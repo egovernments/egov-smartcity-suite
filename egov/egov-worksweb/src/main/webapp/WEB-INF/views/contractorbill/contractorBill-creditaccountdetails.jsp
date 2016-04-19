@@ -58,9 +58,9 @@
 		<table class="table table-bordered" id="tblcreditdetails">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.account.code"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.account.code"/></th>
 					<th><spring:message code="lbl.account.head"/></th>
-					<th><spring:message code="lbl.credit.amount"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.credit.amount"/></th>
 					<th><spring:message code="lbl.action"/></th> 					
 				</tr>
 			</thead>
