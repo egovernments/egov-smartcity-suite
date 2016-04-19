@@ -64,6 +64,7 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
@@ -133,26 +134,27 @@ public class ContractorBillPDFController {
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
-            //reportParams.put("departmentName", contractorBillRegister.getWorkOrder());
             reportParams.put("contractorName", contractorBillRegister.getWorkOrder().getContractor().getName() != null ? contractorBillRegister.getWorkOrder().getContractor().getName(): "");
             reportParams.put("contractorCode", contractorBillRegister.getWorkOrder().getContractor().getCode() != null ? contractorBillRegister.getWorkOrder().getContractor().getCode(): "");
-            reportParams.put("panNo", contractorBillRegister.getWorkOrder().getContractor().getPanNumber() != null ? contractorBillRegister.getWorkOrder().getContractor().getPanNumber(): "N/A");
             reportParams.put("bankAcc", contractorBillRegister.getWorkOrder().getContractor().getBank() != null ? contractorBillRegister.getWorkOrder().getContractor().getBankaccount(): "N/A");
+            reportParams.put("panNo", !contractorBillRegister.getWorkOrder().getContractor().getPanNumber().isEmpty() ? contractorBillRegister.getWorkOrder().getContractor().getPanNumber(): "N/A");
             reportParams.put("billType", contractorBillRegister.getBilltype());
             reportParams.put("win", lineEstimateDetails.getProjectCode().getCode());
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());
-            reportParams.put("billDate", contractorBillRegister.getBilldate());
+            reportParams.put("billDate", formatter.format(contractorBillRegister.getBilldate()));
             reportParams.put("billAmount", contractorBillRegister.getBillamount());
             reportParams.put("nameOfTheWork", lineEstimateDetails.getLineEstimate().getNatureOfWork().getName());
             reportParams.put("ward", lineEstimateDetails.getLineEstimate().getWard().getName());
             
             BigDecimal totalAmount = BigDecimal.ZERO;
+            totalAmount.add(contractorBillRegister.getBillamount());
+            reportParams.put("totalAmount", totalAmount.setScale(2, BigDecimal.ROUND_HALF_EVEN));
             reportParams.put("totalAmountWords", NumberUtil.amountInWords(totalAmount));
             
             final String preparedBy = worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy());
             reportParams.put("preparedBy", preparedBy);
 
-            reportInput = new ReportRequest(CONTRACTORBILLPDF, getAmountDetails(contractorBillRegister.getBillDetailes()), reportParams);
+            reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister), reportParams);
 
         }
 
@@ -164,25 +166,40 @@ public class ContractorBillPDFController {
 
     }
     
-    public List<Map<String, Object>> getAmountDetails(List<EgBilldetails> details) {
-        List<Map<String, Object>> amountDetailsList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> amountDetails = new HashMap<String, Object>();
-        for (final EgBilldetails egBilldetails : details) {
-            egBilldetails.getGlcodeid();
-            if(egBilldetails.getDebitamount() != null){
-                amountDetails.put("debitAmount",egBilldetails.getDebitamount());
-                CChartOfAccounts cChartOfAccounts = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid(), true);
-                amountDetails.put("glcode",cChartOfAccounts.getGlcode());
-                amountDetails.put("glname",cChartOfAccounts.getName());
+    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister) {
+        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> billDetails = new HashMap<String, Object>();
+
+        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
+            if (egBilldetails.getDebitamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getDebitamount());
+                billDetails.put("isDebit", true);
+                billDetails.put("isNetPayable", false);
+            } else if (egBilldetails.getCreditamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getCreditamount());
+                billDetails.put("isDebit", false);
+                if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
+                        && contractorPayableAccountList.contains(coa))
+                    billDetails.put("isNetPayable", true);
+                else
+                    billDetails.put("isNetPayable", false);
+
             }
-            if(egBilldetails.getCreditamount() != null){
-                
-/*               final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
-                        .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);*/
-            }
-            amountDetailsList.add(amountDetails);
-            }
-        return amountDetailsList;
+            billDetailsList.add(billDetails);
+        }
+        return billDetailsList;
     }
 
 }
