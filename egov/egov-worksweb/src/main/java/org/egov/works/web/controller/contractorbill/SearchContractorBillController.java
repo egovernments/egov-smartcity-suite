@@ -39,11 +39,16 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.util.List;
+
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,21 +62,29 @@ public class SearchContractorBillController {
 
     @Autowired
     private DepartmentService departmentService;
+    
+    @Autowired
+    private LineEstimateService lineEstimateService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @RequestMapping(value = "/searchcontractorform", method = RequestMethod.GET)
     public String showSearchContractorBill(
             @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if (departments != null && !departments.isEmpty())
+            searchRequestContractorBill.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestContractorBill", searchRequestContractorBill);
         return "searchcontractorbill-search";
     }
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("billTypes", BillTypes.values());
-        model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("billStatus", BillStatus.values());
-
+        model.addAttribute("departments", departmentService.getAllDepartments());
     }
 
 }
