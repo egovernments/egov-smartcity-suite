@@ -162,7 +162,7 @@ public class CollectionIndex extends AbstractAuditable {
     @Searchable(name = "payeename", group = Searchable.Group.SEARCHABLE)
     private String payeeName;
     
-    @Searchable(name = "", group = Searchable.Group.SEARCHABLE)
+    @Searchable(name = "reductionamount", group = Searchable.Group.SEARCHABLE)
     private BigDecimal reductionAmount;
 
     @Override
