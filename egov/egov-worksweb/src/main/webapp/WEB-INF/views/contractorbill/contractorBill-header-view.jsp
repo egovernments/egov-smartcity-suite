@@ -92,7 +92,14 @@
 						<spring:message code="lbl.party.billdate" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${contractorBillRegister.egBillregistermis.partyBillDate}"></c:out>
+					<c:choose>
+						<c:when test="${contractorBillRegister.egBillregistermis.partyBillDate != null }">
+							<td><fmt:formatDate value="${contractorBillRegister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" /></td>
+						</c:when>
+					<c:otherwise>
+							<td><c:out default="N/A" value="N/A" />
+					</c:otherwise>
+					</c:choose>
 					</div>
 				</div>
 				<div class="row add-border">
