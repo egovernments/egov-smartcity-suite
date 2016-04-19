@@ -167,9 +167,9 @@ public class ManualReconcileHelper {
 		List<ReconcileBean> list=new ArrayList<ReconcileBean>();
 		try{
 		String voucherExcludeStatuses=getExcludeStatuses();
-        String query=" select ih.id as \"ihId\", case when ih.instrumentNumber is null then 'Direct' else ih.instrumentNumber  end as \"chequeNumber\", " +
+        String query=" select v.vouchernumber as \"voucherNumber\" ,ih.id as \"ihId\", case when ih.instrumentNumber is null then 'Direct' else ih.instrumentNumber  end as \"chequeNumber\", " +
 		" to_char(ih.instrumentdate,'dd/mm/yyyy') as \"chequeDate\" ,ih.instrumentAmount as \"chequeAmount\",rec.transactiontype as \"txnType\" , "
-		+ " case when rec.transactionType='Cr' then  'P' else 'R' end as \"type\" " +" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
+		+ " case when rec.transactionType='Cr' then  'Payment' else 'Receipt' end as \"type\" " +" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
 		+" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE "
 		+ "  ih.bankAccountId = BANK.ID AND bank.id =:bankAccId   AND IH.INSTRUMENTDATE <= :toDate  "
 		+" AND v.ID= iv.voucherheaderid  and v.STATUS not in  ("+voucherExcludeStatuses+") AND "
@@ -178,8 +178,8 @@ public class ManualReconcileHelper {
 	
 		+ " union  "
 		
-		+" select ih.id as \"ihId\", case when ih.transactionnumber is null then 'Direct' else ih.transactionnumber end as \"chequeNumber\", " +
-		" to_char(ih.transactiondate,'dd/mm/yyyy') as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\", case when rec.transactionType= 'Cr' then 'P' else 'R' end    as \"type\" " +
+		+" select v.vouchernumber as \"voucherNumber\" , ih.id as \"ihId\", case when ih.transactionnumber is null then 'Direct' else ih.transactionnumber end as \"chequeNumber\", " +
+		" to_char(ih.transactiondate,'dd/mm/yyyy') as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\", case when rec.transactionType= 'Cr' then 'Payment' else 'Receipt' end    as \"type\" " +
 		" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
 		+" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE   ih.bankAccountId = BANK.ID AND bank.id = :bankAccId "
 		+"   AND IH.INSTRUMENTDATE <= :toDate "
@@ -202,11 +202,13 @@ public class ManualReconcileHelper {
 		SQLQuery createSQLQuery = persistenceService.getSession().createSQLQuery(query);
 		createSQLQuery.setLong("bankAccId", bankAccId);
 		createSQLQuery.setDate("toDate", recDate);
+		createSQLQuery.addScalar("voucherNumber",StringType.INSTANCE);
 		createSQLQuery.addScalar("ihId",LongType.INSTANCE);
 		createSQLQuery.addScalar("chequeDate",StringType.INSTANCE);
 		createSQLQuery.addScalar("chequeNumber",StringType.INSTANCE);
 		createSQLQuery.addScalar("chequeAmount",BigDecimalType.INSTANCE);
 		createSQLQuery.addScalar("txnType",StringType.INSTANCE);
+		createSQLQuery.addScalar("type",StringType.INSTANCE);
 		createSQLQuery.setResultTransformer(Transformers.aliasToBean(ReconcileBean.class));
 	    list = (List<ReconcileBean>)createSQLQuery.list();
          

@@ -135,7 +135,7 @@ public class ManualReconciliationAction extends BaseFormAction {
 	@Action(value = "/brs/manualReconciliation-ajaxSearch")
 	public String search()
 	{
-		unReconciledDrCr = manualReconcileHelper.getUnReconciledDrCr(reconcileBean.getAccountId(), reconcileBean.getFromDate(), reconcileBean.getToDate());
+		//unReconciledDrCr = manualReconcileHelper.getUnReconciledDrCr(reconcileBean.getAccountId(), reconcileBean.getFromDate(), reconcileBean.getToDate());
 		unReconciledCheques = manualReconcileHelper.getUnReconciledCheques(reconcileBean.getAccountId(), reconcileBean.getReconciliationDate());
 
 		return "search";

@@ -19,6 +19,7 @@ public class ReconcileBean {
 	private Date reconciliationDate;
 	private Date bankStatementDate;
 	private Long ihId;
+	private String voucherNumber;
 	
 	public Long getBranchId() {
 		return branchId;
@@ -98,6 +99,12 @@ public class ReconcileBean {
 	}
 	public void setIhId(Long ihId) {
 		this.ihId = ihId;
+	}
+	public String getVoucherNumber() {
+		return voucherNumber;
+	}
+	public void setVoucherNumber(String voucherNumber) {
+		this.voucherNumber = voucherNumber;
 	}
 	
 }

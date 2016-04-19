@@ -44,8 +44,10 @@
   <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
     <thead>
       <tr>
+        <th>VoucherNumber</th>
         <th>Cheque Number</th>
         <th>Cheque Date</th>
+        <th>Type</th>
         <th>Amount</th>
         <th>Reconciliation Date</th>
       </tr>
@@ -53,17 +55,19 @@
    <s:if test="%{unReconciledCheques.size>0}">
     <s:iterator var="vh" value="unReconciledCheques" status="status">
       <tr>
-        <td style="text-align:right"><s:property value="chequeNumber" /></td>
-        <td><s:property value="chequeDate" /></td>
-        <td style="text-align:right"> <s:property value="chequeAmount" /></td>
-        <td><input type="text" id="reconDates<s:property value="#status.index"/>"  name="reconDates[<s:property value="#status.index"/>]"   onkeyup="DateFormat(this,this.value,event,false,'3')"
-              /> <a
-            href="javascript:show_calendar('mrform.reconDates<s:property value="#status.index"/>');"
-            style="text-decoration: none">&nbsp;<img tabIndex="-1"
-              src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>   
-          <input type="hidden" name="instrumentHeaders[<s:property value="#status.index"/>]" value='<s:property value="ihId"/>' />
-        </td>
-      </tr>
+        <input type="hidden" name="instrumentHeaders[<s:property value="#status.index"/>]"
+            value='<s:property value="ihId"/>' />
+          <td style="text-align: left"><s:property value="voucherNumber" /></td>
+          <td style="text-align: left"><s:property value="chequeNumber" /></td>
+          <td><s:property value="chequeDate" /></td>
+          <td><s:property value="type" /></td>
+          <td style="text-align: right"><s:property value="chequeAmount" /></td>
+          <td><input type="text" id="reconDates<s:property value="#status.index"/>"
+            name="reconDates[<s:property value="#status.index"/>]" onkeyup="DateFormat(this,this.value,event,false,'3')" />
+            <a href="javascript:show_calendar('mrform.reconDates<s:property value="#status.index"/>');"
+            style="text-decoration: none">&nbsp;<img tabIndex="-1" src="/egi/resources/erp2/images/calendaricon.gif"
+              border="0" /></A> </td>
+        </tr>
     </s:iterator>
     </s:if>
     <s:else>
