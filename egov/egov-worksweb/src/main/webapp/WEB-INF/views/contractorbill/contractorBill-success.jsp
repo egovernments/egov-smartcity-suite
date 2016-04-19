@@ -41,6 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="page-container" id="page-container">
+<input type="hidden" id="id" value="${contractorBillRegister.id }" />
 	<div class="main-content">
 		<div style="font-weight:bold; color:green; text-align:center;">
 			<c:if test="${contractorBillRegister.getId() != null}">
@@ -50,7 +51,9 @@
 		<div class="row">
 			<div class="col-sm-12 text-center">
 				<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+				<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.contractorbillpdf" /></a>
 			</div>
 		</div>
 	</div>
 </div>
+<script src="<c:url value='/resources/js/searchcontractorbill.js?rnd=${app_release_no}'/>"></script>

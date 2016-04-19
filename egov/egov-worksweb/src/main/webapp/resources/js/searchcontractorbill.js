@@ -248,3 +248,8 @@ $(document).ready(function() {
 				$("#contractor").val(data.value);
 			});
 });
+
+function renderPDF(){
+	var id = $('#id').val();
+	window.open("/egworks/contractorbill/contractorbillPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
