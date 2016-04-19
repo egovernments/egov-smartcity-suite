@@ -255,7 +255,16 @@ $(document).ready(function(){
 				map.setCenter(userLatLng);
 				
 				}, function error(err) {
-				console.log('error: ' + err.message);        
+				//console.log('error: ' + err.message);   
+				//set city lat and long
+				var userLatLng = new google.maps.LatLng(citylat, citylng);
+				lat = citylat;
+				lng = citylng;
+				
+				getAddress(lat, lng);
+
+				map.setCenter(userLatLng);
+				
 			});
 		}
 
