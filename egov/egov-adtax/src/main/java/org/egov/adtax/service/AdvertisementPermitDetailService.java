@@ -101,6 +101,9 @@ public class AdvertisementPermitDetailService {
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
 
     @Transactional
     public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
@@ -118,11 +121,13 @@ public class AdvertisementPermitDetailService {
         if (advertisementPermitDetail.getAdvertisement().getLegacy() && advertisementPermitDetail.getPermissionNumber() == null)
             advertisementPermitDetail.setPermissionNumber(adTaxNumberGenerator.generatePermitNumber());
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
-
+       
         if (approvalPosition != null && approvalPosition > 0 && additionalRule != null
                 && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+        //create or update index
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -136,12 +141,16 @@ public class AdvertisementPermitDetailService {
         roundOfAllTaxAmount(advertisementPermitDetail);
 
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
+        // update index for legacy advertisement
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
     @Transactional
     public AdvertisementPermitDetail updateAdvertisementPermitDetail(
             final AdvertisementPermitDetail advertisementPermitDetail) throws HoardingValidationError {
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
+        //update index on advertisement deactivation
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -186,6 +195,8 @@ public class AdvertisementPermitDetailService {
         if ((approvalPosition != null) && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+        //update index on permit generation
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -252,6 +263,7 @@ public class AdvertisementPermitDetailService {
                                 .get(AdvertisementTaxConstants.PENALTYAMOUNT));
                         hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                                 .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                        hoardingSearchResult.setTotalAmount(hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount()));
                         hoardingSearchResult.setTotalHoardingInAgency(1);
                         hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
                         agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
@@ -261,6 +273,7 @@ public class AdvertisementPermitDetailService {
                                 demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT)));
                         hoardingSearchObj.setPendingDemandAmount(hoardingSearchObj.getPendingDemandAmount().add(
                                 demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT)));
+                        hoardingSearchObj.setTotalAmount(hoardingSearchObj.getPendingDemandAmount().add(hoardingSearchObj.getPenaltyAmount()));
                         hoardingSearchObj.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
 
                         hoardingIds.append(hoardingSearchObj.getHordingIdsSearchedByAgency()).append("~")
@@ -276,6 +289,7 @@ public class AdvertisementPermitDetailService {
                     hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                     hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                    hoardingSearchResult.setTotalAmount(hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount()));
                     hoardingSearchResults.add(hoardingSearchResult);
                 }
             }
@@ -318,6 +332,8 @@ public class AdvertisementPermitDetailService {
         if (approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+        //update index on collection
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
     }
 
     public AdvertisementPermitDetail findByApplicationNumber(final String applicationNumber) {
@@ -349,6 +365,8 @@ public class AdvertisementPermitDetailService {
                 && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+        //update index on renewal
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
     //TODO : CODE REVIEW PENDING

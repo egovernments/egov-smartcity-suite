@@ -62,6 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_EDIT_DEMAND;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -139,6 +140,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
         @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
+        @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
+                "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp") })
 public class SearchPropertyAction extends BaseFormAction {
     /**
@@ -314,6 +317,9 @@ public class SearchPropertyAction extends BaseFormAction {
                 addActionError(getText("error.msg.taxExempted"));
                 return COMMON_FORM;
             }
+        if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
+            return APPLICATION_TYPE_EDIT_DEMAND;
+        }
 
         if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
@@ -665,16 +671,20 @@ public class SearchPropertyAction extends BaseFormAction {
                     searchResultMap.put("currSecondHalfDemand", demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
                             demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-                    searchResultMap.put("currFirstHalfDemandDue",
-                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR).subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
-                    searchResultMap.put("currSecondHalfDemandDue",
-                            demandCollMap.get(CURR_SECONDHALF_DMD_STR).subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
+                    searchResultMap.put(
+                            "currFirstHalfDemandDue",
+                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
+                                    .subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
+                    searchResultMap.put(
+                            "currSecondHalfDemandDue",
+                            demandCollMap.get(CURR_SECONDHALF_DMD_STR)
+                                    .subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
                 } else {
                     searchResultMap.put("currFirstHalfDemand", "0");
                     searchResultMap.put("currFirstHalfDemandDue", "0");
                     searchResultMap.put("currSecondHalfDemand", "0");
                     searchResultMap.put("currSecondHalfDemandDue", "0");
-                    searchResultMap.put("arrDemandDue", "0"); 
+                    searchResultMap.put("arrDemandDue", "0");
                 }
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Assessment Number : " + searchResultMap.get("assessmentNum") + ", " + "Owner Name : "
@@ -766,14 +776,14 @@ public class SearchPropertyAction extends BaseFormAction {
                     searchResultMap.put("currFirstHalfDemandDue", "0");
                     searchResultMap.put("currSecondHalfDemand", "0");
                     searchResultMap.put("currSecondHalfDemandDue", "0");
-                    searchResultMap.put("arrDemandDue", "0"); 
+                    searchResultMap.put("arrDemandDue", "0");
                 } else {
                     searchResultMap.put("currFirstHalfDemand", pmv.getAggrCurrFirstHalfDmd().toString());
-                    searchResultMap.put("currFirstHalfDemandDue", pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl())
-                            .toString());
+                    searchResultMap.put("currFirstHalfDemandDue",
+                            pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl()).toString());
                     searchResultMap.put("currSecondHalfDemand", pmv.getAggrCurrSecondHalfDmd().toString());
-                    searchResultMap.put("currSecondHalfDemandDue", pmv.getAggrCurrSecondHalfDmd().subtract(pmv.getAggrCurrSecondHalfColl())
-                            .toString());
+                    searchResultMap.put("currSecondHalfDemandDue",
+                            pmv.getAggrCurrSecondHalfDmd().subtract(pmv.getAggrCurrSecondHalfColl()).toString());
                     searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
                 }
                 searchList.add(searchResultMap);

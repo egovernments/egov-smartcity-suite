@@ -47,7 +47,7 @@
       <thead>
         <th><spring:message code="lbl.from" /></th>
         <th><spring:message code="lbl.to" /></th>
-        <th><spring:message code="lbl.rate" /></th>
+        <th><spring:message code="lbl.penaltyrate" /></th>
         <th><spring:message code="lbl.action" /></th>
       </thead>
       <c:choose>

@@ -79,29 +79,37 @@ public class CategoryMasterController {
         if (resultBinder.hasErrors())
             return "category-master";
 
-        final ConnectionCategory connectionCategoryNameObj = connectionCategoryService
-                .findByNameIgnoreCase(connectionCategory.getName());
-        final ConnectionCategory connectionCategoryCodeObj = connectionCategoryService
-                .findByCodeIgnoreCase(connectionCategory.getCode());
-
         final ConnectionCategory connectioncategoryObj = connectionCategoryService
                 .findByNameAndCode(connectionCategory.getName(), connectionCategory.getCode());
 
         if (connectioncategoryObj != null) {
             redirectAttrs.addFlashAttribute("ConnectionCategory", connectioncategoryObj);
-            model.addAttribute("message", "Entered Category Type and Code are already exists.");
-        } else if (connectionCategoryNameObj != null) {
-            redirectAttrs.addFlashAttribute("UsageType", connectionCategoryNameObj);
-            model.addAttribute("message", "Entered Category Type already exist.");
-        } else if (connectionCategoryCodeObj != null) {
-            redirectAttrs.addFlashAttribute("UsageType", connectionCategoryCodeObj);
-            model.addAttribute("message", "Entered Code already exist.");
+            model.addAttribute("message", "Entered Code and Category Type already exists.");
+            viewForm(model);
             return "category-master";
         } else {
-            connectionCategoryService.createConnectionCategory(connectionCategory);
-            redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);
-        }
+            final ConnectionCategory connectionCategoryNameObj = connectionCategoryService
+                    .findByNameIgnoreCase(connectionCategory.getName());
+            if (connectionCategoryNameObj != null) {
+                redirectAttrs.addFlashAttribute("UsageType", connectionCategoryNameObj);
+                model.addAttribute("message", "Entered Category Type already exist.");
+                viewForm(model);
+                return "category-master";
+            } else {
+                final ConnectionCategory connectionCategoryCodeObj = connectionCategoryService
+                        .findByCodeIgnoreCase(connectionCategory.getCode());
+                if (connectionCategoryCodeObj != null) {
+                    redirectAttrs.addFlashAttribute("UsageType", connectionCategoryCodeObj);
+                    model.addAttribute("message", "Entered Code already exist.");
+                    viewForm(model);
+                    return "category-master";
+                } else {
+                    connectionCategoryService.createConnectionCategory(connectionCategory);
+                    redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);
+                }
 
+            }
+        }
         return getCategoryMasterList(model);
     }
 

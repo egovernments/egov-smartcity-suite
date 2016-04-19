@@ -102,9 +102,9 @@ public class LineEstimateAppropriationService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public LineEstimateAppropriation findByLineEstimateDetails_EstimateNumber(final String estimateNumber) {
+    public LineEstimateAppropriation findLatestByLineEstimateDetails_EstimateNumber(final String estimateNumber) {
         return lineEstimateAppropriationRepository
-                .findByLineEstimateDetails_EstimateNumber(estimateNumber);
+                .findLatestByLineEstimateDetails_EstimateNumber(estimateNumber);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)

@@ -42,7 +42,8 @@ package org.egov.collection.entity;
 import java.math.BigDecimal;
 
 public class DishonoredChequeBean {
-
+    
+    private String voucherNumber;
     private String receiptNumber;
     private String receiptDate;
     private String instrumentNumber;
@@ -54,6 +55,7 @@ public class DishonoredChequeBean {
     private BigDecimal instrumentAmount;
     private Long receiptHeaderid;
     private Long instrumentHeaderid;
+    private Long voucherHeaderId;
 
     public String getReceiptNumber() {
         return receiptNumber;
@@ -142,5 +144,23 @@ public class DishonoredChequeBean {
     public void setReceiptHeaderid(final Long receiptHeaderid) {
         this.receiptHeaderid = receiptHeaderid;
     }
+
+    public String getVoucherNumber() {
+        return voucherNumber;
+    }
+
+    public void setVoucherNumber(String voucherNumber) {
+        this.voucherNumber = voucherNumber;
+    }
+
+    public Long getVoucherHeaderId() {
+        return voucherHeaderId;
+    }
+
+    public void setVoucherHeaderId(Long voucherHeaderId) {
+        this.voucherHeaderId = voucherHeaderId;
+    }
+
+   
 
 }

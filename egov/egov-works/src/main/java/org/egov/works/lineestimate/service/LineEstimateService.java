@@ -386,6 +386,7 @@ public class LineEstimateService {
             if (led.getLineEstimate().getAdminSanctionBy() != null)
                 result.setAdminSanctionBy(led.getLineEstimate().getAdminSanctionBy().getName());
             result.setActualEstimateAmount(led.getActualEstimateAmount());
+            result.setWorkIdentificationNumber(led.getProjectCode().getCode());
             lineEstimateForLoaSearchResults.add(result);
         }
         return lineEstimateForLoaSearchResults;
@@ -706,7 +707,7 @@ public class LineEstimateService {
     public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails) throws ValidationException {
 
         final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationRepository
-                .findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+                .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
         BudgetUsage budgetUsage = null;
@@ -745,7 +746,7 @@ public class LineEstimateService {
     private void persistBudgetReleaseDetails(final LineEstimateDetails lineEstimateDetails, final BudgetUsage budgetUsage) {
         LineEstimateAppropriation lineEstimateAppropriation = null;
         lineEstimateAppropriation = lineEstimateAppropriationRepository
-                .findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+                .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
         lineEstimateAppropriation.setBudgetUsage(budgetUsage);
         lineEstimateAppropriationRepository.save(lineEstimateAppropriation);
     }
@@ -795,5 +796,13 @@ public class LineEstimateService {
     
     public List<String> getEstimateNumberForDepartment(Long departmentId) {
         return  lineEstimateDetailsRepository.findEstimateNumbersForDepartment(departmentId);
+    }
+    
+    public List<String> getEstimateNumbersForWorkIdentificationNumber(String workIdentificationNumber) {
+        return  lineEstimateDetailsRepository.findEstimateNumbersForWorkIdentificationNumber(workIdentificationNumber);
+    }
+    
+    public List<String> getEstimateNumbersForSpillOverFlag(boolean spillOverFlag) {
+        return  lineEstimateDetailsRepository.findEstimateNumbersForSpillOverFlag(spillOverFlag);
     }
 }

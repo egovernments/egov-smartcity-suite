@@ -281,7 +281,7 @@ var codeObj;
 var acccodeArray;
 function loadDropDownCodes()
 {
-	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/voucher/common-ajaxGetAllCoaNames.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -305,7 +305,7 @@ var rebatecodeObj;
 var rebacccodeArray;
 function loadDropDownRebateCodes()
 {
-	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/voucher/common-ajaxGetAllCoaNames.action";
 	var req3 = initiateRequest();
 	req3.onreadystatechange = function()
 	{
@@ -329,7 +329,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = "/EGF/commons/Process.jsp?type=getAllFunctionCode";
+	var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 	var req4 = initiateRequest();
 	req4.onreadystatechange = function()
 	{

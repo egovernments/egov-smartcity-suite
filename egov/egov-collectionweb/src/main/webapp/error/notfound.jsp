@@ -41,7 +41,6 @@
 <html>
 	<head>
 		<title>eGov - Not Found!</title>
-		<link href="<c:url value='/css/commonegovNew.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
 	</head>
 <body bgcolor="#FFFFFF">
   <table border=1 class="tableStyle" width="754" summary>

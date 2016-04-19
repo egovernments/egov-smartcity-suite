@@ -1271,9 +1271,11 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                     else
                         egBillPaydetail.setCreditAmount(subledgerDetail.getAmount());
                     egBillPaydetail.setNarration(voucherHeader.getDescription());
+                    egBillPaydetail.setLastUpdatedTime(new Date());
                     egBillPaydetailes.add(egBillPaydetail);
                 }
             egBilldetail.setEgBillPaydetailes(egBillPaydetailes);
+            egBilldetail.setLastupdatedtime(new Date());
             egBilldetailes.add(egBilldetail);
         }
         if (LOGGER.isDebugEnabled())

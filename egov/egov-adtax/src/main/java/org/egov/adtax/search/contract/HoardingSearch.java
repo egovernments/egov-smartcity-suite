@@ -59,6 +59,7 @@ public class HoardingSearch {
     private AdvertisementStatus status;
     private BigDecimal pendingDemandAmount;
     private BigDecimal penaltyAmount;
+    private BigDecimal totalAmount;
     private int totalHoardingInAgency;
     private String hordingIdsSearchedByAgency;
     private String permitStatus;
@@ -250,6 +251,14 @@ public class HoardingSearch {
 
     public void setOwnerDetail(final String ownerDetail) {
         this.ownerDetail = ownerDetail;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
 }

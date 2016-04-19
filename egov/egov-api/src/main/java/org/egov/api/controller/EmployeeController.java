@@ -212,7 +212,7 @@ public class EmployeeController extends ApiController {
    public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerPostitions) throws HibernateException, ClassNotFoundException {
         
         	List<HashMap<String, Object>> workFlowTypesWithItemsCount=new ArrayList<HashMap<String,Object>>();
-        	Query query = this.workflowTypePersistenceService.getSession().createQuery("select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status != :statusEnded and NOT (status != :statusStarted and createdBy.id != :userId) group by type");
+        	Query query = this.workflowTypePersistenceService.getSession().createQuery("select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status != :statusEnded and status != :statusStarted and createdBy.id != :userId group by type");
         	query.setParameterList("ownerPositions", ownerPostitions);
             query.setParameter("statusEnded", StateStatus.ENDED);
             query.setParameter("statusStarted", StateStatus.STARTED);

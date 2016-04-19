@@ -48,17 +48,20 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.services.voucher.JournalVoucherActionHelper;
+import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +85,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
@@ -94,15 +97,17 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
         super(EgBillregister.class);
 
     }
+
     @Transactional
-    public EgBillregister createBill(EgBillregister bill,WorkflowBean workflowBean) {
+    public EgBillregister createBill(EgBillregister bill, WorkflowBean workflowBean, List<CheckListHelper> checkListsTable) {
         try {
-        applyAuditing(bill);
-        bill = transitionWorkFlow(bill, workflowBean);
-        applyAuditing(bill.getState());
-        persist(bill);
-        bill.getEgBillregistermis().setSourcePath(
-                "/EGF/bill/contingentBill-beforeView.action?billRegisterId=" + bill.getId().toString());
+            applyAuditing(bill);
+            bill = transitionWorkFlow(bill, workflowBean);
+            applyAuditing(bill.getState());
+            persist(bill);
+            bill.getEgBillregistermis().setSourcePath(
+                    "/EGF/bill/contingentBill-beforeView.action?billRegisterId=" + bill.getId().toString());
+            createCheckList(bill, checkListsTable);
         } catch (final Exception e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -112,7 +117,28 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
         return bill;
     }
 
-   
+    @Transactional
+    public void createCheckList(final EgBillregister bill, List<CheckListHelper> checkListsTable) {
+        try {
+            if (checkListsTable != null)
+                for (final CheckListHelper clh : checkListsTable)
+                {
+                    final EgChecklists checkList = new EgChecklists();
+                    final AppConfigValues configValue = (AppConfigValues) persistenceService.find(
+                            "from AppConfigValues where id=?",
+                            clh.getId());
+                    checkList.setObjectid(bill.getId());
+                    checkList.setAppconfigvalue(configValue);
+                    checkList.setChecklistvalue(clh.getVal());
+                    persistenceService.getSession().saveOrUpdate(checkList);
+                }
+        } catch (final Exception e) {
+            e.printStackTrace();
+            final List<ValidationError> errors = new ArrayList<ValidationError>();
+            errors.add(new ValidationError("exp", e.getMessage()));
+            throw new ValidationException(errors);
+        }
+    }
 
     @Transactional
     public EgBillregister sendForApproval(EgBillregister bill, WorkflowBean workflowBean)
@@ -130,14 +156,12 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
         }
         return bill;
     }
-   
 
-    
     @Transactional
     public EgBillregister transitionWorkFlow(final EgBillregister billregister, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(),new Date()).get(0);
+        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
         Position pos = null;
         Assignment wfInitiator = null;
         if (null != billregister.getId())
@@ -156,12 +180,14 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
             }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            EgwStatus egwStatus =  egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
+            EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
+                    FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
             billregister.setStatus(egwStatus);
             billregister.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            EgwStatus egwStatus =  egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
+            EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
+                    FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
             billregister.setStatus(egwStatus);
             billregister.setBillstatus(FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS);
             billregister.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
@@ -193,7 +219,8 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     }
 
     private Assignment getWorkflowInitiator(final EgBillregister billregister) {
-        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(billregister.getCreatedBy().getId(),new Date()).get(0);
+        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(billregister.getCreatedBy().getId(), new Date())
+                .get(0);
         return wfInitiator;
     }
 }

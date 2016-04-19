@@ -41,7 +41,6 @@
 <html>
 <head>
 <title><s:text name="page.title.transfertrade" /></title>
-<sx:head />
 <script>
 		function validateDataBeforeSubmit() {
 			if (document.getElementById("applicantName").value == '' || document.getElementById("applicantName").value == null){
@@ -85,7 +84,7 @@
 			</div>
 			</s:if>
 
-			<s:form action="transferTradeLicense" theme="css_xhtml" name="transferTradeLicense" id="transferTradeLicense" cssClass="form-horizontal form-groups-bordered">
+			<s:form action="transferTradeLicense" theme="simple" name="transferTradeLicense" id="transferTradeLicense" cssClass="form-horizontal form-groups-bordered">
 				<s:token />
 				<s:push value="model">
 					<s:hidden name="id"/>

@@ -80,7 +80,7 @@
 	
 	<bean id="bulkBillGenerationJobDelegate0" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="0" />
-		<property name="billsCount" value="10" />
+		<property name="billsCount" value="40" />
     </bean>
    
     <bean id="bulkBillGenerationCronTrigger0" name="bulkBillGenerationCronTrigger0" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
@@ -113,7 +113,7 @@
 	
 	<bean id="bulkBillGenerationJobDelegate1" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="1" />
-		<property name="billsCount" value="10" />
+		<property name="billsCount" value="40" />
     </bean>
     
     <bean id="bulkBillGenerationCronTrigger1" name="bulkBillGenerationCronTrigger1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
@@ -146,7 +146,7 @@
 	
 	<bean id="bulkBillGenerationJobDelegate2" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="2" />
-		<property name="billsCount" value="10" />
+		<property name="billsCount" value="40" />
     </bean>
    
     <bean id="bulkBillGenerationCronTrigger2" name="bulkBillGenerationCronTrigger2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
@@ -179,7 +179,7 @@
 	
 	<bean id="bulkBillGenerationJobDelegate3" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="3" />
-		<property name="billsCount" value="10" />
+		<property name="billsCount" value="40" />
     </bean>
    
     <bean id="bulkBillGenerationCronTrigger3" name="bulkBillGenerationCronTrigger3" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
@@ -212,7 +212,7 @@
 	
 	<bean id="bulkBillGenerationJobDelegate4" class="org.egov.ptis.scheduler.BulkBillGenerationJob" lazy-init="true" scope="prototype">
 		<property name="modulo" value="4" />
-		<property name="billsCount" value="10" />
+		<property name="billsCount" value="40" />
     </bean>
    
     <bean id="bulkBillGenerationCronTrigger4" name="bulkBillGenerationCronTrigger4" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">

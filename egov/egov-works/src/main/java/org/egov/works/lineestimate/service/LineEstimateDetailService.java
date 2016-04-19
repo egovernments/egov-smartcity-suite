@@ -152,7 +152,7 @@ public class LineEstimateDetailService {
             final BudgetUsage budgetUsage) {
         LineEstimateAppropriation lineEstimateAppropriation = null;
         lineEstimateAppropriation = lineEstimateAppropriationService
-                .findByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
+                .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
 
         if (lineEstimateAppropriation != null)
             lineEstimateAppropriation.setBudgetUsage(budgetUsage);

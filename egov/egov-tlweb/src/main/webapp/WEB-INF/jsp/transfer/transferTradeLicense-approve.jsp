@@ -41,7 +41,6 @@
 <html>
 <head>
 <title><s:text name="page.title.transfer" /></title>
-<sx:head />
 <script>
 		  	function validateForm(obj) {
 		    	if (validateApprover(obj) == false) {
@@ -101,7 +100,7 @@
 										</td>
 									</tr>
 								</table>
-								<s:form action="transferTradeLicense" theme="css_xhtml"
+								<s:form action="transferTradeLicense" theme="simple"
 									name="registrationForm" validate="true">
 									<s:token />
 									<s:push value="model">

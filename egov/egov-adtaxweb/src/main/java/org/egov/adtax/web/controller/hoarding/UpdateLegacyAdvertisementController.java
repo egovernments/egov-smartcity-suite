@@ -66,11 +66,8 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
 
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
-        Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
-        if (advertisement != null) {
-            return advertisement.getActiveAdvertisementPermit();
-        }
-        return null;
+        return advertisementPermitDetailService.findBy(Long.valueOf(id));
+
     }
 
     /*@RequestMapping(value = "viewLegacy/{id}")
@@ -89,7 +86,8 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
     
     @RequestMapping(value = "/updateLegacy/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {
-        final Advertisement advertisement = advertisementService.findByAdvertisementNumber(id);
+        final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
+        final Advertisement advertisement = advertisementPermitDetail.getAdvertisement();
 
         if(advertisement==null)
         {   model.addAttribute("message", "msg.collection.updateRecordNotAllowed");

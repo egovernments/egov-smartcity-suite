@@ -220,8 +220,6 @@ public class LetterOfAcceptanceService {
 
     public List<WorkOrder> searchLetterOfAcceptanceForContractorBill(
             final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-       /* final List<String> estimateNumbers = lineEstimateDetailsRepository
-                .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());*/
         final List<String> estimateNumbers = lineEstimateService.getEstimateNumberForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
         if (estimateNumbers.isEmpty())
             estimateNumbers.add("");

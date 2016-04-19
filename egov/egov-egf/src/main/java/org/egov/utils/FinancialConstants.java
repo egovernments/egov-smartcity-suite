@@ -151,6 +151,12 @@ public interface FinancialConstants {
     public static final String INSTRUMENT_INWORKFLOW_STATUS = "InWorkflow";// dishonour cheque in workflow
     public static final String INSTRUMENT_APPROVED_STATUS = "Approved";
     public static final String STATUS_MODULE_INSTRUMENT = "Instrument";
+    
+    public static final String STATUS_MODULE_DISHONORCHEQUE = "DISHONORCHEQUE";
+    public static final String DISHONORCHEQUE_CREATED_STATUS = "Created";
+    public static final String DISHONORCHEQUE_APPROVED_STATUS = "Approved";
+    public static final String DISHONORCHEQUE_CANCELLED_STATUS = "Cancelled";
+    public static final String DISHONORCHEQUE_REJECTED_STATUS = "Rejected";
 
     public static final String INSTRUMENT_TYPE_CHEQUE = "cheque";
     public static final String INSTRUMENT_TYPE_CASH = "cash";

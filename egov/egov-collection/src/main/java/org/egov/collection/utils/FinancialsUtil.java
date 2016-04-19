@@ -340,7 +340,7 @@ public class FinancialsUtil {
         return instrumentHeaderObj;
 
     }
-
+    @Transactional
     public void updateInstrumentHeader(final InstrumentHeader instrumentHeader) {
         instrumentHeaderService.persist(instrumentHeader);
     }

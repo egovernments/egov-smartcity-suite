@@ -133,6 +133,12 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
                 .setCacheable(true).list();
 
     }
+    
+    public List<CChartOfAccounts> findDetailedAccountCodesByGlcodeLike(String glCode) {
+        final Query qry = getCurrentSession().createQuery("from CChartOfAccounts where classification='4' and isActiveForPosting=true and glcode like :glCode order by glcode");
+        qry.setString("glCode", glCode+ "%");
+        return (List<CChartOfAccounts>) qry.list();
+    }
 
     @Deprecated
     public CChartOfAccounts findCodeByPurposeId(final int purposeId) {

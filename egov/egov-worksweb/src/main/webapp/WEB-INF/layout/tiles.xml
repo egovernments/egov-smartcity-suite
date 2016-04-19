@@ -127,7 +127,7 @@
     </definition>
 
 	<definition name="searchloatocreatecontractorbill-search" extends="base_layout">
-		<put-attribute name="page-title" value="hdr.letterofacceptance" cascade="true"/>
+		<put-attribute name="page-title" value="title.contractorbill.create" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/contractorbill/searchLOAToCreateContractorBill-header.jsp"/>
 	</definition>
 	
@@ -135,4 +135,15 @@
         <put-attribute name="page-title" value="title.contractorbill.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/contractorbill/contractorBill-update.jsp"/>
     </definition>
+    
+    <definition name="searchcontractorbill-search" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.contractorbill" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractorbill/searchContractorBill-header.jsp"/>
+    </definition>
+    
+    <definition name="workProgressRegister-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search.workprogressregister" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/workProgressRegisterReport-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>

@@ -754,7 +754,7 @@ var bankfuncObj;
 var bankArray;
 function loadDropDownCodesBank()
 {
-	var url = "/EGF/commons/Process.jsp?type=getAllBankName";
+	var url = "/EGF/voucher/common-ajaxGetAllBankName.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{

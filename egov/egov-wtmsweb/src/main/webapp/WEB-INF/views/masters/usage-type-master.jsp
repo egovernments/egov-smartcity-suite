@@ -48,7 +48,7 @@
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading"></div>
 			<c:if test="${not empty message}">
-                  <div class="alert alert-success" role="alert">${message}</div>
+                  <div role="alert">${message}</div>
              </c:if>
 		<div class="panel-body custom-form">
 			<div class="form-group">
@@ -83,7 +83,7 @@
 				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
 				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
 				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
-				<button type="button" class="btn btn-default" id="resetid"><spring:message code="lbl.reset"/></button>
+				<button type="button" class="btn btn-default" value="Reset" id="resetid" ><spring:message code="lbl.reset"/></button>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>

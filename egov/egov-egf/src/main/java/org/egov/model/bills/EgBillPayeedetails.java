@@ -42,23 +42,52 @@ package org.egov.model.bills;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.model.recoveries.Recovery;
+import org.hibernate.validator.constraints.Length;
 
-public class EgBillPayeedetails implements java.io.Serializable {
+@Entity
+@Table(name = "EG_BILLPAYEEDETAILS")
+@SequenceGenerator(name = EgBillPayeedetails.SEQ_EG_BILLPAYEEDETAILS, sequenceName = EgBillPayeedetails.SEQ_EG_BILLPAYEEDETAILS, allocationSize = 1)
+public class EgBillPayeedetails extends AbstractPersistable<Integer> implements java.io.Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6620941691239597456L;
-    Integer id;
-    EgBilldetails egBilldetailsId;
-    Integer accountDetailTypeId;
-    Integer accountDetailKeyId;
-    BigDecimal debitAmount;
-    BigDecimal creditAmount;
-    Date lastUpdatedTime;
-    Recovery recovery;
-    String narration;
+    
+    public static final String SEQ_EG_BILLPAYEEDETAILS = "SEQ_EG_BILLPAYEEDETAILS";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EG_BILLPAYEEDETAILS, strategy = GenerationType.SEQUENCE)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "billdetailid")
+    private EgBilldetails egBilldetailsId;
+
+    private Integer accountDetailTypeId;
+
+    private Integer accountDetailKeyId;
+
+    private BigDecimal debitAmount;
+
+    private BigDecimal creditAmount;
+
+    private Date lastUpdatedTime;
+
+    @ManyToOne
+    @JoinColumn(name = "tdsid")
+    private Recovery recovery;
+
+    @Length(max = 250)
+    private String narration;
 
     public Integer getAccountDetailKeyId() {
         return accountDetailKeyId;

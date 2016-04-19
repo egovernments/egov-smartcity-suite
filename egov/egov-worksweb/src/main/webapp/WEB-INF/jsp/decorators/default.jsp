@@ -42,14 +42,11 @@
 <head>
  <%@ include file="/includes/meta.jsp" %>  
 <title>eGov Works <decorator:title/></title>
-
+<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 <link href="<c:url value='/resources/css/works.css?${app_release_no}'/>" rel="stylesheet" type="text/css" />
-<link href="<c:url value='/css/backup/commonegovNew.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-<link href="<c:url value='/resources/global/css/egov/backup/header-custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-
  
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
 <link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	

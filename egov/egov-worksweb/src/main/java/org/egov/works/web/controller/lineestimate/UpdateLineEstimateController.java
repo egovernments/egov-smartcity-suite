@@ -249,7 +249,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                         totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
                     
                     String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",
-                            new String[] { totalEstimateAmount.toString(), budgetAvailable.toString() }, null);
+                            new String[] { budgetAvailable.toString(), totalEstimateAmount.toString() }, null);
                     model.addAttribute("message", errorMessage);
                     return "lineestimate-success";
                 }
@@ -282,7 +282,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
 
             if (budgetAvailable.compareTo(totalEstimateAmount) == -1) {
-                errors.reject("error.budgetappropriation.amount", new String[] { totalEstimateAmount.toString(), budgetAvailable.toString() }, null);
+                errors.reject("error.budgetappropriation.amount", new String[] { budgetAvailable.toString(), totalEstimateAmount.toString() }, null);
             }
         } catch (final ValidationException e) {
             // TODO: Used ApplicationRuntimeException for time being since there is issue in session after

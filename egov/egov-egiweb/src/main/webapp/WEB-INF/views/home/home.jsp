@@ -64,12 +64,12 @@
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
 		<style>
 		body{padding:0;}
@@ -222,7 +222,7 @@
 								</div>
 								<div class="col-md-6 col-xs-6 add-margin text-right">
 									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="inboxsearch" class="form-control input-sm"></span>
+									<span class="inline-elem"><input type="text" id="inboxsearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
 								</div>
 							</div>
 							<div class="row">
@@ -251,7 +251,7 @@
 								</div>
 								<div class="col-md-6 col-xs-6 add-margin text-right">
 									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="draftsearch" class="form-control input-sm"></span>
+									<span class="inline-elem"><input type="text" id="draftsearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_drafts" style="width:100%;">
@@ -277,7 +277,7 @@
 								<div class="col-md-6 col-xs-6 add-margin text-right">
 									
 									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="notifysearch" class="form-control input-sm"></span>
+									<span class="inline-elem"><input type="text" id="notifysearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_notify" style="width:100%;">

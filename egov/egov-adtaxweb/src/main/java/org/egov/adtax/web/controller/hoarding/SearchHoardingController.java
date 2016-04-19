@@ -44,6 +44,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,9 +54,11 @@ import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.search.contract.HoardingSearch;
+import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.web.controller.GenericController;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -72,9 +75,12 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping("/hoarding")
 public class SearchHoardingController extends GenericController {
-
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
+    @Autowired
+    private AdvertisementDemandService advertisementDemandService;
     @Autowired
     private ApplicationProperties applicationProperties;
     @Autowired
@@ -138,8 +144,11 @@ public class SearchHoardingController extends GenericController {
     }
 
     @RequestMapping(value = "view/{id}", method = GET)
-    public String viewHoarding(@PathVariable final String id, final Model model) {
-        model.addAttribute("advertisementPermitDetail", advertisementPermitDetailService.findBy(Long.valueOf(id)));
+    public String viewHoarding(@PathVariable final String id, final Model model, @ModelAttribute AdvertisementPermitDetail advertisementPermitDetail) {
+        advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
+        model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
+        model.addAttribute("arrearTax", advertisementDemandService.getPendingArrearsTax(advertisementPermitDetail));
+        model.addAttribute("previousFinancialYear", financialYearDAO.getPreviousFinancialYearByDate(new Date()));
         return "hoarding-view";
     }
 

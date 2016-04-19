@@ -39,14 +39,35 @@
  ******************************************************************************/
 package org.egov.model.bills;
 
-public class EgBillSubType implements java.io.Serializable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-    /**
-     *
-     */
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name = "EG_BILL_SUBTYPE")
+@SequenceGenerator(name = EgBillSubType.SEQ_EG_BILL_SUBTYPE, sequenceName = EgBillSubType.SEQ_EG_BILL_SUBTYPE, allocationSize = 1)
+public class EgBillSubType extends AbstractPersistable<Integer> implements java.io.Serializable {
+    
     private static final long serialVersionUID = 1350774346491188471L;
+    
+    public static final String SEQ_EG_BILL_SUBTYPE = "SEQ_EG_BILL_SUBTYPE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EG_BILL_SUBTYPE, strategy = GenerationType.SEQUENCE)
     private Integer id;
+    
+    @Length(max = 120)
     private String name;
+    
+    @Length(max = 50)
+    @Column(name="expenditure_type")
     private String expenditureType;
 
     public Integer getId() {

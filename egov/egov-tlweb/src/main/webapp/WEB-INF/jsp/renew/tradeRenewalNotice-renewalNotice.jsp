@@ -44,7 +44,6 @@
 	<head>
 		<title><s:text name="page.title.renewalnoticetrade" />
 		</title>
-		<sx:head />
 		<script>
 		function printNotice() {
 			var html="<html>";

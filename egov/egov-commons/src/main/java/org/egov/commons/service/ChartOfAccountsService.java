@@ -37,14 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
-package org.egov.commons.service;import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+package org.egov.commons.service;
+
 import java.util.List;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts, Long>
 {
     public ChartOfAccountsService(final Class<CChartOfAccounts> chartOfAccounts) {

@@ -103,7 +103,8 @@ public class PropertyCategoryMasterController {
             model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
             redirectAttrs.addFlashAttribute("propertyCategory", propertyCategoryObj);
-            model.addAttribute("message", "Entered Category for the Chosen Property Type already exists.");
+            model.addAttribute("message", "Selected Property Type and Category Type already exists.");
+            viewForm(model);
             return "property-category-master";
         } else {
             propertyCategoryService.createPropertyCategory(propertyCategory);

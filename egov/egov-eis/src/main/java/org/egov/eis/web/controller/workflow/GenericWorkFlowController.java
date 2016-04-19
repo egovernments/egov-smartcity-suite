@@ -117,7 +117,7 @@ public abstract class GenericWorkFlowController {
     public List<String> getValidActions(final StateAware model, final WorkflowContainer container) {
         List<String> validActions = Collections.emptyList();
         if (null == model
-                || null == model.getId()
+                || null == model.getId() || (model.getCurrentState()==null) 
                 || (model != null && model.getCurrentState() != null ? model.getCurrentState().getValue()
                         .equals("Closed")
                         || model.getCurrentState().getValue().equals("END") : false))

@@ -62,6 +62,7 @@ public class DailyCollectionReportResult {
     private BigDecimal currentLibCess;
     private BigDecimal totalLibCess;
     private BigDecimal totalCollection;
+    private BigDecimal totalRebate;
 
     public String getReceiptNumber() {
         return receiptNumber;
@@ -205,6 +206,14 @@ public class DailyCollectionReportResult {
 
     public void setWard(String ward) {
         this.ward = ward;
+    }
+
+    public BigDecimal getTotalRebate() {
+        return totalRebate;
+    }
+
+    public void setTotalRebate(BigDecimal totalRebate) {
+        this.totalRebate = totalRebate;
     }
 
 }

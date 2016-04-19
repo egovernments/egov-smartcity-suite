@@ -63,12 +63,13 @@ public class WaterSourceService {
         this.waterSourceRepository = waterSourceRepository;
     }
 
-    public WaterSource findBy(final Long waterSourceId) {
+    public WaterSource findOne(final Long waterSourceId) {
         return waterSourceRepository.findOne(waterSourceId);
     }
 
     @Transactional
     public WaterSource createWaterSource(final WaterSource waterSource) {
+        waterSource.setActive(true);
         return waterSourceRepository.save(waterSource);
     }
 
@@ -78,7 +79,7 @@ public class WaterSourceService {
     }
 
     public List<WaterSource> findAll() {
-        return waterSourceRepository.findAll(new Sort(Sort.Direction.ASC, "waterSourceType"));
+        return waterSourceRepository.findAll(new Sort(Sort.Direction.DESC, "waterSourceType"));
     }
 
     public WaterSource findByWaterSourceType(final String waterSourceType) {
@@ -98,8 +99,20 @@ public class WaterSourceService {
         return waterSourceRepository.findByCode(code);
     }
 
+    public WaterSource findByCodeIgnoreCase(final String code) {
+        return waterSourceRepository.findByCodeIgnoreCase(code);
+    }
+
+    public WaterSource findByWaterSourceTypeIgnoreCase(final String waterSourceType) {
+        return waterSourceRepository.findByWaterSourceTypeIgnoreCase(waterSourceType);
+    }
+
     public List<WaterSource> getAllActiveWaterSourceTypes() {
         return waterSourceRepository.findByActiveTrueOrderByWaterSourceTypeAsc();
+    }
+
+    public WaterSource findByCodeAndWaterSourceType(final String code, final String waterSourceType) {
+        return waterSourceRepository.findByCodeAndWaterSourceType(code, waterSourceType);
     }
 
     public List<WaterSource> getWaterSourceListForRest() {

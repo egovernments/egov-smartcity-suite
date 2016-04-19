@@ -161,6 +161,9 @@ public class CollectionIndex extends AbstractAuditable {
 
     @Searchable(name = "payeename", group = Searchable.Group.SEARCHABLE)
     private String payeeName;
+    
+    @Searchable(name = "reductionamount", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal reductionAmount;
 
     @Override
     public Long getId() {
@@ -371,6 +374,20 @@ public class CollectionIndex extends AbstractAuditable {
     @Override
     public String getIndexId() {
         return EgovThreadLocals.getCityCode()+"-"+getReceiptNumber();
+    }
+
+    /**
+     * @return the reductionAmount
+     */
+    public BigDecimal getReductionAmount() {
+        return reductionAmount;
+    }
+
+    /**
+     * @param reductionAmount the reductionAmount to set
+     */
+    public void setReductionAmount(BigDecimal reductionAmount) {
+        this.reductionAmount = reductionAmount;
     }
 
 }

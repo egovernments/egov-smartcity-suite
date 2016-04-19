@@ -140,7 +140,9 @@ public class ReconnectionController extends GenericConnectionController {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("additionalRule", WaterTaxConstants.RECONNECTIONCONNECTION);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
+        WorkflowContainer workflowContainer= new WorkflowContainer();
+        workflowContainer.setAdditionalRule(WaterTaxConstants.RECONNECTIONCONNECTION);
+        prepareWorkflow(model, waterConnectionDetails,workflowContainer);
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);

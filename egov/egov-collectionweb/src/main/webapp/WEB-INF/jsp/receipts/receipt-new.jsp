@@ -1699,7 +1699,7 @@ var bankfuncObj;
 var bankArray;
 function loadDropDownCodesBank()
 {
-	var url = "<c:url value='/commons/Process.jsp?type=getAllBankName' context='/EGF'/>";
+	var url = "<c:url value='/voucher/common-ajaxGetAllBankName.action' context='/EGF'/>";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{

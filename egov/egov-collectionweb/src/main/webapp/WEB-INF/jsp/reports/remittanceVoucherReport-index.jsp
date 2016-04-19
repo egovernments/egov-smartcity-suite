@@ -10,6 +10,18 @@ function clearErrors()
 	dom.get("mandatorytodate").style.display="none";
 }
 
+function onChangeBankAccount(branchId) {
+	populatebankAccountId({
+		branchId : branchId,
+	});
+}
+
+function onChangeServiceList(bankAccountId) {
+	populateserviceId({
+		bankAccountId : bankAccountId,
+	});
+}
+
 function validate()
 {
 	var fromdate=dom.get("fromDate").value;
@@ -86,7 +98,7 @@ function validate()
 			<td width="21%" class="bluebox"><s:text
 				name="collectionReport.criteria.todate" /><span class="mandatory"></span></td>
 			<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
-			<td width="30%" class="bluebox"><s:textfield id="toDate"
+			<td width="24%" class="bluebox"><s:textfield id="toDate"
 				name="toDate" value="%{cdFormat1}"
 				onfocus="javascript:vDateType='3';"
 				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
@@ -98,51 +110,50 @@ function validate()
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>
 		</tr>
+	
 		<tr>
-			<td width="4%" class="bluebox2">&nbsp;</td>
+		 <td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox2"><s:text
-				name="collectionReport.criteria.vouchertype" /></td>
-			<td width="24%" class="bluebox2"><s:select headerKey="ALL"
-				headerValue="%{getText('collectionReport.vouchertype.all')}" 
-				name="voucherType" id="voucherType" cssClass="selectwk" 
-				list="voucherTypes" value="%{voucherType}" /> </td>
+								name="collectionReport.bank.name" />:</td>
+						<td width="24%" class="bluebox"><s:select
+								headerValue="--Select--" headerKey="-1"
+								list="dropdownData.bankBranchList" listKey="id"
+								id="bankBranchMaster" listValue="branchname"
+								label="bankBranchMaster" name="branchId"
+								value="%{branchId}"
+								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
+								id="accountNumberIdDropdown" fields="['Text','Value']"
+								dropdownId='bankAccountId'
+								url='receipts/ajaxBankRemittance-accountListOfService.action'
+								selectedValue="%{bankAccountId}" /></td>
+		            	<td width="21%" class="bluebox2"><s:text
+								name="collectionReport.criteria.bankaccount" />:</td>
+						<td width="24%" class="bluebox"><s:select
+								headerValue="--Select--" headerKey="-1"
+								list="dropdownData.accountNumberList" listKey="id"
+								id="bankAccountId" listValue="accountnumber"
+								label="accountNumberMaster" name="bankAccountId"
+								value="%{bankAccountId}" 
+								onChange="onChangeServiceList(this.value)" /> <egov:ajaxdropdown
+								id="serviceIdDropdown" fields="['Text','Value']"
+								dropdownId='serviceId'
+								url='receipts/ajaxBankRemittance-serviceListOfAccount.action'
+								selectedValue="%{serviceId}" /></td></td>
+		</tr>
+		<tr>
+         <td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox2"><s:text
 				name="collectionReport.criteria.service" /></td>
-			<td width="30%" class="bluebox2"><s:select headerKey="-1"
+			<td width="24%" class="bluebox2"><s:select headerKey="-1"
 				headerValue="%{getText('collectionReport.service.all')}" name="serviceId" id="serviceId" cssClass="selectwk"
 				list="dropdownData.collectionServiceList" listKey="id" listValue="name"
 				value="%{serviceId}" /></td>
-		</tr>	
-		<tr>
-			<td width="4%" class="bluebox">&nbsp;</td>
-			<td width="21%" class="bluebox"><s:text
-				name="collectionReport.criteria.fund" /></td>
-			<td width="24%" class="bluebox"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.fund.all')}" name="fundId" id="fundId" cssClass="selectwk"
-				list="dropdownData.collectionFundList" listKey="id" listValue="name"
-				value="%{fundId}" /></td>
-			<td width="21%" class="bluebox"><s:text
-				name="collectionReport.criteria.bankaccount" /></td>
-			<td width="30%" class="bluebox"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.bankaccount.all')}"
-				name="bankAccountId" id="bankAccountId" cssClass="selectwk"
-				list="dropdownData.remittanceBankAccountList" listKey="id" listValue="accountnumber"
-				value="%{id}" /></td>
-
-		</tr>
-		<tr>
-			<td width="4%" class="bluebox2">&nbsp;</td>
 			<td width="21%" class="bluebox2">
 				<s:text name="collectionReport.criteria.user"/></td>
 	        	<td width="24%" class="bluebox2"><s:select headerKey="-1"
 				headerValue="%{getText('collectionReport.user.all')}" name="createdById" id="createdById" cssClass="selectwk"
 				list="dropdownData.remittanceVoucherCreatorList" listKey="id" listValue="name"
 				value="%{createdById}" /></td>
-			<td width="21%" class="bluebox2"><s:text name="collectionReport.criteria.collectionlocation"/></td>
-	        	<td width="30%" class="bluebox2"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.collectionlocation.all')}" name="boundaryId" id="boundaryId" cssClass="selectwk"
-				list="dropdownData.remittanceVoucherBoundaryList" listKey="id" listValue="name"
-				value="%{boundaryId}" /></td>
 		</tr>
 	</table>
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>

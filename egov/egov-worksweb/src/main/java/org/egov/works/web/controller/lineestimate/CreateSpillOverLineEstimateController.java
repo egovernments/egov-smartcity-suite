@@ -296,7 +296,7 @@ public class CreateSpillOverLineEstimateController {
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
 
             if (budgetAvailable.compareTo(totalAppropriationAmount) == -1)
-                errors.reject("error.budgetappropriation.amount", new String[] { totalAppropriationAmount.toString(), budgetAvailable.toString() }, null);
+                errors.reject("error.budgetappropriation.amount", new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);
         } catch (final ValidationException e) {
             // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
             // budgetDetailsDAO.getPlanningBudgetAvailable API call

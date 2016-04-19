@@ -5,16 +5,26 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egf.model.ReconcileBean;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.services.instrument.InstrumentHeaderService;
+import org.egov.services.instrument.InstrumentOtherDetailsService;
+import org.egov.utils.FinancialConstants;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ManualReconcileHelper {
 
@@ -25,6 +35,16 @@ public class ManualReconcileHelper {
 	@Autowired
 	@Qualifier("persistenceService")
 	private PersistenceService persistenceService;
+
+	@Autowired
+	@Qualifier("instrumentOtherDetailsService")
+	private InstrumentOtherDetailsService instrumentOtherDetailsService;
+	@Autowired
+	private EgwStatusHibernateDAO egwStatusHibernateDAO;
+	
+	@Autowired
+	@Qualifier("instrumentHeaderService")
+	private InstrumentHeaderService instrumentHeaderService;
 	public String getUnReconciledDrCr(Long bankAccId,Date fromDate,Date toDate)  
 	{
 
@@ -147,15 +167,18 @@ public class ManualReconcileHelper {
 		List<ReconcileBean> list=new ArrayList<ReconcileBean>();
 		try{
 		String voucherExcludeStatuses=getExcludeStatuses();
-        String query=" select case when ih.instrumentNumber is null then 'Direct' else ih.instrumentNumber  end as \"chequeNumber\", " +
+        String query=" select ih.id as \"ihId\", case when ih.instrumentNumber is null then 'Direct' else ih.instrumentNumber  end as \"chequeNumber\", " +
 		" to_char(ih.instrumentdate,'dd/mm/yyyy') as \"chequeDate\" ,ih.instrumentAmount as \"chequeAmount\",rec.transactiontype as \"txnType\" , "
 		+ " case when rec.transactionType='Cr' then  'P' else 'R' end as \"type\" " +" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
 		+" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE "
 		+ "  ih.bankAccountId = BANK.ID AND bank.id =:bankAccId   AND IH.INSTRUMENTDATE <= :toDate  "
 		+" AND v.ID= iv.voucherheaderid  and v.STATUS not in  ("+voucherExcludeStatuses+") AND "
 		+" ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
-		+" AND rec.instrumentHeaderId=ih.id	 and iv.instrumentHeaderid=ih.id and io.instrumentheaderid=ih.id and ih.instrumentNumber is not null union  "
-		+" select case when ih.transactionnumber is null then 'Direct' else ih.transactionnumber end as \"chequeNumber\", " +
+		+" AND rec.instrumentHeaderId=ih.id	 and iv.instrumentHeaderid=ih.id and io.instrumentheaderid=ih.id and ih.instrumentNumber is not null"
+	
+		+ " union  "
+		
+		+" select ih.id as \"ihId\", case when ih.transactionnumber is null then 'Direct' else ih.transactionnumber end as \"chequeNumber\", " +
 		" to_char(ih.transactiondate,'dd/mm/yyyy') as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\", case when rec.transactionType= 'Cr' then 'P' else 'R' end    as \"type\" " +
 		" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
 		+" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE   ih.bankAccountId = BANK.ID AND bank.id = :bankAccId "
@@ -179,6 +202,11 @@ public class ManualReconcileHelper {
 		SQLQuery createSQLQuery = persistenceService.getSession().createSQLQuery(query);
 		createSQLQuery.setLong("bankAccId", bankAccId);
 		createSQLQuery.setDate("toDate", recDate);
+		createSQLQuery.addScalar("ihId",LongType.INSTANCE);
+		createSQLQuery.addScalar("chequeDate",StringType.INSTANCE);
+		createSQLQuery.addScalar("chequeNumber",StringType.INSTANCE);
+		createSQLQuery.addScalar("chequeAmount",BigDecimalType.INSTANCE);
+		createSQLQuery.addScalar("txnType",StringType.INSTANCE);
 		createSQLQuery.setResultTransformer(Transformers.aliasToBean(ReconcileBean.class));
 	    list = (List<ReconcileBean>)createSQLQuery.list();
          
@@ -186,10 +214,29 @@ public class ManualReconcileHelper {
 		catch(Exception e)
 		{
 			LOGGER.error("Exp in getUnReconciledCheques:"+e.getMessage());
-			new ApplicationRuntimeException(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
 		}
 		
 		return list;
+	}
+
+	@Transactional
+	public void update(List<Date> reconDates, List<Long> instrumentHeaders) {
+		int i=0;
+		EgwStatus reconciledStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.STATUS_MODULE_INSTRUMENT, FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
+		for(Date reconcileOn:reconDates)
+		{
+			if(reconcileOn!=null)
+			{
+				Long ihId = instrumentHeaders.get(i);
+				InstrumentHeader ih = instrumentHeaderService.reconcile(reconcileOn, ihId,reconciledStatus ); 
+				instrumentOtherDetailsService.reconcile(reconcileOn, ihId,ih.getInstrumentAmount());
+			    
+			}
+			i++;
+		}
+		
+		
 	}
 	
 }

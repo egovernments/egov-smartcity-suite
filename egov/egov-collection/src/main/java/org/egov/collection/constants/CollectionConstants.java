@@ -67,7 +67,7 @@ public final class CollectionConstants {
 	public static final String DROPDOWN_DATA_ACCOUNT_NO_LIST = "accountNumberList";
 	public static final String DROPDOWN_DATA_INST_MODE_LIST = "instrumentModeList";
 	public static final String DROPDOWN_DATA_LOCATION_LIST = "locationList";
-
+	public static final String DROPDOWN_DATA_DISHONOR_REASONS_LIST = "dishonorReasonsList";
 	// Instrument Types
 	public static final String INSTRUMENTTYPE_CASH = FinancialConstants.INSTRUMENT_TYPE_CASH;
 	public static final String INSTRUMENTTYPE_CHEQUE = FinancialConstants.INSTRUMENT_TYPE_CHEQUE;

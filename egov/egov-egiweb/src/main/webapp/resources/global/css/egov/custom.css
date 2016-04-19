@@ -438,6 +438,18 @@ label.error {
   width: calc(100% - 250px);
   padding-bottom: 40px;
 }
+.inline-main-content #inboxsearch {
+  padding: 5px 18px 5px 10px;
+}
+.inline-main-content .cleartext {
+  float: right;
+  margin-right: 4px;
+  margin-top: -22px;
+  color: #6b4f2c;
+  cursor: pointer;
+  font-size: 16px;
+  display: none;
+}
 .table-header {
   font-size: 20px;
 }
@@ -453,6 +465,9 @@ label.error {
 }
 .nav-pills > li a {
   padding: 5px;
+}
+.nav-pills > li a span {
+  padding: 0 5px;
 }
 /*Custom Header*/
 .navbar-custom {
@@ -1368,6 +1383,13 @@ label.error {
   .page-container .main-content .no-print * {
     display: none !important;
   }
+}
+.page-container .main-content .new-page-header {
+  font-family: semibold;
+  font-size: 20px;
+  color: #f2851f;
+  text-align: center;
+  padding: 0 15px 15px;
 }
 .page-container .main-content td.greybox input[type="text"],
 .page-container .main-content td.greybox select,

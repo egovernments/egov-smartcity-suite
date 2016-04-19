@@ -74,31 +74,40 @@ public class PipeSizeMasterController {
     }
 
     @RequestMapping(value = "/pipesizeMaster", method = RequestMethod.POST)
-    public String addCategoryMasterData(@Valid @ModelAttribute final PipeSize pipeSize,
+    public String addPipeSizeMasterData(@Valid @ModelAttribute final PipeSize pipeSize,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "pipesize-master";
-        final PipeSize pipesizecodeObj = pipeSizeService.findByCode(pipeSize.getCode());
-        final PipeSize pipesizemmObj = pipeSizeService.findBySizeInMilimeter(pipeSize.getSizeInMilimeter());
-        final PipeSize pipesizeObj = pipeSizeService.findByCodeAndPipeSizeInmm(pipeSize.getCode(),
+
+        final PipeSize pipesizeObj = pipeSizeService.findByCodeAndPipeSizeInmm(pipeSize.getCode().toUpperCase(),
                 pipeSize.getSizeInMilimeter());
 
         if (pipesizeObj != null) {
             redirectAttrs.addFlashAttribute("pipeSize", pipesizeObj);
-            model.addAttribute("message", "Entered Code and H.S.C Pipe Size(mm) are already exists.");
-        } else if (pipesizecodeObj != null) {
-            redirectAttrs.addFlashAttribute("pipeSize", pipesizecodeObj);
-            model.addAttribute("message", "Entered Code already exist.");
-        } else if (pipesizemmObj != null) {
-            redirectAttrs.addFlashAttribute("pipeSize", pipesizemmObj);
-            model.addAttribute("message", "Entered  H.S.C Pipe Size(mm) already exist.");
+            model.addAttribute("message", "Entered Code and H.S.C Pipe Size(mm) already exists.");
+            viewForm(model);
             return "pipesize-master";
         } else {
-            pipeSizeService.createPipeSize(pipeSize);
-            redirectAttrs.addFlashAttribute("pipeSize", pipeSize);
+            final PipeSize pipesizecodeObj = pipeSizeService.findByCodeIgnoreCase(pipeSize.getCode());
+            if (pipesizecodeObj != null) {
+                redirectAttrs.addFlashAttribute("pipeSize", pipesizecodeObj);
+                model.addAttribute("message", "Entered Code already exist.");
+                viewForm(model);
+                return "pipesize-master";
+            } else {
+                final PipeSize pipesizemmObj = pipeSizeService.findBySizeInMilimeter(pipeSize.getSizeInMilimeter());
+                if (pipesizemmObj != null) {
+                    redirectAttrs.addFlashAttribute("pipeSize", pipesizemmObj);
+                    model.addAttribute("message", "Entered  H.S.C Pipe Size(mm) already exist.");
+                    viewForm(model);
+                    return "pipesize-master";
+                } else {
+                    pipeSizeService.createPipeSize(pipeSize);
+                    redirectAttrs.addFlashAttribute("pipeSize", pipeSize);
 
+                }
+            }
         }
-
         return getPipeSizeMasterList(model);
     }
 

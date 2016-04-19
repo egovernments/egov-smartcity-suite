@@ -880,4 +880,18 @@ public int generateDemandForNextInstallment(final List<Advertisement> advertisem
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmount);
         return demandFeeType;
     }
+    
+    
+    public BigDecimal getPendingArrearsTax(final AdvertisementPermitDetail advertisementPermitDetail)
+    {
+        BigDecimal arrearTax=BigDecimal.ZERO;
+        if(advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getDemandId()!=null)
+        {
+            for(EgDemandDetails egDemandDetails : advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()){
+                if (AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX.equalsIgnoreCase(egDemandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+              arrearTax=arrearTax.add(egDemandDetails.getAmount().subtract(egDemandDetails.getAmtCollected()!=null?egDemandDetails.getAmtCollected():BigDecimal.ZERO));
+            }
+        }
+        return arrearTax;
+    }
   }

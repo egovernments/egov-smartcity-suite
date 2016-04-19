@@ -48,19 +48,29 @@
         <th>Cheque Date</th>
         <th>Amount</th>
         <th>Reconciliation Date</th>
-        <th></th>
       </tr>
     </thead>
-    <s:iterator var="s" value="unReconciledCheques" status="status">
+   <s:if test="%{unReconciledCheques.size>0}">
+    <s:iterator var="vh" value="unReconciledCheques" status="status">
       <tr>
-        <input type="hidden" name="id" value='<s:property value="id"/>' />
         <td style="text-align:right"><s:property value="chequeNumber" /></td>
         <td><s:property value="chequeDate" /></td>
-        <td style="text-align:right"><s:property value="chequeAmount" /></td>
-        <td><input type="text" name="reconDate"></td>
-
+        <td style="text-align:right"> <s:property value="chequeAmount" /></td>
+        <td><input type="text" id="reconDates<s:property value="#status.index"/>"  name="reconDates[<s:property value="#status.index"/>]"   onkeyup="DateFormat(this,this.value,event,false,'3')"
+              /> <a
+            href="javascript:show_calendar('mrform.reconDates<s:property value="#status.index"/>');"
+            style="text-decoration: none">&nbsp;<img tabIndex="-1"
+              src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>   
+          <input type="hidden" name="instrumentHeaders[<s:property value="#status.index"/>]" value='<s:property value="ihId"/>' />
+        </td>
       </tr>
     </s:iterator>
+    </s:if>
+    <s:else>
+     <tr>
+        <td colspan="4" style="text-align:center">No Data Found</td>
+      </tr>
+    </s:else>
   </table>
 </div>
 

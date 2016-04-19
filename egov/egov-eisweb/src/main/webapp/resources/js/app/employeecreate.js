@@ -338,14 +338,8 @@ $(document).ready(function(){
 	});
 	
 	$("#submit").click(function () {
-		var count = 0;
-        jQuery(".table-bordered tr").find('input').each(function(){
-                if(jQuery(this).val() == "true"){
-                        count++;
-                }
-        });
-/*		if($("#assignmentTable tr").length==1 || count == 0 ){
-			$('.assignmentserror').html('At least one primary assignment should be entered ').show().fadeOut(5000);
+		if($("#assignmentTable tr").length==1){
+			$('.assignmentserror').html('At least one assignment should be entered ').show().fadeOut(5000);
 			$('.fromdateerror').hide();
 			$('.departmenterror').hide();
 			$('.designationerror').hide();
@@ -353,18 +347,7 @@ $(document).ready(function(){
 			$('.todateerror').hide();
 			$('.fromdateerror').focus();
 			return false;
-		}*/
-        
-       /* if(count == 0){
-        	$('.assignmentserror').html('At least one primary assignment should be entered ').show().fadeOut(25000);
-			$('.fromdateerror').hide();
-			$('.departmenterror').hide();
-			$('.designationerror').hide();
-			$('.positionerror').hide();
-			$('.todateerror').hide();
-			$('.fromdateerror').focus();
-			return false;
-        }	*/
+		}
 	});
 
 	

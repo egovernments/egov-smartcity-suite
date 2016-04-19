@@ -185,6 +185,12 @@ public class CurrentViewDcbController {
             model.addAttribute("mode", "viewdcb");
 
         }
+        else{
+        	 	model.addAttribute("dcbReport", dCBReport);
+        	 	 model.addAttribute("waterTaxDueforParent", BigDecimal.ZERO);
+        	 	model.addAttribute("mode", "viewdcb");
+        	 	model.addAttribute("applicationTypeCode",waterConnectionDetails.getApplicationType().getCode());
+        }
         return "currentDcb-new";
     }
 

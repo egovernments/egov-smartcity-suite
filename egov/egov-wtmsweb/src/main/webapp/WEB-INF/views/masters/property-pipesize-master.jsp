@@ -48,11 +48,11 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading"></div>
 		<c:if test="${not empty message}">
-             <div class="alert alert-success" role="alert">${message}</div>
+             <div role="alert">${message}</div>
          </c:if>
 	<div class="panel-body custom-form">
 		<div class="form-group">
-    		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" /><span class="mandatory"></span></label>
+    		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" />:<span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<form:select path="propertyType" data-first-option="false" id="propertyType" cssClass="form-control" required="required" >
 				<form:option value="">
@@ -62,13 +62,16 @@
 			</form:select>		
 			<form:errors path="propertyType" cssClass="add-margin error-msg" />					
 		</div>
-	 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize.mm" /><span class="mandatory"></span></label>
+	 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize.mm" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="pipeSize" data-first-option="false" id="pipeSize" cssClass="form-control" required="required" >
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${pipeSize}" itemValue="id" itemLabel="sizeInMilimeter" />
+						<c:forEach var="pipeSize" items="${pipeSize}">
+						<form:option value="${pipeSize}"><c:out value="${pipeSize.code} - ${pipeSize.sizeInMilimeter}"/></form:option>  
+						<%-- <form:options items="${pipeSize}" itemValue="id" itemLabel="" /> --%>
+						</c:forEach>
 					</form:select>		
 					<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
 				</div> 

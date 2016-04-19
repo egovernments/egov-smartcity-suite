@@ -162,10 +162,11 @@
                     if ((e.which || e.keyCode) == 82)
                             e.preventDefault();
     	};
-
-    	jQuery(document).ready(function(){
-    		jQuery( ".datepicker" ).datepicker({ autoclose:true, dateFormat: 'dd/mm/yy' }).val();
-        });
+        
+        jQuery(".datepicker").datepicker({
+			format: "dd/mm/yyyy",
+			autoclose:true
+		}); 
     	
     	jQuery(document).on("keydown", disableRefresh);
 

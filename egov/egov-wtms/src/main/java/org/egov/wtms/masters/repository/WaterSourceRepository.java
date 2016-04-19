@@ -52,6 +52,12 @@ public interface WaterSourceRepository extends JpaRepository<WaterSource, Long> 
 
     WaterSource findByWaterSourceType(String waterSourceType);
 
+    WaterSource findByCodeAndWaterSourceType(String code, String waterSourceType);
+
+    WaterSource findByCodeIgnoreCase(String code);
+
+    WaterSource findByWaterSourceTypeIgnoreCase(String waterSourceType);
+
     List<WaterSource> findByActiveTrueOrderByWaterSourceTypeAsc();
 
 }

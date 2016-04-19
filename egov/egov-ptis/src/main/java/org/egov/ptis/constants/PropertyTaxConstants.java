@@ -396,6 +396,8 @@ public interface PropertyTaxConstants {
     public static final String QUERY_DEMANDDETAILS_EXCLUDING_REASONS = "demandDetailsExcludingReasons";
     public static final String QUERY_PROPERTIES_FOR_PENALTY_CALCULATION = "propertiesForPenaltyCalculation";
     public static final String QUERY_DEMAND_BILL_STATUS = "demandBillstatus";
+    public static final String QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR = "INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR";
+    
 
     // Base Rents
     public static final BigDecimal BASERENT_FROM_APRIL2008_BUILDINGS = new BigDecimal("10");
@@ -1228,6 +1230,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy_Remission";
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
     public static final String APPLICATION_TYPE_GRP = "General_Revision_Petition";
+    public static final String APPLICATION_TYPE_EDIT_DEMAND = "Edit_demand";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
@@ -1379,5 +1382,7 @@ public interface PropertyTaxConstants {
     public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String ARREARS = "Arrears";
+    
+    public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     
 }

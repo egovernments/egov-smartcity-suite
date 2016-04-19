@@ -24,16 +24,16 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this 
+ *         Legal Notice.
  * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It 
+ *         is required that all modified versions of this material be marked in 
+ *         reasonable ways as different from the original version.
  * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program 
+ *         with regards to rights under trademark law for use of the trade names 
+ *         or trademarks of eGovernments Foundation.
  * 
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
@@ -137,10 +137,10 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
-    
+
     @Autowired
     private ApplicationContext beanProvider;
-    
+
     @Autowired
     private DCBService dcbService;
     @Autowired
@@ -188,11 +188,10 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
         try {
             if (getBasicProperty() == null) {
-                addActionError("Property not found with given Assessment Number " + propertyId); 
-                throw new PropertyNotFoundException();
+                return VIEW;
             } else {
                 LOGGER.debug("BasicProperty : " + basicProperty);
-                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId); 
+                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
                 viewMap = new HashMap<String, Object>();
                 viewMap.put("propID", basicProperty.getPropertyID());
                 PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()
@@ -204,10 +203,12 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 viewMap.put("taxExempted", property.getIsExemptedFromTax());
                 if (!property.getIsExemptedFromTax()) {
                     Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-                    viewMap.put("currFirstHalfTaxAmount", demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
+                    viewMap.put("currFirstHalfTaxAmount",
+                            demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
                     viewMap.put("currFirstHalfTaxDue", demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR)
                             .subtract(demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)));
-                    viewMap.put("currSecondHalfTaxAmount", demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
+                    viewMap.put("currSecondHalfTaxAmount",
+                            demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
                     viewMap.put("currSecondHalfTaxDue", demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)
                             .subtract(demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
                     viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
@@ -229,19 +230,18 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                     viewMap.put("currTaxAmount", BigDecimal.ZERO);
                     viewMap.put("currTaxDue", BigDecimal.ZERO);
                     viewMap.put("totalArrDue", BigDecimal.ZERO);
-                    dcbReport.setTotalDmdTax(BigDecimal.ZERO); 
-                    dcbReport.setTotalLpayPnlty(BigDecimal.ZERO);  
+                    dcbReport.setTotalDmdTax(BigDecimal.ZERO);
+                    dcbReport.setTotalLpayPnlty(BigDecimal.ZERO);
                     dcbReport.setTotalDmdPnlty(BigDecimal.ZERO);
                     dcbReport.setTotalColTax(BigDecimal.ZERO);
                     dcbReport.setTotalColPnlty(BigDecimal.ZERO);
-                    dcbReport.setTotalColLpayPnlty(BigDecimal.ZERO);  
-                    dcbReport.setTotalRebate(BigDecimal.ZERO); 
-                    dcbReport.setTotalBalance(BigDecimal.ZERO); 
-                } 
+                    dcbReport.setTotalColLpayPnlty(BigDecimal.ZERO);
+                    dcbReport.setTotalRebate(BigDecimal.ZERO);
+                    dcbReport.setTotalBalance(BigDecimal.ZERO);
+                }
 
             }
-        } catch (PropertyNotFoundException e) {
-            LOGGER.error("Property not found with given propertyId " + propertyId, e);
+
         } catch (DCBException e) {
             errorMessage = "Demand details does not exists !";
             LOGGER.warn(errorMessage);
@@ -305,13 +305,13 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private List<Receipt> receiptsInDescendingOrderOfReceiptDate(List<Receipt> receipts) {
         LOGGER.debug("Entered into receiptsInDescendingOrderOfReceiptDate");
 
-            Collections.sort(receipts, new Comparator<Receipt>() {
+        Collections.sort(receipts, new Comparator<Receipt>() {
 
-                @Override
-                public int compare(Receipt r1, Receipt r2) {
-                    return r2.getReceiptDate().compareTo(r1.getReceiptDate());
-                }
-            });
+            @Override
+            public int compare(Receipt r1, Receipt r2) {
+                return r2.getReceiptDate().compareTo(r1.getReceiptDate());
+            }
+        });
 
         LOGGER.debug("Exiting from receiptsInDescendingOrderOfReceiptDate");
         return receipts;
@@ -370,8 +370,8 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         LOGGER.debug("Entered into getMigratedData");
         LOGGER.debug("getMigratedData - propertyId: " + getPropertyId());
         // List of property receipts
-        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=? order by receiptDate desc",
-                getBasicProperty().getId());
+        propReceiptList = getPersistenceService().findAllBy(
+                "from PropertyReceipt where basicProperty.id=? order by receiptDate desc", getBasicProperty().getId());
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
                 propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));
