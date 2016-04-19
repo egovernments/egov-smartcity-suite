@@ -219,6 +219,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                     throws ApplicationException {
         final ContractorBillRegister contractorBillRegister = getContractorBillRegister(contractorBillRegisterId);
         final String responsePage = loadViewData(model, request, contractorBillRegister);
+        model.addAttribute("createdbybydesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
         model.addAttribute("mode", "readOnly");
         return responsePage;
     }

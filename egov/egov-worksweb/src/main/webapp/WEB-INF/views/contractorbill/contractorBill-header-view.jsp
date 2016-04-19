@@ -74,12 +74,6 @@
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${contractorBillRegister.billtype }" />
 					</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.createdby" />
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${contractorBillRegister.createdBy.name }" />
-					</div> 
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
@@ -97,7 +91,7 @@
 							<td><fmt:formatDate value="${contractorBillRegister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" /></td>
 						</c:when>
 					<c:otherwise>
-							<td><c:out default="N/A" value="N/A" />
+						<td><c:out default="N/A" value="N/A" />
 					</c:otherwise>
 					</c:choose>
 					</div>
@@ -171,6 +165,14 @@
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${lineEstimateDetails.projectCode.code}" />
 					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.createdby" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out default="N/A" value="${createdbybydesignation} - ${contractorBillRegister.createdBy.name }" />
+					</div> 
 				</div>
 			</div>
 		</div>
