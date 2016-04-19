@@ -82,6 +82,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONBY_
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILBY_DEMANDREASONID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEPARTMENTS_BY_DEPTCODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSION_VAR_LOGIN_USER_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_MIGRATED;
@@ -296,6 +297,10 @@ public class PropertyTaxUtil {
     public List<Installment> getInstallmentListByStartDate(final Date startDate) {
         return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate,
                 startDate, PTMODULENAME);
+    }
+    
+    public List<Installment> getInstallmentListByStartDateToCurrFinYear(final Date startDate) {
+        return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR, PTMODULENAME,PTMODULENAME,startDate);
     }
 
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReasonCode,

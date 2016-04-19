@@ -45,7 +45,7 @@
 						<td class="greybox" width="25%"><s:text name="assessmentno"></s:text>
 							<span class="mandatory1">*</span> :</td>
 						<td class="greybox" width="25%"><s:textfield name="upicNo"
-								id="upicNo" size="12" maxlength="12"></s:textfield></td>
+								id="upicNo" size="10" maxlength="10" onblur="validNumber(this);checkZero(this,'Assessment Number');"></s:textfield></td>
 						<td class="greybox" width="25%">&nbsp;</td>
 						<td class="greybox" width="20%"></td>
 					</tr>
