@@ -56,9 +56,12 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.exilant.exility.common.TaskFailedException;
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Service
 public class OpeningBalance
 {
