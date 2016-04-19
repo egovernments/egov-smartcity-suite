@@ -223,28 +223,6 @@ $(document).ready(function(){
 		
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (position) {
-				
-				/*var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				lat = position.coords.latitude;
-				lng = position.coords.longitude;
-				$.ajax({
-						type: "POST",
-						url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
-						dataType: 'json',
-						success : function(data){
-							 address = data.results[0].formatted_address;
-						}
-				});
-				
-				marker = new google.maps.Marker({
-					position: userLatLng,
-					draggable:true,
-					map: map
-				});
-				
-				map.setCenter(userLatLng);
-				
-				dragendmarker();*/
 
 				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 				lat = position.coords.latitude;
@@ -255,15 +233,17 @@ $(document).ready(function(){
 				map.setCenter(userLatLng);
 				
 				}, function error(err) {
-				//console.log('error: ' + err.message);   
-				//set city lat and long
-				var userLatLng = new google.maps.LatLng(citylat, citylng);
-				lat = citylat;
-				lng = citylng;
-				
-				getAddress(lat, lng);
-
-				map.setCenter(userLatLng);
+					//console.log('error: ' + err.message); 
+					citylat = $('#getcitylat').val();
+					citylng = $('#getcitylng').val();
+					if(!citylat || !citylng){
+						citylat = 20.5937;
+						citylng = 78.9629;
+						setlatlong(citylat, citylng);
+					}else{
+						setlatlong(citylat, citylng);
+					}
+					
 				
 			});
 		}
@@ -276,6 +256,16 @@ $(document).ready(function(){
 		
 	};
 	
+	function setlatlong(citylat , citylng){
+		var userLatLng = new google.maps.LatLng(citylat, citylng);
+		lat = citylat;
+		lng = citylng;
+		
+		getAddress(lat, lng);
+
+		map.setCenter(userLatLng);
+	}
+	
 	function getAddress(lat, lng){
 		$.ajax({
 			type: "POST",
@@ -286,50 +276,6 @@ $(document).ready(function(){
 			}
 		});	
 	}
-
-	/*function setmarkerfromimage()
-	{
-		marker.setMap(null);
-
-		marker = new google.maps.Marker({
-			position: myCenter,
-			draggable:true,
-			map: map
-		});
-		
-		mapprop();
-		
-		geocoder = new google.maps.Geocoder();
-		
-		marker.setMap(map);
-		
-		dragendmarker();
-		
-	}
-	
-	function mapprop(){
-	
-		mapProp = {
-			center:myCenter,
-			mapTypeControl: true,
-			zoom:12,
-			mapTypeId:google.maps.MapTypeId.ROADMAP
-		};
-		
-	}
-	
-	function dragendmarker(){
-		google.maps.event.addListener(marker, "dragend", function (e) {
-			geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					console.log("drag end!!!");
-					lat = marker.getPosition().lat();
-					lng = marker.getPosition().lng();
-					address = results[0].formatted_address;
-				}
-			});
-		});
-	}*/
 	
 	google.maps.event.addDomListener(window, 'load', initialize);
 	
