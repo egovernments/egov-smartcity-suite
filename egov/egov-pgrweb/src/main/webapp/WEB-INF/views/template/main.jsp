@@ -111,5 +111,9 @@
 					</div>
 			</div>
 		</div>
+		<script>
+			var citylat = ${sessionScope.citylat};
+			var citylng = ${sessionScope.citylng};
+		</script>
     </body>
 </html>

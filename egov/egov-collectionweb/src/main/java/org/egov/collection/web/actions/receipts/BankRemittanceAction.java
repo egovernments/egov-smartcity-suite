@@ -121,11 +121,6 @@ public class BankRemittanceAction extends BaseFormAction {
         populateBankAccountList();
         final long startTimeMillis = System.currentTimeMillis();
         paramList = receiptHeaderService.findAllRemitanceDetails(getJurisdictionBoundary());
-        addDropdownData("approverDepartmentList",
-                collectionsUtil.getDepartmentsAllowedForBankRemittanceApproval(collectionsUtil.getLoggedInUser()));
-        addDropdownData("designationMasterList", Collections.EMPTY_LIST);
-        addDropdownData("postionUserList", Collections.EMPTY_LIST);
-
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 
         LOGGER.info("$$$$$$ Time taken to populate the remittance list (ms) = " + elapsedTimeMillis);

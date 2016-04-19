@@ -686,55 +686,6 @@ public class CollectionsUtil {
         return departments;
     }
 
-    public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {
-        List<Department> departments;
-        Department department;
-        final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
-        if (contraJournalVoucherObj.getVoucherHeaderId() == null)
-            department = getDepartmentOfUser(loggedInUser);
-        else
-            department = contraJournalVoucherObj.getVoucherHeaderId().getVouchermis().getDepartmentid();
-        if (department.getCode().equals('R')) {
-            if (contraJournalVoucherObj.getVoucherHeaderId() == null)
-                departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", 'R');
-            else
-                departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", "CAF");
-        } else
-            departments = persistenceService.findAllBy("select dept from Department dept order by dept.name ");
-
-        return departments;
-    }
-
-    public List<Designation> getDesignationsAllowedForBankRemittanceApproval(final Long departmentId) {
-        Department department;
-        List<Designation> designations;
-        final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
-        department = (Department) persistenceService.find("select dept from Department dept where dept.id=?",
-                departmentId);
-        if (contraJournalVoucherObj.getVoucherHeaderId() == null) {
-            if (department.getCode().equals('R'))
-                designations = persistenceService
-                        .findAllBy(
-                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
-                                departmentId, "REVENUE INSPECTOR");
-            else
-                designations = persistenceService
-                        .findAllBy(
-                                "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                                departmentId);
-        } else if (department.getCode().equals("CAF"))
-            designations = persistenceService
-                    .findAllBy(
-                            "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
-                            "CAF", "SENIOR GRADE CLERK");
-        else
-            designations = persistenceService
-                    .findAllBy(
-                            "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                            departmentId);
-        return designations;
-    }
-
     /**
      * This method checks if the given glcode belongs to an account head
      * representing an arrear account head (for Property Tax). The glcodes for
@@ -915,7 +866,7 @@ public class CollectionsUtil {
                 rcptDate = dateFomatter.parse(receiptDate);
                 finDate = financialYearDAO.getFinancialYearByDate(rcptDate).getStartingDate();
             }
-            if (finDate != null && finDate.equals(financialYearDAO.getCurrYearStartDate())) {
+            if (finDate != null && finDate.toString().equals(financialYearDAO.getCurrYearStartDate())) {
                 if (useReceiptDateAsContraVoucherDate)
                     voucherDate = rcptDate;
                 else
