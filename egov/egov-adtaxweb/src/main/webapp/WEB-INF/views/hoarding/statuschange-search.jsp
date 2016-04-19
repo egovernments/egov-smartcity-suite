@@ -123,8 +123,10 @@
           		    <button type="reset" id="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
           		    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
           		</div>
+          		
         	</div>
         </form:form>
+        <br/>
         <table class="table table-bordered datatable dt-responsive" id="adtax_searchrecord"></table>
 	</div>
 </div>

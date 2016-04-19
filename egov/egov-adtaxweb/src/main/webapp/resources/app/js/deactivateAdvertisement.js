@@ -128,7 +128,7 @@ $('#searchrecord').click(function(e){
 						  { 
 							  "data" : "id",
 							  "render" : function(data, type, row, meta) {
-									return '<button class="btn btn-primary" onclick="window.open(\'/adtax/deactivate/result/'+ data +'\', \'\', \'width=800, height=600 , scrollbars=yes\');"> Change Status </button>';
+									return '<button class="btn btn-primary" onclick="window.open(\'/adtax/deactivate/result/'+ data +'\', \'\', \'width=800, height=600 , scrollbars=yes\');"> Deactivate </button>';
 							   },
 							   "title": "Actions"
 						  }
