@@ -62,7 +62,7 @@
 	function populateFunctionName(){
 		var funcArray;
 		var map = {};
-		var url = path+"/commons/Process.jsp?type=getAllFunctionName";
+		var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 		var req2 = initiateRequest();
 		req2.onreadystatechange = function(){
 		  if (req2.readyState == 4){

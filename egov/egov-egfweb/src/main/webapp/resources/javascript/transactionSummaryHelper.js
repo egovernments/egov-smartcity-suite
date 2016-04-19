@@ -20,15 +20,15 @@ function loadDropDownCodes() {
 	}
 	var url = "";
 	if (document.getElementById("minor").value != "") {
-		var url = "/EGF/commons/Process.jsp?type=coaDetailCode?glCode="
+		var url = "/EGF/voucher/common-ajaxCoaDetailCode.action?glCode="
 				+ document.getElementById("minor").value;
 	} else if (document.getElementById("major").value != "") {
-		url = "/EGF/commons/Process.jsp?type=coaDetailCode?glCode="
+		url = "/EGF/voucher/common-ajaxCoaDetailCode.action?glCode="
 				+ document.getElementById("major").value;
 	} else if (document.getElementById("type").value == "A") {
-		url = "/EGF/commons/Process.jsp?type=getAllAssetCodes";
+		url = "/EGF/voucher/common-ajaxGetAllAssetCodes.action";
 	} else {
-		url = "/EGF/commons/Process.jsp?type=getAllLiabCodes";
+		url = "/EGF/voucher/common-ajaxGetAllLiabCodes.action";
 	}
 
 	var req2 = initiateRequest();
@@ -57,7 +57,7 @@ function loadDropDownCodes() {
 var funcObj;
 var funcArray;
 function loadDropDownCodesFunction() {
-	var url = "/EGF/commons/Process.jsp?type=getAllFunctionName";
+	var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function() {
 		if (req2.readyState == 4) {

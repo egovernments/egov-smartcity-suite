@@ -141,7 +141,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = "/EGF/commons/Process.jsp?type=getAllFunctionName";
+	var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -224,7 +224,7 @@ function fillNeibrAfterSplitFunction(obj)
 
 function loadDropDownCodes()
 {
-	var	url = "/EGF/commons/Process.jsp?type=getAllCoaCodes";
+	var	url = "/EGF/voucher/common-ajaxGetAllCoaCodes.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{

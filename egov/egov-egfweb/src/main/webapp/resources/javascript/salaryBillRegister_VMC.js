@@ -580,7 +580,7 @@ function ButtonPress(name) {
 function loadDropDownCodes() {
 
 	var type = 'getAllCoaCodes';
-	var url = "../../commons/Process.jsp?type=" + type + " ";
+	var url = "/EGF/voucher/common-ajaxGetAllCoaCodes.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function() {
 		if (req2.readyState == 4) {
@@ -600,7 +600,7 @@ function loadDropDownCodes() {
 function loadDropDownFuncNames() {
 
 	var type = 'getAllFunctionName';
-	var url = "../../commons/Process.jsp?type=" + type + " ";
+	var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function() {
 		if (req2.readyState == 4) {
@@ -621,7 +621,7 @@ function loadDropDownFuncNames() {
 function loadDropDownDeductionCodes() {
 
 	var type = 'getAllCoaCodes';
-	var url = "../../commons/Process.jsp?type=" + type + " ";
+	var url = "/EGF/voucher/common-ajaxGetAllCoaCodes.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function() {
 		if (req2.readyState == 4) {
