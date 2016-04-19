@@ -230,14 +230,6 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     }
 
-    @Action(value = "/receipts/ajaxBankRemittance-approverDesignationList")
-    public String approverDesignationList() {
-        if (approverDeptId != null)
-            designationMasterList = collectionsUtil.getDesignationsAllowedForBankRemittanceApproval(approverDeptId);
-
-        return DESIGNATIONLIST;
-    }
-
     /**
      * @param serviceName the serviceName to set
      */
