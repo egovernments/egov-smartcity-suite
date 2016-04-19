@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-19T16:37:27 -->
+<!-- 2016-04-19T20:19:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractorBillPDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e5b9c4d7-5374-4222-b26c-49c47331df4d">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -19,6 +19,8 @@
 	<parameter name="totalAmount" class="java.math.BigDecimal"/>
 	<parameter name="totalAmountWords" class="java.lang.String"/>
 	<parameter name="preparedBy" class="java.lang.String"/>
+	<parameter name="department" class="java.lang.String"/>
+	<parameter name="reportRunDate" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -32,7 +34,7 @@
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
-		<band splitType="Stretch"/>
+		<band height="19" splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="64" splitType="Stretch">
@@ -46,16 +48,16 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="180" y="19" width="200" height="30" uuid="d5c7d0fe-ea5c-4f8a-87a5-5d57e8b72e4a"/>
+				<reportElement x="166" y="19" width="230" height="30" uuid="d5c7d0fe-ea5c-4f8a-87a5-5d57e8b72e4a"/>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$P{ward}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Works bill "+ $P{department} + " " + $P{ward}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="65" splitType="Stretch">
+		<band height="72" splitType="Stretch">
 			<line>
-				<reportElement x="-1" y="61" width="550" height="1" uuid="16fd5ba9-01b5-4a43-bb75-b19e96e73351"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="57" width="550" height="1" uuid="16fd5ba9-01b5-4a43-bb75-b19e96e73351"/>
 				<graphicElement>
 					<pen lineStyle="Dashed"/>
 				</graphicElement>
@@ -82,20 +84,20 @@
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="455" y="3" width="100" height="17" uuid="e3c385c7-4b0e-47fb-bff9-8df64d4644cd"/>
 				<textFieldExpression><![CDATA["Bill Type: "+$P{billType}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="0" y="21" width="149" height="18" uuid="88c88928-3a2b-4b2d-8ba7-bf1e1e95eaeb"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="21" width="203" height="18" uuid="88c88928-3a2b-4b2d-8ba7-bf1e1e95eaeb"/>
 				<textFieldExpression><![CDATA["WIN Code: "+$P{win}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="0" y="38" width="147" height="21" uuid="b4bffa11-c3aa-4ef9-9cac-f75c7711ed2a"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="38" width="229" height="21" uuid="b4bffa11-c3aa-4ef9-9cac-f75c7711ed2a"/>
 				<textFieldExpression><![CDATA["Bill Number: "+$P{billNumber}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="203" y="38" width="110" height="17" uuid="466ed181-9ac1-4e62-bed5-9171149d0190"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="229" y="38" width="110" height="17" uuid="466ed181-9ac1-4e62-bed5-9171149d0190"/>
 				<textFieldExpression><![CDATA["Date: "+$P{billDate}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="378" y="38" width="179" height="20" uuid="2fecca54-49a1-4279-b954-77b75383f94a"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="378" y="38" width="179" height="20" uuid="2fecca54-49a1-4279-b954-77b75383f94a"/>
 				<textFieldExpression><![CDATA["Bill Amount: "+$P{billAmount}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -179,19 +181,19 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="462">
+		<band height="460">
 			<staticText>
-				<reportElement x="425" y="432" width="100" height="30" uuid="8fa273fd-c09c-4ea2-9da0-5f9c8c74eae7"/>
+				<reportElement x="425" y="417" width="100" height="30" uuid="8fa273fd-c09c-4ea2-9da0-5f9c8c74eae7"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Examiner of accounts]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="236" y="432" width="100" height="30" uuid="1faa3185-ea4c-447e-ae80-064eed392ea2"/>
+				<reportElement x="236" y="419" width="100" height="30" uuid="1faa3185-ea4c-447e-ae80-064eed392ea2"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Supdt (Audit)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="9" y="432" width="100" height="30" uuid="591fd967-dc26-44e3-9b7c-faebe635864c"/>
+				<reportElement x="9" y="418" width="100" height="30" uuid="591fd967-dc26-44e3-9b7c-faebe635864c"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Auditor]]></text>
 			</staticText>
@@ -203,7 +205,7 @@
 			<textField>
 				<reportElement x="236" y="356" width="100" height="30" uuid="26515f69-76c0-4919-ab6a-bc03d8b3fa27"/>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["verified By" + "\r\n" + $P{preparedBy}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Approved by" + "\r\n" + $P{preparedBy}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="9" y="356" width="100" height="30" uuid="e8a4147a-6271-43d7-979f-8145cfe84dc7"/>
@@ -211,7 +213,7 @@
 				<textFieldExpression><![CDATA["prepared By" + "\r\n" + $P{preparedBy}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="302" width="540" height="30" uuid="4c0fda12-6790-419d-b27e-579b0493df99"/>
+				<reportElement x="0" y="289" width="540" height="30" uuid="4c0fda12-6790-419d-b27e-579b0493df99"/>
 				<textFieldExpression><![CDATA["Kindly pass the sum of Rupees "+$P{totalAmountWords}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -273,14 +275,18 @@
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="140" y="47" width="120" height="29" uuid="b036c202-2eb0-4ff5-b52a-66010b127807">
-					<printWhenExpression><![CDATA[$F{isNetPayable} ==  Boolean.TRUE && $F{isDebit} ==  Boolean.FALSE]]></printWhenExpression>
+				<reportElement x="213" y="48" width="318" height="30" uuid="04ba3ed6-61b5-4f37-aac0-59d64dadac7e"/>
+				<textFieldExpression><![CDATA["( " + $P{totalAmountWords} + " )"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" x="147" y="48" width="100" height="18" uuid="50651d3e-74a5-45c8-a3d7-7c20249a5983">
+					<printWhenExpression><![CDATA[$F{isDebit} ==  Boolean.TRUE]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="245" y="48" width="318" height="30" uuid="04ba3ed6-61b5-4f37-aac0-59d64dadac7e"/>
-				<textFieldExpression><![CDATA["( " + $P{totalAmountWords} + " )"]]></textFieldExpression>
+				<reportElement x="1" y="439" width="511" height="20" uuid="9d523b6e-e168-47f3-b0ef-d9b40bfcecbd"/>
+				<textFieldExpression><![CDATA["Report Run Date: " + $P{reportRunDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

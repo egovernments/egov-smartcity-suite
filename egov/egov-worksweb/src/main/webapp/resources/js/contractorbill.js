@@ -363,3 +363,8 @@ function resetCreditAccountDetails(obj){
 		$(obj).parents("tr:first").find('.creditaccountheadname').val('');
 	}
 }
+
+function renderPDF(){
+	var id = $('#id').val();
+	window.open("/egworks/contractorbill/contractorbillPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}

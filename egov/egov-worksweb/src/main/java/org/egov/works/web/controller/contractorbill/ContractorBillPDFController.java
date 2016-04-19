@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,18 +54,21 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
@@ -111,6 +115,12 @@ public class ContractorBillPDFController {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @RequestMapping(value = "/contractorbillPDF/{contractorBillId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
@@ -125,6 +135,7 @@ public class ContractorBillPDFController {
         if (contractorBillRegister != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            final SimpleDateFormat timeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:MM:SS");
             final DecimalFormat df = new DecimalFormat("#.##");
             final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(contractorBillRegister.getWorkOrder()
                     .getEstimateNumber());
@@ -143,8 +154,11 @@ public class ContractorBillPDFController {
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());
             reportParams.put("billDate", formatter.format(contractorBillRegister.getBilldate()));
             reportParams.put("billAmount", contractorBillRegister.getBillamount());
-            reportParams.put("nameOfTheWork", lineEstimateDetails.getLineEstimate().getNatureOfWork().getName());
+            reportParams.put("nameOfTheWork", lineEstimateDetails.getNameOfWork());
             reportParams.put("ward", lineEstimateDetails.getLineEstimate().getWard().getName());
+            reportParams.put("department", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getName());
+            reportParams.put("reportRunDate", timeFormatter.format(new Date()));
+            
             
             BigDecimal totalAmount = BigDecimal.ZERO;
             totalAmount.add(contractorBillRegister.getBillamount());
