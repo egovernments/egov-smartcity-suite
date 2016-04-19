@@ -134,9 +134,10 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
 
     }
     
-    public List<CChartOfAccounts> findDetailedAccountCodesByGlcodeLike(String glCode) {
-        final Query qry = getCurrentSession().createQuery("from CChartOfAccounts where classification='4' and isActiveForPosting=true and glcode like :glCode order by glcode");
-        qry.setString("glCode", glCode+ "%");
+    public List<CChartOfAccounts> findDetailedAccountCodesByGlcodeOrNameLike(String searchString) {
+        final Query qry = getCurrentSession().createQuery("from CChartOfAccounts where classification='4' and isActiveForPosting=true and (glcode like :glCode or upper(name) like :name) order by glcode");
+        qry.setString("glCode", searchString+ "%");
+        qry.setString("name", "%"+searchString.toUpperCase()+ "%");
         return (List<CChartOfAccounts>) qry.list();
     }
 

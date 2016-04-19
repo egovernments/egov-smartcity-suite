@@ -101,8 +101,8 @@ public class AjaxContractorBillController {
     }
 
     @RequestMapping(value = "/ajaxdeduction-coa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<CChartOfAccounts> findDetailedAccountCodesByGlcodeLike(@RequestParam final String glCode) {
-        return chartOfAccountsHibernateDAO.findDetailedAccountCodesByGlcodeLike(glCode);
+    public @ResponseBody List<CChartOfAccounts> findDetailedAccountCodesByGlcodeLike(@RequestParam final String searchQuery) {
+        return chartOfAccountsHibernateDAO.findDetailedAccountCodesByGlcodeOrNameLike(searchQuery);
     }
 
 }

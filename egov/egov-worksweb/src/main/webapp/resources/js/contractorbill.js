@@ -327,13 +327,14 @@ function creditGlcode_initialize() {
 	    datumTokenizer: function(d) { return d.tokens; },
 	    queryTokenizer: Bloodhound.tokenizers.whitespace,
 		   remote: {
-	            url: '/egworks/contractorbill/ajaxdeduction-coa?glCode=%QUERY',
+	            url: '/egworks/contractorbill/ajaxdeduction-coa?searchQuery=%QUERY',
 	            filter: function (data) {
 	                return $.map(data, function (ct) {
 	                    return {
 	                        id: ct.id,
 	                        name: ct.name,
-	                        glcode: ct.glcode
+	                        glcode: ct.glcode,
+	                        glcodesearch: ct.glcode+' ~ '+ct.name
 	                    };
 	                });
 	            }
@@ -348,7 +349,7 @@ function creditGlcode_initialize() {
 		minLength : 3
 		
 	}, {		    
-          displayKey: 'glcode',
+          displayKey: 'glcodesearch',
           source: custom.ttAdapter()
     }).on('typeahead:selected', function (event, data) {
     	$(this).parents("tr:first").find('.creditaccountheadname').val(data.name);
