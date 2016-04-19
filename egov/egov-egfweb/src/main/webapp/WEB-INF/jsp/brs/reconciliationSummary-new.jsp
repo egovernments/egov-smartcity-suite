@@ -37,92 +37,14 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+
 <html>
 <head>
 <title><s:text name="Reconciliation Summary" /></title>
-<link rel="stylesheet" type="text/css"
-	href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
-
-<SCRIPT type="text/javascript" src="../resources/javascript/calendar.js?rnd=${app_release_no}" type="text/javascript" ></SCRIPT>
-</head>
-
-<body>
-	<div class="formmainbox">
-		<div class="subheadnew">
-			<s:text name="Reconciliation Summary" />
-		</div>
-		<div style="color: red">
-			<s:actionerror />
-			<s:fielderror />
-		</div>
-		<s:form name="bankReconciliation" action="bankReconciliation" theme="simple">
-		 
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr height="25px">
-					<td class="bluebox"></td>
-				</tr>
-				<tr>
-					<egov:ajaxdropdown id="bank" fields="['Text','Value']"
-						dropdownId="bank" url="voucher/common-ajaxLoadAllBanks.action" />
-
-                    <td style="width: 5%"></td>
-					<td class="bluebox" >Bank And Branch:<span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:select name="bank" id="bank"
-							list="dropdownData.bankList" listKey="bankBranchId"
-							listValue="bankBranchName" headerKey="-1"
-							headerValue="----Choose----" 
-							onChange="populateAccNumbers(this);" /></td>
-					<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
-						dropdownId="accountNumber"
-						url="voucher/common-ajaxLoadAccountNumbers.action" />
-					<td class="bluebox" >Account Number:<span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:select name="bankAccount" 
-							id="accountNumber" list="dropdownData.accNumList" listKey="id"
-							listValue="accountnumber" headerKey="-1"
-							headerValue="----Choose----" onclick="validateBank()" /></td>
-				</tr>
-				<tr>
-				 <td style="width: 5%"></td>
-				 <td class="bluebox" >Bank Statement Balance:<span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-				<td class="bluebox"><s:textfield  name="bankStBalance"id="bankStBalance" /></td>
-				<td class="bluebox">Bank Statement Date:<span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<s:date name="bankStmtDate" format="dd/MM/yyyy" var="BSdate"/>
-				<td class="greybox"><s:textfield name="bankStmtDate" id="bankStmtDate"
-							cssStyle="width:100px" value='%{BSdate}'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('bankReconciliation.bankStmtDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
-					</td>	
-				</tr>
-			</table>
-			<br />
-	</div>
-	<div class="buttonbottom" style="padding-bottom: 10px;">
-		<s:hidden name="mode"></s:hidden>
-		<input type="submit" class="buttonsubmit" value="View Summary"
-			id="search" name="Search" onclick=" return validateAndSubmit();" /> <input
-			type="button" id="Close" value="Close"
-			onclick="javascript:window.close()" class="button" />
-	</div>
-	 
+<script type="text/javascript">
 	
-	</s:form>
-	<script type="text/javascript">
-	function populateAccNumbers(bankBranch){
-		var fund = document.getElementById('fundId');
-		id = bankBranch.options[bankBranch.selectedIndex].value.split("-")[1]
-		populateaccountNumber({branchId:id})	
-	}
-
 		function validateBank(){
 		var bank = document.getElementById('bank').value;
 		if(bank == -1){
@@ -134,17 +56,23 @@
 
   function validateAndSubmit(){
 	  
-	  var bank = document.getElementById('bank').value;
-	  var bankAccount = document.getElementById('accountNumber').value;
+	  var bank = document.getElementById('bankId').value;
+	  var bankBranch=document.getElementById('branchId').value;
+	  var bankAccount = document.getElementById('accountId').value;
 	  var amount = document.getElementById('bankStBalance').value;
 	  var stmtDate = document.getElementById('bankStmtDate').value;
 	  
-	  if(bank== -1)
+	  if(bank== "")
 	  {
 		bootbox.alert("Please select a Bank");
 			return false;
 		}
-	  if(bankAccount== -1)
+	  if(bankBranch== "")
+	  {
+		bootbox.alert("Please select a Bank branch");
+			return false;
+		}
+	  if(bankAccount== "")
 	  {
 			bootbox.alert("Please select a bank account number");
 			return false;
@@ -162,13 +90,105 @@
 			return false;
 		}
 		
-	document.forms[0].action='/EGF/brs/bankReconciliation-brsSummary.action?bankAccount.id='+bankAccount;
+	document.forms[0].action='/EGF/brs/bankReconciliation-brsSummary.action';
 	document.forms[0].submit();
 	return true;
 	
 }
+  function populatebranch(obj) {
+		var bid = document.getElementById("bankId").value;
+		populatebranchId( {
+			bankId : bid
+		})
+	}
+
+	function populateaccount(obj) {
+		var bid = document.getElementById("branchId").value;
+		populateaccountId( {
+			branchId : bid
+		})
+	}
 
     </script>
+</head>
+
+<body>
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="Reconciliation Summary" />
+		</div>
+		<div style="color: red">
+			<s:actionerror />
+			<s:fielderror />
+		</div>
+		<s:form name="bankReconciliation" action="bankReconciliation"
+			theme="simple">
+
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr height="25px">
+					<td class="bluebox"></td>
+				</tr>
+				<tr>
+					<td class="bluebox"></td>
+					<td class="bluebox"><s:text name="bank" /> <span
+						class="bluebox"><span class="mandatory1">*</span></span></td>
+					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
+						dropdownId="branchId"
+						url="/voucher/common-ajaxLoadBankBranchesByBank.action" />
+					<td class="bluebox"><s:select name="bankId" id="bankId"
+							list="dropdownData.bankList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Choose----"
+							onchange="populatebranch(this);" /></td>
+					<td class="bluebox"><s:text name="bankbranch" /> <span
+						class="bluebox"><span class="mandatory1">*</span></span></td>
+					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
+						dropdownId="accountId"
+						url="/voucher/common-ajaxLoadBankAccountsByBranch.action" />
+					<td class="bluebox"><s:select name="branchId" id="branchId"
+							list="dropdownData.branchList" listKey="id"
+							listValue="branchname" headerKey="" headerValue="----Choose----"
+							onchange="populateaccount(this);" /></td>
+				</tr>
+				<tr>
+
+					<td class="bluebox"></td>
+					<td class="bluebox"><s:text name="bankaccount" /> <span
+						class="bluebox"><span class="mandatory1">*</span></span></td>
+					<td class="bluebox"><s:select name="accountId" id="accountId"
+							list="dropdownData.accountList" listKey="id"
+							listValue="chartofaccounts.glcode+'-'+accountnumber" headerKey=""
+							headerValue="----Choose----" /></td>
+					<td class="bluebox">Bank Statement Balance:<span
+						class="bluebox"><span class="mandatory1">*</span></span></td>
+					<td class="bluebox"><s:textfield name="bankStBalance"
+							id="bankStBalance" /></td>
+				</tr>
+				<tr>
+					<td class="bluebox"></td>
+					<td class="bluebox">Bank Statement Date:<span class="bluebox"><span
+							class="mandatory1">*</span></span></td>
+					<s:date name="bankStmtDate" format="dd/MM/yyyy" var="BSdate" />
+					<td class="greybox"><s:textfield id="bankStmtDate"
+							name="bankStmtDate" value="%{BSdate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+
+				</tr>
+			</table>
+			<br />
+	</div>
+	<div class="buttonbottom" style="padding-bottom: 10px;">
+
+		<input type="submit" class="buttonsubmit" value="View Summary"
+			id="search" name="Search" onclick="return validateAndSubmit();" />
+		<input type="button" id="Close" value="Close"
+			onclick="javascript:window.close()" class="button" />
+	</div>
+
+
+	</s:form>
+
 </body>
 
 </html>
