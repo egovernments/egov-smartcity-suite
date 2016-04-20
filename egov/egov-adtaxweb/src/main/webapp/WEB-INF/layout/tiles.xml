@@ -97,7 +97,7 @@
     </definition>
     
     <definition name="hoarding-create" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoarding" cascade="true"/>
+    	<put-attribute name="page-title" value="title.new.hoarding" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-create.jsp"/>
     </definition>
     
@@ -219,11 +219,11 @@
         <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-error.jsp"/>
     </definition>
   <definition name="hoarding-createLegacy" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoarding" cascade="true"/>
+    	<put-attribute name="page-title" value="title.legacy.hoarding" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-createLegacy.jsp"/>
     </definition>
      <definition name="hoarding-updateLegacy" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoarding" cascade="true"/>
+    	<put-attribute name="page-title" value="hoarding-updateLegacy" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-updateLegacy.jsp"/>
     </definition>
     <definition name="report-dcb" extends="base_layout">
@@ -257,7 +257,7 @@
     </definition>
 
      <definition name="statuschange-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
+    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/statuschange-search.jsp"/>
     </definition>
     
@@ -308,6 +308,16 @@
     <definition name="report-agencywise-view" extends="base_layout">
     	<put-attribute name="page-title" value="title.agencywise.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/report-agencywise-view.jsp"/>
+    </definition>
+    
+     <definition name="penaltyRates-change" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.penaltyRateChange" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-change.jsp"/>
+    </definition>
+    
+     <definition name="penaltyRate-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.adtax.penaltyRateChange" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRate-success.jsp"/>
     </definition>
     
 </tiles-definitions>
