@@ -106,7 +106,7 @@ public class AdvertisementIndexService {
 		advertisementSearch.setIsActive(advertisementPermitDetail.getIsActive());
 		advertisementSearch.setIslegacy(advertisementPermitDetail.getAdvertisement().getLegacy());
 		advertisementSearch.setLength(advertisementPermitDetail.getLength());
-		advertisementSearch.setLocality(advertisementPermitDetail.getAdvertisement().getLocality().getName());
+		advertisementSearch.setLocality(advertisementPermitDetail.getAdvertisement().getLocality()!=null?advertisementPermitDetail.getAdvertisement().getLocality().getName():"");
 		advertisementSearch.setMeasurement(advertisementPermitDetail.getMeasurement());
 		advertisementSearch.setMobileNumber(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getMobileNumber():"");
 		advertisementSearch.setOwnerDetail(advertisementPermitDetail.getOwnerDetail());
@@ -124,9 +124,9 @@ public class AdvertisementIndexService {
 		advertisementSearch.setTaxAmount(advertisementPermitDetail.getTaxAmount());
 		advertisementSearch.setTotalHeight(advertisementPermitDetail.getTotalHeight());
 		advertisementSearch.setUom(advertisementPermitDetail.getUnitOfMeasure().getCode());
-		advertisementSearch.setWard(advertisementPermitDetail.getAdvertisement().getWard().getName());
+		advertisementSearch.setWard(advertisementPermitDetail.getAdvertisement().getWard()!=null?advertisementPermitDetail.getAdvertisement().getWard().getName():"");
 		advertisementSearch.setWidth(advertisementPermitDetail.getWidth());
-		advertisementSearch.setZone(advertisementPermitDetail.getAdvertisement().getWard().getParent().getName());
+		advertisementSearch.setZone(advertisementPermitDetail.getAdvertisement().getWard()!=null&& advertisementPermitDetail.getAdvertisement().getWard().getParent()!=null?advertisementPermitDetail.getAdvertisement().getWard().getParent().getName():"");
 		
 		if (advertisementPermitDetail.getAdvertisement().getLatitude()!= 0.0 && advertisementPermitDetail.getAdvertisement().getLongitude()!=0.0) {
 			advertisementSearch.setAdvertisementLocation(new GeoPoint(advertisementPermitDetail.getAdvertisement().getLatitude(), advertisementPermitDetail.getAdvertisement().getLongitude()));

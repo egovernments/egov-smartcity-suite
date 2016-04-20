@@ -85,8 +85,8 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	         
 	         // For legacy application - create only advertisementIndex
 	         if (advertisementPermitDetail.getAdvertisement().getLegacy()
-	                 && (null == advertisementPermitDetail.getId() || null != advertisementPermitDetail.getId()
-	                 && advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED))) {
+	                 && (null == advertisementPermitDetail.getId() || (null != advertisementPermitDetail.getId()
+	                 && advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)))) {
 	        	 advertisementIndexService.createAdvertisementIndex(advertisementSearch); 
 	             return;
 	         }
@@ -102,8 +102,8 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	        			 || advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)
 	        			 || advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))
 	        		){
-        		     applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription().toString());
- 	                 applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
+        		     applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription());
+ 	                 applicationIndex.setOwnername(user!=null?user.getUsername() + "::" + user.getName():"");
 	        		 
  	                 // Set application index status to approved on advertisement approval
  	                 if(advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)){
@@ -114,7 +114,7 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	 	                applicationIndex.setApplicantName(applicantName);
 	 	                applicationIndex.setApplicantAddress(address);
 	 	                applicationIndex.setMobileNumber(advertisementPermitDetail.getAgency()!=null?
-		                		 advertisementPermitDetail.getAgency().getMobileNumber().toString():"");
+		                		 advertisementPermitDetail.getAgency().getMobileNumber():"");
 	 	                applicationIndex.setApproved(ApprovalStatus.APPROVED);
 	 	                applicationIndex.setClosed(ClosureStatus.NO);
 	        		 }
@@ -155,11 +155,11 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
 	                		 AdvertisementTaxConstants.MODULE_NAME, advertisementPermitDetail.getApplicationNumber(),
 	                         advertisementPermitDetail.getApplicationDate(), advertisementPermitDetail.getState().getNatureOfTask(), applicantName, 
-	                         advertisementPermitDetail.getStatus().getDescription().toString(),
-	                         url, address.toString(), user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+	                         advertisementPermitDetail.getStatus().getDescription(),
+	                         url, address, user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
 
 	                 applicationIndexBuilder.mobileNumber(advertisementPermitDetail.getAgency()!=null?
-	                		 advertisementPermitDetail.getAgency().getMobileNumber().toString():"");
+	                		 advertisementPermitDetail.getAgency().getMobileNumber():"");
 	                 applicationIndexBuilder.aadharNumber(null);
 	                 applicationIndexBuilder.approved(ApprovalStatus.UNKNOWN);
                 	 applicationIndexBuilder.closed(ClosureStatus.NO);
