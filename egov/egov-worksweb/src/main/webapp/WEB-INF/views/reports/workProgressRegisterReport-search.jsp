@@ -43,7 +43,8 @@
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="title.lineestimate.search" /></div>
-	<div id="errorMessage" style="display: none;"><spring:message code="error.lineestimate.loa.search" /></div>
+	<div id="searchCriteria" class="col-md-12 text-center"></div>
+	<div id="dataRun" class="col-md-12 text-center"></div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">

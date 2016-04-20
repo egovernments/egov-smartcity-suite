@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-18T17:48:57 -->
+<!-- 2016-04-20T16:12:05 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="workProgressRegisterPdf" pageWidth="1684" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dde57000-7ab1-4a8b-9792-f74605077701">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -33,6 +32,7 @@
 	<parameter name="heading" class="java.lang.String"/>
 	<parameter name="queryParameters" class="java.lang.String"/>
 	<parameter name="reportRunDate" class="java.lang.String"/>
+	<parameter name="dataRunDate" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -119,7 +119,7 @@
 		</band>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="71" splitType="Stretch">
 			<textField>
 				<reportElement x="680" y="20" width="300" height="50" uuid="4aaa0b0f-4a81-4fb3-8643-e5338fa672cc"/>
 				<textElement textAlignment="Center">
@@ -132,8 +132,18 @@
 	<pageHeader>
 		<band height="39" splitType="Stretch">
 			<textField>
-				<reportElement x="180" y="5" width="1300" height="30" uuid="3e7ac302-94cb-4086-8b4b-e207c02d9a34"/>
-				<textFieldExpression><![CDATA["Search Parameters: " + $P{queryParameters}]]></textFieldExpression>
+				<reportElement x="180" y="5" width="1300" height="15" uuid="3e7ac302-94cb-4086-8b4b-e207c02d9a34"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{queryParameters}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="20" width="1300" height="15" uuid="8ff9c52e-0421-4b7d-9163-8950c94b7056"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["The information in this report is not real time, it provides information of the transactions that happened till " + $P{dataRunDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -176,7 +186,7 @@
 				<textElement textAlignment="Center">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA["Location"]]></text>
+				<text><![CDATA[Location]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="152" y="0" width="62" height="35" uuid="bb6d6a27-7c2d-495c-a0b8-64a98249fa85"/>
@@ -436,7 +446,7 @@
 				<textElement textAlignment="Center">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Bill Number]]></text>
+				<text><![CDATA[Bill amount(Rs)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1366" y="0" width="75" height="35" uuid="d12191b3-5c6c-4324-8202-0068fd010853"/>
@@ -798,15 +808,20 @@
 	<columnFooter>
 		<band height="51" splitType="Stretch">
 			<textField>
-				<reportElement x="17" y="19" width="300" height="30" uuid="628734e4-0083-408a-88c1-e08e0ceb5303"/>
+				<reportElement x="1326" y="19" width="300" height="30" uuid="628734e4-0083-408a-88c1-e08e0ceb5303"/>
 				<textFieldExpression><![CDATA["Report Run Date: " + $P{reportRunDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="56" splitType="Stretch">
+			<textField>
+				<reportElement x="772" y="23" width="100" height="30" uuid="93f6f0fa-9014-46f1-834c-60e6a585bfa0"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

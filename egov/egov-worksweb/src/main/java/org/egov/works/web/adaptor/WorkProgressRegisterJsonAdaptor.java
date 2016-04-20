@@ -25,6 +25,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
     @Override
     public JsonElement serialize(final WorkProgressRegister workProgressRegister, final Type type, final JsonSerializationContext jsc) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         final JsonObject jsonObject = new JsonObject();
         if (workProgressRegister != null) {
             if (workProgressRegister.getWard() != null)
@@ -58,15 +59,15 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("winCode", "");
             if (workProgressRegister.getFund() != null)
-                jsonObject.addProperty("fund", workProgressRegister.getFund().getName() + " - " + workProgressRegister.getFund().getCode());
+                jsonObject.addProperty("fund", workProgressRegister.getFund().getCode() + " - " + workProgressRegister.getFund().getName());
             else
                 jsonObject.addProperty("fund", "");
             if (workProgressRegister.getFunction() != null)
-                jsonObject.addProperty("function", workProgressRegister.getFunction().getName() + " - " + workProgressRegister.getFunction().getCode());
+                jsonObject.addProperty("function", workProgressRegister.getFunction().getCode() + " - " + workProgressRegister.getFunction().getName());
             else
                 jsonObject.addProperty("function", "");
             if (workProgressRegister.getBudgetHead() != null)
-                jsonObject.addProperty("budgetHead", workProgressRegister.getBudgetHead().getName() + " - " + workProgressRegister.getBudgetHead().getDescription());
+                jsonObject.addProperty("budgetHead", workProgressRegister.getBudgetHead().getName());
             else
                 jsonObject.addProperty("budgetHead", "");
             if (workProgressRegister.getTypeOfWork() != null)
@@ -133,9 +134,9 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("billType", "");
             if (workProgressRegister.getBillamount() != null)
-                jsonObject.addProperty("agreementAmount", workProgressRegister.getBillamount());
+                jsonObject.addProperty("billAmount", workProgressRegister.getBillamount());
             else
-                jsonObject.addProperty("agreementAmount", "");
+                jsonObject.addProperty("billAmount", "");
             if (workProgressRegister.getTotalBillPaidSoFar() != null)
                 jsonObject.addProperty("totalBillPaidSoFar", workProgressRegister.getTotalBillPaidSoFar());
             else
@@ -144,6 +145,9 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("balanceValueOfWorkToBill", workProgressRegister.getBalanceValueOfWorkToBill());
             else
                 jsonObject.addProperty("balanceValueOfWorkToBill", "");
+            
+            
+            jsonObject.addProperty("createdDate", formatter.format(workProgressRegister.getCreatedDate()));
         }
         return jsonObject;
     }
