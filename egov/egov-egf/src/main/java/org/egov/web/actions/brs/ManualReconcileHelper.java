@@ -167,24 +167,26 @@ public class ManualReconcileHelper {
 		List<ReconcileBean> list=new ArrayList<ReconcileBean>();
 		try{
 		String voucherExcludeStatuses=getExcludeStatuses();
-        String query=" select v.vouchernumber as \"voucherNumber\" ,ih.id as \"ihId\", case when ih.instrumentNumber is null then 'Direct' else ih.instrumentNumber  end as \"chequeNumber\", " +
+        String query=" select string_agg(distinct v.vouchernumber, ',') as \"voucherNumber\" ,ih.id as \"ihId\", case when ih.instrumentNumber is null then 'Direct' else ih.instrumentNumber  end as \"chequeNumber\", " +
 		" to_char(ih.instrumentdate,'dd/mm/yyyy') as \"chequeDate\" ,ih.instrumentAmount as \"chequeAmount\",rec.transactiontype as \"txnType\" , "
 		+ " case when rec.transactionType='Cr' then  'Payment' else 'Receipt' end as \"type\" " +" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
 		+" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE "
 		+ "  ih.bankAccountId = BANK.ID AND bank.id =:bankAccId   AND IH.INSTRUMENTDATE <= :toDate  "
 		+" AND v.ID= iv.voucherheaderid  and v.STATUS not in  ("+voucherExcludeStatuses+") AND "
-		+" ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
+		+" ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited') and ih.ispaycheque='0') or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
 		+" AND rec.instrumentHeaderId=ih.id	 and iv.instrumentHeaderid=ih.id and io.instrumentheaderid=ih.id and ih.instrumentNumber is not null"
+		+ " group by ih.id,rec.transactiontype "
 	
 		+ " union  "
 		
-		+" select v.vouchernumber as \"voucherNumber\" , ih.id as \"ihId\", case when ih.transactionnumber is null then 'Direct' else ih.transactionnumber end as \"chequeNumber\", " +
+		+" select string_agg(distinct v.vouchernumber, ',') as \"voucherNumber\" , ih.id as \"ihId\", case when ih.transactionnumber is null then 'Direct' else ih.transactionnumber end as \"chequeNumber\", " +
 		" to_char(ih.transactiondate,'dd/mm/yyyy') as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\", case when rec.transactionType= 'Cr' then 'Payment' else 'Receipt' end    as \"type\" " +
 		" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
 		+" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE   ih.bankAccountId = BANK.ID AND bank.id = :bankAccId "
 		+"   AND IH.INSTRUMENTDATE <= :toDate "
-		+" AND v.ID= iv.voucherheaderid and v.STATUS not in  ("+voucherExcludeStatuses+") AND ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
+		+" AND v.ID= iv.voucherheaderid and v.STATUS not in  ("+voucherExcludeStatuses+") AND ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited') and ih.ispaycheque='0')or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
 		+" AND rec.instrumentHeaderId=ih.id	 and iv.instrumentHeaderid=ih.id and io.instrumentheaderid=ih.id and ih.transactionnumber is not null"
+		+" group by ih.id,rec.transactiontype "
 		;
 		
        // if(LOGGER.isInfoEnabled())    

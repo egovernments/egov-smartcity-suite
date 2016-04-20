@@ -13,69 +13,83 @@ function getFormData($form) {
 function callAjaxSearch() {
 	doLoadingMask();
 	var fd=jQuery('#mrform').serialize();
-	  jQuery.ajax({
-			url: "/EGF/brs/manualReconciliation-ajaxSearch.action",
-			type: "POST",
-			data: fd,
-			//dataType: "text",
-			success: function (response) {
-				console.log("success"+response );
-				 $('#resultDiv').html(response);
-				 jQuery('#reconcileDiv').show();
-				
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-				
-				bootbox.alert("Failed to search Details");
-			}
-		});
-	   undoLoadingMask();  
+	jQuery.ajax({
+		url: "/EGF/brs/manualReconciliation-ajaxSearch.action",
+		type: "POST",
+		data: fd,
+		//dataType: "text",
+		success: function (response) {
+			//	console.log("success"+response );
+			jQuery('#resultDiv').html(response);
+			jQuery('#reconcileDiv').show();
+			jQuery(".datepicker").datepicker({
+				format: "dd/mm/yyyy",
+				autoclose:true
+			});  
+
+		undoLoadingMask();  
+		}, 
+		error: function (response) {
+			console.log("failed");
+
+			bootbox.alert("Failed to search Details");
+			undoLoadingMask();  
+		}
+	});
+	
 }
 
 
 function validateReconcile()
 {
+	//alert("returned  "+validateReconDate())
 	if(!validateReconDate())
 	{
-		alert("Add atleast one Reconciliation Date");
+		bootbox.alert("Add atleast one Reconciliation Date");
 		return false;
 	}
-		
+
 	doLoadingMask();
-		var fd=jQuery('#mrform').serialize();
-	  jQuery.ajax({
-			url: "/EGF/brs/manualReconciliation-update.action",
-			type: "POST",
-			data: fd, 
-			//dataType: "text",
-			success: function (response) {
-				console.log("success"+response );
-				 $('#resultDiv').html(response);
-				 
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-				
-				bootbox.alert("Failed to Reconcile Details");
-			}
-		});
-	  undoLoadingMask();
+	var fd=jQuery('#mrform').serialize();
+	jQuery.ajax({
+		url: "/EGF/brs/manualReconciliation-update.action",
+		type: "POST",
+		data: fd, 
+		//dataType: "text",
+		success: function (response) {
+			//	console.log("success"+response );
+			undoLoadingMask();    
+			jQuery('#resultDiv').html(response);
+			//bootbox.alert("Passed to Reconcile Details");
+			
+ 
+
+		}, 
+		error: function (response) {
+			console.log("failed");
+			undoLoadingMask();  
+			bootbox.alert("Failed to Reconcile Details");
+			
+		}
+	});
+	 
 }
 
 function validateReconDate()
 {
-	
+	//alert("Validating Reconciliation Date"+jQuery('#resultTable tr').length);
 	var len=jQuery('#resultTable tr').length;
-	
-	for(i=0;i<=len-1;i++)
+
+	for(i=0;i<=len-2;i++)
 	{
-		if(jQuery('#reconDates'+i).value!='')
-		     return true;	
+		//alert("'"+document.getElementById('reconDates'+i).value+"'");
+
+		//alert("Compare----"+ document.getElementById('reconDates'+i).value!='');
+
+		if(document.getElementById('reconDates'+i).value!='')
+			return true;	
 	}
 	return false;
 }
-	
-	
+
+

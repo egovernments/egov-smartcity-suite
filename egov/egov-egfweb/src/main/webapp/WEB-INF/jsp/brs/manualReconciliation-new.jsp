@@ -42,30 +42,7 @@
 <%@ page language="java"%>
 
 <head>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-  type="text/javascript"></script>
 <script type="text/javascript" src="<c:url value='/resources/app/js/reconciliationHelper.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-    <script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-    <script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-    <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-    <script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script> 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 
@@ -200,13 +177,8 @@
 							headerValue="----Choose----" /></td>
 					<td class="bluebox"><s:text name="reconciliationdate" /> <span
 						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:textfield name="reconcileBean.reconciliationDate"
-							id="reconciliationDate"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value="%{asOnDate}" /> <a
-						href="javascript:show_calendar('mrform.reconciliationDate');"
-						style="text-decoration: none">&nbsp;<img tabIndex="-1"
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
+					<td class="bluebox"><input type="text" name="reconcileBean.reconciliationDate" class="form-control datepicker"
+							 data-inputmask="'mask': 'd/m/y'"  id="reconciliationDate"/>
 
 					</td>
 				</tr>
@@ -214,22 +186,14 @@
 					<td class="greybox"></td>
 					<td class="greybox"><s:text name="fromdate" /> <span
 						class="greybox"><span class="mandatory1">*</span></span></td>
-					<td class="greybox"><s:textfield name="reconcileBean.fromDate" id="fromDate"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value="%{fromDate}" /> <a
-						href="javascript:show_calendar('mrform.fromDate');"
-						style="text-decoration: none">&nbsp;<img tabIndex="-1"
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
+					<td class="greybox"><input type="text"  name="reconcileBean.fromDate" id="fromDate" class="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" />
 
 					</td>
 					<td class="greybox"><s:text name="todate" /> <span
 						class="greybox"><span class="mandatory1">*</span></span></td>
-					<td class="greybox"><s:textfield name="reconcileBean.toDate" id="toDate"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value="%{toDate}" /> <a
-						href="javascript:show_calendar('mrform.toDate');"
-						style="text-decoration: none">&nbsp;<img tabIndex="-1"
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
+					<td class="greybox"><input type="text"  name="reconcileBean.toDate" id="toDate" class="form-control datepicker" 
+						data-inputmask="'mask': 'd/m/y'" />	 
 
 					</td>
 				</tr>
@@ -249,17 +213,7 @@
 			</div>
       <div id="resultDiv"> </div>
       
-      <div class="buttonbottom" id="reconcileDiv" style="display: none">
-        <table>
-          <tr>
-            <td><input  type="button" class="buttonsubmit"
-                value="Reconcile" name="Reconcile" method="reconcile"
-                onclick="return validateReconcile();" /></td>
-            <td><input type="button" value="Close"
-              onclick="javascript:window.close()" class="buttonsubmit" /></td>
-          </tr>
-        </table>
-      </div>
+     
 		</center>
       </div>
 	</s:form>
