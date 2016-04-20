@@ -184,13 +184,4 @@
  		<location>/error/404</location>
  	</error-page>
  	
-	<session-config>
-		<cookie-config>
-			<path>/</path>
-			<http-only>true</http-only>
-			<secure>false</secure>
-		</cookie-config>
-		<tracking-mode>COOKIE</tracking-mode>
-	</session-config>
-	
 </web-app>
