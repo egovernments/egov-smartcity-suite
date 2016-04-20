@@ -54,6 +54,8 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
@@ -121,7 +123,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         String mode = "";
         String workFlowAction = "";
-        ContractorBillRegister newContractorBillRegister = null;
+        ContractorBillRegister savedContractorBillRegister = null;
 
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
@@ -154,16 +156,21 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             return loadViewData(model, request, contractorBillRegister);
         } else {
             if (null != workFlowAction)
-                newContractorBillRegister = contractorBillRegisterService.update(contractorBillRegister, approvalPosition,
-                        approvalComment, null, workFlowAction,
-                        mode, files);
-            redirectAttributes.addFlashAttribute("contractorBillRegister", newContractorBillRegister);
+                try {
+                    savedContractorBillRegister = contractorBillRegisterService.update(contractorBillRegister, approvalPosition,
+                            approvalComment, null, workFlowAction,
+                            mode, files);
+                } catch (final ValidationException e) {
+                    for (final ValidationError error : e.getErrors())
+                        errors.reject(error.getMessage());
+                }
+            redirectAttributes.addFlashAttribute("contractorBillRegister", savedContractorBillRegister);
 
-            final String pathVars = worksUtils.getPathVars(newContractorBillRegister.getStatus(),
-                    newContractorBillRegister.getState(), newContractorBillRegister.getId(), approvalPosition);
+            final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
+                    savedContractorBillRegister.getState(), savedContractorBillRegister.getId(), approvalPosition);
 
             return "redirect:/contractorbill/contractorbill-success?pathVars=" + pathVars + "&billNumber="
-                    + newContractorBillRegister.getBillnumber();
+                    + savedContractorBillRegister.getBillnumber();
         }
     }
 

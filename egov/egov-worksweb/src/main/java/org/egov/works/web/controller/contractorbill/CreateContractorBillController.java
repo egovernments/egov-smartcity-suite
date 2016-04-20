@@ -53,6 +53,8 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -183,11 +185,15 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     contractorBillNumberGenerator.generateContractorBillNumber(contractorBillRegister));
 
             contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
-
-            final ContractorBillRegister savedContractorBillRegister = contractorBillRegisterService
-                    .create(contractorBillRegister, lineEstimateDetails, files, approvalPosition,
-                            approvalComment, null, workFlowAction);
-
+            ContractorBillRegister savedContractorBillRegister = null;
+            try {
+                savedContractorBillRegister = contractorBillRegisterService
+                        .create(contractorBillRegister, lineEstimateDetails, files, approvalPosition,
+                                approvalComment, null, workFlowAction);
+            } catch (final ValidationException e) {
+                for (final ValidationError error : e.getErrors())
+                    resultBinder.reject(error.getMessage());
+            }
             final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
                     savedContractorBillRegister.getState(), savedContractorBillRegister.getId(), approvalPosition);
 
@@ -302,10 +308,17 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             final String nextDesign) {
         String message = "";
 
-        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString()))
-            message = messageSource.getMessage("msg.contractorbill.create.success",
-                    new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
-        else if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.APPROVED.toString()))
+        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())) {
+            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber()))
+                message = messageSource.getMessage("msg.contractorbill.create.success.with.budgetappropriation",
+                        new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign,
+                                contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber() },
+                        null);
+            else
+                message = messageSource.getMessage("msg.contractorbill.create.success",
+                        new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
+
+        } else if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.APPROVED.toString()))
             message = messageSource.getMessage("msg.contractorbill.approved.success",
                     new String[] { contractorBillRegister.getBillnumber() }, null);
         else if (contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))

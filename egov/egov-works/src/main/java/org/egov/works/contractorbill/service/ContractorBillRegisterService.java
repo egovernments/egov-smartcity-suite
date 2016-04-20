@@ -46,6 +46,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -54,12 +55,14 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
+import org.egov.services.voucher.VoucherService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository;
@@ -116,6 +119,12 @@ public class ContractorBillRegisterService {
     
     @Autowired
     private LineEstimateService lineEstimateService;
+    
+    @Autowired
+    private VoucherService voucherService;
+    
+    @Autowired
+    private ScriptService scriptExecutionService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -151,6 +160,13 @@ public class ContractorBillRegisterService {
         contractorBillRegister.setExpendituretype(WorksConstants.BILL_EXPENDITURE_TYPE);
         final EgBillregistermis egBillRegisterMis = setEgBillRegisterMis(contractorBillRegister, lineEstimateDetails);
         contractorBillRegister.setEgBillregistermis(egBillRegisterMis);
+        
+        try {
+            checkBudgetAndGenerateBANumber(contractorBillRegister);
+        }
+        catch (final ValidationException e) {
+            throw new ValidationException(e.getErrors());
+        }
         final ContractorBillRegister savedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
         
         createContractorBillRegisterWorkflowTransition(savedContractorBillRegister,
@@ -173,9 +189,21 @@ public class ContractorBillRegisterService {
             final MultipartFile[] files) throws ValidationException, IOException {
         ContractorBillRegister updatedContractorBillRegister = null;
 
-        if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+        if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
             contractorBillRegister.setApprovedDate(new Date());
+            contractorBillRegister.getEgBillregistermis().setSourcePath(
+                    "/egworks/contractorbill/view/" + contractorBillRegister.getId());
+        }
         
+        try {
+            if (contractorBillRegister.getStatus().getCode()
+                    .equals(ContractorBillRegister.BillStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) {
+                checkBudgetAndGenerateBANumber(contractorBillRegister);
+            }
+        }
+        catch (final ValidationException e) {
+            throw new ValidationException(e.getErrors());
+        }
         contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
         contractorBillRegister.setBillstatus(contractorBillRegister.getStatus().getCode());
         
@@ -362,6 +390,13 @@ public class ContractorBillRegisterService {
     
     public BigDecimal getTotalBillAmountByWorkOrder(final WorkOrder workOrder) {
         return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatus(workOrder, ContractorBillRegister.BillStatus.CANCELLED.toString());  
+    }
+    
+    private ContractorBillRegister checkBudgetAndGenerateBANumber(final ContractorBillRegister contractorBill) {
+        final ScriptContext scriptContext = ScriptService.createContext("voucherService", voucherService, "bill",
+                contractorBill);
+        scriptExecutionService.executeScript("egf.bill.budgetcheck", scriptContext);
+        return contractorBill;
     }
 
 }
