@@ -244,10 +244,40 @@ $(document).ready(function(){
 		var hoardingIds = oTable.fnGetData($(this).parent().parent(),0);
 		var agencyName = oTable.fnGetData($(this).parent().parent(),1);
 		var pendingAmount = oTable.fnGetData($(this).parent().parent(),3); 
-
-		window.open("collectTaxByAgency/"+agencyName+"/"+hoardingIds+"/"+pendingAmount ,''+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		openPopupPage("collectTaxByAgency",agencyName,hoardingIds,pendingAmount);
+		//window.open("collectTaxByAgency/"+agencyName+"/"+hoardingIds+"/"+pendingAmount ,''+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	
 	});
 	
+	function openPopupPage(relativeUrl,agencyName,hoardingIds,pendingAmount)
+	{
+	 var param = { 'agencyName' : agencyName, 'hoardingIds': hoardingIds ,'total': pendingAmount };
+	 OpenWindowWithPost(relativeUrl, "width=1000, height=600, left=100, top=100, resizable=yes, scrollbars=yes", "collectTaxByAgency", param);
+	}
+	 
+	 
+	function OpenWindowWithPost(url, windowoption, name, params)
+	{
+	 var form = document.createElement("form");
+	 form.setAttribute("action", url);
+	 form.setAttribute("target", name);
+	 form.setAttribute("method", "post");
+	 for (var i in params)
+	 {
+	   if (params.hasOwnProperty(i))
+	   {
+	     var input = document.createElement('input');
+	     input.type = 'hidden';
+	     input.name = i;
+	     input.value = params[i];
+	     form.appendChild(input);
+	   }
+	 }
+	 document.body.appendChild(form);
+	 window.open("collectTaxByAgency", name, windowoption);
+	 form.submit();
+	}
+
+		
 });
 

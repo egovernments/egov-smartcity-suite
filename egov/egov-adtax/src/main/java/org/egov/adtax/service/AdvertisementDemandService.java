@@ -336,6 +336,9 @@ public class AdvertisementDemandService {
 
         BigDecimal penaltyAmt = BigDecimal.ZERO;
         BigDecimal pendingAmount = BigDecimal.ZERO;
+        /**
+         * Assumption: We are calculating penalty for total pending amount. If penalty is part of demand, then also we are considering that amount for penalty calculation.
+         */
         if (advPermitDetail!=null && advPermitDetail.getAdvertisement()!=null && advPermitDetail.getAdvertisement().getDemandId() != null) {
             for (final EgDemandDetails demandDtl :  advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
 

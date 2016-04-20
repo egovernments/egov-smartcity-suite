@@ -109,7 +109,9 @@ public class ReportController {
         ReportOutput reportOutput = null;
         if (null != advertisementPermitDetail) {
             final Map<String, Object> reportParams = buildParametersForReport(request, advertisementPermitDetail);
-            
+            reportParams.put("advertisementtitle",
+                    WordUtils.capitalize(AdvertisementTaxConstants.ADVERTISEMENTPERMITODERTITLE));
+             
             reportInput = new ReportRequest(AdvertisementTaxConstants.PERMITORDER, advertisementPermitDetail,
                     reportParams);
         }

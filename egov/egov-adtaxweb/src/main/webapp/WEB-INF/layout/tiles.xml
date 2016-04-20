@@ -210,7 +210,10 @@
         <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-redirection.jsp"/>
     </definition>
- 
+ <definition name="agencyWiseTaxCollect" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/collection/agencyWiseTaxCollection.jsp"/>
+    </definition>
   <definition name="collectAdvtax-error" extends="base_layout">	 
         <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-error.jsp"/>
