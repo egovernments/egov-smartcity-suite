@@ -42,8 +42,6 @@
  */
 package org.egov.web.actions.contra;
 
-
-
 import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -140,11 +138,11 @@ public class ContraBTBAction extends BaseVoucherAction {
     private String sourceGlcode;
     private String destinationGlcode;
     private ContraJournalVoucher contraVoucher;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private InstrumentService instrumentService;
     private String mode;
     @Autowired
@@ -1661,7 +1659,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 if (!generalled.getGlcode().equalsIgnoreCase(contraVoucher.getToBankAccountId().getChartofaccounts()
                         .getGlcode()))
                     contraBean.setDestinationGlcode(generalled.getGlcode());
-        }else{
+        } else {
             generalLedgerDesList = persistenceService.findAllBy(
                     "from CGeneralLedger where voucherHeaderId.refvhId = ?",
                     voucherHeader.getId());

@@ -42,9 +42,6 @@
  */
 package org.egov.web.actions.voucher;
 
-
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -87,8 +84,8 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
@@ -100,6 +97,7 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
@@ -118,11 +116,10 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected UserService userMngr;
     protected EisUtilService eisService;
     protected AssignmentService assignmentService;
-   
- @Autowired
- @Qualifier("persistenceService")
- protected PersistenceService persistenceService;
- @Autowired
+    @Autowired
+    @Qualifier("persistenceService")
+    protected PersistenceService persistenceService;
+    @Autowired
     private VoucherTypeForULB voucherTypeForULB;
     protected SecurityUtils securityUtils;
     protected String reversalVoucherNumber;
@@ -133,7 +130,8 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     public static final String ZERO = "0";
     private FinancingSourceService financingSourceService;
     List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
-    private @Autowired CreateVoucher createVoucher;
+    @Autowired
+    private  CreateVoucher createVoucher;
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
 
     @Autowired

@@ -41,7 +41,6 @@ package org.egov.web.actions.payment;
 
 
 
-import org.egov.infstr.services.PersistenceService;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -92,7 +91,7 @@ import org.egov.infra.script.entity.Script;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentVoucher;

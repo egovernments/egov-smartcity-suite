@@ -133,11 +133,13 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
                 .setCacheable(true).list();
 
     }
-    
+
     public List<CChartOfAccounts> findDetailedAccountCodesByGlcodeOrNameLike(String searchString) {
-        final Query qry = getCurrentSession().createQuery("from CChartOfAccounts where classification='4' and isActiveForPosting=true and (glcode like :glCode or upper(name) like :name) order by glcode");
-        qry.setString("glCode", searchString+ "%");
-        qry.setString("name", "%"+searchString.toUpperCase()+ "%");
+        final Query qry = getCurrentSession()
+                .createQuery(
+                        "from CChartOfAccounts where classification='4' and isActiveForPosting=true and (glcode like :glCode or upper(name) like :name) order by glcode");
+        qry.setString("glCode", searchString + "%");
+        qry.setString("name", "%" + searchString.toUpperCase() + "%");
         return (List<CChartOfAccounts>) qry.list();
     }
 
@@ -614,4 +616,12 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         return listChartOfAcc;
     }
 
+    public List<CChartOfAccounts> getAccountCodesListForBankEntries() {
+
+        return getCurrentSession()
+                .createQuery(
+                        "select acc from CChartOfAccounts acc where acc.isActiveForPosting=true and (acc.glcode like '1%' or acc.glcode like '2%') and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) order by acc.glcode")
+                .setCacheable(true).list();
+
+    }
 }
