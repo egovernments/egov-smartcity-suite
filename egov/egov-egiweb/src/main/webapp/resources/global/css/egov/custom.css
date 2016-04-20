@@ -467,7 +467,7 @@ label.error {
   padding: 5px;
 }
 .nav-pills > li a span {
-  padding: 0 5px;
+  margin: 0 3px;
 }
 /*Custom Header*/
 .navbar-custom {

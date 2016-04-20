@@ -208,54 +208,84 @@ $(document).ready(function(){
 		//marker=new google.maps.Marker();
 		
 		//mapprop();
-		var mapOptions = {
+		var latLng,mapOptions = {
 			zoom: 10,
+			timeout: 500, 
 			mapTypeControl: false,
 			navigationControl: false,
 		};
+		
+		var userLocationFound = function(position){
+		    latLng = {
+		        lat: position.coords.latitude,
+		        lng: position.coords.longitude
+		    };
+		    console.log("User confirmed! Location found: " + latLng.lat + ", " + latLng.lng);
+		    
+		    //Set current locaion to map
+		    var userLatLng = new google.maps.LatLng(latLng.lat, latLng.lng);
+			lat = latLng.lat;
+			lng = latLng.lng;
+			
+			getAddress(lat, lng);
+
+			map.setCenter(userLatLng);
+			
+			mapcenterchangeevent();
+			
+		}
+		
+		var userLocationNotFound = function(){
+			
+			citylat = $('#getcitylat').val();
+			citylng = $('#getcitylng').val();
+			
+		    //Assign static point to map
+			if(!citylat || !citylng){
+				citylat = 20.5937;
+				citylng = 78.9629;
+			    //console.log("Fallback set with no city setup: ", citylat+'<-->'+citylng);
+			}else{
+			    //console.log("Fallback set with city setup: ", citylat+'<-->'+citylng);
+			}
+			
+			latLng = {
+		        lat: citylat, // fallback lat 
+		        lng: citylng  // fallback lng
+		    };
+			setlatlong(citylat, citylng);
+			mapcenterchangeevent();
+			
+		}
+
 		
 		geocoder = new google.maps.Geocoder();
 		map=new google.maps.Map(document.getElementById("normal"),mapOptions);
 		
 		var GeoMarker = new GeolocationMarker(map);
 		$('<div/>').addClass('centerMarker').appendTo(map.getDiv());
-		//marker.setMap(map);
 		
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function (position) {
+		navigator.geolocation.getCurrentPosition(userLocationFound, userLocationNotFound, mapOptions);
 
-				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				lat = position.coords.latitude;
-				lng = position.coords.longitude;
-				
-				getAddress(lat, lng);
-
-				map.setCenter(userLatLng);
-				
-				}, function error(err) {
-					//console.log('error: ' + err.message); 
-					citylat = $('#getcitylat').val();
-					citylng = $('#getcitylng').val();
-					if(!citylat || !citylng){
-						citylat = 20.5937;
-						citylng = 78.9629;
-						setlatlong(citylat, citylng);
-					}else{
-						setlatlong(citylat, citylng);
-					}
-					
-				
-			});
-		}
-
+		setTimeout(function () {
+		    if(!latLng){
+		        console.log("No confirmation from user, using fallback");
+		        userLocationNotFound();
+		    }else{
+		        console.log("Location was set");
+		    }
+		}, mapOptions.timeout + 500); // Wait extra second
+		
+	};
+	
+	function mapcenterchangeevent(){
 		google.maps.event.addListener(map, 'center_changed', function() {
 			var location = map.getCenter();
 			//console.log(location.lat()+"<=======>"+location.lng());
 			getAddress(location.lat(), location.lng());
 		});
-		
-	};
-	
+	}
+
 	function setlatlong(citylat , citylng){
 		var userLatLng = new google.maps.LatLng(citylat, citylng);
 		lat = citylat;
@@ -302,7 +332,6 @@ $(document).ready(function(){
 	
 	$('.btn-save-location').click(function(){
 		var location = map.getCenter();
-		console.log(location.lat()+"<=======>"+location.lng());
 		lat = location.lat();
 		lng = location.lng();
 		$.ajax({
@@ -315,6 +344,7 @@ $(document).ready(function(){
 				 $('#latlngaddress').val(address);
 			}
 		});	
+		//console.log(lat+'<-->'+lng);
 		$('#lat').val(lat);
 		$('#lng').val(lng);
 	});
