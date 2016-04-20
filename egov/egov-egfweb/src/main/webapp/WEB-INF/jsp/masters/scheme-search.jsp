@@ -116,21 +116,20 @@
 					<td style="width: 10%"></td>
 					<td class="greybox"><s:text name="scheme.startDate" /></td>
 					<td class="greybox"><s:date name="validfrom" id="validfromId"
-							format="dd/MM/yyyy" /> <s:textfield name="validfrom"
-							id="validfromId" value="%{validfrom}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('schemeForm.validfrom',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							format="dd/MM/yyyy" />
+						<s:textfield id="validfromId" name="validfrom"
+							value="%{validfrom}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 
 					<td class="greybox"><s:text name="scheme.endDate" /></td>
 					<td class="greybox"><s:date name="validto" id="validtoId"
-							format="dd/MM/yyyy" /> <s:textfield name="validto" id="validtoId"
-							value="%{validto}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('schemeForm.validto',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							format="dd/MM/yyyy" /> <s:textfield id="validtoId"
+							name="validto" value="%{validto}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 
 			</table>
