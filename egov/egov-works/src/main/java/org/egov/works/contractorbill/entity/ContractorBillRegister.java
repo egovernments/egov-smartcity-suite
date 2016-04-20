@@ -55,6 +55,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -62,6 +63,7 @@ import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.workorder.WorkOrder;
+
 
 @Entity
 @Table(name = "EGW_CONTRACTORBILL")
@@ -90,6 +92,10 @@ public class ContractorBillRegister extends EgBillregister {
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillReg", targetEntity = StatutoryDeductionsForBill.class)
     private List<StatutoryDeductionsForBill> statutoryDeductionsList = new LinkedList<StatutoryDeductionsForBill>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approvedBy")
+    private User approvedBy;
 
     @Transient
     private String owner;
@@ -220,5 +226,13 @@ public class ContractorBillRegister extends EgBillregister {
 
     public void setApprovalComent(String approvalComent) {
         this.approvalComent = approvalComent;
+    }
+
+    public User getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(User approvedBy) {
+        this.approvedBy = approvedBy;
     }
 }

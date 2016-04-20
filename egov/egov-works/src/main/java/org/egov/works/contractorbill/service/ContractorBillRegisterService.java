@@ -193,6 +193,7 @@ public class ContractorBillRegisterService {
 
         if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
             contractorBillRegister.setApprovedDate(new Date());
+            contractorBillRegister.setApprovedBy(securityUtils.getCurrentUser());
             contractorBillRegister.getEgBillregistermis().setSourcePath(
                     "/egworks/contractorbill/view/" + contractorBillRegister.getId());
         }
