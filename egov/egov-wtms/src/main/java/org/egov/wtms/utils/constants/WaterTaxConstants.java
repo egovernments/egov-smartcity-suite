@@ -107,6 +107,7 @@ public class WaterTaxConstants {
     public static final String ROLE_SUPERUSER = "Super User";
     public static final String ROLE_CITIZEN = "Citizen";
     public static final String ROLE_OPERATOR = "Operator";
+    public static final String ROLE_ADMIN = "Property Administrator";
 
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";

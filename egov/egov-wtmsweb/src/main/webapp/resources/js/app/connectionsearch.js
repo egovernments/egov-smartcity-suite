@@ -51,6 +51,7 @@ jQuery(document).ready(function($) {
 		var operatorRole = $('#operatorRole').val();
 		var citizenRole = $('#citizenRole').val();
 		var billcollector=$('#billcollectionRole').val();
+		var administratorRole =$('#administratorRole').val();
 		 document.onkeydown=function(evt){
 			 var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
 		if(keyCode == 13){
@@ -284,8 +285,8 @@ function submitButton()
 	        			   else if(superUserRole!=null && full.resource.clauses.status == 'DISCONNECTED') {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 	        			   }
-	        			   else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy ==true) {
-	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="13">Add/Edit DCB</option></select>');
+	        			   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
+	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
 	        			   }
 	        			   else if(superUserRole!=null && superUserRole!="" ){
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
@@ -345,7 +346,7 @@ function submitButton()
 	        				  else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && (billcollector==null ||  billcollector==""))) && full.resource.searchable.closureType =='P') {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 	        				   }
-	        				  else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy == true) {
+	        				  else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
 		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
 		        			   }
 	        				   else if(superUserRole!=null && superUserRole!="" ){
@@ -412,7 +413,7 @@ function submitButton()
 	        			   else if(superUserRole!=null && superUserRole!=""){
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy == true) {
+	        			   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
 	        			   }
 	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))) && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T' ) {
@@ -456,7 +457,7 @@ function submitButton()
 	        			   else if(superUserRole!=null && superUserRole!=""){
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy == true) {
+	        			   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
 	        			   }
 	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ( billcollector==null ||  billcollector=="") &&  ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T' ) {
