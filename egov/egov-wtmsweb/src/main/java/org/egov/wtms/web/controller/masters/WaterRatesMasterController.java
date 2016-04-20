@@ -41,6 +41,7 @@ package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -107,14 +108,13 @@ public class WaterRatesMasterController {
                         waterRatesHeader.getPipeSize());
 
         if (waterRatesHeaderTemp != null) {
-            waterRatesHeader = updateWateRatesetails(waterRatesHeaderTemp, waterRatesHeader.getWaterRatesDetails());
             redirectAttrs.addFlashAttribute("waterRatesHeader", waterRatesHeaderTemp);
             model.addAttribute("message", "Monthly Rent for Non-Meter Master Data already exists.");
             viewForm(model);
             return "waterRates-master";
         } else {
             waterRatesHeader.setActive(true);
-            waterRatesHeader = buildappConfigDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
+            waterRatesHeader = buildWaterRateDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
             waterRatesHeaderService.createWaterRatesHeader(waterRatesHeader);
         }
 
@@ -154,15 +154,21 @@ public class WaterRatesMasterController {
             return "waterRates-master";
         final WaterRatesHeader waterRatesHeaderTemp = waterRatesHeaderService.findBy(waterRatesHeaderid);
 
-        if (waterRatesHeaderTemp != null)
+        if (waterRatesHeaderTemp != null) {
+            waterRatesHeaderTemp.setUsageType(waterRatesHeader.getUsageType());
+            waterRatesHeaderTemp.setPipeSize(waterRatesHeader.getPipeSize());
+            waterRatesHeaderTemp.setWaterSource(waterRatesHeader.getWaterSource());
+            waterRatesHeaderTemp.setActive(waterRatesHeader.isActive());
             waterRatesHeader = updateWateRatesetails(waterRatesHeaderTemp, waterRatesHeader.getWaterRatesDetails());
+        }
+
         else
-            waterRatesHeader = buildappConfigDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
+            waterRatesHeader = buildWaterRateDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
         waterRatesHeaderService.updateWaterRatesHeader(waterRatesHeader);
         return getWaterRatesMasterList(model);
     }
 
-    private WaterRatesHeader buildappConfigDetails(final WaterRatesHeader waterRatesHeader,
+    private WaterRatesHeader buildWaterRateDetails(final WaterRatesHeader waterRatesHeader,
             final List<WaterRatesDetails> unitDetail) {
         final Set<WaterRatesDetails> unitSet = new HashSet<WaterRatesDetails>(0);
 
@@ -180,20 +186,17 @@ public class WaterRatesMasterController {
     }
 
     private WaterRatesHeader updateWateRatesetails(final WaterRatesHeader waterRatesHeader,
-            final List<WaterRatesDetails> unitDetail) {
-        final Set<WaterRatesDetails> unitSet = new HashSet<WaterRatesDetails>(0);
-        for (final WaterRatesDetails unitdetailOld : waterRatesHeader.getWaterRatesDetails())
-            for (final WaterRatesDetails unitdetail : unitDetail)
-                if (unitdetail.getFromDate() != null && !"".equals(unitdetail.getMonthlyRate())) {
-                    unitdetailOld.setWaterRatesHeader(waterRatesHeader);
-                    unitdetailOld.setMonthlyRate(unitdetail.getMonthlyRate());
-                    unitdetailOld.setFromDate(unitdetail.getFromDate());
-                    unitSet.add(unitdetailOld);
-
-                    waterRatesHeader.getWaterRatesDetails().clear();
-
-                    waterRatesHeader.getWaterRatesDetails().addAll(unitSet);
+            final List<WaterRatesDetails> newWaterRatesList) {
+        final List<WaterRatesDetails> unitWaterRatesList = new ArrayList<>(0);
+        for (final WaterRatesDetails waterRatesOld : waterRatesHeader.getWaterRatesDetails())
+            for (final WaterRatesDetails waterRatesNew : newWaterRatesList)
+                if (waterRatesNew.getFromDate() != null && !"".equals(waterRatesNew.getMonthlyRate())) {
+                    waterRatesOld.setWaterRatesHeader(waterRatesHeader);
+                    waterRatesOld.setMonthlyRate(waterRatesNew.getMonthlyRate());
+                    waterRatesOld.setFromDate(waterRatesNew.getFromDate());
+                    unitWaterRatesList.add(waterRatesOld);
                 }
+        waterRatesHeader.setWaterRatesDetails(unitWaterRatesList);
         return waterRatesHeader;
     }
 
