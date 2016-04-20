@@ -414,6 +414,28 @@ public class InstrumentService {
         if (instrMap.get(INSTRUMENT_NUMBER) != null)
             instrHeader.setInstrumentNumber((String) instrMap
                     .get(INSTRUMENT_NUMBER));
+        if (instrMap.get(BANK_CODE) != null) {
+            final Bank bank = getBank(instrMap.get(BANK_CODE).toString());
+            if (bank == null)
+                throw new ApplicationRuntimeException(BANK_CODE + "'"
+                        + instrMap.get(BANK_CODE).toString()
+                        + "' is not defined in the system ");
+            else
+                instrHeader.setBankId(bank);
+        } else
+            throw new ApplicationRuntimeException(BANK_CODE + IS_NULL);
+
+        // applicable for payment
+        if (instrMap.get(BANKACCOUNTID) != null) {
+            final Bankaccount bankaccount = getBankaccount(instrMap.get(
+                    BANKACCOUNTID).toString());
+            if (bankaccount == null)
+                throw new ApplicationRuntimeException(BANKACCOUNTID + "'"
+                        + instrMap.get(BANKACCOUNTID).toString()
+                        + "' is not defined in the system ");
+            else
+                instrHeader.setBankAccountId(bankaccount);
+        }
     }
 
     private void validateAndAssignCheque(InstrumentHeader instrHeader,
