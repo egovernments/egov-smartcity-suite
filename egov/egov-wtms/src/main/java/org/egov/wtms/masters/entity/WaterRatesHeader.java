@@ -151,7 +151,8 @@ public class WaterRatesHeader extends AbstractAuditable {
     }
 
     public void setWaterRatesDetails(final List<WaterRatesDetails> waterRatesDetails) {
-        this.waterRatesDetails = waterRatesDetails;
+        this.waterRatesDetails.clear();
+        this.waterRatesDetails.addAll(waterRatesDetails);
     }
 
     public void addWaterRatesDetails(final WaterRatesDetails waterRatesDetail) {
