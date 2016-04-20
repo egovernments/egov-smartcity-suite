@@ -141,11 +141,12 @@ public class WorksUtils {
                     final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
                             .getOwnerPosition().getId(), new Date());
                     for (final Assignment assgn : assignmentList)
-                        for (final String str : desgnArray)
-                            if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
-                                approverPosition = stateObj.getOwnerPosition().getId();
-                                break;
-                            }
+                        if(desgnArray != null)
+                            for (final String str : desgnArray)
+                                if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
+                                    approverPosition = stateObj.getOwnerPosition().getId();
+                                    break;
+                                }
                 }
         } else {
                 final Position posObjToClerk = positionMasterService
