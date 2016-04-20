@@ -58,6 +58,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectCodeService extends PersistenceService<ProjectCode, Long> implements EntityTypeService {
 
+    public ProjectCodeService() {
+        super(ProjectCode.class);
+    }
+    
     @Autowired
     private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
 
