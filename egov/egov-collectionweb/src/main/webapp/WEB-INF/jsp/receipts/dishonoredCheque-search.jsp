@@ -292,8 +292,7 @@
 							headerKey="-1" headerValue="---Choose---"
 							listKey="bank.id + '-' + id"
 							listValue="bank.name + ' ' + branchname"
-							value="%{bank.id + '-' + id}"
-							onchange="getAccountNumbers(this.value);" /> <egov:ajaxdropdown
+							onchange="getAccountNumbers(this.value);"  value="%{bankBranchId}"/> <egov:ajaxdropdown
 							id="accountNumber" fields="['Text','Value']"
 							dropdownId='accountNumber'
 							url='receipts/dishonoredCheque-getAccountNumbers.action'
@@ -327,9 +326,9 @@
 
 					<td class="greybox"><s:text
 							name="dishonorcheque.cheque.dd.date" />:<span class="mandatory1">*</span></td>
+							 <s:date name="chequeDate" var="chqDate" format="dd/MM/yyyy"/>
 					<td class="greybox"><s:textfield id="chequeDate"
-							name="chequeDate" data-date-end-date="0d"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							name="chequeDate"  value="%{chqDate}"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
