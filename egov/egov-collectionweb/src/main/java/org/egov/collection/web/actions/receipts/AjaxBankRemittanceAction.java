@@ -89,7 +89,8 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     private Integer fundId;
     private Integer branchId;
 	private Integer bankAccountId;
-    private final List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
+	private Long serviceId;
+	private final List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
     private List<Bankaccount> bankAccountArrayList;
     private List<ServiceDetails>  serviceNameList;
 
@@ -101,6 +102,11 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                 throw new ValidationException(Arrays.asList(new ValidationError("fund.not.found",
                         "Fund information not available")));
             setFundName(fund.getName());
+        }
+        if(serviceName==null && serviceId!=null && serviceId!=-1)
+        {
+        	final ServiceDetails serviceDetails=(ServiceDetails	)persistenceService.find("from ServiceDetails where id=?",serviceId);
+        	setServiceName(serviceDetails.getName());
         }
         final String bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
@@ -155,6 +161,11 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                         "Fund information not available")));
             setFundName(fund.getName());
         }
+        if(serviceName==null && serviceId!=null && serviceId!=-1)
+        {
+        	final ServiceDetails serviceDetails=(ServiceDetails	)persistenceService.find("from ServiceDetails where id=?",serviceId);
+        	setServiceName(serviceDetails.getName());
+        }
         final String bankAccountQueryString = "select ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                 + "ba.BRANCHID=" + branchId + " and sd.NAME='" + serviceName + "' and fd.NAME='" + fundName + "'";
@@ -199,9 +210,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/ajaxBankRemittance-serviceListOfAccount")
     public String serviceListOfAccount() {
-    	System.out.println(bankAccountId);
-    	  final String serviceAccountQueryString = "select  sd.id as serviceid,sd.name as servicename from EGCL_SERVICEDETAILS sd where sd.id in (select asm.servicedetails from EGCL_BANKACCOUNTSERVICEMAPPING asm where asm.bankaccount="+bankAccountId +")";
-                 
+   	    final String serviceAccountQueryString = "select sd.id as serviceid,sd.name as servicename from EGCL_SERVICEDETAILS sd,EGCL_BANKACCOUNTSERVICEMAPPING asm where sd.id=asm.servicedetails and asm.bankaccount="+bankAccountId;
         final Query serviceListQuery = persistenceService.getSession().createSQLQuery(serviceAccountQueryString);
         final List<Object[]> queryResults = serviceListQuery.list();
 
@@ -346,9 +355,13 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 		this.bankAccountId = bankAccountId;
 	}
 
+    public Long getServiceId() {
+		return serviceId;
+	}
 
-    
-    
+	public void setServiceId(Long serviceId) {
+		this.serviceId = serviceId;
+	}
 
 
 }
