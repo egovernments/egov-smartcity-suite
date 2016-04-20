@@ -93,7 +93,7 @@ public class WaterRatesHeader extends AbstractAuditable {
 
     private boolean active;
 
-    @OneToMany(mappedBy = "waterRatesHeader", fetch = FetchType.LAZY,orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "waterRatesHeader", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<WaterRatesDetails> waterRatesDetails = new ArrayList<WaterRatesDetails>();
 
     @Override
@@ -146,13 +146,11 @@ public class WaterRatesHeader extends AbstractAuditable {
         this.active = active;
     }
 
- 
-
     public List<WaterRatesDetails> getWaterRatesDetails() {
         return waterRatesDetails;
     }
 
-    public void setWaterRatesDetails(List<WaterRatesDetails> waterRatesDetails) {
+    public void setWaterRatesDetails(final List<WaterRatesDetails> waterRatesDetails) {
         this.waterRatesDetails = waterRatesDetails;
     }
 

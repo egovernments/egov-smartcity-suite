@@ -143,8 +143,6 @@ $(document).ready(function(){
 function edit(waterratesHeader)
 {
 	window.open("/wtms/masters/waterRatesMaster/"+waterratesHeader, "_self");
-	/*window.open("/wtms/masters/waterRatesMaster/"+waterratesHeader, '',
-	'scrollbars=yes,width=1000,height=700,status=yes');*/
 	console.log("Water Details ->"+waterratesHeader);
 	
 }

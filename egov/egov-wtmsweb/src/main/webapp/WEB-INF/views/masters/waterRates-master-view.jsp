@@ -43,150 +43,97 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-   <form:form method ="post" action="" class="form-horizontal form-groups-bordered"  id="waterrates-view"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-			<input type="hidden" name="waterRatesHeaderList" id="waterRatesHeaderList" value="${waterRatesHeaderList}"> 
-			<input type="hidden" id="waterratesid" name="waterratesid"
-						value="${waterConnectionDetails.connection.consumerCode}" />
-			
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-						</div>
-					
-					<div class="panel-body custom-form ">
-					<c:if test="${not empty message}">
+<form:form method ="post" action="" class="form-horizontal form-groups-bordered"  id="waterrates-view"
+			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<input type="hidden" name="waterRatesHeaderList" id="waterRatesHeaderList" value="${waterRatesHeaderList}"> 
+<input type="hidden" id="waterratesid" name="waterratesid" value="${waterConnectionDetails.connection.consumerCode}" />
+	<div class="panel panel-primary" data-collapsed="0">
+		<div class="panel-heading"></div>
+			<div class="panel-body custom-form ">
+				<c:if test="${not empty message}">
                     <div >${message}</div>
                 </c:if>
-					<div class="form-group" align ="center">
-								Edit Water Rates Master
-								</div>
- 					
 	              <c:choose>
-    <c:when test="${waterRatesHeaderList.isEmpty()}">
-    <div class="form-group" align ="center">
-       No Master Data
-     </div>
-     </c:when>
-    <c:otherwise>
+<c:when test="${waterRatesHeaderList.isEmpty()}">
+	<div class="form-group" align ="center"> No Master Data</div>
+ </c:when>
+ <c:otherwise>
       <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
                   <thead>
 					<tr>
 						<th colspan="1" >
-							<div align="center">
-						 <spring:message code="lbl.watersourcetype" /> 
-						    </div>
+							<div align="center"><spring:message code="lbl.watersourcetype" /> </div>
 						</th>
-						<th   colspan="1" >
-						   <div align="center">
-						<spring:message code="lbl.usagetype" /> 
-						    </div>
+						<th colspan="1" >
+						   <div align="center"><spring:message code="lbl.usagetype" /> </div>
 						</th>
-						<th   colspan="1" >
-						   <div align="center">
-						<spring:message code="lbl.hscpipesize.inches" />
-						   </div>
+						<th colspan="1" >
+						   <div align="center"><spring:message code="lbl.hscpipesize.inches" /></div>
+						</th>
+						<th align="center" colspan="1" >
+						   <div align="center"><spring:message code="lbl.monthlyrate" /> </div>
 						</th>
 						<th  align="center" colspan="1" >
-						   <div align="center">
-						Monthly Rate
-						    </div>
-						
+						   <div align="center"><spring:message code="lbl.effectiveformdate" /> </div>
 						</th>
 						<th  align="center" colspan="1" >
-						   <div align="center">
-						Effective From Date
-						    </div>
-						
+						   <div align="center"><spring:message code="lbl.status"/></div>
 						</th>
-						
-						<th  align="center" colspan="1" >
-						   <div align="center">
-						Status
-						    </div>
-						
-						</th>
-
-						<th   colspan="1" >
-						    <div align="center">
-						<spring:message code="lbl.edit" />
-						    </div>
-						
+						<th colspan="1" >
+						    <div align="center"><spring:message code="lbl.edit" /></div>
 						</th>
 					</tr>
 					</thead>
 					<c:forEach var="waterRatesHeader" items="${waterRatesHeaderList}" >
 					<tr>
-							<td  colspan="1" >
-								<div align="center">
+						<td  colspan="1" >
+							<div align="center">
 								<c:out value="${waterRatesHeader.waterSource.waterSourceType}" />
-								<!-- 	<s:property value="bookNumber" /> -->
-								</div>
-							</td>
-							<td  colspan="1" >
-								<div align="center">
+							</div>
+						</td>
+						<td  colspan="1" >
+							<div align="center">
 								<c:out value="${waterRatesHeader.usageType.name}" />
-								
-								</div>
+							</div>
+						</td>
+						<td colspan="1" >
+								<div align="center"><c:out value="${waterRatesHeader.pipeSize.code}"/></div>
 							</td>
-							<td  colspan="1" >
-								<div align="center">
-								<c:out value="${waterRatesHeader.pipeSize.code}" />
-									
-								</div>
+							<td colspan="1" >
+								<div align="center"><c:out value="${waterRatesHeader.waterRatesDetails[0].monthlyRate}" /></div>
 							</td>
-
-							<td  colspan="1" >
-								<div align="center">
-								<c:out value="${waterRatesHeader.waterRatesDetails[0].monthlyRate}" />
-								
-								</div>
+							<td colspan="1" >
+								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${waterRatesHeader.waterRatesDetails[0].fromDate}"/></div>
 							</td>
-							
-							<td  colspan="1" >
+							<td colspan="1" >
 								<div align="center">
-								
-								<fmt:formatDate pattern="dd-MM-yyyy" 
-            value="${waterRatesHeader.waterRatesDetails[0].fromDate}"/>
-								<%-- <c:out value="${waterRatesHeader.waterRatesDetails[0].fromDate}" /> --%>
-								
-								</div>
-							</td>
-							
-							<td  colspan="1" >
-								<div align="center">
-								
 								<c:choose>
-                                 <c:when test="${waterRatesHeader.active == 'true'}">
-                                     <c:out value="ACTIVE" />
-     							 </c:when>    
-    							 <c:otherwise>
-       								 <c:out value="INACTIVE" />
-    							 </c:otherwise>
+									<c:when test="${waterRatesHeader.active == 'true'}">
+                                     	<c:out value="ACTIVE" />
+     							 	</c:when>    
+    							 	<c:otherwise>
+       								 	<c:out value="INACTIVE" />
+    							 	</c:otherwise>
 								</c:choose>
 								</div>
 							</td>
-							
-							
 							<td  colspan="1">
 								<div align="center">
 								  <a href="javascript:void(0);" onclick="edit('<c:out value="${waterRatesHeader.id}" />');">Edit</a>
 								</div>
 							</td>
 						</tr>
-						</c:forEach> 	
-					</table>
-    </c:otherwise>
-     </c:choose>
+				</c:forEach> 	
+		</table>
+	</c:otherwise>
+</c:choose>
      <div class="form-group text-center" >
-    
-							 	<%-- <form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></form:button> --%>
-							 	<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)">Add New</a>
-								<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
-							</div>
-     </div>
-     </div>
-		</form:form>
+			<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)">Add New</a>
+			<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
+	</div>
+  </div>
+</div>
+</form:form>
 				<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
 	            type="text/javascript"></script>
