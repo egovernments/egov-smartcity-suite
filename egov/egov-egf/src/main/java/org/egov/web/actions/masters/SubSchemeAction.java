@@ -51,6 +51,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -60,7 +61,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -77,6 +78,8 @@ public class SubSchemeAction extends BaseFormAction {
      */
     private static final long serialVersionUID = -3712472100095261379L;
     private SubScheme subScheme = new SubScheme();
+    @Autowired
+    SubSchemeHibernateDAO subSchemeHibernateDAO;
     private boolean isActive = false;
     private boolean clearValues = false;
     private int fundId;
@@ -84,11 +87,14 @@ public class SubSchemeAction extends BaseFormAction {
     private int schemeId;
     private Long subSchemeId;
     private List<SubScheme> subSchemeList;
+    private List<SubScheme> subSchemeListCN;
     public static final String SEARCH = "search";
     public static final String VIEW = "view";
     private String showMode;
     private SubSchemeService subSchemeService;
 
+    private String code;
+	private String name;
     @Override
     public Object getModel() {
         return subScheme;
@@ -132,6 +138,26 @@ public class SubSchemeAction extends BaseFormAction {
         subScheme.setCreatedDate(new Date());
         subScheme.setCreatedBy(getLoggedInUser());
         subScheme.setLastmodifieddate(new Date());
+        subSchemeListCN = persistenceService
+				.findAllBy(
+						"from SubScheme where code=? or name=? ",code,name);
+        if(subSchemeListCN.size()!=0)
+        {
+        	for(SubScheme s:subSchemeListCN)
+        	{
+        if(name.equalsIgnoreCase(s.getName()))
+        {
+        	addActionError(getText("subscheme.name.already.exists"));
+        	
+        }
+        if(code.equalsIgnoreCase(s.getCode())) 
+        {
+        	addActionError(getText("subscheme.code.already.exists"));
+        	
+        }
+        	}
+        return NEW;
+        }
         try {
             subSchemeService.persist(subScheme);
             subSchemeService.getSession().flush();
@@ -330,5 +356,21 @@ public class SubSchemeAction extends BaseFormAction {
     public void setSubSchemeId(final Long subSchemeId) {
         this.subSchemeId = subSchemeId;
     }
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 }
