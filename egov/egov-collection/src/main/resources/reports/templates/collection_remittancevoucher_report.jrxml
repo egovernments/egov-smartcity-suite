@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-04-20T17:44:34 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_voucher_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="b76bdff0-f9b9-4afd-886d-d310a7b060b2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.lang.*"/>
@@ -52,7 +53,7 @@
 	</parameter>
 	<parameter name="Q_BRANCH_ID" class="java.lang.String">
 		<parameterDescription><![CDATA[Where clause for bankbranch id]]></parameterDescription>
-		<defaultValueExpression><![CDATA[($P{EGOV_BRANCH_ID} == null || $P{EGOV_BRANCH_ID} == -1) ? "" : "AND EGCL_SERVICEDETAILS.ID = " + $P{EGOV_BRANCH_ID}]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{EGOV_BRANCH_ID} == null || $P{EGOV_BRANCH_ID} == -1) ? "" : "AND BANKBRANCH.ID = " + $P{EGOV_BRANCH_ID}]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT DISTINCT(VOUCHERHEADER.VOUCHERNUMBER) AS VOUCHER_NUMBER,
@@ -323,7 +324,7 @@ ORDER BY
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="651" y="116" width="131" height="20" uuid="3410f866-eb63-4f3b-940a-e60e33b96759"/>
+				<reportElement x="608" y="116" width="131" height="20" uuid="3410f866-eb63-4f3b-940a-e60e33b96759"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -351,7 +352,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE} == null ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="552" y="116" width="98" height="20" uuid="40c03bb3-d584-41bb-a5df-a6f32fd2e1d7"/>
+				<reportElement x="510" y="116" width="98" height="20" uuid="40c03bb3-d584-41bb-a5df-a6f32fd2e1d7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -393,7 +394,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EGCL_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="552" y="138" width="98" height="20" uuid="5ac32a18-7dfa-4cc8-aac1-06ee4e1fb028"/>
+				<reportElement x="509" y="138" width="98" height="20" uuid="5ac32a18-7dfa-4cc8-aac1-06ee4e1fb028"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -407,7 +408,7 @@ ORDER BY
 				<text><![CDATA[Bank Account:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="651" y="138" width="131" height="20" uuid="1d0accb7-8c1c-4e15-82de-91d29f4ed490"/>
+				<reportElement x="608" y="138" width="201" height="20" uuid="1d0accb7-8c1c-4e15-82de-91d29f4ed490"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -421,7 +422,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[($P{EGOV_BANKACCOUNT_ID} == null || $P{EGOV_BANKACCOUNT_ID} == -1) ? "All Accounts" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT BANK.NAME||'-'||BANKACCOUNT.ACCOUNTNUMBER FROM BANK, BANKACCOUNT,BANKBRANCH WHERE BANKACCOUNT.BRANCHID=BANKBRANCH.ID AND BANKBRANCH.BANKID=BANK.ID AND BANKACCOUNT.ID=" + $P{EGOV_BANKACCOUNT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="552" y="160" width="98" height="20" uuid="0257acb7-0219-4baa-b120-21ee2b63e8ea"/>
+				<reportElement x="509" y="160" width="98" height="20" uuid="0257acb7-0219-4baa-b120-21ee2b63e8ea"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -435,7 +436,7 @@ ORDER BY
 				<text><![CDATA[User Name:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="651" y="160" width="131" height="20" uuid="4e245512-5900-4afa-a123-dbcd74aa874d"/>
+				<reportElement x="608" y="160" width="131" height="20" uuid="4e245512-5900-4afa-a123-dbcd74aa874d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -446,7 +447,7 @@ ORDER BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_CREATEDBY_ID} == null || $P{EGOV_CREATEDBY_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT USER_NAME FROM EG_USER WHERE ID = " + $P{EGOV_CREATEDBY_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_CREATEDBY_ID} == null || $P{EGOV_CREATEDBY_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT USERNAME FROM EG_USER WHERE ID = " + $P{EGOV_CREATEDBY_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="51" y="136" width="79" height="20" uuid="56bb9d4b-20d5-4156-b965-de915ab65b8e"/>
@@ -463,7 +464,7 @@ ORDER BY
 				<text><![CDATA[Bank Name:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="131" y="136" width="131" height="20" uuid="17c671ad-c541-46f3-a7e5-2e1519ef3b3b"/>
+				<reportElement x="131" y="136" width="239" height="20" uuid="17c671ad-c541-46f3-a7e5-2e1519ef3b3b"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -476,8 +477,8 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA[($P{EGOV_BRANCH_ID} == null || $P{EGOV_BRANCH_ID} == -1) ? "All Banks" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT BANK.NAME FROM BANK,BANKBRANCH WHERE BANKBRANCH.BANKID = BANK.ID and BANKBRANCH.ID=" + $P{EGOV_BRANCH_ID})]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="20" y="10" width="60" height="60" uuid="1a91ab96-586b-4653-8f8b-4dabf263d6a5"/>
+			<image onErrorType="Blank">
+				<reportElement stretchType="RelativeToBandHeight" x="33" y="10" width="91" height="92" isRemoveLineWhenBlank="true" uuid="bd413854-a8d2-4a66-8117-3b8e843ce498"/>
 				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 		</band>
@@ -847,10 +848,10 @@ ORDER BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_CREATEDBY_ID} == null || $P{EGOV_CREATEDBY_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT USER_NAME FROM EG_USER WHERE ID = " + $P{EGOV_CREATEDBY_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_CREATEDBY_ID} == null || $P{EGOV_CREATEDBY_ID} == -1) ? "All Users" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT USERNAME FROM EG_USER WHERE ID = " + $P{EGOV_CREATEDBY_ID})]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="124" y="0" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
+				<reportElement x="163" y="0" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
 				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 		</band>
