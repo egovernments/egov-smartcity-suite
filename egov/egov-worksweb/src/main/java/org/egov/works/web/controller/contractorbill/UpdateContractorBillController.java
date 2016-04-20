@@ -54,7 +54,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -151,19 +151,31 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
+        try {
+            if (contractorBillRegister.getStatus().getCode()
+                    .equals(ContractorBillRegister.BillStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                contractorBillRegisterService.checkBudgetAndGenerateBANumber(contractorBillRegister);
+        } catch (final ValidationException e) {
+            // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
+            // checkBudgetAndGenerateBANumber API call. Needs to replace with errors.reject
+            throw new ApplicationRuntimeException("error.contractorbill.budgetcheck.insufficient.amount");
+            /*
+             * for (final ValidationError error : e.getErrors()) { if(error.getMessage().contains("Budget Check failed for ")) {
+             * errors.reject(messageSource.getMessage("error.contractorbill.budgetcheck.insufficient.amount",null,null)+". "
+             * +error.getMessage()); } else errors.reject(error.getMessage()); }
+             */
+        }
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return loadViewData(model, request, contractorBillRegister);
         } else {
             if (null != workFlowAction)
-                try {
-                    savedContractorBillRegister = contractorBillRegisterService.update(contractorBillRegister, approvalPosition,
-                            approvalComment, null, workFlowAction,
-                            mode, files);
-                } catch (final ValidationException e) {
-                    for (final ValidationError error : e.getErrors())
-                        errors.reject(error.getMessage());
-                }
+                savedContractorBillRegister = contractorBillRegisterService.update(contractorBillRegister, approvalPosition,
+                        approvalComment, null, workFlowAction,
+                        mode, files);
+
             redirectAttributes.addFlashAttribute("contractorBillRegister", savedContractorBillRegister);
 
             final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
@@ -183,8 +195,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
-        if (contractorBillRegister.getCurrentState() != null)
-            model.addAttribute("currentState", contractorBillRegister.getCurrentState().getValue());
+        if (contractorBillRegister.getState() != null)
+            model.addAttribute("currentState", contractorBillRegister.getState().getValue());
 
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
         if (contractorBillRegister.getState() != null

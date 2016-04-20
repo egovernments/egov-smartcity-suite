@@ -53,7 +53,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -191,8 +191,14 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                         .create(contractorBillRegister, lineEstimateDetails, files, approvalPosition,
                                 approvalComment, null, workFlowAction);
             } catch (final ValidationException e) {
-                for (final ValidationError error : e.getErrors())
-                    resultBinder.reject(error.getMessage());
+                // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
+                // checkBudgetAndGenerateBANumber API call. Needs to replace with errors.reject
+                throw new ApplicationRuntimeException("error.contractorbill.budgetcheck.insufficient.amount");
+                /*
+                 * for (final ValidationError error : e.getErrors()) { if(error.getMessage().contains("Budget Check failed for "))
+                 * { errors.reject(messageSource.getMessage("error.contractorbill.budgetcheck.insufficient.amount",null,null)+". "
+                 * +error.getMessage()); } else errors.reject(error.getMessage()); }
+                 */
             }
             final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
                     savedContractorBillRegister.getState(), savedContractorBillRegister.getId(), approvalPosition);

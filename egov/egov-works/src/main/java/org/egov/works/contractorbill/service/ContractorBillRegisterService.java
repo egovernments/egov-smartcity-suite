@@ -120,19 +120,21 @@ public class ContractorBillRegisterService {
     @Autowired
     private LineEstimateService lineEstimateService;
     
+   private ScriptService scriptExecutionService;
+    
     @Autowired
     private VoucherService voucherService;
     
-    @Autowired
-    private ScriptService scriptExecutionService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Autowired
-    public ContractorBillRegisterService(final ContractorBillRegisterRepository contractorBillRegisterRepository) {
+    public ContractorBillRegisterService(final ContractorBillRegisterRepository contractorBillRegisterRepository, 
+            ScriptService scriptExecutionService) {
         this.contractorBillRegisterRepository = contractorBillRegisterRepository;
+        this.scriptExecutionService = scriptExecutionService;
     }
 
     public ContractorBillRegister getContractorBillById(final Long id) {
@@ -193,16 +195,6 @@ public class ContractorBillRegisterService {
             contractorBillRegister.setApprovedDate(new Date());
             contractorBillRegister.getEgBillregistermis().setSourcePath(
                     "/egworks/contractorbill/view/" + contractorBillRegister.getId());
-        }
-        
-        try {
-            if (contractorBillRegister.getStatus().getCode()
-                    .equals(ContractorBillRegister.BillStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) {
-                checkBudgetAndGenerateBANumber(contractorBillRegister);
-            }
-        }
-        catch (final ValidationException e) {
-            throw new ValidationException(e.getErrors());
         }
         contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
         contractorBillRegister.setBillstatus(contractorBillRegister.getStatus().getCode());
@@ -392,11 +384,11 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatus(workOrder, ContractorBillRegister.BillStatus.CANCELLED.toString());  
     }
     
-    private ContractorBillRegister checkBudgetAndGenerateBANumber(final ContractorBillRegister contractorBill) {
+    public ContractorBillRegister checkBudgetAndGenerateBANumber(final ContractorBillRegister contractorBill) {
         final ScriptContext scriptContext = ScriptService.createContext("voucherService", voucherService, "bill",
                 contractorBill);
         scriptExecutionService.executeScript("egf.bill.budgetcheck", scriptContext);
-        return contractorBill;
+        return contractorBill;   
     }
-
+  
 }
