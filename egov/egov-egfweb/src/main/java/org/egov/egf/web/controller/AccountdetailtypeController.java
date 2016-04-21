@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.egf.web.adaptor.AccountdetailtypeJsonAdaptor;
@@ -53,7 +55,7 @@ public class AccountdetailtypeController {
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String create(@ModelAttribute final Accountdetailtype accountdetailtype,
+	public String create(@Valid @ModelAttribute final Accountdetailtype accountdetailtype,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
 		if (errors.hasErrors()) {
