@@ -62,7 +62,9 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
+import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 
 @Entity
@@ -114,6 +116,9 @@ public class ContractorBillRegister extends EgBillregister {
 
     @Transient
     private String approvalComent;
+    
+    @Transient
+    private MBHeader mbHeader;
 
     @Override
     public String getStateDetails() {
@@ -234,5 +239,13 @@ public class ContractorBillRegister extends EgBillregister {
 
     public void setApprovedBy(User approvedBy) {
         this.approvedBy = approvedBy;
+    }
+
+    public MBHeader getMbHeader() {
+        return mbHeader;
+    }
+
+    public void setMbHeader(MBHeader mbHeader) {
+        this.mbHeader = mbHeader;
     }
 }

@@ -39,40 +39,36 @@
 #------------------------------------------------------------------------------- -->
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>	
-		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="contractorbill-save" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>' "> 
-			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" /> 
-			<form:hidden path="billamount"  name="billamount" id="billamount" />
-			<div class="row">
-				<div class="col-md-12"> 
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title"><spring:message code="lbl.header" /></div> 
-						</div>
-						<div>
-							<spring:hasBindErrors name="contractorBillRegister">
-								<div class="alert alert-danger col-md-10 col-md-offset-1">
-						      			<form:errors path="*" /><br/>
-						      	</div>
-				        	</spring:hasBindErrors>
-				        </div>
-						<div class="panel-body custom-form">
-							<jsp:include page="contractorBill-header.jsp"/>
-							<jsp:include page="contractorBill-mbdetails.jsp"/>
-							<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
-							<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
-							<jsp:include page="uploadDocuments.jsp"/>
-						</div>
-					</div>
-				</div>
-			</div>	
-			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<form:hidden path="mbHeader.workOrder.id"  value="${workOrder.id}" /> 
+<form:hidden path="mbHeader.id"  value="${contractorBillRegister.mbHeader.id}" /> 
+<form:hidden path="mbHeader.egBillregister.id"  value="${contractorBillRegister.id}" />
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.referencenumber" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="mbRefNo" path="mbHeader.mbRefNo" maxlength="32" required="required" />
+		<form:errors path="mbHeader.mbRefNo" cssClass="add-margin error-msg" />		
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.mb.pagenumber" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+			<div class="col-sm-6">
+				<form:input class="form-control patternvalidation" data-pattern="number" id="fromPageNo" path="mbHeader.fromPageNo" maxlength="4" required="required" placeholder="From" />
+				<form:errors path="mbHeader.fromPageNo" cssClass="add-margin error-msg" />	
 			</div>
-		</form:form>  
-<script src="<c:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+			<div class="col-sm-6">
+				<form:input class="form-control patternvalidation" data-pattern="number" id="toPageNo" path="mbHeader.toPageNo" maxlength="4" required="required" placeholder="To" />
+				<form:errors path="mbHeader.toPageNo" cssClass="add-margin error-msg" /> 
+			</div>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.date" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:input id="mbDate" path="mbHeader.mbDate" class="form-control datepicker" data-date-end-date="0d" required="required"  />
+		<form:errors path="mbHeader.mbDate" cssClass="add-margin error-msg" />
+		<input type="hidden" id="errorMBDate" value="<spring:message code='error.validate.mbdate.lessthan.loadate' />" />
+	</div>
+</div>

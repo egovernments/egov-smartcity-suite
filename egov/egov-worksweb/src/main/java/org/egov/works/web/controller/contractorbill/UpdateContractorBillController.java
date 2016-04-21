@@ -63,6 +63,8 @@ import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -95,6 +97,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
+    @Autowired
+    private MBHeaderService mbHeaderService;
 
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
@@ -221,6 +226,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         final ContractorBillRegister newcontractorBillRegister = getContractorBillDocuments(contractorBillRegister);
         model.addAttribute("contractorBillRegister", newcontractorBillRegister);
+        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(newcontractorBillRegister);
+        if (mbHeaders != null && !mbHeaders.isEmpty())
+            newcontractorBillRegister.setMbHeader(mbHeaders.get(0));
         return "contractorBill-update";
     }
 

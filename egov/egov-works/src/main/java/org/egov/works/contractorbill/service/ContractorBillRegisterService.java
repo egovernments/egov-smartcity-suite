@@ -69,6 +69,8 @@ import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -88,7 +90,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class ContractorBillRegisterService {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ContractorBillRegisterService.class);
 
     @PersistenceContext
@@ -104,10 +106,10 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
-    
+
     @Autowired
     private SimpleWorkflowService<ContractorBillRegister> contractorBillRegisterWorkflowService;
-    
+
     @Autowired
     private AssignmentService assignmentService;
 
@@ -116,23 +118,25 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private PositionMasterService positionMasterService;
-    
+
     @Autowired
     private LineEstimateService lineEstimateService;
-    
-   private ScriptService scriptExecutionService;
-    
+
+    private final ScriptService scriptExecutionService;
+
     @Autowired
     private VoucherService voucherService;
-    
+
+    @Autowired
+    private MBHeaderService mbHeaderService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Autowired
-    public ContractorBillRegisterService(final ContractorBillRegisterRepository contractorBillRegisterRepository, 
-            ScriptService scriptExecutionService) {
+    public ContractorBillRegisterService(final ContractorBillRegisterRepository contractorBillRegisterRepository,
+            final ScriptService scriptExecutionService) {
         this.contractorBillRegisterRepository = contractorBillRegisterRepository;
         this.scriptExecutionService = scriptExecutionService;
     }
@@ -162,18 +166,19 @@ public class ContractorBillRegisterService {
         contractorBillRegister.setExpendituretype(WorksConstants.BILL_EXPENDITURE_TYPE);
         final EgBillregistermis egBillRegisterMis = setEgBillRegisterMis(contractorBillRegister, lineEstimateDetails);
         contractorBillRegister.setEgBillregistermis(egBillRegisterMis);
-        
+
         try {
             checkBudgetAndGenerateBANumber(contractorBillRegister);
-        }
-        catch (final ValidationException e) {
+        } catch (final ValidationException e) {
             throw new ValidationException(e.getErrors());
         }
         final ContractorBillRegister savedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
-        
+
         createContractorBillRegisterWorkflowTransition(savedContractorBillRegister,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
-        
+
+        populateAndSaveMBHeader(savedContractorBillRegister);
+
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedContractorBillRegister,
                 WorksConstants.CONTRACTORBILL);
         if (!documentDetails.isEmpty()) {
@@ -182,7 +187,7 @@ public class ContractorBillRegisterService {
         }
         return savedContractorBillRegister;
     }
-    
+
     @Transactional
     public ContractorBillRegister update(
             final ContractorBillRegister contractorBillRegister,
@@ -191,17 +196,20 @@ public class ContractorBillRegisterService {
             final MultipartFile[] files) throws ValidationException, IOException {
         ContractorBillRegister updatedContractorBillRegister = null;
 
-        if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
+        if (workFlowAction.equalsIgnoreCase(WorksConstants.FORWARD_ACTION.toString()))
+            populateAndSaveMBHeader(contractorBillRegister);
+        else if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
             contractorBillRegister.setApprovedDate(new Date());
             contractorBillRegister.setApprovedBy(securityUtils.getCurrentUser());
             contractorBillRegister.getEgBillregistermis().setSourcePath(
                     "/egworks/contractorbill/view/" + contractorBillRegister.getId());
-        }
+            approveMBHeader(contractorBillRegister);
+        } else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION))
+            cancelMBHeader(contractorBillRegister);
         contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
         contractorBillRegister.setBillstatus(contractorBillRegister.getStatus().getCode());
-        
-        updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
 
+        updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
         createContractorBillRegisterWorkflowTransition(updatedContractorBillRegister,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
@@ -231,7 +239,7 @@ public class ContractorBillRegisterService {
         egBillRegisterMis.setLastupdatedtime(new Date());
         return egBillRegisterMis;
     }
-    
+
     public Long getApprovalPositionByMatrixDesignation(final ContractorBillRegister contractorBillRegister,
             Long approvalPosition, final String additionalRule, final String mode, final String workFlowAction) {
         final WorkFlowMatrix wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister
@@ -250,7 +258,7 @@ public class ContractorBillRegisterService {
 
         return approvalPosition;
     }
-    
+
     public void createContractorBillRegisterWorkflowTransition(final ContractorBillRegister contractorBillRegister,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
@@ -268,11 +276,11 @@ public class ContractorBillRegisterService {
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = WorksConstants.WF_STATE_REJECTED;
             contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-            .withComments(approvalComent)
-            .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-            .withOwner(wfInitiator.getPosition())
-            .withNextAction("")
-            .withNatureOfTask(natureOfwork);
+                    .withComments(approvalComent)
+                    .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition())
+                    .withNextAction("")
+                    .withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
@@ -281,61 +289,65 @@ public class ContractorBillRegisterService {
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, currState, null);
                 contractorBillRegister.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction())
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
                 contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction("")
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction("")
+                        .withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
                 contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                .withComments(approvalComent)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                .withNextAction(wfmatrix.getNextAction())
-                .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
             }
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
     }
-    
-    public void contractorBillRegisterStatusChange(final ContractorBillRegister contractorBillRegister, final String workFlowAction,
+
+    public void contractorBillRegisterStatusChange(final ContractorBillRegister contractorBillRegister,
+            final String workFlowAction,
             final String mode) throws ValidationException {
         if (null != contractorBillRegister && null != contractorBillRegister.getStatus()
                 && null != contractorBillRegister.getStatus().getCode())
             if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())
-                    && contractorBillRegister.getState() != null && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+                    && contractorBillRegister.getState() != null
+                    && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
                 contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                         ContractorBillRegister.BillStatus.APPROVED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                         ContractorBillRegister.BillStatus.REJECTED.toString()));
             else if (contractorBillRegister.getStatus().getCode()
-                    .equals(ContractorBillRegister.BillStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+                    .equals(ContractorBillRegister.BillStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
                 contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                         ContractorBillRegister.BillStatus.CANCELLED.toString()));
             else if (contractorBillRegister.getStatus().getCode()
-                    .equals(ContractorBillRegister.BillStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                    .equals(ContractorBillRegister.BillStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                         ContractorBillRegister.BillStatus.CREATED.toString()));
 
     }
-    
+
     public List<ContractorBillRegister> searchContractorBill(final SearchRequestContractorBill searchRequestContractorBill) {
-     // TODO Need TO handle in single query
+        // TODO Need TO handle in single query
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
                 .createAlias("workOrder", "cbrwo")
                 .createAlias("cbrwo.contractor", "cbrwocont");
-        
+
         if (searchRequestContractorBill != null) {
             if (searchRequestContractorBill.getBillFromDate() != null)
                 criteria.add(Restrictions.ge("billdate", searchRequestContractorBill.getBillFromDate()));
@@ -347,31 +359,35 @@ public class ContractorBillRegisterService {
                 criteria.add(Restrictions.ilike("billnumber", searchRequestContractorBill.getBillNumber(), MatchMode.ANYWHERE));
             if (searchRequestContractorBill.getStatus() != null)
                 criteria.add(Restrictions.eq("billstatus", searchRequestContractorBill.getStatus()));
-            if (searchRequestContractorBill.getWorkIdentificationNumber() != null){
-                final List<String> estimateNumbersforWIN = lineEstimateService.getEstimateNumbersForWorkIdentificationNumber(searchRequestContractorBill.getWorkIdentificationNumber());
+            if (searchRequestContractorBill.getWorkIdentificationNumber() != null) {
+                final List<String> estimateNumbersforWIN = lineEstimateService
+                        .getEstimateNumbersForWorkIdentificationNumber(searchRequestContractorBill.getWorkIdentificationNumber());
                 if (estimateNumbersforWIN.isEmpty())
                     estimateNumbersforWIN.add("");
                 criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforWIN));
             }
             if (searchRequestContractorBill.getContractorName() != null)
                 criteria.add(Restrictions.eq("cbrwocont.name", searchRequestContractorBill.getContractorName()));
-            if (searchRequestContractorBill.getDepartment() != null){
-                final List<String> estimateNumbers = lineEstimateService.getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());
+            if (searchRequestContractorBill.getDepartment() != null) {
+                final List<String> estimateNumbers = lineEstimateService
+                        .getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());
                 if (estimateNumbers.isEmpty())
                     estimateNumbers.add("");
                 criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbers));
             }
-            if(searchRequestContractorBill.isSpillOverFlag()){
-                final List<String> estimateNumbersforSpillOverFlag = lineEstimateService.getEstimateNumbersForSpillOverFlag(searchRequestContractorBill.isSpillOverFlag());
+            if (searchRequestContractorBill.isSpillOverFlag()) {
+                final List<String> estimateNumbersforSpillOverFlag = lineEstimateService
+                        .getEstimateNumbersForSpillOverFlag(searchRequestContractorBill.isSpillOverFlag());
                 criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforSpillOverFlag));
             }
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-    
+
     public List<String> findWorkIdentificationNumbersToSearchContractorBill(final String code) {
-        final List<String> workIdNumbers = contractorBillRegisterRepository.findWorkIdentificationNumberToSearchContractorBill("%" + code + "%");
+        final List<String> workIdNumbers = contractorBillRegisterRepository
+                .findWorkIdentificationNumberToSearchContractorBill("%" + code + "%");
         return workIdNumbers;
     }
 
@@ -380,16 +396,45 @@ public class ContractorBillRegisterService {
                 WorksConstants.APPROVED);
         return results;
     }
-    
+
     public BigDecimal getTotalBillAmountByWorkOrder(final WorkOrder workOrder) {
-        return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatus(workOrder, ContractorBillRegister.BillStatus.CANCELLED.toString());  
+        return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatus(workOrder,
+                ContractorBillRegister.BillStatus.CANCELLED.toString());
     }
-    
+
     public ContractorBillRegister checkBudgetAndGenerateBANumber(final ContractorBillRegister contractorBill) {
         final ScriptContext scriptContext = ScriptService.createContext("voucherService", voucherService, "bill",
                 contractorBill);
         scriptExecutionService.executeScript("egf.bill.budgetcheck", scriptContext);
-        return contractorBill;   
+        return contractorBill;
     }
-  
+
+    private void populateAndSaveMBHeader(final ContractorBillRegister contractorBillRegister) {
+        final MBHeader mbHeader = contractorBillRegister.getMbHeader();
+        MBHeader existingMBHeader = null;
+        if(contractorBillRegister.getMbHeader() != null && contractorBillRegister.getMbHeader().getId() != null)
+            existingMBHeader = mbHeaderService.getMBHeaderById(contractorBillRegister.getMbHeader().getId());
+       if(existingMBHeader != null) {
+           mbHeader.setCreatedBy(existingMBHeader.getCreatedBy());
+           mbHeader.setCreatedDate(existingMBHeader.getCreatedDate());
+       }
+        mbHeader.setMbAmount(contractorBillRegister.getBillamount());
+        mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                MBHeader.MeasurementBookStatus.CREATED.toString()));
+        mbHeader.setEgBillregister(contractorBillRegister);
+        mbHeaderService.create(mbHeader);
+    }
+
+    private void approveMBHeader(final ContractorBillRegister contractorBillRegister) {
+        final MBHeader mbHeader = mbHeaderService.getMBHeaderById(contractorBillRegister.getMbHeader().getId());
+        mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                MBHeader.MeasurementBookStatus.APPROVED.toString()));
+        mbHeaderService.create(mbHeader);
+    }
+
+    private void cancelMBHeader(final ContractorBillRegister contractorBillRegister) {
+        final MBHeader mbHeader = mbHeaderService.getMBHeaderById(contractorBillRegister.getMbHeader().getId());
+        mbHeaderService.cancel(mbHeader);
+    }
+
 }

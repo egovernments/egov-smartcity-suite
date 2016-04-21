@@ -73,13 +73,21 @@ $(document).ready(function(){
 				var partyBillDate = $('#partyBillDate').data('datepicker').date;
 				if(workOrderDate > partyBillDate) {
 					bootbox.alert($('#errorPartyBillDate').val());
-					$('#partyBillDate').val("");
+					$('#partyBillDate').val(""); 
 					return false;
 				}
-				else {
-					document.forms[0].submit();	
+			}	
+			if($('#mbDate').val() != '') { 
+				var workOrderDate = $('#workOrderDate').data('datepicker').date;
+				var mbDate = $('#mbDate').data('datepicker').date;
+				if(workOrderDate > mbDate) {
+					bootbox.alert($('#errorMBDate').val());
+					$('#mbDate').val("");
+					return false;
 				}
 			}	
+			if(!validateMBPageNumbers())
+				return false;
 			if(!validateNetPayableAmount())
 				return false;
 			return validateWorkFlowApprover(button);
@@ -269,6 +277,18 @@ function calculateNetPayableAmount(){
 	$('#netPayableAmount').val(roundTo(debitAmount-totalDeductionAmount));
 	validateNetPayableAmount();
 }	
+
+function validateMBPageNumbers() { 
+	if(($('#fromPageNo').val() != '' && $('#fromPageNo').val() == 0) || ($('#toPageNo').val() != '' && $('#toPageNo').val() == 0)) {
+		bootbox.alert("MB Page Numbers should be greater than Zero!");
+		return false;
+	}
+	if($('#fromPageNo').val() != '' && $('#toPageNo').val() != '' && $('#fromPageNo').val() > $('#toPageNo').val()) {
+		bootbox.alert("MB From Page Number cannot be greater than MB To Page Number!");
+		return false;
+	}
+	return true;
+}
 
 function validateNetPayableAmount() {
 	if($('#debitamount').val() != '' && $('#netPayableAmount').val() < 0) {

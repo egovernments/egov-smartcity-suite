@@ -84,7 +84,7 @@
 					<div class="col-xs-3 add-margin view-content">
 					<c:choose>
 						<c:when test="${contractorBillRegister.egBillregistermis.partyBillDate != null }">
-							<td><fmt:formatDate value="${contractorBillRegister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" /></td>
+							<fmt:formatDate value="${contractorBillRegister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" />
 						</c:when>
 					<c:otherwise>
 						<td><c:out default="N/A" value="N/A" />
@@ -160,6 +160,29 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${lineEstimateDetails.projectCode.code}" />
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.mb.referencenumber" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<form:hidden path="mbHeader.id"  value="${contractorBillRegister.mbHeader.id}" /> 
+						<c:out value="${contractorBillRegister.mbHeader.mbRefNo}" /> 
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.mb.pagenumber" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${contractorBillRegister.mbHeader.fromPageNo}" /> - <c:out value="${contractorBillRegister.mbHeader.toPageNo}" />
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.mb.date" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<fmt:formatDate value="${contractorBillRegister.mbHeader.mbDate}" pattern="dd/MM/yyyy" />
 					</div>
 				</div>
 				<div class="row add-border">

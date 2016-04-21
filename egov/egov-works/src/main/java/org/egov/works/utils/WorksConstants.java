@@ -261,6 +261,7 @@ public class WorksConstants {
 
     public static final String WORKORDER = "WorkOrder";
     public static final String CONTRACTORBILL = "CONTRACTORBILL";
+    public static final String MBHEADER = "MBHeader";
 
     public static final String BOUNDARY_TYPE_WARD = "Ward";
     public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";

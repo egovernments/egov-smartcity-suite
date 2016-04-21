@@ -277,7 +277,32 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate()
                         .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
-
+        
+        if(contractorBillRegister.getMbHeader() != null) {
+            if (StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
+                resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
+            
+            if (contractorBillRegister.getMbHeader().getMbDate() == null)
+                resultBinder.rejectValue("mbHeader.mbDate", "error.mbdate.required");
+            
+            if (contractorBillRegister.getMbHeader().getFromPageNo() == null)
+                resultBinder.rejectValue("mbHeader.fromPageNo", "error.frompageno.required");
+            
+            if (contractorBillRegister.getMbHeader().getToPageNo() == null)
+                resultBinder.rejectValue("mbHeader.toPageNo", "error.topageno.required");
+            
+            if(contractorBillRegister.getMbHeader().getFromPageNo() ==0 || contractorBillRegister.getMbHeader().getToPageNo() == 0)
+                resultBinder.reject("error.validate.mb.pagenumbers.zero", "error.validate.mb.pagenumbers.zero");
+            
+            if(contractorBillRegister.getMbHeader().getFromPageNo() != null && contractorBillRegister.getMbHeader().getToPageNo() != null && contractorBillRegister.getMbHeader().getFromPageNo() > contractorBillRegister.getMbHeader().getToPageNo())
+                resultBinder.reject("error.validate.mb.frompagenumber.greaterthan.topagenumber", "error.validate.mb.frompagenumber.greaterthan.topagenumber");
+    
+            if (contractorBillRegister.getMbHeader().getMbDate() != null
+                    && contractorBillRegister.getMbHeader().getMbDate()
+                            .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
+                resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
+        }
+        
         if (StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
             resultBinder.reject("error.netpayable.accountcode.required", "error.netpayable.accountcode.required");
         if (StringUtils.isBlank(request.getParameter("netPayableAmount"))

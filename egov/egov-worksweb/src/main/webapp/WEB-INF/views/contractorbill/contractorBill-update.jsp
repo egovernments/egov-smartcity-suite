@@ -69,6 +69,7 @@
 						<div class="panel-body">
 							<c:if test="${mode == 'edit'}">
 								<jsp:include page="contractorBill-header.jsp"/>
+								<jsp:include page="contractorBill-mbdetails.jsp"/>
 							</c:if>
 							<c:if test="${mode == 'view' || mode == 'readOnly' }">
 								<jsp:include page="contractorBill-header-view.jsp"/>
