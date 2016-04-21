@@ -54,15 +54,11 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.utils.NumberUtil;
 import org.egov.model.bills.EgBilldetails;
@@ -116,12 +112,6 @@ public class ContractorBillPDFController {
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
     
-    @Autowired
-    private AssignmentService assignmentService;
-    
-    @Autowired
-    private SecurityUtils securityUtils;
-
     @RequestMapping(value = "/contractorbillPDF/{contractorBillId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
             @PathVariable("contractorBillId") final Long id,
@@ -135,12 +125,13 @@ public class ContractorBillPDFController {
         if (contractorBillRegister != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            final SimpleDateFormat timeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:MM:SS");
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
             final DecimalFormat df = new DecimalFormat("#.##");
             final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(contractorBillRegister.getWorkOrder()
                     .getEstimateNumber());
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
+            
             reportParams.put("cityLogo",url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat((String) request.getSession().getAttribute("citylogo")));
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
@@ -157,18 +148,13 @@ public class ContractorBillPDFController {
             reportParams.put("nameOfTheWork", lineEstimateDetails.getNameOfWork());
             reportParams.put("ward", lineEstimateDetails.getLineEstimate().getWard().getName());
             reportParams.put("department", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getName());
-            reportParams.put("reportRunDate", timeFormatter.format(new Date()));
-            
-            
-            BigDecimal totalAmount = BigDecimal.ZERO;
-            totalAmount.add(contractorBillRegister.getBillamount());
-            reportParams.put("totalAmount", totalAmount.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-            reportParams.put("totalAmountWords", NumberUtil.amountInWords(totalAmount));
-            
-            final String preparedBy = worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy());
-            reportParams.put("preparedBy", preparedBy);
+            reportParams.put("reportRunDate", sdf.format(new Date()));
+            reportParams.put("creatorName", contractorBillRegister.getCreatedBy().getName());
+            reportParams.put("creatorDesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
+            reportParams.put("approverDesignation", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
+            reportParams.put("approverName", contractorBillRegister.getApprovedBy().getName());
 
-            reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister), reportParams);
+            reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister, reportParams), reportParams);
 
         }
 
@@ -180,10 +166,12 @@ public class ContractorBillPDFController {
 
     }
     
-    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister) {
+    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,
+            Map<String, Object> reportParams) {
         final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
         Map<String, Object> billDetails = new HashMap<String, Object>();
-
+        BigDecimal creditSum = BigDecimal.ZERO;
+        BigDecimal debitSum = BigDecimal.ZERO;
         final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
         for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
@@ -194,6 +182,7 @@ public class ContractorBillPDFController {
                 billDetails.put("glcode", coa.getGlcode());
                 billDetails.put("accountHead", coa.getName());
                 billDetails.put("amount", egBilldetails.getDebitamount());
+                debitSum=debitSum.add(egBilldetails.getDebitamount());
                 billDetails.put("isDebit", true);
                 billDetails.put("isNetPayable", false);
             } else if (egBilldetails.getCreditamount() != null) {
@@ -207,10 +196,19 @@ public class ContractorBillPDFController {
                 if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
                         && contractorPayableAccountList.contains(coa))
                     billDetails.put("isNetPayable", true);
-                else
+                else{
                     billDetails.put("isNetPayable", false);
+                    creditSum=creditSum.add(egBilldetails.getCreditamount());
+            }
 
             }
+            reportParams.put("debitSum", debitSum);
+            reportParams.put("creditSum", creditSum);
+            BigDecimal netpayable = BigDecimal.ZERO;
+            netpayable=debitSum.subtract(creditSum);
+            reportParams.put("netPayable", netpayable);
+            reportParams.put("netpayable", netpayable.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            reportParams.put("totalAmountWords", NumberUtil.amountInWords(netpayable));
             billDetailsList.add(billDetails);
         }
         return billDetailsList;
