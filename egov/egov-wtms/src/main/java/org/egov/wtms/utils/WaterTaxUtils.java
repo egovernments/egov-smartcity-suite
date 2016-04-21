@@ -42,6 +42,7 @@ import java.util.Locale;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -75,7 +76,6 @@ import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -141,6 +141,9 @@ public class WaterTaxUtils {
 
     @Autowired
     private ModuleService moduleService;
+
+    @Autowired
+    private InstallmentDao installmentDao;
 
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -271,7 +274,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
+                        waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
         return smsMsg;
     }
 
@@ -480,12 +483,7 @@ public class WaterTaxUtils {
 
     public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
         final Module module = moduleService.getModuleByName(PTMODULENAME);
-        final String query = "select installment from Installment installment,CFinancialYear finYear where installment.module =:module  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
-                + " and installment.fromDate >= finYear.startingDate and cast(installment.toDate as date) <= finYear.endingDate order by installment.id ";
-        final Query qry = persistenceService.getSession().createQuery(query.toString());
-        qry.setLong("module", module.getId());
-        qry.setDate("currDate", currDate);
-        final List<Installment> installments = qry.list();
+        final List<Installment> installments = installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
         return installments;
     }
 
