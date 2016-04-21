@@ -40,13 +40,13 @@
 package org.egov.works.models.measurementbook;
 
 import org.egov.infstr.models.BaseModel;
-import org.egov.model.bills.EgBillregister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
 public class MBForCancelledBill extends BaseModel {
 
     private static final long serialVersionUID = -6540546979562987332L;
     private MBHeader mbHeader;
-    private EgBillregister egBillregister;
+    private ContractorBillRegister egBillregister;
 
     public MBHeader getMbHeader() {
         return mbHeader;
@@ -56,11 +56,11 @@ public class MBForCancelledBill extends BaseModel {
         this.mbHeader = mbHeader;
     }
 
-    public EgBillregister getEgBillregister() {
+    public ContractorBillRegister getEgBillregister() {
         return egBillregister;
     }
 
-    public void setEgBillregister(final EgBillregister egBillregister) {
+    public void setEgBillregister(final ContractorBillRegister egBillregister) {
         this.egBillregister = egBillregister;
     }
 
