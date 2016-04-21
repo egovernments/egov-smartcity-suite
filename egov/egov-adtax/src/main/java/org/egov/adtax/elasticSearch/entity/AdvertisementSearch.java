@@ -42,12 +42,12 @@ package org.egov.adtax.elasticSearch.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.infra.search.elastic.Indexable;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
 import org.elasticsearch.common.geo.GeoPoint;
 
-public class AdvertisementSearch extends AdvertisementPermitDetail {
+public class AdvertisementSearch implements Indexable {
 
 	@Override
 	public String getIndexId() {
@@ -752,14 +752,5 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 
 	public void setCurrent_state(String current_state) {
 		this.current_state = current_state;
-	}
-
-	public static AdvertisementSearch method(
-			AdvertisementPermitDetail advPermitDetail) {
-		AdvertisementSearch advPermitDetailIndex = null;
-		if (advPermitDetail instanceof AdvertisementSearch) {
-			advPermitDetailIndex = (AdvertisementSearch) advPermitDetail; // downcasting
-		}
-		return advPermitDetailIndex;
 	}
 }

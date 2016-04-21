@@ -65,17 +65,17 @@ public class AdvertisementIndexService {
 	private BoundaryService boundaryService;	
 	
 	@Indexing(name = Index.ADVERTISEMENT, type = IndexType.ADVERTISEMENTSEARCH)
-	public AdvertisementSearch createAdvertisementIndex(AdvertisementSearch advertisementSearchIndex){ 
-		
-		if(advertisementSearchIndex.getStatus()!=null &&
-	   			 (advertisementSearchIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)
-	   			 ||	advertisementSearchIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXAMOUNTPAID)
-	   			 || advertisementSearchIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)
-	   			 || advertisementSearchIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))
+	public AdvertisementSearch createAdvertisementIndex(final AdvertisementPermitDetail advertisementPermitDetailIndex){ 
+		AdvertisementSearch advertisementSearch = null;
+		if(advertisementPermitDetailIndex.getStatus()!=null &&
+	   			 (advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)
+	   			 ||	advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXAMOUNTPAID)
+	   			 || advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)
+	   			 || advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))
   		){
-			advertisementSearchIndex =createOrUpdateAdvIndex(advertisementSearchIndex);
+			advertisementSearch  =createOrUpdateAdvIndex(advertisementPermitDetailIndex);
 		}
-		return advertisementSearchIndex;
+		return advertisementSearch;
 	}
 	
 	public AdvertisementSearch createOrUpdateAdvIndex(final AdvertisementPermitDetail advertisementPermitDetail){
@@ -97,9 +97,9 @@ public class AdvertisementIndexService {
 		advertisementSearch.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
 		advertisementSearch.setBlock(advertisementPermitDetail.getAdvertisement().getBlock()!=null?advertisementPermitDetail.getAdvertisement().getBlock().getName():"");
 		advertisementSearch.setBreadth(advertisementPermitDetail.getBreadth());
-		advertisementSearch.setCategory(advertisementPermitDetail.getAdvertisement().getCategory().getName());
+		advertisementSearch.setCategory(advertisementPermitDetail.getAdvertisement().getCategory().getName());  
 		advertisementSearch.setCreatedDate(advertisementPermitDetail.getAdvertisement().getCreatedDate());
-		//advertisementSearch.setCurrent_state(advertisementPermitDetail.getState().getValue());
+		advertisementSearch.setCurrent_state(advertisementPermitDetail.getState()!=null?advertisementPermitDetail.getState().getValue():"");
 		advertisementSearch.setElectionWard(advertisementPermitDetail.getAdvertisement().getElectionWard()!=null?advertisementPermitDetail.getAdvertisement().getElectionWard().getName():"");
 		advertisementSearch.setElectricityServiceNumber(advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber());
 		advertisementSearch.setEncroachmentFee(advertisementPermitDetail.getEncroachmentFee());
@@ -109,9 +109,9 @@ public class AdvertisementIndexService {
 		advertisementSearch.setLocality(advertisementPermitDetail.getAdvertisement().getLocality()!=null?advertisementPermitDetail.getAdvertisement().getLocality().getName():"");
 		advertisementSearch.setMeasurement(advertisementPermitDetail.getMeasurement());
 		advertisementSearch.setMobileNumber(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getMobileNumber():"");
-		advertisementSearch.setOwnerDetail(advertisementPermitDetail.getOwnerDetail());
+		advertisementSearch.setOwnerDetail(advertisementPermitDetail.getOwnerDetail()!=null?advertisementPermitDetail.getOwnerDetail():"");
 		advertisementSearch.setPenaltyCalculationDate(advertisementPermitDetail.getAdvertisement().getPenaltyCalculationDate());
-		advertisementSearch.setPendingTax(advertisementPermitDetail.getAdvertisement().getPendingTax());
+		advertisementSearch.setPendingTax(advertisementPermitDetail.getAdvertisement().getPendingTax()); 
 		advertisementSearch.setPermissionEndDate(advertisementPermitDetail.getPermissionenddate());
 		advertisementSearch.setPermissionNumber(advertisementPermitDetail.getPermissionNumber());
 		advertisementSearch.setPermissionStartDate(advertisementPermitDetail.getPermissionstartdate());
@@ -127,6 +127,10 @@ public class AdvertisementIndexService {
 		advertisementSearch.setWard(advertisementPermitDetail.getAdvertisement().getWard()!=null?advertisementPermitDetail.getAdvertisement().getWard().getName():"");
 		advertisementSearch.setWidth(advertisementPermitDetail.getWidth());
 		advertisementSearch.setZone(advertisementPermitDetail.getAdvertisement().getWard()!=null&& advertisementPermitDetail.getAdvertisement().getWard().getParent()!=null?advertisementPermitDetail.getAdvertisement().getWard().getParent().getName():"");
+		// Demand and Collection Details
+		advertisementSearch.setTax_demand(advertisementPermitDetail.getAdvertisement().getDemandId().getBaseDemand());
+		advertisementSearch.setTax_collected(advertisementPermitDetail.getAdvertisement().getDemandId().getAmtCollected()); 
+		
 		
 		if (advertisementPermitDetail.getAdvertisement().getLatitude()!= 0.0 && advertisementPermitDetail.getAdvertisement().getLongitude()!=0.0) {
 			advertisementSearch.setAdvertisementLocation(new GeoPoint(advertisementPermitDetail.getAdvertisement().getLatitude(), advertisementPermitDetail.getAdvertisement().getLongitude()));

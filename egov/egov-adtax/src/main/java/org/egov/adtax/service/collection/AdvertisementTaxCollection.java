@@ -53,6 +53,7 @@ import org.egov.adtax.entity.AgencyWiseCollectionDetail;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
+import org.egov.adtax.service.AdvertisementPermitDetailUpdateIndexService;
 import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.AgencyWiseCollectionService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -96,6 +97,9 @@ public class AdvertisementTaxCollection extends TaxCollection {
 
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
+    
+    @Autowired
+    private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -537,6 +541,8 @@ public class AdvertisementTaxCollection extends TaxCollection {
                         AdvertisementTaxConstants.COLLECTION_REMARKS, advertisementPermitDetail.getPreviousapplicationid()!=null?AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE:  AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
                         AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON);
                 advertisementPermitDetailRepository.saveAndFlush(advertisementPermitDetail);
+            } else {
+            	 advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail);
             }
         }
     }
