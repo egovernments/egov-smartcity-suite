@@ -1009,12 +1009,6 @@ function validate()
 	 	<div class="highlight2"><s:text name="challan.findchallan.message" /></div>
 	</div>
 
-	<s:if test="%{model.id==null || hasErrors()}" >
-		<div class="buttonbottom" >
-			<input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
-		</div>
-	</s:if>
-
 </s:if>
 <s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
 	
@@ -1024,6 +1018,8 @@ function validate()
 		<%@ include file='challandetails.jsp'%>
 		</td>
 		</tr>
+		<s:if test="%{!hasErrors()}" >
+		<div>
  		<tr>
     	<td>
     		<div class="subheadnew">
@@ -1222,8 +1218,10 @@ function validate()
 			<!-- for card-->
 			</table> <!-- End of mode of payments table -->
      </td></tr>
+     </div>
+     </s:if>
 </table> <!--  main table ends -->
-
+<s:if test="%{!hasErrors()}" >
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
@@ -1238,6 +1236,12 @@ function validate()
       <input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
 </div>
 </s:if>
+</s:if>
+<s:if test="%{model.id==null || hasErrors()}" >
+		<div class="buttonbottom" >
+			<input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
+		</div>
+	</s:if>
 </div>
 
 
