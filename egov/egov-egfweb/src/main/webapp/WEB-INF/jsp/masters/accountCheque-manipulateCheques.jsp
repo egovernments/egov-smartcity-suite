@@ -89,19 +89,19 @@
 
 					<tr>
 						<td class="bluebox "></td>
-						<td class="bluebox">Bank</td>
+						<td class="bluebox">Bank <span class="mandatory1">*</span></td>
 						<td class="bluebox"><s:property
 								value="bankaccount.bankbranch.bank.name" /></td>
-						<td class="bluebox">Bank Branch</td>
+						<td class="bluebox">Bank Branch <span class="mandatory1">*</span></td>
 						<td class="bluebox"><s:property
 								value="bankaccount.bankbranch.branchname" /></td>
 					</tr>
 					<tr>
 						<td class="bluebox "></td>
-						<td class="greybox">Account Number</td>
+						<td class="greybox">Account Number <span class="mandatory1">*</span></td>
 						<td class="greybox"><s:property
 								value="bankaccount.accountnumber" /></td>
-						<td class="greybox">Fund</td>
+						<td class="greybox">Fund <span class="mandatory1">*</span></td>
 						<td class="greybox"><s:property value="bankaccount.fund.name" /></td>
 					</tr>
 				</table>
@@ -175,7 +175,7 @@
 
 					<td align="center" style="text-align: center"><input
 						type="button" name="Done" onclick="updateGridData()"
-						class="buttongeneral" value="Click to add new cheque"
+						class="buttonsubmit" value="Click to add new cheque"
 						align="middle" /></td>
 
 				</tr>

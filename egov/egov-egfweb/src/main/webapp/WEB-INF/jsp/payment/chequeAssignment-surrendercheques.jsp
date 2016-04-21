@@ -109,7 +109,7 @@
 							<s:property value="#stat.index+1" />
 							</td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:property
-									value="%{serialNo}" /></td>
+									value="%{serialNo.finYearRange}" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:property
 									value="%{instrumentNumber}" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:property

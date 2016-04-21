@@ -78,14 +78,14 @@
 		<table border="0" width="100%">
 			<tr>
 				<td class="greybox"></td>
-				<td class="greybox">Fund</td>
+				<td class="greybox">Fund <span class="mandatory1">*</span></td>
 				<td class="greybox"><s:select name="fundId" id="fundId"
 						list="dropdownData.fundList" listKey="id" listValue="name"
 						headerKey="-1" headerValue="----Choose----"
 						onChange="loadBank(this);" /></td>
 				<egov:ajaxdropdown id="bankbranchId" fields="['Text','Value']"
 					dropdownId="bankbranchId" url="voucher/common-ajaxLoadBanks.action" />
-				<td class="greybox">Bank</td>
+				<td class="greybox">Bank <span class="mandatory1">*</span></td>
 				<td class="greybox"><s:select name="bankbranchId"
 						id="bankbranchId" list="dropdownData.bankList" listKey="id"
 						listValue="name" headerKey="-1" headerValue="----Choose----"
@@ -96,7 +96,7 @@
 				<egov:ajaxdropdown id="bankAccId" fields="['Text','Value']"
 					dropdownId="bankAccId"
 					url="voucher/common-ajaxLoadBankAccounts.action" />
-				<td class="bluebox">Account Number</td>
+				<td class="bluebox">Account Number <span class="mandatory1">*</span></td>
 				<td class="bluebox"><s:select name="bankAccId" id="bankAccId"
 						list="dropdownData.accNumList" listKey="id" listValue="name"
 						headerKey="-1" headerValue="----Choose----" /></td>
@@ -114,29 +114,42 @@
 	</s:form>
 
 	<script>
-	function loadBank(fund){
-		populatebankbranchId({fundId:fund.options[fund.selectedIndex].value})	
-		
-	}
-	function loadBankAccount(branch){
-		var fundObj = document.getElementById('fundId');
-		var bankbranchId = branch.options[branch.selectedIndex].value;
-		var index=bankbranchId.indexOf("-");
-		var brId=bankbranchId.substring(index+1,bankbranchId.length);
-		populatebankAccId({fundId: fundObj.options[fundObj.selectedIndex].value,branchId:brId})
-		
-	}
-	function addModifyChq(){
-		if( document.getElementById("bankAccId").value == -1){
-			
-			document.getElementById("lblError").innerHTML = "Please select bank account number";
-			return false;
-		}
-		var bankAccId = document.getElementById('bankAccId').value; 
-		window.location = "../masters/accountCheque-manipulateCheques.action?bankAccId="+bankAccId;
-		
-	}
+		function loadBank(fund) {
+			populatebankbranchId({
+				fundId : fund.options[fund.selectedIndex].value
+			})
 
-</script>
+		}
+		function loadBankAccount(branch) {
+			var fundObj = document.getElementById('fundId');
+			var bankbranchId = branch.options[branch.selectedIndex].value;
+			var index = bankbranchId.indexOf("-");
+			var brId = bankbranchId.substring(index + 1, bankbranchId.length);
+			populatebankAccId({
+				fundId : fundObj.options[fundObj.selectedIndex].value,
+				branchId : brId
+			})
+
+		}
+		function addModifyChq() {
+			if (document.getElementById("fundId").value == -1) {
+
+				document.getElementById("lblError").innerHTML = "Please select fund";
+				return false;
+			} else if (document.getElementById("bankbranchId").value == -1) {
+
+				document.getElementById("lblError").innerHTML = "Please select bank";
+				return false;
+			} else if (document.getElementById("bankAccId").value == -1) {
+
+				document.getElementById("lblError").innerHTML = "Please select bank account number";
+				return false;
+			}
+			var bankAccId = document.getElementById('bankAccId').value;
+			window.location = "../masters/accountCheque-manipulateCheques.action?bankAccId="
+					+ bankAccId;
+
+		}
+	</script>
 </body>
 </html>

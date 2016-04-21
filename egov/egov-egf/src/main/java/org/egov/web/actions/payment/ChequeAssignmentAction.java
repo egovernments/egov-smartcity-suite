@@ -1808,7 +1808,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         {
             final InstrumentHeader newInstrumentHeader = instrumentHeader.clone();
             newInstrumentHeader.setInstrumentNumber(chequeNoList.get(i).toString());
-            newInstrumentHeader.setSerialNo(serialNoList.get(i).toString());
+            newInstrumentHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNoList.get(i).toString()),false));
             newInstrumentHeader.setStatusId(instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS));
             newInstrumentHeader.setInstrumentDate(chequeDatelist.get(i));
             i++;

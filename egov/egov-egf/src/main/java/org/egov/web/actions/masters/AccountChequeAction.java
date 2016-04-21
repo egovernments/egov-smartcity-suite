@@ -42,9 +42,6 @@
  */
 package org.egov.web.actions.masters;
 
-
-
-import org.egov.infstr.services.PersistenceService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,8 +58,8 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
@@ -71,7 +68,6 @@ import org.egov.utils.Constants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 
 @Results({
         @Result(name = "new", location = "accountCheque-new.jsp"),
@@ -85,20 +81,20 @@ public class AccountChequeAction extends BaseFormAction {
     private List<ChequeDeptMapping> chequeList;
     private Bankaccount bankaccount;
     private List<ChequeDetail> chequeDetailsList;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     @Qualifier("accountChequesService")
     private AccountChequesService accountChequesService;
-    
+
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     private String deletedChqDeptId;
 
     public AccountChequeAction() {
@@ -158,7 +154,8 @@ public class AccountChequeAction extends BaseFormAction {
             chequeDetail.setToChqNo(chequeDeptMapping.getAccountCheque().getToChequeNumber());
             chequeDetail.setDeptName(chequeDeptMapping.getAllotedTo().getName());
             chequeDetail.setDeptId(chequeDeptMapping.getAllotedTo().getId().intValue());
-            CFinancialYear fy = (CFinancialYear) financialYearDAO.findById(Long.valueOf(chequeDeptMapping.getAccountCheque().getSerialNo()), false);
+            CFinancialYear fy = (CFinancialYear) financialYearDAO.findById(
+                    Long.valueOf(chequeDeptMapping.getAccountCheque().getSerialNo()), false);
             chequeDetail.setSerialNoH(fy.getFinYearRange());
             chequeDetail
                     .setReceivedDate(Constants.DDMMYYYYFORMAT2.format(chequeDeptMapping.getAccountCheque().getReceivedDate()));

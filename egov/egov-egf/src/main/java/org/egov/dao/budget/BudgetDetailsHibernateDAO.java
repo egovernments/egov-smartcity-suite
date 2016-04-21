@@ -1217,7 +1217,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                         + ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
                         + ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
-            query = prepareQuery(deptid.intValue(), functionid, functionaryid, schemeid, subschemeid, boundaryid.intValue(),
+            query = prepareQuery(deptid.intValue(), functionid, functionaryid, schemeid, subschemeid, boundaryid!=null?boundaryid.intValue():null,
                     fundid);
 
             // handle the list
