@@ -1851,13 +1851,18 @@ function showHideMandataryMark(obj){
 	</b></font>
   </li>
 </span>
-<div class="formmainbox" style="width:100%;max-width:960px;">
-	<s:if test="%{hasErrors()}">
-	    <div id="actionErrorMessages" class="errorstyle">
+<s:if test="%{hasErrors()}">
+	<div align="center">
+	    <div id="actionErrorMessages" class="alert alert-danger">
 	      <s:actionerror/>
-	      <s:fielderror/>
+	      <s:fielderror/>	      
 	    </div>
+	    <input name="button" type="button" class="button" id="buttonclose" value="Close" onclick="window.close();" />
+	</div>
 	</s:if>
+	<s:else>
+<div class="formmainbox" style="width:100%;max-width:960px;">
+	
 	<s:if test="%{hasActionMessages()}">
 	    <div id="actionMessages" class="messagestyle">
 	    	<s:actionmessage theme="simple"/>
@@ -2239,8 +2244,11 @@ function showHideMandataryMark(obj){
 
 
 </s:push>
+
 </s:form>
+
 </div>
+</s:else>
 <script type="text/javascript">
 // MAIN FUNCTION: new switchcontent("class name", "[optional_element_type_to_scan_for]") REQUIRED
 // Call Instance.init() at the very end. REQUIRED

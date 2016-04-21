@@ -43,6 +43,7 @@ package org.egov.collection.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,6 +91,7 @@ import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
@@ -340,8 +342,7 @@ public class CollectionsUtil {
         }
 
         if (isEmp && !isDeptAllowed) {
-            final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
-            validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
+            throw new ValidationException(Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
         } else if (!isEmp || isDeptAllowed)
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
         // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
