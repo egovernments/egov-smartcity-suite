@@ -114,7 +114,7 @@
 	
 	<bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter" />
 
-	<bean id="sessionFixationProtectionStrategy" class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy"/>
+	<bean id="sessionFixationProtectionStrategy" class="org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy"/>
 
     <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
         <constructor-arg name="delegateStrategies">
