@@ -75,6 +75,39 @@ function validateReconcile()
 	 
 }
 
+
+
+function showBalance()
+{
+	//alert("returned  "+validateReconDate())
+
+
+	doLoadingMask();
+	var fd=jQuery('#mrform').serialize();
+	jQuery.ajax({
+		url: "/EGF/brs/manualReconciliation-ajaxBalance.action",  
+		type: "POST",
+		data: fd, 
+		//dataType: "text",
+		success: function (response) {
+			//	console.log("success"+response );
+			undoLoadingMask();    
+			jQuery('#balanceDiv').html(response);
+			//bootbox.alert("Passed to Reconcile Details");
+			
+ 
+
+		}, 
+		error: function (response) {
+			console.log("failed");
+			undoLoadingMask();  
+			bootbox.alert("Failed to Show balance Details");
+			
+		}
+	});
+	 
+}
+
 function validateReconDate()
 {
 	//alert("Validating Reconciliation Date"+jQuery('#resultTable tr').length);

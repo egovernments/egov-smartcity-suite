@@ -42,6 +42,7 @@ package org.egov.web.actions.brs;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -64,6 +65,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 	@Result(name = "search", location = "manualReconciliation-" + "search" + ".jsp"),
 	@Result(name = "report", location = "manualReconciliation-" + "report" + ".jsp"),
 	@Result(name = "update", location = "manualReconciliation-update.jsp"),
+	@Result(name = "balance", location = "manualReconciliation-balance.jsp"),
 	@Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
 			"application/pdf", "contentDisposition", "no-cache;filename=AutoReconcileReport.pdf" }),
 			@Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -83,7 +85,7 @@ public class ManualReconciliationAction extends BaseFormAction {
 	private ManualReconcileHelper manualReconcileHelper;
 
 	private ReconcileBean reconcileBean;
-	private String unReconciledDrCr;
+	private Map<String,String> unReconciledDrCr;
 	private List<ReconcileBean> unReconciledCheques;
 	List<Long> instrumentHeaders;
 	List<Date> reconDates;
@@ -95,12 +97,12 @@ public class ManualReconciliationAction extends BaseFormAction {
 		return new Bankreconciliation();
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
-	public void prepare()
+	public void prepareNewForm()
 	{
 
 		reconcileBean=new ReconcileBean();
+		reconcileBean.setLimit(500);
 
 		List<Bank> allBankHavingAccounts = bankHibernateDAO.getAllBankHavingBranchAndAccounts(); 
 		dropdownData.put("bankList", allBankHavingAccounts);  
@@ -135,12 +137,18 @@ public class ManualReconciliationAction extends BaseFormAction {
 	@Action(value = "/brs/manualReconciliation-ajaxSearch")
 	public String search()
 	{
-		//unReconciledDrCr = manualReconcileHelper.getUnReconciledDrCr(reconcileBean.getAccountId(), reconcileBean.getFromDate(), reconcileBean.getToDate());
-		unReconciledCheques = manualReconcileHelper.getUnReconciledCheques(reconcileBean.getAccountId(), reconcileBean.getReconciliationDate());
-
+		unReconciledCheques = manualReconcileHelper.getUnReconciledCheques(reconcileBean);
 		return "search";
 	}
 
+	@Action(value = "/brs/manualReconciliation-ajaxBalance")
+	public String balance()
+	{
+		unReconciledDrCr = manualReconcileHelper.getUnReconciledDrCr(reconcileBean.getAccountId(), reconcileBean.getFromDate(), reconcileBean.getToDate());
+
+		return "balance";
+	}
+	
 	@Action(value = "/brs/manualReconciliation-update")
 	@ValidationErrorPage("search")
 	public String update()
@@ -191,13 +199,7 @@ public class ManualReconciliationAction extends BaseFormAction {
 		return accountList;
 	}
 
-	public String getUnReconciledDrCr() {
-		return unReconciledDrCr;
-	}
-
-	public void setUnReconciledDrCr(String unReconciledDrCr) {
-		this.unReconciledDrCr = unReconciledDrCr;
-	}
+	
 
 	public List<ReconcileBean> getUnReconciledCheques() {
 		return unReconciledCheques;
@@ -221,6 +223,14 @@ public class ManualReconciliationAction extends BaseFormAction {
 
 	public void setReconDates(List<Date> reconDates) {
 		this.reconDates = reconDates;
+	}
+
+	public Map<String, String> getUnReconciledDrCr() {
+		return unReconciledDrCr;
+	}
+
+	public void setUnReconciledDrCr(Map<String, String> unReconciledDrCr) {
+		this.unReconciledDrCr = unReconciledDrCr;
 	}
 
 

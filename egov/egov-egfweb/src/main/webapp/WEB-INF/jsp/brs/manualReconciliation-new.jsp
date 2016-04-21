@@ -197,7 +197,17 @@
 
 					</td>
 				</tr>
+        <tr>
+          <td class="greybox"></td>
+           <td class="greybox"><s:text name="instrumentNo" /> <span
+            class="greybox"></td>
+          <td class="greybox"><input type="text"  name="reconcileBean.instrumentNo" id="instrumentNo" /></td>
 
+          </td>
+          <td class="greybox"><s:text name="limit" /> <span
+            class="greybox"></td>
+          <td class="greybox"><s:textfield name="reconcileBean.limit" id="limit"  /></td>
+        </tr>
 			</table>
 
 			<div class="buttonbottom" id="buttondiv">
@@ -206,11 +216,14 @@
 						<td><input  type="button" class="buttonsubmit"
 								value="Search" name="Search" method="search"
 								onclick="return validate();" /></td>
+                <td><input type="button" value="Show Pendings"
+                        onclick="showBalance()" class="buttonsubmit" /></td>
 						<td><input type="button" value="Close"
 							onclick="javascript:window.close()" class="buttonsubmit" /></td>
 					</tr>
 				</table>
 			</div>
+      <div class="col-md-12 form-group report-table-container" />
       <div id="resultDiv"> </div>
       
      

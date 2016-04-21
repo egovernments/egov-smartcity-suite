@@ -2,7 +2,9 @@ package org.egov.web.actions.brs;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
@@ -45,9 +47,9 @@ public class ManualReconcileHelper {
 	@Autowired
 	@Qualifier("instrumentHeaderService")
 	private InstrumentHeaderService instrumentHeaderService;
-	public String getUnReconciledDrCr(Long bankAccId,Date fromDate,Date toDate)  
+	public Map<String,String> getUnReconciledDrCr(Long bankAccId,Date fromDate,Date toDate)  
 	{
-
+		Map<String,String> unreconMap=new LinkedHashMap<String,String>();
 		//String  ="decode(iv.voucherHeaderId,null,0,ih.instrumentAmount)";
 		String instrumentsForBrsEntryTotal="case when br.voucherHeaderId is null then ih.instrumentAmount else 0 end";
 		//String instrumentsForOtherTotal="decode(br.voucherHeaderId,null,ih.instrumentAmount,0)";
@@ -141,17 +143,33 @@ public class ManualReconcileHelper {
 				debitTotalBrsEntry=my[1]!=null?my[1].toString():null;
 			}
 
-
-		unReconciledDrCr=(creditTotal != null ? creditTotal : "0" )+"/"+(creditOthertotal!= null ? creditOthertotal : "0")
-		+"/"+(debitTotal!= null ? debitTotal : "0") +"/"+( debitOtherTotal!= null ? debitOtherTotal : "0")+""+
-		"/"+(creditTotalBrsEntry!= null ? creditTotalBrsEntry : "0") +"/"+( debitTotalBrsEntry!= null ? debitTotalBrsEntry : "0")+"";
+			
+      /* ReconcileBean reconBean=new ReconcileBean();
+       reconBean.setCreditAmount(BigDecimal.valueOf(creditTotal));
+       reconBean.setDebitAmount(debitTotal);
+       */
+			creditTotal=creditTotal==null?"0":creditTotal;
+			debitTotal=debitTotal==null?"0":debitTotal;
+			creditOthertotal=creditOthertotal==null?"0":creditOthertotal;
+			debitOtherTotal=debitOtherTotal==null?"0":debitOtherTotal;
+			debitTotalBrsEntry=debitTotalBrsEntry==null?"0":debitTotalBrsEntry;
+			
+			unreconMap.put("Cheque/DD/Cash Payments",creditTotal);
+			unreconMap.put("Cheque/DD/Cash Receipts",debitTotal);
+			unreconMap.put("RTGS Payments",creditOthertotal);
+			unreconMap.put("Other Receipts",debitOtherTotal);
+			unreconMap.put("BRS Entry",debitTotalBrsEntry);
+			
+		/*//unReconciledDrCr="Cheque/DD/Cash Payments:"+(creditTotal != null ? creditTotal : "0" )+",RTGS Payments:"+(creditOthertotal!= null ? creditOthertotal : "0")
+		+",Cheque/DD/Cash Receipts:"+(debitTotal!= null ? debitTotal : "0") +",Other Receipts:"+( debitOtherTotal!= null ? debitOtherTotal : "0")+""+
+		"/"+(creditTotalBrsEntry!= null ? creditTotalBrsEntry : "0") +",Net:"+( debitTotalBrsEntry!= null ? debitTotalBrsEntry : "0")+"";*/
 		}
 		catch(Exception e)
 		{
 			LOGGER.error("Exp in getUnReconciledDrCr"+e.getMessage());
 			
 		}
-		return unReconciledDrCr;
+		return unreconMap;
 	}
 	
 	private String getExcludeStatuses() {
@@ -162,18 +180,23 @@ public class ManualReconcileHelper {
 		
 	}
 	
-	public List<ReconcileBean> getUnReconciledCheques(Long bankAccId,Date recDate) 
+	public List<ReconcileBean> getUnReconciledCheques(ReconcileBean reconBean) 
 	{
 		List<ReconcileBean> list=new ArrayList<ReconcileBean>();
+		String instrumentCondition="";
+		if(reconBean.getInstrumentNo()!=null && !reconBean.getInstrumentNo().isEmpty())
+		{
+			instrumentCondition="and (ih.instrumentNumber='"+reconBean.getInstrumentNo()+"' or ih.transactionnumber='"+reconBean.getInstrumentNo()+"' )";
+		}
 		try{
 		String voucherExcludeStatuses=getExcludeStatuses();
-        String query=" select string_agg(distinct v.vouchernumber, ',') as \"voucherNumber\" ,ih.id as \"ihId\", case when ih.instrumentNumber is null then 'Direct' else ih.instrumentNumber  end as \"chequeNumber\", " +
+        StringBuffer query=new StringBuffer().append(" select string_agg(distinct v.vouchernumber, ',') as \"voucherNumber\" ,ih.id as \"ihId\", case when ih.instrumentNumber is null then 'Direct' else ih.instrumentNumber  end as \"chequeNumber\", " +
 		" to_char(ih.instrumentdate,'dd/mm/yyyy') as \"chequeDate\" ,ih.instrumentAmount as \"chequeAmount\",rec.transactiontype as \"txnType\" , "
 		+ " case when rec.transactionType='Cr' then  'Payment' else 'Receipt' end as \"type\" " +" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
 		+" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE "
 		+ "  ih.bankAccountId = BANK.ID AND bank.id =:bankAccId   AND IH.INSTRUMENTDATE <= :toDate  "
-		+" AND v.ID= iv.voucherheaderid  and v.STATUS not in  ("+voucherExcludeStatuses+") AND "
-		+" ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited') and ih.ispaycheque='0') or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
+		+" AND v.ID= iv.voucherheaderid  and v.STATUS not in  ("+voucherExcludeStatuses+")  "  +instrumentCondition 
+		+" AND ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited') and ih.ispaycheque='0') or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
 		+" AND rec.instrumentHeaderId=ih.id	 and iv.instrumentHeaderid=ih.id and io.instrumentheaderid=ih.id and ih.instrumentNumber is not null"
 		+ " group by ih.id,rec.transactiontype "
 	
@@ -183,11 +206,17 @@ public class ManualReconcileHelper {
 		" to_char(ih.transactiondate,'dd/mm/yyyy') as \"chequedate\" ,ih.instrumentAmount as \"chequeamount\",rec.transactiontype as \"txnType\", case when rec.transactionType= 'Cr' then 'Payment' else 'Receipt' end    as \"type\" " +
 		" FROM BANKRECONCILIATION rec, BANKACCOUNT BANK,"
 		+" VOUCHERHEADER v ,egf_instrumentheader ih, egf_instrumentotherdetails io, egf_instrumentVoucher iv	WHERE   ih.bankAccountId = BANK.ID AND bank.id = :bankAccId "
-		+"   AND IH.INSTRUMENTDATE <= :toDate "
+		+"   AND IH.INSTRUMENTDATE <= :toDate " +instrumentCondition 
 		+" AND v.ID= iv.voucherheaderid and v.STATUS not in  ("+voucherExcludeStatuses+") AND ((ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited') and ih.ispaycheque='0')or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
 		+" AND rec.instrumentHeaderId=ih.id	 and iv.instrumentHeaderid=ih.id and io.instrumentheaderid=ih.id and ih.transactionnumber is not null"
-		+" group by ih.id,rec.transactiontype "
-		;
+		+"   group by ih.id,rec.transactiontype order by 4 " );
+       
+        
+        
+        if(reconBean.getLimit()!=null & reconBean.getLimit()!=0)
+        {
+        	query.append(" limit "+reconBean.getLimit());
+        }
 		
        // if(LOGGER.isInfoEnabled())    
         LOGGER.info("  query  for getUnReconciledCheques: "+query);
@@ -201,9 +230,9 @@ public class ManualReconcileHelper {
 */
         
         
-		SQLQuery createSQLQuery = persistenceService.getSession().createSQLQuery(query);
-		createSQLQuery.setLong("bankAccId", bankAccId);
-		createSQLQuery.setDate("toDate", recDate);
+		SQLQuery createSQLQuery = persistenceService.getSession().createSQLQuery(query.toString());
+		createSQLQuery.setLong("bankAccId", reconBean.getAccountId());
+		createSQLQuery.setDate("toDate", reconBean.getReconciliationDate());
 		createSQLQuery.addScalar("voucherNumber",StringType.INSTANCE);
 		createSQLQuery.addScalar("ihId",LongType.INSTANCE);
 		createSQLQuery.addScalar("chequeDate",StringType.INSTANCE);
