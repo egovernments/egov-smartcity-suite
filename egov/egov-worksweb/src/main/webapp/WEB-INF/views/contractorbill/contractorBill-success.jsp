@@ -43,7 +43,7 @@
 <div class="page-container" id="page-container">
 <input type="hidden" id="id" value="${contractorBillRegister.id }" />
 	<div class="main-content">
-		<div style="font-weight:bold; color:green; text-align:center;">
+		<div class="alert text-center" style="color:green;">
 			<c:if test="${contractorBillRegister.getId() != null}">
 				<c:out value="${message }" />
 			</c:if>

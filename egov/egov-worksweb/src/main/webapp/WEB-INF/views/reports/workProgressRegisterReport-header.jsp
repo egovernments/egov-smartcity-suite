@@ -47,7 +47,7 @@
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
@@ -59,7 +59,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.wincode" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.wincode" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber" placeholder="Type first 3 letters of Work Order Number" />
 				<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
@@ -71,7 +71,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="department" data-first-option="false" id="department" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>

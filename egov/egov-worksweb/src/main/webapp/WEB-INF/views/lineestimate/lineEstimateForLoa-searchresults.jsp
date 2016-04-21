@@ -40,11 +40,11 @@
 #------------------------------------------------------------------------------- -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
+<div class="display-hide report-section">
+	<div class="table-header text-left">
 		<spring:message code="title.lineestimate.search" /></div>
 	<div id="errorMessage" style="display: none;"><spring:message code="error.lineestimate.loa.search" /></div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="form-group report-table-container">
 		<table class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
@@ -69,7 +69,7 @@
 		<div class="col-sm-12 text-center">
 			<button type='button' class='btn btn-primary' id="btncreateloa">
 				<spring:message code='lbl.createloa' />
-			</button>
+			</button> &nbsp;
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>

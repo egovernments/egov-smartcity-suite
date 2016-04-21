@@ -49,6 +49,11 @@
 	.file-ellipsis {
 		width : auto !Important;
 	}
+	
+	.padding-10
+	{
+	  padding:10px;
+	}
 </style>
 <div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 	<div class="panel-heading">
@@ -80,7 +85,7 @@
 						 	<table id="uploadertbl" width="100%"><tbody>
 						 		<tr id="row1">			 				
 									<td>
-										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)">
+										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
 									</td>
 								</tr>									 										
 						 	</tbody></table>

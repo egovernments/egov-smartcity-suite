@@ -46,11 +46,14 @@
 			<spring:message code="header.lineestimate" />
 		</div>
 	</div>
-	<div class="add-margin error-msg">
-				<spring:hasBindErrors name="lineEstimate">
-		       		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
-		       	</spring:hasBindErrors>
-			</div>
+	
+	
+	<spring:hasBindErrors name="lineEstimate">
+		<div class="alert alert-danger col-md-10 col-md-offset-1">
+      			<form:errors path="*" /><br/>
+      	</div>
+    </spring:hasBindErrors>
+
 	<div class="panel-body custom-form">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.date" /><span class="mandatory"></span></label>
@@ -115,13 +118,12 @@
 			<div class="col-sm-3 add-margin">
 				<form:radiobutton path="workCategory" id="slum" value="SLUM_WORK" onclick="showSlumFields();" required="required" />
 			</div>
-			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.nonslum" /><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-3 add-margin">
-					<form:radiobutton path="workCategory" id="nonslum" value="NON_SLUM_WORK" onclick="disableSlumFields()" required="required" />
-				</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.nonslum" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<form:radiobutton path="workCategory" id="nonslum" value="NON_SLUM_WORK" onclick="disableSlumFields()" required="required" />
 			</div>
+			
 		</div>
 		<div id="slumfields" style="display: none">
 			<div class="form-group">

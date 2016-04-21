@@ -43,16 +43,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <form:hidden path="id" name="id" value="${id}" class="form-control table-input hidden-input"/>
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0"
-			style="text-align: left">
-			<div class="add-margin error-msg">
 				<spring:hasBindErrors name="contractorBillRegister">
-		       		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+		       		<div class="alert alert-danger col-md-10 col-md-offset-1">
+			      			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+			      	</div>
 		       	</spring:hasBindErrors>
-			</div>
-			<div class="panel-body">
+		       	
 			<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.billnumber" />
@@ -174,7 +170,3 @@
 						<c:out default="N/A" value="${createdbybydesignation} - ${contractorBillRegister.createdBy.name }" />
 					</div> 
 				</div>
-			</div>
-		</div>
-	</div>
-</div>

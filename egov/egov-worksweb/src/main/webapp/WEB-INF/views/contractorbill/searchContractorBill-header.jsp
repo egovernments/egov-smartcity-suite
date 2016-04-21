@@ -42,8 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container" id="page-container">
-	<div class="main-content">
 		<form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestContractorBill" id="searchRequestContractorBill" class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">
@@ -60,7 +58,6 @@
 				</div>
 			</div>
 		</form:form>  
-	</div>
 	<jsp:include page="contractorBill-searchResult.jsp"/>
 
 <script>

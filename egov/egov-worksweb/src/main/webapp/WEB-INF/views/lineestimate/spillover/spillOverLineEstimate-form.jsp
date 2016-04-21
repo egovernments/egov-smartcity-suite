@@ -42,8 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container" id="page-container">
-	<div class="main-content">
 		<form:form name="lineEstimateForm" action="create-spillover" role="form" modelAttribute="lineEstimate" id="lineEstimateForm" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
 			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
 			<form:hidden path="" name="lineEstimateId" id="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
@@ -66,6 +64,4 @@
 				</table>
 			</div>
 		</form:form>  
-	</div>
-</div>
 <script src="<c:url value='/resources/js/lineestimate/spillover/spillover.js?rnd=${app_release_no}'/>"></script

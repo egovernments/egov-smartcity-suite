@@ -41,13 +41,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.debit.details"/>
+
+		<div class="panel-heading custom_form_panel_heading">
+			<div class="panel-title"><spring:message  code="lbl.debit.details"/></div>
 		</div>
-	</div>
-	<div class="panel-body">
+		<div  style="padding: 0 15px;">
 		<table class="table table-bordered" id="tbldebitdetails">
 			<thead>
 				<tr>
@@ -73,5 +71,4 @@
 				</tr>
 			</tbody>
 		</table>
-	</div>
 </div>
