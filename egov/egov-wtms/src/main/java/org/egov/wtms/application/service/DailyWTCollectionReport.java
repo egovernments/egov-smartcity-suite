@@ -60,17 +60,16 @@ public class DailyWTCollectionReport {
     private String fromInstallment;
     private String toInstallment;
     private String status;
-    
-    
+
     public String getWardName() {
-		return wardName;
-	}
+        return wardName;
+    }
 
-	public void setWardName(String wardName) {
-		this.wardName = wardName;
-	}
+    public void setWardName(final String wardName) {
+        this.wardName = wardName;
+    }
 
-	public String getReceiptNumber() {
+    public String getReceiptNumber() {
         return receiptNumber;
     }
 
