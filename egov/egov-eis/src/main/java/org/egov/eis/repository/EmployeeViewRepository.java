@@ -39,11 +39,20 @@
  */
 package org.egov.eis.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.eis.entity.EmployeeView;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
 public interface EmployeeViewRepository extends Repository<EmployeeView, Long> {
 
     public EmployeeView findByAssignment_Id(final Long id);
+
+    @Query("select empview from EmployeeView empview where upper(name) like :userName or upper(code) like :code or upper(position.name) like :positionName and :currentDate between fromDate and toDate")
+    public List<EmployeeView> findByUserNameLikeOrCodeLikeOrPosition_NameLike(@Param("userName") String userName,
+            @Param("code") String code, @Param("positionName") String positionName, @Param("currentDate") Date currentDate);
 
 }
