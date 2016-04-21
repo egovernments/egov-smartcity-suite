@@ -149,18 +149,25 @@
 											id="newInstrumentNumber%{#stat.index}"
 											value='%{newInstrumentNumber[#stat.index]}'
 											onblur="validatechequeno(this)" /></td>
-									<td style="text-align: left" class="blueborderfortdnew"><s:textfield
-											name="newInstrumentDate"
-											value="%{newInstrumentDate[#stat.index]}" /></td>
+									<td style="text-align: left"
+										class="blueborderfortdnew"><s:textfield
+											id="newInstrumentDate" name="newInstrumentDate"
+											value="%{newInstrumentDate[#stat.index]}"
+											data-date-end-date="0d"
+											onkeyup="DateFormat(this,this.value,event,false,'3')"
+											placeholder="DD/MM/YYYY" class="form-control datepicker"
+											data-inputmask="'mask': 'd/m/y'" /></td>
 								</s:if>
 						</tr>
 					</s:iterator>
 					<tr>
-						<td class="greybox"><s:text name="chq.issued.department" /><span
-							class="mandatory1">*</span> <s:select name="department"
-								id="department" list="dropdownData.departmentList" listKey="id"
-								listValue="name" headerKey="-1" headerValue="----Choose----"
+						<td class="greybox" colspan="3"><s:text
+								name="chq.issued.department" /><span class="mandatory1">*</span>
+							<s:select name="department" id="department"
+								list="dropdownData.departmentList" listKey="id" listValue="name"
+								headerKey="-1" headerValue="----Choose----"
 								value="%{department}" /></td>
+						<td class="greybox" colspan="10"></td>
 					</tr>
 				</s:if>
 
@@ -171,7 +178,8 @@
 			<s:if test="%{instrumentHeaderList.size()>0}">
 				<div class="buttonbottom">
 					<s:hidden name="button" id="button" />
-					<s:hidden name="containsRTGS" id="containsRTGS" value = "%{containsRTGS}"/>
+					<s:hidden name="containsRTGS" id="containsRTGS"
+						value="%{containsRTGS}" />
 					<s:submit type="submit" cssClass="buttonsubmit" name="Surrender"
 						value="Surrender" onclick="return surrenderChq();" method="save" />
 					<s:if test="%{containsRTGS==false}">

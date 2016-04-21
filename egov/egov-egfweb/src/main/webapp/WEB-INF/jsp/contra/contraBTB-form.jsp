@@ -189,11 +189,12 @@
 			id="chequeNum" value="%{contraBean.chequeNumber}" /></td>
 	<td class="greybox"><span id="mdcDate"><s:text
 				name="contra.chequeDate" /></span></td>
-	<td class="greybox"><s:textfield name="contraBean.chequeDate"
-			id="chequeDate" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-		<a href="javascript:show_calendar('cbtbform.chequeDate');"
-		style="text-decoration: none">&nbsp;<img tabIndex="-1"
-			src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+	<td class="greybox"><s:textfield id="chequeDate"
+			name="contraBean.chequeDate"
+			data-date-end-date="0d"
+			onkeyup="DateFormat(this,this.value,event,false,'3')"
+			placeholder="DD/MM/YYYY" class="form-control datepicker"
+			data-inputmask="'mask': 'd/m/y'" /></td>
 
 </tr>
 

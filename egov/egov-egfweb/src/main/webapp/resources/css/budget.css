@@ -1,5 +1,12 @@
 @charset "utf-8";
 
+.page-container .main-content table th.bluebgheadtd
+{
+	border-right-color: #CCCCCC;
+    border-bottom-color: #CCCCCC;
+    background-color: #f2851f;
+}
+
 div.topbar {
 	background-color: #293E5B;
 	height: 65px;
@@ -145,18 +152,16 @@ th.bluebgheadtd {
 	border-bottom-width: 1px;
 	border-right-style: solid;
 	border-bottom-style: solid;
-	border-right-color: #E9E9E9;
-	border-bottom-color: #E9E9E9;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	font-weight: bold;
 	color: #FFFFFF;
 	padding-right: 5px;
 	padding-left: 5px;
-	background-color: #999999;
 	text-align: center;
-	background-image: url(/egi/resources/erp2/images/tablebg.gif);
-	background-repeat: repeat-x;
+	border-right-color: #CCCCCC;
+    border-bottom-color: #CCCCCC;
+    background-color: #f2851f;
 	}
 td.bluebgheadtd {
 	height: 32px;
@@ -164,8 +169,6 @@ td.bluebgheadtd {
 	border-bottom-width: 1px;
 	border-right-style: solid;
 	border-bottom-style: solid;
-	border-right-color: #E9E9E9;
-	border-bottom-color: #E9E9E9;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	font-weight: bold;
@@ -174,8 +177,9 @@ td.bluebgheadtd {
 	padding-left: 5px;
 	background-color: #999999;
 	text-align: center;
-	background-image: url(/egi/resources/erp2/images/tablebg.gif);
-	background-repeat: repeat-x;
+	border-right-color: #CCCCCC;
+    border-bottom-color: #CCCCCC;
+    background-color: #f2851f;
 	}
 	
 td.totalbg {
@@ -559,18 +563,17 @@ th.bluebgheadtdnew {
 	border-bottom-width: 1px;
 	border-right-style: solid;
 	border-bottom-style: solid;
-	border-right-color: #E9E9E9;
-	border-bottom-color: #E9E9E9;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	font-weight: bold;
 	color: #FFFFFF;
 	padding-right: 2px;
 	padding-left: 2px;
-	background-color: #999999;
 	text-align: center;
-	background-image: url(/egi/resources/erp2/images/tablebg.gif);
-	background-repeat: repeat-x;
+	border-right-color: #CCCCCC;
+    border-bottom-color: #CCCCCC;
+    background-color: #f2851f;
+
 	}
 
 td.blueborderfortdnew {

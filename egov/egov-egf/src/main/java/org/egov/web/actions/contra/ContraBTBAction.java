@@ -42,7 +42,6 @@
  */
 package org.egov.web.actions.contra;
 
-import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -78,7 +77,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentHeader;
@@ -613,12 +612,19 @@ public class ContraBTBAction extends BaseVoucherAction {
     @SkipValidation
     @Action(value = "/contra/contraBTB-newform")
     public String newform() {
-        reset();
-        LoadAjaxedDropDowns();
-        loadDefalutDates();
-        final Date currDate = new Date();
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        contraBean.setChequeDate(sdf.format(currDate));
+        try {
+
+            reset();
+            LoadAjaxedDropDowns();
+            loadDefalutDates();
+            final Date currDate = new Date();
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            contraBean.setChequeDate(sdf.format(currDate));
+            voucherDate = sdf.parse(sdf.format(currDate));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return NEW;
     }
 

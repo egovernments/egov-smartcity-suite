@@ -8,16 +8,15 @@ table.its th {
   border-bottom-width: 1px;
   border-right-style: solid;
   border-bottom-style: solid;
-  border-right-color: #84B1AD;
-  border-bottom-color: #84B1AD;
-  font-family: semibold;
+    font-family: semibold;
   font-size: 10px;
   font-weight: bold;
   color: #FFF;
   padding: 4px;
-  background-color: #8CBBB7;
-  background-image:none;
   text-align: center;
+  border-right-color: #CCCCCC;
+  border-bottom-color: #CCCCCC;
+  background-color: #f2851f;
 }
 
 

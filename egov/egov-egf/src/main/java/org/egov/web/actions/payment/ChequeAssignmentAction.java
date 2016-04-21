@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
-
-
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -155,11 +153,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
     private String paymentMode, inFavourOf;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     @Qualifier("paymentService")
     private PaymentService paymentService;
     private Integer bankaccount, selectedRows = 0, bankbranch;
@@ -251,6 +249,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Boolean nonSubledger = false;
     private FinancialYearDAO financialYearDAO;
     private boolean containsRTGS = false;
+
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
     }
@@ -784,9 +783,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Map<String, String> loadChequeSerialNo(final Integer acc) {
 
         chequeSlNoMap = new LinkedHashMap<String, String>();
-        final List<Object[]> cheueSlList = persistenceService.getSession()
+        final List<Object[]> cheueSlList = persistenceService
+                .getSession()
                 .createSQLQuery(
-                        "select distinct(serialNo) ,fs.financialyear from  egf_account_cheques ac,financialyear fs where ac.serialno = fs.id and  bankAccountId=" + acc
+                        "select distinct(serialNo) ,fs.financialyear from  egf_account_cheques ac,financialyear fs where ac.serialno = fs.id and  bankAccountId="
+                                + acc
                                 + " order by serialNo desc ").list();
         if (cheueSlList != null)
             for (final Object[] s : cheueSlList)
@@ -1659,7 +1660,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         loadChequeSerialNo(bankaccount);
 
         try {
-            
+
             if (surrender == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender Cheque ",
                         "Please select the atleast one Cheque for Surrendering ")));
@@ -1808,7 +1809,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         {
             final InstrumentHeader newInstrumentHeader = instrumentHeader.clone();
             newInstrumentHeader.setInstrumentNumber(chequeNoList.get(i).toString());
-            newInstrumentHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNoList.get(i).toString()),false));
+            newInstrumentHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNoList.get(i).toString()), false));
             newInstrumentHeader.setStatusId(instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS));
             newInstrumentHeader.setInstrumentDate(chequeDatelist.get(i));
             i++;
@@ -2549,6 +2550,5 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     public void setContainsRTGS(boolean containsRTGS) {
         this.containsRTGS = containsRTGS;
     }
-
 
 }

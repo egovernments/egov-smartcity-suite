@@ -155,10 +155,10 @@
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeDate"
-									value="%{tempChequeDate}" size="10" /><a
-								href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
+									value="%{tempChequeDate}" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:if>
 						<s:elseif
 							test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
@@ -176,10 +176,10 @@
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeDate"
-									value="%{tempChequeDate}" size="10" /><a
-								href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
+									value="%{tempChequeDate}" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:elseif>
 					</tr>
 				</s:iterator>
@@ -213,11 +213,10 @@
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
 									var="tempChequeDate" format="dd/MM/yyyy" /> <s:textfield
 									id="chequeDt" name="chequeDt" value="%{tempChequeDate}"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-								href="javascript:show_calendar('forms[0].chequeDt');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)
-							</td>
+									data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:if>
 
 
@@ -237,11 +236,10 @@
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
 									var="tempChequeDate" format="dd/MM/yyyy" /> <s:textfield
 									id="chequeDt" name="chequeDt" value="%{tempChequeDate}"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-								href="javascript:show_calendar('forms[0].chequeDt');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)
-							</td>
+									data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:elseif>
 						<s:elseif
 							test="%{!isChequeNoGenerationAuto() && paymentMode=='rtgs'}">
@@ -253,11 +251,10 @@
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="rtgsDate"
 									var="tempChequeDate" format="dd/MM/yyyy" /> <s:textfield
 									id="chequeDt" name="rtgsDate" value="%{tempChequeDate}"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-								href="javascript:show_calendar('forms[0].rtgsDate');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)
-							</td>
+									data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:elseif>
 
 						<s:if test="%{paymentMode=='cash'}">
@@ -362,6 +359,7 @@
 			
 			
 			function validateChequeDateForNonChequeMode(){
+				var flag = true;
 				var noOfSelectedRows=document.getElementById('selectedRows').value;
 				//bootbox.alert("sizseled"+noOfSelectedRows);
 				var chkCount=0;
@@ -371,16 +369,9 @@
 				var chequeNo=document.getElementById('chequeNumber0').value;
 				if(chequeNo==null || chequeNo==''){
 					bootbox.alert('Please enter a valid cheque Number', function() {
-						return false;
+						flag =  false;
 					});
 				}
-				if(isNaN( Date.parse( chequeDate))) {                
-
-					bootbox.alert('Please enter a valid cheque date', function() {
-						document.getElementById('chequeNumber0').value = "";  
-						return false;
-					});
-				 }else{
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
 					if(document.getElementById('isSelected'+index).checked){
@@ -391,15 +382,13 @@
 							bootbox.alert('Cheque Date cannot be less than than payment Date', function() {
 								document.getElementById('chequeDt').value='';
 								document.getElementById('chequeDt').focus();
-								return false;
+								flag =  false;
 							});
 						 }
 						if(chkCount==noOfSelectedRows){ break;}
 					}
 				}
-				return true;
-				 }
-			  
+			  return flag ;
 			}
 			
 			function validateChequeDateForChequeMode(){
