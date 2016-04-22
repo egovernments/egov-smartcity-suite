@@ -283,7 +283,7 @@ function validateMBPageNumbers() {
 		bootbox.alert("MB Page Numbers should be greater than Zero!");
 		return false;
 	}
-	if($('#fromPageNo').val() != '' && $('#toPageNo').val() != '' && $('#fromPageNo').val() > $('#toPageNo').val()) {
+	if($('#fromPageNo').val() != '' && $('#toPageNo').val() != '' && eval($('#fromPageNo').val()) > eval($('#toPageNo').val())) {
 		bootbox.alert("MB From Page Number cannot be greater than MB To Page Number!");
 		return false;
 	}
