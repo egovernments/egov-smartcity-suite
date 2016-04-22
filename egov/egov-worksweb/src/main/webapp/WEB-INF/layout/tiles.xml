@@ -128,7 +128,7 @@
 
 	<definition name="searchloatocreatecontractorbill-search" extends="base_layout">
 		<put-attribute name="page-title" value="title.contractorbill.create" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/contractorbill/searchLOAToCreateContractorBill-header.jsp"/>
+		<put-attribute name="body" value="/WEB-INF/views/contractorbill/searchLOAForContractorBill-header.jsp"/>
 	</definition>
 	
 	<definition name="contractorBill-update" extends="base_layout">

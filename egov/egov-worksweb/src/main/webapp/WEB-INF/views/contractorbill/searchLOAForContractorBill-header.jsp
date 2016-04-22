@@ -48,7 +48,7 @@
 			class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">
-					<jsp:include page="searchLOACreateContractor-form.jsp" />
+					<jsp:include page="searchLOAForContractorBill-form.jsp" />
 				</div>
 			</div>
 			<div class="row">
@@ -61,7 +61,7 @@
 				</div>
 			</div>
 		</form:form>
-<jsp:include page="searchLOaContractorBill-searchResult.jsp" />
+<jsp:include page="searchLOAForContractorBill-searchResult.jsp" />
 <script>
 	$('#btnsearch').click(function(e) {
 		if ($('form').valid()) {
