@@ -114,7 +114,7 @@ public class LineEstimateForLoaSearchRequest {
         return spillOverFlag;
     }
 
-    public void setSpillOverFlag(boolean spillOverFlag) {
+    public void setSpillOverFlag(final boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
     }
 }

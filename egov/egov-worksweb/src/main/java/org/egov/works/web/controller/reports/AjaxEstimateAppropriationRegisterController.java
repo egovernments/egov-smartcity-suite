@@ -21,27 +21,29 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping("/reports")
 public class AjaxEstimateAppropriationRegisterController {
-    
+
     @Autowired
     private EstimateAppropriationRegisterService estimateAppropriationRegisterService;
-    
+
     @Autowired
     private EstimateAppropriationRegisterJSONAdaptor estimateAppropriationRegisterJSONAdaptor;
-    
+
     @RequestMapping(value = "/ajax-estimateappropriationregister", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchEstimateAppropriationRegister(final Model model,
             @ModelAttribute final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest) {
-        
+
         final List<LineEstimateAppropriation> lineEstimateAppropriations = estimateAppropriationRegisterService
                 .searchEstimateAppropriationRegister(estimateAppropriationRegisterSearchRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimateAppropriationRegisterJson(lineEstimateAppropriations))
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchEstimateAppropriationRegisterJson(lineEstimateAppropriations))
                 .append("}").toString();
         return result;
     }
 
     public Object toSearchEstimateAppropriationRegisterJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateAppropriation.class, estimateAppropriationRegisterJSONAdaptor).create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(LineEstimateAppropriation.class, estimateAppropriationRegisterJSONAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }

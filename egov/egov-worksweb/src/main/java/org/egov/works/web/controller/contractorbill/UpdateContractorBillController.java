@@ -178,19 +178,20 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
              * +error.getMessage()); } else errors.reject(error.getMessage()); }
              */
         }
-        
+
         if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString())
                 && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) {
             final WorkOrder workOrder = contractorBillRegister.getWorkOrder();
-            final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-            
+            final LineEstimateDetails lineEstimateDetails = lineEstimateService
+                    .findByEstimateNumber(workOrder.getEstimateNumber());
+
             validateInput(contractorBillRegister, lineEstimateDetails, errors, request);
             contractorBillRegister.getEgBilldetailes().clear();
-            
+
             contractorBillRegister = addBillDetails(contractorBillRegister, lineEstimateDetails, errors, request);
             contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
         }
-        
+
         if (!checkForDuplicateAccountCodes(contractorBillRegister))
             errors.reject("error.contractorbill.duplicate.accountcodes", "error.contractorbill.duplicate.accountcodes");
         validateTotalDebitAndCreditAmount(contractorBillRegister, errors);
@@ -200,7 +201,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             return loadViewData(model, request, contractorBillRegister);
         } else {
             if (null != workFlowAction)
-                updatedContractorBillRegister = contractorBillRegisterService.updateContractorBillRegister(contractorBillRegister, approvalPosition,
+                updatedContractorBillRegister = contractorBillRegisterService.updateContractorBillRegister(contractorBillRegister,
+                        approvalPosition,
                         approvalComment, null, workFlowAction,
                         mode, files);
 
@@ -213,7 +215,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                     + updatedContractorBillRegister.getBillnumber();
         }
     }
-    
+
     private void validateInput(final ContractorBillRegister contractorBillRegister, final LineEstimateDetails lineEstimateDetails,
             final BindingResult resultBinder,
             final HttpServletRequest request) {
@@ -240,39 +242,43 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate()
                         .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
-        
-        if(contractorBillRegister.getMbHeader() != null) {
+
+        if (contractorBillRegister.getMbHeader() != null) {
             if (StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
                 resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
-            
+
             if (contractorBillRegister.getMbHeader().getMbDate() == null)
                 resultBinder.rejectValue("mbHeader.mbDate", "error.mbdate.required");
-            
+
             if (contractorBillRegister.getMbHeader().getFromPageNo() == null)
                 resultBinder.rejectValue("mbHeader.fromPageNo", "error.frompageno.required");
-            
+
             if (contractorBillRegister.getMbHeader().getToPageNo() == null)
                 resultBinder.rejectValue("mbHeader.toPageNo", "error.topageno.required");
-            
-            if(contractorBillRegister.getMbHeader().getFromPageNo() ==0 || contractorBillRegister.getMbHeader().getToPageNo() == 0)
+
+            if (contractorBillRegister.getMbHeader().getFromPageNo() == 0
+                    || contractorBillRegister.getMbHeader().getToPageNo() == 0)
                 resultBinder.reject("error.validate.mb.pagenumbers.zero", "error.validate.mb.pagenumbers.zero");
-            
-            if(contractorBillRegister.getMbHeader().getFromPageNo() != null && contractorBillRegister.getMbHeader().getToPageNo() != null && contractorBillRegister.getMbHeader().getFromPageNo() > contractorBillRegister.getMbHeader().getToPageNo())
-                resultBinder.reject("error.validate.mb.frompagenumber.greaterthan.topagenumber", "error.validate.mb.frompagenumber.greaterthan.topagenumber");
-    
+
+            if (contractorBillRegister.getMbHeader().getFromPageNo() != null
+                    && contractorBillRegister.getMbHeader().getToPageNo() != null
+                    && contractorBillRegister.getMbHeader().getFromPageNo() > contractorBillRegister.getMbHeader().getToPageNo())
+                resultBinder.reject("error.validate.mb.frompagenumber.greaterthan.topagenumber",
+                        "error.validate.mb.frompagenumber.greaterthan.topagenumber");
+
             if (contractorBillRegister.getMbHeader().getMbDate() != null
                     && contractorBillRegister.getMbHeader().getMbDate()
                             .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
         }
-        
+
         if (StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
             resultBinder.reject("error.netpayable.accountcode.required", "error.netpayable.accountcode.required");
         if (StringUtils.isBlank(request.getParameter("netPayableAmount"))
                 || Double.valueOf(request.getParameter("netPayableAmount").toString()) < 0)
             resultBinder.reject("error.netpayable.amount.required", "error.netpayable.amount.required");
     }
-    
+
     private void validateTotalDebitAndCreditAmount(final ContractorBillRegister contractorBillRegister,
             final BindingResult resultBinder) {
         BigDecimal totalDebitAmount = BigDecimal.ZERO;
@@ -393,8 +399,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                     model.addAttribute("netPayableAccountId", egBilldetails.getId());
                     model.addAttribute("netPayableAccountCode", coa.getId());
                     model.addAttribute("netPayableAmount", egBilldetails.getCreditamount());
-                }
-                else
+                } else
                     billDetails.put("isNetPayable", false);
 
             }
@@ -402,7 +407,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         }
         return billDetailsList;
     }
-    
+
     private ContractorBillRegister addBillDetails(final ContractorBillRegister contractorBillRegister,
             final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder, final HttpServletRequest request) {
         if (contractorBillRegister.getBillDetailes() == null || contractorBillRegister.getBillDetailes().isEmpty())

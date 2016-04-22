@@ -22,7 +22,6 @@ import org.egov.works.reports.entity.EstimateAppropriationRegisterPdf;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
 import org.egov.works.reports.service.EstimateAppropriationRegisterService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -43,10 +42,7 @@ public class EstimateAppropriationRegisterPDFController {
     private ReportService reportService;
 
     @Autowired
-    private WorksUtils worksUtils;
-
-    @Autowired
-    private  EstimateAppropriationRegisterService estimateAppropriationRegisterService;
+    private EstimateAppropriationRegisterService estimateAppropriationRegisterService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -79,24 +75,25 @@ public class EstimateAppropriationRegisterPDFController {
         searchRequest.setFund(fund);
 
         String queryParameters = "Estimate Appropriation Register Report ";
-            
-            queryParameters += "for ";
-            //queryParameters += "As On Date : " + asOnDate + ", ";
-            queryParameters += "Budget Head : " + budgetHead + ", ";
-            queryParameters += "Department : " + departmentService.getDepartmentById(department).getName() + ", ";
-            //queryParameters += "Financial Year : " + financialYear + ", ";
-            queryParameters += "Function : " + function + ", ";
-            queryParameters += "Fund : " + fund;
-            
+
+        queryParameters += "for ";
+        // queryParameters += "As On Date : " + asOnDate + ", ";
+        queryParameters += "Budget Head : " + budgetHead + ", ";
+        queryParameters += "Department : " + departmentService.getDepartmentById(department).getName() + ", ";
+        // queryParameters += "Financial Year : " + financialYear + ", ";
+        queryParameters += "Function : " + function + ", ";
+        queryParameters += "Fund : " + fund;
+
         reportParams.put("queryParameters", queryParameters);
-        
-        final List<LineEstimateAppropriation> lineEstimateAppropriations = estimateAppropriationRegisterService.searchEstimateAppropriationRegister(searchRequest);
+
+        final List<LineEstimateAppropriation> lineEstimateAppropriations = estimateAppropriationRegisterService
+                .searchEstimateAppropriationRegister(searchRequest);
         return generateReport(lineEstimateAppropriations, request, session, contentType);
 
     }
 
-    private ResponseEntity<byte[]> generateReport(List<LineEstimateAppropriation> lineEstimateAppropriations,
-            HttpServletRequest request, HttpSession session, String contentType) {
+    private ResponseEntity<byte[]> generateReport(final List<LineEstimateAppropriation> lineEstimateAppropriations,
+            final HttpServletRequest request, final HttpSession session, final String contentType) {
 
         final List<EstimateAppropriationRegisterPdf> estimateAppropriationRegisterPdfList = new ArrayList<EstimateAppropriationRegisterPdf>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -104,8 +101,7 @@ public class EstimateAppropriationRegisterPDFController {
 
         String dataRunDate = "";
 
-        if (lineEstimateAppropriations != null && !lineEstimateAppropriations.isEmpty()) {
-            
+        if (lineEstimateAppropriations != null && !lineEstimateAppropriations.isEmpty())
             for (final LineEstimateAppropriation lea : lineEstimateAppropriations) {
                 final EstimateAppropriationRegisterPdf pdf = new EstimateAppropriationRegisterPdf();
                 if (lea.getBudgetUsage().getAppropriationnumber() != null)
@@ -129,52 +125,54 @@ public class EstimateAppropriationRegisterPDFController {
                 else
                     pdf.setNameOfTheWork("");
                 if (lea.getLineEstimateDetails().getCreatedDate() != null)
-                    pdf.setEstimateDate(lea.getLineEstimateDetails().getCreatedDate() + " - " + sdf.format(lea.getLineEstimateDetails().getCreatedDate()));
+                    pdf.setEstimateDate(lea.getLineEstimateDetails().getCreatedDate() + " - "
+                            + sdf.format(lea.getLineEstimateDetails().getCreatedDate()));
                 else
                     pdf.setEstimateDate("");
                 if (lea.getLineEstimateDetails().getEstimateAmount() != null)
-                    pdf.setEstimateValue(lea.getLineEstimateDetails().getEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    pdf.setEstimateValue(
+                            lea.getLineEstimateDetails().getEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setEstimateValue("");
-                //for appripraite value checking realease and consume amount
+                // for appripraite value checking realease and consume amount
                 if (lea.getBudgetUsage().getConsumedAmount() != null && lea.getBudgetUsage().getConsumedAmount() > 0)
                     pdf.setAppropriatedValue(lea.getBudgetUsage().getConsumedAmount().toString());
-                else if(lea.getBudgetUsage().getReleasedAmount() != null && lea.getBudgetUsage().getReleasedAmount() < 0)
+                else if (lea.getBudgetUsage().getReleasedAmount() != null && lea.getBudgetUsage().getReleasedAmount() < 0)
                     pdf.setAppropriatedValue(lea.getBudgetUsage().getConsumedAmount().toString());
                 else
-                    pdf.setAppropriatedValue("");                
-                //for cummulative total and balence available
+                    pdf.setAppropriatedValue("");
+                // for cummulative total and balence available
                 if (lea.getLineEstimateDetails().getEstimateAmount() != null)
-                    pdf.setEstimateValue(lea.getLineEstimateDetails().getEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    pdf.setEstimateValue(
+                            lea.getLineEstimateDetails().getEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setEstimateValue("");
-                
+
                 if (lea.getLineEstimateDetails().getEstimateAmount() != null)
-                    pdf.setEstimateValue(lea.getLineEstimateDetails().getEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    pdf.setEstimateValue(
+                            lea.getLineEstimateDetails().getEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setEstimateValue("");
-                
+
                 dataRunDate = formatter.format(lea.getCreatedDate());
 
                 estimateAppropriationRegisterPdfList.add(pdf);
             }
-                
-    }
-            reportParams.put("heading", WorksConstants.HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT);
-            reportParams.put("reportRunDate", formatter.format(new Date()));
-            reportParams.put("dataRunDate", dataRunDate);
+        reportParams.put("heading", WorksConstants.HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT);
+        reportParams.put("reportRunDate", formatter.format(new Date()));
+        reportParams.put("dataRunDate", dataRunDate);
 
-            reportInput = new ReportRequest(ESTIMATEAPPROPRIATIONREGISTERPDF, estimateAppropriationRegisterPdfList, reportParams);
-            
-            final HttpHeaders headers = new HttpHeaders();
-            if (contentType.equalsIgnoreCase("pdf")) {
-                headers.setContentType(MediaType.parseMediaType("application/pdf"));
-                headers.add("content-disposition", "inline;filename=EstimateAppropriationRegister.pdf");
-            } else {
-                headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
-                headers.add("content-disposition", "inline;filename=EstimateAppropriationRegister.xls");
-            }
-            reportOutput = reportService.createReport(reportInput);
-            return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-}
+        reportInput = new ReportRequest(ESTIMATEAPPROPRIATIONREGISTERPDF, estimateAppropriationRegisterPdfList, reportParams);
+
+        final HttpHeaders headers = new HttpHeaders();
+        if (contentType.equalsIgnoreCase("pdf")) {
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            headers.add("content-disposition", "inline;filename=EstimateAppropriationRegister.pdf");
+        } else {
+            headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
+            headers.add("content-disposition", "inline;filename=EstimateAppropriationRegister.xls");
+        }
+        reportOutput = reportService.createReport(reportInput);
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
 }

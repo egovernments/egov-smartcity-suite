@@ -75,7 +75,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGW_MV_WORK_PROGRESS_REGISTER")
 @SequenceGenerator(name = WorkProgressRegister.SEQ_EGW_WORKPROGREEREGISTER, sequenceName = WorkProgressRegister.SEQ_EGW_WORKPROGREEREGISTER, allocationSize = 1)
-public class WorkProgressRegister extends AbstractAuditable{
+public class WorkProgressRegister extends AbstractAuditable {
 
     private static final long serialVersionUID = 5548463818994931623L;
 
@@ -183,17 +183,19 @@ public class WorkProgressRegister extends AbstractAuditable{
     private BigDecimal totalBillPaidSoFar;
 
     private BigDecimal balanceValueOfWorkToBill;
-    
+
     private boolean spillOverFlag;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
     private Department department;
 
+    @Override
     protected void setId(final Long id) {
         this.id = id;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -450,7 +452,7 @@ public class WorkProgressRegister extends AbstractAuditable{
         return spillOverFlag;
     }
 
-    public void setSpillOverFlag(boolean spillOverFlag) {
+    public void setSpillOverFlag(final boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
     }
 
@@ -458,7 +460,7 @@ public class WorkProgressRegister extends AbstractAuditable{
         return department;
     }
 
-    public void setDepartment(Department department) {
+    public void setDepartment(final Department department) {
         this.department = department;
     }
 }

@@ -62,10 +62,10 @@ public class SearchContractorBillController {
 
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private LineEstimateService lineEstimateService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 

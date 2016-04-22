@@ -84,14 +84,14 @@ public class MBHeader extends StateAware {
     @Required(message = "mbheader.mbrefno.null")
     @Length(max = 50, message = "mbheader.mbrefno.length")
     private String mbRefNo;
-  
+
     @Length(max = 400, message = "mbheader.contractorComments.length")
     private String contractorComments;
     @Required(message = "mbheader.mbdate.null")
     @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "mbheader.mbDate.futuredate")
     @DateFormat(message = "invalid.fieldvalue.mbDate")
     private Date mbDate;
-    //@Required(message = "mbheader.mbabstract.null")
+    // @Required(message = "mbheader.mbabstract.null")
     @Length(max = 400, message = "mbheader.mbabstract.length")
     private String mbAbstract;
     @Required(message = "mbheader.fromPageNo.null")
@@ -116,7 +116,7 @@ public class MBHeader extends StateAware {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
         if (workOrder != null && (workOrder.getId() == null || workOrder.getId() == 0 || workOrder.getId() == -1))
             validationErrors.add(new ValidationError("workOrder", "mbheader.workorder.null"));
-        
+
         if (fromPageNo != null && toPageNo != null && fromPageNo > toPageNo)
             validationErrors.add(new ValidationError("toPageNo", "mbheader.toPageNo.invalid"));
         if (mbDate != null && workOrder != null && workOrder.getWorkOrderDate() != null

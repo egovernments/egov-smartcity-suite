@@ -45,7 +45,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.reports.entity.WorkProgressRegister;
@@ -63,7 +62,7 @@ public class WorkProgressRegisterService {
 
     @Autowired
     private LineEstimateDetailsRepository lineEstimateDetailsRepository;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -77,31 +76,31 @@ public class WorkProgressRegisterService {
 
     @Transactional
     public List<WorkProgressRegister> searchWorkProgressRegister(
-            WorkProgressRegisterSearchRequest workProgressRegisterSearchRequest) {
+            final WorkProgressRegisterSearchRequest workProgressRegisterSearchRequest) {
         if (workProgressRegisterSearchRequest != null) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkProgressRegister.class);
-                if (workProgressRegisterSearchRequest.getDepartment() != null)
-                    criteria.add(Restrictions.eq("department.id",
-                            workProgressRegisterSearchRequest.getDepartment()));
-                if (workProgressRegisterSearchRequest.getWorkIdentificationNumber() != null)
-                    criteria.add(Restrictions.eq("winCode",
-                            workProgressRegisterSearchRequest.getWorkIdentificationNumber()));
-                if (workProgressRegisterSearchRequest.getContractor() != null) {
-                    criteria.createAlias("contractor", "contractor");
-                    criteria.add(Restrictions.or(Restrictions.ilike("contractor.code",
-                            workProgressRegisterSearchRequest.getContractor()), Restrictions.ilike("contractor.name",
-                                    workProgressRegisterSearchRequest.getContractor())));
-                }
-                if (workProgressRegisterSearchRequest.getAdminSanctionFromDate() != null)
-                    criteria.add(Restrictions.ge("adminSanctionDate",
-                            workProgressRegisterSearchRequest.getAdminSanctionFromDate()));
-                if (workProgressRegisterSearchRequest.getAdminSanctionToDate() != null)
-                    criteria.add(Restrictions.le("adminSanctionDate",
-                            workProgressRegisterSearchRequest.getAdminSanctionToDate()));
-            
-                if(workProgressRegisterSearchRequest.isSpillOverFlag())
-                    criteria.add(Restrictions.eq("spillOverFlag", workProgressRegisterSearchRequest.isSpillOverFlag()));
-            
+            if (workProgressRegisterSearchRequest.getDepartment() != null)
+                criteria.add(Restrictions.eq("department.id",
+                        workProgressRegisterSearchRequest.getDepartment()));
+            if (workProgressRegisterSearchRequest.getWorkIdentificationNumber() != null)
+                criteria.add(Restrictions.eq("winCode",
+                        workProgressRegisterSearchRequest.getWorkIdentificationNumber()));
+            if (workProgressRegisterSearchRequest.getContractor() != null) {
+                criteria.createAlias("contractor", "contractor");
+                criteria.add(Restrictions.or(Restrictions.ilike("contractor.code",
+                        workProgressRegisterSearchRequest.getContractor()), Restrictions.ilike("contractor.name",
+                                workProgressRegisterSearchRequest.getContractor())));
+            }
+            if (workProgressRegisterSearchRequest.getAdminSanctionFromDate() != null)
+                criteria.add(Restrictions.ge("adminSanctionDate",
+                        workProgressRegisterSearchRequest.getAdminSanctionFromDate()));
+            if (workProgressRegisterSearchRequest.getAdminSanctionToDate() != null)
+                criteria.add(Restrictions.le("adminSanctionDate",
+                        workProgressRegisterSearchRequest.getAdminSanctionToDate()));
+
+            if (workProgressRegisterSearchRequest.isSpillOverFlag())
+                criteria.add(Restrictions.eq("spillOverFlag", workProgressRegisterSearchRequest.isSpillOverFlag()));
+
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();
         } else

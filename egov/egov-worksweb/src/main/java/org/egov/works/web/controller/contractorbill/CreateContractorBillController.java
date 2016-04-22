@@ -161,14 +161,14 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("netPayableAmount", request.getParameter("netPayableAmount"));
             model.addAttribute("netPayableAccountCode", request.getParameter("netPayableAccountCode"));
             model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
-            
+
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
 
             prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
 
             model.addAttribute("mode", "edit");
-            
+
             model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister));
 
             return "contractorBill-form";
@@ -286,32 +286,36 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate()
                         .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
-        
-        if(contractorBillRegister.getMbHeader() != null) {
+
+        if (contractorBillRegister.getMbHeader() != null) {
             if (StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
                 resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
-            
+
             if (contractorBillRegister.getMbHeader().getMbDate() == null)
                 resultBinder.rejectValue("mbHeader.mbDate", "error.mbdate.required");
-            
+
             if (contractorBillRegister.getMbHeader().getFromPageNo() == null)
                 resultBinder.rejectValue("mbHeader.fromPageNo", "error.frompageno.required");
-            
+
             if (contractorBillRegister.getMbHeader().getToPageNo() == null)
                 resultBinder.rejectValue("mbHeader.toPageNo", "error.topageno.required");
-            
-            if(contractorBillRegister.getMbHeader().getFromPageNo() ==0 || contractorBillRegister.getMbHeader().getToPageNo() == 0)
+
+            if (contractorBillRegister.getMbHeader().getFromPageNo() == 0
+                    || contractorBillRegister.getMbHeader().getToPageNo() == 0)
                 resultBinder.reject("error.validate.mb.pagenumbers.zero", "error.validate.mb.pagenumbers.zero");
-            
-            if(contractorBillRegister.getMbHeader().getFromPageNo() != null && contractorBillRegister.getMbHeader().getToPageNo() != null && contractorBillRegister.getMbHeader().getFromPageNo() > contractorBillRegister.getMbHeader().getToPageNo())
-                resultBinder.reject("error.validate.mb.frompagenumber.greaterthan.topagenumber", "error.validate.mb.frompagenumber.greaterthan.topagenumber");
-    
+
+            if (contractorBillRegister.getMbHeader().getFromPageNo() != null
+                    && contractorBillRegister.getMbHeader().getToPageNo() != null
+                    && contractorBillRegister.getMbHeader().getFromPageNo() > contractorBillRegister.getMbHeader().getToPageNo())
+                resultBinder.reject("error.validate.mb.frompagenumber.greaterthan.topagenumber",
+                        "error.validate.mb.frompagenumber.greaterthan.topagenumber");
+
             if (contractorBillRegister.getMbHeader().getMbDate() != null
                     && contractorBillRegister.getMbHeader().getMbDate()
                             .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
         }
-        
+
         if (StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
             resultBinder.reject("error.netpayable.accountcode.required", "error.netpayable.accountcode.required");
         if (StringUtils.isBlank(request.getParameter("netPayableAmount"))
@@ -466,7 +470,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         egBillPaydetail.setLastUpdatedTime(new Date());
         return egBillPaydetail;
     }
-    
+
     public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister) {
         final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
         Map<String, Object> billDetails = new HashMap<String, Object>();

@@ -84,7 +84,7 @@ public class WorkProgressRegisterPDFController {
                 .searchWorkProgressRegister(searchRequest);
 
         String queryParameters = "Work Progress Register Report ";
-        if(spillOverFlag)
+        if (spillOverFlag)
             queryParameters = "Work Progress Register for Spill Over Line Estimates ";
         if (adminSanctionFromDate != null
                 || adminSanctionToDate != null
@@ -92,29 +92,24 @@ public class WorkProgressRegisterPDFController {
                 || contractor != null
                 || department != null)
             queryParameters += "for ";
-        
-        if (adminSanctionFromDate != null && adminSanctionToDate != null) {
-            queryParameters += "Date Range : " + sdf.format(adminSanctionFromDate) + " - " + sdf.format(adminSanctionFromDate) + ", ";
-        }
-        if (adminSanctionFromDate != null && adminSanctionToDate == null) {
+
+        if (adminSanctionFromDate != null && adminSanctionToDate != null)
+            queryParameters += "Date Range : " + sdf.format(adminSanctionFromDate) + " - " + sdf.format(adminSanctionFromDate)
+                    + ", ";
+        if (adminSanctionFromDate != null && adminSanctionToDate == null)
             queryParameters += "Admin Sanction From Date : " + adminSanctionFromDate + ", ";
-        }
-        if (adminSanctionToDate != null && adminSanctionFromDate == null) {
+        if (adminSanctionToDate != null && adminSanctionFromDate == null)
             queryParameters += "Admin Sanction To Date : " + adminSanctionToDate + ", ";
-        }
-        if (workIdentificationNumber != null) {
+        if (workIdentificationNumber != null)
             queryParameters += "Work Identification Number : " + workIdentificationNumber + ", ";
-        }
-        if (contractor != null) {
+        if (contractor != null)
             queryParameters += "Contractor : " + contractor + ", ";
-        }
-        if (department != null) {
+        if (department != null)
             queryParameters += "Department : " + departmentService.getDepartmentById(department).getName() + ", ";
-        }
 
         if (queryParameters.endsWith(", "))
             queryParameters = queryParameters.substring(0, queryParameters.length() - 2);
-        
+
         reportParams.put("queryParameters", queryParameters);
 
         return generateReport(workProgressRegisters, request, session, contentType);
@@ -129,8 +124,7 @@ public class WorkProgressRegisterPDFController {
 
         String dataRunDate = "";
 
-        if (workProgressRegisters != null && !workProgressRegisters.isEmpty()) {
-
+        if (workProgressRegisters != null && !workProgressRegisters.isEmpty())
             for (final WorkProgressRegister wpr : workProgressRegisters) {
                 final WorkProgressRegisterPdf pdf = new WorkProgressRegisterPdf();
                 if (wpr.getWard() != null)
@@ -148,8 +142,7 @@ public class WorkProgressRegisterPDFController {
                         pdf.setTypeOfSlum("Notified Slum");
                     else
                         pdf.setTypeOfSlum("Non Notified Slum");
-                }
-                else
+                } else
                     pdf.setTypeOfSlum("Non slum work");
                 if (wpr.getBeneficiary() != null)
                     pdf.setBeneficiary(wpr.getBeneficiary().toString());
@@ -237,7 +230,8 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setTotalBillPaidSoFar("NA");
                 if (wpr.getBalanceValueOfWorkToBill() != null)
-                    pdf.setBalanceValueOfWorkToBill(wpr.getBalanceValueOfWorkToBill().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    pdf.setBalanceValueOfWorkToBill(
+                            wpr.getBalanceValueOfWorkToBill().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setBalanceValueOfWorkToBill("NA");
 
@@ -246,14 +240,12 @@ public class WorkProgressRegisterPDFController {
                 workProgressRegisterPdfList.add(pdf);
             }
 
-        }
-
         reportParams.put("heading", WorksConstants.HEADING_WORK_PROGRESS_REGISTER_REPORT);
         reportParams.put("reportRunDate", formatter.format(new Date()));
         reportParams.put("dataRunDate", dataRunDate);
 
         reportInput = new ReportRequest(WORKPROGRESSREGISTERPDF, workProgressRegisterPdfList, reportParams);
-        
+
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
             headers.setContentType(MediaType.parseMediaType("application/pdf"));

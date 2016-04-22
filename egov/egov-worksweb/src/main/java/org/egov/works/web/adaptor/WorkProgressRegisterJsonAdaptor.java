@@ -3,8 +3,6 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
-import org.egov.works.lineestimate.entity.LineEstimate;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.reports.entity.WorkProgressRegister;
@@ -23,8 +21,9 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
     private WorksUtils worksUtils;
 
     @Override
-    public JsonElement serialize(final WorkProgressRegister workProgressRegister, final Type type, final JsonSerializationContext jsc) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    public JsonElement serialize(final WorkProgressRegister workProgressRegister, final Type type,
+            final JsonSerializationContext jsc) {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         final JsonObject jsonObject = new JsonObject();
         if (workProgressRegister != null) {
@@ -43,8 +42,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                     jsonObject.addProperty("typeOfSlum", "Notified Slum");
                 else
                     jsonObject.addProperty("typeOfSlum", "Non Notified Slum");
-            }
-            else
+            } else
                 jsonObject.addProperty("typeOfSlum", "Non slum work");
             if (workProgressRegister.getBeneficiary() != null)
                 jsonObject.addProperty("beneficiaries", workProgressRegister.getBeneficiary().toString());
@@ -59,11 +57,13 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("winCode", "");
             if (workProgressRegister.getFund() != null)
-                jsonObject.addProperty("fund", workProgressRegister.getFund().getCode() + " - " + workProgressRegister.getFund().getName());
+                jsonObject.addProperty("fund",
+                        workProgressRegister.getFund().getCode() + " - " + workProgressRegister.getFund().getName());
             else
                 jsonObject.addProperty("fund", "");
             if (workProgressRegister.getFunction() != null)
-                jsonObject.addProperty("function", workProgressRegister.getFunction().getCode() + " - " + workProgressRegister.getFunction().getName());
+                jsonObject.addProperty("function",
+                        workProgressRegister.getFunction().getCode() + " - " + workProgressRegister.getFunction().getName());
             else
                 jsonObject.addProperty("function", "");
             if (workProgressRegister.getBudgetHead() != null)
@@ -126,7 +126,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("latestMbNumberDate", "NA");
             if (workProgressRegister.getLatestBillNumber() != null)
                 jsonObject.addProperty("latestBillNumberDate",
-                        workProgressRegister.getLatestBillNumber() + " - " + sdf.format(workProgressRegister.getLatestBillDate()));
+                        workProgressRegister.getLatestBillNumber() + " - "
+                                + sdf.format(workProgressRegister.getLatestBillDate()));
             else
                 jsonObject.addProperty("latestBillNumberDate", "NA");
             if (workProgressRegister.getBilltype() != null)
@@ -145,8 +146,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("balanceValueOfWorkToBill", workProgressRegister.getBalanceValueOfWorkToBill());
             else
                 jsonObject.addProperty("balanceValueOfWorkToBill", "");
-            
-            
+
             jsonObject.addProperty("createdDate", formatter.format(workProgressRegister.getCreatedDate()));
         }
         return jsonObject;

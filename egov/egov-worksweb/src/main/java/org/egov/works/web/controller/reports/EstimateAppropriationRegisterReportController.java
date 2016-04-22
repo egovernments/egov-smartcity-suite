@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/reports/estimateappropriationregister")
 public class EstimateAppropriationRegisterReportController {
 
-
     @Autowired
     private DepartmentService departmentService;
 
@@ -33,7 +32,7 @@ public class EstimateAppropriationRegisterReportController {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showEstimateAppropriationRegister(
             @ModelAttribute final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest,
@@ -44,11 +43,11 @@ public class EstimateAppropriationRegisterReportController {
     }
 
     private void setDropDownValues(final Model model) {
-         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-         model.addAttribute("financialYear", financialYearDAO.getAllActiveFinancialYearList());
-         model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
+        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        model.addAttribute("financialYear", financialYearDAO.getAllActiveFinancialYearList());
+        model.addAttribute("departments", departmentService.getAllDepartments());
     }
 
 }

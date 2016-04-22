@@ -64,7 +64,6 @@ import org.egov.infstr.utils.NumberUtil;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.service.MBHeaderService;
@@ -97,14 +96,11 @@ public class ContractorBillPDFController {
     private LineEstimateService lineEstimateService;
 
     @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
-    
-    @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
-    
+
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    
+
     @Autowired
     private MBHeaderService mbHeaderService;
 
@@ -116,7 +112,7 @@ public class ContractorBillPDFController {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    
+
     @RequestMapping(value = "/contractorbillPDF/{contractorBillId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
             @PathVariable("contractorBillId") final Long id,
@@ -125,26 +121,33 @@ public class ContractorBillPDFController {
         return generateReport(contractorBillRegister, request, session);
     }
 
-    private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister, final HttpServletRequest request,
+    private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
+            final HttpServletRequest request,
             final HttpSession session) {
         if (contractorBillRegister != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-            final DecimalFormat df = new DecimalFormat("#.##");
-            final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(contractorBillRegister.getWorkOrder()
-                    .getEstimateNumber());
+            new DecimalFormat("#.##");
+            final LineEstimateDetails lineEstimateDetails = lineEstimateService
+                    .findByEstimateNumber(contractorBillRegister.getWorkOrder()
+                            .getEstimateNumber());
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
-            
-            reportParams.put("cityLogo",url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat((String) request.getSession().getAttribute("citylogo")));
+
+            reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+                    .concat((String) request.getSession().getAttribute("citylogo")));
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
-            reportParams.put("contractorName", contractorBillRegister.getWorkOrder().getContractor().getName() != null ? contractorBillRegister.getWorkOrder().getContractor().getName(): "");
-            reportParams.put("contractorCode", contractorBillRegister.getWorkOrder().getContractor().getCode() != null ? contractorBillRegister.getWorkOrder().getContractor().getCode(): "");
-            reportParams.put("bankAcc", contractorBillRegister.getWorkOrder().getContractor().getBank() != null ? contractorBillRegister.getWorkOrder().getContractor().getBankaccount(): "N/A");
-            reportParams.put("panNo", !contractorBillRegister.getWorkOrder().getContractor().getPanNumber().isEmpty() ? contractorBillRegister.getWorkOrder().getContractor().getPanNumber(): "N/A");
+            reportParams.put("contractorName", contractorBillRegister.getWorkOrder().getContractor().getName() != null
+                    ? contractorBillRegister.getWorkOrder().getContractor().getName() : "");
+            reportParams.put("contractorCode", contractorBillRegister.getWorkOrder().getContractor().getCode() != null
+                    ? contractorBillRegister.getWorkOrder().getContractor().getCode() : "");
+            reportParams.put("bankAcc", contractorBillRegister.getWorkOrder().getContractor().getBank() != null
+                    ? contractorBillRegister.getWorkOrder().getContractor().getBankaccount() : "N/A");
+            reportParams.put("panNo", !contractorBillRegister.getWorkOrder().getContractor().getPanNumber().isEmpty()
+                    ? contractorBillRegister.getWorkOrder().getContractor().getPanNumber() : "N/A");
             reportParams.put("billType", contractorBillRegister.getBilltype());
             reportParams.put("win", lineEstimateDetails.getProjectCode().getCode());
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());
@@ -158,10 +161,11 @@ public class ContractorBillPDFController {
             reportParams.put("creatorDesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
             reportParams.put("approverDesignation", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
             reportParams.put("approverName", contractorBillRegister.getApprovedBy().getName());
-            List<MBHeader> mbHeaders = mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister);
+            final List<MBHeader> mbHeaders = mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister);
             reportParams.put("mbRefNo", mbHeaders != null && !mbHeaders.isEmpty() ? mbHeaders.get(0).getMbRefNo() : "");
 
-            reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister, reportParams), reportParams);
+            reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister, reportParams),
+                    reportParams);
 
         }
 
@@ -172,9 +176,9 @@ public class ContractorBillPDFController {
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
     }
-    
+
     public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,
-            Map<String, Object> reportParams) {
+            final Map<String, Object> reportParams) {
         final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
         Map<String, Object> billDetails = new HashMap<String, Object>();
         BigDecimal creditSum = BigDecimal.ZERO;
@@ -189,7 +193,7 @@ public class ContractorBillPDFController {
                 billDetails.put("glcode", coa.getGlcode());
                 billDetails.put("accountHead", coa.getName());
                 billDetails.put("amount", egBilldetails.getDebitamount());
-                debitSum=debitSum.add(egBilldetails.getDebitamount());
+                debitSum = debitSum.add(egBilldetails.getDebitamount());
                 billDetails.put("isDebit", true);
                 billDetails.put("isNetPayable", false);
             } else if (egBilldetails.getCreditamount() != null) {
@@ -203,16 +207,16 @@ public class ContractorBillPDFController {
                 if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
                         && contractorPayableAccountList.contains(coa))
                     billDetails.put("isNetPayable", true);
-                else{
+                else {
                     billDetails.put("isNetPayable", false);
-                    creditSum=creditSum.add(egBilldetails.getCreditamount());
-            }
+                    creditSum = creditSum.add(egBilldetails.getCreditamount());
+                }
 
             }
             reportParams.put("debitSum", debitSum);
             reportParams.put("creditSum", creditSum);
             BigDecimal netpayable = BigDecimal.ZERO;
-            netpayable=debitSum.subtract(creditSum);
+            netpayable = debitSum.subtract(creditSum);
             reportParams.put("netPayable", netpayable);
             reportParams.put("netpayable", netpayable.setScale(2, BigDecimal.ROUND_HALF_EVEN));
             reportParams.put("totalAmountWords", NumberUtil.amountInWords(netpayable));

@@ -69,8 +69,10 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
             @Param("workOrderStatus") String workOrderStatus);
 
     @Query("select sum(cbr.billamount) from ContractorBillRegister as cbr where cbr.workOrder = :workOrder and upper(cbr.billstatus) not in (:billStatus)")
-    BigDecimal findSumOfBillAmountByWorkOrderAndStatus(@Param("workOrder") final WorkOrder workOrder, @Param("billStatus") final String billStatus);
+    BigDecimal findSumOfBillAmountByWorkOrderAndStatus(@Param("workOrder") final WorkOrder workOrder,
+            @Param("billStatus") final String billStatus);
 
     @Query("select sum(cbr.billamount) from ContractorBillRegister as cbr where cbr.workOrder = :workOrder and cbr.id != :id and upper(cbr.billstatus) not in (:billStatus)")
-    BigDecimal findSumOfBillAmountByWorkOrderAndStatusAndNotContractorBillRegister(@Param("workOrder") final WorkOrder workOrder, @Param("billStatus") final String billStatus, @Param("id") Long id);
+    BigDecimal findSumOfBillAmountByWorkOrderAndStatusAndNotContractorBillRegister(@Param("workOrder") final WorkOrder workOrder,
+            @Param("billStatus") final String billStatus, @Param("id") Long id);
 }

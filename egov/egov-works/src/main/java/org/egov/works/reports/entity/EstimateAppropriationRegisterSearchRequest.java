@@ -23,7 +23,7 @@ public class EstimateAppropriationRegisterSearchRequest {
         return budgetHead;
     }
 
-    public void setBudgetHead(Long budgetHead) {
+    public void setBudgetHead(final Long budgetHead) {
         this.budgetHead = budgetHead;
     }
 
@@ -31,7 +31,7 @@ public class EstimateAppropriationRegisterSearchRequest {
         return fund;
     }
 
-    public void setFund(Long fund) {
+    public void setFund(final Long fund) {
         this.fund = fund;
     }
 
@@ -39,7 +39,7 @@ public class EstimateAppropriationRegisterSearchRequest {
         return function;
     }
 
-    public void setFunction(Long function) {
+    public void setFunction(final Long function) {
         this.function = function;
     }
 
@@ -47,7 +47,7 @@ public class EstimateAppropriationRegisterSearchRequest {
         return department;
     }
 
-    public void setDepartment(Long department) {
+    public void setDepartment(final Long department) {
         this.department = department;
     }
 
@@ -55,7 +55,7 @@ public class EstimateAppropriationRegisterSearchRequest {
         return financialYear;
     }
 
-    public void setFinancialYear(Long financialYear) {
+    public void setFinancialYear(final Long financialYear) {
         this.financialYear = financialYear;
     }
 

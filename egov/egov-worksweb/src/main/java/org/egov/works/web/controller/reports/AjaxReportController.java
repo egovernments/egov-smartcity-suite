@@ -64,7 +64,7 @@ public class AjaxReportController {
 
     @Autowired
     private WorkProgressRegisterService workProgressRegisterService;
-    
+
     @Autowired
     private WorkProgressRegisterJsonAdaptor workProgressRegisterJsonAdaptor;
 
@@ -72,7 +72,7 @@ public class AjaxReportController {
     public @ResponseBody List<String> getChildBoundariesById(@RequestParam final String code) {
         return workProgressRegisterService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(code);
     }
-    
+
     @RequestMapping(value = "/ajax-workprogressregister", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchWorkProgressRegister(final Model model,
             @ModelAttribute final WorkProgressRegisterSearchRequest workProgressRegisterSearchRequest) {

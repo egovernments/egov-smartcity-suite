@@ -59,7 +59,6 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.DocumentDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,37 +121,37 @@ public class WorksUtils {
     public Long getApproverPosition(final String designationName, final State state, final Long createdById) {
         final Set<StateHistory> stateHistoryList = state.getHistory();
         Long approverPosition = 0l;
-        final String[] desgnArray = designationName !=null ? designationName.split(",") : null;
+        final String[] desgnArray = designationName != null ? designationName.split(",") : null;
         if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
-                for (final StateHistory stateHistory : stateHistoryList)
-                    if (stateHistory.getOwnerPosition() != null) {
-                        final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
-                                stateHistory.getOwnerPosition().getId(), new Date());
-                        for (final Assignment assgn : assignmentList)
-                            if(desgnArray != null)
+            for (final StateHistory stateHistory : stateHistoryList)
+                if (stateHistory.getOwnerPosition() != null) {
+                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
+                            stateHistory.getOwnerPosition().getId(), new Date());
+                    for (final Assignment assgn : assignmentList)
+                        if (desgnArray != null)
                             for (final String str : desgnArray)
                                 if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
                                     approverPosition = stateHistory.getOwnerPosition().getId();
                                     break;
                                 }
-                    }
-                if (approverPosition == 0) {
-                    final State stateObj = state;
-                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
-                            .getOwnerPosition().getId(), new Date());
-                    for (final Assignment assgn : assignmentList)
-                        if(desgnArray != null)
-                            for (final String str : desgnArray)
-                                if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
-                                    approverPosition = stateObj.getOwnerPosition().getId();
-                                    break;
-                                }
                 }
-        } else {
-                final Position posObjToClerk = positionMasterService
-                        .getCurrentPositionForUser(createdById);
-                approverPosition = posObjToClerk.getId();
+            if (approverPosition == 0) {
+                final State stateObj = state;
+                final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
+                        .getOwnerPosition().getId(), new Date());
+                for (final Assignment assgn : assignmentList)
+                    if (desgnArray != null)
+                        for (final String str : desgnArray)
+                            if (assgn.getDesignation().getName().equalsIgnoreCase(str)) {
+                                approverPosition = stateObj.getOwnerPosition().getId();
+                                break;
+                            }
             }
+        } else {
+            final Position posObjToClerk = positionMasterService
+                    .getCurrentPositionForUser(createdById);
+            approverPosition = posObjToClerk.getId();
+        }
         return approverPosition;
     }
 
@@ -169,7 +168,7 @@ public class WorksUtils {
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 
-    public String getPathVars(EgwStatus status, State state, Long id, Long approvalPosition) {
+    public String getPathVars(final EgwStatus status, final State state, final Long id, final Long approvalPosition) {
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
 
@@ -189,17 +188,16 @@ public class WorksUtils {
             nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
 
         String pathVars = "";
-        if(!status.getCode().equals(LineEstimateStatus.REJECTED.toString())) {
+        if (!status.getCode().equals(LineEstimateStatus.REJECTED.toString()))
             pathVars = id + ","
                     + getApproverName(approvalPosition) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                     + (nextDesign != null ? nextDesign : "");
-        } else {
+        else
             pathVars = id + ","
                     + getApproverName(state.getOwnerPosition().getId()) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                     + (nextDesign != null ? state.getOwnerPosition().getDeptDesig().getDesignation().getName() : "");
-        }
         return pathVars;
     }
 
