@@ -99,7 +99,8 @@ public class WorkProgressRegisterService {
                     criteria.add(Restrictions.le("adminSanctionDate",
                             workProgressRegisterSearchRequest.getAdminSanctionToDate()));
             
-                criteria.add(Restrictions.eq("spillOverFlag", workProgressRegisterSearchRequest.isSpillOverFlag()));
+                if(workProgressRegisterSearchRequest.isSpillOverFlag())
+                    criteria.add(Restrictions.eq("spillOverFlag", workProgressRegisterSearchRequest.isSpillOverFlag()));
             
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();

@@ -41,9 +41,12 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -157,10 +160,15 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("workOrder", workOrder);
             model.addAttribute("netPayableAmount", request.getParameter("netPayableAmount"));
             model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
+            
+            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
+            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
 
             prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
 
             model.addAttribute("mode", "edit");
+            
+            model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister));
 
             return "contractorBill-form";
         } else {
@@ -456,6 +464,42 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         egBillPaydetail.setEgBilldetailsId(billDetails);
         egBillPaydetail.setLastUpdatedTime(new Date());
         return egBillPaydetail;
+    }
+    
+    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister) {
+        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> billDetails = new HashMap<String, Object>();
+
+        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
+            if (egBilldetails.getDebitamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getDebitamount());
+                billDetails.put("isDebit", true);
+                billDetails.put("isNetPayable", false);
+            } else if (egBilldetails.getCreditamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getCreditamount());
+                billDetails.put("isDebit", false);
+                if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
+                        && contractorPayableAccountList.contains(coa))
+                    billDetails.put("isNetPayable", true);
+                else
+                    billDetails.put("isNetPayable", false);
+
+            }
+            billDetailsList.add(billDetails);
+        }
+        return billDetailsList;
     }
 
 }

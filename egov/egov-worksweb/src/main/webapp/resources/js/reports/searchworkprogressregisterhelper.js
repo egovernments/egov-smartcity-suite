@@ -54,7 +54,7 @@ jQuery('#btnsearch').click(function(e) {
 			bootbox.alert('Admin Sanction To Date should be greater than Admin Sanction From Date');
 		}
 	}
-	if(flag)
+	if(flag && $('form').valid())
 		callAjaxSearch();
 	
 	var spillOver = document.getElementById("spillOverFlag");
@@ -172,6 +172,7 @@ function callAjaxSearch() {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : []
 				},
+				"sScrollX": true,
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
 					if(data.adminSanctionAmount != "")
@@ -222,7 +223,7 @@ function callAjaxSearch() {
 					"data" : "subTypeOfWork", "sClass" : "text-left"} ,{
 					"data" : "adminSanctionAuthorityDate", "sClass" : "text-left"} ,{
 					"data" : "adminSanctionAmount", "sClass" : "text-right"}, {
-					"data" : "technicalSanctionAuthorityDate", "sClass" : "text-right"}, {
+					"data" : "technicalSanctionAuthorityDate", "sClass" : "text-center"}, {
 					"data" : "estimateAmount", "sClass" : "text-right"}, {
 					"data" : "modeOfAllotment", "sClass" : "text-right"}, {
 					"data" : "agreementNumberDate", "sClass" : "text-right"}, {

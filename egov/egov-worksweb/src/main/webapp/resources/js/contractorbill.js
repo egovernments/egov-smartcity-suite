@@ -42,6 +42,7 @@ $(document).ready(function(){
 	
 	creditGlcode_initialize();	
 	replaceBillTypeChar();
+	calculateNetPayableAmount();
 	
 	var currentState = $('#currentState').val();
 	if(currentState == 'Created') {
@@ -95,9 +96,12 @@ $(document).ready(function(){
 		return validateWorkFlowApprover(button);
 	});
 	
+	var netPayableAccountCodeId = $('#netPayableAccountCodeId').val();
 	$("#netPayableAccountCode").each(function() {
 		if($(this).children('option').length == 2) {
 		 	$(this).find('option').eq(1).prop('selected', true);
+		} else {
+			$(this).val(netPayableAccountCodeId);
 		}
 	});
 

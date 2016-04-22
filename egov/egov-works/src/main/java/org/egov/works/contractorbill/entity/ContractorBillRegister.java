@@ -105,8 +105,7 @@ public class ContractorBillRegister extends EgBillregister {
     @Transient
     private List<String> billActions = new ArrayList<String>();
 
-    @Transient
-    private List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+    private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
     
     @Transient
     private List<EgBilldetails> billDetailes = new ArrayList<EgBilldetails>(0);
@@ -206,7 +205,9 @@ public class ContractorBillRegister extends EgBillregister {
     }
 
     public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
-        this.documentDetails = documentDetails;
+        this.documentDetails.clear();
+        if (documentDetails != null)
+            this.documentDetails.addAll(documentDetails);
     }
 
     public List<EgBilldetails> getBillDetailes() {

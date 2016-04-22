@@ -41,8 +41,11 @@ package org.egov.works.contractorbill.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -60,6 +63,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
@@ -189,31 +193,68 @@ public class ContractorBillRegisterService {
     }
 
     @Transactional
-    public ContractorBillRegister update(
+    public ContractorBillRegister updateContractorBillRegister(
             final ContractorBillRegister contractorBillRegister,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction, final String mode,
             final MultipartFile[] files) throws ValidationException, IOException {
         ContractorBillRegister updatedContractorBillRegister = null;
-
-        if (workFlowAction.equalsIgnoreCase(WorksConstants.FORWARD_ACTION.toString()))
-            populateAndSaveMBHeader(contractorBillRegister);
-        else if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
-            contractorBillRegister.setApprovedDate(new Date());
-            contractorBillRegister.setApprovedBy(securityUtils.getCurrentUser());
-            contractorBillRegister.getEgBillregistermis().setSourcePath(
-                    "/egworks/contractorbill/view/" + contractorBillRegister.getId());
-            approveMBHeader(contractorBillRegister);
-        } else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION))
-            cancelMBHeader(contractorBillRegister);
-        contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
-        contractorBillRegister.setBillstatus(contractorBillRegister.getStatus().getCode());
-
+        
+        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString())) {
+            if (workFlowAction.equalsIgnoreCase(WorksConstants.FORWARD_ACTION.toString()))
+                populateAndSaveMBHeader(contractorBillRegister);
+            else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION))
+                cancelMBHeader(contractorBillRegister);
+            updatedContractorBillRegister = update(contractorBillRegister, files);
+            contractorBillRegisterStatusChange(updatedContractorBillRegister, workFlowAction, mode);
+        } else {
+            contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
+            
+            if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
+                contractorBillRegister.setApprovedDate(new Date());
+                contractorBillRegister.setApprovedBy(securityUtils.getCurrentUser());
+                contractorBillRegister.getEgBillregistermis().setSourcePath(
+                        "/egworks/contractorbill/view/" + contractorBillRegister.getId());
+                approveMBHeader(contractorBillRegister);
+            }
+        }
         updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
+        updatedContractorBillRegister.setBillstatus(updatedContractorBillRegister.getStatus().getCode());
+        
         createContractorBillRegisterWorkflowTransition(updatedContractorBillRegister,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
         return updatedContractorBillRegister;
+    }
+    
+    private ContractorBillRegister update(ContractorBillRegister contractorBillRegister,
+            MultipartFile[] files) throws IOException {
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, contractorBillRegister,
+                WorksConstants.CONTRACTORBILL);
+        if (!documentDetails.isEmpty()) {
+            contractorBillRegister.setDocumentDetails(documentDetails);
+            worksUtils.persistDocuments(documentDetails);
+        }
+        return contractorBillRegisterRepository.save(contractorBillRegister);
+    }
+
+    public Set<EgBilldetails> removeDeletedBillDetails(final Set<EgBilldetails> set,
+            final String removedBillDetailsIds) {
+        final Set<EgBilldetails> details = new HashSet<EgBilldetails>();
+        if (null != removedBillDetailsIds) {
+            final String[] ids = removedBillDetailsIds.split(",");
+            final List<String> strList = new ArrayList<String>();
+            for (final String str : ids)
+                strList.add(str);
+            for (final EgBilldetails line : set)
+                if (line.getId() != null) {
+                    if (!strList.contains(line.getId().toString()))
+                        details.add(line);
+                } else
+                    details.add(line);
+        } else
+            return set;
+        return details;
     }
 
     private EgBillregistermis setEgBillRegisterMis(final ContractorBillRegister contractorBillRegister,
@@ -435,6 +476,11 @@ public class ContractorBillRegisterService {
     private void cancelMBHeader(final ContractorBillRegister contractorBillRegister) {
         final MBHeader mbHeader = mbHeaderService.getMBHeaderById(contractorBillRegister.getMbHeader().getId());
         mbHeaderService.cancel(mbHeader);
+    }
+
+    public BigDecimal getTotalBillAmountByWorkOrderAndNotContractorBillRegister(WorkOrder workOrder, Long id) {
+        return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatusAndNotContractorBillRegister(workOrder,
+                ContractorBillRegister.BillStatus.CANCELLED.toString(), id);
     }
 
 }

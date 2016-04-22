@@ -47,6 +47,7 @@
 			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>' "> 
 			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" />
 			<input type="hidden" id="id" value="${contractorBillRegister.id }" /> 
+			<input type="hidden" name="mode" id="mode" value="${mode }" />
 			<div class="row">
 				<div class="col-md-12"> 
 					<div class="panel panel-primary" data-collapsed="0">
@@ -70,13 +71,15 @@
 							<c:if test="${mode == 'edit'}">
 								<jsp:include page="contractorBill-header.jsp"/>
 								<jsp:include page="contractorBill-mbdetails.jsp"/>
+								<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
+								<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
 							</c:if>
 							<c:if test="${mode == 'view' || mode == 'readOnly' }">
 								<jsp:include page="contractorBill-header-view.jsp"/>
 								<jsp:include page="contractorBill-accountdetails-view.jsp"/>
 							</c:if>
 						<%-- 	<jsp:include page="contractorBill-details.jsp"/> --%>
-						<c:if test="${mode == 'view' || mode == 'readOnly'} && ${!contractorBillRegister.documentDetails.isEmpty()}">
+						<c:if test="${!contractorBillRegister.documentDetails.isEmpty()}">
 							<jsp:include page="uploadDocuments.jsp"/>
 						</c:if>
 						<c:if test="${mode == 'readOnly'}">
