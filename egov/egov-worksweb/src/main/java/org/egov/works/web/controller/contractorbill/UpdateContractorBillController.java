@@ -188,6 +188,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             contractorBillRegister.getEgBilldetailes().clear();
             
             contractorBillRegister = addBillDetails(contractorBillRegister, lineEstimateDetails, errors, request);
+            contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
         }
         
         if (!checkForDuplicateAccountCodes(contractorBillRegister))
