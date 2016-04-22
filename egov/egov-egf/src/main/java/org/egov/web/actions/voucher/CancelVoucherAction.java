@@ -42,7 +42,9 @@ package org.egov.web.actions.voucher;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -284,11 +286,12 @@ public class CancelVoucherAction extends BaseFormAction {
                                     + FinancialConstants.PREAPPROVEDVOUCHERSTATUS + ","
                                     + FinancialConstants.CANCELLEDVOUCHERSTATUS +
                                     ") " + VoucherMisJoin + filterQuerySql);
-            final Iterator<BigDecimal> payList = query1.list().iterator();
-            //persistenceService.setType(CVoucherHeader.class);
-            while (payList.hasNext())
-                voucherList.add((CVoucherHeader) persistenceService.findById(payList.next().longValue(), false));
+            List<BigInteger> list = query1.list();
 
+			for(BigInteger b:list)
+			{      		   
+				voucherList.add((CVoucherHeader) persistenceService.find("from CVoucherHeader  where id=?",b.longValue()));
+			}
         }
         else if (voucherHeader.getType().equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA))
         {
