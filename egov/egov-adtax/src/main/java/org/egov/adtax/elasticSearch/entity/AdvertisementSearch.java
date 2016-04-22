@@ -54,22 +54,19 @@ public class AdvertisementSearch implements Indexable {
 		return EgovThreadLocals.getCityCode() + "-" + applicationNumber;
 	}
 
-	@Searchable(name = "zone", group = Searchable.Group.CLAUSES)
-	private String zone;
-
-	@Searchable(name = "ward", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "revwardname", group = Searchable.Group.CLAUSES)
 	private String ward;
 
-	@Searchable(name = "locality", group = Searchable.Group.SEARCHABLE)
+	@Searchable(name = "locationname", group = Searchable.Group.SEARCHABLE)
 	private String locality;
 
-	@Searchable(name = "block", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "blockname", group = Searchable.Group.CLAUSES)
 	private String block;
 
-	@Searchable(name = "electionward", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "adminwardname", group = Searchable.Group.CLAUSES)
 	private String electionWard;
 
-	@Searchable(name = "street", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "streetname", group = Searchable.Group.CLAUSES)
 	private String street;
 
 	@Searchable(name = "createdDate", group = Searchable.Group.COMMON)
@@ -78,7 +75,7 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = "advertisementnumber", group = Searchable.Group.SEARCHABLE)
 	private String advertisementNumber;
 
-	@Searchable(name = "assessmentnumber", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "ptassesmentno", group = Searchable.Group.CLAUSES)
 	private String assessmentNumber;
 
 	@Searchable(name = "propertytype", group = Searchable.Group.CLAUSES)
@@ -99,7 +96,7 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = "address", group = Searchable.Group.SEARCHABLE)
 	private String address;
 
-	@Searchable(name = "advertisementcreatedby", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "createdby", group = Searchable.Group.CLAUSES)
 	private String advertisementCreatedBy;
 
 	@Searchable(name = "status", group = Searchable.Group.CLAUSES)
@@ -117,7 +114,7 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = "applicationdate", group = Searchable.Group.CLAUSES)
 	private Date applicationDate;
 
-	@Searchable(name = "applicationnumber", group = Searchable.Group.SEARCHABLE)
+	@Searchable(name = "consumernumber", group = Searchable.Group.SEARCHABLE)
 	private String applicationNumber;
 
 	@Searchable(name = "permissionnumber", group = Searchable.Group.SEARCHABLE)
@@ -180,7 +177,7 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = " deactivationdate", group = Searchable.Group.CLAUSES)
 	private Date deactivationDate;
 
-	@Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "cityname", group = Searchable.Group.CLAUSES)
 	private String ulbName;
 
 	@Searchable(name = "districtname", group = Searchable.Group.CLAUSES)
@@ -189,44 +186,51 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = "regionname", group = Searchable.Group.CLAUSES)
 	private String regionName;
 
-	@Searchable(name = "ulbgrade", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "citygrade", group = Searchable.Group.CLAUSES)
 	private String ulbGrade;
 
-	@Searchable(name = "ulbcode", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "citycode", group = Searchable.Group.CLAUSES)
 	private String ulbCode;
 
-	@Searchable(name = "tax_demand", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "taxdemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal tax_demand;
 
-	@Searchable(name = "tax_collected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "taxcollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal tax_collected;
 
-	@Searchable(name = "encroachmentfee_demand", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "encroachmentfeedemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal encroachmentfee_demand;
 
-	@Searchable(name = "encroachmentfee_collected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "encroachmentfeecollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal encroachmentfee_collected;
 
-	@Searchable(name = "arrears_demand", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "arreardemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal arrears_demand;
 
-	@Searchable(name = "arrears_collected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "arrearcollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal arrears_collected;
 
-	@Searchable(name = "penalty_demand", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "penaltydemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal penalty_demand;
 
-	@Searchable(name = "penalty_collected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "penaltycollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal penalty_collected;
 
-	@Searchable(name = "totalamount", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "totaldemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal totalamount;
 
-	@Searchable(name = "totalamountcollected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "totalcollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal totalamountcollected;
 
 	@Searchable(name = "advertisementlocation", group = Searchable.Group.CLAUSES)
 	private GeoPoint advertisementLocation;
+	
+	@Searchable(name = "totalbalance", group = Searchable.Group.CLAUSES)
+	private BigDecimal totalbalance;
+	
+	@Searchable(name = "consumername", group = Searchable.Group.SEARCHABLE)
+	private String consumerName;
+
 
 	public AdvertisementSearch(final String advertisementNumber,
 			final String ulbName, final String ulbCode, final Date createdDate,
@@ -243,14 +247,6 @@ public class AdvertisementSearch implements Indexable {
 
 	public AdvertisementSearch() {
 		// TODO Auto-generated constructor stub
-	}
-
-	public String getZone() {
-		return zone;
-	}
-
-	public void setZone(String zone) {
-		this.zone = zone;
 	}
 
 	public String getWard() {
@@ -708,5 +704,21 @@ public class AdvertisementSearch implements Indexable {
 
 	public void setAssessmentNumber(String assessmentNumber) {
 		this.assessmentNumber = assessmentNumber;
+	}
+
+	public BigDecimal getTotalbalance() {
+		return totalbalance;
+	}
+
+	public void setTotalbalance(BigDecimal totalbalance) {
+		this.totalbalance = totalbalance;
+	}
+
+	public String getConsumerName() {
+		return consumerName;
+	}
+
+	public void setConsumerName(String consumerName) {
+		this.consumerName = consumerName;
 	}
 }

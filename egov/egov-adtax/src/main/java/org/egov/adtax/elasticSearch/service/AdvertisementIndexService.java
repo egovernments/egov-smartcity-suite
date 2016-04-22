@@ -129,7 +129,8 @@ public class AdvertisementIndexService {
 		advertisementSearch.setUom(advertisementPermitDetail.getUnitOfMeasure().getCode());
 		advertisementSearch.setWard(advertisementPermitDetail.getAdvertisement().getWard()!=null?advertisementPermitDetail.getAdvertisement().getWard().getName():"");
 		advertisementSearch.setWidth(advertisementPermitDetail.getWidth()!=null?advertisementPermitDetail.getWidth():0.0);
-		advertisementSearch.setZone(advertisementPermitDetail.getAdvertisement().getWard()!=null&& advertisementPermitDetail.getAdvertisement().getWard().getParent()!=null?advertisementPermitDetail.getAdvertisement().getWard().getParent().getName():"");
+		advertisementSearch.setConsumerName(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():
+       	advertisementPermitDetail.getOwnerDetail());
 		
 		// Demand and Collection Details
 		advertisementSearch.setTax_demand(advertisementPermitDetail.getAdvertisement().getDemandId().getBaseDemand());
@@ -185,6 +186,8 @@ public class AdvertisementIndexService {
 						(demandCollectionMap.get("Total").get("totalAmountCollected")!=null?
 								demandCollectionMap.get("Total").get("totalAmountCollected"):
 									BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setTotalbalance(advertisementSearch.getTotalamount().subtract(advertisementSearch.getTotalamountcollected()));
 		
 		if (advertisementPermitDetail.getAdvertisement().getLatitude()!= 0.0 && advertisementPermitDetail.getAdvertisement().getLongitude()!=0.0) {
 			advertisementSearch.setAdvertisementLocation(new GeoPoint(advertisementPermitDetail.getAdvertisement().getLatitude(), advertisementPermitDetail.getAdvertisement().getLongitude()));
