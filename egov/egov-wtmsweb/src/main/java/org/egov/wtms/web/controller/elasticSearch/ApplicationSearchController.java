@@ -127,13 +127,9 @@ public class ApplicationSearchController {
                 searchRequest.searchFilters(), sort, Page.NULL);
 
         final List<Document> searchResultFomatted = new ArrayList<Document>(0);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.info("searchResultFomat size: " + searchResult.getDocuments().size());
         for (final Document document : searchResult.getDocuments()) {
             document.getResource().remove("searchable.mobilenumber");
             document.getResource().remove("searchable.aadharnumber");
-            if (LOGGER.isDebugEnabled())
-                LOGGER.info("document : " + document);
             searchResultFomatted.add(document);
         }
         return searchResultFomatted;
