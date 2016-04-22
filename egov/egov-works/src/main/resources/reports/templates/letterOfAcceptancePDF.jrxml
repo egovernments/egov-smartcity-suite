@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-15T13:41:12 -->
+<!-- 2016-04-22T12:51:27 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.util.*"/>
@@ -31,7 +31,7 @@
 	<background>
 		<band height="802" splitType="Stretch">
 			<rectangle>
-				<reportElement key="rectangle-2" x="1" y="1" width="553" height="801" uuid="48401a83-c993-40a5-9db7-2d50b1b3f6ae"/>
+				<reportElement key="rectangle-2" x="8" y="1" width="542" height="799" uuid="48401a83-c993-40a5-9db7-2d50b1b3f6ae"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
