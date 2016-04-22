@@ -51,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -77,12 +78,12 @@ public class FileDownloadController {
 
     @RequestMapping("/logo")
     public String download(@RequestParam String fileStoreId, @RequestParam String moduleName, HttpSession session) throws IOException, ServletException {
-        String logoPath = LOGO_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN;
-        Path logo = Paths.get(session.getServletContext().getRealPath(logoPath));
-        if (!Files.exists(logo)) {
+        String logoPath =  LOGO_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN;
+        Path logoRealPath = Paths.get(session.getServletContext().getRealPath(LOGO_IMAGE_PATH)+ File.separator + fileStoreId + ImageUtils.JPG_EXTN);
+        if (!Files.exists(logoRealPath)) {
             String cityLogoKey = (String)session.getAttribute(CITY_LOGO_KEY);
             if ( cityLogoKey != null && cityLogoKey.contains(fileStoreId)) {
-                this.fileStoreUtils.copyFileToPath(logo, fileStoreId, moduleName);
+                this.fileStoreUtils.copyFileToPath(logoRealPath, fileStoreId, moduleName);
             }
         }
 
