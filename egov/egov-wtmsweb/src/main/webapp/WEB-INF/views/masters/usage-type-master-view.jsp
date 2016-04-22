@@ -87,7 +87,7 @@
 								</div>
 							</td>
 							<td colspan="1">
-								<div align="centre">
+								<div align="center">
 								<c:choose>
 									<c:when test="${usageType.active == 'true'}">
 										<c:out value="ACTIVE" />
