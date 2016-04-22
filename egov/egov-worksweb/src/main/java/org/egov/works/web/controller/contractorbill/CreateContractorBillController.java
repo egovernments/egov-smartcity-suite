@@ -159,6 +159,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("lineEstimateDetails", lineEstimateDetails);
             model.addAttribute("workOrder", workOrder);
             model.addAttribute("netPayableAmount", request.getParameter("netPayableAmount"));
+            model.addAttribute("netPayableAccountCode", request.getParameter("netPayableAccountCode"));
             model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
             
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
