@@ -155,7 +155,7 @@
 							list="dropdownData.fundDropDownList" listKey="id"
 							listValue="name" headerKey="" headerValue="----Select----"
 							value="scheme.fund.id" /></td>
-					<td class="bluebox">IsActive</td>
+					<td class="bluebox">Active</td>
 					<td class="bluebox"><s:checkbox id="isactive" name="isactive"
 							value="%{scheme.isactive}" /></td>
 				</tr>
@@ -163,18 +163,18 @@
 					<td style="width: 10%"></td>
 					<td class="greybox"><s:text name="scheme.startDate" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox"><s:date name="validfrom" id="validfromId"
+					<td class="greybox"><s:date name="scheme.validfrom" id="validfromId" 
 							format="dd/MM/yyyy" /> <s:textfield id="validfromId"
-							name="validfrom" value="%{scheme.validfrom}"
+							name="validfrom" value="%{validfromId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>
 
 					<td class="greybox"><s:text name="scheme.endDate" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox"><s:date name="validto" id="validtoId"
+					<td class="greybox"><s:date name="scheme.validto" id="validtoId"
 							format="dd/MM/yyyy" /> <s:textfield id="validtoId"
-							name="validto" value="%{scheme.validto}"
+							name="validto" value="%{validtoId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>

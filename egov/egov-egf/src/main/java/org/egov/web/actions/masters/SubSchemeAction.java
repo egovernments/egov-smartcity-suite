@@ -73,14 +73,11 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
     @Result(name = SubSchemeAction.SEARCH, location = "subScheme-search.jsp"),
     @Result(name = SubSchemeAction.VIEW, location = "subScheme-view.jsp") })
 public class SubSchemeAction extends BaseFormAction {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3712472100095261379L;
     private SubScheme subScheme = new SubScheme();
     @Autowired
     SubSchemeHibernateDAO subSchemeHibernateDAO;
-    private boolean isActive = false;
+    private boolean isactive = false;
     private boolean clearValues = false;
     private int fundId;
     private static final String REQUIRED = "required";
@@ -130,7 +127,7 @@ public class SubSchemeAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/masters/subScheme-create")
     public String save() {
-        if (isActive)
+        if (isactive)
             subScheme.setIsactive(true);
         else
             subScheme.setIsactive(false);
@@ -180,7 +177,7 @@ public class SubSchemeAction extends BaseFormAction {
     public String edit() {
         if (subSchemeId != null)
             subScheme.setId(subSchemeId.intValue());
-        if (isActive)
+        if (isactive)
             subScheme.setIsactive(true);
         else
             subScheme.setIsactive(false);
@@ -210,7 +207,7 @@ public class SubSchemeAction extends BaseFormAction {
     {
         subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
         if (subScheme!=null && subScheme.getIsactive())
-            isActive = true;
+        	isactive = true;
         return NEW;
     }
 
@@ -333,15 +330,16 @@ public class SubSchemeAction extends BaseFormAction {
         return subScheme;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
-    }
 
-    public boolean isActive() {
-        return isActive;
-    }
+    public boolean isIsactive() {
+		return isactive;
+	}
 
-    public void setClearValues(final boolean clearValues) {
+	public void setIsactive(boolean isactive) {
+		this.isactive = isactive;
+	}
+
+	public void setClearValues(final boolean clearValues) {
         this.clearValues = clearValues;
     }
 

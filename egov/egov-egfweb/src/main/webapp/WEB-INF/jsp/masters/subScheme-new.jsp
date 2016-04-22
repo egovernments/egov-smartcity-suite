@@ -103,11 +103,11 @@
 			<s:else>
 				<s:text name="subscheme.modify.title" />
 			</s:else>
-			<div style="color: red">
+			<div style="color: red" align="left">
 				<s:actionerror />
 				<s:fielderror />
 			</div>
-			<div style="color: green">
+			<div style="color: green" align="left">
 				<s:actionmessage />
 			</div>
 			
@@ -129,23 +129,35 @@
 								headerKey="" headerValue="--- Select ---"
 								value="%{subScheme.scheme.id}" /></td>
 						<td class="bluebox" width="20%"><strong>Name<span
-								class="mandatory1"> *</span></strong></td>
+								class="mandatory1"> *</span></strong>
+								</td>
+								<s:if test="showMode == 'new'">
 						<td class="bluebox"><s:textfield id="name" name="name"
 								value="%{subScheme.name}" cssStyle="width: 250px" onblur="checkuniquenessname();"/></td>
+								</s:if>
+								<s:else> 
+								<td class="bluebox"><s:textfield id="name" name="name"
+								value="%{subScheme.name}" cssStyle="width: 250px"  readonly="true"/></td></s:else>
 								
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
 						<td class="greybox"><strong>Code</strong><span
 							class="mandatory1"> *</span></td>
+							<s:if test="showMode == 'new'">
 						<td class="greybox"><s:textfield id="code" name="code"
 								value="%{subScheme.code}" onblur="checkuniquenesscode();" /></td>
+								</s:if>
+								<s:else>
+								<td class="greybox"><s:textfield id="code" name="code"
+								value="%{subScheme.code}" onblur="checkuniquenesscode();" readonly="true" /></td>
+								</s:else>
 								
 						<td class="greybox"><strong>Valid From</strong><span
 							class="mandatory1"> *</span></td>
-						<td class="greybox"><s:date name="validfrom" id="validfrom"
+						<td class="greybox"><s:date name="subScheme.validfrom" id="validfromId"
 								format="dd/MM/yyyy" /> <s:textfield id="validfrom"
-								name="validfrom" value="%{subScheme.validfrom}"
+								name="validfrom" value="%{validfromId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 								data-inputmask="'mask': 'd/m/y'" /></td>
@@ -156,16 +168,16 @@
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox"><strong>Valid To</strong><span
 							class="mandatory1"> *</span></td>
-						<td class="bluebox"><s:date name="validto" id="validtoId"
+						<td class="bluebox"><s:date name="subScheme.validto" id="validtoId"
 								format="dd/MM/yyyy" /> <s:textfield id="validtoId"
-								name="validto" value="%{subScheme.validto}"
+								name="validto" value="%{validtoId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 								data-inputmask="'mask': 'd/m/y'" /></td>
 						</td>
-						<td class="bluebox"><strong>Is Active</strong></td>
-						<td class="bluebox"><s:checkbox name="isActive"
-								value="%{isActive}" /></td>
+						<td class="bluebox"><strong>Active</strong></td>
+						<td class="bluebox"><s:checkbox id="isactive"  name="isactive" 
+								value="%{subScheme.isactive}" /></td>
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
@@ -189,9 +201,12 @@
 								value="%{subScheme.councilLoanProposalNumber}" /></td>
 						<td class="bluebox"><strong>Council Loan Proposal
 								Date</strong></td>
-						<td class="bluebox"><s:textfield id="councilLoanProposalDate"
+						<td class="bluebox">
+						<s:date name="subScheme.councilLoanProposalDate" id="councilLoanProposalDateId"
+								format="dd/MM/yyyy" />
+						<s:textfield id="subScheme.councilLoanProposalDate"
 								name="councilLoanProposalDate"
-								value="%{councilLoanProposalDate}"
+								value="%{councilLoanProposalDateId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 								data-inputmask="'mask': 'd/m/y'" /></td>
@@ -206,9 +221,10 @@
 								value="%{subScheme.councilAdminSanctionNumber}" /></td>
 						<td class="greybox"><strong>Council Admin Sanctioned
 								Date</strong></td>
-						<td class="greybox"><s:textfield
+						<td class="greybox"><s:date name="subScheme.councilAdminSanctionDate" id="councilAdminSanctionDateId"
+								format="dd/MM/yyyy" /><s:textfield
 								id="councilAdminSanctionDate" name="councilAdminSanctionDate"
-								value="%{councilAdminSanctionDate}"
+								value="%{councilAdminSanctionDateId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 								data-inputmask="'mask': 'd/m/y'" /></td>
@@ -222,8 +238,9 @@
 								value="%{subScheme.govtLoanProposalNumber}" /></td>
 						<td class="bluebox"><strong>Government Loan Proposal
 								Date</strong></td>
-						<td class="bluebox"><s:textfield id="govtLoanProposalDate"
-								name="govtLoanProposalDate" value="%{govtLoanProposalDate}"
+						<td class="bluebox"><s:date name="subScheme.govtLoanProposalDate" id="govtLoanProposalDateId"
+								format="dd/MM/yyyy" /><s:textfield id="govtLoanProposalDate"
+								name="govtLoanProposalDate" value="%{govtLoanProposalDateId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 								data-inputmask="'mask': 'd/m/y'" /></td>
@@ -237,8 +254,10 @@
 								value="%{subScheme.govtAdminSanctionNumber}" /></td>
 						<td class="greybox"><strong>Government Admin
 								Sanction Date</strong></td>
-						<td class="greybox"><s:textfield id="govtAdminSanctionDate"
-								name="govtAdminSanctionDate" value="%{govtAdminSanctionDate}"
+						<td class="greybox"><s:date name="subScheme.govtAdminSanctionDate" id="govtAdminSanctionDateId"
+								format="dd/MM/yyyy" />
+						<s:textfield id="govtAdminSanctionDate"
+								name="govtAdminSanctionDate" value="%{govtAdminSanctionDateId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 								data-inputmask="'mask': 'd/m/y'" /></td>
@@ -272,7 +291,7 @@
 				</s:else>
 			</s:form>
 			<script type="text/javascript">
-		<s:if test="%{clearValues == true}">
+		/* <s:if test="%{clearValues == true}">
 			document.getElementById('scheme').value = 0;
 			document.getElementById('department').value = 0;
 			document.getElementById('name').value = "";
@@ -289,7 +308,7 @@
 			document.getElementById('govtLoanProposalDate').value = "";
 			document.getElementById('govtAdminSanctionNumber').value = "";
 			document.getElementById('govtAdminSanctionDate').value = "";
-		</s:if>
+		</s:if> */
 		</script>
 </body>
 </html>

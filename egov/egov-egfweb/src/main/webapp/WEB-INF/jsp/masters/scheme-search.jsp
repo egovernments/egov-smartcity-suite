@@ -163,7 +163,7 @@
 					<th class="bluebgheadtd" style="width: 4%; text-align: center"
 						align="center">End Date</th>
 					<th class="bluebgheadtd" style="width: 4%; text-align: center"
-						align="center">IsActive</th>
+						align="center">Active Y/N</th>
 				</tr>
 				<c:set var="trclass" value="greybox" />
 				<s:iterator var="scheme" value="schemeList" status="f">
@@ -183,7 +183,8 @@
 						<td class="<c:out value="${trclass}"/>" style="text-align: center"
 							align="center"><s:date name="%{validto}" format="dd/MM/yyyy" /></td>
 						<td class="<c:out value="${trclass}"/>" style="text-align: center"
-							align="center"><s:property value="isactive" /></td>
+							align="center"><s:if test="%{isactive==true}">Yes</s:if>
+						<s:else>No</s:else></td>
 						<c:choose>
 							<c:when test="${trclass=='greybox'}">
 								<c:set var="trclass" value="bluebox" />
