@@ -78,8 +78,8 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = "advertisementnumber", group = Searchable.Group.SEARCHABLE)
 	private String advertisementNumber;
 
-	@Searchable(name = "assessment_number", group = Searchable.Group.CLAUSES)
-	private String assessment_number;
+	@Searchable(name = "assessmentnumber", group = Searchable.Group.CLAUSES)
+	private String assessmentNumber;
 
 	@Searchable(name = "propertytype", group = Searchable.Group.CLAUSES)
 	private String propertyType;
@@ -102,7 +102,7 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = "advertisementcreatedby", group = Searchable.Group.CLAUSES)
 	private String advertisementCreatedBy;
 
-	@Searchable(name = "status", group = Searchable.Group.SEARCHABLE)
+	@Searchable(name = "status", group = Searchable.Group.CLAUSES)
 	private String advertisement_status;
 
 	@Searchable(name = "type", group = Searchable.Group.CLAUSES)
@@ -111,14 +111,8 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = "islegacy", group = Searchable.Group.CLAUSES)
 	private Boolean islegacy;
 
-	@Searchable(name = "penaltycalculationdate", group = Searchable.Group.CLAUSES)
-	private Date penaltyCalculationDate;
-
 	@Searchable(name = "electricityservicenumber", group = Searchable.Group.CLAUSES)
 	private String electricityServiceNumber;
-
-	@Searchable(name = "pendingTax", group = Searchable.Group.CLAUSES)
-	private BigDecimal pendingTax;
 
 	@Searchable(name = "applicationdate", group = Searchable.Group.CLAUSES)
 	private Date applicationDate;
@@ -146,9 +140,6 @@ public class AdvertisementSearch implements Indexable {
 
 	@Searchable(name = "permissionenddate", group = Searchable.Group.CLAUSES)
 	private Date permissionEndDate;
-
-	@Searchable(name = "isactive", group = Searchable.Group.CLAUSES)
-	private Boolean isActive;
 
 	@Searchable(name = "mobilenumber", group = Searchable.Group.CLAUSES)
 	private String mobileNumber;
@@ -182,9 +173,6 @@ public class AdvertisementSearch implements Indexable {
 
 	@Searchable(name = "totalheight", group = Searchable.Group.CLAUSES)
 	private Double totalHeight;
-
-	@Searchable(name = "currentstate", group = Searchable.Group.CLAUSES)
-	private String current_state;
 
 	@Searchable(name = "deactivationremarks", group = Searchable.Group.CLAUSES)
 	private String deactivationRemarks;
@@ -409,28 +397,12 @@ public class AdvertisementSearch implements Indexable {
 		this.advertisementCreatedBy = advertisementCreatedBy;
 	}
 
-	public Date getPenaltyCalculationDate() {
-		return penaltyCalculationDate;
-	}
-
-	public void setPenaltyCalculationDate(Date penaltyCalculationDate) {
-		this.penaltyCalculationDate = penaltyCalculationDate;
-	}
-
 	public String getElectricityServiceNumber() {
 		return electricityServiceNumber;
 	}
 
 	public void setElectricityServiceNumber(String electricityServiceNumber) {
 		this.electricityServiceNumber = electricityServiceNumber;
-	}
-
-	public BigDecimal getPendingTax() {
-		return pendingTax;
-	}
-
-	public void setPendingTax(BigDecimal pendingTax) {
-		this.pendingTax = pendingTax;
 	}
 
 	public Date getApplicationDate() {
@@ -495,14 +467,6 @@ public class AdvertisementSearch implements Indexable {
 
 	public void setPermissionEndDate(Date permissionEndDate) {
 		this.permissionEndDate = permissionEndDate;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
 	}
 
 	public String getAdvertiser() {
@@ -591,14 +555,6 @@ public class AdvertisementSearch implements Indexable {
 
 	public void setAdvertisementLocation(GeoPoint advertisementLocation) {
 		this.advertisementLocation = advertisementLocation;
-	}
-
-	public String getAssessment_number() {
-		return assessment_number;
-	}
-
-	public void setAssessment_number(String assessment_number) {
-		this.assessment_number = assessment_number;
 	}
 
 	public String getAddress() {
@@ -746,11 +702,11 @@ public class AdvertisementSearch implements Indexable {
 		this.uom = uom;
 	}
 
-	public String getCurrent_state() {
-		return current_state;
+	public String getAssessmentNumber() {
+		return assessmentNumber;
 	}
 
-	public void setCurrent_state(String current_state) {
-		this.current_state = current_state;
+	public void setAssessmentNumber(String assessmentNumber) {
+		this.assessmentNumber = assessmentNumber;
 	}
 }
