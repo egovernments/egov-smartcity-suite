@@ -112,7 +112,8 @@ import com.exilant.exility.common.TaskFailedException;
         @Result(name = "new", location = "contraBTB-new.jsp"),
         @Result(name = "edit", location = "contraBTB-edit.jsp"),
         @Result(name = "reverse", location = "contraBTB-reverse.jsp"),
-        @Result(name = "view", location = "contraBTB-view.jsp")
+        @Result(name = "view", location = "contraBTB-view.jsp"),
+        @Result(name = "success", location = "contraBTB-success.jsp")
 })
 public class ContraBTBAction extends BaseVoucherAction {
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
@@ -196,7 +197,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     public void prepare() {
         super.prepare();
         ModeOfCollectionMap = new LinkedHashMap<String, String>();
-        ModeOfCollectionMap.put(MDC_CHEQUE, MDC_CHEQUE);
+        // ModeOfCollectionMap.put(MDC_CHEQUE, MDC_CHEQUE);
         ModeOfCollectionMap.put(MDC_OTHER, MDC_OTHER);
         final List<CChartOfAccounts> glCodeList = persistenceService
                 .findAllBy("from CChartOfAccounts coa where coa.purposeId=8 and coa.classification=4 and coa.isActiveForPosting=true order by coa.glcode ");
@@ -255,8 +256,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 if (contraBean.getModeOfCollection().equals(MDC_CHEQUE))
                     validateChqNumber(contraBean.getChequeNumber(), contraVoucher.getFromBankAccountId().getId(), voucherHeader);
             voucherHeader = contraBTBActionHelper.create(contraBean, contraVoucher, voucherHeader);
-            addActionMessage(getText("transaction.success")
-                    + voucherHeader.getVoucherNumber());
+            addActionMessage("Bank to Bank Transfer "+ getText("transaction.success") + " with Voucher number: "+ voucherHeader.getVoucherNumber());
             setVhId(voucherHeader.getId());
             LoadAjaxedDropDowns();
             if (LOGGER.isDebugEnabled())
@@ -272,7 +272,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
-        return NEW;
+        return SUCCESS;
     }
 
     /**
@@ -787,14 +787,13 @@ public class ContraBTBAction extends BaseVoucherAction {
                     || contraBean.getToBankAccountId().equals("-1"))
                 addFieldError("contraBean.toBankAccountId()",
                         getText("toBankAccountId.required"));
-            if (contraBean.getToFundId() != null && !contraBean.getToFundId().equals("-1")) {
-                final Fund toFund = (Fund) persistenceService.find("from Fund where id=?", contraBean.getToFundId());
-                if (!toFund.getCode().equalsIgnoreCase("03"))
-                    if (contraBean.getToDepartment() == null
-                            || contraBean.getToDepartment().equals("-1"))
-                        addFieldError("contraBean.contraBean.toDepartment()",
-                                getText("toDepartment.required"));
-            }
+            /*
+             * if (contraBean.getToFundId() != null && !contraBean.getToFundId().equals("-1")) { final Fund toFund = (Fund)
+             * persistenceService.find("from Fund where id=?", contraBean.getToFundId()); if
+             * (!toFund.getCode().equalsIgnoreCase("03")) if (contraBean.getToDepartment() == null ||
+             * contraBean.getToDepartment().equals("-1")) addFieldError("contraBean.contraBean.toDepartment()",
+             * getText("toDepartment.required")); }
+             */
             if (voucherHeader.getVouchermis().getDepartmentid() == null
                     || voucherHeader.getVouchermis().getDepartmentid().getId() == null) {
                 addFieldError("voucherHeader.vouchermis.departmentid.id",
@@ -826,6 +825,10 @@ public class ContraBTBAction extends BaseVoucherAction {
                         || contraBean.getSourceGlcode().equals("-1"))
                     addFieldError("contraBean.sourceGlcode",
                             getText("sourceGlcode.required"));
+                if (contraBean.getToDepartment() == null
+                        || contraBean.getToDepartment().equals("-1"))
+                    addFieldError("contraBean.contraBean.toDepartment()",
+                            getText("toDepartment.required"));
             }
 
             if (getAmount() == null)

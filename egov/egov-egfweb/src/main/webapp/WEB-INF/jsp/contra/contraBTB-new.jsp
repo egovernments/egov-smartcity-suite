@@ -104,8 +104,11 @@
 					</tr>
 					<%@include file="contraBTB-form.jsp"%>
 				</table>
-				<div class="mandatory1" align="left">* Mandatory Fields</div>
 			</div>
+			<div class="mandatory1" align="left">* Mandatory Fields</div>
+
+			</br>
+			</br>
 			<%@include file="../voucher/SaveButtons.jsp"%>
 			<input type="hidden" id=name name="name" value="BankToBank" />
 			<input type="hidden" id="type" name="type" value="Contra" />
@@ -114,7 +117,6 @@
 			<s:hidden id="startDateForBalanceCheckStr"
 				name="startDateForBalanceCheckStr"
 				value="%{startDateForBalanceCheckStr}" />
-			</div>
 		</s:push>
 	</s:form>
 	<SCRIPT type="text/javascript">
@@ -129,7 +131,9 @@ function	onLoadTask_new()
 	{
 		if(srcFund!=desFund)
 		{
-		document.getElementById('interFundRow').style.visibility="visible";
+		document.getElementById('interFundRow1').style.visibility="visible";
+		document.getElementById('interFundRow2').style.visibility="visible";
+		document.getElementById('interFundRow3').style.visibility="visible";
 		}
 	}
 	

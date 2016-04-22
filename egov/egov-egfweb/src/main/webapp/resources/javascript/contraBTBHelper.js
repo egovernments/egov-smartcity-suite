@@ -192,15 +192,21 @@ function checkInterFund() {
 				}
 				j++;
 			}
-			document.getElementById('interFundRow').style.visibility = "visible";
+			document.getElementById('interFundRow1').style.visibility = "visible";
+			document.getElementById('interFundRow2').style.visibility = "visible";
+			document.getElementById('interFundRow3').style.visibility = "visible";
 		} else {
 			// bootbox.alert("from fund="+fromFund+"toFund="+toFund);
-			document.getElementById('interFundRow').style.visibility = "hidden";
+			document.getElementById('interFundRow1').style.visibility = "hidden";
+			document.getElementById('interFundRow2').style.visibility = "hidden";
+			document.getElementById('interFundRow3').style.visibility = "hidden";
 		}
 
 	} else if (fromFund == "" || toFund == "") {
 		// bootbox.alert("min else if");
-		document.getElementById('interFundRow').style.visibility = "hidden";
+		document.getElementById('interFundRow1').style.visibility = "hidden";
+		document.getElementById('interFundRow2').style.visibility = "hidden";
+		document.getElementById('interFundRow3').style.visibility = "hidden";
 	}
 }
 
