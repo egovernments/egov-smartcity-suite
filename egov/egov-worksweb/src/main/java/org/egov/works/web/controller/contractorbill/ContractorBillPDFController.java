@@ -158,8 +158,8 @@ public class ContractorBillPDFController {
             reportParams.put("creatorDesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
             reportParams.put("approverDesignation", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
             reportParams.put("approverName", contractorBillRegister.getApprovedBy().getName());
-            List<MBHeader> mbheaders = mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister);
-            reportParams.put("mbRefNo", mbheaders.get(0).getMbRefNo());
+            List<MBHeader> mbHeaders = mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister);
+            reportParams.put("mbRefNo", mbHeaders != null && !mbHeaders.isEmpty() ? mbHeaders.get(0).getMbRefNo() : "");
 
             reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister, reportParams), reportParams);
 
