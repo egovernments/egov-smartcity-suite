@@ -226,11 +226,11 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         if (lineEstimateDetails.getLineEstimate().isBillsCreated() && lineEstimateDetails.getGrossAmountBilled() != null)
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill
                     .add(lineEstimateDetails.getGrossAmountBilled());
-//        if (totalBillAmountIncludingCurrentBill.doubleValue() > contractorBillRegister.getWorkOrder().getWorkOrderAmount())
-//            resultBinder.reject("error.contractorbill.totalbillamount.exceeds.workorderamount",
-//                    new String[] { String.valueOf(totalBillAmountIncludingCurrentBill),
-//                            String.valueOf(contractorBillRegister.getWorkOrder().getWorkOrderAmount()) },
-//                    null);
+        if (totalBillAmountIncludingCurrentBill.doubleValue() > contractorBillRegister.getWorkOrder().getWorkOrderAmount())
+            resultBinder.reject("error.contractorbill.totalbillamount.exceeds.workorderamount",
+                    new String[] { String.valueOf(totalBillAmountIncludingCurrentBill),
+                            String.valueOf(contractorBillRegister.getWorkOrder().getWorkOrderAmount()) },
+                    null);
 
         if (StringUtils.isBlank(contractorBillRegister.getBilltype()))
             resultBinder.rejectValue("billtype", "error.billtype.required");

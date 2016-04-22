@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-22T16:36:32 -->
+<!-- 2016-04-22T18:32:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="workProgressRegisterPdf" pageWidth="1684" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dde57000-7ab1-4a8b-9792-f74605077701">
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
@@ -111,27 +111,26 @@
 	<background>
 		<band height="520" splitType="Stretch">
 			<rectangle>
-				<reportElement key="rectangle-2" x="10" y="20" width="1622" height="500" uuid="48401a83-c993-40a5-9db7-2d50b1b3f6ae"/>
+				<reportElement key="rectangle-2" x="10" y="10" width="1622" height="500" uuid="48401a83-c993-40a5-9db7-2d50b1b3f6ae">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
 				<graphicElement>
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</rectangle>
 		</band>
 	</background>
-	<title>
-		<band height="71" splitType="Stretch"/>
-	</title>
 	<pageHeader>
-		<band height="45" splitType="Stretch">
+		<band height="71" splitType="Stretch">
 			<textField>
-				<reportElement x="180" y="4" width="1300" height="20" uuid="3e7ac302-94cb-4086-8b4b-e207c02d9a34"/>
+				<reportElement x="180" y="27" width="1300" height="20" uuid="3e7ac302-94cb-4086-8b4b-e207c02d9a34"/>
 				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{queryParameters}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="180" y="26" width="1300" height="15" uuid="8ff9c52e-0421-4b7d-9163-8950c94b7056"/>
+				<reportElement x="180" y="49" width="1300" height="15" uuid="8ff9c52e-0421-4b7d-9163-8950c94b7056"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
@@ -152,7 +151,7 @@
 				<textElement textAlignment="Center">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Si. No]]></text>
+				<text><![CDATA[Sl. No]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="43" y="0" width="43" height="47" uuid="a9e040ad-75e9-4c23-a2cc-2f87a50d7ce2"/>
@@ -611,7 +610,7 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="43" y="0" width="43" height="40" uuid="bb4a5c89-a91e-4901-8a1f-df5ee2530229"/>
