@@ -284,4 +284,6 @@ public class WorksConstants {
     public static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
     
     public static final String HEADING_WORK_PROGRESS_REGISTER_REPORT = "Work Progress Register Report";
+    
+    public static final String HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT = "Estimate Appropriation Register Report";
 }

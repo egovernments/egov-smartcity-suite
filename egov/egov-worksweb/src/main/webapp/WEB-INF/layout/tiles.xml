@@ -146,4 +146,9 @@
         <put-attribute name="body" value="/WEB-INF/views/reports/workProgressRegisterReport-form.jsp"/>
     </definition>
     
+    <definition name="estimateAppropriationRegister-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search.estimateappropriationregister" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/estimateAppropriationRegister-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>
