@@ -424,8 +424,7 @@ public class InstrumentService {
                         + "' is not defined in the system ");
             else
                 instrHeader.setBankId(bank);
-        } else
-            throw new ApplicationRuntimeException(BANK_CODE + IS_NULL);
+        } 
 
         // applicable for payment
         if (instrMap.get(BANKACCOUNTID) != null) {
