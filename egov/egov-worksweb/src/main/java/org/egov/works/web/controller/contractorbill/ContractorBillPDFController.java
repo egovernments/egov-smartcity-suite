@@ -67,6 +67,8 @@ import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +104,9 @@ public class ContractorBillPDFController {
     
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    
+    @Autowired
+    private MBHeaderService mbHeaderService;
 
     public static final String CONTRACTORBILLPDF = "ContractorBillPDF";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -153,6 +158,8 @@ public class ContractorBillPDFController {
             reportParams.put("creatorDesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
             reportParams.put("approverDesignation", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
             reportParams.put("approverName", contractorBillRegister.getApprovedBy().getName());
+            List<MBHeader> mbheaders = mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister);
+            reportParams.put("mbRefNo", mbheaders.get(0).getMbRefNo());
 
             reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister, reportParams), reportParams);
 
