@@ -203,7 +203,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());

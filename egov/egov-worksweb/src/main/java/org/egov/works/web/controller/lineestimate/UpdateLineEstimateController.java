@@ -63,6 +63,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.services.masters.SchemeService;
@@ -132,6 +133,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -332,7 +336,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
