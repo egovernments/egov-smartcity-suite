@@ -63,7 +63,7 @@ public class WorkProgressRegisterPDFController {
     protected FileStoreService fileStoreService;
 
     @RequestMapping(value = "/pdf", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
+    public @ResponseBody ResponseEntity<byte[]> generateWorkProgressRegisterPDF(final HttpServletRequest request,
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
             @RequestParam("adminSanctionToDate") final Date adminSanctionToDate,
             @RequestParam("workIdentificationNumber") final String workIdentificationNumber,
@@ -216,8 +216,8 @@ public class WorkProgressRegisterPDFController {
                     pdf.setAgreementAmount(wpr.getAgreementAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setAgreementAmount("NA");
-                if (wpr.getLatestMbNumber() != null)
-                    pdf.setLatestMbNumberDate(wpr.getLatestMbNumber() + ", " + sdf.format(wpr.getLatestMbDate()));
+                if (wpr.getLatestMbNumber() != null && wpr.getLatestMbDate() != null)
+                    pdf.setLatestMbNumberDate(wpr.getLatestMbNumber() + " - " + sdf.format(wpr.getLatestMbDate()));
                 else
                     pdf.setLatestMbNumberDate("");
                 if (wpr.getLatestBillNumber() != null)
