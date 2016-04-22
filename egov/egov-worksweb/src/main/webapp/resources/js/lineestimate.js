@@ -71,7 +71,14 @@ $(document).ready(function(){
 	
 	$('#estimateTotal').text(roundTo($('#estimateTotal').text()));
 
-
+	var functionId = $('#functionId').val();
+	if (functionId != "") {
+		$('#function option').each(function() {
+			if ($(this).val() == functionId)
+				$(this).prop('selected', true);
+		});
+	}
+	
 	return showSlumFieldsValue();
 });
 
