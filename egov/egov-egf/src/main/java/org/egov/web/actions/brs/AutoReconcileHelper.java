@@ -409,7 +409,7 @@ public class AutoReconcileHelper {
 	    {
 	        // Step1: mark which are all we are going to process
 	        count = 0;
-	        persistenceService.getSession().getTransaction().setTimeout(900);
+	       // persistenceService.getSession().getTransaction().setTimeout(900);
 	        if (LOGGER.isDebugEnabled())
 	            LOGGER.debug("Started at " + new Date());
 	        markForProcessing(BRS_TRANSACTION_TYPE_CHEQUE);
