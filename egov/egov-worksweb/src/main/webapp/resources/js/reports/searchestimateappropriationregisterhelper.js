@@ -44,11 +44,11 @@ jQuery('#btnsearch').click(function(e) {
 
 $('#btndownloadpdf').click(function() {
 	var departments = $('#departments').val();
-	var financialYear = $('#financialyear').val();
+	var financialYear = $('#financialYear').val();
 	var asOnDate = $('#asOnDate').val();
 	var fund = $('#fund').val();
 	var functionPDF = $('#function').val();
-	var budgetHead = $('budgetHead').val();
+	var budgetHead = $('#budgetHead').val();
 
 	window.open("/egworks/reports/estimateappropriationregister/pdf?departments="
 			+ departments
@@ -66,11 +66,11 @@ $('#btndownloadpdf').click(function() {
 
 $('#btndownloadexcel').click(function() {
 	var departments = $('#departments').val();
-	var financialYear = $('#financialyear').val();
+	var financialYear = $('#financialYear').val();
 	var asOnDate = $('#asOnDate').val();
 	var fund = $('#fund').val();
 	var functionPDF = $('#function').val();
-	var budgetHead = $('budgetHead').val();
+	var budgetHead = $('#budgetHead').val();
 
 	window.open("/egworks/reports/estimateappropriationregister/pdf?departments="
 			+ departments
@@ -128,47 +128,15 @@ function callAjaxSearch() {
 				columns : [ { 
 					"data" : "", "sClass" : "text-center"} ,{ 
 					"data" : "appropriationNumber", "sClass" : "text-left"} ,{
-					"data" : "appropriationDate", "sClass" : "text-left",
-					render: function (data, type, full) {
-						if(full!=null &&  full.appropriationDate != undefined) {
-							var regDateSplit = full.appropriationDate.split(" ")[0].split("-");		
-							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-						}
-						else return "";} },{
-					"data" : "appropriationValue", "sClass" : "text-left"} ,{ 
+					"data" : "appropriationDate", "sClass" : "text-left" },{
+					"data" : "appropriationValue", "sClass" : "text-right"} ,{ 
 					"data" : "estimateNumber", "sClass" : "text-left"} ,{
 					"data" : "workIdentificationNumber", "sClass" : "text-left"} ,{
 					"data" : "nameOfWork", "sClass" : "text-left"} ,{
 					"data" : "estimateDate", "sClass" : "text-left"} ,{
-					"data" : "estimateValue", "sClass" : "text-left"} ,{
-					"data" : "cumulativeTotal", "sClass" : "text-left"} ,{
-					"data" : "balanceAvailable", "sClass" : "text-left"
-					}]				
+					"data" : "estimateValue", "sClass" : "text-right"} ,{
+					"data" : "cumulativeTotal", "sClass" : "text-right"} ,{
+					"data" : "balanceAvailable", "sClass" : "text-right"
+					}]
 				});
 			}
-var workIdNumber = new Bloodhound({
-    datumTokenizer: function (datum) {
-        return Bloodhound.tokenizers.whitespace(datum.value);
-    },
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    remote: {
-        url: '/egworks/reports/ajax-wincodestosearchworkprogressregister?code=%QUERY',
-        filter: function (data) {
-            return $.map(data, function (ct) {
-                return {
-                    name: ct
-                };
-            });
-        }
-    }
-});
-
-workIdNumber.initialize();
-var workIdNumber_typeahead = $('#workIdentificationNumber').typeahead({
-	hint : true,
-	highlight : true,
-	minLength : 3
-}, {
-	displayKey : 'name',
-	source : workIdNumber.ttAdapter()
-});
