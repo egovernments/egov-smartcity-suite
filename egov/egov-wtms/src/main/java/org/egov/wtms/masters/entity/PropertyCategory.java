@@ -50,9 +50,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 @Entity
 @Table(name = "egwtr_property_category")
+@CompositeUnique(fields = { "connectionCategory",
+        "propertyType" }, enableDfltMsg = true, message = "{propertycategory.validity.exist}")
 @SequenceGenerator(name = PropertyCategory.SEQ_PROPERTY_CATEGORY, sequenceName = PropertyCategory.SEQ_PROPERTY_CATEGORY, allocationSize = 1)
 public class PropertyCategory extends AbstractAuditable {
 

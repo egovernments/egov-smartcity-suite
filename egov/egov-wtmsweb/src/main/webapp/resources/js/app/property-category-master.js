@@ -41,7 +41,7 @@ $(document).ready(function(){
 	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false' && 'true'){
+	if (activeDiv =='false'){
 			$('#statusdiv').hide();
 			$('#addnewid').hide();
 		}
@@ -50,12 +50,13 @@ $(document).ready(function(){
 			$('#statusdiv').show();
 			$('#addnewid').show();
 		}
+	
+	$("#resetid").click(function(){
+		$("#propertyCategoryMasterform")[0].reset();
+		window.open("/wtms/masters/propertyCategoryMaster/", "_self");
+		})
  });
 
-$("#resetid").click(function(){
-	$("#propertyCategoryMasterform")[0].reset();
-	});
-	
 $('#listid').click(function() {
 	window.open("/wtms/masters/propertyCategoryMaster/list", "_self");
  });
