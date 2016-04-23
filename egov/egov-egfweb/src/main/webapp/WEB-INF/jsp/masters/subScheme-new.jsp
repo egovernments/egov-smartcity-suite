@@ -133,11 +133,11 @@
 								</td>
 								<s:if test="showMode == 'new'">
 						<td class="bluebox"><s:textfield id="name" name="name"
-								value="%{subScheme.name}" cssStyle="width: 250px" onblur="checkuniquenessname();"/></td>
+								value="%{subScheme.name}" cssStyle="width: 250px" /></td>
 								</s:if>
 								<s:else> 
-								<td class="bluebox"><s:textfield id="name" name="name"
-								value="%{subScheme.name}" cssStyle="width: 250px"  readonly="true"/></td></s:else>
+								<td class="bluebox"><s:textfield id="name" name="name" style="background-color:#DCDCDC; color:black;" 
+								value="%{subScheme.name}"  readonly="true"/></td></s:else>  
 								
 					</tr>
 					<tr>
@@ -146,11 +146,12 @@
 							class="mandatory1"> *</span></td>
 							<s:if test="showMode == 'new'">
 						<td class="greybox"><s:textfield id="code" name="code"
-								value="%{subScheme.code}" onblur="checkuniquenesscode();" /></td>
+								value="%{subScheme.code}"  /></td>
 								</s:if>
 								<s:else>
-								<td class="greybox"><s:textfield id="code" name="code"
-								value="%{subScheme.code}" onblur="checkuniquenesscode();" readonly="true" /></td>
+								
+								<td class="greybox" > <s:textfield id="code" name="code" style="background-color:#DCDCDC; color:black;"
+								value="%{subScheme.code}"  readonly="true" /></td>
 								</s:else>
 								
 						<td class="greybox"><strong>Valid From</strong><span
