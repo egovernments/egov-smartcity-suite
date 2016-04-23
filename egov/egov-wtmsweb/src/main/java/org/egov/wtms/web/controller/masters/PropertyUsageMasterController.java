@@ -58,7 +58,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -90,24 +89,13 @@ public class PropertyUsageMasterController {
 
     @RequestMapping(value = "/propertyUsageMaster", method = RequestMethod.POST)
     public String createPropertyUsageData(@Valid @ModelAttribute final WaterPropertyUsage waterPropertyUsage,
-            final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
-            return "property-usage-master";
-        final WaterPropertyUsage waterpropertyUsageobj = waterPropertyUsageService.findByPropertyTypeAndUsageType(
-                waterPropertyUsage.getPropertyType(), waterPropertyUsage.getUsageType());
-
-        if (waterpropertyUsageobj != null) {
-            redirectAttrs.addFlashAttribute("waterPropertyUsage", waterpropertyUsageobj);
+            final BindingResult errors, final Model model) {
+        if (errors.hasErrors()) {
             model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
-            model.addAttribute("message", "Selected Property Type and Usage Type already exists.");
-            viewForm(model);
             return "property-usage-master";
-        } else {
-
+        } else
             waterPropertyUsageService.createWaterPropertyUsage(waterPropertyUsage);
-            redirectAttrs.addFlashAttribute("waterPropertyUsage", waterPropertyUsage);
-        }
         return getPropertyUsageList(model);
     }
 
@@ -132,12 +120,13 @@ public class PropertyUsageMasterController {
 
     @RequestMapping(value = "/propertyUsageMaster/{waterPropertyUsageId}", method = RequestMethod.POST)
     public String editPropertyUsageData(@Valid @ModelAttribute final WaterPropertyUsage waterPropertyUsage,
-            @PathVariable final long waterPropertyUsageId, final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
+            final BindingResult errors, final Model model, @PathVariable final long waterPropertyUsageId) {
+        if (errors.hasErrors()) {
+            model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
+            model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
             return "property-usage-master";
-        waterPropertyUsageService.updateWaterPropertyUsage(waterPropertyUsage);
-        redirectAttrs.addFlashAttribute("WaterPropertyUsage", waterPropertyUsage);
+        } else
+            waterPropertyUsageService.updateWaterPropertyUsage(waterPropertyUsage);
         return getPropertyUsageList(model);
 
     }

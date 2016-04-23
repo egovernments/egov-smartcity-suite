@@ -41,7 +41,7 @@ $(document).ready(function(){
 	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false' && 'true'){
+	if (activeDiv =='false'){
 			$('#statusdiv').hide();
 			$('#addnewid').hide();
 		}
@@ -53,6 +53,7 @@ $(document).ready(function(){
 	
 	$("#resetid").click(function(){
 		$("#waterPropertyUsageform")[0].reset();
+		window.open("/wtms/masters/propertyUsageMaster/", "_self");
 		})
 	
  });
