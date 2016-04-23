@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-22T12:51:26 -->
+<!-- 2016-04-23T08:35:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractorBillPDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e5b9c4d7-5374-4222-b26c-49c47331df4d">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -101,17 +101,17 @@
 				<textFieldExpression><![CDATA["Work Identification Number : "+$P{win}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="13" y="38" width="229" height="21" uuid="b4bffa11-c3aa-4ef9-9cac-f75c7711ed2a">
+				<reportElement positionType="Float" x="13" y="42" width="229" height="21" uuid="b4bffa11-c3aa-4ef9-9cac-f75c7711ed2a">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textFieldExpression><![CDATA["Bill Number: "+$P{billNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="242" y="38" width="110" height="17" uuid="466ed181-9ac1-4e62-bed5-9171149d0190"/>
+				<reportElement positionType="Float" x="242" y="42" width="110" height="17" uuid="466ed181-9ac1-4e62-bed5-9171149d0190"/>
 				<textFieldExpression><![CDATA["Date: "+$P{billDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="378" y="38" width="179" height="20" uuid="2fecca54-49a1-4279-b954-77b75383f94a"/>
+				<reportElement positionType="Float" x="378" y="42" width="179" height="20" uuid="2fecca54-49a1-4279-b954-77b75383f94a"/>
 				<textFieldExpression><![CDATA["Amount(Rs): "+$P{billAmount}]]></textFieldExpression>
 			</textField>
 			<line>
@@ -120,8 +120,8 @@
 					<pen lineStyle="Dashed"/>
 				</graphicElement>
 			</line>
-			<textField>
-				<reportElement x="348" y="21" width="132" height="17" uuid="6ed8b8b8-ab41-40ec-9b41-5e5d35df2f64"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="315" y="21" width="237" height="18" uuid="6ed8b8b8-ab41-40ec-9b41-5e5d35df2f64"/>
 				<textFieldExpression><![CDATA["MB Number : "+$P{mbRefNo}]]></textFieldExpression>
 			</textField>
 		</band>
