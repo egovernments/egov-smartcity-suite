@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-23T08:35:21 -->
+<!-- 2016-04-23T14:06:13 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractorBillPDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e5b9c4d7-5374-4222-b26c-49c47331df4d">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -222,17 +222,17 @@
 	<summary>
 		<band height="458" splitType="Immediate">
 			<staticText>
-				<reportElement positionType="Float" x="410" y="439" width="138" height="19" uuid="8fa273fd-c09c-4ea2-9da0-5f9c8c74eae7"/>
+				<reportElement positionType="FixRelativeToBottom" x="410" y="439" width="138" height="19" uuid="8fa273fd-c09c-4ea2-9da0-5f9c8c74eae7"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Examiner of account(s)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="236" y="440" width="100" height="18" uuid="1faa3185-ea4c-447e-ae80-064eed392ea2"/>
+				<reportElement positionType="FixRelativeToBottom" x="236" y="440" width="100" height="18" uuid="1faa3185-ea4c-447e-ae80-064eed392ea2"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Supdt (Audit)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="13" y="439" width="100" height="18" uuid="591fd967-dc26-44e3-9b7c-faebe635864c"/>
+				<reportElement positionType="FixRelativeToBottom" x="13" y="439" width="100" height="18" uuid="591fd967-dc26-44e3-9b7c-faebe635864c"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Auditor]]></text>
 			</staticText>

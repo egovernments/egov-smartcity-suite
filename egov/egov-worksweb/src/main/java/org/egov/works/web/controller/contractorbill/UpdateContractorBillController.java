@@ -122,7 +122,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         final ContractorBillRegister contractorBillRegister = getContractorBillRegister(contractorBillRegisterId);
         // if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString()))
         setDropDownValues(model);
-
+        model.addAttribute("createdbybydesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
         return loadViewData(model, request, contractorBillRegister);
     }
 
