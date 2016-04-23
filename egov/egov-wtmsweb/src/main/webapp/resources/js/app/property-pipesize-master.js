@@ -14,6 +14,7 @@ $(document).ready(function(){
 	
 	$("#resetid").click(function(){
 		$("#propertypipesizeform")[0].reset();
+		window.open("/wtms/masters/propertyPipeSizeMaster/", "_self");
 		})
 	
  });

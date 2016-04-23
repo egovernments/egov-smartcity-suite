@@ -50,9 +50,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 @Entity
 @Table(name = "egwtr_property_pipe_size")
+@CompositeUnique(fields = { "pipeSize",
+        "propertyType" }, enableDfltMsg = true, message = "{propertypipesize.validity.exist}")
 @SequenceGenerator(name = PropertyPipeSize.SEQ_PROPERTY_PIPESIZE, sequenceName = PropertyPipeSize.SEQ_PROPERTY_PIPESIZE, allocationSize = 1)
 public class PropertyPipeSize extends AbstractAuditable {
 
