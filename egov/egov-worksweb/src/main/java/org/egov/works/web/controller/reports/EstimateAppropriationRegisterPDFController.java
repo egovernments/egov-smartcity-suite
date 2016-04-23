@@ -18,6 +18,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
+import org.egov.works.models.estimate.BudgetFolioDetail;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterPdf;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
 import org.egov.works.reports.service.EstimateAppropriationRegisterService;
@@ -85,10 +86,18 @@ public class EstimateAppropriationRegisterPDFController {
         queryParameters += "Fund : " + fund;
 
         reportParams.put("queryParameters", queryParameters);
-
-        final List<LineEstimateAppropriation> lineEstimateAppropriations = estimateAppropriationRegisterService
+        
+        final Map<String, List> approvedBudgetFolioDetailsMap = estimateAppropriationRegisterService
                 .searchEstimateAppropriationRegister(searchRequest);
-        return generateReport(lineEstimateAppropriations, request, session, contentType);
+        List<BudgetFolioDetail> approvedBudgetFolioDetails = approvedBudgetFolioDetailsMap.get("budgetFolioList");
+        List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
+        Double latestCumulative = (Double) calculatedValuesList.get(0);
+        BigDecimal latestBalance = (BigDecimal) calculatedValuesList.get(1);
+        for(BudgetFolioDetail bfd : approvedBudgetFolioDetails) {
+            bfd.setCumulativeExpensesIncurred(latestCumulative);
+            bfd.setActualBalanceAvailable(latestBalance.doubleValue());
+        }
+        return generateReport(new ArrayList<LineEstimateAppropriation>(), request, session, contentType);
 
     }
 

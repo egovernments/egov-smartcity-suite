@@ -2,7 +2,9 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
+import org.egov.works.models.estimate.BudgetFolioDetail;
+import org.egov.works.utils.WorksUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -11,55 +13,59 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 @Component
-public class EstimateAppropriationRegisterJSONAdaptor implements JsonSerializer<LineEstimateAppropriation> {
+public class EstimateAppropriationRegisterJSONAdaptor implements JsonSerializer<BudgetFolioDetail>{
 
     @Override
-    public JsonElement serialize(final LineEstimateAppropriation lineEstimateAppropriation, final Type type,
+    public JsonElement serialize(final BudgetFolioDetail budgetFolioDetail, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        if (lineEstimateAppropriation != null) {
-            if (lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber() != null)
-                jsonObject.addProperty("appropriationNumber",
-                        lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber());
+        if (budgetFolioDetail != null) {
+            if (budgetFolioDetail.getBudgetApprNo() != null)
+                jsonObject.addProperty("appropriationNumber", budgetFolioDetail.getBudgetApprNo());
             else
                 jsonObject.addProperty("appropriationNumber", "");
-            if (lineEstimateAppropriation.getCreatedDate() != null)
-                jsonObject.addProperty("appropriationDate",
-                        lineEstimateAppropriation.getBudgetUsage().getUpdatedTime().toString());
+            if (budgetFolioDetail.getAppDate() != null)
+                jsonObject.addProperty("appropriationDate", budgetFolioDetail.getAppDate());
             else
                 jsonObject.addProperty("appropriationDate", "");
-            if (lineEstimateAppropriation.getBudgetUsage().getConsumedAmount() != null
-                    && lineEstimateAppropriation.getBudgetUsage().getConsumedAmount() > 0)
-                jsonObject.addProperty("appropriationValue", lineEstimateAppropriation.getBudgetUsage().getConsumedAmount());
-            else if (lineEstimateAppropriation.getBudgetUsage().getReleasedAmount() != null
-                    && lineEstimateAppropriation.getBudgetUsage().getReleasedAmount() < 0)
-                jsonObject.addProperty("appropriationValue", lineEstimateAppropriation.getBudgetUsage().getReleasedAmount());
+            if (budgetFolioDetail.getAppropriatedValue() != null)
+                jsonObject.addProperty("appropriationValue", budgetFolioDetail.getAppropriatedValue());
             else
                 jsonObject.addProperty("appropriationValue", "");
-            if (lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber() != null)
-                jsonObject.addProperty("estimateNumber", lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber());
+            if (budgetFolioDetail.getEstimateNo() != null)
+                jsonObject.addProperty("estimateNumber", budgetFolioDetail.getEstimateNo());
             else
                 jsonObject.addProperty("estimateNumber", "");
-            if (lineEstimateAppropriation.getLineEstimateDetails().getProjectCode().getCode() != null)
-                jsonObject.addProperty("workIdentificationNumber",
-                        lineEstimateAppropriation.getLineEstimateDetails().getProjectCode().getCode());
+            if (budgetFolioDetail.getWorkIdentificationNumber() != null)
+                jsonObject.addProperty("workIdentificationNumber", budgetFolioDetail.getWorkIdentificationNumber());
             else
                 jsonObject.addProperty("workIdentificationNumber", "");
-            if (lineEstimateAppropriation.getLineEstimateDetails().getNameOfWork() != null)
-                jsonObject.addProperty("nameOfWork", lineEstimateAppropriation.getLineEstimateDetails().getNameOfWork());
+            if (budgetFolioDetail.getNameOfWork() != null)
+                jsonObject.addProperty("nameOfWork", budgetFolioDetail.getNameOfWork());
             else
                 jsonObject.addProperty("nameOfWork", "");
-            if (lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getCreatedDate() != null)
-                jsonObject.addProperty("estimateDate",
-                        lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getCreatedDate().toString());
+            if (budgetFolioDetail.getEstimateDate() != null)
+                jsonObject.addProperty("estimateDate", budgetFolioDetail.getEstimateDate());
             else
                 jsonObject.addProperty("estimateDate", "");
-            if (lineEstimateAppropriation.getLineEstimateDetails().getEstimateAmount() != null)
-                jsonObject.addProperty("estimateValue", lineEstimateAppropriation.getLineEstimateDetails().getEstimateAmount());
+            if (budgetFolioDetail.getWorkValue() != null)
+                jsonObject.addProperty("estimateValue", budgetFolioDetail.getWorkValue());
             else
                 jsonObject.addProperty("estimateValue", "");
-
-            jsonObject.addProperty("id", lineEstimateAppropriation.getId());
+            if(budgetFolioDetail.getCumulativeExpensesIncurred() != null)
+                jsonObject.addProperty("cumulativeTotal", budgetFolioDetail.getCumulativeTotal());
+            else
+                jsonObject.addProperty("cumulativeTotal", "");
+            if(budgetFolioDetail.getCumulativeExpensesIncurred() != null)
+                jsonObject.addProperty("balanceAvailable", budgetFolioDetail.getBalanceAvailable());
+            else
+                jsonObject.addProperty("balanceAvailable", "");
+            if(budgetFolioDetail.getCumulativeExpensesIncurred() != null)
+                jsonObject.addProperty("actualBalanceAvailable", budgetFolioDetail.getActualBalanceAvailable());
+            else
+                jsonObject.addProperty("actualBalanceAvailable", "");
+            
+            jsonObject.addProperty("id", budgetFolioDetail.getSrlNo());
         }
         return jsonObject;
     }

@@ -118,6 +118,10 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
+					if(index == reportdatatable.fnSettings().fnRecordsTotal() - 1) {
+						var balanceAvailable = "Available Balance : " + data.actualBalanceAvailable;
+						$('#balanceAvailable').html(balanceAvailable);
+					}
 					return row;
 				},
 				aaSorting: [],				
@@ -136,7 +140,9 @@ function callAjaxSearch() {
 					"data" : "workIdentificationNumber", "sClass" : "text-left"} ,{
 					"data" : "nameOfWork", "sClass" : "text-left"} ,{
 					"data" : "estimateDate", "sClass" : "text-left"} ,{
-					"data" : "estimateValue", "sClass" : "text-left"
+					"data" : "estimateValue", "sClass" : "text-left"} ,{
+					"data" : "cumulativeTotal", "sClass" : "text-left"} ,{
+					"data" : "balanceAvailable", "sClass" : "text-left"
 					}]				
 				});
 			}
