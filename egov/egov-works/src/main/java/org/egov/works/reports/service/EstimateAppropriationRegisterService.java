@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
@@ -46,6 +47,9 @@ public class EstimateAppropriationRegisterService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
+    
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
     
     @SuppressWarnings("unchecked")
     public Map<String, List> searchEstimateAppropriationRegister(
@@ -93,7 +97,7 @@ public class EstimateAppropriationRegisterService {
         if (estimateAppropriationRegisterSearchRequest != null
                 && estimateAppropriationRegisterSearchRequest.getFinancialYear() != null) {
             queryParamMap.put("financialyearid", estimateAppropriationRegisterSearchRequest.getFinancialYear());
-            queryParamMap.put("fromDate", estimateAppropriationRegisterSearchRequest.getAsOnDate());
+            queryParamMap.put("fromDate", financialYearHibernateDAO.getFinancialYearById(estimateAppropriationRegisterSearchRequest.getFinancialYear()).getStartingDate());
             queryParamMap.put("toDate", new Date());
         }
 
@@ -179,6 +183,7 @@ public class EstimateAppropriationRegisterService {
             budgetFolioDetail.setAppDate(sdf.format(new Date(budgetUsage.getUpdatedTime().getTime())));
             budgetFolioDetail.setAppType(getApporpriationType(budgetUsage.getId()));
             budgetFolioResultList.add(budgetFolioDetail);
+            
 
             if (budgetUsage.getReleasedAmount() > 0) {
                 cumulativeTotal = cumulativeTotal - budgetUsage.getReleasedAmount();

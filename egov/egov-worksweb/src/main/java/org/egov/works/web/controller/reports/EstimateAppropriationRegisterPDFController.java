@@ -12,15 +12,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.estimate.BudgetFolioDetail;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterPdf;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
@@ -56,9 +57,15 @@ public class EstimateAppropriationRegisterPDFController {
 
     @Autowired
     private FunctionHibernateDAO functionHibernateDAO;
+    
+    @Autowired
+    private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
     private BudgetGroupDAO budgetGroupDAO;
+
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     public static final String BUDGETFOLIOPDF = "BudgetFolio";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -86,13 +93,7 @@ public class EstimateAppropriationRegisterPDFController {
         searchRequest.setFinancialYear(financialYear);
         searchRequest.setFunction(function);
         searchRequest.setFund(fund);
-
-        String queryParameters = " Budget Head : "+ budgetHead + ", ";
-
-        queryParameters += "Function : " + function + ", ";
-        queryParameters += "Fund : " + fund;
         
-        reportParams.put("queryParameters", queryParameters);
         reportParams.put("department", departmentService.getDepartmentById(department).getName());
         reportParams.put("function", functionHibernateDAO.getFunctionById(function).getName());
         reportParams.put("budgetHead", budgetGroupDAO.getBudgetHeadById(budgetHead).getName());
@@ -102,7 +103,7 @@ public class EstimateAppropriationRegisterPDFController {
                 .searchEstimateAppropriationRegister(searchRequest);
         
         List<BudgetFolioDetail> approvedBudgetFolioDetails = approvedBudgetFolioDetailsMap.get("budgetFolioList");
-        
+
         List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
         Double latestCumulative = (Double) calculatedValuesList.get(0);
         BigDecimal latestBalance = (BigDecimal) calculatedValuesList.get(1);
@@ -115,18 +116,16 @@ public class EstimateAppropriationRegisterPDFController {
 
     }
 
-    private ResponseEntity<byte[]> generateReport(final List<BudgetFolioDetail> budgetFolioDetail,
+    private ResponseEntity<byte[]> generateReport(final List<BudgetFolioDetail> budgetFolioDetails,
             final HttpServletRequest request, final HttpSession session, final String contentType) {
 
-        final List<EstimateAppropriationRegisterPdf> estimateAppropriationRegisterPdfList = new ArrayList<EstimateAppropriationRegisterPdf>();
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
      
         reportParams.put("heading", WorksConstants.HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT);
         reportParams.put("reportRunDate", formatter.format(new Date()));
 
-        reportInput = new ReportRequest(BUDGETFOLIOPDF, budgetFolioDetail, reportParams);
-
+        reportInput = new ReportRequest(BUDGETFOLIOPDF, budgetFolioDetails, reportParams);
+        reportParams.put("latestBalanceAvailable", budgetFolioDetails.get(budgetFolioDetails.size()-1).getBalanceAvailable());
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
