@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -60,15 +57,15 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.exility.common.TaskFailedException;
@@ -83,19 +80,16 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 })
 public class JournalBookReportAction extends BaseFormAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -7540296344209825345L;
     private static final Logger LOGGER = Logger.getLogger(JournalBookReportAction.class);
     private GeneralLedgerBean journalBookReport = new GeneralLedgerBean();
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private List<GeneralLedgerBean> journalBookDisplayList = new ArrayList<GeneralLedgerBean>();
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private EgovMasterDataCaching masterDataCache;
     String heading = "";
 
@@ -168,25 +162,26 @@ public class JournalBookReportAction extends BaseFormAction {
         for (GeneralLedgerBean bean : journalBookDisplayList) {
             bean.setDebitamount(new BigDecimal(bean.getDebitamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             bean.setCreditamount(new BigDecimal(bean.getCreditamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-            if (voucherDate!=null && !voucherDate.equalsIgnoreCase("") && voucherDate.equalsIgnoreCase(bean.getVoucherdate())
+            if (voucherDate != null && !voucherDate.equalsIgnoreCase("") && voucherDate.equalsIgnoreCase(bean.getVoucherdate())
                     && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
                 bean.setVoucherdate("");
             } else {
                 voucherDate = bean.getVoucherdate();
             }
-            if (voucherName!=null && !voucherName.equalsIgnoreCase("") && voucherName.equalsIgnoreCase(bean.getVoucherName())
+            if (voucherName != null && !voucherName.equalsIgnoreCase("") && voucherName.equalsIgnoreCase(bean.getVoucherName())
                     && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
                 bean.setVoucherName("");
             } else {
                 voucherName = bean.getVoucherName();
             }
-            if (voucherNumber!=null &&  !voucherNumber.equalsIgnoreCase("") && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
+            if (voucherNumber != null && !voucherNumber.equalsIgnoreCase("")
+                    && voucherNumber.equalsIgnoreCase(bean.getVouchernumber())) {
                 bean.setVouchernumber("");
             } else {
                 voucherNumber = bean.getVouchernumber();
             }
 
-            if (narration!=null && !narration.equalsIgnoreCase("") && narration.equalsIgnoreCase(bean.getNarration())) {
+            if (narration != null && !narration.equalsIgnoreCase("") && narration.equalsIgnoreCase(bean.getNarration())) {
                 bean.setNarration("");
             } else {
                 narration = bean.getNarration();

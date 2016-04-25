@@ -53,14 +53,13 @@
 						</td>
 					</tr>
 					<tr>
-						<th>
-							<div class="reportheader">
-								Cheque issue register report for <b><s:property
-										value="formattedBankName" /></b> with <br />account no:<b><s:property
-										value="accountNumber.accountnumber" /></b> from <b><s:property
-										value="fromDate" /></b> to <b><s:property value="toDate" /></b>
-							</div>
-						</th>
+						<th class="bluebgheadtd" width="100%"><strong
+							style="font-size: 15px;"> Cheque issue register report
+								for <b><s:property value="formattedBankName" /></b> with <br />account
+								no:<b><s:property value="accountNumber.accountnumber" /></b>
+								from <b><s:property value="fromDate" /></b> to <b><s:property
+										value="toDate" /></b>
+						</strong></th>
 					</tr>
 					<tr>
 						<td class="blueborderfortd">
@@ -78,8 +77,8 @@
 										<th class="bluebgheadtd" width="10%">Cheque Status</th>
 										<th class="bluebgheadtd" width="15%">Payment Order No.
 											&amp; Date</th>
-										<th class="bluebgheadtd" width="15%">Bank Payment
-											Voucher No. &amp; Date</th>
+										<th class="bluebgheadtd" width="15%">Bank Payment Voucher
+											No. &amp; Date</th>
 									</tr>
 									<s:iterator value="chequeIssueRegisterList" status="stat">
 										<tr>
@@ -144,4 +143,6 @@
 		</tr>
 	</table>
 </s:if>
-<s:else><h5 style="color: red">No data found</h5></s:else>
+<s:else>
+	<h5 style="color: red">No data found</h5>
+</s:else>

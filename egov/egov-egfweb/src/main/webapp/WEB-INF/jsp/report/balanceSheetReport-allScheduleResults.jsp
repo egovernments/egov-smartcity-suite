@@ -39,48 +39,59 @@
   -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <script>
-function showDetails(glcode){           
+	function showDetails(glcode) {
 		var deptId = "<s:property value="balanceSheet.department.id"/>";
 		var functionaryId = "<s:property value="balanceSheet.functionary.id"/>";
 		var functionName = '<s:property value="functionName"/>';
 		var functionId = "<s:property value="balanceSheet.function.id"/>";
-		var fieldId = '<s:property value="balanceSheet.field.id"/>';	   
-		var fundId='<s:property value="balanceSheet.fund.id"/>';
-        var startDate='<s:date name="%{fromDate}" format="dd/MM/yyyy"/>';
-        var endDate='<s:date name="%{toDate}" format="dd/MM/yyyy"/>';
-		
-		 var functionCode1=functionName+"~"+functionId;
+		var fieldId = '<s:property value="balanceSheet.field.id"/>';
+		var fundId = '<s:property value="balanceSheet.fund.id"/>';
+		var startDate = '<s:date name="%{fromDate}" format="dd/MM/yyyy"/>';
+		var endDate = '<s:date name="%{toDate}" format="dd/MM/yyyy"/>';
+
+		var functionCode1 = functionName + "~" + functionId;
 
 		// bootbox.alert(functionCode1);
-		if(functionId==0){
-			functionCode1="";
-			functionId="";
-			}                   
-		
-		window.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		if (functionId == 0) {
+			functionCode1 = "";
+			functionId = "";
+		}
+
+		window
+				.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='
+						+ glcode + '&fund_id=' + fundId + '&startDate='
+						+ startDate + '&endDate=' + endDate + '&departmentId='
+						+ deptId + '&functionaryId=' + functionaryId
+						+ '&functionCodeId=' + functionId + '&functionCode='
+						+ functionCode1 + '&fieldId=' + fieldId, '',
+						'resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 	}
-	
-function showPreviousYearDetails(glcode)
-{
+
+	function showPreviousYearDetails(glcode) {
 		var deptId = "<s:property value="balanceSheet.department.id"/>";
 		var functionaryId = "<s:property value="balanceSheet.functionary.id"/>";
 		var functionName = '<s:property value="functionName"/>';
 		var functionId = "<s:property value="balanceSheet.function.id"/>";
-		var fieldId = '<s:property value="balanceSheet.field.id"/>';	   
-		var fundId='<s:property value="balanceSheet.fund.id"/>';
-        var startDate='<s:date name="%{previousYearfromDate}" format="dd/MM/yyyy"/>';
-        var endDate='<s:date name="%{previousYeartoDate}" format="dd/MM/yyyy"/>';
-         var functionCode1=functionName+"~"+functionId;
- 		if(functionId==0){
-			functionCode1="";
-			functionId="";
-			}                   
-		
-		window.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		var fieldId = '<s:property value="balanceSheet.field.id"/>';
+		var fundId = '<s:property value="balanceSheet.fund.id"/>';
+		var startDate = '<s:date name="%{previousYearfromDate}" format="dd/MM/yyyy"/>';
+		var endDate = '<s:date name="%{previousYeartoDate}" format="dd/MM/yyyy"/>';
+		var functionCode1 = functionName + "~" + functionId;
+		if (functionId == 0) {
+			functionCode1 = "";
+			functionId = "";
+		}
 
-}
-	
+		window
+				.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='
+						+ glcode + '&fund_id=' + fundId + '&startDate='
+						+ startDate + '&endDate=' + endDate + '&departmentId='
+						+ deptId + '&functionaryId=' + functionaryId
+						+ '&functionCodeId=' + functionId + '&functionCode='
+						+ functionCode1 + '&fieldId=' + fieldId, '',
+						'resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 
+	}
 </script>
 <s:if test="%{balanceSheet.size()>0}">
 	<br />
@@ -96,8 +107,9 @@ function showPreviousYearDetails(glcode)
 								<div>
 									<table width="100%" border="0" cellpadding="0" cellspacing="0">
 										<tr>
-											<th class="subheadsmallnew" colspan="16" bgcolor="#CCCCCC"><s:property
-													value="ulbName" /><br /> <strong><s:text
+											<th class="bluebgheadtd" width="100%" colspan="5"><strong
+												style="font-size: 15px;"><s:property
+														value="ulbName" /><br /> <s:text
 														name="report.balancesheet.schedule" /> <s:property
 														value="model.financialYear.finYearRange" /> <s:property
 														value="header" /></strong></th>
@@ -171,8 +183,7 @@ function showPreviousYearDetails(glcode)
 														<s:if test='%{displayBold == true}'>
 															<strong><s:if test='%{currentYearTotal != 0}'>
 																	<s:property value="currentYearTotal" />
-																</s:if>
-																<s:else>0.0</s:else></strong>
+																</s:if> <s:else>0.0</s:else></strong>
 														</s:if>
 														<s:else>
 															<s:if test='%{currentYearTotal != 0}'>
@@ -188,8 +199,7 @@ function showPreviousYearDetails(glcode)
 														<s:if test='%{displayBold == true}'>
 															<strong><s:if test='%{previousYearTotal != 0}'>
 																	<s:property value="previousYearTotal" />
-																</s:if>
-																<s:else>0.0</s:else></strong>
+																</s:if> <s:else>0.0</s:else></strong>
 														</s:if>
 														<s:else>
 															<s:if test='%{previousYearTotal != 0}'>

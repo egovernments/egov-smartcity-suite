@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -75,10 +72,9 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.report.ReportBean;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -90,22 +86,22 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.eGov.src.reports.TrialBalanceBean;
 
 @Results(value = {
-		 @Result(name = "new", location = "trialBalance-new.jsp"),
+        @Result(name = "new", location = "trialBalance-new.jsp"),
         @Result(name = "trialBalance-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", "contentDisposition",
-        "no-cache;filename=trialBalance.pdf" }),
+                "no-cache;filename=trialBalance.pdf" }),
         @Result(name = "trialBalance-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", "contentDisposition",
-        "no-cache;filename=trialBalance.xls" }),
+                "no-cache;filename=trialBalance.xls" }),
         @Result(name = "trialBalance-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "text/html", "contentDisposition",
-        "no-cache;filename=trialBalance.html" })
-       })
+                "no-cache;filename=trialBalance.html" })
+})
 @ParentPackage("egov")
 public class TrialBalanceAction extends BaseFormAction {
 
@@ -145,11 +141,11 @@ public class TrialBalanceAction extends BaseFormAction {
     private Map<String, BigDecimal> fundWiseTotalMap = new LinkedHashMap<String, BigDecimal>();
     private FinancialYearDAO financialYearDAO;
     private String removeEntrysWithZeroAmount = "";
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private AppConfigValueService appConfigValuesService;
     private Date startDate = new Date();
     private Date endDate = new Date();
@@ -176,6 +172,7 @@ public class TrialBalanceAction extends BaseFormAction {
         addDropdownData("functionList", masterDataCache.get("egi-function"));
 
     }
+
     @Action(value = "/report/trialBalance-newForm")
     public String newForm()
     {
@@ -220,37 +217,37 @@ public class TrialBalanceAction extends BaseFormAction {
     @Action(value = "/report/trialBalance-search")
     public String search()
     {
-    	if (rb.getReportType().equalsIgnoreCase("daterange"))
-    	{
-    	String sDate=parameters.get("fromDate")[0];
-    	String eDate=parameters.get("toDate")[0];
-        Date dt=new Date();
-        Date dd=dt;
+        if (rb.getReportType().equalsIgnoreCase("daterange"))
+        {
+            String sDate = parameters.get("fromDate")[0];
+            String eDate = parameters.get("toDate")[0];
+            Date dt = new Date();
+            Date dd = dt;
             try {
-				dt = sdf.parse(sDate);
-			} catch (ParseException e1) {
-				
-				e1.printStackTrace();
-			}
-        
-        	CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
-        	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        	try {
-				dd = sdf.parse(eDate);
-			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+                dt = sdf.parse(sDate);
+            } catch (ParseException e1) {
+
+                e1.printStackTrace();
+            }
+
+            CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                dd = sdf.parse(eDate);
+            } catch (ParseException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
             String endFormat = formatter.format(dd);
-            	String	endDate1 =formatter.format(finYearByDate.getEndingDate());
-            	
-            	if(endFormat.compareTo(endDate1)>0)
-            	{
-                    	addActionError(getText("Start Date and End Date should be in same financial year"));
-                    	return "new";
-                    
-            	}
-    	}
+            String endDate1 = formatter.format(finYearByDate.getEndingDate());
+
+            if (endFormat.compareTo(endDate1) > 0)
+            {
+                addActionError(getText("Start Date and End Date should be in same financial year"));
+                return "new";
+
+            }
+        }
         try {
             final List<AppConfigValues> configValues = appConfigValuesService.
                     getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
@@ -449,10 +446,10 @@ public class TrialBalanceAction extends BaseFormAction {
             new Double(0);
             final SQLQuery SQLQuery = persistenceService.getSession().createSQLQuery(query);
             SQLQuery.addScalar("accCode")
-            .addScalar("accName")
-            .addScalar("fundId", StringType.INSTANCE)
-            .addScalar("amount", BigDecimalType.INSTANCE)
-            .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
+                    .addScalar("accName")
+                    .addScalar("fundId", StringType.INSTANCE)
+                    .addScalar("amount", BigDecimalType.INSTANCE)
+                    .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
             if (null != rb.getFundId())
                 SQLQuery.setInteger("fundId", rb.getFundId());
             if (null != rb.getDepartmentId())
@@ -1002,7 +999,8 @@ public class TrialBalanceAction extends BaseFormAction {
 
         if (rb.getDepartmentId() != null)
             heading.append(" For  "
-                    + (String) persistenceService.find("select name from Department where id=?", (rb.getDepartmentId()).longValue()));
+                    + (String) persistenceService.find("select name from Department where id=?",
+                            (rb.getDepartmentId()).longValue()));
 
         if (rb.getFunctionaryId() != null)
             heading.append(" For  "
@@ -1097,15 +1095,16 @@ public class TrialBalanceAction extends BaseFormAction {
         this.removeEntrysWithZeroAmount = removeEntrysWithZeroAmount;
     }
 
-	public AppConfigValueService getAppConfigValuesService() {
-		return appConfigValuesService;
-	}
+    public AppConfigValueService getAppConfigValuesService() {
+        return appConfigValuesService;
+    }
 
-	public void setAppConfigValuesService(
-			AppConfigValueService appConfigValuesService) {
-		this.appConfigValuesService = appConfigValuesService;
-	}
-	public void setEndDate(final Date endDate) {
+    public void setAppConfigValuesService(
+            AppConfigValueService appConfigValuesService) {
+        this.appConfigValuesService = appConfigValuesService;
+    }
+
+    public void setEndDate(final Date endDate) {
         this.endDate = endDate;
     }
 
@@ -1120,9 +1119,9 @@ public class TrialBalanceAction extends BaseFormAction {
     public Date getStartDate() {
         return startDate;
     }
+
     public void setFinancialYearDAO(final FinancialYearDAO financialYearDAO) {
         this.financialYearDAO = financialYearDAO;
     }
-    
-    
+
 }

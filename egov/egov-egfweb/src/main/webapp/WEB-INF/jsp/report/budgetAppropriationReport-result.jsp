@@ -49,10 +49,8 @@
 					<div align="center">
 						<br />
 						<tr>
-							<td colspan="9"><strong><div
-										class="subheadsmallnew">
-										<strong><s:property value="heading" /></strong>
-									</div></td>
+							<th class="bluebgheadtd" width="100%" colspan="9"><strong
+								style="font-size: 15px;"> <s:property value="heading" /></strong></th>
 						</tr>
 						<tr>
 							<td colspan="9">

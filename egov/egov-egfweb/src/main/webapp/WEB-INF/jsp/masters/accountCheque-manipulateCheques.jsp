@@ -81,10 +81,12 @@
 					align="center">
 					<tr align="center">
 						<div class="headingsmallbg">
-							<td><span class="bold">Bank Details</span></td>
+							<td class="bluebgheadtd" width="100%" colspan="5"><strong
+								style="font-size: 15px;">Bank Details</strong></td>
 						</div
 					</tr>
 				</table>
+				</br>
 				<table border="0" width="100%">
 
 					<tr>
@@ -114,8 +116,9 @@
 				<tr align="center">
 
 					<div class="headingsmallbg">
-						<td><span class="bold">Add New Cheque </span></td>
-					</div>
+					<td class="bluebgheadtd" width="100%" colspan="5"><strong
+								style="font-size: 15px;">Add New Cheque</strong></td>
+					</div>  
 
 				</tr>
 			</table>

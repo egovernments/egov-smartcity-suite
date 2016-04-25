@@ -50,19 +50,23 @@
 		cellpadding="0" cellspacing="0" export="true"
 		requestURI="openingBalanceReport-ajaxSearch.action">
 		<display:caption>
-			<div class="headingsmallbgnew" align="center"
-				style="text-align: center; width: 98%;">
-				<b><s:property value="%{heading}" /></b>
-			</div>
+			<table width="100%" border="1" cellspacing="0" cellpadding="0">
+				<tr>
+					<th class="bluebgheadtd" width="100%" colspan="5"><strong
+						style="font-size: 15px;"> <s:property value="%{heading}" /></strong></th>
+				</tr>
+			</table>
 		</display:caption>
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Fund" style="width:6%;text-align:center" property="fund" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="GL Code" style="width:6%;text-align:center" property="accCode" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="Department" style="width:3%;text-align:center" property="deptcode" />
+			title="Department" style="width:3%;text-align:center"
+			property="deptcode" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="Function" style="width:3%;text-align:center" property="functioncode" />
+			title="Function" style="width:3%;text-align:center"
+			property="functioncode" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Account Head" style="width:8%;text-align:left"
 			property="accName" />
@@ -70,7 +74,8 @@
 			title="Description" style="width:5%;text-align:left"
 			property="description" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-			title="Debit (Rs.)" style="width:6%;text-align:right" property="debit" />
+			title="Debit (Rs.)" style="width:6%;text-align:right"
+			property="debit" />
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Credit (Rs.)" style="width:6%;text-align:right"
 			property="credit" />

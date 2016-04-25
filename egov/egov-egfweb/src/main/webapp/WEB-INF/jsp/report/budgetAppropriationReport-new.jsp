@@ -47,12 +47,10 @@
 	var funcName = "";
 	var callback = {
 		success : function(o) {
-			document.getElementById('loading').style.display = 'none';
 			document.getElementById('result').innerHTML = o.responseText;
 			undoLoadingMask();
 		},
 		failure : function(o) {
-			document.getElementById('loading').style.display = 'none';
 			undoLoadingMask();
 		}
 	}
@@ -131,9 +129,6 @@
 		}
 		doLoadingMask();
 		return true;
-	}
-	function doAfterSubmit() {
-		document.getElementById('loading').style.display = 'block';
 	}
 </script>
 
@@ -234,11 +229,6 @@ th.bluebgheadtd {
 					onclick="javascript:window.close()" class="button" />
 			</div>
 
-		</div>
-		<div id="loading" class="loading"
-			style="width: 700; height: 700; display: none" align="center">
-			<blink style="color: red">Searching processing, Please
-				wait...</blink>
 		</div>
 	</s:form>
 </div>
