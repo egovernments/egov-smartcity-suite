@@ -44,7 +44,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form id="statusdeactivateform" name="statusdeactivateform" method ="get" class="form-horizontal form-groups-bordered"  modelAttribute="advertisementPermitDetailStatus" commandName="advertisementPermitDetailStatus">
+		<form:form id="statusdeactivateform" name="statusdeactivateform" method ="post" class="form-horizontal form-groups-bordered"  modelAttribute="advertisementPermitDetailStatus" commandName="advertisementPermitDetailStatus">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form">
 					<div class="panel-heading ">
