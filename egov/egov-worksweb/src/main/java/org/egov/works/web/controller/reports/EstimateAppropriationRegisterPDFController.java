@@ -167,7 +167,6 @@ public class EstimateAppropriationRegisterPDFController {
             totalGrantPerc = totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));
             queryParamMap.put("totalGrantPerc", totalGrantPerc);
         }
-        //totalGrant = budgetDetailsDAO.getBudgetedAmtForYear(queryParamMap);
         reportParams.put("totalGrant", totalGrant);
         reportParams.put("planningBudgetPerc", planningBudgetPerc);
         reportParams.put("totalGrantPerc", totalGrantPerc);
