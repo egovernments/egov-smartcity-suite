@@ -800,7 +800,9 @@ function autocompletecodeBank(obj,myEvent)
 				oAutoComp.useShadow = true;
 				oAutoComp.maxResultsDisplayed = 15;
 				oAutoComp.useIFrame = true;
-				
+				bankfuncObj.applyLocalFilter = true;
+				bankfuncObj.queryMatchContains = true;
+				oAutoComp.minQueryLength = 0;
 			}
 		}
 		yuiflagBank[currRow] = 1;
