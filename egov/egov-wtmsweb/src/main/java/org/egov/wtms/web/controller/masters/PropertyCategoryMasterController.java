@@ -121,9 +121,12 @@ public class PropertyCategoryMasterController {
     @RequestMapping(value = "/propertyCategoryMaster/{propertyCategoryId}", method = RequestMethod.POST)
     public String editPropertyCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
             final BindingResult errors, final Model model, @PathVariable final long propertyCategoryId) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()) {
+            model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
+            model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
             return "property-category-master";
-        propertyCategoryService.updatePropertyCategory(propertyCategory);
+        } else
+            propertyCategoryService.updatePropertyCategory(propertyCategory);
         return getPropertyCategoryMasterList(model);
     }
 
