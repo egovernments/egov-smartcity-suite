@@ -42,12 +42,41 @@ function callAjaxSearch() {
 
 function validateReconcile()
 {
-	//alert("returned  "+validateReconDate())
-	if(!validateReconDate())
+	
+	var toDate=document.getElementById("toDate").value;
+	var len=jQuery('#resultTable tr').length;
+    var row="line ";
+    var rows;
+    var numOfrows='';
+    var value=false;
+    for(i=0;i<=len-2;i++)
+				{
+			if(document.getElementById('reconDates'+i).value > toDate)
+			{
+				var a=i+1;
+				rows=row.concat(a);
+				numOfrows=numOfrows+rows+',';
+				value=true;
+			}
+			
+				}
+			
+		if(value==true)
+		{
+			
+			bootbox.alert("Reconciliation Date should be less than or equal to Bank statement To Date : "+numOfrows.replace(/\,$/, ''));
+			return false;
+		}
+				
+
+    
+	if( !validateReconDate() )
 	{
 		bootbox.alert("Add atleast one Reconciliation Date");
 		return false;
 	}
+	
+	
 
 	doLoadingMask();
 	var fd=jQuery('#mrform').serialize();
@@ -119,9 +148,11 @@ function validateReconDate()
 
 		//alert("Compare----"+ document.getElementById('reconDates'+i).value!='');
 
+		
 		if(document.getElementById('reconDates'+i).value!='')
 			return true;	
 	}
+
 	return false;
 }
 
