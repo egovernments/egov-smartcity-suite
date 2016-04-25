@@ -133,10 +133,11 @@ $('#searchagencywise').click(function(e){
 								   "title": "Agency"
 							  },
 							  { "data" : "totalHoardingInAgency", "title": "No.of hoarding"},
+							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
 							  { "data" : "totalDemand", "title": "TotalDemand"},
 							  { "data" : "collectedAmount", "title": "Collected Amount"},
 							  { "data" : "pendingAmount", "title": "Pending Amount"},
-							  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+							 
 							  ]
 					});
 		e.stopPropagation();
