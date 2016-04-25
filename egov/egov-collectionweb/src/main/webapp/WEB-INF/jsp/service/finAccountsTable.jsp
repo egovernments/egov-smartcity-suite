@@ -39,17 +39,16 @@
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>  
 <script>
 
 		path="${pageContext.request.contextPath}";
 		
 		var makeAccountsDetailTable = function() {
 		var accountColumns = [ 
-			{key:"functionid",hidden:true, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".function.id","hidden")},
-            {key:"function",label:'Function', formatter:createTextFieldFormatterForFunction(ACCOUNTDETAILSLIST,".function.name")},
 			{key:"glcodeid",hidden:true, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.id","hidden")},
-			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>', formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.glcode","text")},
-			{key:"accounthead", label:'Account Head <span class="mandatory1">*</span>',formatter:createLongTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.name")},				
+			{key:"accounthead", label:'Account Head <span class="mandatory1">*</span>',formatter:createLongTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.name")},
+			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>', formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.glcode","text")},				
 			{key:"amount",label:'Amount <span class="mandatory1">*</span>', formatter:createAmountFieldFormatter(ACCOUNTDETAILSLIST,".amount")}, 
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
@@ -82,8 +81,6 @@
 		});
 		<s:iterator value="accountDetails" status="stat">
 				accountsDetailTable.addRow({SlNo:accountsDetailTable.getRecordSet().getLength()+1,
-					"functionid":'<s:property value="function.id"/>',
-					"function":'<s:property value="function.name"/>',
 					"glcodeid":'<s:property value="glCodeId.id"/>',
 					"glcode":'<s:property value="glCodeId.glcode"/>',
 					"accounthead":'<s:property value="glCodeId.name"/>',
@@ -91,8 +88,6 @@
 					
 				});
 				var index = '<s:property value="#stat.index"/>';
-				updateGridAccounts('function.id',index,'<s:property value="function.id"/>');
-				updateGridAccounts('function.name',index,'<s:property value="function.name"/>');
 				updateGridAccounts('glCodeId.id',index,'<s:property value="glCodeId.id"/>');
 				updateGridAccounts('glCodeId.glcode',index,'<s:property value="glCodeId.glcode"/>');
 				updateGridAccounts('glCodeId.name',index,'<s:property value="glCodeId.name"/>');
