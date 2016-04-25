@@ -1345,8 +1345,7 @@ label.error {
 }
 .page-container .main-content .yui-skin-sam .yui-dt th {
   color: #fff;
-  background: #6b4f2c;
-  border-right: 1px solid #5a3e1b;
+  background: #f2851f;
 }
 .page-container .main-content .yui-skin-sam .yui-dt td {
   border-right: 1px solid #E9E9E9;
@@ -1696,9 +1695,6 @@ label.error {
   border-left: 1px solid transparent;
   border-top-left-radius: 5px;
 }
-.table thead > tr > th:hover {
-  cursor: pointer;
-}
 .table tbody tr:hover {
   background: #f7f7f7;
 }
@@ -1717,6 +1713,9 @@ label.error {
     left: -9990px;
     display: block;
   }
+}
+table.dataTable thead tr > th:hover {
+  cursor: pointer;
 }
 table.dataTable tbody {
   font-size: 13px;

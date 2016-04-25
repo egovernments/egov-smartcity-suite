@@ -1488,8 +1488,7 @@ b, label, strong{
         
         .yui-skin-sam .yui-dt th {
           color:@whitecolor;
-          background: @basecolor;
-          border-right: 1px solid @separation;
+          background: @active;
         }
 
         .yui-skin-sam .yui-dt td {
@@ -1868,10 +1867,6 @@ b, label, strong{
         
     }
     
-    thead > tr > th:hover{
-        cursor:pointer;
-    }
-    
     tbody tr:hover
     {
         background:#f7f7f7;
@@ -1894,6 +1889,10 @@ table.dataTable{
                 left:-9990px;
                 display: block;
             }
+        }
+        
+        tr > th:hover{
+        	cursor:pointer;
         }
         
     }
