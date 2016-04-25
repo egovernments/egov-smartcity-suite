@@ -189,7 +189,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private ScriptService scriptService;
     private String mode = "";
     protected Long voucherId;
-
+    private EgBillregister billRegister ; 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
 
@@ -411,7 +411,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                 result = VOUCHEREDIT;
             else
                 result = "voucherview";
-
+        billRegister = (EgBillregister) persistenceService.find(
+                "select mis.egBillregister from EgBillregistermis mis where mis.voucherHeader.id=?", voucherHeader.getId());
         return result;
     }
 
@@ -802,7 +803,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     public String getSourcePath() {
         String sourcePath;
-        if (voucherHeader.getGeneralledger().size() > 0)
+        if (voucherHeader != null && voucherHeader.getGeneralledger() != null && voucherHeader.getGeneralledger().size() > 0)
             sourcePath = voucherHeader.getVouchermis().getSourcePath();
         else
             sourcePath = egBillregister.getEgBillregistermis().getSourcePath();
@@ -1411,6 +1412,14 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     public void setVoucherId(Long voucherId) {
         this.voucherId = voucherId;
+    }
+
+    public EgBillregister getBillRegister() {
+        return billRegister;
+    }
+
+    public void setBillRegister(EgBillregister billRegister) {
+        this.billRegister = billRegister;
     }
 
 }
