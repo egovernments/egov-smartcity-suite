@@ -71,32 +71,35 @@ $(document).ready(function(){
 	});
 	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
 	
+	
 	$("#deactivation").click(function(e){
 		var pendingTax= $('#ptax').html();
+		var id=document.getElementById("id").value;
+
 		if($('#statusdeactivateform').valid()){
 			if(parseInt(pendingTax)>0)
 			{
 				bootbox.confirm("You Have a Pending Tax Of Rupees "+pendingTax+". Do You Want To Continue Deactivation?", function(result){
 					if(result)
 						{
-							$('#statusdeactivateform').attr('method','get');
-							$('#statusdeactivateform').attr('action','/adtax/deactivate/deactive');
+							var action = '/adtax/deactivate/deactive/' + id;
+							$('#statusdeactivateform').attr('method','post');
+							$('#statusdeactivateform').attr('action',action);
 							document.forms[0].submit();
 						}
 				});
 			}else
 				{
-					$('#statusdeactivateform').attr('method','get');
-					$('#statusdeactivateform').attr('action','/adtax/deactivate/deactive');
+					var action = '/adtax/deactivate/deactive/' + id;
+					$('#statusdeactivateform').attr('method','post');
+					$('#statusdeactivateform').attr('action',action);
 					document.forms[0].submit();
 				}
 		}else{
 			e.preventDefault();
+			
 		}
-		
-		
 	});
-	
 });	
 
 var prevdatatable;
@@ -141,11 +144,6 @@ $('#searchrecord').click(function(e){
 
 	});
 
-	$(document).on('click','.statuscheck' ,function(){
-		var applicationNumber=oTable.fnGetdata($(this).parent().parent(),1);
-		var url = '/adtax/deactivate/result/'+ applicationNumber;
-	});
-	
 	$('#zoneList').change(function(){
 		$.ajax({
 			type: "GET",

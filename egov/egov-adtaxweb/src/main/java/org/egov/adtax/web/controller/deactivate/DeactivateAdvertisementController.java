@@ -179,11 +179,11 @@ public class DeactivateAdvertisementController extends GenericController {
         return "statusChange-deactivate";
     }
 
-    @RequestMapping(value = "/deactive", method = GET)
-    public String deactivate(@ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model) {
+    @RequestMapping(value = "/deactive/{id}", method = RequestMethod.POST)
+    public String deactivate(@ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model, @PathVariable final Long id) {
 
         AdvertisementPermitDetail existingRateObject = advertisementPermitDetailService
-                .findByApplicationNumber(advertisementPermitDetailStatus.getApplicationNumber());
+                .findById(id);
 
         if (existingRateObject != null) {
             existingRateObject.setDeactivation_remarks(advertisementPermitDetailStatus.getDeactivation_remarks());
