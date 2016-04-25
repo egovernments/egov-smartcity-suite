@@ -50,7 +50,7 @@ $('#btndownloadpdf').click(function() {
 	var financialYear = $('#financialYear').val();
 	var asOnDate = $('#asOnDate').val();
 	var fund = $('#fund').val();
-	var functionPDF = $('#function').val();
+	var functionName = $('#function').val();
 	var budgetHead = $('#budgetHead').val();
 
 	window.open("/egworks/reports/estimateappropriationregister/pdf?departments="
@@ -61,8 +61,8 @@ $('#btndownloadpdf').click(function() {
 			+ asOnDate
 			+ "&fund="
 			+ fund
-			+ "&functionPDF="
-			+ functionPDF
+			+ "&functionName="
+			+ functionName
 			+ "&budgetHead=" + budgetHead
 			+ "&contentType=pdf", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
@@ -72,7 +72,7 @@ $('#btndownloadexcel').click(function() {
 	var financialYear = $('#financialYear').val();
 	var asOnDate = $('#asOnDate').val();
 	var fund = $('#fund').val();
-	var functionPDF = $('#function').val();
+	var functionName = $('#function').val();
 	var budgetHead = $('#budgetHead').val();
 
 	window.open("/egworks/reports/estimateappropriationregister/pdf?departments="
@@ -83,8 +83,8 @@ $('#btndownloadexcel').click(function() {
 			+ asOnDate
 			+ "&fund="
 			+ fund
-			+ "&functionPDF="
-			+ functionPDF
+			+ "&functionName="
+			+ functionName
 			+ "&budgetHead=" + budgetHead
 			+ "&contentType=excel", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
