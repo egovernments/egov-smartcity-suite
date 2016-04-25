@@ -148,19 +148,22 @@ public class DeactivateAdvertisementController extends GenericController {
     @RequestMapping(value = "/result/{id}", method = GET)
     public String viewHoardingByApplicationNumber(@PathVariable final Long id, final Model model) {
         AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findById(id);
-        
-        if (advertisementPermitDetail!=null && advertisementPermitDetail.getAdvertisement() != null && advertisementPermitDetail.getAdvertisement().getStatus()!=null && advertisementPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
+
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() != null
+                && advertisementPermitDetail.getAdvertisement().getStatus() != null
+                && advertisementPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
             model.addAttribute("message", "msg.deactivate.alreadyInWorkFlow");
-               return "deactive-error";
-          
-       }
-       //If curernt status of permit is approved, then payment is pending for the selected record.
-       if(advertisementPermitDetail!=null && advertisementPermitDetail.getAdvertisement() != null && advertisementPermitDetail.getAdvertisement().getStatus()!=null && advertisementPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE)  &&
-               advertisementPermitDetail.getStatus()!=null && advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED))
-       {
-           model.addAttribute("message", "msg.deactivate.paymentPending");
-           return "deactive-error";
-       }
+            return "deactive-error";
+
+        }
+        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() != null
+                && advertisementPermitDetail.getAdvertisement().getStatus() != null
+                && advertisementPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.ACTIVE) &&
+                advertisementPermitDetail.getStatus() != null && advertisementPermitDetail.getStatus().getCode()
+                        .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {
+            model.addAttribute("message", "msg.deactivate.paymentPending");
+            return "deactive-error";
+        }
         Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
         demandDetails = advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails();
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -180,7 +183,8 @@ public class DeactivateAdvertisementController extends GenericController {
     }
 
     @RequestMapping(value = "/deactive/{id}", method = RequestMethod.POST)
-    public String deactivate(@ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model, @PathVariable final Long id) {
+    public String deactivate(@ModelAttribute AdvertisementPermitDetail advertisementPermitDetailStatus, final Model model,
+            @PathVariable final Long id) {
 
         AdvertisementPermitDetail existingRateObject = advertisementPermitDetailService
                 .findById(id);
