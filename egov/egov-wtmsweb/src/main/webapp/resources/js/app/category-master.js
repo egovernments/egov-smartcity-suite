@@ -47,8 +47,9 @@ $(document).ready(function(){
 		}
 	
 	else if(activeDiv=='true'){
-			$('#statusdiv').show();
-			$('#addnewid').show();
+		$('#resetid').hide();
+		$('#statusdiv').show();
+		$('#addnewid').show();
 		}
 	
 	

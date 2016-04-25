@@ -8,6 +8,7 @@ $(document).ready(function(){
 		}
 	
 	else if(activeDiv=='true'){
+		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
