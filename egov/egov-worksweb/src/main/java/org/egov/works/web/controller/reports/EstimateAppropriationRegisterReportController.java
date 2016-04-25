@@ -1,6 +1,6 @@
 package org.egov.works.web.controller.reports;
 
-import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
@@ -31,7 +31,7 @@ public class EstimateAppropriationRegisterReportController {
     private BudgetGroupDAO budgetGroupDAO;
 
     @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO; 
+    private FinancialYearDAO financialYearDAO;  
     
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showEstimateAppropriationRegister(
@@ -46,7 +46,7 @@ public class EstimateAppropriationRegisterReportController {
          model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
          model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
          model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-         model.addAttribute("financialYear", financialYearHibernateDAO.findAll());
+         model.addAttribute("financialYear", financialYearDAO.getAllActiveFinancialYearList());
          model.addAttribute("departments", departmentService.getAllDepartments());
          
     }

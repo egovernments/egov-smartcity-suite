@@ -54,24 +54,6 @@ public class EstimateAppropriationRegisterService {
     @SuppressWarnings("unchecked")
     public Map<String, List> searchEstimateAppropriationRegister(
             EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest) {
-//        if (estimateAppropriationRegisterSearchRequest != null) {
-//            final Criteria criteria = getCurrentSession().createCriteria(LineEstimateAppropriation.class)
-//                    .createAlias("lineEstimateDetails", "lineEstimateDetails")
-//                    .createAlias("lineEstimateDetails.lineEstimate", "lineEstimate")
-//                    .createAlias("budgetUsage", "budgetUsage")
-//                    .createAlias("budgetUsage.budgetDetail", "budgetDetail")
-//                    .createAlias("budgetDetail.budget", "budget")
-//                    .createAlias("budget.financialYear", "financialYear");
-//                    criteria.add(Restrictions.eq("lineEstimate.executingDepartment.id",estimateAppropriationRegisterSearchRequest.getDepartment()));
-//                    criteria.add(Restrictions.eq("lineEstimate.fund.id",estimateAppropriationRegisterSearchRequest.getFund().intValue()));
-//                    criteria.add(Restrictions.eq("lineEstimate.function.id",estimateAppropriationRegisterSearchRequest.getFunction()));
-//                    criteria.add(Restrictions.eq("financialYear.id",estimateAppropriationRegisterSearchRequest.getFinancialYear()));
-//                    criteria.add(Restrictions.le("financialYear.startingDate",estimateAppropriationRegisterSearchRequest.getAsOnDate()));
-//                    criteria.add(Restrictions.eq("lineEstimate.budgetHead.id",estimateAppropriationRegisterSearchRequest.getBudgetHead()));
-//                   
-//            criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-//            return criteria.list();
-//        } else
         
         Map<String, Object> queryParamMap = new HashMap<String, Object>();
         BigDecimal totalGrant = BigDecimal.ZERO;
@@ -172,7 +154,8 @@ public class EstimateAppropriationRegisterService {
                 budgetFolioDetail.setNameOfWork(led.getNameOfWork());
                 budgetFolioDetail.setWorkValue(led.getEstimateAmount().doubleValue());
                 budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getCreatedDate()));
-                budgetFolioDetail.setWorkIdentificationNumber(led.getProjectCode().getCode());
+                if(led.getProjectCode() != null)
+                    budgetFolioDetail.setWorkIdentificationNumber(led.getProjectCode().getCode());
 
             }
 
@@ -203,14 +186,6 @@ public class EstimateAppropriationRegisterService {
     
     public String getApporpriationType(final long budgetUsageId) {
         String appType = "Regular";
-//        if (estimateAppropriationService != null) {
-//            final List allReadyAppropriatedBudgetUsageList = estimateAppropriationService
-//                    .findAllBy(
-//                            "from AbstractEstimateAppropriation where abstractEstimate.id=(select max(abstractEstimate.id) from AbstractEstimateAppropriation where budgetUsage.id=?) and budgetUsage.id<?",
-//                            budgetUsageId, budgetUsageId);
-//            if (allReadyAppropriatedBudgetUsageList.size() != 0)
-//                appType = "Re-Appropriation";
-//        }
         return appType;
     }
 }

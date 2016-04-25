@@ -3,8 +3,6 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.works.models.estimate.BudgetFolioDetail;
-import org.egov.works.utils.WorksUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;

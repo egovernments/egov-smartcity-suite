@@ -22,8 +22,9 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.model.budget.BudgetGroup;
+import org.egov.services.budget.BudgetGroupService;
 import org.egov.works.models.estimate.BudgetFolioDetail;
-import org.egov.works.reports.entity.EstimateAppropriationRegisterPdf;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
 import org.egov.works.reports.service.EstimateAppropriationRegisterService;
 import org.egov.works.utils.WorksConstants;
@@ -66,6 +67,9 @@ public class EstimateAppropriationRegisterPDFController {
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
+    
+    @Autowired
+    private BudgetGroupService budgetGroupService;
 
     public static final String BUDGETFOLIOPDF = "BudgetFolio";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -93,9 +97,45 @@ public class EstimateAppropriationRegisterPDFController {
         searchRequest.setFinancialYear(financialYear);
         searchRequest.setFunction(function);
         searchRequest.setFund(fund);
+
+        Map<String, Object> queryParamMap = new HashMap<String, Object>();
+        BigDecimal totalGrant = BigDecimal.ZERO;
+        BigDecimal totalGrantPerc = BigDecimal.ZERO;
+        BigDecimal planningBudgetPerc = new BigDecimal(0);
+        
+        if(searchRequest != null && searchRequest.getFund() != null)
+            queryParamMap.put("fundid", searchRequest.getFund().intValue());
+        if(searchRequest != null && searchRequest.getFunction() != null)
+            queryParamMap.put("functionid", searchRequest.getFunction());
+        if(searchRequest != null && searchRequest.getBudgetHead() != null){        
+            final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
+            BudgetGroup budgetGroup = budgetGroupService.findById(searchRequest.getBudgetHead(), true);
+            budgetheadid.add(budgetGroup);
+            queryParamMap.put("budgetheadid", budgetheadid);
+        }
+        if(searchRequest != null && searchRequest.getDepartment() != null)
+            queryParamMap.put("deptid", searchRequest.getDepartment());
+        if(searchRequest != null && searchRequest.getFinancialYear() != null)
+            queryParamMap.put("financialyearid", searchRequest.getFinancialYear());
+        if(searchRequest != null && searchRequest.getAsOnDate() != null)
+        queryParamMap.put("fromDate", financialYearHibernateDAO.getFinYearByDate(searchRequest.getAsOnDate()).getStartingDate());
+            
+        totalGrant = budgetDetailsDAO.getBudgetedAmtForYear(queryParamMap);
+        queryParamMap.put("deptid", searchRequest.getDepartment().intValue());
+        planningBudgetPerc = budgetDetailsDAO.getPlanningPercentForYear(queryParamMap);
+        
+        if (planningBudgetPerc != null && !planningBudgetPerc.equals(0)) {
+            totalGrantPerc = totalGrant.multiply(planningBudgetPerc.divide(new BigDecimal(100)));
+            queryParamMap.put("totalGrantPerc", totalGrantPerc);
+        }
+        //totalGrant = budgetDetailsDAO.getBudgetedAmtForYear(queryParamMap);
+        reportParams.put("totalGrant", totalGrant);
+        reportParams.put("planningBudgetPerc", planningBudgetPerc);
+        reportParams.put("totalGrantPerc", totalGrantPerc);
         
         reportParams.put("department", departmentService.getDepartmentById(department).getName());
         reportParams.put("function", functionHibernateDAO.getFunctionById(function).getName());
+        reportParams.put("functionCode", functionHibernateDAO.getFunctionById(function).getCode());
         reportParams.put("budgetHead", budgetGroupDAO.getBudgetHeadById(budgetHead).getName());
         reportParams.put("fund", fundHibernateDAO.fundById(fund.intValue(),true).getName());
         
@@ -125,7 +165,10 @@ public class EstimateAppropriationRegisterPDFController {
         reportParams.put("reportRunDate", formatter.format(new Date()));
 
         reportInput = new ReportRequest(BUDGETFOLIOPDF, budgetFolioDetails, reportParams);
-        reportParams.put("latestBalanceAvailable", budgetFolioDetails.get(budgetFolioDetails.size()-1).getBalanceAvailable());
+        
+        reportParams.put("latestBalanceAvailable", budgetFolioDetails.get(0).getActualBalanceAvailable());
+        reportParams.put("cumulativeExpensesIncurred", budgetFolioDetails.get(0).getCumulativeExpensesIncurred());
+        
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
             headers.setContentType(MediaType.parseMediaType("application/pdf"));

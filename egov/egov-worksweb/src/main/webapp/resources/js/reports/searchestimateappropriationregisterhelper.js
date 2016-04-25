@@ -38,6 +38,9 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
+	$('#btndownloadpdf').hide();
+	$('#btndownloadexcel').hide();
+	$('#balanceAvailable').html("");
 	if($("form").valid())
 		callAjaxSearch();
 });
@@ -117,9 +120,20 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
+					if(data.appropriationValue != "")
+						$('td:eq(3)',row).html(parseFloat(Math.round(data.appropriationValue * 100) / 100).toFixed(2));
+					if(data.estimateValue != "")
+						$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateValue * 100) / 100).toFixed(2));
+					if(data.cumulativeTotal != "")
+						$('td:eq(9)',row).html(parseFloat(Math.round(data.cumulativeTotal * 100) / 100).toFixed(2));
+					if(data.balanceAvailable != "")
+						$('td:eq(10)',row).html(parseFloat(Math.round(data.balanceAvailable * 100) / 100).toFixed(2));
+
+					$('#btndownloadpdf').show();
+					$('#btndownloadexcel').show();
 					$('td:eq(0)',row).html(index+1);
 					if(index == reportdatatable.fnSettings().fnRecordsTotal() - 1) {
-						var balanceAvailable = "Available Balance : " + data.actualBalanceAvailable;
+						var balanceAvailable = "Available Balance : " + parseFloat(Math.round(data.actualBalanceAvailable * 100) / 100).toFixed(2);
 						$('#balanceAvailable').html(balanceAvailable);
 					}
 					return row;

@@ -147,7 +147,7 @@
     </definition>
     
     <definition name="estimateAppropriationRegister-search" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.title.search.estimateappropriationregister" cascade="true"/>
+        <put-attribute name="page-title" value="title.estimateappropriationregister.searchresult" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/estimateAppropriationRegister-form.jsp"/>
     </definition>
     

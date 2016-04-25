@@ -39,6 +39,8 @@
 #-------------------------------------------------------------------------------*/
 $createdDate="";
 jQuery('#btnsearch').click(function(e) {
+	$('#btndownloadpdf').hide();
+	$('#btndownloadexcel').hide();
 	var adminSanctionFromDate = '';
 	var adminSanctionToDate = '';
 	if($('#adminSanctionFromDate').val() != "") {
@@ -173,6 +175,8 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
+					$('#btndownloadpdf').show();
+					$('#btndownloadexcel').show();
 					$('td:eq(0)',row).html(index+1);
 					if(data.adminSanctionAmount != "")
 						$('td:eq(13)',row).html(parseFloat(Math.round(data.adminSanctionAmount * 100) / 100).toFixed(2));

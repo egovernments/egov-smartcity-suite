@@ -84,10 +84,10 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type='button' class='btn btn-primary' id="btndownloadpdf">
+			<button style="display: none;" type='button' class='btn btn-primary' id="btndownloadpdf">
 				<spring:message code='lbl.download.pdf' />
 			</button>
-			<button type='button' class='btn btn-primary' id="btndownloadexcel">
+			<button style="display: none;" type='button' class='btn btn-primary' id="btndownloadexcel">
 				<spring:message code='lbl.download.excel' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'

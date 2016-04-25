@@ -1,6 +1,7 @@
 package org.egov.works.web.controller.reports;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,11 +39,16 @@ public class AjaxEstimateAppropriationRegisterController {
                 .searchEstimateAppropriationRegister(estimateAppropriationRegisterSearchRequest);
         List<BudgetFolioDetail> approvedBudgetFolioDetails = approvedBudgetFolioDetailsMap.get("budgetFolioList");
         List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
-        Double latestCumulative = (Double) calculatedValuesList.get(0);
-        BigDecimal latestBalance = (BigDecimal) calculatedValuesList.get(1);
-        for(BudgetFolioDetail bfd : approvedBudgetFolioDetails) {
-            bfd.setCumulativeExpensesIncurred(latestCumulative);
-            bfd.setActualBalanceAvailable(latestBalance.doubleValue());
+        if(calculatedValuesList != null) {
+            Double latestCumulative = (Double) calculatedValuesList.get(0);
+            BigDecimal latestBalance = (BigDecimal) calculatedValuesList.get(1);
+            for(BudgetFolioDetail bfd : approvedBudgetFolioDetails) {
+                bfd.setCumulativeExpensesIncurred(latestCumulative);
+                bfd.setActualBalanceAvailable(latestBalance.doubleValue());
+            }
+        }
+        if(approvedBudgetFolioDetails==null){
+            approvedBudgetFolioDetails=new ArrayList<BudgetFolioDetail>();
         }
         final String result = new StringBuilder("{ \"data\":").append(toSearchEstimateAppropriationRegisterJson(approvedBudgetFolioDetails))
                 .append("}").toString();
