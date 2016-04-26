@@ -374,13 +374,13 @@ function onLoadTask_new()
 				{
 						var vhId='<s:property value="voucherHeader.id"/>';
 						document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+vhId;
-						document.forms[0].submit();
+						return true;
 				}
 			else if(button=="Save_New")
 				{      	
 					document.forms[0].button.value='';
 				    document.forms[0].action = "directBankPayment-newform.action";
-				 	document.forms[0].submit();
+				 	return true;
 				}
 		}
 		
@@ -444,7 +444,7 @@ function onSubmit()
 			}); 
 	}else{
 		document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-		document.dbpform.submit();
+		return true;
 		}
 	return false;
 }
