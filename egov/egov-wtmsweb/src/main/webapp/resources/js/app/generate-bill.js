@@ -145,6 +145,9 @@ function loadingReport()
 			var today = getdate();
 			var connectionType = $("#connectionType").val();
 			
+			$('#warning-msg').addClass('hide');
+			$('#generateBill-table_wrapper').removeClass('hide');
+			
 			oTable= $('#generateBill-table');
 			var oDataTable=oTable.dataTable({
 				"sPaginationType": "bootstrap",
@@ -154,9 +157,42 @@ function loadingReport()
 				"bDestroy": true,
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : [ 
+					               {
+						             "sExtends": "pdf",
+						             "mColumns": [ 1, 2, 3, 4,5,6,7,8],
+	                                 "sPdfMessage": "Generate Report as on "+today+"",
+	                                 "sTitle": "Generate Report",
+	                                 "sPdfOrientation": "landscape"
+					                },
+					                {
+							             "sExtends": "xls",
+							             "mColumns": [ 1,2,3,4,5,6,7,8],
+		                                 "sPdfMessage": "Generate Report",
+		                                 "sTitle": "Water Tax Defaulters Report"
+						             },
+						             {
+							             "sExtends": "print",
+							             "mColumns": [ 1,2,3,4,5,6,7,8],
+		                                 "sPdfMessage": "Generate Report",
+		                                 "sTitle": "Water Tax Defaulters Report"
+						             }],
+					
 				},
 				ajax : {
 					url : "/wtms/report/generateBill/search/result",
+					dataSrc:function(d){
+						if(d.recordsCount>1000)
+						{
+							$('#warning-msg').removeClass('hide');
+							$('#generateBill-table_wrapper').addClass('hide');
+						}
+						else
+						{
+							$('#warning-msg').addClass('hide');					
+						}
+						return d.data;
+					},
 					data : {
 						'consumerCode': consumerCode,
 						'zone': zone,

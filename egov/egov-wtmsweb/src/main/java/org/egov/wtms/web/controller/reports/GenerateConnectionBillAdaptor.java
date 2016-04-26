@@ -56,7 +56,7 @@ public class GenerateConnectionBillAdaptor implements JsonSerializer<GenerateCon
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("hscNo", generateConnectionBill.getHscNo());
         jsonObject.addProperty("ownerName", generateConnectionBill.getOwnerName());
-        jsonObject.addProperty("propertyId", generateConnectionBill.getAssementNo());
+        jsonObject.addProperty("propertyId", generateConnectionBill.getAssessmentNo());
         jsonObject.addProperty("connectionType", generateConnectionBill.getConnectionType());
         jsonObject.addProperty("houseNo", generateConnectionBill.getHouseNumber());
         jsonObject.addProperty("locality", generateConnectionBill.getLocality());

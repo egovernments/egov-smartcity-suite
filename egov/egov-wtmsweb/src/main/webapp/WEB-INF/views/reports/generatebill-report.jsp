@@ -145,7 +145,7 @@
 						
 						
 						
-						 <div class="form-group">
+						<div class="form-group">
 						<label for="field-1" class="col-md-4 control-label"><spring:message
 										code="lbl.houseno" /></label>
 										<div class="col-md-4 add-margin">
@@ -163,23 +163,26 @@
 						<form:button type="reset" class="btn btn-primary"  ><spring:message code="lbl.reset"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
-						
-				
 
 				</form:form>
-				
-				<table class="table table-bordered table-hover multiheadertbl"
-			id="generateBill-table" width="200%">
-			<tbody>
-		   
-			
-			</tbody>
-		</table>
 					</div> 
 
 
 			</div>
+			
+			<div class="row hide" id="warning-msg">
+				   <div class="col-xs-12 col-md-6 col-md-offset-3">
+				     <div class="alert alert-warning">Search result exceeds the limit 1000. Please, refine your search</div>
+				   </div>
+				</div>
 
+			<table class="table table-bordered table-hover multiheadertbl"
+			id="generateBill-table" width="200%">
+					<tbody>
+				   
+					
+					</tbody>
+				</table>
 
 		</div>
 
