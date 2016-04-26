@@ -40,6 +40,7 @@
 package org.egov.adtax.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,9 +48,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "EGADTAX_MSTR_PENALTYRATES")
+@EntityListeners(AuditingEntityListener.class)
 @SequenceGenerator(name = AdvertisementPenaltyRates.SEQ_PENALTYRATES, sequenceName = AdvertisementPenaltyRates.SEQ_PENALTYRATES, allocationSize = 1)
 public class AdvertisementPenaltyRates extends AbstractPersistable<Long> {
 
@@ -59,9 +63,13 @@ public class AdvertisementPenaltyRates extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_PENALTYRATES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Audited
     private Double rangeFrom;
+   
+    @Audited
     private Double rangeTo;
 
+    @Audited
     private Double percentage;
 
     public Long getId() {
@@ -72,6 +80,7 @@ public class AdvertisementPenaltyRates extends AbstractPersistable<Long> {
         this.id = id;
     }
 
+    
     public Double getRangeFrom() {
         return rangeFrom;
     }
@@ -80,6 +89,7 @@ public class AdvertisementPenaltyRates extends AbstractPersistable<Long> {
         this.rangeFrom = rangeFrom;
     }
 
+    
     public Double getRangeTo() {
         return rangeTo;
     }
@@ -88,6 +98,7 @@ public class AdvertisementPenaltyRates extends AbstractPersistable<Long> {
         this.rangeTo = rangeTo;
     }
 
+    
     public Double getPercentage() {
         return percentage;
     }

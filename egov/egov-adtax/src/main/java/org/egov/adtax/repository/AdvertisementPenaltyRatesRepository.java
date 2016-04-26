@@ -50,5 +50,5 @@ public interface AdvertisementPenaltyRatesRepository extends JpaRepository<Adver
 
     @Query("select A from AdvertisementPenaltyRates A where A.rangeFrom < :units and A.rangeTo >= :units ")
     AdvertisementPenaltyRates findPenaltyRatesByNumberOfDays(@Param("units") Double units);
-
+  
 }
