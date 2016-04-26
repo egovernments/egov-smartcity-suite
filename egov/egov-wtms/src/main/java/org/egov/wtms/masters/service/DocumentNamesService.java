@@ -64,12 +64,13 @@ public class DocumentNamesService {
         this.documentNamesRepository = documentNamesRepository;
     }
 
-    public DocumentNames findBy(final Long documentNameId) {
+    public DocumentNames findOne(final Long documentNameId) {
         return documentNamesRepository.findOne(documentNameId);
     }
 
     @Transactional
     public DocumentNames createDocumentName(final DocumentNames documentNames) {
+        documentNames.setActive(true);
         return documentNamesRepository.save(documentNames);
     }
 
@@ -79,7 +80,7 @@ public class DocumentNamesService {
     }
 
     public List<DocumentNames> findAll() {
-        return documentNamesRepository.findAll(new Sort(Sort.Direction.ASC, "documentName"));
+        return documentNamesRepository.findAll(new Sort(Sort.Direction.DESC, "documentName"));
     }
 
     public DocumentNames findByDocumentName(final String documentName) {
@@ -98,9 +99,10 @@ public class DocumentNamesService {
     public List<DocumentNames> findByApplicationType(final ApplicationType applicationType) {
         return documentNamesRepository.findByApplicationType(applicationType);
     }
-    
-    public DocumentNames findByApplicationTypeAndDocumentName(final ApplicationType applicationType,final String documentName) {
-        return documentNamesRepository.findByApplicationTypeAndDocumentName(applicationType,documentName);
+
+    public DocumentNames findByApplicationTypeAndDocumentName(final ApplicationType applicationType,
+            final String documentName) {
+        return documentNamesRepository.findByApplicationTypeAndDocumentName(applicationType, documentName);
     }
 
     public List<DocumentNames> getAllActiveDocumentNamesByApplicationType(final ApplicationType applicationType) {
