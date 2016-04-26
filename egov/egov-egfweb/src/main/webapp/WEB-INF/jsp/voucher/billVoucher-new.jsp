@@ -63,7 +63,7 @@
 			</div>
 			<div id="listid" style="display: block">
 				<br />
-				<div align="center">
+				<div align="left">
 					<font style='color: red; font-weight: bold'>
 						<p class="error-block" id="lblError"></p>
 					</font> <span class="mandatory1"> <font
@@ -169,8 +169,7 @@
 				</table>
 			</div>
 		</s:if>
-<s:else>
-<div style="color:red" align="left">No records are found to display</div></s:else>
+
 	</s:form>
 	<script type="text/javascript">
 function onloadtask(){
