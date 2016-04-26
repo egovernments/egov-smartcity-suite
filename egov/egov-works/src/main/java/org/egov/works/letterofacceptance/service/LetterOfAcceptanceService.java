@@ -191,6 +191,8 @@ public class LetterOfAcceptanceService {
         // TODO Need TO handle in single query
         final List<String> estimateNumbers = lineEstimateDetailsRepository
                 .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+        if (estimateNumbers.isEmpty())
+            estimateNumbers.add("");
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
                 .createAlias("wo.contractor", "woc")
                 .createAlias("egwStatus", "status");
@@ -208,8 +210,7 @@ public class LetterOfAcceptanceService {
                         Restrictions.ilike("fileNumber", searchRequestLetterOfAcceptance.getFileNumber(), MatchMode.ANYWHERE));
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
                 criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()));
-            if (searchRequestLetterOfAcceptance.getDepartmentName() != null
-                    && !searchRequestLetterOfAcceptance.getEstimateNumber().isEmpty())
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
                 criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
             if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
