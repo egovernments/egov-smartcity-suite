@@ -119,6 +119,21 @@ $(document).ready(function(){
 		$('#waterConnectionSuccess').attr('mode', 'search');
 		window.location = url;
 	});
+	$('#viewRecOonnAck').click(function() {
+		var url = '/wtms/application/ReconnacknowlgementNotice/view/'+ $('#applicationCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.location = url;
+	});
+	$('#viewClosureAck').click(function() {
+		var url = '/wtms/application/acknowlgementNotice/view/'+ $('#applicationCode').val();
+		$('#waterConnectionSuccess').attr('method', 'get');
+		$('#waterConnectionSuccess').attr('action', url);
+		$('#waterConnectionSuccess').attr('mode', 'search');
+		window.location = url;
+	});
+	
 });
 
 $('#payBtn').click(function() {

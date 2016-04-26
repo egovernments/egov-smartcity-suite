@@ -58,6 +58,7 @@ import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infstr.models.ServiceDetails;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
 
@@ -65,7 +66,8 @@ import org.hibernate.Query;
 @Results({ @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),
         @Result(name = AjaxBankRemittanceAction.ACCOUNTLIST, location = "ajaxBankRemittance-accountList.jsp"),
         @Result(name = AjaxBankRemittanceAction.USERLIST, location = "ajaxBankRemittance-userList.jsp"),
-        @Result(name = AjaxBankRemittanceAction.DESIGNATIONLIST, location = "ajaxBankRemittance-designationList.jsp") })
+        @Result(name = AjaxBankRemittanceAction.DESIGNATIONLIST, location = "ajaxBankRemittance-designationList.jsp"),
+        @Result(name = AjaxBankRemittanceAction.SERVICENAMELIST, location = "ajaxBankRemittance-serviceListOfAccount.jsp")})
 public class AjaxBankRemittanceAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     protected static final String BANKBRANCHLIST = "bankBranchList";
@@ -79,14 +81,18 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     private List<EmployeeView> postionUserList = new ArrayList<EmployeeView>(0);
     private List<Designation> designationMasterList = new ArrayList<Designation>(0);
     private CollectionsUtil collectionsUtil;
+    protected static final String SERVICENAMELIST="serviceNameList";
 
     /**
      * A <code>Long</code> representing the fund id. The fund id is arriving from the miscellanoeus receipt screen
      */
     private Integer fundId;
     private Integer branchId;
-    private final List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
+	private Integer bankAccountId;
+	private Long serviceId;
+	private final List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
     private List<Bankaccount> bankAccountArrayList;
+    private List<ServiceDetails>  serviceNameList;
 
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchList")
     public String bankBranchList() {
@@ -96,6 +102,11 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                 throw new ValidationException(Arrays.asList(new ValidationError("fund.not.found",
                         "Fund information not available")));
             setFundName(fund.getName());
+        }
+        if(serviceName==null && serviceId!=null && serviceId!=-1)
+        {
+        	final ServiceDetails serviceDetails=(ServiceDetails	)persistenceService.find("from ServiceDetails where id=?",serviceId);
+        	setServiceName(serviceDetails.getName());
         }
         final String bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
@@ -150,6 +161,11 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                         "Fund information not available")));
             setFundName(fund.getName());
         }
+        if(serviceName==null && serviceId!=null && serviceId!=-1)
+        {
+        	final ServiceDetails serviceDetails=(ServiceDetails	)persistenceService.find("from ServiceDetails where id=?",serviceId);
+        	setServiceName(serviceDetails.getName());
+        }
         final String bankAccountQueryString = "select ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                 + "ba.BRANCHID=" + branchId + " and sd.NAME='" + serviceName + "' and fd.NAME='" + fundName + "'";
@@ -192,6 +208,24 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     }
 
+    @Action(value = "/receipts/ajaxBankRemittance-serviceListOfAccount")
+    public String serviceListOfAccount() {
+   	    final String serviceAccountQueryString = "select sd.id as serviceid,sd.name as servicename from EGCL_SERVICEDETAILS sd,EGCL_BANKACCOUNTSERVICEMAPPING asm where sd.id=asm.servicedetails and asm.bankaccount="+bankAccountId;
+        final Query serviceListQuery = persistenceService.getSession().createSQLQuery(serviceAccountQueryString);
+        final List<Object[]> queryResults = serviceListQuery.list();
+
+        serviceNameList = new ArrayList<ServiceDetails>();
+        for (int i = 0; i < queryResults.size(); i++) {
+            final Object[] arrayObjectInitialIndex = queryResults.get(i);
+            final ServiceDetails newServiceNameList = new ServiceDetails();
+            newServiceNameList.setId(Long.valueOf(arrayObjectInitialIndex[0].toString()));
+            newServiceNameList.setName(arrayObjectInitialIndex[1].toString());
+            getServiceNameList().add(newServiceNameList);
+        }
+
+        return SERVICENAMELIST;
+
+    }
     @Action(value = "/receipts/ajaxBankRemittance-positionUserList")
     public String positionUserList() {
         if (designationId != null && approverDeptId != null)
@@ -203,14 +237,6 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
             }
         return USERLIST;
 
-    }
-
-    @Action(value = "/receipts/ajaxBankRemittance-approverDesignationList")
-    public String approverDesignationList() {
-        if (approverDeptId != null)
-            designationMasterList = collectionsUtil.getDesignationsAllowedForBankRemittanceApproval(approverDeptId);
-
-        return DESIGNATIONLIST;
     }
 
     /**
@@ -248,7 +274,16 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         return bankAccountArrayList;
     }
 
-    /**
+    public List<ServiceDetails> getServiceNameList() {
+		return serviceNameList;
+	}
+
+	public void setServiceNameList(List<ServiceDetails> serviceNameList) {
+		this.serviceNameList = serviceNameList;
+	}
+
+
+	/**
      * @return the fundName
      */
     public String getFundName() {
@@ -311,5 +346,22 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
     }
+
+	public Integer getBankAccountId() {
+		return bankAccountId;
+	}
+
+	public void setBankAccountId(Integer bankAccountId) {
+		this.bankAccountId = bankAccountId;
+	}
+
+    public Long getServiceId() {
+		return serviceId;
+	}
+
+	public void setServiceId(Long serviceId) {
+		this.serviceId = serviceId;
+	}
+
 
 }

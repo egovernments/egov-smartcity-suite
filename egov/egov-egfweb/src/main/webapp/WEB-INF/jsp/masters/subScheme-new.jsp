@@ -87,6 +87,9 @@
 				}
 			return true; 
 		}
+
+		
+	    
 </script>
 
 </head>
@@ -100,13 +103,14 @@
 			<s:else>
 				<s:text name="subscheme.modify.title" />
 			</s:else>
-			<div style="color: red">
+			<div style="color: red" align="left">
 				<s:actionerror />
 				<s:fielderror />
 			</div>
-			<div style="color: green">
+			<div style="color: green" align="left">
 				<s:actionmessage />
 			</div>
+			
 			<s:token />
 
 			<s:form id="subSchemeForm" name="subSchemeForm" action="subScheme"
@@ -125,25 +129,39 @@
 								headerKey="" headerValue="--- Select ---"
 								value="%{subScheme.scheme.id}" /></td>
 						<td class="bluebox" width="20%"><strong>Name<span
-								class="mandatory1"> *</span></strong></td>
+								class="mandatory1"> *</span></strong>
+								</td>
+								<s:if test="showMode == 'new'">
 						<td class="bluebox"><s:textfield id="name" name="name"
 								value="%{subScheme.name}" cssStyle="width: 250px" /></td>
+								</s:if>
+								<s:else> 
+								<td class="bluebox"><s:textfield id="name" name="name" style="background-color:#DCDCDC; color:black;" 
+								value="%{subScheme.name}"  readonly="true"/></td></s:else>  
+								
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
 						<td class="greybox"><strong>Code</strong><span
 							class="mandatory1"> *</span></td>
+							<s:if test="showMode == 'new'">
 						<td class="greybox"><s:textfield id="code" name="code"
-								value="%{subScheme.code}" /></td>
+								value="%{subScheme.code}"  /></td>
+								</s:if>
+								<s:else>
+								
+								<td class="greybox" > <s:textfield id="code" name="code" style="background-color:#DCDCDC; color:black;"
+								value="%{subScheme.code}"  readonly="true" /></td>
+								</s:else>
+								
 						<td class="greybox"><strong>Valid From</strong><span
 							class="mandatory1"> *</span></td>
-						<td class="greybox"><s:date name="validfrom" id="validfrom"
-								format="dd/MM/yyyy" /> <s:textfield name="validfrom"
-								id="validfrom" value="%{subScheme.validfrom}" maxlength="10"
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-							href="javascript:show_calendar('subSchemeForm.validfrom',null,null,'DD/MM/YYYY');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+						<td class="greybox"><s:date name="subScheme.validfrom" id="validfromId"
+								format="dd/MM/yyyy" /> <s:textfield id="validfrom"
+								name="validfrom" value="%{validfromId}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 
 						</td>
 					</tr>
@@ -151,16 +169,16 @@
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox"><strong>Valid To</strong><span
 							class="mandatory1"> *</span></td>
-						<td class="bluebox"><s:date name="validto" id="validtoId"
-								format="dd/MM/yyyy" /> <s:textfield name="validto"
-								id="validtoId" value="%{subScheme.validto}" maxlength="10"
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-							href="javascript:show_calendar('subSchemeForm.validto',null,null,'DD/MM/YYYY');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+						<td class="bluebox"><s:date name="subScheme.validto" id="validtoId"
+								format="dd/MM/yyyy" /> <s:textfield id="validtoId"
+								name="validto" value="%{validtoId}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 						</td>
-						<td class="bluebox"><strong>Is Active</strong></td>
-						<td class="bluebox"><s:checkbox name="isActive" value="%{isActive}" /></td>
+						<td class="bluebox"><strong>Active</strong></td>
+						<td class="bluebox"><s:checkbox id="isactive"  name="isactive" 
+								value="%{subScheme.isactive}" /></td>
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
@@ -184,15 +202,15 @@
 								value="%{subScheme.councilLoanProposalNumber}" /></td>
 						<td class="bluebox"><strong>Council Loan Proposal
 								Date</strong></td>
-						<td class="bluebox"><input type="text"
-							id="councilLoanProposalDate" name="councilLoanProposalDate"
-							style="width: 100px"
-							value='<s:date name="councilLoanProposalDate" format="dd/MM/yyyy"/>'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-							href="javascript:show_calendar('subSchemeForm.councilLoanProposalDate');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>
-						</td>
+						<td class="bluebox">
+						<s:date name="subScheme.councilLoanProposalDate" id="councilLoanProposalDateId"
+								format="dd/MM/yyyy" />
+						<s:textfield id="subScheme.councilLoanProposalDate"
+								name="councilLoanProposalDate"
+								value="%{councilLoanProposalDateId}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
@@ -204,15 +222,13 @@
 								value="%{subScheme.councilAdminSanctionNumber}" /></td>
 						<td class="greybox"><strong>Council Admin Sanctioned
 								Date</strong></td>
-						<td class="greybox"><input type="text"
-							id="councilAdminSanctionDate" name="councilAdminSanctionDate"
-							style="width: 100px"
-							value='<s:date name="councilAdminSanctionDate" format="dd/MM/yyyy"/>'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-							href="javascript:show_calendar('subSchemeForm.councilAdminSanctionDate');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>
-						</td>
+						<td class="greybox"><s:date name="subScheme.councilAdminSanctionDate" id="councilAdminSanctionDateId"
+								format="dd/MM/yyyy" /><s:textfield
+								id="councilAdminSanctionDate" name="councilAdminSanctionDate"
+								value="%{councilAdminSanctionDateId}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 					</tr>
 					<tr>
 						<td class="bluebox">&nbsp;</td>
@@ -223,15 +239,12 @@
 								value="%{subScheme.govtLoanProposalNumber}" /></td>
 						<td class="bluebox"><strong>Government Loan Proposal
 								Date</strong></td>
-						<td class="bluebox"><input type="text"
-							id="govtLoanProposalDate" name="govtLoanProposalDate"
-							style="width: 100px"
-							value='<s:date name="govtLoanProposalDate" format="dd/MM/yyyy"/>'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-							href="javascript:show_calendar('subSchemeForm.govtLoanProposalDate');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>
-						</td>
+						<td class="bluebox"><s:date name="subScheme.govtLoanProposalDate" id="govtLoanProposalDateId"
+								format="dd/MM/yyyy" /><s:textfield id="govtLoanProposalDate"
+								name="govtLoanProposalDate" value="%{govtLoanProposalDateId}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
@@ -242,15 +255,13 @@
 								value="%{subScheme.govtAdminSanctionNumber}" /></td>
 						<td class="greybox"><strong>Government Admin
 								Sanction Date</strong></td>
-						<td class="greybox"><input type="text"
-							id="govtAdminSanctionDate" name="govtAdminSanctionDate"
-							style="width: 100px"
-							value='<s:date name="govtAdminSanctionDate" format="dd/MM/yyyy"/>'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-							href="javascript:show_calendar('subSchemeForm.govtAdminSanctionDate');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>
-						</td>
+						<td class="greybox"><s:date name="subScheme.govtAdminSanctionDate" id="govtAdminSanctionDateId"
+								format="dd/MM/yyyy" />
+						<s:textfield id="govtAdminSanctionDate"
+								name="govtAdminSanctionDate" value="%{govtAdminSanctionDateId}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 					</tr>
 				</table>
 				<br />
@@ -281,7 +292,7 @@
 				</s:else>
 			</s:form>
 			<script type="text/javascript">
-		<s:if test="%{clearValues == true}">
+		/* <s:if test="%{clearValues == true}">
 			document.getElementById('scheme').value = 0;
 			document.getElementById('department').value = 0;
 			document.getElementById('name').value = "";
@@ -298,7 +309,7 @@
 			document.getElementById('govtLoanProposalDate').value = "";
 			document.getElementById('govtAdminSanctionNumber').value = "";
 			document.getElementById('govtAdminSanctionDate').value = "";
-		</s:if>
+		</s:if> */
 		</script>
 </body>
 </html>

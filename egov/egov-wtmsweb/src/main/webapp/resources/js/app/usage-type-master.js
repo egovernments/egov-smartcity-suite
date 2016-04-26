@@ -47,14 +47,17 @@ $(document).ready(function(){
 	     $('#addnewid').hide();
 		}
 	
-	else
+	else if(activeDiv=='true')
 		{
+		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
+	
 	$("#resetid").click(function(){
-		$("#usageTypeform")[0].reset();
+		$("#usageTypeMasterform")[0].reset();
+		window.open("/wtms/masters/usageTypeMaster/", "_self");
 		})
 	$( "#code" ).focusout(function() {
 	    textValue =  $.trim($(this).val());

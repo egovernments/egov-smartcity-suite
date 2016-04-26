@@ -38,7 +38,10 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <html>
 <title><s:text name='page.title.estimate.template'/></title>
 <body class="yui-skin-sam">
@@ -47,7 +50,7 @@
 <script>
 function enableFieldsForModify(){
     id=dom.get('id').value;
-    document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate!edit.action?mode=edit&id='+id;
+    document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=edit&id='+id;
     document.estimateTemplateForm.submit();
 }
 
@@ -83,28 +86,25 @@ function validateEstimateTemplateFormAndSubmit() {
     	mode=dom.get('mode').value;
     	if(mode=='edit'){
     	 if(validateCancel()){
-    	  document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate!save.action';
+    	  document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-save.action';
     	  document.estimateTemplateForm.submit();
     	 }
     	}
     	else{
-    	document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate!save.action';
+    	document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-save.action';
     	document.estimateTemplateForm.submit();
     	}
    	}
    	return true;
 }
-
 </script>
 
 <div class="new-page-header">
-	Create Estimate Template
+	<s:text name="estimate.sor.createEstimate"/>	
 </div>
-		
-
 <div id="estimatetemplateerror" class="alert alert-danger" style="display:none;"></div>
 <div id="templatecodeerror" class="alert alert-danger" style="display:none;">
-<s:text name="estimateTemplate.code.isunique"/>
+	<s:text name="estimateTemplate.code.isunique"/>
 </div>
     <s:if test="%{hasErrors()}">
         <div id="errorstyle" class="alert alert-danger" >
@@ -115,42 +115,41 @@ function validateEstimateTemplateFormAndSubmit() {
     <s:if test="%{hasActionMessages()}">
         <div class="messagestyle">
         	<s:property value="%{code}"/> &nbsp; <s:actionmessage theme="simple"/>
-        	
         </div>
     </s:if>
-    <s:form theme="simple" name="estimateTemplateForm" cssClass="form-horizontal form-groups-bordered">
+<s:form theme="simple" name="estimateTemplateForm" cssClass="form-horizontal form-groups-bordered">
 	    <s:token/>
-	<s:push value="model">
+<s:push value="model">
 
-	<s:if test="%{model.id!=null}">
-		<s:hidden name="id" value="%{id}" id="id"/>
-	    <s:hidden name="mode" value="%{mode}" id="mode"/>
-	</s:if> 
-	<s:else>
-	    <s:hidden name="id" value="%{null}" id="mode" />
-	</s:else>
+<s:if test="%{model.id!=null}">
+	<s:hidden name="id" value="%{id}" id="id"/>
+    <s:hidden name="mode" value="%{mode}" id="mode"/>
+    <s:hidden  name="model.id" value="%{model.id}"id="id"/> 
+</s:if> 
+<s:else>
+    <s:hidden name="id" value="%{null}" id="mode" />
+</s:else>
 	
 	<%@ include file='estimateTemplate-header.jsp'%>
 	<%@ include file='estimateTemplate-sor.jsp'%>
 	<%@ include file='estimateTemplate-nonSor.jsp'%>
 	
-	<div class="row">
-		<div class="col-xs-12 text-center buttonholdersearch">
-			<s:if test="%{mode!='view'}">
+<div class="row">
+	<div class="col-xs-12 text-center buttonholdersearch">
+		<s:if test="%{mode!='view'}">
 			<input type="submit" class="btn btn-primary" value="Save" id="saveButton" name="button" onclick="return validateEstimateTemplateFormAndSubmit()"/>&nbsp;
-			</s:if>
-			<egov-authz:authorize actionName="editEstimateTemplate">
-			<s:if test="%{mode=='view'}">
-				<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
-			</s:if>
-			</egov-authz:authorize>
-			<s:if test="%{model.id==null}" >
-				<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();">&nbsp;
-			</s:if>
+		</s:if>
+		<egov-authz:authorize actionName="editEstimateTemplate">
+		<s:if test="%{mode=='view'}">
+			<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
+		</s:if>
+		</egov-authz:authorize>
+		<s:if test="%{model.id==null}" >
+			<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();">&nbsp;
+		</s:if>
 			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
-		</div>
 	</div>
-	
+</div>
 </s:push>
 </s:form>
 </body>

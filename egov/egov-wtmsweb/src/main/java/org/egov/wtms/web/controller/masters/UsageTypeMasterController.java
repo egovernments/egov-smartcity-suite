@@ -74,31 +74,12 @@ public class UsageTypeMasterController {
     }
 
     @RequestMapping(value = "/usageTypeMaster", method = RequestMethod.POST)
-    public String createUsageType(@Valid @ModelAttribute final UsageType usageType,
-            final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder,
-            final BindingResult errors) {
-        if (resultBinder.hasErrors())
+    public String createUsageType(@Valid @ModelAttribute final UsageType usageType, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors())
             return "usage-type-master";
-        final UsageType usageTypeNameObj = usageTypeService.findByNameIgnoreCase(usageType.getName());
-        final UsageType usageTypeCodeObj = usageTypeService.findByCodeIgnoreCase(usageType.getCode());
-
-        final UsageType usagetypeObj = usageTypeService.findByNameAndCode(usageType.getName(), usageType.getCode());
-
-        if (usagetypeObj != null) {
-            redirectAttrs.addFlashAttribute("UsageType", usagetypeObj);
-            model.addAttribute("message", "Entered Usage Type and Code are already exists");
-        } else if (usageTypeNameObj != null) {
-            redirectAttrs.addFlashAttribute("UsageType", usageTypeNameObj);
-            model.addAttribute("message", "Entered Usage Type already exist");
-        } else if (usageTypeCodeObj != null) {
-            redirectAttrs.addFlashAttribute("UsageType", usageTypeCodeObj);
-            model.addAttribute("message", "Entered Code already exist");
-            return "usage-type-master";
-        } else {
-            usageTypeService.createUsageType(usageType);
-            redirectAttrs.addFlashAttribute("usageType", usageType);
-        }
-
+        usageTypeService.createUsageType(usageType);
+        redirectAttrs.addFlashAttribute("usageType", usageType);
         return getUsageTypeList(model);
     }
 
@@ -119,10 +100,9 @@ public class UsageTypeMasterController {
     }
 
     @RequestMapping(value = "/usageTypeMaster/{usageTypeId}", method = RequestMethod.POST)
-    public String editUsageTypeData(@Valid @ModelAttribute final UsageType usageType,
-            @PathVariable final long usageTypeId, final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
+    public String editUsageTypeData(@Valid @ModelAttribute final UsageType usageType, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model, @PathVariable final long usageTypeId) {
+        if (errors.hasErrors())
             return "usage-type-master";
         usageTypeService.updateUsageType(usageType);
         redirectAttrs.addFlashAttribute("UsageType", usageType);

@@ -329,14 +329,12 @@
 						<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy' />
 						<td class="bluebox" width="34%">
 							<div name="daterow">
-								<s:textfield name="voucherDate" id="voucherDate" maxlength="10"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" size="15"
-									value="%{voucherDateId}" />
-								<a
-									href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');"
-									style="text-decoration: none" align="left"> <img img
-									width="18" height="18" border="0" align="absmiddle" alt="Date"
-									src="/egi/resources/erp2/images/calendaricon.gif" /></a>
+								<s:textfield id="voucherDate" name="voucherDate"
+									value="%{voucherDateId}" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" />
+
 							</div>
 						</td>
 					</tr>

@@ -160,10 +160,11 @@ public class UpdateConnectionController extends GenericConnectionController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
+        WorkflowContainer workflowContainer= new WorkflowContainer();
         if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() == null) {
-            model.addAttribute("additionalRule", "CLOSECONNECTION");
-            model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
+            model.addAttribute("additionalRule",WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
+            workflowContainer.setAdditionalRule(WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE);
             if (waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE))
                 waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
             else
@@ -197,16 +198,20 @@ public class UpdateConnectionController extends GenericConnectionController {
                 }
             else
                 model.addAttribute("appforDocumentList", waterConnectionDetails.getApplicationDocs());
-        } else if (waterConnectionDetails.getCloseConnectionType() != null
+        } 
+        
+        if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() != null) {
             model.addAttribute("additionalRule", WaterTaxConstants.RECONNECTIONCONNECTION);
-            model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
+            workflowContainer.setAdditionalRule(WaterTaxConstants.RECONNECTIONCONNECTION);	
 
-        } else
+        } else{
+        	workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
             model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
+        }
+        prepareWorkflow(model, waterConnectionDetails, workflowContainer);
+        model.addAttribute("currentState", waterConnectionDetails.getCurrentState().getValue());
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        prepareWorkflow(model, waterConnectionDetails, new WorkflowContainer());
-
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
         model.addAttribute("feeDetails", connectionDemandService.getSplitFee(waterConnectionDetails));
         model.addAttribute(

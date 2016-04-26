@@ -90,22 +90,8 @@
 		
 		}
 		var valSuccess = true;
-		document.getElementById("errorMessages").
-		innerHTML = "";
-	
-			if (fromdate == "") {
-				document.getElementById("errorMessages").style.display = "block";
-				document.getElementById("errorMessages").innerHTML += '<s:text name="common.datemandatory.fromdate" />'
-						+ '<br>';
-				valSuccess = false;
-			}
-	
-			if (todate == "") {
-				document.getElementById("errorMessages").style.display = "block";
-				document.getElementById("errorMessages").innerHTML += '<s:text name="common.datemandatory.todate" />'
-						+ '<br>';
-				valSuccess = false;
-			}
+		document.getElementById("errorMessages").innerHTML = "";
+		document.getElementById("errorMessages").style.display="none"; 
 	
 			if (fromdate != "" && todate != "" && fromdate != todate) {
 				if (!checkFdateTdate(fromdate, todate)) {

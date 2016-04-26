@@ -2,8 +2,10 @@
 <jboss umlns="urn:jboss:1.0">
     <shared-session-config xmlns="urn:jboss:shared-session-config:1.0">
         <session-config>
+            <tracking-mode>COOKIE</tracking-mode>
             <cookie-config>
                 <path>/</path>
+                <http-only>true</http-only>
             </cookie-config>
         </session-config>
     </shared-session-config>

@@ -58,6 +58,7 @@
         	
         success: function(data)
         {
+        	document.getElementById("resultDiv").innerHTML="";
             document.getElementById("resultDiv").innerHTML=data;
             document.getElementById("resultDiv").style.display="block";
             undoLoadingMask();

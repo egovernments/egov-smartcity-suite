@@ -1,0 +1,104 @@
+create or replace FUNCTION egwUpdateWorkProgressMatView()
+RETURNS void as $$
+declare
+  v_id bigint;
+  v_estimatenumber character varying(256);
+  v_ward bigint;
+  v_location bigint;
+  v_workcategory character varying(100);
+  v_typeofslum character varying(100);
+  v_beneficiary character varying(100);
+  v_nameofwork character varying(1024);
+  v_wincode character varying(256);
+  v_fund bigint;
+  v_function bigint;
+  v_budgethead bigint;
+  v_typeofwork bigint;
+  v_subtypeofwork bigint;
+  v_adminsanctionby bigint;
+  v_adminsanctiondate timestamp without time zone;
+  v_adminsanctionamount double precision;
+  v_technicalsanctionby bigint;
+  v_technicalsanctiondate timestamp without time zone;
+  v_estimateamount double precision;
+  v_modeofallotment character varying(64);
+  v_agreementnumber character varying(50);
+  v_agreementdate timestamp without time zone;
+  v_contractor bigint;
+  v_agreementamount double precision;
+  v_latestmbnumber character varying(50);
+  v_latestmbdate timestamp without time zone;
+  v_latestbillnumber character varying(50);
+  v_latestbilldate timestamp without time zone;
+  v_billtype character varying(50);
+  v_billamount double precision;
+  v_totalbillpaidsofar double precision;
+  v_balancevalueofworktobill double precision;
+  v_spilloverflag boolean;
+  v_department bigint;
+  v_grossamountbilled double precision;
+  v_spilloverbillscreatedflag boolean;
+
+  lineestimatedetails record;
+BEGIN
+    delete from egw_mv_work_progress_register;
+    for lineestimatedetails in (select distinct led.id, led.estimatenumber from egw_lineestimate_details as led, egw_lineestimate as le where led.lineestimate = le.id and le.status in (select id from egw_status where code in ('ADMINISTRATIVE_SANCTIONED', 'TECHNICAL_SANCTIONED')))
+    loop
+        v_id := lineestimatedetails.id;
+        v_estimatenumber := lineestimatedetails.estimatenumber;
+        v_totalbillpaidsofar := 0;
+        v_grossamountbilled := 0;
+        v_agreementamount := 0;
+        v_balancevalueofworktobill := 0;
+        v_spilloverbillscreatedflag := false;
+        select le.ward, le.location, le.workcategory, le.typeofslum, le.beneficiary, led.nameofwork, led.projectcode, le.fund, le.function, le.budgethead, le.typeofwork, le.subtypeofwork, le.adminsanctionby, le.adminsanctiondate, led.estimateamount, le.modeofallotment, le.technicalsanctionby, le.technicalsanctiondate, led.actualestimateamount, le.spilloverflag,le.billscreated,le.executingdepartment, led.grossamountbilled into v_ward, v_location, v_workcategory, v_typeofslum, v_beneficiary, v_nameofwork, v_wincode, v_fund, v_function, v_budgethead, v_typeofwork, v_subtypeofwork, v_adminsanctionby, v_adminsanctiondate, v_adminsanctionamount, v_modeofallotment, v_technicalsanctionby, v_technicalsanctiondate, v_estimateamount, v_spilloverflag,v_spilloverbillscreatedflag, v_department, v_grossamountbilled from egw_lineestimate_details as led, egw_lineestimate as le where led.id = v_id and le.id = led.lineestimate;
+        select wo.workorder_number, wo.workorder_date, wo.contractor_id, COALESCE(wo.workorder_amount,0) into v_agreementnumber, v_agreementdate, v_contractor, v_agreementamount from egw_workorder as wo where wo.estimatenumber = v_estimatenumber;
+        select code into v_wincode from egw_projectcode where id = (select projectcode from egw_lineestimate_details where id = v_id);
+        select br.billnumber, br.billdate, br.billtype, br.billamount, mb.mb_refno, mb.mb_date into v_latestbillnumber, v_latestbilldate, v_billtype, v_billamount, v_latestmbnumber, v_latestmbdate from eg_billregister as br
+            join egw_contractorbill as con on br.id = con.id join egw_mb_header as mb on br.id = mb.billregister_id where con.workorder = (select id from egw_workorder where workorder_number = v_agreementnumber and status_id = (
+                select id from egw_status where moduletype = 'WorkOrder' and code = 'APPROVED')) and con.billsequencenumber = (
+                    select max(conn.billsequencenumber) from egw_contractorbill as conn
+                        join eg_billregister as brr on brr.id = conn.id where
+                            conn.workorder = (select id from egw_workorder where workorder_number = v_agreementnumber) and brr.billstatus = 'APPROVED');
+        select COALESCE(sum(br.billamount),0) into v_totalbillpaidsofar from eg_billregister as br
+            join egw_contractorbill as con on br.id = con.id
+                left outer join eg_billregistermis bill_reg_mis on bill_reg_mis.billid=br.id
+                    left outer join voucherheader bill_voucher_hdr on bill_reg_mis.voucherheaderid=bill_voucher_hdr.id
+                        left outer join miscbilldetail misc_bill_dtl on misc_bill_dtl.billvhid=bill_voucher_hdr.id
+                            left outer join voucherheader paymentvoucher on paymentvoucher.id = misc_bill_dtl.billvhid
+                            where paymentvoucher.status = 0 and bill_voucher_hdr.status = 0 and con.workorder = (select id from egw_workorder where workorder_number = v_agreementnumber and status_id = (
+                                select id from egw_status where moduletype = 'WorkOrder' and code = 'APPROVED'))
+                                    and br.billstatus = 'APPROVED';
+                                   
+        IF v_spilloverbillscreatedflag THEN
+            v_totalbillpaidsofar := v_totalbillpaidsofar + v_grossamountbilled;
+        END IF;
+
+        IF v_totalbillpaidsofar > 0 THEN
+            v_balancevalueofworktobill := v_agreementamount - v_totalbillpaidsofar;
+        ELSE
+            v_balancevalueofworktobill = v_agreementamount;
+        END IF;       
+
+
+        INSERT INTO egw_mv_work_progress_register(
+            id, ward, location, workcategory, typeofslum, beneficiary, nameofwork, wincode,
+            fund, function, budgethead, typeofwork, subtypeofwork, adminsanctionby,
+            adminsanctiondate, adminsanctionamount, technicalsanctionby,
+            technicalsanctiondate, estimateamount, modeofallotment, agreementnumber,
+            agreementdate, contractor, agreementamount, latestmbnumber, latestmbdate,
+            latestbillnumber, latestbilldate, billtype, billamount, totalbillpaidsofar,
+            balancevalueofworktobill, spilloverflag, department,
+            createdby, createddate, lastmodifiedby, lastmodifieddate)
+    VALUES (nextval('seq_egw_mv_work_progress_register'), v_ward, v_location, v_workcategory, v_typeofslum, v_beneficiary, v_nameofwork, v_wincode,
+            v_fund, v_function, v_budgethead, v_typeofwork, v_subtypeofwork, v_adminsanctionby,
+            v_adminsanctiondate, v_adminsanctionamount, v_technicalsanctionby,
+            v_technicalsanctiondate, v_estimateamount, v_modeofallotment, v_agreementnumber,
+            v_agreementdate, v_contractor, v_agreementamount, v_latestmbnumber, v_latestmbdate,
+            v_latestbillnumber, v_latestbilldate, v_billtype, v_billamount, v_totalbillpaidsofar,
+            v_balancevalueofworktobill, v_spilloverflag, v_department,
+            1, now(), 1, now());
+
+    end loop;
+end;
+$$ LANGUAGE plpgsql;

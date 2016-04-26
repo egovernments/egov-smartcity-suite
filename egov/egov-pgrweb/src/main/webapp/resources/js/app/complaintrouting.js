@@ -88,6 +88,7 @@ $(document).ready(function()
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
 			url: '/pgr/complaint/router/position?positionName=%QUERY',
+			dataType: "json",
 			filter: function (data) {
 				// Map the remote source JSON array to a JavaScript object array
 				return $.map(data, function (pos) {

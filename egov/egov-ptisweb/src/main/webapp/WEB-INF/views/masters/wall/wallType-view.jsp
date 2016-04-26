@@ -42,10 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -92,11 +89,3 @@
 		</form:form>
 	</div>
 </div>
-
-<script
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-

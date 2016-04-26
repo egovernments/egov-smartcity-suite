@@ -55,8 +55,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.model.bills.EgBillregister;
-import org.egov.pims.model.PersonalInformation;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.hibernate.validator.constraints.Length;
@@ -85,15 +84,14 @@ public class MBHeader extends StateAware {
     @Required(message = "mbheader.mbrefno.null")
     @Length(max = 50, message = "mbheader.mbrefno.length")
     private String mbRefNo;
-    @Required(message = "mbheader.mbPreparedBy.null")
-    private PersonalInformation mbPreparedBy;
+
     @Length(max = 400, message = "mbheader.contractorComments.length")
     private String contractorComments;
     @Required(message = "mbheader.mbdate.null")
     @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "mbheader.mbDate.futuredate")
     @DateFormat(message = "invalid.fieldvalue.mbDate")
     private Date mbDate;
-    @Required(message = "mbheader.mbabstract.null")
+    // @Required(message = "mbheader.mbabstract.null")
     @Length(max = 400, message = "mbheader.mbabstract.length")
     private String mbAbstract;
     @Required(message = "mbheader.fromPageNo.null")
@@ -103,9 +101,8 @@ public class MBHeader extends StateAware {
     private Integer toPageNo;
 
     private WorkOrderEstimate workOrderEstimate;
-    private Long documentNumber;
     private Integer approverUserId;
-    private EgBillregister egBillregister;
+    private ContractorBillRegister egBillregister;
     @Valid
     private List<MBDetails> mbDetails = new LinkedList<MBDetails>();
     private String owner;
@@ -119,11 +116,7 @@ public class MBHeader extends StateAware {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
         if (workOrder != null && (workOrder.getId() == null || workOrder.getId() == 0 || workOrder.getId() == -1))
             validationErrors.add(new ValidationError("workOrder", "mbheader.workorder.null"));
-        if (mbPreparedBy != null
-                && (mbPreparedBy.getIdPersonalInformation() == null || mbPreparedBy.getIdPersonalInformation() == 0
-                        || mbPreparedBy
-                                .getIdPersonalInformation() == -1))
-            validationErrors.add(new ValidationError("mbPreparedBy", "mbheader.mbPreparedBy.null"));
+
         if (fromPageNo != null && toPageNo != null && fromPageNo > toPageNo)
             validationErrors.add(new ValidationError("toPageNo", "mbheader.toPageNo.invalid"));
         if (mbDate != null && workOrder != null && workOrder.getWorkOrderDate() != null
@@ -181,14 +174,6 @@ public class MBHeader extends StateAware {
         this.toPageNo = toPageNo;
     }
 
-    public PersonalInformation getMbPreparedBy() {
-        return mbPreparedBy;
-    }
-
-    public void setMbPreparedBy(final PersonalInformation mbPreparedBy) {
-        this.mbPreparedBy = mbPreparedBy;
-    }
-
     public String getContractorComments() {
         return contractorComments;
     }
@@ -215,11 +200,11 @@ public class MBHeader extends StateAware {
         return "MbHeader : " + getMbRefNo();
     }
 
-    public EgBillregister getEgBillregister() {
+    public ContractorBillRegister getEgBillregister() {
         return egBillregister;
     }
 
-    public void setEgBillregister(final EgBillregister egBillregister) {
+    public void setEgBillregister(final ContractorBillRegister egBillregister) {
         this.egBillregister = egBillregister;
     }
 
@@ -237,14 +222,6 @@ public class MBHeader extends StateAware {
 
     public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
         this.workOrderEstimate = workOrderEstimate;
-    }
-
-    public Long getDocumentNumber() {
-        return documentNumber;
-    }
-
-    public void setDocumentNumber(final Long documentNumber) {
-        this.documentNumber = documentNumber;
     }
 
     public String getOwner() {

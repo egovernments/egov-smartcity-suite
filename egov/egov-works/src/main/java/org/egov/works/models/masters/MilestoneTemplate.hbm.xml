@@ -76,8 +76,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 			<column name="STATE_ID" />
 		</many-to-one>
-		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" column="STATUS_ID" not-null="true" fetch="select" />
-		
+				
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />

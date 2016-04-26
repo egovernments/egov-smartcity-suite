@@ -40,6 +40,7 @@
 package org.egov.adtax.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +51,7 @@ import java.util.Set;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseCollection;
 import org.egov.adtax.entity.AgencyWiseCollectionDetail;
+import org.egov.adtax.entity.AgencyWiseCollectionSearch;
 import org.egov.adtax.repository.AgencyWiseCollectionRepository;
 import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -94,12 +96,12 @@ public class AgencyWiseCollectionService {
         return agencyWiseCollectionRepository.findAgencyWiseCollectionByDemand(demand.getId());
 
     }
-/**
- * 
- * @param hoardingList
- * @return
- */
-   public AgencyWiseCollection buildAgencyWiseObjectByHoardings(final String[] hoardingList) {
+
+    /**
+     * @param hoardingList
+     * @return
+     */
+    public AgencyWiseCollection buildAgencyWiseObjectByHoardings(final String[] hoardingList) {
 
         final Set<AgencyWiseCollectionDetail> agencyWiseCollectionDetails = new HashSet<AgencyWiseCollectionDetail>(0);
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -107,9 +109,9 @@ public class AgencyWiseCollectionService {
         final AgencyWiseCollection agencyWiseCollection = new AgencyWiseCollection();
 
         final Installment installment = advertisementDemandService.getCurrentInstallment();
-      
-        Map<Installment,BigDecimal> penaltyReasons= null;
-    
+
+        Map<Installment, BigDecimal> penaltyReasons = null;
+
         for (final String hoardingId : hoardingList) {
             final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long
                     .valueOf(hoardingId.trim()));
@@ -228,6 +230,51 @@ public class AgencyWiseCollectionService {
         agencyWiseDt.setAmount(amount);
         agencyWiseDt.setAgencyWiseCollection(agencyWiseCollection);
         agencyWiseCollectionDetails.add(agencyWiseDt);
+    }
+
+    public List<AgencyWiseCollectionSearch> buildAgencyWiseCollectionSearch(String[] hoardingList) {
+
+        List<AgencyWiseCollectionSearch> permitDetails = new ArrayList<AgencyWiseCollectionSearch>();
+        AgencyWiseCollectionSearch agencyWiseCollectionSearchResult = null;
+
+        for (final String hoardingId : hoardingList) {
+            final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long
+                    .valueOf(hoardingId.trim()));
+
+            if (!permitDetails.contains(advertisementPermitDetail))
+                agencyWiseCollectionSearchResult = new AgencyWiseCollectionSearch();
+            else {
+                for (AgencyWiseCollectionSearch result : permitDetails) {
+                    if (result.getAdvertisementPermitId().equals(advertisementPermitDetail.getId())) {
+                        agencyWiseCollectionSearchResult = result;
+                    }
+                }
+
+            }
+
+            Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
+                    .checkPedingAmountByDemand(advertisementPermitDetail);
+           if(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT).compareTo(BigDecimal.ZERO)>0 ||
+                   demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT).compareTo(BigDecimal.ZERO)>0)
+           {
+            agencyWiseCollectionSearchResult.setAdvertisementNumber(advertisementPermitDetail.getAdvertisement()
+                    .getAdvertisementNumber());
+            agencyWiseCollectionSearchResult.setAdvertisementPermitId(advertisementPermitDetail.getId());
+            agencyWiseCollectionSearchResult
+                    .setAgencyName(advertisementPermitDetail.getAgency() != null ? advertisementPermitDetail
+                            .getAgency().getName() : " ");
+            agencyWiseCollectionSearchResult.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
+            agencyWiseCollectionSearchResult.setPenaltyAmount(demandWiseFeeDetail
+                    .get(AdvertisementTaxConstants.PENALTYAMOUNT));
+            agencyWiseCollectionSearchResult.setPendingDemandAmount(demandWiseFeeDetail
+                    .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+            permitDetails.add(agencyWiseCollectionSearchResult);
+           }
+
+        }
+
+        return permitDetails;
+
     }
 
 }

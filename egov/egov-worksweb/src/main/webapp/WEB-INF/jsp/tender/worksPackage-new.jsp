@@ -59,9 +59,9 @@ function load(){
 <s:if test="%{sourcepage!='search' && getNextAction()!='END'}">
 	loadDesignationFromMatrix();
 </s:if>
-<s:if test="%{sourcepage=='inbox' && (model.egwStatus!=null && !(model.egwStatus.code=='NEW' || model.egwStatus.code=='REJECTED'))}">
+<s:if test="%{sourcepage=='inbox' && !(model.egwStatus.code=='NEW' || model.egwStatus.code=='REJECTED')}">
        //toggleFields(true,['departmentid','designationId','approverUserId','approverComments']);
-       toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Save',
+       toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments',
 		                     'Forward','Reject','button2','Approve']); 
       links=document.workspackageForm.getElementsByTagName("a"); 
 	  for(i=0;i<links.length;i++){	
@@ -92,7 +92,7 @@ function enableSelect(){
 
 function disableSelect(){
    	for(i=0;i<document.workspackageForm.elements.length;i++){
-    document.workspackageForm.elements[i].disabled=false;
+    document.workspackageForm.elements[i].disabled=true;
 	}
 }
 
@@ -103,35 +103,25 @@ function disableLinks() {
 	}
 }
 
-function enableButtons() {
-	if(dom.get('save')!=null) {
-		dom.get('save').disabled=false;
+function enableButtons() { 
+	if(dom.get('Save')!=null) {
+		dom.get('Save').disabled=false;
 	}
-	if(dom.get('submit_for_approval')!=null) {
-		dom.get('submit_for_approval').disabled=false;
-	}
-	if(dom.get('clearButton')!=null) {
-		dom.get('clearButton').disabled=false;
+	if(dom.get('Forward')!=null) {
+		dom.get('Forward').disabled=false;
 	}
 	if(dom.get('closeButton')!=null) {
 		dom.get('closeButton').disabled=false;
 	}
-	if(dom.get('worksDocUploadButton')!=null) {
-		dom.get('worksDocUploadButton').disabled=false;
+	if(dom.get('Reject')!=null) {
+		dom.get('Reject').disabled=false;
 	}
-	if(dom.get('reject')!=null) {
-		dom.get('reject').disabled=false;
-	}
-	if(dom.get('cancel')!=null) {
-		dom.get('cancel').disabled=false;
+	if(dom.get('Cancel')!=null) {
+		dom.get('Cancel').disabled=false; 
 	}
 	if(dom.get('pdfButton')!=null) {
 		dom.get('pdfButton').disabled=false;
 	}
-	if(dom.get('docViewButton')!=null) {
-		dom.get('docViewButton').disabled=false;
-	}
-
 }
 
 function deleteAllrows(tableID) {
@@ -288,6 +278,13 @@ function enableDepartment(){
 	<div class="rbroundbox2">
 	<div class="rbtop2"><div></div></div>
 	<div class="rbcontent2">
+		<div class="datewk" align="left"> 
+			<div class="estimateno">
+				<s:text name="wp.no" /> :
+				<s:if test="%{not wpNumber}">&lt; <s:text name="message.notAssigned" /> &gt;</s:if>
+				<s:property value="model.wpNumber" />
+			</div>
+		</div>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">          
           <tr>
             <td>&nbsp;</td>
@@ -417,25 +414,24 @@ function enableDepartment(){
 </s:form>
 <script>
 
-<s:if test="%{sourcepage=='inbox' && (model.egwStatus!=null && (model.egwStatus.code!='NEW' || model.egwStatus.code!='REJECTED'))}">
-	disableSelect();
+<s:if test="%{sourcepage=='inbox' && (model.egwStatus.code=='NEW' || model.egwStatus.code=='REJECTED')}">
+	enableSelect(); 
 	enableButtons();
-	showElements(['approverComments']);
+	//showElements(['approverComments']);
 
 </s:if>
 <s:if test="%{sourcepage=='search'}">
 	//hideElements(['workflowDetials']);
-	//hideElements(['approverComments']);
 	disableSelect();
 	disableLinks();
 	enableButtons();	
 </s:if>
-<s:if test="%{sourcepage=='inbox' && (model.egwStatus!=null && model.egwStatus.code=='CHECKED')}">
+<s:if test="%{sourcepage=='inbox' && model.egwStatus.code=='CHECKED'}">
 	disableSelect();
 	disableLinks();
 	enableButtons();
 	//hideElements(['workflowDetials']);
-	//showElements(['approverCommentsRow']);
+	showElements(['approverComments']);
 </s:if>
 </script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

@@ -51,6 +51,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -60,7 +61,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -72,23 +73,25 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
     @Result(name = SubSchemeAction.SEARCH, location = "subScheme-search.jsp"),
     @Result(name = SubSchemeAction.VIEW, location = "subScheme-view.jsp") })
 public class SubSchemeAction extends BaseFormAction {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3712472100095261379L;
     private SubScheme subScheme = new SubScheme();
-    private boolean isActive = false;
+    @Autowired
+    SubSchemeHibernateDAO subSchemeHibernateDAO;
+    private boolean isactive = false;
     private boolean clearValues = false;
     private int fundId;
     private static final String REQUIRED = "required";
     private int schemeId;
     private Long subSchemeId;
     private List<SubScheme> subSchemeList;
+    private List<SubScheme> subSchemeListCN;
     public static final String SEARCH = "search";
     public static final String VIEW = "view";
     private String showMode;
     private SubSchemeService subSchemeService;
 
+    private String code;
+	private String name;
     @Override
     public Object getModel() {
         return subScheme;
@@ -124,7 +127,7 @@ public class SubSchemeAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/masters/subScheme-create")
     public String save() {
-        if (isActive)
+        if (isactive)
             subScheme.setIsactive(true);
         else
             subScheme.setIsactive(false);
@@ -132,6 +135,26 @@ public class SubSchemeAction extends BaseFormAction {
         subScheme.setCreatedDate(new Date());
         subScheme.setCreatedBy(getLoggedInUser());
         subScheme.setLastmodifieddate(new Date());
+        subSchemeListCN = persistenceService
+				.findAllBy(
+						"from SubScheme where code=? or name=? ",code,name);
+        if(subSchemeListCN.size()!=0)
+        {
+        	for(SubScheme s:subSchemeListCN)
+        	{
+        if(name.equalsIgnoreCase(s.getName()))
+        {
+        	addActionError(getText("subscheme.name.already.exists"));
+        	
+        }
+        if(code.equalsIgnoreCase(s.getCode())) 
+        {
+        	addActionError(getText("subscheme.code.already.exists"));
+        	
+        }
+        	}
+        return NEW;
+        }
         try {
             subSchemeService.persist(subScheme);
             subSchemeService.getSession().flush();
@@ -154,7 +177,7 @@ public class SubSchemeAction extends BaseFormAction {
     public String edit() {
         if (subSchemeId != null)
             subScheme.setId(subSchemeId.intValue());
-        if (isActive)
+        if (isactive)
             subScheme.setIsactive(true);
         else
             subScheme.setIsactive(false);
@@ -184,7 +207,7 @@ public class SubSchemeAction extends BaseFormAction {
     {
         subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
         if (subScheme!=null && subScheme.getIsactive())
-            isActive = true;
+        	isactive = true;
         return NEW;
     }
 
@@ -307,15 +330,16 @@ public class SubSchemeAction extends BaseFormAction {
         return subScheme;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
-    }
 
-    public boolean isActive() {
-        return isActive;
-    }
+    public boolean isIsactive() {
+		return isactive;
+	}
 
-    public void setClearValues(final boolean clearValues) {
+	public void setIsactive(boolean isactive) {
+		this.isactive = isactive;
+	}
+
+	public void setClearValues(final boolean clearValues) {
         this.clearValues = clearValues;
     }
 
@@ -330,5 +354,21 @@ public class SubSchemeAction extends BaseFormAction {
     public void setSubSchemeId(final Long subSchemeId) {
         this.subSchemeId = subSchemeId;
     }
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 }

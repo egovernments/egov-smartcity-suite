@@ -11,17 +11,17 @@ import org.egov.infstr.services.PersistenceService;
 
 public class UOMService extends PersistenceService<UOM, Long> {
 
-	@PersistenceContext
+    @PersistenceContext
     private EntityManager entityManager;
-	
-	public UOM getUOMById(Long uomId) {
-		UOM uom = (UOM) entityManager.find(UOM.class, uomId);
-		return uom;
-	}
 
-	public List<UOM> getAllUOMs() {
-		final Query query = entityManager.createQuery("from UOM  order by upper(uom)");
-		List<UOM> uomList = (List<UOM>) query.getResultList();
-		return uomList;
-	}
+    public UOM getUOMById(final Long uomId) {
+        final UOM uom = entityManager.find(UOM.class, uomId);
+        return uom;
+    }
+
+    public List<UOM> getAllUOMs() {
+        final Query query = entityManager.createQuery("from UOM  order by upper(uom)");
+        final List<UOM> uomList = query.getResultList();
+        return uomList;
+    }
 }

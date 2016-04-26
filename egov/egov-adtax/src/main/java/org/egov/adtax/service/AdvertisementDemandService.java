@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -336,6 +337,9 @@ public class AdvertisementDemandService {
 
         BigDecimal penaltyAmt = BigDecimal.ZERO;
         BigDecimal pendingAmount = BigDecimal.ZERO;
+        /**
+         * Assumption: We are calculating penalty for total pending amount. If penalty is part of demand, then also we are considering that amount for penalty calculation.
+         */
         if (advPermitDetail!=null && advPermitDetail.getAdvertisement()!=null && advPermitDetail.getAdvertisement().getDemandId() != null) {
             for (final EgDemandDetails demandDtl :  advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
 
@@ -879,5 +883,56 @@ public int generateDemandForNextInstallment(final List<Advertisement> advertisem
         demandFeeType.put(AdvertisementTaxConstants.TOTALCOLLECTION, totalCollection);
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmount);
         return demandFeeType;
+    }
+    
+    
+    public BigDecimal getPendingArrearsTax(final AdvertisementPermitDetail advertisementPermitDetail)
+    {
+        BigDecimal arrearTax=BigDecimal.ZERO;
+        if(advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getDemandId()!=null)
+        {
+            for(EgDemandDetails egDemandDetails : advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()){
+                if (AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX.equalsIgnoreCase(egDemandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+              arrearTax=arrearTax.add(egDemandDetails.getAmount().subtract(egDemandDetails.getAmtCollected()!=null?egDemandDetails.getAmtCollected():BigDecimal.ZERO));
+            }
+        }
+        return arrearTax;
+    }
+    
+    /**
+     * @description returns reasonwise demand and collected amount
+     * @param advPermitDetail
+     * @return
+     */
+    public Map<String, Map<String, BigDecimal>> getReasonWiseDemandAndCollection(AdvertisementPermitDetail advPermitDetail) {
+        final Map<String, Map<String, BigDecimal>> reasonwiseDmnd_CollDtls = new HashMap<String, Map<String, BigDecimal>>();
+        Map<String, BigDecimal> demandCollectionSum = null;
+        BigDecimal totalAmount = BigDecimal.ZERO;  // Holds sum of all demand detail reason base amount
+        BigDecimal totalAmountCollected = BigDecimal.ZERO; // Holds sum of all demand detail reason collected amount
+        if (advPermitDetail!=null && advPermitDetail.getAdvertisement()!=null && advPermitDetail.getAdvertisement().getDemandId() != null) {
+        	  for (EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
+        		  demandCollectionSum = new HashMap<String, BigDecimal>();
+        		  if(reasonwiseDmnd_CollDtls.containsKey(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())){
+        			  Map<String, BigDecimal> temp = reasonwiseDmnd_CollDtls.get(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode());
+        			  demandCollectionSum.put("demandAmount", temp.get("demandAmount").add(demandDtl.getAmount()!=null?demandDtl.getAmount():BigDecimal.ZERO));
+        			  demandCollectionSum.put("collectedAmount", temp.get("collectedAmount").add(demandDtl.getAmtCollected()!=null?demandDtl.getAmtCollected():BigDecimal.ZERO));
+        			  totalAmount=totalAmount.add(demandDtl.getAmount()!=null?demandDtl.getAmount():BigDecimal.ZERO);
+        			  totalAmountCollected=totalAmountCollected.add(demandDtl.getAmtCollected()!=null?demandDtl.getAmtCollected():BigDecimal.ZERO);
+        			  reasonwiseDmnd_CollDtls.put(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode(), demandCollectionSum);
+        		  }else{
+        			  // New Entry
+        			  demandCollectionSum.put("demandAmount", demandDtl.getAmount());
+        			  demandCollectionSum.put("collectedAmount", demandDtl.getAmtCollected());
+        			  totalAmount=totalAmount.add(demandDtl.getAmount());
+        			  totalAmountCollected=totalAmountCollected.add(demandDtl.getAmtCollected());
+        			  reasonwiseDmnd_CollDtls.put(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode(), demandCollectionSum);
+        		  }
+        	  }
+        	  demandCollectionSum = new HashMap<String, BigDecimal>();
+        	  demandCollectionSum.put("totalAmount", totalAmount);
+        	  demandCollectionSum.put("totalAmountCollected", totalAmountCollected);
+        	  reasonwiseDmnd_CollDtls.put("Total", demandCollectionSum);
+        }
+        return reasonwiseDmnd_CollDtls;
     }
   }

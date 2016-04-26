@@ -438,6 +438,18 @@ label.error {
   width: calc(100% - 250px);
   padding-bottom: 40px;
 }
+.inline-main-content #inboxsearch {
+  padding: 5px 18px 5px 10px;
+}
+.inline-main-content .cleartext {
+  float: right;
+  margin-right: 4px;
+  margin-top: -22px;
+  color: #6b4f2c;
+  cursor: pointer;
+  font-size: 16px;
+  display: none;
+}
 .table-header {
   font-size: 20px;
 }
@@ -453,6 +465,9 @@ label.error {
 }
 .nav-pills > li a {
   padding: 5px;
+}
+.nav-pills > li a span {
+  margin: 0 3px;
 }
 /*Custom Header*/
 .navbar-custom {
@@ -1330,8 +1345,7 @@ label.error {
 }
 .page-container .main-content .yui-skin-sam .yui-dt th {
   color: #fff;
-  background: #6b4f2c;
-  border-right: 1px solid #5a3e1b;
+  background: #f2851f;
 }
 .page-container .main-content .yui-skin-sam .yui-dt td {
   border-right: 1px solid #E9E9E9;
@@ -1368,6 +1382,13 @@ label.error {
   .page-container .main-content .no-print * {
     display: none !important;
   }
+}
+.page-container .main-content .new-page-header {
+  font-family: semibold;
+  font-size: 20px;
+  color: #f2851f;
+  text-align: center;
+  padding: 0 15px 15px;
 }
 .page-container .main-content td.greybox input[type="text"],
 .page-container .main-content td.greybox select,
@@ -1674,9 +1695,6 @@ label.error {
   border-left: 1px solid transparent;
   border-top-left-radius: 5px;
 }
-.table thead > tr > th:hover {
-  cursor: pointer;
-}
 .table tbody tr:hover {
   background: #f7f7f7;
 }
@@ -1695,6 +1713,9 @@ label.error {
     left: -9990px;
     display: block;
   }
+}
+table.dataTable thead tr > th:hover {
+  cursor: pointer;
 }
 table.dataTable tbody {
   font-size: 13px;

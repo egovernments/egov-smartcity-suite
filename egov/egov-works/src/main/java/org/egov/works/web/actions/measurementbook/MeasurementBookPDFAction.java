@@ -115,7 +115,6 @@ public class MeasurementBookPDFAction extends BaseFormAction {
         reportParams.put("mbDate", dateFormatter.format(mbHeader.getMbDate()));
         reportParams.put("reportTitle", getText("page.title.measurement.book"));
         reportParams.put("approvalDetails", createApprovalDetailsTable(mbHeader));
-        reportParams.put("preparedBy", mbHeader.getMbPreparedBy().getEmployeeName());
         return reportParams;
     }
 

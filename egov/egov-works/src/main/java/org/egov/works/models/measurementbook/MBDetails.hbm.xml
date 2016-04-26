@@ -70,7 +70,7 @@
 		</property>
          
 		<property name="OrderNumber" type="string">
-			<column name="ORDER_NUMER"/>
+			<column name="ORDER_NUMBER"/>
 		</property>
          <property name="mbdetailsDate" type="date">
 			<column name="ORDER_DATE"/>

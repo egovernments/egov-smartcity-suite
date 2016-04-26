@@ -39,6 +39,7 @@
 #------------------------------------------------------------------------------- -->
 <%@page import="com.fasterxml.jackson.annotation.JsonInclude.Include"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<script src="<egov:url path='/resources/js/works.js'/>"></script> 
 <html>
 <head>
 <title><s:text name="contractor.list" /></title>
@@ -57,28 +58,17 @@ ul {
 </s:if>
 
 <%@ include file='contractor-commonView.jsp' %>
-<s:hidden name="model.id" />
+<s:hidden name="model.id" id="model"/>
 <div class="row text-center">
 	<div class="add-margin">
-	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
+	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyContractorData();" />
 	
 	<s:if test="%{mode!='edit'}">
-		<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor" id="CREATE" name="button" onclick="createNew();" />
+		<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor" id="CREATE" name="button" onclick="createNewContractor();" />
 	</s:if>
 	
 	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
 	</div>
-	
 </div>
-
-<script type="text/javascript">
-function createNew() {
-	window.location = '${pageContext.request.contextPath}/masters/contractor-newform.action';
-}
-function modifyData() {
-	window.location = '${pageContext.request.contextPath}/masters/contractor-edit.action?mode=edit&id='+<s:property value="%{model.id}"/>;
-}
-</script>
-
 </body>
 </html>

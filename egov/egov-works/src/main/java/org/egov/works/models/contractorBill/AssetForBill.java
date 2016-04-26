@@ -44,7 +44,7 @@ import java.math.BigDecimal;
 import org.egov.asset.model.Asset;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.models.BaseModel;
-import org.egov.model.bills.EgBillregister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 
 public class AssetForBill extends BaseModel {
@@ -54,7 +54,7 @@ public class AssetForBill extends BaseModel {
     private CChartOfAccounts coa;
     private String description;
     private BigDecimal amount;
-    private EgBillregister egbill;
+    private ContractorBillRegister egbill;
     private WorkOrderEstimate workOrderEstimate;
 
     public BigDecimal getAmount() {
@@ -89,11 +89,11 @@ public class AssetForBill extends BaseModel {
         this.description = description;
     }
 
-    public EgBillregister getEgbill() {
+    public ContractorBillRegister getEgbill() {
         return egbill;
     }
 
-    public void setEgbill(final EgBillregister egbill) {
+    public void setEgbill(final ContractorBillRegister egbill) {
         this.egbill = egbill;
     }
 

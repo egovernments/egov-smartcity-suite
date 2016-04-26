@@ -38,3 +38,4 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="scheduleCategory-new.jsp" %> 
+<script src="<egov:url path='resources/js/works.js'/>"></script> 

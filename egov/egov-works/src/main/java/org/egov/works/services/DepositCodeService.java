@@ -51,7 +51,7 @@ import org.egov.works.utils.WorksConstants;
 /**
  * Entity Type Service for deposit code
  */
-public class DepositCodeService extends PersistenceService<DepositCode, Long>implements EntityTypeService {
+public class DepositCodeService extends PersistenceService<DepositCode, Long> implements EntityTypeService {
 
     /*
      * (non-Javadoc)

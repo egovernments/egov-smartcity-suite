@@ -71,6 +71,7 @@
 					<input type="hidden"  id="operatorRole" value="${operatorRole}" />
 					<input type="hidden"  id="citizenRole" value="${citizenRole}" />
 					<input type="hidden"  id="billcollectionRole" value="${billcollectionRole}" />
+					<input type="hidden"  id="administratorRole" value="${administratorRole}" />
 					
 					
 			<c:if test="${!citizenRole }" >

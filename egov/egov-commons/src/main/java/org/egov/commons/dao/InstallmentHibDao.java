@@ -48,6 +48,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -140,14 +141,16 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     }
 
     @Override
-    public List<Installment> fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(final Module module, final Date installmentDate, final int noOfInstallmentToFetch) {
-        final Query qry = getCurrentSession()
-                .createQuery("from Installment I where I.module=:module and I.toDate< :installmentDate order by fromDate desc");
-        qry.setEntity("module", module);
-        qry.setDate("installmentDate", installmentDate);
-        qry.setMaxResults(noOfInstallmentToFetch);
+    public List<Installment> getAllInstallmentsByModuleAndStartDate(final Module module, final Date currDate ) {
+        final Query qry = getCurrentSession().createQuery(" select inst  from Installment inst,CFinancialYear finYear where inst.module=:module and inst.fromDate >= (select fromDate from Installment "
+                +" where module=:module and ((cast(:currDate as date)) between fromDate and toDate)) and cast(inst.toDate as date) <= cast(finYear.endingDate as date) "
+               +"  and now() between finYear.startingDate and finYear.endingDate order by inst.fromDate");
+        qry.setLong("module", module.getId());
+        qry.setDate("currDate", currDate);
         return qry.list();
     }
+    
+    
 
     @Override
     public Installment fetchInstallmentByModuleAndInstallmentNumber(final Module module, final Integer installmentNumber) {
@@ -165,5 +168,15 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
 
     public Installment findById(final int i, final boolean b) {
         return (Installment)getCurrentSession().get(Installment.class, i);
+    }
+    
+    @Override
+    public List<Installment> fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(final Module module, final Date installmentDate, final int noOfInstallmentToFetch) {
+        final Query qry = getCurrentSession()
+                .createQuery("from Installment I where I.module=:module and I.toDate< :installmentDate order by fromDate desc");
+        qry.setEntity("module", module);
+        qry.setDate("installmentDate", installmentDate);
+        qry.setMaxResults(noOfInstallmentToFetch);
+        return qry.list();
     }
 }

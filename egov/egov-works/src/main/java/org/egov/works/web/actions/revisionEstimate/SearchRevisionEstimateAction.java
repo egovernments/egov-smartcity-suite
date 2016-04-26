@@ -39,6 +39,18 @@
  */
 package org.egov.works.web.actions.revisionEstimate;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -79,18 +91,6 @@ import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-
 @ParentPackage("egov")
 @Result(name = SearchRevisionEstimateAction.SEARCH, location = "searchRevisionEstimate-search.jsp")
 public class SearchRevisionEstimateAction extends SearchFormAction {
@@ -107,7 +107,6 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
     private AssignmentService assignmentService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    private PersonalInformationService personalInformationService;
     public static final String SEARCH = "search";
     public static final Locale LOCALE = new Locale("en", "IN");
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
@@ -511,7 +510,6 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
     }
 
     public void setPersonalInformationService(final PersonalInformationService personalInformationService) {
-        this.personalInformationService = personalInformationService;
     }
 
     public void setWorksService(final WorksService worksService) {

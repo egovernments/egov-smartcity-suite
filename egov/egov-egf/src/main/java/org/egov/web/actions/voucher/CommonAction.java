@@ -119,11 +119,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-/**
- * @author msahoo We cannot change here the transaction mode to readonly since it is aslo called from save or edit actions. These
- * we can change once we set the ajax submit
- *
- */
 
 @Results({
         @Result(name = "bankAccountByBranch", location = "common-bankAccountByBranch.jsp"),
@@ -159,7 +154,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
         @Result(name = "instrument", location = "common-instrument.jsp"),
         @Result(name = "desg", location = "common-desg.jsp"),
         @Result(name = "COA", location = "common-COA.jsp"),
-        @Result(name = "schemeBy20", location = "common-schemeBy20.jsp")
+        @Result(name = "process", location = "common-process.jsp"),
+        @Result(name = "schemeBy20", location = "common-schemeBy20.jsp"),
 })
 public class CommonAction extends BaseFormAction {
 
@@ -238,6 +234,10 @@ public class CommonAction extends BaseFormAction {
     private List<Accountdetailtype> subLedgerTypeList;
     private List<CChartOfAccounts> coaList;
     private StringBuffer result;
+    private Long vouchHeaderId;
+    private String glcodeParam; 
+    private String accountId;
+    private String functionName;
 
     public String getSerialNo() {
         return serialNo;
@@ -3341,6 +3341,7 @@ public class CommonAction extends BaseFormAction {
                     .findAllBy("from CChartOfAccounts  where parentId is null order by glcode asc");
 
             // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM  chartOfAccounts where parentId is null order by id asc";
+            
         }
         else
         {
@@ -3395,6 +3396,8 @@ public class CommonAction extends BaseFormAction {
                                     +
                                     " and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') " +
                                     " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?", glCode + "%");
+        
+        
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadGLreportCodes.");
         return "glCodes";
@@ -3470,6 +3473,209 @@ public class CommonAction extends BaseFormAction {
         return "workflowHistory";
     }
 
+    
+    @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxGetAllCoaCodes")
+    public String ajaxGetAllCoaCodes() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxGetAllCoaCodes...");
+       
+        coaList = persistenceService.findAllBy(
+            		" from CChartOfAccounts where classification=4 and isactiveforposting = true order by glcode ");
+       // String query="select glcode||'`-`'||name||'`~`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true order by glcode ";*/
+        
+        result = new StringBuffer();
+        for (CChartOfAccounts cc : coaList)
+        {
+            	result.append(cc.getGlcode()+"`-`");
+            	result.append(cc.getName()+"`~`");
+            	result.append(cc.getId()+"+");
+        }
+        result.append("^"); 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxGetAllCoaCodes.");
+        return "process";
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxGetAllCoaCodesExceptCashBank")
+    public String ajaxGetAllCoaCodesExceptCashBank() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxGetAllCoaCodesExceptCashBank...");
+       
+        coaList = persistenceService.findAllBy(
+            		" FROM CChartOfAccounts   WHERE classification = 4 AND "
+         +"isactiveforposting = true AND parentid  not in(select id  from CChartOfAccounts where purposeid in "
+         +"( SELECT id FROM AccountCodePurpose  WHERE UPPER (NAME) = UPPER ('Cash In Hand') OR UPPER (NAME) = UPPER ('Bank Codes')"
+         +" OR UPPER (NAME) = UPPER ('Cheque In Hand')) ) "
+    	 +" and id  not in(select id  from CChartOfAccounts where purposeid in ( SELECT id FROM AccountCodePurpose WHERE "
+    	 +"	UPPER (NAME) = UPPER ('Cash In Hand') OR UPPER (NAME) = UPPER ('Bank Codes') OR UPPER (NAME) = UPPER ('Cheque In Hand')) )" 
+    	 +"	and glcode not like '471%' ORDER BY glcode  ");
+
+       
+        result = new StringBuffer();
+        for (CChartOfAccounts cc : coaList)
+        {
+            	result.append(cc.getGlcode()+"`-`");
+            	result.append(cc.getName()+"`~`");
+            	result.append(cc.getId()+"+");
+        }
+        result.append("^"); 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxGetAllCoaCodesExceptCashBank.");
+        return "process";
+    }
+    
+    
+
+    @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxGetAllAssetCodes")
+    public String ajaxGetAllAssetCodes() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxGetAllAssetCodes...");
+       
+        coaList = persistenceService.findAllBy(
+            		" from CChartOfAccounts where classification=4 and isactiveforposting = true and type = 'A' order by glcode  ");
+        //String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and type = 'A' order by glcode ";
+        
+        result = new StringBuffer();
+        for (CChartOfAccounts cc : coaList)
+        {
+            	result.append(cc.getGlcode()+"`-`");
+            	result.append(cc.getName()+"`-`");
+            	result.append(cc.getId()+"+");
+        }
+        result.append("^"); 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxGetAllAssetCodes.");
+        return "process";
+    }
+    
+
+    @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxGetAllLiabCodes")
+    public String ajaxGetAllLiabCodes() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxGetAllLiabCodes...");
+       
+        coaList = persistenceService.findAllBy(
+            		" from CChartOfAccounts where classification=4 and isactiveforposting = true and type = 'L' order by glcode  ");
+        //String query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true and type = 'L' order by glcode ";
+        
+        result = new StringBuffer();
+        for (CChartOfAccounts cc : coaList)
+        {
+            	result.append(cc.getGlcode()+"`-`");
+            	result.append(cc.getName()+"`-`");
+            	result.append(cc.getId()+"+");
+        }
+        result.append("^"); 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxGetAllLiabCodes.");
+        return "process";
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxGetAllFunctionName")
+    public String ajaxGetAllFunctionName() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxGetAllFunctionName...");
+        
+            functionCodesList = persistenceService.findAllBy("select f from CFunction f where  isactive = true AND isnotleaf=false order by name");
+        //String query="select code||'`-`'||name||'`~`'||id as \"code\" from function where  isactive = true AND isnotleaf=false order by name ";
+
+            result = new StringBuffer();
+            for (CFunction cf : functionCodesList)
+            {
+                	result.append(cf.getCode()+"`-`");
+                	result.append(cf.getName()+"`~`");
+                	result.append(cf.getId()+"+");
+            }
+            result.append("^"); 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxGetAllFunctionName.");
+        return "process";
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxGetAllBankName")
+    public String ajaxGetAllBankName() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxGetAllBankName...");
+        
+            bankList = persistenceService.findAllBy("from Bank where  isactive = true order by name");
+          //String query="select name||'`-`'||id as \"code\" from bank where  isactive = true order by name ";
+            result = new StringBuffer();
+            for (Bank b : bankList)
+            {
+                	result.append(b.getName()+"`-`");
+                	result.append(b.getId()+"+");
+            }
+            result.append("^"); 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxGetAllBankName.");
+        return "process";
+    }
+    
+  
+    
+
+ 	
+
+	@SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxGetAllCoaNames")
+    public String ajaxGetAllCoaNames() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxGetAllCoaNames...");
+       
+        coaList = persistenceService.findAllBy(
+            		" from CChartOfAccounts where classification=4 and isactiveforposting = true order by glcode ");
+    	//final String query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true order by glcode ";
+        
+        result = new StringBuffer();
+        for (CChartOfAccounts cc : coaList)
+        {
+            	result.append(cc.getName()+"`-`");
+            	result.append(cc.getGlcode()+"`-`");
+            	result.append(cc.getId()+"+");
+        }
+        result.append("^"); 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxGetAllCoaNames.");
+        return "process";
+    }
+	
+	@SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxCoaDetailCode")
+    public String ajaxCoaDetailCode() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxCoaDetailCode...");
+        if (glCode == null)
+            glCodesList = new ArrayList<CChartOfAccounts>();
+        else
+        {
+        	String codeName = "%" + glCode + "%";
+            glCodesList = persistenceService
+                    .findAllBy("select glcode from CChartOfAccounts ca where  classification=4 and isactiveforposting = true "
+                    		+"and glcode like ? order by glcode",codeName);
+        }
+        //String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true 
+        //and glcode like '"+accountCode+"'|| '%' order by glcode ";
+
+        result = new StringBuffer();
+        for (CChartOfAccounts cc : coaList)
+        {
+            	result.append(cc.getGlcode()+"+");
+        }
+        result.append("^"); 
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxCoaDetailCode.");
+        return "process";
+    }
+
+	
+	
     public String getStateId() {
         return stateId;
     }
@@ -3816,7 +4022,7 @@ public class CommonAction extends BaseFormAction {
         }
         return ARF_NUMBER_SEARCH_RESULTS;
     }
-
+    
     public String getQuery() {
         return query;
     }
@@ -3900,5 +4106,39 @@ public class CommonAction extends BaseFormAction {
     public void setResult(StringBuffer result) {
         this.result = result;
     }
+
+	public Long getVouchHeaderId() {
+		return vouchHeaderId;
+	}
+
+	public void setVouchHeaderId(Long vouchHeaderId) {
+		this.vouchHeaderId = vouchHeaderId;
+	}
+
+	public String getGlcodeParam() {
+		return glcodeParam;
+	}
+
+	public void setGlcodeParam(String glcodeParam) {
+		this.glcodeParam = glcodeParam;
+	}
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getFunctionName() {
+		return functionName;
+	}
+
+	public void setFunctionName(String functionName) {
+		this.functionName = functionName;
+	}
+    
+    
 
 }

@@ -39,6 +39,9 @@
  */
 package org.egov.eis.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.repository.EmployeeViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,11 @@ public class EmployeeViewService {
 
     public EmployeeView getEmployeeViewByAssignment(final Long id) {
         return employeeViewwRepository.findByAssignment_Id(id);
+    }
+
+    public List<EmployeeView> findByUserNameLikeOrCodeLikeOrPosition_NameLike(final String userName, final String code,
+            final String positionName, final Date currentDate) {
+        return employeeViewwRepository.findByUserNameLikeOrCodeLikeOrPosition_NameLike(userName, code, positionName, currentDate);
     }
 
 }

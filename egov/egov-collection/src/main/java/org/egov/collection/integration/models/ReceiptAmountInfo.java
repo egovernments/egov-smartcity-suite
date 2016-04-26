@@ -47,11 +47,13 @@ public class ReceiptAmountInfo {
     private BigDecimal penaltyAmount = BigDecimal.ZERO;
     private BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
     private BigDecimal advanceAmount = BigDecimal.ZERO;
+    // To capture late payment charges levied in case of payment after due date.
     private BigDecimal latePaymentCharges = BigDecimal.ZERO;
     private BigDecimal arrearCess = BigDecimal.ZERO;
     private BigDecimal currentCess = BigDecimal.ZERO;
     private String installmentFrom;
     private String installmentTo;
+    private BigDecimal reductionAmount = BigDecimal.ZERO;
 
     public BigDecimal getArrearsAmount() {
         return arrearsAmount;
@@ -167,6 +169,21 @@ public class ReceiptAmountInfo {
      */
     public void setInstallmentTo(final String installmentTo) {
         this.installmentTo = installmentTo;
+    }
+
+    /**
+     * @return the reductionAmount
+     */
+    public BigDecimal getReductionAmount() {
+        return reductionAmount;
+    }
+
+    /**
+     * To set the rebate/deduction/discount(if any)
+     * @param reductionAmount the reductionAmount to set
+     */
+    public void setReductionAmount(BigDecimal reductionAmount) {
+        this.reductionAmount = reductionAmount;
     }
 
 }

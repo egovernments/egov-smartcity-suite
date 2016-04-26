@@ -20,14 +20,14 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ContractorGrade getContractorGradeById(Long contractorGradeId) {
-        ContractorGrade contractorGrade = (ContractorGrade) entityManager.find(ContractorGrade.class, contractorGradeId);
+    public ContractorGrade getContractorGradeById(final Long contractorGradeId) {
+        final ContractorGrade contractorGrade = entityManager.find(ContractorGrade.class, contractorGradeId);
         return contractorGrade;
     }
 
     public List<ContractorGrade> getAllContractorGrades() {
         final Query query = entityManager.createQuery("from ContractorGrade order by upper(grade)");
-        List<ContractorGrade> contractorGradeList = (List<ContractorGrade>) query.getResultList();
+        final List<ContractorGrade> contractorGradeList = query.getResultList();
         return contractorGradeList;
     }
 
@@ -36,9 +36,9 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
         String contractorGradeStr = "";
         final List<Object> paramList = new ArrayList<Object>();
         contractorGradeSql.append(" from ContractorGrade cg");
-        String grade = (String) criteriaMap.get(WorksConstants.GRADE);
-        Double minAmount = (Double) criteriaMap.get(WorksConstants.MIN_AMOUNT);
-        Double maxAmount = (Double) criteriaMap.get(WorksConstants.MAX_AMOUNT);
+        final String grade = (String) criteriaMap.get(WorksConstants.GRADE);
+        final Double minAmount = (Double) criteriaMap.get(WorksConstants.MIN_AMOUNT);
+        final Double maxAmount = (Double) criteriaMap.get(WorksConstants.MAX_AMOUNT);
         if (grade != null && !grade.trim().equals("") || minAmount != -1 || maxAmount != -1)
             contractorGradeSql.append(" where 1=1");
 

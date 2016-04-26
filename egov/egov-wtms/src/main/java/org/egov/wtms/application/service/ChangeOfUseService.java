@@ -106,7 +106,7 @@ public class ChangeOfUseService {
                     "err.validate.changeofUse.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() },
-                            null);
+                    null);
         else {
             if (null != assessmentDetails.getPropertyDetails()
                     && null != assessmentDetails.getPropertyDetails().getTaxDue()
@@ -121,10 +121,10 @@ public class ChangeOfUseService {
                 if (waterTaxDueforParent.doubleValue() > 0)
                     if (validationMessage.equalsIgnoreCase(""))
                         validationMessage = messageSource
-                        .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
+                                .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
                     else
                         validationMessage = validationMessage + " and " + messageSource
-                        .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
+                                .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
                 if (parentWaterConnectionDetail.getConnection().getId() != null)
                     if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
                         if (validationMessage.equalsIgnoreCase(""))

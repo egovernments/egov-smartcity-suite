@@ -71,12 +71,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
 
- public ContractorService()
-    {
-     super(Contractor.class) ;    
+    public ContractorService() {
+        super(Contractor.class);
     }
- 
- 
+
     private final Logger logger = Logger.getLogger(getClass());
     @Autowired
     private WorksService worksService;
@@ -294,5 +292,9 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         adk.setDetailname(accountdetailtype.getAttributename());
         adk.setAccountdetailtype(accountdetailtype);
         accountdetailkeyHibernateDAO.create(adk);
+    }
+
+    public List<Contractor> getContractorsByCodeOrName(final String queryString) {
+        return filterActiveEntities(queryString, 0, null);
     }
 }

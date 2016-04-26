@@ -50,17 +50,16 @@
 		cellpadding="0" cellspacing="0" export="true"
 		requestURI="generalLedgerReport-ajaxSearch.action">
 		<display:caption>
-			<div class="headingsmallbgnew" align="center"
-				style="text-align: center; width: 100%;">
-				<s:property value="%{heading}" />
-			</div>
-			
 			<table width="100%" border="1" cellspacing="0" cellpadding="0">
 				<tr>
-					<th class="bluebgheadtd" ><s:text
-							name="generalLedger.debit" /></th>
-					<th class="bluebgheadtd" ><s:text
-							name="generalLedger.credit" /></th>
+					<th class="bluebgheadtd" width="100%" colspan="5"><strong
+						style="font-size: 15px;"> <s:property value="%{heading}" /></strong></th>
+				</tr>
+			</table>
+			<table width="100%" border="1" cellspacing="0" cellpadding="0">
+				<tr>
+					<th class="bluebgheadtd"><s:text name="generalLedger.debit" /></th>
+					<th class="bluebgheadtd"><s:text name="generalLedger.credit" /></th>
 				</tr>
 			</table>
 		</display:caption>

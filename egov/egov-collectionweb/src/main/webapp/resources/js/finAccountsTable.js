@@ -80,7 +80,7 @@ function createTextFieldFormatter(prefix,suffix,type){
 	
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = " <input type='"+type+"' id='"+prefix+"["+accountTableIndex+"]"+suffix+"' name='"+prefix+"["+accountTableIndex+"]"+suffix+"' style='width:90px;' onkeyup='autocompletecode(this,event)' autocomplete='off' onblur='fillNeibrAfterSplitGlcode(this);'/>";
+		el.innerHTML = " <input type='"+type+"' id='"+prefix+"["+accountTableIndex+"]"+suffix+"' name='"+prefix+"["+accountTableIndex+"]"+suffix+"' style='width:90px;' readOnly/>";
 		
 	}
 }
@@ -88,7 +88,7 @@ function createTextFieldFormatter(prefix,suffix,type){
 function createLongTextFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+accountTableIndex+"]"+suffix+"' name='"+prefix+"["+accountTableIndex+"]"+suffix+"' readOnly style='width:250px;' tabindex='-1'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+accountTableIndex+"]"+suffix+"' name='"+prefix+"["+accountTableIndex+"]"+suffix+"' onfocus='autocompletecode(this,event)' onblur='fillNeibrAfterSplitGlcode(this)' style='width:250px;' tabindex='-1'/>";
 	}
 }
 
@@ -141,7 +141,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = "/EGF/commons/Process.jsp?type=getAllFunctionName";
+	var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -224,7 +224,7 @@ function fillNeibrAfterSplitFunction(obj)
 
 function loadDropDownCodes()
 {
-	var	url = "/EGF/commons/Process.jsp?type=getAllCoaCodes";
+	var	url = "/EGF/voucher/common-ajaxGetAllCoaCodes.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -258,32 +258,23 @@ function loadDropDownCodes()
 
 var yuiflag = new Array();
 function autocompletecode(obj,myEvent)
-{
-	//Fix-Me
-	var funObj = document.getElementById('accountDetails[0].function.name');
-	jQuery(funObj).trigger('focus');
-	jQuery(obj).trigger('focus');
-	
-	
-	var src = obj;	
+{	var src = obj;	
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
-	target.style.left=posSrc[0]+"px";
-	target.style.top=posSrc[1]+22+"px"; 
-	target.style.width="650px";		
-	var coaCodeObj=obj;	
-	var  currRow=getRowIndex(obj);
-	//40 --> Down arrow, 38 --> Up arrow
-	
+	target.style.left=posSrc[0];	
+	target.style.top=posSrc[1]-40;
+	target.style.width=450;	
+	codeObj
+	var coaCodeObj=obj;
+		var  currRow=getRowIndex(obj);
+	//40 --> Down a+rrow, 38 --> Up arrow
 	if(yuiflag[currRow] == undefined)
 	{
-
 		var key = window.event ? window.event.keyCode : myEvent.charCode;  
 		if(key != 40 )
 		{
 			if(key != 38 )
 			{
-				
 				var oAutoComp = new YAHOO.widget.AutoComplete(coaCodeObj,'codescontainer', codeObj);
 				oAutoComp.queryDelay = 0;
 				oAutoComp.prehighlightClassName = "yui-ac-prehighlight";
@@ -293,10 +284,6 @@ function autocompletecode(obj,myEvent)
 				codeObj.applyLocalFilter = true;
 				codeObj.queryMatchContains = true;
 				oAutoComp.minQueryLength = 0;
-				oAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
-					var data = oResultData.toString();
-				    return data.split("`~`")[0];
-				};
 			}
 		}
 		yuiflag[currRow] = 1;
@@ -313,8 +300,8 @@ function fillNeibrAfterSplitGlcode(obj)
 		obj.value=temp[0];
 		var currRow=getRowIndex(obj);
 		document.getElementById('accountDetails['+currRow+'].glCodeId.id').value=allGlcodes[key];
-		
 		document.getElementById('accountDetails['+currRow+'].glCodeId.name').value=temp[1].split("`~`")[0];
+		document.getElementById('accountDetails['+currRow+'].glCodeId.glcode').value=temp[0];
 		var flag=false;
 		for (var i=0; i<subledgerTableIndex;i++ )
 		{

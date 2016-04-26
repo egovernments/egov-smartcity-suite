@@ -57,7 +57,7 @@ body {
 	font-family: regular;
 }
 </style>
-
+<script src="<egov:url path='resources/js/works.js'/>"></script> 
 <html>
 <head>
 <title><s:text name="contractor.header" /></title>
@@ -78,6 +78,7 @@ body {
 		cssClass="form-horizontal form-groups-bordered">
 <s:hidden name="model.id" />
 <s:hidden name="mode" id="mode" />
+<input type="hidden" value="<s:text name='contractor.panNumber.alphaNumeric' />" id='panNumberMessage'>
 		<%@ include file='contractor-form.jsp'%>
 		<p class="text-center">
 			<s:if test="%{model.id!=null && mode != 'view'}">
@@ -86,7 +87,7 @@ body {
 		</s:if>
 			<s:if test="%{model.id==null}">
 				<s:submit type="submit" cssClass="btn btn-primary" value="Save"
-					id="saveButton" name="button" method="save" />&nbsp;
+					id="saveButton" name="button" method="save" onclick="return validateContractorFormAndSubmit();"/>&nbsp;
 
 				<input type="button" class="btn btn-default" value="Clear"
 					id="button" name="clear" onclick="this.form.reset();">&nbsp;

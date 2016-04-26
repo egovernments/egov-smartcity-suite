@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetReportFunctionwise" pageWidth="462" pageHeight="842" columnWidth="462" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-04-19T17:41:20 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetReportFunctionwise" pageWidth="462" pageHeight="842" columnWidth="462" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7f6aec9e-2404-44de-a191-e152fb4b78c5">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="amountStyle" isDefault="false" hAlign="Left" vAlign="Middle">
+	<style name="amountStyle" hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{rowStyle}=="totalrow")]]></conditionExpression>
-			<style isDefault="false" style="amountStyle" hAlign="Right" vAlign="Middle" isBold="true" isUnderline="false"/>
+			<style hTextAlign="Right" hImageAlign="Right" vTextAlign="Middle" vImageAlign="Middle" isBold="true" isUnderline="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{rowStyle}=="deptrow")]]></conditionExpression>
-			<style isDefault="false" style="amountStyle" hAlign="Center" vAlign="Middle" fontName="SansSerif" fontSize="14" isBold="true"/>
+			<style hTextAlign="Center" hImageAlign="Center" vTextAlign="Middle" vImageAlign="Middle" fontName="SansSerif" fontSize="14" isBold="true"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{rowStyle}=="typerow")]]></conditionExpression>
-			<style isDefault="false" style="amountStyle" hAlign="Left" vAlign="Middle" isBold="true"/>
+			<style hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" isBold="true"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{rowStyle}=="functionrow")]]></conditionExpression>
-			<style isDefault="false" style="amountStyle" hAlign="Center" vAlign="Middle" isBold="true" isItalic="true"/>
+			<style hTextAlign="Center" hImageAlign="Center" vTextAlign="Middle" vImageAlign="Middle" isBold="true" isItalic="true"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{rowStyle}=="majorcoderow")]]></conditionExpression>
-			<style isDefault="false" style="amountStyle" hAlign="Left" vAlign="Middle" isBold="true"/>
+			<style hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" isBold="true"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{rowStyle}=="majorcodeheadingrow")]]></conditionExpression>
-			<style isDefault="false" style="amountStyle" hAlign="Center" vAlign="Middle" isBold="true" isUnderline="true"/>
+			<style hTextAlign="Center" hImageAlign="Center" vTextAlign="Middle" vImageAlign="Middle" isBold="true" isUnderline="true"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="finYear" class="java.lang.String" isForPrompting="false"/>
@@ -66,7 +68,7 @@
 	<title>
 		<band height="40" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText-1" x="0" y="0" width="460" height="40"/>
+				<reportElement key="staticText-1" x="0" y="0" width="460" height="40" uuid="b97c2538-9aa8-472d-9c49-3e903d985b44"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
@@ -77,7 +79,7 @@
 	<pageHeader>
 		<band height="60" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText-2" x="0" y="0" width="34" height="60"/>
+				<reportElement key="staticText-2" x="0" y="0" width="34" height="60" uuid="0e2ac243-a36c-48a2-8e27-786d315e3b17"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -91,7 +93,7 @@
 				<text><![CDATA[Dept Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-3" x="34" y="0" width="53" height="60"/>
+				<reportElement key="staticText-3" x="34" y="0" width="53" height="60" uuid="4790d7f9-ee40-4b6b-90e4-9546e4d8ad57"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -105,7 +107,7 @@
 				<text><![CDATA[Function Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-4" x="87" y="0" width="50" height="60"/>
+				<reportElement key="staticText-4" x="87" y="0" width="50" height="60" uuid="6569298e-8145-4952-a7c5-f2b36ca67dec"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -119,7 +121,7 @@
 				<text><![CDATA[DP Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-5" x="137" y="0" width="105" height="60"/>
+				<reportElement key="staticText-5" x="137" y="0" width="105" height="60" uuid="5f5c1f1c-a623-4743-b047-3efedcf84da8"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -133,7 +135,7 @@
 				<text><![CDATA[Narration]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-6" x="242" y="0" width="58" height="60"/>
+				<reportElement key="staticText-6" x="242" y="0" width="58" height="60" uuid="6761b1b4-65c3-4af5-b844-d38e57a22dcf"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -147,7 +149,7 @@
 				<text><![CDATA[Reference]]></text>
 			</staticText>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-1" x="300" y="0" width="63" height="60"/>
+				<reportElement key="textField-1" x="300" y="0" width="63" height="60" uuid="c881bb10-93ee-4014-a38b-08a0bb6cd4cc"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -158,10 +160,10 @@
 				<textElement textAlignment="Center">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Budget Estimate "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Budget Estimate "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="363" y="0" width="57" height="60"/>
+				<reportElement x="363" y="0" width="57" height="60" uuid="9b4101b6-8fff-42eb-adcd-f4f24fe855ef"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -170,10 +172,10 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Re Appropriation "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Re Appropriation "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="420" y="0" width="40" height="60"/>
+				<reportElement x="420" y="0" width="40" height="60" uuid="b3024e05-0c31-4111-b64b-55a78d1a9626"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -192,7 +194,7 @@
 	<detail>
 		<band height="35" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="0" y="0" width="34" height="35"/>
+				<reportElement key="textField" x="0" y="0" width="34" height="35" uuid="2c9d6eae-45c9-4cf2-9c2b-d590a7237640"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -203,10 +205,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{deptCode}==null?" ":$F{deptCode}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{deptCode}==null?"":$F{deptCode}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="34" y="0" width="53" height="35"/>
+				<reportElement key="textField" x="34" y="0" width="53" height="35" uuid="606c867a-7885-48de-9f18-457c9da78284"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -217,10 +219,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{functionCode}==null?" ":$F{functionCode}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{functionCode}==null?"":$F{functionCode}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="87" y="0" width="50" height="35"/>
+				<reportElement key="textField" x="87" y="0" width="50" height="35" uuid="a09b30a5-bcc7-4393-9745-78ecbdd38275"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -231,10 +233,10 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{glCode}==null?" ":$F{glCode}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{glCode}==null?"":$F{glCode}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="242" y="0" width="58" height="35"/>
+				<reportElement key="textField" x="242" y="0" width="58" height="35" uuid="6d173153-d05c-48ca-94f2-b5c58f11ac61"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -245,10 +247,10 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}==null?" ":$F{reference}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{reference}==null?"":$F{reference}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement key="textField" x="300" y="0" width="63" height="35"/>
+				<reportElement key="textField" x="300" y="0" width="63" height="35" uuid="5edd7726-45fb-4fe5-97b5-82ca38ed33bb"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -259,10 +261,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount}==null?" ":$F{amount}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amount}==null?"":$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-2" style="amountStyle" x="137" y="0" width="105" height="35"/>
+				<reportElement key="textField-2" style="amountStyle" x="137" y="0" width="105" height="35" uuid="bead945c-4481-4161-ad71-c8f89018745c"/>
 				<box>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -270,10 +272,10 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{narration}==null?" ":$F{narration}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{narration}==null?"":$F{narration}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="363" y="0" width="57" height="35"/>
+				<reportElement x="363" y="0" width="57" height="35" uuid="bdca023c-5a98-4217-b1c1-aa05b970c632"/>
 				<box>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -281,10 +283,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{appropriationAmount}==null?" ":$F{appropriationAmount}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{appropriationAmount}==null?"":$F{appropriationAmount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="420" y="0" width="40" height="35"/>
+				<reportElement x="420" y="0" width="40" height="35" uuid="f82d0c45-fe05-42b8-a567-6d8840655461"/>
 				<box>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -292,7 +294,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{totalAmount}==null?" ":$F{totalAmount}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{totalAmount}==null?"":$F{totalAmount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -308,7 +310,7 @@
 	<noData>
 		<band height="27" splitType="Prevent">
 			<staticText>
-				<reportElement key="staticText-7" x="0" y="0" width="460" height="27" isRemoveLineWhenBlank="true"/>
+				<reportElement key="staticText-7" x="0" y="0" width="460" height="27" isRemoveLineWhenBlank="true" uuid="5f05cb6b-6228-44c1-bbde-58725cd4790b"/>
 				<textElement textAlignment="Center">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>

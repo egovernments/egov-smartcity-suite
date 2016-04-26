@@ -338,15 +338,15 @@
 									  <fmt:formatNumber type="number" maxFractionDigits="2" minFractionDigits="2" value="${advertisementPermitDetail.encroachmentFee}" />
 								</div>
 							</div>
-							
 							<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.pendingtax"/>
+								<label class="col-sm-3 control-label text-right">
+									<spring:message code="lbl.pendingtax"/> 
+									<fmt:formatDate value="${previousFinancialYear.endingDate}" pattern="dd-MM-yyyy" var="previousFinancialYrEndDte"/>
+									<strong><c:out value="${previousFinancialYrEndDte}"/></strong>
+									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									
-									  <fmt:formatNumber type="number"  maxFractionDigits="2" minFractionDigits="2" value="${advertisementPermitDetail.advertisement.pendingTax}" />
-						
+									  <fmt:formatNumber type="number"  maxFractionDigits="2" minFractionDigits="2" value="${arrearTax}" />
 								</div>
 							</div>
 					</div>

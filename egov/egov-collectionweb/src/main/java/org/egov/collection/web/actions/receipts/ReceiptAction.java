@@ -559,7 +559,8 @@ public class ReceiptAction extends BaseFormAction {
             }
         return receiptDetail;
     }
-
+    
+    @ValidationErrorPage(value = "new")
     @Action(value = "/receipts/receipt-newform")
     public String newform() {
 

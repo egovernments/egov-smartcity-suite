@@ -165,8 +165,8 @@
 					<td class="<c:out value='${trclass}'/>"><s:property
 							value="initialEstimateAmount" /></td>
 					<td class="<c:out value="${trclass}"/>"><s:if
-							test="%{isactive==true}">Active</s:if>
-						<s:else>Inactive</s:else></td>
+							test="%{isactive==true}">Yes</s:if>
+						<s:else>No</s:else></td>
 				</tr>
 				<c:choose>
 					<c:when test="${trclass=='greybox'}">

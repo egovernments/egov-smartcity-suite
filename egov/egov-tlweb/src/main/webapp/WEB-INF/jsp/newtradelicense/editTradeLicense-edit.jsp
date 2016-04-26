@@ -41,7 +41,6 @@
 <html>
 <head>
 <title><s:text name="page.title.edittrade" /></title>
-<sx:head />
 <script type="text/javascript"
 	src="../js/app/tradeLicense.js?rnd=${app_release_no}"></script>
 <script>
@@ -103,7 +102,7 @@
 										</tr>
 									</table>
 									<s:push value="model">
-										<s:form action="editTradeLicense" theme="css_xhtml" enctype="multipart/form-data" name="editTradeLicense" validate="true">
+										<s:form action="editTradeLicense" theme="simple" enctype="multipart/form-data" name="editTradeLicense" validate="true">
 										<s:token/>
 											<s:hidden name="id" id="id" />
 											<table border="0" cellpadding="0" cellspacing="0" width="100%" id="maintbl">

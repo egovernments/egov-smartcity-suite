@@ -40,6 +40,7 @@
 package org.egov.works.services;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +52,8 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
@@ -93,8 +94,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      * @param workOrder an instance of <code>WorkOrder</code> representing the executing department.
      * @return a boolean value indicating if the bill number change is required.
      */
-    public String generateContractorBillNumber(EgBillregister bill, WorkOrder workOrder,
-            WorkOrderEstimate workOrderEstimate);
+    public String generateContractorBillNumber(ContractorBillRegister contractorBillRegister);
 
     /**
      * Get utilized amount amount for a given workorder, including approved, unapproved bill(Bill other than cancelled and
@@ -476,4 +476,14 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      * @return
      */
     public Object[] getLatestMBCreatedDateAndRefNo(Long woId, Long estId);
+
+    public Collection<StatutoryDeductionsForBill> getStatutoryDeductions(List<StatutoryDeductionsForBill> actionStatutorydetails);
+
+    public Collection<EgBilldetails> getCustomDeductionTypes(List<EgBilldetails> customDeductions);
+
+    public Collection<EgBilldetails> getRetentionMoneyTypes(List<EgBilldetails> retentionMoneyDeductions);
+
+    public Collection<AssetForBill> getAssetAndAccountDetails(List<AssetForBill> accountDetailsForBill);
+
+    public Collection<DeductionTypeForBill> getStandardDeductionTypes(List<DeductionTypeForBill> standardDeductions);
 }

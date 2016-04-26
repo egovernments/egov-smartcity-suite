@@ -38,12 +38,7 @@
  */
 package org.egov.adtax.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -52,14 +47,9 @@ import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementRepository;
-import org.egov.adtax.search.contract.HoardingDcbReport;
-import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
-import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgdmCollectedReceipt;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,7 +62,7 @@ public class AdvertisementService {
 
     @Autowired
     private  AdvertisementRepository advertisementRepository;
-  
+   
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -182,54 +172,10 @@ public class AdvertisementService {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
     
-public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoarding) {
-     List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
-    Map<String,BillReceiptInfo> billReceiptInfoMap = new HashMap<String,BillReceiptInfo>();
-        if(hoarding!=null && hoarding.getDemandId()!=null)
- {
-            for (EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails()) {
-                HoardingDcbReport hoardingReport = new HoardingDcbReport();
-                Set<String> receiptNumbetSet = new HashSet<String>();
-                StringBuffer agencyName = new StringBuffer();
-                StringBuffer receiptNumber = new StringBuffer();
-                hoardingReport.setDemandReason(demandDtl.getEgDemandReason().getEgDemandReasonMaster()
-                        .getReasonMaster());
-                hoardingReport.setInstallmentYearDescription(demandDtl.getEgDemandReason().getEgInstallmentMaster()
-                        .getDescription());
-                hoardingReport.setDemandAmount(demandDtl.getAmount());
-                hoardingReport.setCollectedAmount(demandDtl.getAmtCollected());
-
-                for (EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts()) {
-                    if (!collRecpt.isCancelled()) {
-                        receiptNumbetSet.add(collRecpt.getReceiptNumber());
-                        receiptNumber.append(collRecpt.getReceiptNumber()).append(" ");
-                    }
-                }
-                if (receiptNumbetSet.size() > 0) {
-                    hoardingReport.setReceiptNumber(receiptNumber.toString());
-                    billReceiptInfoMap = collectionIntegrationService.getReceiptInfo(
-                            AdvertisementTaxConstants.SERVICE_CODE, receiptNumbetSet);
-
-                }
-                if (billReceiptInfoMap.size() > 0) {
-                    for (Map.Entry<String, BillReceiptInfo> map : billReceiptInfoMap.entrySet()) {
-                        agencyName.append(map.getValue().getPayeeName());
-                        agencyName.append(" ");
-                    }
-
-                }
-                hoardingReport.setPayeeName(agencyName.toString());
-                HoardingDcbReportResults.add(hoardingReport);
-            }
-        }
-    return HoardingDcbReportResults;
-
-}
-  
-
     public Advertisement findByAdvertisementNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
+    
     public Advertisement findBy(final Long hoardingId) {
         return advertisementRepository.findOne(hoardingId);
     }
@@ -237,4 +183,5 @@ public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoar
     public Advertisement getAdvertisementByDemand(final EgDemand demand) {
         return advertisementRepository.findByDemandId(demand);
     }
-}
+    
+    }

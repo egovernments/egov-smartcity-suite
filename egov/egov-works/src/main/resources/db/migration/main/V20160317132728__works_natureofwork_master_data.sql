@@ -1,0 +1,8 @@
+----------START---------------
+DELETE FROM EGW_NATUREOFWORK;
+INSERT INTO EGW_NATUREOFWORK (ID,NAME,EXPENDITURE_TYPE,CODE) VALUES (NEXTVAL('SEQ_EGW_NATUREOFWORK'),'Capital Works','CAPITAL','Capital Works');
+INSERT INTO EGW_NATUREOFWORK (ID,NAME,EXPENDITURE_TYPE,CODE) VALUES (NEXTVAL('SEQ_EGW_NATUREOFWORK'),'Repairs and maintenance Works','REVENUE','Repairs and maintenance');
+
+--rollback delete from EGW_NATUREOFWORK;
+
+---------------END---------------

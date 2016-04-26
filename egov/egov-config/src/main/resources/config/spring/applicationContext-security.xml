@@ -88,7 +88,7 @@
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="filterProcessesUrl" value="/j_security_check" />
 		<property name="rememberMeServices" ref="rememberMeServices" />
-		<property name="sessionAuthenticationStrategy" ref="concurrentSessionControlStrategy" />
+		<property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy" />
 		<property name="credentialFields">
 			<list>
 				<value>j_password</value>
@@ -113,7 +113,18 @@
 	</bean>
 	
 	<bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter" />
-	
+
+	<bean id="sessionFixationProtectionStrategy" class="org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy"/>
+
+    <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
+        <constructor-arg name="delegateStrategies">
+            <list>
+                <ref bean="concurrentSessionControlStrategy"/>
+                <ref bean="sessionFixationProtectionStrategy"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
 	<bean id="rememberMeAuthenticationFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
 		<constructor-arg name="authenticationManager" ref="authenticationManager"/>
 		<constructor-arg name="rememberMeServices" ref="rememberMeServices"/>

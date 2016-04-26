@@ -50,7 +50,7 @@
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-body custom-form ">
 			<c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert">${message}</div>
+                <div role="alert">${message}</div>
              </c:if>
 			<c:choose>
 				<c:when test="${propertyPipeSizeList.isEmpty()}">
@@ -85,10 +85,10 @@
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${propertyPipeSize.pipeSize.sizeInMilimeter}" />
+								<c:out value="${propertyPipeSize.pipeSize.code}-${propertyPipeSize.pipeSize.sizeInMilimeter}" />
 								</div>
 							</td>
-							<td colspan="1">
+						<td colspan="1">
 								<div align="center">
 								<c:choose>
 									<c:when test="${propertyPipeSize.active == 'true'}">

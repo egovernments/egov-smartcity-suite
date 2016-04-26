@@ -101,7 +101,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
             @ModelAttribute final WaterConnectionDetails addConnection, final Model model,
             @PathVariable final String consumerCode) {
         final WaterConnection connection = waterConnectionService.findByConsumerCode(consumerCode);
-        prepareWorkflow(model, addConnection, new WorkflowContainer());
+        WorkflowContainer workflowContainer= new WorkflowContainer();
+        workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
+        prepareWorkflow(model, addConnection, workflowContainer);
         parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetails(
                 connection.getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         loadBasicDetails(addConnection, model, parentConnectionDetails);
@@ -165,7 +167,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(addConnection.getConnection());
             loadBasicDetails(addConnection, model, parentConnectionDetails);
-            prepareWorkflow(model, addConnection, new WorkflowContainer());
+            WorkflowContainer workflowContainer= new WorkflowContainer();
+            workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
+            prepareWorkflow(model, addConnection,workflowContainer);
             model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
             model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
             model.addAttribute("stateType", addConnection.getClass().getSimpleName());
@@ -199,7 +203,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                         .getActiveConnectionDetailsByConnection(addConnection.getConnection());
                 loadBasicDetails(addConnection, model, parentConnectionDetails);
-                prepareWorkflow(model, addConnection, new WorkflowContainer());
+                WorkflowContainer workflowContainer= new WorkflowContainer();
+                workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
+                prepareWorkflow(model, addConnection, workflowContainer);
                 model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
                 model.addAttribute("stateType", addConnection.getClass().getSimpleName());
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));

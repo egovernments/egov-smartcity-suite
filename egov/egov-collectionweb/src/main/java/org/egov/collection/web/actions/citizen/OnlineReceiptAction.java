@@ -74,6 +74,7 @@ import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -354,9 +355,40 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             }
 
             if (getStatusCode()[i].equals(CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS)) {
-                receiptHeaderService.createOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
+                final List<ReceiptDetail> existingReceiptDetails = new ArrayList<ReceiptDetail>(0);
+
+                for (final ReceiptDetail receiptDetail : receipts[i].getReceiptDetails())
+                    if (!FinancialsUtil.isRevenueAccountHead(receiptDetail.getAccounthead(),
+                            chartOfAccountsHibernateDAO.getBankChartofAccountCodeList())) {
+                        final ReceiptDetail newReceiptDetail = new ReceiptDetail();
+                        if (receiptDetail.getOrdernumber() != null)
+                            newReceiptDetail.setOrdernumber(receiptDetail.getOrdernumber());
+                        if (receiptDetail.getDescription() != null)
+                            newReceiptDetail.setDescription(receiptDetail.getDescription());
+                        if (receiptDetail.getIsActualDemand() != null)
+                            newReceiptDetail.setIsActualDemand(receiptDetail.getIsActualDemand());
+                        if (receiptDetail.getFunction() != null)
+                            newReceiptDetail.setFunction(receiptDetail.getFunction());
+                        if (receiptDetail.getCramountToBePaid() != null)
+                            newReceiptDetail.setCramountToBePaid(receiptDetail.getCramountToBePaid());
+                        newReceiptDetail.setCramount(receiptDetail.getCramount());
+                        newReceiptDetail.setAccounthead(receiptDetail.getAccounthead());
+                        newReceiptDetail.setDramount(receiptDetail.getDramount());
+                        existingReceiptDetails.add(newReceiptDetail);
+                    }
+                final List<ReceiptDetail> reconstructedList = collectionsUtil.reconstructReceiptDetail(receipts[i],
+                        existingReceiptDetails);
+
+                ReceiptDetail debitAccountDetail = null;
+                if (reconstructedList != null)
+                    debitAccountDetail = collectionCommon.addDebitAccountHeadDetails(
+                            receipts[i].getTotalAmount(), receipts[i], BigDecimal.ZERO,
+                            receipts[i].getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE);
+
+                receiptHeaderService.reconcileOnlineSuccessPayment(receipts[i], transDate, getTransactionId()[i],
                         receipts[i].getTotalAmount(), null,
-                        getRemarks()[i], null);
+                        reconstructedList, debitAccountDetail);
+
                 LOGGER.debug("Manually reconciled a success online payment");
             }
 

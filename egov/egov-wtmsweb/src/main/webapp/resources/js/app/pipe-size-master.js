@@ -39,23 +39,22 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false')
-		{
+	if (activeDiv =='false'){
 		$('#statusdiv').hide();
 	     $('#addnewid').hide();
 		}
 	
-	else
-		{
+	else if(activeDiv =='true'){
+		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
 	$("#resetid").click(function(){
-		$("#pipeSizeform")[0].reset();
+		$("#pipesizeform")[0].reset();
+		window.open("/wtms/masters/pipesizeMaster/", "_self");
 		})
 	$( "#pipesizeid" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
@@ -74,10 +73,19 @@ $(document).ready(function(){
 		 }
 	});
 	$("#pipesizeInInch").attr('disabled','disabled');
+	
+	
  });
+$('#pipesizeid*:input').each(function(){
+	var patternNoInput = /[0].[0]$/;
+	if(patternNoInput.exec($(this).val())!=null){
+		$(this).attr('value',$(this).val().replace('0.0',""));
+	}
+});
+	
 $('#listid').click(function() {
-	window.open("/wtms/masters/pipesizeMaster/list", "_self");
- });
+	 window.open("/wtms/masters/pipesizeMaster/list", "_self");
+	});
 
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/pipesizeMaster/", "_self");
@@ -90,7 +98,6 @@ function addNew()
 
 function edit(pipeSize)
 {
-	
 	window.open("/wtms/masters/pipesizeMaster/"+pipeSize, "_self");
 	
 }

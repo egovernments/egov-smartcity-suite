@@ -134,6 +134,11 @@ public class CollectionIndexBuilder {
         validate();
         return collectionIndex;
     }
+    
+    public CollectionIndexBuilder reductionAmount(final BigDecimal reductionAmount) {
+        collectionIndex.setReductionAmount(reductionAmount);
+        return this;
+    }
 
     private void validate() throws ApplicationRuntimeException {
         if (collectionIndex.getReceiptDate() == null)

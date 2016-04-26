@@ -50,44 +50,12 @@
 		<property name="schedulerName" value="collection-scheduler"/>
 		<property name="triggers">
 	    	<list>
-				<!-- <ref bean="bouncedChqInstrCronTrigger" />-->
 				<ref bean="axisReconciliationCronTrigger" />
 	    	</list>
 		</property>	
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-collection" />   
 	</bean> 
    
-   <!-- Add description for updateDishonoredInstrumentsJobScheduler -->
- 	 
-   <bean name="updateDishonoredInstrumentsJobScheduler" id="updateDishonoredInstrumentsJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-   		<property name="group" value="COLLECTION_JOB_GROUP"/>
-   		<property name="name" value="Update Dishonored Instruments Job"/>
-   		<property name="jobClass" value="org.egov.collection.scheduler.UpdateDishonoredInstrumentsJob"/>
-   		<property name="requestsRecovery" value="true"/>
-		<property name="jobDataAsMap">
-            <map>
-                <entry key="jobBeanName" value="updateDishonoredInstrumentsJobDelegate"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
-				<entry key="moduleName" value="collection"/>
-            </map>
-        </property>           	
-	</bean>
-	
-	<bean id="updateDishonoredInstrumentsJobDelegate" class="org.egov.collection.scheduler.UpdateDishonoredInstrumentsJob" lazy-init="true" scope="prototype">
-        <property name="persistenceService" ref="persistenceService" />
-        <property name="instrumentService" ref="instrumentService" />
-    </bean>
-   
-     <bean id="bouncedChqInstrCronTrigger" name="bouncedChqInstrCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
-        <property name="jobDetail" ref="updateDishonoredInstrumentsJobScheduler" />
-        <property name="group" value="COLLECTION_TRIGGER_GROUP"/>
-		<property name="name" value="Update Dishonored Instruments Trigger"/>
-       	<property name="cronExpression" value="0 0 14,18 * * ?" />
-     </bean>
-     
-     <!-- END updateDishonoredInstrumentsJobScheduler -->
-     
       <!-- Add description for axisReconciliationJobScheduler -->
  	 
    <bean name="axisReconciliationJobScheduler" id="axisReconciliationJobScheduler" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" lazy-init="false">

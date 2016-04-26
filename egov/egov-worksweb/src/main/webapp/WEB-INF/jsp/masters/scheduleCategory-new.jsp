@@ -38,33 +38,32 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %>
+<script src="<egov:url path='resources/js/works.js'/>"></script> 
+
 <html>
 	<head>
 		<title><s:text name="scheduleCategory.add.title"/></title>
 	</head>
-	<body id="home">
+	<body id="home" onload="disableFields();">
 		<div class="new-page-header">
-			Create Schedule Of Category
+		<s:text name="scheduleCategory.create.title" />
 		</div>
 		
 		<s:if test="%{hasErrors()}">
 			<div class="alert alert-danger">
-				<s:actionerror />
+				<s:actionerror escape="false"/>
 				<s:fielderror />
 			</div>
 		</s:if>
 		<s:if test="%{hasActionMessages()}">
 			<div class="alert alert-success">
 				 <a href="#" style="font-size:21px;" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				<s:actionmessage theme="simple" />
+				<s:actionmessage theme="simple" escape="false"/>
 			</div>
 		</s:if>
-		
-		<s:form action="scheduleCategory-save" theme="simple" name="scheduleCategory"
-		cssClass="form-horizontal form-groups-bordered">
+		<s:form action="scheduleCategory-save" theme="simple" name="scheduleCategory" cssClass="form-horizontal form-groups-bordered">
 			<s:token />
 			<%@ include file='scheduleCategory-form.jsp'%>
 		</s:form>
 	</body>
 </html>
-

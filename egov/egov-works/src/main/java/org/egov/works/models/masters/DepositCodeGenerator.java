@@ -24,16 +24,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -41,15 +41,18 @@ package org.egov.works.models.masters;
 
 import javax.script.ScriptContext;
 
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DepositCodeGenerator {
+
     @Autowired
-    private SequenceGenerator sequenceGenerator;
-    // private PersistenceService<Script, Long> scriptService;
+    private SequenceNumberGenerator sequenceGenerator;
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
     @Autowired
     private ScriptService scriptService;
 
@@ -57,16 +60,13 @@ public class DepositCodeGenerator {
 
         try {
             final ScriptContext scriptContext = ScriptService.createContext("depositCode", depositCode,
-                    "sequenceGenerator", sequenceGenerator);
+                    "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", dbSequenceGenerator, "finYear",
+                    depositCode.getFinancialYear());
+
             return scriptService.executeScript("works.depositCode.generator", scriptContext).toString();
         } catch (final ValidationException sequenceException) {
             throw sequenceException;
         }
-        /*
-         * List<Script> scripts = scriptService.findAllByNamedQuery("SCRIPT", "works.depositCode.generator"); try{ return
-         * scripts.get(0).eval(Script .createContext("depositCode",depositCode,"sequenceGenerator"
-         * ,sequenceGenerator)).toString(); } catch (ValidationException e){ throw e; }
-         */
     }
 
 }

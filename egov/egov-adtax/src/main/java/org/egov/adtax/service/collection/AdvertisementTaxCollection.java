@@ -53,6 +53,7 @@ import org.egov.adtax.entity.AgencyWiseCollectionDetail;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
+import org.egov.adtax.service.AdvertisementPermitDetailUpdateIndexService;
 import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.AgencyWiseCollectionService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -96,6 +97,9 @@ public class AdvertisementTaxCollection extends TaxCollection {
 
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
+    
+    @Autowired
+    private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -151,11 +155,34 @@ public class AdvertisementTaxCollection extends TaxCollection {
      */
     private void updateAgencyWiseCollectionOnCreate(final BillReceiptInfo billRcptInfo,
             final AgencyWiseCollection agencyWiseCollection, final BigDecimal totalAmount) {
+        
+        /**
+         * Whether we will adjust arrears of all demand first ? or financial year wise first.. and then last financial year ?
+         * or clear individual advertisement wise ?
+         * make it configurable.
+         *  final HashMap<EgDemandReason, BigDecimal> demandReasonWiseList;
+         *  
+         * 1. Get List of agencywise collections group by demandid. Sort by arrears,tax and based on year.
+         * 2. Check whether full amount we are collected for this demand. If yes check whether record in workflow, then close workflow.
+         * 3. If no, mean.. amount remaining is less than amount to be collected for advertisement. Here we need to collect arrears , tax, encroachment 
+         * fee in order. The percentage of penalty we need to get based on demand detail and penalty calculation date. 
+         * Pending amount > balance + penalty  then use that demand detail.
+         * else
+         * for pending amount decide penalty to be adjust + tax  to be adjust.
+         *
+         * Check remaining amount is required to adjust with other demand detail.
+         * Add penalty to map by financial year and update demand detail on final stage.
+         */
+        
+        // group by arrears, last financial year and current year 
+        // group by demandid return values.
+        
+        
         for (final AgencyWiseCollectionDetail agencyDtl : agencyWiseCollection.getAgencyWiseCollectionDetails()) {
             if (agencyDtl.getDemandDetail() != null) {
                 agencyDtl.getDemandDetail().setAmtCollected(
                         agencyDtl.getDemandDetail().getAmtCollected().add(agencyDtl.getAmount()));
-
+             //TODO: IF PENALTY IS PART OF DEMAND REASON, THEN WE NEED TO HANDLE IN THIS LOOP. HERE AMOUNT COLLECTED WILL BE MORE IN THAT CASE.
                 persistCollectedReceipts(agencyDtl.getDemandDetail(), billRcptInfo.getReceiptNum(), totalAmount,
                         billRcptInfo.getReceiptDate(), agencyDtl.getAmount());
                 agencyDtl.getDemand().addCollected(agencyDtl.getAmount());
@@ -165,7 +192,7 @@ public class AdvertisementTaxCollection extends TaxCollection {
                 /*
                  * Check whether penalty reason already present in current demand.
                  */
-                if (penaltyDmtDtails != null && penaltyDmtDtails.size() > 0) {
+                if (penaltyDmtDtails != null && penaltyDmtDtails.size() > 0) {//TODO: THIS LOOP MAY NOT REQUIRED. 
                     penaltyDmtDtails.get(0).setAmount(penaltyDmtDtails.get(0).getAmount().add(agencyDtl.getAmount()));
                     penaltyDmtDtails.get(0).setAmtCollected(
                             penaltyDmtDtails.get(0).getAmtCollected().add(agencyDtl.getAmount()));
@@ -320,6 +347,93 @@ public class AdvertisementTaxCollection extends TaxCollection {
         }
     }
 
+    /*public void apportionCollection(final String billRefNo, final BigDecimal amtPaid,
+            final List<ReceiptDetail> receiptDetails) {
+        
+        *//**
+         * Whether we will adjust arrears of all demand first ? or financial year wise first.. and then last financial year ?
+         * or clear individual advertisement wise ?
+         * make it configurable.
+         *  final HashMap<EgDemandReason, BigDecimal> demandReasonWiseList;
+         *  
+         * 1. Get List of agencywise collections group by demandid. Sort by arrears,tax and based on year.
+         * 2. Check whether full amount we are collected for this demand. If yes check whether record in workflow, then close workflow.
+         * 3. If no, mean.. amount remaining is less than amount to be collected for advertisement. Here we need to collect arrears , tax, encroachment 
+         * fee in order. The percentage of penalty we need to get based on demand detail and penalty calculation date. 
+         * Pending amount > balance + penalty  then use that demand detail.
+         * else
+         * for pending amount decide penalty to be adjust + tax  to be adjust.
+         *
+         * Check remaining amount is required to adjust with other demand detail.
+         * Add penalty to map by financial year and update demand detail on final stage.
+         *//*
+        
+        EgDemand demand = getDemandByBillReferenceNumber(Long.valueOf(billRefNo));
+        final AgencyWiseCollection agencyWiseCollection = agencyWiseCollectionService.getAgencyWiseCollectionByDemand(demand);
+
+        if (agencyWiseCollection != null && agencyWiseCollection.getAgencyWiseCollectionDetails().isEmpty()) {
+            ArrayList<AgencyWiseCollectionDetail> agencyWiseList = new ArrayList<AgencyWiseCollectionDetail>(
+                    agencyWiseCollection.getAgencyWiseCollectionDetails());
+            Collections.sort(agencyWiseList, new Comparator<AgencyWiseCollectionDetail>() {
+                @Override
+                public int compare(AgencyWiseCollectionDetail o1, AgencyWiseCollectionDetail o2) {
+                    if (o1 == null || o2 == null) {
+                        return 1;
+                    } else {
+                        if (o1.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equals(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX)) {
+                            if (o1.getDemandDetail()
+                                    .getEgDemandReason()
+                                    .getEgInstallmentMaster()
+                                    .getFromDate()
+                                    .before(o2.getDemandDetail().getEgDemandReason().getEgInstallmentMaster()
+                                            .getFromDate())) {
+                                return -1;
+                            } else
+                                return 1;
+                        } else if (o2.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equals(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX)) {
+                            return 1;
+                        } else if (o1.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equals(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX)) {
+                            if (o1.getDemandDetail()
+                                    .getEgDemandReason()
+                                    .getEgInstallmentMaster()
+                                    .getFromDate()
+                                    .before(o2.getDemandDetail().getEgDemandReason().getEgInstallmentMaster()
+                                            .getFromDate())) {
+                                return -1;
+                            } else
+                                return 1;
+                        } else if (o2.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equals(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX)) {
+                            return 1;
+                        } else if (o1.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equals(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE)) {
+                            if (o1.getDemandDetail()
+                                    .getEgDemandReason()
+                                    .getEgInstallmentMaster()
+                                    .getFromDate()
+                                    .before(o2.getDemandDetail().getEgDemandReason().getEgInstallmentMaster()
+                                            .getFromDate())) {
+                                return -1;
+                            } else
+                                return 1;
+                        } else if (o2.getDemandDetail().getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equals(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE)) {
+                            return 1;
+                        }
+                    }
+                    return 0;
+                }
+            });
+        }
+            //agencyWiseCollection.getAgencyWiseCollectionDetails()
+        
+       
+        return;
+    }
+*/    
     /**
      * @param demandMasterReasonDesc
      * @param financialYearDesc 
@@ -427,6 +541,8 @@ public class AdvertisementTaxCollection extends TaxCollection {
                         AdvertisementTaxConstants.COLLECTION_REMARKS, advertisementPermitDetail.getPreviousapplicationid()!=null?AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE:  AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE,
                         AdvertisementTaxConstants.WF_DEMANDNOTICE_BUTTON);
                 advertisementPermitDetailRepository.saveAndFlush(advertisementPermitDetail);
+            } else {
+            	 advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail);
             }
         }
     }

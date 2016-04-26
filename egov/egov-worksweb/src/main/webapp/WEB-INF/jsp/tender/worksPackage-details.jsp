@@ -157,7 +157,7 @@ function deleterow(obj)
 	<s:iterator var="e" value="abstractEstimateList" status="s">
 	<tr>
 		<td width="5%"  class="whitebox3wk">&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="text" name="slNo" id="slNo" disabled="true" size="1" value='<s:property value='%{#s.index+1}' />'/>
+			<input type="text" name="slNo" id="slNo" readonly="true" disabled="true" size="1" value='<s:property value='%{#s.index+1}' />'/>
 		</td>
 		<td width="15%" class="whitebox3wk">&nbsp;&nbsp;&nbsp;&nbsp;
 			<s:property value='%{estimateNumber}' /><s:hidden name="estId" id="estId" value="%{id}"/>

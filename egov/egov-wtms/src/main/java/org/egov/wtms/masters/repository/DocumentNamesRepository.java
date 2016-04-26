@@ -55,7 +55,7 @@ public interface DocumentNamesRepository extends JpaRepository<DocumentNames, Lo
 
     List<DocumentNames> findByApplicationType(ApplicationType applicationType);
 
-    @Query("select DN from DocumentNames DN where DN.applicationType=:applicationType and UPPER(DN.documentName)=:documentName")
+    @Query("select DN from DocumentNames DN where DN.applicationType=:applicationType and DN.documentName=:documentName")
     DocumentNames findByApplicationTypeAndDocumentName(@Param("applicationType") ApplicationType applicationType,
             @Param("documentName") String documentName);
 

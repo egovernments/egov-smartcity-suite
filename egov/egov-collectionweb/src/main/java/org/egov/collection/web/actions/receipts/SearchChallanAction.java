@@ -90,6 +90,8 @@ public class SearchChallanAction extends BaseFormAction {
                     CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
         else
             addDropdownData("serviceList",Collections.EMPTY_LIST);
+        setFromDate(new Date());
+        setToDate(new Date());
     }
 
     public SearchChallanAction() {

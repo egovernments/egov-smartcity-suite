@@ -229,11 +229,11 @@
 											</s:else>
 											</c:if> --%>
 										</s:if>
-										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE.toUpperCase())}">
+										<%-- <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE.toUpperCase())}">
 												<option value="editOwner">
 													<s:text name="editOwner"></s:text>
 												</option>
-										</s:if>
+										</s:if> --%>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_COLLECTION_OPERATOR.toUpperCase())}">
 											<c:if test="${currentRowObject.isTaxExempted == false }">
 												<option value="CollectTax">

@@ -150,6 +150,10 @@ public class BillVoucherAction extends BaseVoucherAction {
                 query.append(" and br.billdate<='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
                         parse(voucherTypeBean.getVoucherDateTo()))).append("'");
             preApprovedVoucherList = persistenceService.findAllBy(query.toString(), 4);
+            if(preApprovedVoucherList.size()==0)
+            {
+            	addActionError("No records found.");
+            }
         } catch (final ValidationException e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();

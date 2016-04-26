@@ -52,6 +52,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LA
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -87,6 +89,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infstr.utils.DateUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.DemandDetail;
@@ -146,10 +149,13 @@ public class EditDemandAction extends BaseFormAction {
             + "LEFT JOIN ptd.egDemandDetails dd " + "LEFT JOIN ptd.egptProperty p " + "LEFT JOIN  p.basicProperty bp "
             + "WHERE bp = ? " + "AND bp.active = true " + "AND p.status = 'A' ";
 
-    private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS /*+ "AND dd.amount > 0 "*/;
+    private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS /*
+                                                                                     * +
+                                                                                     * "AND dd.amount > 0 "
+                                                                                     */;
 
     private static final String queryInstallmentDemandDetails = QUERY_NONZERO_DEMAND_DETAILS
-            /*+ " AND ptd.egInstallmentMaster = ? "*/;
+    /* + " AND ptd.egInstallmentMaster = ? " */;
 
     private static final String EDIT_TYPE_DEMAND = "Demand";
     private static final String EDIT_TYPE_COLLECTION = "Collection";
@@ -212,7 +218,8 @@ public class EditDemandAction extends BaseFormAction {
 
         DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
         try {
-            allInstallments = propertyTaxUtil.getInstallmentListByStartDate(dateFormat.parse("01/04/1963"));
+            allInstallments = propertyTaxUtil
+                    .getInstallmentListByStartDateToCurrFinYear(dateFormat.parse("01/04/1963"));
         } catch (ParseException e) {
             throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
         }
@@ -309,12 +316,25 @@ public class EditDemandAction extends BaseFormAction {
 
         List<Installment> installmentsInOrder = null;
         if (!newInstallments.isEmpty()) {
-            installmentsInOrder = propertyTaxUtil.getInstallmentListByStartDate((new ArrayList<Installment>(
-                    newInstallments).get(0)).getFromDate());
+            installmentsInOrder = propertyTaxUtil
+                    .getInstallmentListByStartDateToCurrFinYear((new ArrayList<Installment>(newInstallments).get(0))
+                            .getFromDate());
 
             if (newInstallments.size() != installmentsInOrder.size()) {
                 addActionError(getText("error.editDemand.badInstallmentSelection"));
             }
+
+            Date currDate = new Date();
+            Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
+            if(!DateUtils.compareDates(currDate,currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate())) {
+                if ((newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF)) && !newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) ||
+                        (!newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF)) && newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF)))) {
+                    addActionError(getText("error.currentyearinstallments"));
+                }
+            } else if(!newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) {
+                addActionError(getText("error.currentInst"));
+            }
+          
         }
 
         if (installmentsChqPenalty.size() > 0) {
@@ -346,8 +366,8 @@ public class EditDemandAction extends BaseFormAction {
         } else {
             ownerName = basicProperty.getFullOwnerName();
             propertyAddress = basicProperty.getAddress().toString();
-            demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty/*,*/
-                    /*propertyTaxUtil.getCurrentInstallment()*/);
+            demandDetails = getPersistenceService().findAllBy(queryInstallmentDemandDetails, basicProperty/* , */
+            /* propertyTaxUtil.getCurrentInstallment() */);
             if (!demandDetails.isEmpty()) {
                 Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
                     @Override
@@ -614,7 +634,12 @@ public class EditDemandAction extends BaseFormAction {
         }
 
         List<EgDemandDetails> currentInstdemandDetailsFromDB = getPersistenceService().findAllBy(
-                queryInstallmentDemandDetails, basicProperty/*, propertyTaxUtil.getCurrentInstallment()*/);
+                queryInstallmentDemandDetails, basicProperty/*
+                                                             * ,
+                                                             * propertyTaxUtil.
+                                                             * getCurrentInstallment
+                                                             * ()
+                                                             */);
 
         EgDemand currentPtdemand = null;
         if (!currentInstdemandDetailsFromDB.isEmpty())

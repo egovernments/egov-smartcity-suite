@@ -111,7 +111,9 @@ public class ChangeOfUseController extends GenericConnectionController {
             // TODO - error handling
         } else
             loadBasicData(model, parentConnectionDetails, changeOfUse, connectionUnderChange);
-        prepareWorkflow(model, changeOfUse, new WorkflowContainer());
+        WorkflowContainer workflowContainer= new WorkflowContainer();
+        workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
+        prepareWorkflow(model, changeOfUse, workflowContainer);
         return "changeOfUse-form";
     }
 
@@ -157,7 +159,9 @@ public class ChangeOfUseController extends GenericConnectionController {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
             loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
-            prepareWorkflow(model, changeOfUse, new WorkflowContainer());
+            WorkflowContainer workflowContainer= new WorkflowContainer();
+            workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
+            prepareWorkflow(model, changeOfUse, workflowContainer);
             model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
             model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
             model.addAttribute("validationmessage", resultBinder.getFieldErrors().get(0).getField() + " = "
@@ -194,7 +198,9 @@ public class ChangeOfUseController extends GenericConnectionController {
                 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                         .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
                 loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
-                prepareWorkflow(model, changeOfUse, new WorkflowContainer());
+                WorkflowContainer workflowContainer= new WorkflowContainer();
+                workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
+                prepareWorkflow(model, changeOfUse, workflowContainer);
                 model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
                 model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));

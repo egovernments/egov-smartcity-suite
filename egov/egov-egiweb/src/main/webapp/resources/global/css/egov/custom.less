@@ -523,6 +523,21 @@ b, label, strong{
     overflow-x: hidden;
     width: ~"calc(100% - 250px)";
     padding-bottom: 40px;
+    
+    #inboxsearch{
+    	padding: 5px 18px 5px 10px;
+    }
+    
+    .cleartext {
+	    float: right;
+	    margin-right: 4px;
+	    margin-top: -22px;
+	    color: @basecolor;
+	    cursor:pointer;
+	    .font-size(16px);
+	    display:none;
+	}
+        
 }
 
 .table-header {
@@ -544,6 +559,10 @@ b, label, strong{
     
     a {
         padding: 5px;
+        
+        span{
+        	margin: 0 3px;
+        }
     }
 }
 
@@ -1469,8 +1488,7 @@ b, label, strong{
         
         .yui-skin-sam .yui-dt th {
           color:@whitecolor;
-          background: @basecolor;
-          border-right: 1px solid @separation;
+          background: @active;
         }
 
         .yui-skin-sam .yui-dt td {
@@ -1525,6 +1543,14 @@ b, label, strong{
                 display: none !important;
             }
         }
+        
+        .new-page-header {
+		    font-family: semibold;
+		    .font-size(20px);
+		    color: @active;
+		    text-align: center;
+		    padding: 0 15px 15px;
+		}
         
         td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select
         {
@@ -1841,10 +1867,6 @@ b, label, strong{
         
     }
     
-    thead > tr > th:hover{
-        cursor:pointer;
-    }
-    
     tbody tr:hover
     {
         background:#f7f7f7;
@@ -1867,6 +1889,10 @@ table.dataTable{
                 left:-9990px;
                 display: block;
             }
+        }
+        
+        tr > th:hover{
+        	cursor:pointer;
         }
         
     }

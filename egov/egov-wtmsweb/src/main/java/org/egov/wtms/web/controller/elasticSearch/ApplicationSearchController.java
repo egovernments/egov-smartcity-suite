@@ -45,6 +45,7 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.City;
@@ -80,6 +81,8 @@ public class ApplicationSearchController {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+
+    private static final Logger LOGGER = Logger.getLogger(ApplicationSearchController.class);
 
     @Autowired
     public ApplicationSearchController(final ApplicationSearchService applicationSearchService,

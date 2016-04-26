@@ -43,9 +43,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
-import org.egov.adtax.service.AdvertisementService;
+import org.egov.adtax.service.AdvertisementReportService;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ import com.google.gson.GsonBuilder;
 public class DcbReportController extends GenericController {
 
     @Autowired
-    private AdvertisementService hoardingService;
+    private AdvertisementReportService hoardingReportService;
     @Autowired
     private ApplicationProperties applicationProperties;
     @Autowired
@@ -82,11 +83,14 @@ public class DcbReportController extends GenericController {
                 + "}";
     }
 
-    @RequestMapping(value = "getHoardingDcb/{hoardingNumber}")
-    public String viewHoarding(@PathVariable final String hoardingNumber, final Model model) {
-        final Advertisement hoarding = hoardingService.getHoardingByAdvertisementNumber(hoardingNumber);
+    @RequestMapping(value = "getHoardingDcb/{id}")
+    public String viewHoarding(@PathVariable final Long id, final Model model) {
+        AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(id);
+        if(advertisementPermitDetail!=null){
+        final Advertisement hoarding = advertisementPermitDetail.getAdvertisement();
         model.addAttribute("hoarding", hoarding);
-        model.addAttribute("dcbResult", hoardingService.getHoardingWiseDCBResult(hoarding));
+        model.addAttribute("dcbResult", hoardingReportService.getHoardingWiseDCBResult(hoarding));
+        }
         return "report-dcbview";
     }
 }

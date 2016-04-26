@@ -39,14 +39,15 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
@@ -60,8 +61,8 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
@@ -72,14 +73,14 @@ import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.utils.AbstractPDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 
 public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     private static final Logger logger = Logger.getLogger(ContractorBillPDFGenerator.class);
@@ -428,7 +429,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
                 final String[] resultAry = resultAmt.split(":");
                 createcreateDeductionTypeDataTable.getDefaultCell().setColspan(7);
                 createcreateDeductionTypeDataTable.addCell(
-                        chartOfAccountsHibernateDAO.findById(Long.valueOf(egBilldetails.getGlcodeid().toString()),false).getName());
+                        chartOfAccountsHibernateDAO.findById(Long.valueOf(egBilldetails.getGlcodeid().toString()), false)
+                                .getName());
                 createcreateDeductionTypeDataTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
                 createcreateDeductionTypeDataTable.getDefaultCell().setColspan(1);
                 createcreateDeductionTypeDataTable.addCell(resultTotCustomAry[0]);// Rs. amt all bill for workorder till billdate
@@ -767,8 +769,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
             billGenNumber = egBillRegister.getBillnumber();
 
         // partbillNo
-        if (egBillRegister.getBillnumber() != null && egBillRegister.getPartbillNo() != null)
-            billNumber = egBillRegister.getPartbillNo().toString();
+        if (egBillRegister.getBillnumber() != null && egBillRegister.getBillSequenceNumber() != null)
+            billNumber = egBillRegister.getBillSequenceNumber().toString();
 
         if (egBillRegister.getBilldate() != null)
             billDate = sdf.format(egBillRegister.getBilldate());
@@ -984,7 +986,6 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     public void setEmployeeService(final EmployeeServiceOld employeeService) {
         this.employeeService = employeeService;
     }
-
 
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;

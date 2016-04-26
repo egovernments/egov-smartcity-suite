@@ -106,6 +106,7 @@ $('#dailyCollectionReportSearch').click(function(e){
 						  { "data" : "arrearLibCess","title": "Arrear Library cess"},
 						  { "data" : "currLibCess","title": "Current Library cess"},
 						  { "data" : "totalLibCess","title": "Total library cess"},
+						  { "data" : "totalRebate","title": "Rebate"}, 
 						  { "data" : "totalCollection", "title": "Total collection"}, 
 						  ],
 						  "aaSorting": [[2, 'desc']] ,
@@ -124,10 +125,11 @@ $('#dailyCollectionReportSearch').click(function(e){
 									updateTotalFooter(15, api);
 									updateTotalFooter(16, api);
 									updateTotalFooter(17, api);
+									updateTotalFooter(18, api);
 								}
 							},
 							"aoColumnDefs" : [ {
-								"aTargets" : [11,12,13,14,15,16,17],
+								"aTargets" : [11,12,13,14,15,16,17,18],
 								"mRender" : function(data, type, full) {
 									return formatNumberInr(data);    
 								}

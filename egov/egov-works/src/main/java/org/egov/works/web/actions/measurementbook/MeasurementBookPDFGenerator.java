@@ -139,10 +139,6 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                 mbTable = createMbData(mbTable, mbHeader);
             document.add(mbTable);
             document.add(spacer());
-            if (mbHeader != null && mbHeader.getMbPreparedBy() != null)
-                document.add(makePara(8, pdfLabel.get("mbpdf.preparedby") + " "
-                        + mbHeader.getMbPreparedBy().getEmployeeName()));
-
             document.newPage();
             // approval details table
 

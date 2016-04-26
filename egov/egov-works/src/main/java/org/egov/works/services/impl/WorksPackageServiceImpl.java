@@ -57,7 +57,7 @@ import org.egov.works.models.tender.WorksPackageNumberGenerator;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.utils.WorksConstants;
 
-public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>implements WorksPackageService {
+public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long> implements WorksPackageService {
     private WorksPackageNumberGenerator workspackageGenerator;
 
     public WorksPackageServiceImpl(final PersistenceService<WorksPackage, Long> persistenceService) {

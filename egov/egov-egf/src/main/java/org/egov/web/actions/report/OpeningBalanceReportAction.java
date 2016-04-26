@@ -81,15 +81,10 @@ public class OpeningBalanceReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
-
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -2567999475434622263L;
     private static final Logger LOGGER = Logger.getLogger(OpeningBalanceReportAction.class);
     private OpeningBalanceInputBean openingBalanceReport = new OpeningBalanceInputBean();
-    private OpeningBalance openingBalance = new OpeningBalance();
+    private OpeningBalance openingBalance;
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     protected ArrayList openingBalanceDisplayList = new ArrayList();
     String heading = "";

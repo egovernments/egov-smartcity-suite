@@ -59,6 +59,7 @@ public class BudgetFolioDetail implements Serializable {
     private Double expensesIncurred;
     private Double cumulativeExpensesIncurred;
     private Double actualBalanceAvailable;
+    private String workIdentificationNumber;
 
     public String getBudgetApprNo() {
         return budgetApprNo;
@@ -170,5 +171,13 @@ public class BudgetFolioDetail implements Serializable {
 
     public void setActualBalanceAvailable(final Double actualBalanceAvailable) {
         this.actualBalanceAvailable = actualBalanceAvailable;
+    }
+
+    public String getWorkIdentificationNumber() {
+        return workIdentificationNumber;
+    }
+
+    public void setWorkIdentificationNumber(String workIdentificationNumber) {
+        this.workIdentificationNumber = workIdentificationNumber;
     }
 }

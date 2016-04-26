@@ -41,8 +41,6 @@ package org.egov.works.models.masters;
 
 public enum ExemptionForm {
 
-    INCOME_TAX,
-    EARNEST_MONEY_DEPOSIT,
-    VAT;
+    INCOME_TAX, EARNEST_MONEY_DEPOSIT, VAT;
 
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-03-28T16:26:22 -->
+<!-- 2016-04-20T14:25:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_summary" language="groovy" pageWidth="800" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="700" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7eaa32-622d-4fd8-a432-187d94fbaded">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
@@ -32,6 +32,10 @@
 	<parameter name="EGOV_SERVICE_ID" class="java.lang.Long">
 		<parameterDescription><![CDATA[The Service]]></parameterDescription>
 		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_SERVICE_NAME" class="java.lang.String">
+		<parameterDescription><![CDATA[The Service Name]]></parameterDescription>
+		<defaultValueExpression><![CDATA["All Services"]]></defaultValueExpression>
 	</parameter>
 	<field name="aggrCollectionSummaryReportList" class="java.util.List"/>
 	<field name="collectionSummaryReportList" class="java.util.List"/>
@@ -165,7 +169,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EGCL_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_NAME})]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -324,7 +328,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EGCL_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_NAME})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="472" y="96" width="98" height="25" uuid="73ddee59-be76-40c3-a24b-4001d790a0cd"/>

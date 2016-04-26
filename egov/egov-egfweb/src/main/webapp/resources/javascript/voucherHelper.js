@@ -419,7 +419,7 @@ function loadCoa(id){
 
 function loadDropDownCodes()
 {
-	var	url = "/EGF/commons/Process.jsp?type=getAllCoaCodes";
+	var	url = "/EGF/voucher/common-ajaxGetAllCoaCodes.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -448,7 +448,7 @@ function loadDropDownCodes()
 
 function loadDropDownCodesExcludingCashAndBank()
 {
-	var	url = path+"/commons/Process.jsp?type=getAllCoaCodesExceptCashBank";
+	var	url = "/EGF/voucher/common-ajaxGetAllCoaCodesExceptCashBank.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -828,7 +828,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = "/EGF/commons/Process.jsp?type=getAllFunctionName";
+	var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{

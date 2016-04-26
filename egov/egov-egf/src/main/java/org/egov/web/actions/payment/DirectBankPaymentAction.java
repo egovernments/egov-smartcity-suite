@@ -42,10 +42,6 @@
  */
 package org.egov.web.actions.payment;
 
-
-
-import org.egov.infstr.services.PersistenceService;
-
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -53,7 +49,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,12 +76,9 @@ import org.egov.commons.Vouchermis;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -94,8 +86,6 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentHeader;
@@ -104,7 +94,6 @@ import org.egov.model.voucher.CommonBean;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.payment.services.PaymentActionHelper;
-import org.egov.pims.commons.Designation;
 import org.egov.services.contra.ContraService;
 import org.egov.services.payment.MiscbilldetailService;
 import org.egov.services.payment.PaymentService;
@@ -140,11 +129,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private static final String FAILED = "Transaction failed";
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final long serialVersionUID = 1L;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private CreateVoucher createVoucher;
     private PaymentService paymentService;
     @Autowired
@@ -273,9 +262,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                                 voucherHeader.getId());
                 voucherHeader.setId(null);
                 populateWorkflowBean();
-                paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader,voucherHeader,billVhId, commonBean, billDetailslist, subLedgerlist,workflowBean);
+                paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader, voucherHeader, billVhId, commonBean,
+                        billDetailslist, subLedgerlist, workflowBean);
                 showMode = "create";
-                addActionMessage(getText("directbankpayment.transaction.success") + paymentheader.getVoucherheader().getVoucherNumber());
+                addActionMessage(getText("directbankpayment.transaction.success")
+                        + paymentheader.getVoucherheader().getVoucherNumber());
                 addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
                         .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
             } else
@@ -341,7 +332,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         if (netPay.getFunctionId() != null)
         {
             vd.setFunctionIdDetail(Long.valueOf(netPay.getFunctionId()));
-            CFunction function =(CFunction) persistenceService.getSession().load(CFunction.class,Long.valueOf(netPay.getFunctionId()));
+            CFunction function = (CFunction) persistenceService.getSession().load(CFunction.class,
+                    Long.valueOf(netPay.getFunctionId()));
             vd.setFunctionDetail(function.getId().toString());
         }
         commonBean.setAmount(BigDecimal.valueOf(netPay.getCreditAmount()));
@@ -469,8 +461,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         }
 
     }
-
-  
 
     private void updateMiscBillDetail(final CVoucherHeader billVhId) {
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService.find(
@@ -647,8 +637,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         // phoenix migration voucherHeader.setId(reversalVoucher.getId());
         return REVERSE;
     }
-
-  
 
     private void reCreateLedger() {
         try {
@@ -845,10 +833,10 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
         if (paymentheader.getId() == null)
             paymentheader = getPayment();
-       
+
         populateWorkflowBean();
-        paymentheader =  paymentActionHelper.sendForApproval(paymentheader,workflowBean);
-              
+        paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
+
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.rejected",
                     new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
@@ -1027,7 +1015,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     }
 
     public String getComments() {
-        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
+        return getText("payment.comments", new String[] { paymentheader.getPaymentAmount()
+                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString() });
     }
 
     public String getTypeOfAccount() {
@@ -1053,8 +1042,6 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     public void setScriptService(final ScriptService scriptService) {
         this.scriptService = scriptService;
     }
-
- 
 
     public ChartOfAccounts getChartOfAccounts() {
         return chartOfAccounts;

@@ -95,7 +95,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     @Autowired
     private FinancialYearHibernateDAO finHibernateDao;
     @Autowired
-    private PersistenceService<ProjectCode, Long> projectCodeService;
+    private ProjectCodeService projectCodeService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private DepositWorksUsageService depositWorksUsageService;
 
@@ -725,13 +725,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         this.estimateNumberGenerator = estimateNumberGenerator;
     }
 
-    /*public void setProjectCodeService(final PersistenceService<ProjectCode, Long> projectCodeService) {
-        this.projectCodeService = projectCodeService;
-    }
-
-    public PersistenceService<ProjectCode, Long> getProjectCodeService() {
-        return projectCodeService;
-    }*/
+    /*
+     * public void setProjectCodeService(final PersistenceService<ProjectCode, Long> projectCodeService) { this.projectCodeService
+     * = projectCodeService; } public PersistenceService<ProjectCode, Long> getProjectCodeService() { return projectCodeService; }
+     */
 
     public BudgetGroupDAO getBudgetGroupDAO() {
         return budgetGroupDAO;

@@ -147,7 +147,7 @@ public class DailyWTCollectionReportService {
         for (final ReceiptHeader receiptHeader : receiptHeaderList) {
             BigDecimal currCollection = BigDecimal.ZERO;
             BigDecimal arrCollection = BigDecimal.ZERO;
-            DailyWTCollectionReport result = new DailyWTCollectionReport();
+            final DailyWTCollectionReport result = new DailyWTCollectionReport();
             result.setReceiptNumber(receiptHeader.getReceiptnumber());
             result.setReceiptDate(receiptHeader.getReceiptdate());
             result.setConsumerCode(receiptHeader.getConsumerCode());
@@ -160,15 +160,16 @@ public class DailyWTCollectionReportService {
             final StringBuilder queryString = new StringBuilder();
             queryString.append(
                     "select wardboundary.name as \"wardName\",dcbinfo.houseno as \"houseNo\" from egwtr_mv_dcb_view dcbinfo"
-                            + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '"+receiptHeader.getConsumerCode()+"'");
+                            + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id  where dcbinfo.hscno = '"
+                            + receiptHeader.getConsumerCode() + "'");
             final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryString.toString());
             finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
             List<DefaultersReport> listforWardAndHsc = new ArrayList<DefaultersReport>();
-            listforWardAndHsc =finalQuery.list();
+            listforWardAndHsc = finalQuery.list();
             if (!listforWardAndHsc.isEmpty())
             {
-            result.setDoorNumber(listforWardAndHsc.get(0).getHouseNo());
-            result.setWardName(listforWardAndHsc.get(0).getWardName());
+                result.setDoorNumber(listforWardAndHsc.get(0).getHouseNo());
+                result.setWardName(listforWardAndHsc.get(0).getWardName());
             }
             result.setTotal(receiptHeader.getTotalAmount());
             result.setStatus(receiptHeader.getStatus().getDescription());
@@ -209,17 +210,17 @@ public class DailyWTCollectionReportService {
                     String currentInstallment = null;
                     if (Arrays.asList(WaterTaxConstants.CREATECONNECTIONDMDDESC).contains(receiptDmdRsnDesc))
                         currentInstallment = connectionDemandService
-                                .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
-                                .getDescription();
+                        .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
+                        .getDescription();
                     else if (Arrays.asList(WaterTaxConstants.WATERCHARGESDMDDESC).contains(receiptDmdRsnDesc))
                         if (ConnectionType.METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
-                                    .getDescription();
+                            .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
+                            .getDescription();
                         else if (ConnectionType.NON_METERED.equals(waterConnection.getConnectionType()))
                             currentInstallment = connectionDemandService
-                                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
-                                    .getDescription();
+                            .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
+                            .getDescription();
 
                     if (null != rdesc
                             && rdesc.substring(rdesc.indexOf("-") + 1, rdesc.indexOf("#")).trim().equals(currentInstallment))

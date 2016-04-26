@@ -134,6 +134,15 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
 
     }
 
+    public List<CChartOfAccounts> findDetailedAccountCodesByGlcodeOrNameLike(String searchString) {
+        final Query qry = getCurrentSession()
+                .createQuery(
+                        "from CChartOfAccounts where classification='4' and isActiveForPosting=true and (glcode like :glCode or upper(name) like :name) order by glcode");
+        qry.setString("glCode", searchString + "%");
+        qry.setString("name", "%" + searchString.toUpperCase() + "%");
+        return (List<CChartOfAccounts>) qry.list();
+    }
+
     @Deprecated
     public CChartOfAccounts findCodeByPurposeId(final int purposeId) {
         final Query qry = getCurrentSession().createQuery(
@@ -267,24 +276,24 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
             query = persistenceService
                     .getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId))) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
             query = persistenceService
                     .getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId)) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
             query = persistenceService
                     .getSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeId=:purposeId) AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE parentId IN (SELECT id FROM CChartOfAccounts WHERE purposeid=:purposeId) AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
             query = getCurrentSession()
                     .createQuery(
-                            " FROM CChartOfAccounts WHERE purposeId=:purposeId AND classification=4 AND isActiveForPosting=true ");
+                            " FROM CChartOfAccounts WHERE purposeid=:purposeId AND classification=4 AND isActiveForPosting=true ");
             query.setLong("purposeId", purposeId);
             accountCodeList.addAll((List<CChartOfAccounts>) query.list());
         } catch (final Exception e) {
@@ -384,7 +393,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         final List<CChartOfAccounts> listChartOfAcc = new ArrayList<CChartOfAccounts>();
         Query query = getCurrentSession()
                 .createQuery(
-                        " FROM CChartOfAccounts WHERE purposeId in(:purposeId)AND classification=4 AND isActiveForPosting=true ");
+                        " FROM CChartOfAccounts WHERE purposeid in(:purposeId)AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
@@ -392,7 +401,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         query = persistenceService
                 .getSession()
                 .createQuery(
-                        " from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeId in (:purposeId) ) AND classification=4 AND isActiveForPosting=true ");
+                        " from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId) ) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
@@ -400,7 +409,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         query = persistenceService
                 .getSession()
                 .createQuery(
-                        " from CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeId in (:purposeId))) AND classification=4 AND isActiveForPosting=true");
+                        " from CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId))) AND classification=4 AND isActiveForPosting=true");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
@@ -408,7 +417,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         query = persistenceService
                 .getSession()
                 .createQuery(
-                        " from CChartOfAccounts where   parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeId in (:purposeId)))) AND classification=4 AND isActiveForPosting=true ");
+                        " from CChartOfAccounts where   parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId)))) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
@@ -562,9 +571,9 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
     }
 
     /**
-     * @description - Get list of Chartofaccount objects for a list of purpose ids
+     * @description - Get list of Chartofaccount objects for a list of purpose names
      * @param purposeNames - list of purpose names.
-     * @return listChartOfAcc - list of chartofaccount objects for the given list of purpose id
+     * @return listChartOfAcc - list of chartofaccount objects for the given list of purpose names
      * @throws ValidationException
      */
     public List<CChartOfAccounts> getAccountCodeByListOfPurposeName(final String[] purposeNames) throws ValidationException {
@@ -607,4 +616,12 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         return listChartOfAcc;
     }
 
+    public List<CChartOfAccounts> getAccountCodesListForBankEntries() {
+
+        return getCurrentSession()
+                .createQuery(
+                        "select acc from CChartOfAccounts acc where acc.isActiveForPosting=true and (acc.glcode like '1%' or acc.glcode like '2%') and acc.id not in (select cd.glCodeId from CChartOfAccountDetail cd) order by acc.glcode")
+                .setCacheable(true).list();
+
+    }
 }

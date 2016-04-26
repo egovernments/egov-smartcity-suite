@@ -34,68 +34,70 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-
-
 public class WaterChargesReceiptInfo {
 
-	private String consumerNumber;
-	
-	private Integer bookNumber;
-	
-	private BigInteger receiptNumber;
-	
-	private Date receiptDate;
-	private Date fromDate;
-	private Date toDate;
-	private BigDecimal receiptAmount;
-	
-	public String getConsumerNumber() {
-		return consumerNumber;
-	}
-	public void setConsumerNumber(String consumerNumber) {
-		this.consumerNumber = consumerNumber;
-	}
-	public Date getReceiptDate() {
-		return receiptDate;
-	}
-	
-	public Integer getBookNumber() {
-		return bookNumber;
-	}
-	public void setBookNumber(Integer bookNumber) {
-		this.bookNumber = bookNumber;
-	}
-	public BigInteger getReceiptNumber() {
-		return receiptNumber;
-	}
-	public void setReceiptNumber(BigInteger receiptNumber) {
-		this.receiptNumber = receiptNumber;
-	}
-	public void setReceiptDate(Date receiptDate) {
-		this.receiptDate = receiptDate;
-	}
-	public Date getFromDate() {
-		return fromDate;
-	}
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-	public Date getToDate() {
-		return toDate;
-	}
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-	public BigDecimal getReceiptAmount() {
-		return receiptAmount;
-	}
-	public void setReceiptAmount(BigDecimal receiptAmount) {
-		this.receiptAmount = receiptAmount;
-	}
-    
+    private String consumerNumber;
+    private Integer bookNumber;
+    private BigInteger receiptNumber;
+    private Date receiptDate;
+    private Date fromDate;
+    private Date toDate;
+    private BigDecimal receiptAmount;
+
+    public String getConsumerNumber() {
+        return consumerNumber;
+    }
+
+    public void setConsumerNumber(final String consumerNumber) {
+        this.consumerNumber = consumerNumber;
+    }
+
+    public Date getReceiptDate() {
+        return receiptDate;
+    }
+
+    public Integer getBookNumber() {
+        return bookNumber;
+    }
+
+    public void setBookNumber(final Integer bookNumber) {
+        this.bookNumber = bookNumber;
+    }
+
+    public BigInteger getReceiptNumber() {
+        return receiptNumber;
+    }
+
+    public void setReceiptNumber(final BigInteger receiptNumber) {
+        this.receiptNumber = receiptNumber;
+    }
+
+    public void setReceiptDate(final Date receiptDate) {
+        this.receiptDate = receiptDate;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public BigDecimal getReceiptAmount() {
+        return receiptAmount;
+    }
+
+    public void setReceiptAmount(final BigDecimal receiptAmount) {
+        this.receiptAmount = receiptAmount;
+    }
 
 }
-
-
-
-

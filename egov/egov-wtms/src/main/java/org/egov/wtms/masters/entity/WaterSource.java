@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -49,11 +48,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_water_source")
+@Unique(id = "id", tableName = "egwtr_water_source", columnName = { "code", "watersourcetype" }, fields = { "code",
+        "waterSourceType" }, enableDfltMsg = true)
 @SequenceGenerator(name = WaterSource.SEQ_WATERSOURCE, sequenceName = WaterSource.SEQ_WATERSOURCE, allocationSize = 1)
 public class WaterSource extends AbstractAuditable {
 
@@ -67,16 +69,13 @@ public class WaterSource extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 1, max = 25)
-    @Column(name = "code", unique = true)
     private String code;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 100)
-    @Column(name = "watersourcetype", unique = true)
     private String waterSourceType;
 
-    @NotNull
     @SafeHtml
     private String description;
 

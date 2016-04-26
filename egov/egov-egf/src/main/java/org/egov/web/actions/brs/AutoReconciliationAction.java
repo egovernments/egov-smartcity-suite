@@ -47,8 +47,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -56,9 +58,11 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.Bankreconciliation;
+import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -128,6 +132,11 @@ public class AutoReconciliationAction extends BaseFormAction {
     private BigDecimal bankBookBalance;
     @Autowired
     private AutoReconcileHelper autoReconcileHelper;
+    
+    @Autowired
+    private BankHibernateDAO bankHibernateDAO;
+    
+    
 
     public BigDecimal getBankBookBalance() {
         return autoReconcileHelper.getBankBookBalance();
@@ -166,9 +175,8 @@ public class AutoReconciliationAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     public void prepare()
     {
-        final List bankList = persistenceService
-                .findAllBy("select   b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and b.isactive=true order by upper(b.name)");
-        dropdownData.put("bankList", bankList);
+    	List<Bank> allBankHavingAccounts = bankHibernateDAO.getAllBankHavingBranchAndAccounts(); 
+        dropdownData.put("bankList", allBankHavingAccounts);  
         dropdownData.put("branchList", branchList);
         dropdownData.put("accountList", accountList);
         if (branchId != null)

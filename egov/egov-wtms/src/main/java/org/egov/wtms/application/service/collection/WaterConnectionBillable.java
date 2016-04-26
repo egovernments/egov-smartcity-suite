@@ -55,7 +55,6 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
@@ -97,8 +96,6 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
-    @Autowired
-    private UserService userService;
     @Autowired
     private EgBillDao egBillDAO;
     @Autowired
@@ -144,11 +141,8 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public EgBillType getBillType() {
         if (billType == null)
-            if (getUserId() != null && !getUserId().equals("")) {
-                final String loginUser = userService.getUserById(getUserId()).getName();
-                if (!loginUser.equals(WaterTaxConstants.CITIZENUSER))
-                    billType = egBillDAO.getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL);
-            }
+            billType = egBillDAO.getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO);
+           
         return billType;
     }
 

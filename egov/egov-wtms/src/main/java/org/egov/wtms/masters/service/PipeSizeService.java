@@ -69,6 +69,8 @@ public class PipeSizeService {
 
     @Transactional
     public PipeSize createPipeSize(final PipeSize pipeSize) {
+        final double pipeSizeininch = pipeSize.getSizeInMilimeter() * 0.039370;
+        pipeSize.setSizeInInch(Math.round(pipeSizeininch * 1000.0) / 1000.0);
         pipeSize.setActive(true);
         return pipeSizeRepository.save(pipeSize);
     }
@@ -79,7 +81,7 @@ public class PipeSizeService {
     }
 
     public List<PipeSize> findAll() {
-        return pipeSizeRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
+        return pipeSizeRepository.findAll(new Sort(Sort.Direction.DESC, "code"));
     }
 
     public PipeSize load(final Long id) {
@@ -114,6 +116,10 @@ public class PipeSizeService {
     public PipeSize findByCodeAndPipeSizeInmm(final String code, final double sizeInMilimeter) {
 
         return pipeSizeRepository.findByCodeAndSizeInMilimeter(code, sizeInMilimeter);
+    }
+
+    public PipeSize findByCodeIgnoreCase(final String code) {
+        return pipeSizeRepository.findByCodeIgnoreCase(code);
     }
 
     public List<PipeSize> getPipeSizeListForRest() {

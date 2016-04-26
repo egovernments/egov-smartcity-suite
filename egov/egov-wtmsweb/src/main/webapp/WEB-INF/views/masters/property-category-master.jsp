@@ -49,33 +49,37 @@
 		<div class="panel-heading"></div>
 			<div class="panel-body custom-form">
 				<c:if test="${not empty message}">
-                   <div class="alert alert-success" role="alert">${message}</div>
+                   <div role="alert">${message}</div>
                 </c:if>
+                <spring:hasBindErrors name="propertyCategory">
+        		<form:errors path="propertyType" cssClass="add-margin error-msg" />
+          		<%-- <form:errors path="connectionCategory" cssClass="add-margin error-msg" /> --%>
+        	</spring:hasBindErrors>
 			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" /><span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="propertyType" data-first-option="false" id="propertyType" cssClass="form-control" required="required">
 						<form:option value=""><spring:message code="lbl.select" /></form:option>
 						<form:options items="${propertyType}" itemValue="id" itemLabel="name" />
 					</form:select>
-					<form:errors path="propertyType" cssClass="add-margin error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.category.type" /><span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.category.type" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="connectionCategory" data-first-option="false" id="categoryType" cssClass="form-control" required="required">
 						<form:option value=""><spring:message code="lbl.select" /></form:option>
 						<form:options items="${connectionCategory}" itemValue="id" itemLabel="name" />
 					</form:select>
-					<form:errors path="connectionCategory" cssClass="add-margin error-msg" />
 				</div>
 			</div>
-			<div class="form-group" id="statusdiv">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
-					<div class="col-sm-3 add-margin" >
-						<form:checkbox id="activeid" path="active" value ="active" />
-						<form:errors path="active" />
-					</div>
-			</div>	
+			<div class="form-group">
+				<div class="form-group" id="statusdiv">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
+						<div class="col-sm-3 add-margin" >
+							<form:checkbox id="activeid" path="active" value ="active" />
+							<form:errors path="active" />
+						</div>
+				</div>	
+			</div>
 				<input type="hidden" name="propertyCategory" value="${propertyCategory.id}" />
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>	
 			<div class="form-group text-center">

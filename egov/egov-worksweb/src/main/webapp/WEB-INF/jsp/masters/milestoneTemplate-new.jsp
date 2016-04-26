@@ -41,7 +41,7 @@
 
 <html>
 <title><s:text name='page.title.milestone.template'/></title>
-<body onload="populateDesignation();" class="yui-skin-sam">
+<body class="yui-skin-sam">
 
 <script src="<egov:url path='resources/js/works.js'/>"></script>
 <script>
@@ -49,7 +49,7 @@
 function enableFieldsForModify(){
 	if(validateModfiy()){
     	id=dom.get('id').value;
-    	document.milestoneTemplateForm.action='${pageContext.request.contextPath}/masters/milestoneTemplate!edit.action?id='+id+'&mode=modify&sourcepage=search';
+    	document.milestoneTemplateForm.action='${pageContext.request.contextPath}/masters/milestoneTemplate-edit.action?id='+id+'&mode=modify&sourcepage=search';
     	document.milestoneTemplateForm.submit();
     }
     else{
@@ -132,16 +132,6 @@ function validateMilestoneTemplateFormAndSubmit() {
     return true;
 }
 
-function validateCancel() {
-	var msg='<s:text name="milestone.temmplate.cancel.confirm"/>';
-	var code='<s:property value="model.code"/>'; 
-	if(!confirmCancel(msg,code)) {
-		return false;
-	}
-	else {
-		return true;
-	}
-}
 
 function trim(str) {
         return str.replace(/^\s+|\s+$/g,"");
@@ -187,76 +177,29 @@ function validate(obj,text){
         	
         </div>
     </s:if>
-    <s:form theme="simple" name="milestoneTemplateForm" cssClass="form-horizontal form-groups-bordered">
+    <s:form action="milestoneTemplate-save" theme="simple" name="milestoneTemplateForm" cssClass="form-horizontal form-groups-bordered" >
     <s:token/>
 <s:push value="model">
 
 	
-<s:if test="%{model.id!=null}">
 	<s:hidden name="id" value="%{id}" id="id"/>
-    <s:hidden name="mode" value="%{mode}" id="mode"/>
-</s:if> 
-<s:else>
-    <s:hidden name="id" value="%{null}" id="mode" />
-</s:else>
-<s:hidden name="sourcepage" value="%{sourcepage}" id="sourcepage"/>
-<s:hidden name="scriptName" id="scriptName" value="MilestoneTemplate"></s:hidden>
-
+    <s:hidden name="mode" id="mode"/>
+    <s:hidden name="sourcepage" value="%{sourcepage}" id="sourcepage"/>
+	
 <%@ include file='milestoneTemplate-header.jsp'%>
 <%@ include file='milestoneTemplateActivity.jsp'%>
-<div id="manual_workflow">
-		<%@ include file="../workflow/workflow.jsp"%> 	 
-	</div>
 
  <div class="row">
 		<div class="col-xs-12 text-center buttonholdersearch">
 			
 			<input type="hidden" name="actionName" id="actionName" />
-		<s:if test="%{mode=='modify' && (model.egwStatus.code=='APPROVED' || model.egwStatus.code=='NEW')}">
-			<!-- egov authorization tag-->
-			<egov-authz:authorize actionName="createMilestoneTemplate">
-				<s:submit type="submit" cssClass="btn btn-primary"
-					value="Save" id="save" name="save"
-					method="save"
-					onclick="document.milestoneTemplateForm.actionName.value='save';return validate('noncancel','save');" />
-				<s:submit type="submit" cssClass="btn btn-primary"
-					value="Save & Submit" id="submit_for_approval" name="submit_for_approval"
-					method="save"
-					onclick="document.milestoneTemplateForm.actionName.value='submit_for_approval';return validate('noncancel','submit_for_approval');" />
-			</egov-authz:authorize>
-		</s:if>
-		<s:elseif test="%{(mode!='view') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
-				<s:iterator value="%{validActions}">
-					<s:if test="%{description!=''}">
-						<s:if test="%{description=='CANCEL'}">
-							<s:submit type="submit" cssClass="btn btn-primary" value="%{description}" id="%{name}" 
-								name="%{name}" method="cancel" 
-								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('cancel','%{name}');"/>
-						</s:if>								
-						<s:elseif test="%{description=='REJECT'}">
-							<s:submit type="submit" cssClass="btn btn-primary" value="%{description}" id="%{name}" 
-								name="%{name}" method="reject" 
-								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('reject','%{name}');"/>
-						</s:elseif>								
-						<s:else>
-							<s:submit type="submit" cssClass="btn btn-primary"
-								value="%{description}" id="%{name}" name="%{name}"
-								method="save"
-								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('noncancel','%{name}');" />
-						</s:else>
-				 	</s:if>
-				</s:iterator>
-			</s:elseif>
-	 		<s:if test="%{mode=='view' && sourcepage=='search' && model.egwStatus.code=='APPROVED'}">
-	 			<egov-authz:authorize actionName="createMilestoneTemplate">
-					<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
-				</egov-authz:authorize>
-			</s:if>  	
+			<s:hidden type="mode" id="mode" />
+				
+			<s:submit type="submit" cssClass="btn btn-primary" value="Save"	id="saveButton" name="button" method="save" />&nbsp;
 			<s:if test="%{model.id==null}" >
 				<input type="button" class="btn btn-default" value="Clear" id="clear" name="clear" onclick="this.form.reset();">&nbsp;
 			</s:if>
 			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
-		
 		</div>
  </div>
 
@@ -267,27 +210,6 @@ function validate(obj,text){
 		disableSelect();
 		enableButtons();
   </s:if>
-  
-  	<s:if test="%{sourcepage=='inbox' && (model.egwStatus.code=='CREATED'||model.egwStatus.code =='RESUBMITTED')}">
-	      hideElements(['workflowDetials']);
-	      showElements(['approverCommentsRow']);
-	      disableSelect();
-	      enableButtons();
-	</s:if>
-	<s:if test="%{sourcepage=='inbox' && (model.egwStatus.code=='NEW' ||model.egwStatus.code=='REJECTED') }">
-	      showElements(['approverCommentsRow']);
-	 </s:if>
-	 <s:if test="%{sourcepage!='inbox' && model.id!=null && model.egwStatus.code!='NEW'}">
-	 	hideElements(['workflowDetials']);
-	    hideElements(['approverCommentsRow']);
-	 </s:if>
-	 <s:if test="%{model.id==null || model.egwStatus.code=='NEW'}">
-	 	showElements(['approverCommentsRow']);
-	 </s:if>
-	 <s:if test="%{mode=='modify' && (model.egwStatus.code=='NEW' || model.egwStatus.code=='APPROVED')}">
-	 	showElements(['workflowDetials']);
-	 	showElements(['approverCommentsRow']);
-	 </s:if>
 </script>           
 
 </body>

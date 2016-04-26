@@ -39,6 +39,18 @@
  */
 package org.egov.works.web.actions.measurementbook;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -79,21 +91,8 @@ import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.services.impl.WorkOrderServiceImpl;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Result(name = MeasurementBookAction.NEW, location = "measurementBook-new.jsp")
@@ -167,15 +166,11 @@ public class MeasurementBookAction extends BaseFormAction {
     private String dispDesignation;
     private Long estimateId;
     private PersonalInformationService personalInformationService;
-    private EisUtilService eisService;
-
     private static final String ACTION_NAME = "actionName";
     private String activitySearchMode;
     private boolean isLegacyMB;
     private static final String NON_TENDERED = "nonTendered";
     private static final String LUMP_SUM = "lumpSum";
-    private static final String SEARCH = "search";
-    private static final String INBOX = "inbox";
     private String cancellationReason;
     private String cancelRemarks;
     private Long mbId;
@@ -204,11 +199,8 @@ public class MeasurementBookAction extends BaseFormAction {
         ajaxMBAction.setPersonalInformationService(personalInformationService);
         if (id != null) {
             mbHeader = measurementBookService.findById(id, false);
-            if (mbHeader != null && mbHeader.getMbPreparedBy() != null) {
-                mbPreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
-                        mbHeader.getMbPreparedBy().getIdPersonalInformation());
+            if (mbHeader != null)
                 workOrderEstimateList.add(mbHeader.getWorkOrderEstimate());
-            }
         } else if (workOrderId != null) {
             workOrderEstimateList.addAll(getPersistenceService().findAllByNamedQuery(
                     "getWorkOrderEstimateByWorkOrderId", workOrderId));
@@ -222,8 +214,6 @@ public class MeasurementBookAction extends BaseFormAction {
 
         super.prepare();
         setupDropdownDataExcluding("workOrder");
-        populatePreparedByList(ajaxMBAction, mbHeader.getWorkOrder() != null);
-        setMBPreparedBy(getIdPersonalInformationFromParams());
         addDropdownData("executingDepartmentList", getPersistenceService().findAllBy("from DepartmentImpl"));
         if (getLatestAssignmentForCurrentLoginUser() != null)
             departmentId = getLatestAssignmentForCurrentLoginUser().getDepartment().getId();
@@ -280,82 +270,6 @@ public class MeasurementBookAction extends BaseFormAction {
 
     protected MBHeader calculateMBdetails(final MBHeader mbHeader, final boolean isPersistedObject) {
         return measurementBookService.calculateMBDetails(mbHeader, isPersistedObject);
-    }
-
-    protected void populatePreparedByList(final AjaxMeasurementBookAction ajaxMBAction,
-            final boolean executingDeptPopulated) {
-        if (executingDeptPopulated) {
-            if (mode != null && mode.equalsIgnoreCase(SEARCH)) {
-                ajaxMBAction.setExecutingDepartment(workOrderEstimateList.get(0).getEstimate().getExecutingDepartment()
-                        .getId());
-                ajaxMBAction.usersInExecutingDepartment();
-                addDropdownData("preparedByList", ajaxMBAction.getUsersInExecutingDepartment());
-            } else if (sourcepage != null && sourcepage.equalsIgnoreCase(INBOX) && !canUserModify()
-                    && !(mbHeader != null && mbHeader.getEgwStatus().getCode().equalsIgnoreCase("REJECTED"))) {
-                ajaxMBAction.setExecutingDepartment(workOrderEstimateList.get(0).getEstimate().getExecutingDepartment()
-                        .getId());
-                ajaxMBAction.usersInExecutingDepartment();
-                addDropdownData("preparedByList", ajaxMBAction.getUsersInExecutingDepartment());
-            } else if (id == null || mbHeader == null || mbHeader.getId() == null || canUserModify()
-                    || mbHeader != null && mbHeader.getEgwStatus().getCode().equalsIgnoreCase("REJECTED")) {
-                final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
-                ajaxEstimateAction.setPersistenceService(getPersistenceService());
-                ajaxEstimateAction.setAssignmentService(assignmentService);
-                ajaxEstimateAction.setEisService(eisService);
-                ajaxEstimateAction.setExecutingDepartment(workOrderEstimateList.get(0).getEstimate()
-                        .getExecutingDepartment().getId());
-                String loggedInUserEmployeeCode = null;
-                if (mbHeader != null && mbHeader.getMbPreparedBy() != null)
-                    loggedInUserEmployeeCode = mbHeader.getMbPreparedBy().getEmployeeCode();
-                else {
-                    final Assignment latestAssignment = getLatestAssignmentForCurrentLoginUser();
-                    if (latestAssignment != null)
-                        loggedInUserEmployeeCode = latestAssignment.getEmployee().getCode();
-                }
-                ajaxEstimateAction.setEmployeeCode(loggedInUserEmployeeCode);
-                ajaxEstimateAction.usersInExecutingDepartment();
-                if (ajaxEstimateAction.getUsersInExecutingDepartment() != null
-                        && ajaxEstimateAction.getUsersInExecutingDepartment().size() == 1) {
-                    // TODO: Please check the below 2 lines -- edited by Vaibhav
-                    defaultPreparedById = ((List<EmployeeView>) ajaxEstimateAction.getUsersInExecutingDepartment())
-                            .get(0).getId().intValue();
-                    defaultDesgination = ((List<EmployeeView>) ajaxEstimateAction.getUsersInExecutingDepartment())
-                            .get(0).getDepartment().getName();
-                }
-                addDropdownData("preparedByList", ajaxEstimateAction.getUsersInExecutingDepartment());
-            } else {
-                ajaxMBAction.setExecutingDepartment(workOrderEstimateList.get(0).getEstimate().getExecutingDepartment()
-                        .getId());
-                ajaxMBAction.usersInExecutingDepartment();
-                addDropdownData("preparedByList", ajaxMBAction.getUsersInExecutingDepartment());
-            }
-        } else
-            addDropdownData("preparedByList", Collections.emptyList());
-    }
-
-    protected Integer getIdPersonalInformationFromParams() {
-        final String[] ids = parameters.get("mbPreparedBy");
-        if (ids != null && ids.length > 0) {
-            parameters.remove("mbPreparedBy");
-            final String id = ids[0];
-            if (id != null && id.length() > 0)
-                return Integer.parseInt(id);
-        }
-        return null;
-    }
-
-    protected void setMBPreparedBy(final Integer idPersonalInformation) {
-        if (validMBPreparedBy(idPersonalInformation)) {
-            mbHeader.setMbPreparedBy(employeeServiceOld.getEmloyeeById(idPersonalInformation));
-            mbPreparedByView = (EmployeeView) getPersistenceService().find("from EmployeeView where id = ?",
-                    idPersonalInformation);
-        }
-    }
-
-    protected boolean validMBPreparedBy(final Integer idPersonalInformation) {
-        if (idPersonalInformation != null && idPersonalInformation > 0)
-            return true;
-        return false;
     }
 
     public String loadSerachForActivity() {
@@ -1254,7 +1168,6 @@ public class MeasurementBookAction extends BaseFormAction {
     }
 
     public void setEisService(final EisUtilService eisService) {
-        this.eisService = eisService;
     }
 
     public Integer getDefaultPreparedById() {

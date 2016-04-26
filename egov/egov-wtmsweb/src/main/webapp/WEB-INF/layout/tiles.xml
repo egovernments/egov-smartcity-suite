@@ -290,5 +290,29 @@
         <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-list.jsp"/>
     </definition>
+     <definition name="generateBill-Report" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/generatebill-report.jsp"/>
+    </definition>
+    <definition name="water-source-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master.jsp"/>
+    </definition>
+    <definition name="water-source-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master-list.jsp"/>
+    </definition>
+     <definition name="donation-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-view.jsp"/>
+    </definition>
+     <definition name="document-name-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master-list.jsp"/>
+    </definition>
+   <definition name="application-process-time-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master-list"/>
+    </definition>
     
 </tiles-definitions>

@@ -11,18 +11,39 @@ import org.egov.works.models.masters.ScheduleCategory;
 
 public class ScheduleCategoryService extends PersistenceService<ScheduleCategory, Long> {
 
-	@PersistenceContext
+    @PersistenceContext
     private EntityManager entityManager;
-	
-	public ScheduleCategory getScheduleCategoryById(Long scheduleCategoryId) {
-		ScheduleCategory scheduleCategory = (ScheduleCategory) entityManager.find(ScheduleCategory.class,
-				scheduleCategoryId);
-		return scheduleCategory;
-	}
 
-	public List<ScheduleCategory> getAllScheduleCategories() {
-		final Query query = entityManager.createQuery("from ScheduleCategory sc");
-		List<ScheduleCategory> scheduleCategoryList = (List<ScheduleCategory>) query.getResultList();
-		return scheduleCategoryList;
-	}
+    public ScheduleCategory getScheduleCategoryById(final Long scheduleCategoryId) {
+        final ScheduleCategory scheduleCategory = entityManager.find(ScheduleCategory.class,
+                scheduleCategoryId);
+        return scheduleCategory;
+    }
+
+    public List<ScheduleCategory> getAllScheduleCategories() {
+        final Query query = entityManager.createQuery("from ScheduleCategory sc");
+        final List<ScheduleCategory> scheduleCategoryList = query.getResultList();
+        return scheduleCategoryList;
+    }
+
+    public boolean checkForSOR(final Long id) {
+        final Query query = entityManager.createQuery(" from ScheduleOfRate rate where sor_category_id  = "
+                + "(select id from ScheduleCategory  where id = :id)");
+        query.setParameter("id", Long.valueOf(id));
+        final List retList = query.getResultList();
+        if (retList != null && !retList.isEmpty())
+            return false;
+        else
+            return true;
+    }
+
+    public boolean checkForScheduleCategory(final String code) {
+        final Query query = entityManager.createQuery(" from ScheduleCategory  where code = :code");
+        query.setParameter("code", code);
+        final List retList = query.getResultList();
+        if (retList != null && !retList.isEmpty())
+            return true;
+        else
+            return false;
+    }
 }

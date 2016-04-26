@@ -51,11 +51,14 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_document_names")
+@CompositeUnique(fields = { "applicationType",
+        "documentName" }, enableDfltMsg = true, message = "{documentnames.validity.exist}")
 @SequenceGenerator(name = DocumentNames.SEQ_DOCUMENTNAMES, sequenceName = DocumentNames.SEQ_DOCUMENTNAMES, allocationSize = 1)
 public class DocumentNames extends AbstractAuditable {
 

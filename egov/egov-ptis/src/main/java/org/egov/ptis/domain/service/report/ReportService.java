@@ -293,6 +293,7 @@ public class ReportService {
         DailyCollectionReportResult result = null;
         BigDecimal arrLibCess = null;
         BigDecimal currLibCess = null;
+        BigDecimal rebateAmount = null;
 
         for (Object objects : objectList) {
             final Object[] object = (Object[]) objects;
@@ -323,8 +324,10 @@ public class ReportService {
             result.setCurrentLibCess(collectionIndex.getCurrentCess());
             arrLibCess = collectionIndex.getCurrentCess() != null ? collectionIndex.getCurrentCess() : BigDecimal.ZERO;
             currLibCess = collectionIndex.getArrearCess() != null ? collectionIndex.getArrearCess() : BigDecimal.ZERO;
+            rebateAmount = collectionIndex.getReductionAmount() != null ? collectionIndex.getReductionAmount() : BigDecimal.ZERO;
             result.setTotalLibCess(arrLibCess.add(currLibCess));
             result.setTotalPenalty(collectionIndex.getLatePaymentCharges());
+            result.setTotalRebate(rebateAmount);
             result.setFromInstallment(collectionIndex.getInstallmentFrom());
             result.setToInstallment(collectionIndex.getInstallmentTo());
             dailyCollectionReportList.add(result);

@@ -58,6 +58,9 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     @Query("select complaint from Complaint complaint where createdBy =:createdBy order by createddate DESC")
     Page<Complaint> findByMyComplaint(@Param("createdBy") User createdBy, Pageable pageable);
     
+    @Query("select complaint from Complaint complaint where createdBy =:createdBy and status.name in (:statuses) order by createddate DESC")
+    Page<Complaint> findMyComplaintyByStatus(@Param("createdBy") User createdBy, @Param("statuses") String[] statuses, Pageable pageable);
+    
     @Query("select complaint from Complaint complaint where createdBy <>:createdBy order by createddate DESC")
     Page<Complaint> findByLatestComplaint(@Param("createdBy") User createdBy, Pageable pageable);
     

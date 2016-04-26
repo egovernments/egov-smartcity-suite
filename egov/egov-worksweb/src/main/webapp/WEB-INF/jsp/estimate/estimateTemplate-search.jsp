@@ -80,12 +80,10 @@ function bodyOnLoad(){
 <body onload="bodyOnLoad()" class="yui-skin-sam">
 
 <script src="<egov:url path='resources/js/works.js'/>"></script>
-
    
 <div class="new-page-header">
-	Search Estimate Template
+	<s:text name="estimate.search.estimate.template"/>
 </div>   
- 
     <s:if test="%{hasErrors()}">
         <div id="errorstyle" class="alert alert-danger" >
           <s:actionerror/>
@@ -104,18 +102,15 @@ function bodyOnLoad(){
   <s:hidden name="typeOfWork" id="typeOfWork" />
   <s:hidden name="subTypeOfWork" id="subTypeOfWork" />
   
-  <div class="alert alert-danger" id="estimateTemplate_error"	style="display: none;"></div>
-  
-  
-<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+ <div class="alert alert-danger" id="estimateTemplate_error"	style="display: none;"></div>
+ <div class="panel panel-primary" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">
 		<div class="panel-title">
 		   <s:text name='title.search.criteria' />
 		</div>
 	</div>
 	<div class="panel-body">
-	   
-	  <div class="form-group">
+	  	<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <s:text name="estimate.work.type" /><span class="mandatory"></span>
 			</label>
@@ -129,7 +124,7 @@ function bodyOnLoad(){
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
 			</div>
-		</div>
+	  	</div>
 		
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
@@ -157,10 +152,9 @@ function bodyOnLoad(){
 			    <s:text name="estimate.template.search.status" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="0"  list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
+				<s:select headerKey="0" list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
 			</div>
 		</div>
-		
 	</div>
 </div>
   
@@ -172,14 +166,12 @@ function bodyOnLoad(){
 	</div>
 </div>
 
-
 <div class="row report-section">
    <s:if test="%{searchResult.fullListSize != 0}">
 		<div class="col-md-12 table-header text-left">
-		  Search Result
+		  <s:text name="searchEst.result"/>
 		</div>
    </s:if>	
-   			
    <div class="col-md-12 report-table-container">
 	   <%@ include file='estimateTemplate-searchResults.jsp'%> 
    </div>

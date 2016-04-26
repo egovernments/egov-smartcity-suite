@@ -75,6 +75,7 @@ public class DailyCollectionReportAdaptor implements JsonSerializer<DailyCollect
         jsonObject.addProperty("currLibCess", null != dailyCollectionReportResult.getCurrentLibCess() ? dailyCollectionReportResult.getCurrentLibCess().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO); 
         jsonObject.addProperty("totalLibCess", null != dailyCollectionReportResult.getTotalLibCess() ? dailyCollectionReportResult.getTotalLibCess().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
         jsonObject.addProperty("totalCollection", dailyCollectionReportResult.getTotalCollection().setScale(2, BigDecimal.ROUND_HALF_UP));
+        jsonObject.addProperty("totalRebate", dailyCollectionReportResult.getTotalRebate().setScale(2, BigDecimal.ROUND_HALF_UP));
         jsonObject.addProperty("ward",dailyCollectionReportResult.getWard());
         return jsonObject;
     }

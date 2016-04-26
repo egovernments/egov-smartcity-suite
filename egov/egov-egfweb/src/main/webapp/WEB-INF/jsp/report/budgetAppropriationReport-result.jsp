@@ -49,10 +49,8 @@
 					<div align="center">
 						<br />
 						<tr>
-							<td colspan="9"><strong><div
-										class="subheadsmallnew">
-										<strong><s:property value="heading" /></strong>
-									</div></td>
+							<th class="bluebgheadtd" width="100%" colspan="9"><strong
+								style="font-size: 15px;"> <s:property value="heading" /></strong></th>
 						</tr>
 						<tr>
 							<td colspan="9">
@@ -157,15 +155,15 @@
 						<div class="buttonbottom">
 							<s:text name="report.export.options" />
 							: <a
-								href='/EGF/report/budgetAppropriationReport!ajaxGenerateReportXls.action?showDropDown=false&model.budgetDetail.executingDepartment.id=<s:property value="model.budgetDetail.executingDepartment.id"/>&model.budgetDetail.fund.id=<s:property value="model.budgetDetail.fund.id"/>&model.budgetDetail.function.id=<s:property value="model.budgetDetail.function.id"/>&model.budgetDetail.budget.id=<s:property value="model.budgetDetail.budget.id"/>&fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&budgetName=<s:property value="budgetName"/>&deptName=<s:property value="deptName"/>&fundName=<s:property value="fundName"/>&functionName=<s:property value="functionName"/>'>
+								href='/EGF/report/budgetAppropriationReport-ajaxGenerateReportXls.action?showDropDown=false&model.budgetDetail.executingDepartment.id=<s:property value="model.budgetDetail.executingDepartment.id"/>&model.budgetDetail.fund.id=<s:property value="model.budgetDetail.fund.id"/>&model.budgetDetail.function.id=<s:property value="model.budgetDetail.function.id"/>&model.budgetDetail.budget.id=<s:property value="model.budgetDetail.budget.id"/>&fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&budgetName=<s:property value="budgetName"/>&deptName=<s:property value="deptName"/>&fundName=<s:property value="fundName"/>&functionName=<s:property value="functionName"/>'>
 								Excel</a> | <a
-								href='/EGF/report/budgetAppropriationReport!ajaxGenerateReportPdf.action?showDropDown=false&model.budgetDetail.executingDepartment.id=<s:property value="model.budgetDetail.executingDepartment.id"/>&model.budgetDetail.fund.id=<s:property value="model.budgetDetail.fund.id"/>&model.budgetDetail.function.id=<s:property value="model.budgetDetail.function.id"/>&model.budgetDetail.budget.id=<s:property value="model.budgetDetail.budget.id"/>&fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&budgetName=<s:property value="budgetName"/>&deptName=<s:property value="deptName"/>&fundName=<s:property value="fundName"/>&functionName=<s:property value="functionName"/>'>PDF</a>
+								href='/EGF/report/budgetAppropriationReport-ajaxGenerateReportPdf.action?showDropDown=false&model.budgetDetail.executingDepartment.id=<s:property value="model.budgetDetail.executingDepartment.id"/>&model.budgetDetail.fund.id=<s:property value="model.budgetDetail.fund.id"/>&model.budgetDetail.function.id=<s:property value="model.budgetDetail.function.id"/>&model.budgetDetail.budget.id=<s:property value="model.budgetDetail.budget.id"/>&fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&budgetName=<s:property value="budgetName"/>&deptName=<s:property value="deptName"/>&fundName=<s:property value="fundName"/>&functionName=<s:property value="functionName"/>'>PDF</a>
 						</div>
 					</div>
 					</div>
 					</div> </s:if> <s:else>
 						<tr>
-							<td colspan="7" align="center"><font color="red">No
-									record Found.</font></td>
+							<td colspan="7"><div style="color: red" align="center">No
+									record Found.</div></td>
 						</tr>
 					</s:else>

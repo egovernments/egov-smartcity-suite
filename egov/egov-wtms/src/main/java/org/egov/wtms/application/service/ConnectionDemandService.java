@@ -272,7 +272,7 @@ public class ConnectionDemandService {
                 if (WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount
-                    .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
+                            .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
                 else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
@@ -496,7 +496,8 @@ public class ConnectionDemandService {
             demandObj.setEgInstallmentMaster(installment);
             demandObj.getEgDemandDetails().addAll(dmdDetailSet);
             demandObj.setModifiedDate(new Date());
-            if (waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) == null) {
+            if (demandObj.getId() != null
+                    && waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) == null) {
                 final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
                 waterdemandConnection.setDemand(demandObj);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
@@ -533,8 +534,8 @@ public class ConnectionDemandService {
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
-            && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) >= 0
-            && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
+                    && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) >= 0
+                    && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
                 demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
                 demandObj.setAmtCollected(getTotalCollectedAmountForDemand(demanddetailBean,
                         demandObj.getAmtCollected()));
@@ -546,14 +547,14 @@ public class ConnectionDemandService {
         final int listlength = demandObj.getEgDemandDetails().size() - 1;
         final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
                 WaterTaxConstants.PROPERTY_MODULE_NAME, waterConnectionDetails.getDemandDetailBeanList().get(listlength)
-                .getInstallment());
+                        .getInstallment());
         demandObj.setEgInstallmentMaster(installObj);
         demandObj.setModifiedDate(new Date());
         if (demandObj.getIsHistory() == null)
             demandObj.setIsHistory("N");
         if (demandObj.getCreateDate() == null)
             demandObj.setCreateDate(new Date());
-        if (waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demandObj) == null) {
+        if (demandObj.getId() == null) {
             final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
             waterdemandConnection.setDemand(demandObj);
             waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
@@ -657,7 +658,8 @@ public class ConnectionDemandService {
             demand.setEgInstallmentMaster(installment);
             demand.getEgDemandDetails().add(demandDetails);
             demand.setModifiedDate(new Date());
-            if (waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand) == null) {
+            if (demand.getId() != null
+                    && waterDemandConnectionService.findByWaterConnectionDetailsAndDemand(waterConnectionDetails, demand) == null) {
                 final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
                 waterdemandConnection.setDemand(demand);
                 waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
@@ -773,9 +775,9 @@ public class ConnectionDemandService {
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null
                 && waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
             if (installment != null
-            && installment.getInstallmentNumber().equals(
-                    waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgInstallmentMaster()
-                    .getInstallmentNumber()))
+                    && installment.getInstallmentNumber().equals(
+                            waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgInstallmentMaster()
+                                    .getInstallmentNumber()))
                 currrentInstallMentExist = true;
         return currrentInstallMentExist;
     }

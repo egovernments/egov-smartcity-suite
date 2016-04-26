@@ -113,8 +113,10 @@ public interface ChartOfAccountsDAO {
     CChartOfAccounts update(CChartOfAccounts entity);
 
     void delete(CChartOfAccounts entity);
-    
+
     public List<CChartOfAccounts> getAccountCodeByPurposeName(String purposeId) throws ApplicationException;
-    
+
     public List<CChartOfAccounts> getAccountCodeByListOfPurposeName(String[] purposeId) throws ValidationException;
+
+    public List<CChartOfAccounts> getAccountCodesListForBankEntries();
 }

@@ -57,10 +57,8 @@
 		 <property name="workOrderDate" type="date">
 			<column name="WORKORDER_DATE" length="7" not-null="true" />
 		</property>	
-		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>					
-	    <many-to-one name="workOrderPreparedBy" class="org.egov.pims.model.PersonalInformation" column="PREPAREDBY" fetch="select" not-null="true" />
-		<many-to-one name="engineerIncharge"  class="org.egov.pims.model.PersonalInformation" column="ENGINEER_INCHARGE1" fetch="select" not-null="true" />			
-	    <many-to-one name="engineerIncharge2" class="org.egov.pims.model.PersonalInformation" column="ENGINEER_INCHARGE2" fetch="select" />
+		<many-to-one name="contractor" class="org.egov.works.models.masters.Contractor" column="CONTRACTOR_ID" not-null="true" fetch="select"/>	
+		<many-to-one name="engineerIncharge"  class="org.egov.eis.entity.Employee" column="ENGINEERINCHARGE" fetch="select" not-null="true" />	
 
 		<property name="emdAmountDeposited" type="double" precision="2"	scale="20" column="EMD_AMOUNT_DEPOSITED" />
 		<property name="securityDeposit" type="double" precision="2" scale="20" column="SECURITY_DEPOSIT" />
@@ -68,25 +66,37 @@
 		<property name="packageNumber" column="WP_NUMBER" />	
 		<property name="tenderNumber" column="TENDER_NUMBER" />	
 		<property name="negotiationNumber" column="NEGOTIATION_NUMBER" />	
-		<property name="contractPeriod" column="CONTRACT_PERIOD" type="double" precision="2" scale="10" />	
+		<property name="contractPeriod" column="CONTRACT_PERIOD" type="integer" />	
 		<property name="defectLiabilityPeriod" type="double" precision="2" scale="10" column="DEFECT_LIABILITY_PERIOD"/>				
 		<property name="workOrderDetails" column="WORK_ORDER_DETAILS" />	
 		<property name="agreementDetails" column="AGREEMENT_DETAILS" />	
 		<property name="paymentTerms" column="PAYMENT_TERMS" />	
-		<many-to-one name="egwStatus" column="STATUS_ID" />
-		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
-			cascade="all">
+		
+		<many-to-one name="egwStatus" column="STATUS_ID" not-null="true"/>
+		<many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
 			<column name="STATE_ID" />
 		</many-to-one>
-		<property name="workOrderAmount" column="WORKORDER_AMOUNT" not-null="true" />			
-       	<property name="documentNumber" type="long">
-			<column name="DOCUMENT_NUMBER" />
-		</property>
+		<property name="workOrderAmount" column="WORKORDER_AMOUNT" not-null="true" />	     
 		<many-to-one name="parent" column="PARENTID" />
+		
 		<property name="approvedDate" type="date">
 			<column name="APPROVED_DATE" length="7"/>
 		</property>
-					
+		<property name="tenderFinalizedPercentage" type="double">
+            <column name="TENDERFINALIZEDPERCENTAGE" precision="20" />
+        </property>    
+		<property name="bankGuarantee" column="BANKGUARANTEE" />
+		
+		<property name="fileNumber" type="string" >
+			<column name="FILENUMBER" length="100" />
+		</property>		
+		<property name="fileDate" type="date">
+			<column name="FILEDATE" length="7"/>
+		</property>		
+		<property name="estimateNumber" type="string" >
+			<column name="ESTIMATENUMBER" length="100" />
+		</property>		
+				
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />	
@@ -101,9 +111,9 @@
 			<key column="WORKORDER_ID" />
 			<one-to-many class="org.egov.works.models.measurementbook.MBHeader"  />
 		</set>		
-		<set name="setStatuses" inverse="true" >
+		<set name="offlineStatuses" inverse="true" >
 			<key column="OBJECT_ID" />
-			<one-to-many class="org.egov.works.models.tender.SetStatus"  />
+			<one-to-many class="org.egov.works.models.tender.OfflineStatus"  />
 		</set>		
 		<set name="revisionWOs" inverse="true" >
 			<key column="PARENTID" />
@@ -129,12 +139,7 @@
         and (detail.validity.endDate is null or detail.validity.endDate >= sysdate )
     ]]> 
      </query>
-    <query name="GET_TENDERRESPONSE">
-    <![CDATA[
-       from TenderResponse tr where tr.negotiationNumber = ? 
-    ]]>   
-    </query>
-    
+      
     <query name="getApprovedContractorsWithWO">
 		<![CDATA[
      	select distinct wo.contractor from WorkOrder wo where wo.parent is null and wo.egwStatus.code='APPROVED'

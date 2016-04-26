@@ -126,7 +126,7 @@ public class AjaxMilestoneAction extends BaseFormAction {
             milestoneexistsOrNot = true;
             if (getPersistenceService()
                     .find("from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code=?  and woe.id=? and woe.workOrder.id in ( select stat.objectId from "
-                            + " SetStatus stat where stat.egwStatus.code= ? and stat.id = (select max(stat1.id) from SetStatus stat1 where stat1.objectType='"
+                            + " OfflineStatus stat where stat.egwStatus.code= ? and stat.id = (select max(stat1.id) from OfflineStatus stat1 where stat1.objectType='"
                             + OBJECT_TYPE + "' and woe.workOrder.id=stat1.objectId))", "APPROVED", workOrderEstimateId,
                             "Work commenced") != null)
                 woWorkCommenced = true;

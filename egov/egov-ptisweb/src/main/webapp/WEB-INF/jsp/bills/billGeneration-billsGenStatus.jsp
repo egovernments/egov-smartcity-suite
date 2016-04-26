@@ -83,9 +83,7 @@
 							<td class="blueborderfortd" width="25%"></td>
 							<td class="blueborderfortd" style="border-left: 1px solid #E9E9E9">
 								<div align="center">
-									<a href='../bills/billGeneration!billGenStatusByPartNo.action?wardNum=<s:property value="%{reportInfos[#reportInfo.index].wardNo}" />'>
 										<s:property value="%{reportInfos[#reportInfo.index].wardNo}" />
-									</a>
 								</div>
 							</td>
 							<td class="blueborderfortd">

@@ -47,7 +47,7 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
 	default-lazy-init="true">
 	<context:component-scan
-		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*" />
+		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*, org.egov.egf.formatters.*" />
 
 
 	<bean id="instrumentTypeService" class = "org.egov.services.instrument.InstrumentTypeService" >
@@ -58,6 +58,12 @@
 		scope="prototype" autowire-candidate="default">
 		<property name="type" value="org.egov.commons.Bank" />
 	</bean>
+	
+	<bean id="bankEntriesService" class="org.egov.services.instrument.BankEntriesService"
+		scope="prototype" autowire-candidate="default">
+		<property name="type" value="org.egov.model.brs.BrsEntries" />
+	</bean>
+	
 
 	<bean id="instrumentVoucherService" class="org.egov.services.instrument.InstrumentVoucherService" >
 		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentVoucher" />

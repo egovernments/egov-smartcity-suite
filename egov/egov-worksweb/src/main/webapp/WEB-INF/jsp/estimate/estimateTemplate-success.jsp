@@ -38,19 +38,30 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
+<script src="<egov:url path='/resources/js/works.js'/>"></script> 
 <html>
-
-<title>Estimate Template</title>
+<title><s:text name="page.title.estimate.template" /></title>
 <body>
-<script>
-
-</script>
-	
+<div class="new-page-header">
 	<s:if test="%{model.id!=null && mode!='edit'}" >
-				The Estimate Template with code '<s:property value="%{code}" />' and name  '<s:property value="%{name}" />' was created successfully 
+		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.create" />
 	</s:if>
     <s:if test="%{mode=='edit'}">   
-				The Estimate Template with code '<s:property value="%{code}" />' and name  '<s:property value="%{name}" />' was saved successfully 
+		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.save" />
 	</s:if>
+</div>
+<s:hidden name="id" id="id" />
+
+	<%@ include file="estimateTemplate-commonView.jsp" %>
+
+<div class="row text-center">
+	<div class="add-margin">
+	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyEstimate();" />
+	<s:if test="%{mode!='edit'}">
+		<input type="submit" name="create" Class="btn btn-primary" value="Create New Estimate" id="CREATE" name="button" onclick="createNewEsimate();" />
+	</s:if>
+	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+	</div>
+</div>
 </body>
 </html>

@@ -337,12 +337,12 @@
 						<tr>
 					</table>
 					<div class="buttonbottom">
-							<input name="button32" type="button" class="buttonsubmit"
-							id="button32" value="Search" onclick="return searchDataToRemit()" />
+							<input name="search" type="button" class="buttonsubmit"
+							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
-							export="false" requestURI="" excludedParams="*">
+							export="false" requestURI="" excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray receiptDateArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
 							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
 								style="width:5%; text-align: center">
@@ -456,57 +456,6 @@
 						</display:table>
 					</div>
 					<br />
-
-			<%-- 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<div class="subheadnew">
-								<s:text name="approval.authority.information" />
-							</div>
-						</tr>
-						<tr>
-							<td width="4%" class="bluebox">&nbsp;</td>
-							<td width="15%" class="bluebox">Approver Department: <s:if
-									test="%{model.id==null}">
-									<span class="mandatory">*</span>
-								</s:if></td>
-							<td width="20%" class="bluebox"><s:select headerKey=""
-									headerValue="%{getText('challan.select')}"
-									name="approverDeptId" id="approverDeptId" cssClass="selectwk"
-									list="dropdownData.approverDepartmentList" listKey="id"
-									listValue="name" onChange="onChangeDeparment(this.value)" /> <egov:ajaxdropdown
-									id="designationIdDropdown" fields="['Text','Value']"
-									dropdownId='designationId'
-									url='receipts/ajaxBankRemittance-approverDesignationList.action'
-									selectedValue="%{designationId}" /></td>
-
-
-							<td width="15%" class="bluebox"><s:text
-									name="challan.approve.designation" />
-								<s:if test="%{model.id==null}">
-									<span class="mandatory">*</span>
-								</s:if></td>
-							<td width="20%" class="bluebox"><s:select headerKey=""
-									headerValue="--Select--" name="designationId"
-									id="designationId" cssClass="selectwk"
-									list="dropdownData.designationMasterList" listKey="id"
-									listValue="name" onChange="onChangeDesignation(this.value)" />
-								<egov:ajaxdropdown id="positionUserDropdown"
-									fields="['Text','Value']" dropdownId='positionUser'
-									url='receipts/ajaxBankRemittance-positionUserList.action'
-									selectedValue="%{position.id}" /></td>
-							<td width="15%" class="bluebox"><s:text
-									name="challan.approve.userposition" />
-								<s:if test="%{model.id==null}">
-									<span class="mandatory">*</span>
-								</s:if></td>
-							<td width="20%" class="bluebox"><s:select
-									headerValue="--Select--" headerKey="-1"
-									list="dropdownData.postionUserList" listKey="position.id"
-									id="positionUser" listValue="position.name"
-									label="positionUser" name="positionUser" value="%{position.id}" />
-							</td>
-						</tr>
-					</table> --%>
 					<div id="loadingMask"
 						style="display: none; overflow: hidden; text-align: center">
 						<img src="/egi/resources/erp2/images/bar_loader.gif" alt=""/> <span

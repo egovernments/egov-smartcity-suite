@@ -96,6 +96,13 @@
 		<button type="submit" class="btn btn-primary" id="viewWorkOrder"><spring:message code="lb.printworkorder"/></button>
 	</c:if>
 	
+	<c:if test="${ !citizenRole && ( waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION'  && waterConnectionDetails.connectionStatus == 'CLOSED' && waterConnectionDetails.status.code == 'CLOSERSANCTIONED')}">
+		<button type="submit" class="btn btn-primary" id="viewClosureAck"><spring:message code="lbl.printclosureAck"/></button>
+	</c:if>
+	<c:if test="${ !citizenRole && ( waterConnectionDetails.applicationType.code == 'RECONNECTION'  && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.status.code == 'RECONNECTIONSANCTIONED')}">
+		<button type="submit" class="btn btn-primary" id="viewRecOonnAck"><spring:message code="lbl.printReconnAck"/></button>
+	</c:if>
+	
 	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!='')) && waterConnectionDetails.connectionStatus == 'ACTIVE' && waterConnectionDetails.applicationType.code == 'NEWCONNECTION' && waterConnectionDetails.closeConnectionType== null && waterConnectionDetails.connectionType !='METERED'}">
 		<button type="submit" class="btn btn-primary" id="addConnection"><spring:message code="lbl.addconnection"/></button>
 		<button type="submit" class="btn btn-primary" id="changeConnection"><spring:message code="lbl.changeconnection"/></button>
@@ -140,7 +147,7 @@
 		<button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
 		<%-- <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button> --%>
 	</c:if>
-	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!=''))  && waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION'  && waterConnectionDetails.connectionStatus == 'CLOSED' && waterConnectionDetails.closeConnectionType== 'T' }">
+	<c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!=''))  && waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION'  && waterConnectionDetails.connectionStatus == 'CLOSED' && waterConnectionDetails.closeConnectionType== 'T' && waterConnectionDetails.status.code == 'CLOSERSANCTIONED' }">
 		<button type="submit" class="btn btn-primary" id="re-connection"><spring:message code="lbl.re-connection"/></button>
 	</c:if>
 	</c:otherwise>

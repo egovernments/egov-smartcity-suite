@@ -51,6 +51,7 @@ jQuery(document).ready(function($) {
 		var operatorRole = $('#operatorRole').val();
 		var citizenRole = $('#citizenRole').val();
 		var billcollector=$('#billcollectionRole').val();
+		var administratorRole =$('#administratorRole').val();
 		 document.onkeydown=function(evt){
 			 var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
 		if(keyCode == 13){
@@ -188,6 +189,7 @@ function submitButton()
 	var citizenRole = $('#citizenRole').val();
 	var billcollector=$('#billcollectionRole').val();
 	
+	
 	$('#searchResultDiv').show();
 	$.post("/wtms/search/waterSearch/",$('#waterSearchRequestForm').serialize())
 	.done(function(searchResult) {
@@ -195,9 +197,33 @@ function submitButton()
 	tableContainer.dataTable({
 	destroy : true,
 	"sPaginationType" : "bootstrap",
-	"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+	"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 	"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
 	"autoWidth" : false,
+	"oTableTools" : {
+		"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+		"aButtons" : [ 
+		               {
+			             "sExtends": "pdf",
+			             "mColumns": [0,1,2,4,5,6,9],
+                         "sPdfMessage": "",
+                         "sTitle": "Water Connection Report",
+                         "sPdfOrientation": "landscape"
+		                },
+		                {
+				             "sExtends": "xls",
+				             "mColumns": [0,1,2,4,5,6,9],
+                             "sPdfMessage": "Water Connection Report",
+                             "sTitle": "Water Connection Report"
+			             },
+			             {
+				             "sExtends": "print",
+				             "mColumns": [0,1,2,4,5,6,9],
+                             "sPdfMessage": "",
+                             "sTitle": "Water Connection Report"
+			             }],
+		
+	},
 	searchable : true,
 	data : searchResult,
 	columns : [{title : 'Applicant Name',data : 'resource.searchable.consumername'},
@@ -284,8 +310,8 @@ function submitButton()
 	        			   else if(superUserRole!=null && full.resource.clauses.status == 'DISCONNECTED') {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 	        			   }
-	        			   else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy ==true) {
-	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="13">Add/Edit DCB</option></select>');
+	        			   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
+	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
 	        			   }
 	        			   else if(superUserRole!=null && superUserRole!="" ){
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
@@ -345,7 +371,7 @@ function submitButton()
 	        				  else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && (billcollector==null ||  billcollector==""))) && full.resource.searchable.closureType =='P') {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 	        				   }
-	        				  else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy == true) {
+	        				  else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
 		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
 		        			   }
 	        				   else if(superUserRole!=null && superUserRole!="" ){
@@ -412,7 +438,7 @@ function submitButton()
 	        			   else if(superUserRole!=null && superUserRole!=""){
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy == true) {
+	        			   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
 	        			   }
 	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))) && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T' ) {
@@ -456,7 +482,7 @@ function submitButton()
 	        			   else if(superUserRole!=null && superUserRole!=""){
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if(superUserRole!=null && superUserRole!=""  && full.resource.clauses.islegacy == true) {
+	        			   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
 	        			   }
 	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ( billcollector==null ||  billcollector=="") &&  ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T' ) {

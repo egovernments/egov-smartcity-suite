@@ -192,6 +192,7 @@ import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -2831,6 +2832,14 @@ public class PropertyService {
             assessmentDetail.getPropertyDetails().setCurrentTax(currDmd);
             assessmentDetail.getPropertyDetails().setArrearTax(arrDmd);
         }
+    }
+    
+    public void updateAssessmentSeq() {
+        String maxAssessmentno = (String) propPerServ.getSession().createSQLQuery("select right(max(propertyid),6) from egpt_basic_property ").uniqueResult();
+        Integer nextVal = Integer.parseInt(maxAssessmentno);
+        nextVal++;
+        SQLQuery query = (SQLQuery) propPerServ.getSession().createSQLQuery("ALTER SEQUENCE seq_egpt_assessment_number start with " + nextVal + " ");
+        query.executeUpdate();
     }
 
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {

@@ -123,7 +123,7 @@
 		
 		
 		
-		<div class="row">
+		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.pt.tax"/></div>
 			<div class="col-xs-3 add-margin view-content" id="propertytaxdue"></div>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
@@ -137,6 +137,11 @@
 				</c:otherwise>
 			</c:choose>
 			
+		</div>
+		<div class="row">
+		<div class="col-xs-3 add-margin"><spring:message code="lbl.connectiondate"/></div>
+		
+		<div class="col-xs-3 add-margin view-content"><fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.executionDate}" /></div>
 		</div>
 	</div>
 

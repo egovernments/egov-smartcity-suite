@@ -58,7 +58,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -91,23 +90,13 @@ public class PropertyPipeSizeMasterController {
 
     @RequestMapping(value = "/propertyPipeSizeMaster", method = RequestMethod.POST)
     public String addpPropertyPipeSizeMasterData(@Valid @ModelAttribute final PropertyPipeSize propertyPipeSize,
-            final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
-            return "property-pipesize-master";
-
-        final PropertyPipeSize propertypipeSizeObj = propertyPipeSizeService
-                .findByPropertyTypeAndPipeSize(propertyPipeSize.getPropertyType(), propertyPipeSize.getPipeSize());
-        if (propertypipeSizeObj != null) {
-            redirectAttrs.addFlashAttribute("propertyPipeSize", propertypipeSizeObj);
+            final BindingResult errors, final Model model) {
+        if (errors.hasErrors()) {
             model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
-            model.addAttribute("message", "Entered PipeSize for the Chosen Property Type already exists.");
             return "property-pipesize-master";
-        } else {
+        } else
             propertyPipeSizeService.createPropertyPipeSize(propertyPipeSize);
-            redirectAttrs.addFlashAttribute("propertyPipeSize", propertyPipeSize);
-        }
-
         return getPropertyPipeSizeMasterList(model);
     }
 
@@ -131,12 +120,13 @@ public class PropertyPipeSizeMasterController {
 
     @RequestMapping(value = "/propertyPipeSizeMaster/{propertyPipeSizeId}", method = RequestMethod.POST)
     public String editPropertyPipeSizeData(@Valid @ModelAttribute final PropertyPipeSize propertyPipeSize,
-            @PathVariable final long propertyPipeSizeId, final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
+            final BindingResult errors, final Model model, @PathVariable final long propertyPipeSizeId) {
+        if (errors.hasErrors()) {
+            model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
+            model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
             return "property-pipesize-master";
-        propertyPipeSizeService.updatePropertyPipeSize(propertyPipeSize);
-        redirectAttrs.addFlashAttribute("PropertyPipeSize", propertyPipeSize);
+        } else
+            propertyPipeSizeService.updatePropertyPipeSize(propertyPipeSize);
         return getPropertyPipeSizeMasterList(model);
 
     }

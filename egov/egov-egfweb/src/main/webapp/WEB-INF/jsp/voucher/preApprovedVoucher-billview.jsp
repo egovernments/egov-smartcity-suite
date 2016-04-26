@@ -98,6 +98,10 @@ function onSubmit()
 		return false;
 		}
 }
+jQuery(document).ready(function() {
+jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
+});
+
 </script>
 <body onload="checkBillIdBillview()">
 	<s:form action="preApprovedVoucher" theme="simple"
@@ -123,21 +127,17 @@ function onSubmit()
 					<div align="center">
 						<table border="0" width="100%" cellspacing="0">
 							<tr>
-								<td class="greybox" width="25%%"><s:text
-										name="voucher.date" /><span class="mandatory1">*</span></td>
-								<s:date name='voucherDate' id="voucherDateId"
-									format='dd/MM/yyyy' />
-								<td class="greybox" width="25%%">
+								<td class="greybox" width="25%"><s:text name="voucher.date" /><span
+									class="mandatory1">*</span></td>
+								<td class="greybox" width="25%">
 									<div name="daterow">
-										<s:textfield name="voucherDate" id="voucherDate"
-											maxlength="10"
+										<s:textfield id="voucherDate" name="voucherDate"
+											data-date-end-date="0d"
 											onkeyup="DateFormat(this,this.value,event,false,'3')"
-											size="15" value="%{voucherDateId}" />
-										<A
-											href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');"
-											style="text-decoration: none" align="left"><img img
-											width="18" height="18" border="0" align="absmiddle"
-											alt="Date" src="/egi/resources/erp2/images/calendaricon.gif" /></A>
+											placeholder="DD/MM/YYYY"
+											class="form-control
+											datepicker"
+											data-inputmask="'mask': 'd/m/y'" />
 									</div>
 								</td>
 								<td class="greybox" width="25%" />
@@ -263,19 +263,6 @@ function onSubmit()
 							class="button" onclick="window.close();" />
 					</div>
 				</s:else>
-				<div class="buttonbottom" align="center" id="buttondiv">
-					<s:if
-						test="%{egBillregister.expendituretype == finConstExpendTypeContingency}">
-						<input type="button" class="button" id="print"
-							value="Print Preview" onclick="printEJV()" />
-					</s:if>
-					<s:else>
-						<input type="button" class="button" id="print"
-							value="Print Preview" onclick="printJV()" />
-					</s:else>
-
-				</div>
-
 			</div>
 		</div>
 		<s:if test="%{hasErrors()}">
