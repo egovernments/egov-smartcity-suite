@@ -123,13 +123,13 @@ public class CollectionIndex extends AbstractAuditable {
     private String billNumber;
 
     @Length(max = 50)
-    @Searchable(name = "consumercode", group = Searchable.Group.CLAUSES)
+    @Searchable(name = "consumercode", group = Searchable.Group.COMMON)
     private String consumerCode;
 
     @NotNull
     @Length(max = 250)
-    @Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
-    private String ulbName;
+    @Searchable(name = "cityname", group = Searchable.Group.CLAUSES)
+    private String cityName;
 
     @Length(max = 250)
     @Searchable(name = "districtname", group = Searchable.Group.CLAUSES)
@@ -153,17 +153,32 @@ public class CollectionIndex extends AbstractAuditable {
     @Searchable(name = "currentcess", group = Searchable.Group.SEARCHABLE)
     private BigDecimal currentCess;
 
+    @Length(max = 50)
     @Searchable(name = "installmentfrom", group = Searchable.Group.SEARCHABLE)
     private String installmentFrom;
 
+    @Length(max = 50)
     @Searchable(name = "installmentto", group = Searchable.Group.SEARCHABLE)
     private String installmentTo;
 
-    @Searchable(name = "payeename", group = Searchable.Group.SEARCHABLE)
-    private String payeeName;
-    
+    @Length(max = 256)
+    @Searchable(name = "consumername", group = Searchable.Group.SEARCHABLE)
+    private String consumerName;
+
     @Searchable(name = "reductionamount", group = Searchable.Group.SEARCHABLE)
     private BigDecimal reductionAmount;
+
+    @Length(max = 50)
+    @Searchable(name = "citygrade", group = Searchable.Group.CLAUSES)
+    private String cityGrade;
+
+    @Length(max = 10)
+    @Searchable(name = "citycode", group = Searchable.Group.CLAUSES)
+    private String cityCode;
+
+    @Length(max = 100)
+    @Searchable(name = "receiptcreator", group = Searchable.Group.CLAUSES)
+    private String receiptCreator;
 
     @Override
     public Long getId() {
@@ -279,12 +294,12 @@ public class CollectionIndex extends AbstractAuditable {
         this.consumerCode = consumerCode;
     }
 
-    public String getUlbName() {
-        return ulbName;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
+    public void setCityName(final String cityName) {
+        this.cityName = cityName;
     }
 
     public String getDistrictName() {
@@ -335,12 +350,12 @@ public class CollectionIndex extends AbstractAuditable {
         this.currentCess = currentCess;
     }
 
-    public String getPayeeName() {
-        return payeeName;
+    public String getConsumerName() {
+        return consumerName;
     }
 
-    public void setPayeeName(final String payeeName) {
-        this.payeeName = payeeName;
+    public void setConsumerName(final String consumerName) {
+        this.consumerName = consumerName;
     }
 
     /**
@@ -370,10 +385,10 @@ public class CollectionIndex extends AbstractAuditable {
     public void setInstallmentTo(final String installmentTo) {
         this.installmentTo = installmentTo;
     }
-    
+
     @Override
     public String getIndexId() {
-        return EgovThreadLocals.getCityCode()+"-"+getReceiptNumber();
+        return EgovThreadLocals.getCityCode() + "-" + getReceiptNumber();
     }
 
     /**
@@ -388,6 +403,48 @@ public class CollectionIndex extends AbstractAuditable {
      */
     public void setReductionAmount(BigDecimal reductionAmount) {
         this.reductionAmount = reductionAmount;
+    }
+
+    /**
+     * @return the cityGrade
+     */
+    public String getCityGrade() {
+        return cityGrade;
+    }
+
+    /**
+     * @param cityGrade the cityGrade to set
+     */
+    public void setCityGrade(String cityGrade) {
+        this.cityGrade = cityGrade;
+    }
+
+    /**
+     * @return the ulbCode
+     */
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    /**
+     * @param ulbCode the ulbCode to set
+     */
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    /**
+     * @return the receiptCreator
+     */
+    public String getReceiptCreator() {
+        return receiptCreator;
+    }
+
+    /**
+     * @param receiptCreator the receiptCreator to set
+     */
+    public void setReceiptCreator(String receiptCreator) {
+        this.receiptCreator = receiptCreator;
     }
 
 }

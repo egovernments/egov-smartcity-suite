@@ -95,7 +95,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
@@ -792,7 +791,8 @@ public class CollectionsUtil {
                 .getReferencenumber() : "");
         collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader
                 .getOnlinePayment().getService().getName() : "");
-        collectionIndexBuilder.payeeName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
+        collectionIndexBuilder.consumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
+        collectionIndexBuilder.receiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getUsername() : "");
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
             final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
