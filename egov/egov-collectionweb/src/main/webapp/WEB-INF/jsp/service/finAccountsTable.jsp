@@ -232,7 +232,7 @@ var loadDetailType = function(index) {
 		var subledgerid=document.getElementById('subledgerDetails['+index+'].serviceAccountDetail.glCodeId.id');
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 		document.getElementById('subledgerDetails['+index+'].serviceAccountDetail.glCodeId.glcode').value =accountCode;
-		var url = path+'/receipts/ajaxReceiptCreate!getDetailTypeForService.action?accountCode='+accountCode+'&index='+index;
+		var url = path+'/receipts/ajaxReceiptCreate-getDetailTypeForService.action?accountCode='+accountCode+'&index='+index;
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 };
 var postType = {

@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -59,6 +60,8 @@ import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.ChartOfAccountsDAO;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -106,15 +109,21 @@ public class ServiceDetailsAction extends BaseFormAction {
     private CollectionsUtil collectionsUtil;
     @Autowired
     private FunctionHibernateDAO functionDAO;
+    @Autowired
+    private ChartOfAccountsDAO chartOfAccountsDAO;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     public ServiceDetailsAction() {
 
         addRelatedEntity("serviceCategory", ServiceCategory.class);
         addRelatedEntity("fund", Fund.class);
-       /* addRelatedEntity("scheme", Scheme.class);
-        addRelatedEntity("subscheme", SubScheme.class);
-        addRelatedEntity("fundSource", Fundsource.class);
-        addRelatedEntity("functionary", Functionary.class);*/
+        /*
+         * addRelatedEntity("scheme", Scheme.class);
+         * addRelatedEntity("subscheme", SubScheme.class);
+         * addRelatedEntity("fundSource", Fundsource.class);
+         * addRelatedEntity("functionary", Functionary.class);
+         */
         addRelatedEntity("function", CFunction.class);
     }
 
@@ -148,8 +157,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         } else if (null != serviceDetails.getServiceCategory() && null != serviceDetails.getServiceCategory().getCode()) {
             final ServiceCategory category = serviceCategoryService.findById(serviceDetails.getServiceCategory()
                     .getId(), false);
-            setServiceCategoryId(serviceDetails.getServiceCategory()
-                    .getId());
+            setServiceCategoryId(serviceDetails.getServiceCategory().getId());
             serviceDetails.setServiceCategory(category);
         } else if (null != serviceCategoryId) {
             final ServiceCategory category = serviceCategoryService.findById(serviceCategoryId, false);
@@ -159,7 +167,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         mandatoryFields = new ArrayList<String>(0);
         getHeaderMandateFields();
         setupDropdownDataExcluding();
-        
+
         if (headerFields.contains(CollectionConstants.DEPARTMENT))
             addDropdownData("departmentList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
@@ -175,7 +183,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         if (headerFields.contains(CollectionConstants.FUNDSOURCE))
             addDropdownData("fundsourceList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUNDSOURCE));
-        
+
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
 
@@ -270,23 +278,15 @@ public class ServiceDetailsAction extends BaseFormAction {
 
         for (final Long deptId : departmentList) {
 
-            final Department dept = (Department) getPersistenceService().find(" from Department where id= ?", deptId);
+            final Department dept = departmentService.getDepartmentById(deptId);
             serviceDetails.addServiceDept(dept);
         }
-
         for (final ServiceAccountDetails account : accountDetails) {
 
             final ServiceAccountDetails serviceAccount = new ServiceAccountDetails();
             serviceAccount.setAmount(account.getAmount());
-            final CChartOfAccounts glCodeId = (CChartOfAccounts) persistenceService.find(
-                    " from CChartOfAccounts where id =?", account.getGlCodeId().getId());
+            final CChartOfAccounts glCodeId = chartOfAccountsDAO.findById(account.getGlCodeId().getId(), false);
             serviceAccount.setGlCodeId(glCodeId);
-            if (null != account.getFunction() && null != account.getFunction().getId()) {
-                final CFunction function = (CFunction) persistenceService.find("from CFunction where id=?", account
-                        .getFunction().getId());
-                serviceAccount.setFunction(function);
-            }
-
             serviceAccount.setServiceDetails(serviceDetails);
             for (final ServiceSubledgerInfo subledger : subledgerDetails)
                 if (subledger.getServiceAccountDetail().getGlCodeId().getId().equals(account.getGlCodeId().getId())) {
@@ -353,9 +353,9 @@ public class ServiceDetailsAction extends BaseFormAction {
     private boolean validateSubledger() {
         final Map<String, BigDecimal> accountDetailAmount = new HashMap<String, BigDecimal>(0);
         for (final ServiceAccountDetails account : accountDetails) {
-            final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-                    " from CChartOfAccountDetail" + " where glCodeId.id=?", account.getGlCodeId().getId());
-            if (null != chartOfAccountDetail)
+            final Set<CChartOfAccountDetail> chartOfAccountDetail = chartOfAccountsHibernateDAO
+                    .getCChartOfAccountsByGlCode(account.getGlCodeId().getGlcode()).getChartOfAccountDetails();
+            if (null != chartOfAccountDetail && !chartOfAccountDetail.isEmpty())
                 accountDetailAmount.put(account.getGlCodeId().getGlcode(), account.getAmount());
         }
 
@@ -401,7 +401,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 
         return Boolean.TRUE;
     }
-    
+
     public boolean isFieldMandatory(final String field) {
         return mandatoryFields.contains(field);
     }
@@ -412,7 +412,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     protected void getHeaderMandateFields() {
         final List<AppConfigValues> appConfigValuesList = collectionsUtil.getAppConfigValues(
-                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG, CollectionConstants.MISMandatoryAttributesKeyCollection);
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.MISMandatoryAttributesKeyCollection);
 
         for (final AppConfigValues appConfigVal : appConfigValuesList) {
             final String value = appConfigVal.getValue();
@@ -496,7 +497,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         return headerFields;
     }
 
-    public void setHeaderFields(List<String> headerFields) {
+    public void setHeaderFields(final List<String> headerFields) {
         this.headerFields = headerFields;
     }
 
@@ -504,7 +505,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         return mandatoryFields;
     }
 
-    public void setMandatoryFields(List<String> mandatoryFields) {
+    public void setMandatoryFields(final List<String> mandatoryFields) {
         this.mandatoryFields = mandatoryFields;
     }
 }

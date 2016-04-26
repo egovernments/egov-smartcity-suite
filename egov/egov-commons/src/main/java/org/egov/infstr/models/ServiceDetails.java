@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
@@ -51,321 +52,327 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
+@Unique(fields = { "code" }, id = "id", tableName = "EGCL_SERVICEDETAILS", columnName = { "CODE" }, message = "masters.serviceDetailsCode.isunique")
 public class ServiceDetails extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
-	private String name;
-	private String serviceUrl;
-	private Boolean isEnabled;
-	private String callBackurl;
-	private String serviceType;
-	private String code;
-	private Boolean voucherCreation;
-	private Boolean isVoucherApproved;
-	private Date voucherCutOffDate;
-	private Integer orderNumber;
+    /**
+     * Serial version uid
+     */
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private String serviceUrl;
+    private Boolean isEnabled;
+    private String callBackurl;
+    private String serviceType;
+    private String code;
+    private Boolean voucherCreation;
+    private Boolean isVoucherApproved;
+    private Date voucherCutOffDate;
+    private Integer orderNumber;
 
-	private Set<BankAccountServiceMap> bankAccountServiceMap = new HashSet<BankAccountServiceMap>(
-			0);
-	private Fund fund;
-	private Fundsource fundSource;
+    private Set<BankAccountServiceMap> bankAccountServiceMap = new HashSet<BankAccountServiceMap>(0);
+    private Fund fund;
+    private Fundsource fundSource;
 
-	private Functionary functionary;
+    private Functionary functionary;
 
-	private Scheme scheme;
-	private SubScheme subscheme;
-	private ServiceCategory serviceCategory;
+    private Scheme scheme;
+    private SubScheme subscheme;
+    private ServiceCategory serviceCategory;
 
-	private Set<Department> serviceDept = new LinkedHashSet<Department>(0);
+    private Set<Department> serviceDept = new LinkedHashSet<Department>(0);
 
-	private Set<ServiceAccountDetails> serviceAccountDtls = new LinkedHashSet<ServiceAccountDetails>(0);
+    private Set<ServiceAccountDetails> serviceAccountDtls = new LinkedHashSet<ServiceAccountDetails>(0);
 
-	public void addServiceAccountDtls(ServiceAccountDetails account) {
-		getServiceAccountDtls().add(account);
-	}
+    private CFunction function;
 
-	public void addServiceDept(Department dept) {
-		getServiceDept().add(dept);
-	}
+    public void addServiceAccountDtls(final ServiceAccountDetails account) {
+        getServiceAccountDtls().add(account);
+    }
 
-	/**
-	 * @return the serviceName
-	 */
-	@Required(message = "service.name.null")
-	public String getName() {
-		return name;
-	}
+    public void addServiceDept(final Department dept) {
+        getServiceDept().add(dept);
+    }
 
-	/**
-	 * @param serviceName
-	 *            the serviceName to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @return the serviceName
+     */
+    @Required(message = "service.name.null")
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @return the serviceUrl
-	 */
-	public String getServiceUrl() {
-		return serviceUrl;
-	}
+    /**
+     * @param serviceName
+     *            the serviceName to set
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @param serviceUrl
-	 *            the serviceUrl to set
-	 */
-	public void setServiceUrl(String serviceUrl) {
-		this.serviceUrl = serviceUrl;
-	}
+    /**
+     * @return the serviceUrl
+     */
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
 
-	/**
-	 * @return the isEnabled
-	 */
-	public Boolean getIsEnabled() {
-		return isEnabled;
-	}
+    /**
+     * @param serviceUrl
+     *            the serviceUrl to set
+     */
+    public void setServiceUrl(final String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+    }
 
-	/**
-	 * @param isEnabled
-	 *            the isEnabled to set
-	 */
-	public void setIsEnabled(Boolean isEnabled) {
-		if (null == isEnabled) {
-			this.isEnabled = Boolean.FALSE;
-		} else {
-			this.isEnabled = isEnabled;
-		}
-	}
+    /**
+     * @return the isEnabled
+     */
+    public Boolean getIsEnabled() {
+        return isEnabled;
+    }
 
-	/**
-	 * @return the callBackurl
-	 */
-	public String getCallBackurl() {
-		return callBackurl;
-	}
+    /**
+     * @param isEnabled
+     *            the isEnabled to set
+     */
+    public void setIsEnabled(final Boolean isEnabled) {
+        if (null == isEnabled)
+            this.isEnabled = Boolean.FALSE;
+        else
+            this.isEnabled = isEnabled;
+    }
 
-	/**
-	 * @param callBackurl
-	 *            the callBackurl to set
-	 */
-	public void setCallBackurl(String callBackurl) {
-		this.callBackurl = callBackurl;
-	}
+    /**
+     * @return the callBackurl
+     */
+    public String getCallBackurl() {
+        return callBackurl;
+    }
 
-	/**
-	 * @return the serviceType
-	 */
-	public String getServiceType() {
-		return serviceType;
-	}
+    /**
+     * @param callBackurl
+     *            the callBackurl to set
+     */
+    public void setCallBackurl(final String callBackurl) {
+        this.callBackurl = callBackurl;
+    }
 
-	/**
-	 * @param serviceType
-	 *            the serviceType to set
-	 */
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    /**
+     * @return the serviceType
+     */
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	/**
-	 * @return the code
-	 */
-	@Required(message = "service.code.null")
-	public String getCode() {
-		return code;
-	}
+    /**
+     * @param serviceType
+     *            the serviceType to set
+     */
+    public void setServiceType(final String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	/**
-	 * @param code
-	 *            the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * @return the code
+     */
+    @Required(message = "service.code.null")
+    public String getCode() {
+        return code;
+    }
 
-	/**
-	 * @return the fund
-	 */
-	public Fund getFund() {
-		return fund;
-	}
+    /**
+     * @param code
+     *            the code to set
+     */
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	/**
-	 * @param fund
-	 *            the fund to set
-	 */
-	public void setFund(Fund fund) {
-		this.fund = fund;
-	}
+    /**
+     * @return the fund
+     */
+    public Fund getFund() {
+        return fund;
+    }
 
-	/**
-	 * @return the fundSource
-	 */
-	public Fundsource getFundSource() {
-		return fundSource;
-	}
+    /**
+     * @param fund
+     *            the fund to set
+     */
+    public void setFund(final Fund fund) {
+        this.fund = fund;
+    }
 
-	/**
-	 * @param fundSource
-	 *            the fundSource to set
-	 */
-	public void setFundSource(Fundsource fundSource) {
-		this.fundSource = fundSource;
-	}
+    /**
+     * @return the fundSource
+     */
+    public Fundsource getFundSource() {
+        return fundSource;
+    }
 
-	/**
-	 * /**
-	 * 
-	 * @return the functionary
-	 */
-	public Functionary getFunctionary() {
-		return functionary;
-	}
+    /**
+     * @param fundSource
+     *            the fundSource to set
+     */
+    public void setFundSource(final Fundsource fundSource) {
+        this.fundSource = fundSource;
+    }
 
-	/**
-	 * @param functionary
-	 *            the functionary to set
-	 */
-	public void setFunctionary(Functionary functionary) {
-		this.functionary = functionary;
-	}
+    /**
+     * /**
+     * 
+     * @return the functionary
+     */
+    public Functionary getFunctionary() {
+        return functionary;
+    }
 
-	public Set<BankAccountServiceMap> getBankAccountServiceMap() {
-		return bankAccountServiceMap;
-	}
+    /**
+     * @param functionary
+     *            the functionary to set
+     */
+    public void setFunctionary(final Functionary functionary) {
+        this.functionary = functionary;
+    }
 
-	public void setBankAccountServiceMap(
-			Set<BankAccountServiceMap> bankAccountServiceMap) {
-		this.bankAccountServiceMap = bankAccountServiceMap;
-	}
+    public Set<BankAccountServiceMap> getBankAccountServiceMap() {
+        return bankAccountServiceMap;
+    }
 
-	public void addBankAccountServiceMap(
-			BankAccountServiceMap bankAccountServiceMap) {
-		getBankAccountServiceMap().add(bankAccountServiceMap);
-	}
+    public void setBankAccountServiceMap(final Set<BankAccountServiceMap> bankAccountServiceMap) {
+        this.bankAccountServiceMap = bankAccountServiceMap;
+    }
 
-	public Boolean getVoucherCreation() {
-		return voucherCreation;
-	}
+    public void addBankAccountServiceMap(final BankAccountServiceMap bankAccountServiceMap) {
+        getBankAccountServiceMap().add(bankAccountServiceMap);
+    }
 
-	public void setVoucherCreation(Boolean voucherCreation) {
-		if (null == voucherCreation) {
-			this.voucherCreation = Boolean.FALSE;
-		} else {
-			this.voucherCreation = voucherCreation;
-		}
+    public Boolean getVoucherCreation() {
+        return voucherCreation;
+    }
 
-	}
+    public void setVoucherCreation(final Boolean voucherCreation) {
+        if (null == voucherCreation)
+            this.voucherCreation = Boolean.FALSE;
+        else
+            this.voucherCreation = voucherCreation;
 
-	/**
-	 * @return the scheme
-	 */
-	public Scheme getScheme() {
-		return scheme;
-	}
+    }
 
-	/**
-	 * @param scheme
-	 *            the scheme to set
-	 */
-	public void setScheme(Scheme scheme) {
-		this.scheme = scheme;
-	}
+    /**
+     * @return the scheme
+     */
+    public Scheme getScheme() {
+        return scheme;
+    }
 
-	/**
-	 * @return the subscheme
-	 */
-	public SubScheme getSubscheme() {
-		return subscheme;
-	}
+    /**
+     * @param scheme
+     *            the scheme to set
+     */
+    public void setScheme(final Scheme scheme) {
+        this.scheme = scheme;
+    }
 
-	/**
-	 * @param subscheme
-	 *            the subscheme to set
-	 */
-	public void setSubscheme(SubScheme subscheme) {
-		this.subscheme = subscheme;
-	}
+    /**
+     * @return the subscheme
+     */
+    public SubScheme getSubscheme() {
+        return subscheme;
+    }
 
-	/**
-	 * @return the serviceCategory
-	 */
-	public ServiceCategory getServiceCategory() {
-		return serviceCategory;
-	}
+    /**
+     * @param subscheme
+     *            the subscheme to set
+     */
+    public void setSubscheme(final SubScheme subscheme) {
+        this.subscheme = subscheme;
+    }
 
-	/**
-	 * @param serviceCategory
-	 *            the serviceCategory to set
-	 */
-	public void setServiceCategory(ServiceCategory serviceCategory) {
-		this.serviceCategory = serviceCategory;
-	}
+    /**
+     * @return the serviceCategory
+     */
+    public ServiceCategory getServiceCategory() {
+        return serviceCategory;
+    }
 
-	/**
-	 * @return the serviceDept
-	 */
-	public Set<Department> getServiceDept() {
-		return serviceDept;
-	}
+    /**
+     * @param serviceCategory
+     *            the serviceCategory to set
+     */
+    public void setServiceCategory(final ServiceCategory serviceCategory) {
+        this.serviceCategory = serviceCategory;
+    }
 
-	/**
-	 * @param serviceDept
-	 *            the serviceDept to set
-	 */
-	public void setServiceDept(Set<Department> serviceDept) {
-		this.serviceDept = serviceDept;
-	}
+    /**
+     * @return the serviceDept
+     */
+    public Set<Department> getServiceDept() {
+        return serviceDept;
+    }
 
-	public Set<ServiceAccountDetails> getServiceAccountDtls() {
-		return serviceAccountDtls;
-	}
+    /**
+     * @param serviceDept
+     *            the serviceDept to set
+     */
+    public void setServiceDept(final Set<Department> serviceDept) {
+        this.serviceDept = serviceDept;
+    }
 
-	public void setServiceAccountDtls(
-			Set<ServiceAccountDetails> serviceAccountDtls) {
-		this.serviceAccountDtls = serviceAccountDtls;
-	}
+    public Set<ServiceAccountDetails> getServiceAccountDtls() {
+        return serviceAccountDtls;
+    }
 
-	/**
-	 * @return the isVoucherApproved
-	 */
-	public Boolean getIsVoucherApproved() {
-		return isVoucherApproved;
-	}
+    public void setServiceAccountDtls(final Set<ServiceAccountDetails> serviceAccountDtls) {
+        this.serviceAccountDtls = serviceAccountDtls;
+    }
 
-	/**
-	 * @param isVoucherApproved
-	 *            the isVoucherApproved to set
-	 */
-	public void setIsVoucherApproved(Boolean isVoucherApproved) {
-		this.isVoucherApproved = isVoucherApproved;
-	}
+    /**
+     * @return the isVoucherApproved
+     */
+    public Boolean getIsVoucherApproved() {
+        return isVoucherApproved;
+    }
 
-	/**
-	 * @return the voucherCutOffDate
-	 */
-	public Date getVoucherCutOffDate() {
-		return voucherCutOffDate;
-	}
+    /**
+     * @param isVoucherApproved
+     *            the isVoucherApproved to set
+     */
+    public void setIsVoucherApproved(final Boolean isVoucherApproved) {
+        this.isVoucherApproved = isVoucherApproved;
+    }
 
-	/**
-	 * @param voucherCutOffDate
-	 *            the voucherCutOffDate to set
-	 */
-	public void setVoucherCutOffDate(Date voucherCutOffDate) {
-		this.voucherCutOffDate = voucherCutOffDate;
-	}
+    /**
+     * @return the voucherCutOffDate
+     */
+    public Date getVoucherCutOffDate() {
+        return voucherCutOffDate;
+    }
 
-	public Integer getOrderNumber() {
-		return orderNumber;
-	}
+    /**
+     * @param voucherCutOffDate
+     *            the voucherCutOffDate to set
+     */
+    public void setVoucherCutOffDate(final Date voucherCutOffDate) {
+        this.voucherCutOffDate = voucherCutOffDate;
+    }
 
-	public void setOrderNumber(Integer orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(final Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public CFunction getFunction() {
+        return function;
+    }
+
+    public void setFunction(final CFunction function) {
+        this.function = function;
+    }
 
 }
