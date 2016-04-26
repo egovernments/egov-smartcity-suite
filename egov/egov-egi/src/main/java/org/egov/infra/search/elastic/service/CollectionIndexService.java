@@ -90,7 +90,7 @@ public class CollectionIndexService {
 
     public CollectionIndex findByReceiptNumber(final String receiptNumber) {
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        return collectionIndexRepository.findByReceiptNumberAndUlbName(receiptNumber, cityWebsite.getName());
+        return collectionIndexRepository.findByReceiptNumberAndCityName(receiptNumber, cityWebsite.getName());
     }
 
 }
