@@ -302,5 +302,9 @@
         <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master-list.jsp"/>
     </definition>
+     <definition name="donation-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-view.jsp"/>
+    </definition>
     
 </tiles-definitions>

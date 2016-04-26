@@ -96,13 +96,24 @@
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.hscpipesize.max.inches" /><span class="mandatory"></span></label>
+			<%-- <div class="col-sm-3 add-margin">
+		<form:select path="pipeSize" data-first-option="false" id="pipeSize"
+			cssClass="form-control" required="required" >
+			<form:option value="">
+				<spring:message code="lbl.select" />
+			</form:option>
+			<form:options items="${pipeSizes}" itemValue="id" 
+				itemLabel="code" />
+		</form:select>		
+		<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
+	</div> --%>
 	<div class="col-sm-3 add-margin">
 		<form:select path="donationHeader.maxPipeSize" data-first-option="false" id="pipeSize"
 			cssClass="form-control" required="required" >
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${maxPipeSize}" itemValue="id" 
+			<form:options items="${maxPipeSizeList}" itemValue="id" 
 				itemLabel="code" />
 		</form:select>		
 		<form:errors path="donationHeader.maxPipeSize" cssClass="add-margin error-msg" />					
@@ -118,7 +129,7 @@
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>
-			<form:options items="${minPipeSize}" itemValue="id" 
+			<form:options items="${minPipeSizeList}" itemValue="id" 
 				itemLabel="code" />
 		</form:select>		
 		<form:errors path="donationHeader.minPipeSize" cssClass="add-margin error-msg" />					
@@ -140,9 +151,22 @@
 								<form:errors path="fromDate" cssClass="add-margin error-msg" />
 						</div>
 </div>
-<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
+<div class="form-group" id="statusdiv">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active" /></label>
+				<div class="col-sm-3 add-margin" >
+					<form:checkbox id="activeid" path="donationHeader.active" value ="donationHeader.active" />
+					<form:errors path="donationHeader.active" />
+				</div>
+			</div>								
+					<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
+					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
+
 <div class="form-group text-center" >
-						<form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></form:button>
+						<%-- <form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></form:button> --%>
+						<form:button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></form:button>
+						<form:button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew"/></form:button>
+						<form:button type="button" class="btn btn-primary" id="listid"><spring:message code="lbl.list"/></form:button>
+						<form:button type="reset" class="btn btn-primary"  id="resetid" ><spring:message code="lbl.reset"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
 					</div>

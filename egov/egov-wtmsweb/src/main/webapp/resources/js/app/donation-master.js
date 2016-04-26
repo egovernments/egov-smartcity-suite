@@ -83,6 +83,25 @@ $(document).ready(function(){
 		  
 	  });
 	  
+	  $('#statusdiv').hide();
+		
+		var activeDiv = $('#reqAttr').val();
+		
+		if (activeDiv =='false')
+			{
+			$('#statusdiv').hide();
+		     $('#addnewid').hide();
+		     $('#resetid').show();
+			}
+		
+		else
+			{
+			
+			$('#resetid').hide();
+			$('#statusdiv').show();
+			 $('#addnewid').show();
+			}
+	  
 	  $('#buttonid').click(function() {
 		  if ($( "#donationDetailsform" ).valid())
 			  {
@@ -107,6 +126,17 @@ $(document).ready(function(){
 					}
 			  }
 		  		});
+	  
+	  $('#listid').click(function() {
+			window.open("/wtms/masters/donationMaster/list", "_self");
+		 });
+	  
+	  $('#addnewid').click(function() {
+		  window.open("/wtms/masters/donationMaster/", "_self");
+			
+	  });
+
+
      });
 
 
@@ -193,6 +223,18 @@ function overwritedonation(res)
 	    //document.forms[0].reset();
 	    return false;
 	}
+}
+
+function edit(donationHeader)
+{
+	window.open("/wtms/masters/donationMaster/"+donationHeader, "_self");
+	
+	
+}
+
+function addNew()
+{
+	window.open("/wtms/masters/donationMaster/", "_self");
 }
 	function compareDate(dt1, dt2){			
 	/*******		Return Values [0 if dt1=dt2], [1 if dt1<dt2],  [-1 if dt1>dt2]     *******/
