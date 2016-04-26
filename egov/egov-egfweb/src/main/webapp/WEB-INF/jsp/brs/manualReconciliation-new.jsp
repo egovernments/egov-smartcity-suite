@@ -50,60 +50,11 @@
 <script type="text/javascript">
 
 
-	function validate() {
-		if (document.getElementById("bankId").value == "") {
-			bootbox.alert("Select Bank");
-			return false;
-		}
-		if (document.getElementById("branchId").value == "") {
-			bootbox.alert("Select Branch");
-			return false;
-		}
-		if (document.getElementById("accountId").value == "") {
-			bootbox.alert("Select Account");
-			return false;
-		}
-		var toDateStr=document.getElementById("toDate").value;
-		
-		var reconDateStr =document.getElementById("reconciliationDate").value;
-		if (reconDateStr == "") {
-			bootbox.alert("Select <s:text name='reconciliationdate'/>");
-			return false;
-		}
-		if (document.getElementById("fromDate").value == "") {
-			bootbox.alert("Select <s:text name='fromdate'/>");
-			return false;
-		}
-		if (toDateStr == "") {
-			bootbox.alert("Select <s:text name='todate'/>");
-			return false;
-		}
-		
-		if(toDateStr!=null && reconDateStr!=null)
-		{
-		
-		var toDateParts=	toDateStr.split("/");
-		if(toDateParts.length!=3)
-		{
-		bootbox.alert("Enter date is 'DD/MM/YYYY' format only");
-		return false;
-		}
-		var toDate=new Date(toDateParts[1]+"/"+toDateParts[0]+"/"+toDateParts[2]);
-		var reconDateParts=	reconDateStr.split("/");
-		
-		if(reconDateParts.length!=3)
-		{
-		bootbox.alert("Enter date is 'DD/MM/YYYY' format only");
-		return false;
-		}
-		var reconDate=new Date(reconDateParts[1]+"/"+reconDateParts[0]+"/"+reconDateParts[2]);
-		//bootbox.alert(reconDate.toString('MM-dd-yyyy'));
-		if(reconDate<toDate)
-		{
-		bootbox.alert("<s:text name='reconciliationdate'/> must be higher or equal to <s:text name='todate'/>");
-		return false;
-		}
-		}
+	function validateSubmit() {
+		if(!validate())
+			{
+				return false;
+			}
 	    callAjaxSearch();
 		//return true;
 	}
@@ -215,7 +166,7 @@
 					<tr>
 						<td><input  type="button" class="buttonsubmit"
 								value="Search" name="Search" method="search"
-								onclick="return validate();" /></td>
+								onclick="return validateSubmit();" /></td>
                 <td><input type="button" value="Show Pendings"
                         onclick="showBalance()" class="buttonsubmit" /></td>
 						<td><input type="button" value="Close"
@@ -223,7 +174,7 @@
 					</tr>
 				</table>
 			</div>
-      <div class="col-md-12 form-group report-table-container" />
+      <div class="col-md-12 form-group report-table-container" id="balanceDiv"></div>
       <div id="resultDiv"> </div>
       
      

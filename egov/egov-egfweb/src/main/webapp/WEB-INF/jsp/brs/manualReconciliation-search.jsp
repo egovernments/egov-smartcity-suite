@@ -40,53 +40,59 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <div class="panel-heading custom_form_panel_heading">
-    <div class="panel-title">Un Reconciled Items</div>
+	<div class="panel-title">Un Reconciled Items</div>
 </div>
 <div class="col-md-12 form-group report-table-container">
-  <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
-    <thead>
-      <tr>
-        <th>VoucherNumber</th>
-        <th>Cheque Number</th>
-        <th>Cheque Date</th>
-        <th>Type</th>
-        <th>Amount</th>
-        <th>Reconciliation Date</th>
-      </tr>
-    </thead>
-    <s:if test="%{unReconciledCheques.size>0}">
-      <s:iterator var="vh" value="unReconciledCheques" status="status">
-        <tr>
-          <input type="hidden" name="instrumentHeaders[<s:property value="#status.index"/>]"
-            value='<s:property value="ihId"/>' />
-          <td style="text-align: left"><s:property value="voucherNumber" /></td>
-          <td style="text-align: left"><s:property value="chequeNumber" /></td>
-          <td><s:property value="chequeDate" /></td>
-          <td><s:property value="type" /></td>
-          <td style="text-align: right"><s:property value="chequeAmount" /></td>
-          <td><input type="text" id="reconDates<s:property value="#status.index"/>"
-            name="reconDates[<s:property value="#status.index"/>]" class="form-control datepicker"
-               data-inputmask="'mask': 'd/m/y'"/> </td>  
-        </tr>
-      </s:iterator>
-    </s:if>
-    <s:else>
-      <tr>
-        <td colspan="6" style="text-align: center">No Data Found</td>
-      </tr>
-    </s:else>
-  </table>
+	<table class="table table-bordered table-hover multiheadertbl"
+		id="resultTable">
+		<thead>
+			<tr>
+				<th>Voucher Number</th>
+				<th>Cheque Number</th>
+				<th>Cheque Date</th>
+				<th>Type</th>
+				<th>Amount</th>
+				<th>Reconciliation Date</th>
+			</tr>
+		</thead>
+		<s:if test="%{unReconciledCheques.size>0}">
+			<s:iterator var="vh" value="unReconciledCheques" status="status">
+				<tr>
+					<input type="hidden"
+						name="instrumentHeaders[<s:property value="#status.index"/>]"
+						value='<s:property value="ihId"/>' />
+					<td style="text-align: left"><s:property value="voucherNumber" /></td>
+					<td style="text-align: left"><s:property value="chequeNumber" /></td>
+					<td><s:property value="chequeDate" /></td>
+					<td><s:property value="type" /></td>
+					<td style="text-align: right"><s:property value="chequeAmount" /></td>
+					<td><input type="text"
+						id="reconDates<s:property value="#status.index"/>"
+						name="reconDates[<s:property value="#status.index"/>]"
+						class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
+					</td>
+				</tr>
+			</s:iterator>
+		</s:if>
+		<s:else>
+			<tr>
+				<td colspan="6" style="text-align: center">No Data Found</td>
+			</tr>
+		</s:else>
+	</table>
 </div>
 <s:if test="%{unReconciledCheques.size>0}">
-  <div class="buttonbottom" id="reconcileDiv" style="display: none">
-    <table>
-      <tr>
-        <td><input type="button" class="buttonsubmit" value="Reconcile" name="Reconcile" method="reconcile"
-          onclick="return validateReconcile();" /></td>
-        <td><input type="button" value="Close" onclick="javascript:window.close()" class="buttonsubmit" /></td>
-      </tr>
-    </table>
-  </div>
+	<div class="buttonbottom" id="reconcileDiv" style="display: none">
+		<table>
+			<tr>
+				<td><input type="button" class="buttonsubmit" value="Reconcile"
+					name="Reconcile" method="reconcile"
+					onclick="return validateReconcile();" /></td>
+				<td><input type="button" value="Close"
+					onclick="javascript:window.close()" class="buttonsubmit" /></td>
+			</tr>
+		</table>
+	</div>
 </s:if>
 
 
