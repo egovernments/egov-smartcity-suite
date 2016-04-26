@@ -44,7 +44,10 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -73,6 +76,9 @@ public class CreateLetterOfAcceptanceController {
     private LetterOfAcceptanceService letterOfAcceptanceService;
     @Autowired
     private LetterOfAcceptanceNumberGenerator letterOfAcceptanceNumberGenerator;
+    
+    @Autowired
+    private DepartmentService departmentService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
@@ -166,6 +172,15 @@ public class CreateLetterOfAcceptanceController {
             resultBinder.rejectValue("fileDate", "error.loa.filedate");
         if (workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
             resultBinder.rejectValue("fileDate", "error.loa.workorderdate");
+    }
+    
+    @RequestMapping(value = "/contractorsearchform", method = RequestMethod.GET)
+    public String showSearchContractorForm(
+            @ModelAttribute final SearchRequestContractor searchRequestContractor,
+            final Model model) throws ApplicationException {
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("searchRequestContractor", searchRequestContractor);
+        return "contractor-search";
     }
 
 }

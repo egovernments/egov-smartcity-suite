@@ -39,13 +39,17 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.master.services.ContractorService;
 import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +76,9 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchLetterOfAcceptanceJsonAdaptor searchLetterOfAcceptanceJsonAdaptor;
+    
+    @Autowired
+    private SearchContractorJsonAdaptor searchContractorJsonAdaptor;
 
     @Autowired
     private SearchLetterOfAcceptanceToCreateContractorBillJson searchLetterOfAcceptanceToCreateContractorBillJson;
@@ -152,4 +159,24 @@ public class AjaxLetterOfAcceptanceController {
         return letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
     }
 
+    @RequestMapping(value = "/ajax-contractorsforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxContractorSearch(final Model model,
+            @ModelAttribute final SearchRequestContractor searchRequestContractor) {
+        final List<ContractorDetail> contractorDetails = letterOfAcceptanceService.searchContractorDetails(searchRequestContractor);
+        final List<Contractor> contractors = new ArrayList<Contractor>();
+        for(ContractorDetail cd : contractorDetails) {
+            if(!contractors.contains(cd.getContractor()))
+                contractors.add(cd.getContractor());
+        }
+        final String result = new StringBuilder("{ \"data\":").append(toSearchContractorJson(contractors))
+                .append("}").toString();
+        return result;
+    }
+    
+    public Object toSearchContractorJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Contractor.class, searchContractorJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 }

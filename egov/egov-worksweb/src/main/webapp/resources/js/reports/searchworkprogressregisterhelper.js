@@ -202,7 +202,7 @@ function callAjaxSearch() {
 						$('td:eq(25)',row).html(parseFloat(Math.round(data.balanceValueOfWorkToBill * 100) / 100).toFixed(2));
 					else
 						$('td:eq(25)',row).html('NA');
-					if(index == reportdatatable.fnSettings().fnRecordsTotal() - 1) {
+					if(index == 0) {
 						$createdDate = data.createdDate;
 						var dataRunmTime = "The information in this report is not real time, it provides information of the transactions that happened till " + $createdDate;
 						$('#dataRun').html(dataRunmTime);

@@ -55,11 +55,14 @@ import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
@@ -306,6 +309,23 @@ public class LetterOfAcceptanceService {
             return true;
         else
             return false;
+    }
+    
+    public List<ContractorDetail> searchContractorDetails(final SearchRequestContractor searchRequestContractor) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorDetail.class, "cd")
+                .createAlias("contractor", "contractor");
+        if (searchRequestContractor != null) {
+            if (searchRequestContractor.getDepartment() != null)
+                criteria.add(Restrictions.eq("department.id", searchRequestContractor.getDepartment()));
+            if (searchRequestContractor.getContractorClass() != null)
+                criteria.add(Restrictions.ge("grade.id", searchRequestContractor.getContractorClass()));
+            if (searchRequestContractor.getContractorCode() != null)
+                criteria.add(Restrictions.ilike("contractor.code", searchRequestContractor.getContractorCode(), MatchMode.ANYWHERE));
+            if (searchRequestContractor.getNameOfAgency() != null)
+                criteria.add(Restrictions.eq("contractor.name", searchRequestContractor.getNameOfAgency()));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 
 }

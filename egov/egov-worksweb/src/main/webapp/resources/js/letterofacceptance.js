@@ -181,3 +181,7 @@ $(document).ready(function(){
 			  return stringValue;
 			}
 });
+
+function searchContractor() {
+	window.open("/egworks/letterofacceptance/contractorsearchform", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
