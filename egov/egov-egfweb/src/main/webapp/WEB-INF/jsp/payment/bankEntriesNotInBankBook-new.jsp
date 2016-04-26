@@ -111,7 +111,7 @@
 	} ];
 	<s:iterator value="dropdownData.glcodeList">
 	glcodeOptions.push({
-		label : '<s:property value="glcode"/>',
+		label : '<s:property value="glcode"/>'+'-'+'<s:property value="name"/>',
 		value : '<s:property value="id"/>'
 	})
 	</s:iterator>
@@ -135,10 +135,10 @@
 							BANKENTRIESNOTINBANKBOOKLIST, ".refNum")
 				},
 				{
-					key : "typeValue",
+					key : "beId",
 					hidden : true,
 					formatter : createHiddenFieldFormatterBENIBB(
-							BANKENTRIESNOTINBANKBOOKLIST, ".typeValue")
+							BANKENTRIESNOTINBANKBOOKLIST, ".beId")
 				},
 				{
 					key : "type",
@@ -149,6 +149,7 @@
 				{
 					key : "date",
 					label : 'Date <span class="mandatory1">*</span>',
+					width:120,
 					formatter : createDateFormatterBENIBB(
 							BANKENTRIESNOTINBANKBOOKLIST, ".date")
 				},
@@ -173,6 +174,7 @@
 				{
 					key : "glcodeDetail",
 					label : 'Account Code <span class="mandatory1">*</span>',
+					width:120,
 					formatter : createDropdownFormatterBENIBB(
 							BANKENTRIESNOTINBANKBOOKLIST, "loaddropdown(this)"),
 					dropdownOptions : glcodeOptions
@@ -214,16 +216,41 @@
 				check();
 			}
 			if (column.key == 'Delete') {
-				if (this.getRecordSet().getLength() > 1) {
+				console.log(record._oData.beId);
+				if(record._oData.beId !=null && record._oData.beId!=""){
+					jQuery.ajax({
+						url : '/EGF/payment/ajaxDeleteBankEntries.action',
+						type : "get",
+						data : {
+							beId : record._oData.beId						
+						},
+						success : function(data, textStatus, jqXHR) {
+							bootbox.alert("Deleting data is successful");
+						},
+						error : function(jqXHR, textStatus, errorThrown) {
+							bootbox.alert("Error while deleting data");
+						}
+					});
 					this.deleteRow(record);
 					allRecords = this.getRecordSet();
 					for (var i = 0; i < allRecords.getLength(); i++) {
 						this.updateCell(this.getRecord(i), this
 								.getColumn('SlNo'), "" + (i + 1));
 					}
-				} else {
-					bootbox.alert("This row can not be deleted");
+				}else{
+
+					if (this.getRecordSet().getLength() > 1) {
+						this.deleteRow(record);
+						allRecords = this.getRecordSet();
+						for (var i = 0; i < allRecords.getLength(); i++) {
+							this.updateCell(this.getRecord(i), this
+									.getColumn('SlNo'), "" + (i + 1));
+						}
+					} else {
+						bootbox.alert("This row can not be deleted");
+					}
 				}
+				
 			}
 		});
 
@@ -233,19 +260,25 @@
 					SlNo : bankEntriesNotInBankBooksTable.getRecordSet()
 							.getLength() + 1,
 					"refNum" : '<s:property value="refNum"/>',
-					"typeValue" : '<s:property value="typeValue"/>',
+					"beId" : '<s:property value="beId"/>',
 					"type" : '<s:property value="type"/>',
 					"date" : '<s:property value="date"/>',
 					"amount" : '<s:property value="amount"/>',
 					"remarks" : '<s:property value="remarks"/>',
-					"glcodeIdDetail" : '<s:property value="glcodeIdDetail"/>',
-					"glcodeDetail" : '<s:property value="glcodeDetail"/>',
-					"createVoucher" : '<s:property value="createVoucher"/>'
+					"glcodeDetail" : '<s:property value="glcodeDetail"/>'
 				});
-		'<s:property value="glcodeIdDetail"/>'
 		var index = '<s:property value="#stat.index"/>';
+		updateGridBENIBB('beId',index,'<s:property value="beId"/>');
+		updateGridBENIBB('refNum',index,'<s:property value="refNum"/>');
+		updateGridBENIBB('type',index,'<s:property value="type"/>');
+		updateGridBENIBB('dateId',index,'<s:property value="dateId"/>');
+		updateGridDateBENIBB(index);
+		updateGridBENIBB('remarks',index,'<s:property value="remarks"/>');
+		updateGridBENIBB('glcodeDetail',index,'<s:property value="glcodeDetail"/>');
+		updateGridBENIBB('amount',index,'<s:property value="amount"/>');
 		updateBENIBBTableIndex();
 		</s:iterator>
+
 
 	}
 	var amountshouldbenumeric = '<s:text  name="amount.should.be.numeric"/>';
@@ -277,7 +310,11 @@
 					</div> <s:actionmessage />
 				</span>
 				<table border="0" width="100%" cellspacing="0" cellpadding="0">
+					<jsp:include page="../voucher/vouchertrans-filter-new.jsp" />
 					<tr>
+						<egov:ajaxdropdown id="bank" fields="['Text','Value']"
+							dropdownId="bank"
+							url="voucher/common-ajaxLoadAllBanksByFund.action" />
 						<td class="greybox"></td>
 						<td class="greybox"><s:text name="bank" /><span
 							class="mandatory1">*</span></td>
@@ -311,25 +348,33 @@
 						<td class="greybox"></td>
 						<td class="greybox"></td>
 					</tr>
-					<jsp:include page="../voucher/vouchertrans-filter-new.jsp" />
-					</br>
-					</br>
-					<table cellspacing="0" cellpadding="0" border="0" width="100%"
-						style="border-right: 0px solid rgb(197, 197, 197);"
-						class="tablebottom">
-						<tbody>
-							<tr>
-								<td colspan="6">
-									<div class="subheadsmallnew">
-										<strong>Bank Entries Not In Bank Book Details </strong>
-									</div>
-									</div>
+				</table>
+			</div>
+			<div class="buttonbottom">
+				<input type="button" value="Search" class="buttonsubmit"
+					onclick="return onSearch();" /> <input type="button" value="Close"
+					onclick="javascript:window.close()" class="button" />
 
-									<div class="yui-skin-sam" align="center">
-										<div id="bankEntriesNotInBankBookTable"></div>
+			</div>
+			</br>
+			</br>
+			<table id="bankEntriesNotInBankBookuiTable" cellspacing="0"
+				cellpadding="0" border="0" width="100%"
+				style="border-right: 0px solid rgb(197, 197, 197);"
+				class="tablebottom">
+				<tbody>
+					<tr>
+						<td colspan="6">
+							<div class="subheadsmallnew">
+								<strong>Bank Entries Not In Bank Book Details </strong>
+							</div>
+							</div>
+
+							<div class="yui-skin-sam" align="center">
+								<div id="bankEntriesNotInBankBookTable"></div>
 
 
-										<script>
+								<script>
 											makeBankEntriesNotInBankBookTable();
 											//initialise datepicker
 												jQuery(".datepicker").datepicker({
@@ -342,15 +387,16 @@
 													.getElementsByTagName(
 															'table')[0].width = "100%"
 										</script>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					</br>
-				</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</br>
 
-			</div>
-			<div class="buttonbottom">
+
+
+
+			<div class="buttonbottom" id="saveButtion">
 				<input type="button" value="Save" class="buttonsubmit"
 					onclick="return onSave();" /> <input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
@@ -360,19 +406,114 @@
 		<s:hidden name="showMode" />
 	</s:form>
 	<script type="text/javascript">
-		function onSave() {
+		function onSearch() {
 			var bank = document.getElementById("bank").value;
 			var bankBranch = document.getElementById("bank_branch").value;
 			var bankAccount = document.getElementById("bankaccount").value;
+			var fund = document.getElementById("fundId").value;
+			var fund = document.getElementById("fundId").value;
+			if (fund == null || fund == "" || fund == "-1") {
+				bootbox.alert("Please select Fund");
+				return false;
+			} 
 			if (bank == null || bank == "" || bank == "-1") {
 				bootbox.alert("Please select bank");
 				return false;
-			}  if (bankBranch == null || bankBranch == ""
+			} 
+			 if (bankBranch == null || bankBranch == ""
 					|| bankBranch == "-1") {
 				bootbox.alert("Please select bank branch");
 
 				return false;
-			}  if (bankAccount == null || bankAccount == ""
+			}  
+			if (bankAccount == null || bankAccount == ""
+					|| bankAccount == "-1") {
+				bootbox.alert("Please select bank account");
+				return false;
+			}
+			<s:if test="%{isFieldMandatory('fund')}"> 
+			 if(null != document.getElementById('fundId') && document.getElementById('fundId').value == ""){
+				 bootbox.alert( "Please select a Fund");
+				return false;
+			 }    
+		 </s:if>   
+		 <s:if test="%{isFieldMandatory('function')}">                        
+		 if(null != document.getElementById('vouchermis.function') && document.getElementById('vouchermis.function').value == -1){
+
+			 bootbox.alert( "Please select a Function");
+			return false;
+		 }
+	 	</s:if>
+		<s:if test="%{isFieldMandatory('department')}"> 
+			 if(null!= document.getElementById('vouchermis.departmentid') && document.getElementById('vouchermis.departmentid').value ==""){
+
+				 bootbox.alert( "Please select a Department");
+				return false;
+			 }
+		</s:if>
+		<s:if test="%{isFieldMandatory('scheme')}"> 
+			 if(null!=document.getElementById('schemeid') &&  document.getElementById('schemeid').value == -1){
+
+				 bootbox.alert( "Please select a Scheme");
+				return false;
+			 }
+		</s:if>
+		<s:if test="%{isFieldMandatory('subscheme')}"> 
+			 if(null!= document.getElementById('subschemeid') && document.getElementById('subschemeid').value == -1){
+
+				 bootbox.alert( "Please select a Subscheme");
+				return false;
+			 }
+		</s:if>
+		<s:if test="%{isFieldMandatory('functionary')}"> 
+			 if(null!=document.getElementById('vouchermis.functionary') &&  document.getElementById('vouchermis.functionary').value == -1){
+
+				 bootbox.alert( "Please select a Functionary");
+				return false;
+			 }
+		</s:if>
+		<s:if test="%{isFieldMandatory('fundsource')}"> 
+			 if(null !=document.getElementById('fundsourceId') &&  document.getElementById('fundsourceId').value == -1){
+
+				 bootbox.alert( "Please select a Fundsource");
+				return false;
+			}
+		</s:if>
+		<s:if test="%{isFieldMandatory('field')}"> 
+			 if(null!= document.getElementById('vouchermis.divisionid') && document.getElementById('vouchermis.divisionid').value == -1){
+
+				 bootbox.alert( "Please select a Field");
+				return false;
+			 }
+		</s:if>
+		console.log(jQuery("#bankEntriesNotInBankBookform").serialize());
+			doLoadingMask();
+			document.bankEntriesNotInBankBookform.action = '/EGF/payment/bankEntriesNotInBankBook-search.action';
+			document.bankEntriesNotInBankBookform.submit();
+
+		}
+
+		function onSave() {
+			var bank = document.getElementById("bank").value;
+			var bankBranch = document.getElementById("bank_branch").value;
+			var bankAccount = document.getElementById("bankaccount").value;
+			var fund = document.getElementById("fundId").value;
+			var fund = document.getElementById("fundId").value;
+			if (fund == null || fund == "" || fund == "-1") {
+				bootbox.alert("Please select Fund");
+				return false;
+			} 
+			if (bank == null || bank == "" || bank == "-1") {
+				bootbox.alert("Please select bank");
+				return false;
+			} 
+			 if (bankBranch == null || bankBranch == ""
+					|| bankBranch == "-1") {
+				bootbox.alert("Please select bank branch");
+
+				return false;
+			}  
+			if (bankAccount == null || bankAccount == ""
 					|| bankAccount == "-1") {
 				bootbox.alert("Please select bank account");
 				return false;
@@ -440,55 +581,8 @@
 		}
 
 		}
-		function loadBankAccount(obj) {
-			if (obj.options[obj.selectedIndex].value != -1) {
-				var branchId = obj.options[obj.selectedIndex].value;
-				//bootbox.alert("heelo"+x);                            
-				populatebankaccount({
-					branchId : branchId
-				});
-			}
-
-		}
-
-		function loadBankBranch(obj) {
-			if (obj.options[obj.selectedIndex].value != -1) {
-				var bankId = obj.options[obj.selectedIndex].value;
-				//bootbox.alert("heelo"+x);                            
-				populatebank_branch({
-					bankId : bankId
-				});
-			}
-
-		}
-		function validate(){
-			var flag =true ; 
-			for (var i = 0; i < bankEntriesNotInBankBookTableIndex; i++) {
-				var type = document.getElementById('bankEntriesNotInBankBookList['
-						+ i + '].type').value;
-				var glcode = document.getElementById('bankEntriesNotInBankBookList[' + i
-						+ '].glcodeDetail').value;
-				var date = document.getElementById('bankEntriesNotInBankBookList['
-						+ i + '].date').value;
-				var amount = document.getElementById('bankEntriesNotInBankBookList[' + i
-						+ '].amount').value;
-				if (glcode == null || glcode == 0) {
-					bootbox.alert('Please select account code  for row '+ (i+1));
-					flag= false;
-				} else if (type == null || type == 0) {
-					bootbox.alert('Please select type for row ' + (i+1));
-					flag = false;
-				} else if (date == null || date == '') {
-					bootbox.alert('Please select date for row '
-							+ (i+1));
-					flag = false;
-				} else if (amount == null || amount == '' ) {
-					bootbox.alert('Please enter amount for row  ' + (i+1));
-					flag = false;
-				}
-			}
-			return flag;
-			}
+		
+	
 	</SCRIPT>
 </body>
 </html>

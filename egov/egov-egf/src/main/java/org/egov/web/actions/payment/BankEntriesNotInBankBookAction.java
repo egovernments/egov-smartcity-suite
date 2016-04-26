@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,9 +59,18 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.voucher.BankEntriesNotInBankBook;
+import org.egov.services.instrument.BankEntriesService;
 import org.egov.services.voucher.BankEntriesNotInBankBookActionHelper;
+import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
+import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({
@@ -70,6 +81,7 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
 
     private static final long serialVersionUID = 8336255427935452077L;
     private static final Logger LOGGER = Logger.getLogger(BankEntriesNotInBankBookAction.class);
+    private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
 
     private Integer bankaccount;
 
@@ -80,6 +92,11 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     @Autowired
     private BankEntriesNotInBankBookActionHelper bankEntriesNotInBankBookActionHelper;
+    @Autowired
+    @Qualifier("bankEntriesService")
+    private BankEntriesService bankEntriesService;
+
+    private Long beId;
 
     @Override
     public StateAware getModel() {
@@ -97,7 +114,7 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
 
     public void prepareNewform() {
         addDropdownData("glcodeList", chartOfAccountsHibernateDAO.getAccountCodesListForBankEntries());
-        addDropdownData("bankList", bankHibernateDAO.getAllBankHavingBranchAndAccounts());
+        addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("bankBranchList", Collections.EMPTY_LIST);
         addDropdownData("bankAccountList", Collections.EMPTY_LIST);
 
@@ -115,6 +132,62 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
         bankEntriesNotInBankBookList.add(new BankEntriesNotInBankBook());
         loadDefalutDates();
         return NEW;
+    }
+
+    @SkipValidation
+    @Action(value = "/payment/bankEntriesNotInBankBook-search")
+    public String search() {
+        Query query = null;
+        query = persistenceService.getSession().createSQLQuery(getQuery())
+                .addScalar("refNum", StringType.INSTANCE)
+                .addScalar("type", StringType.INSTANCE)
+                .addScalar("date", DateType.INSTANCE)
+                .addScalar("amount", BigDecimalType.INSTANCE)
+                .addScalar("remarks", StringType.INSTANCE)
+                .addScalar("glcodeDetail", StringType.INSTANCE)
+                .addScalar("beId", LongType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(BankEntriesNotInBankBook.class));
+        bankEntriesNotInBankBookList = query.list();
+        List<BankEntriesNotInBankBook> tempList = new ArrayList<BankEntriesNotInBankBook>();
+        for (BankEntriesNotInBankBook bean : bankEntriesNotInBankBookList)
+        {
+            bean.setDateId(FORMATDDMMYYYY.format(bean.getDate()));
+            tempList.add(bean);
+        }
+        bankEntriesNotInBankBookList = tempList;
+        if (bankEntriesNotInBankBookList.size() == 0)
+            bankEntriesNotInBankBookList.add(new BankEntriesNotInBankBook());
+        prepareNewform();
+        addDropdownData("bankList", bankHibernateDAO.getAllBanksByFund(voucherHeader.getFundId().getId()));
+        return NEW;
+    }
+
+    private String getQuery() {
+        String query = "", subQuery = "";
+        if (bankaccount != null)
+            subQuery = subQuery + "and be.bankaccountid = " + bankaccount;
+        if (voucherHeader.getVouchermis().getDepartmentid() != null)
+            subQuery = subQuery + "and bemis.departmentid = " + voucherHeader.getVouchermis().getDepartmentid().getId();
+        if (voucherHeader.getFundId() != null)
+            subQuery = subQuery + "and bemis.fundid = " + voucherHeader.getFundId().getId();
+        if (voucherHeader.getVouchermis().getSchemeid() != null)
+            subQuery = subQuery + "and bemis.schemeid = " + voucherHeader.getVouchermis().getSchemeid().getId();
+        if (voucherHeader.getVouchermis().getSubschemeid() != null)
+            subQuery = subQuery + "and bemis.subschemeid = " + voucherHeader.getVouchermis().getSubschemeid().getId();
+        if (voucherHeader.getVouchermis().getFundsource() != null)
+            subQuery = subQuery + "and bemis.fundsourceid = " + voucherHeader.getVouchermis().getFundsource().getId();
+        if (voucherHeader.getVouchermis().getDivisionid() != null)
+            subQuery = subQuery + "and bemis.divisionid = " + voucherHeader.getVouchermis().getDivisionid().getId();
+        if (voucherHeader.getVouchermis().getFunctionary() != null)
+            subQuery = subQuery + "and bemis.functionaryid = " + voucherHeader.getVouchermis().getFunctionary().getId();
+        if (voucherHeader.getVouchermis().getFunction() != null)
+            subQuery = subQuery + "and bemis.functionid = " + voucherHeader.getVouchermis().getFunction().getId();
+
+        query = "select be.id as beId,be.refno as refnum,be.type as type,be.txndate as date,be.txnamount as amount,be.glcodeid as glcodeDetail,be.remarks as remarks "
+                + " from bankentries be,bankentries_mis bemis where be.voucherheaderid is null and be.id = bemis.bankentriesid "
+                + subQuery;
+        return query;
+
     }
 
     @SkipValidation
@@ -137,6 +210,13 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
         return SUCCESS;
     }
 
+    @SkipValidation
+    @Action(value = "/payment/ajaxDeleteBankEntries")
+    public void ajaxDeleteBankEntries() {
+        if (beId != null)
+            bankEntriesService.delete(bankEntriesService.findById(beId, false));
+    }
+
     public List<BankEntriesNotInBankBook> getBankEntriesNotInBankBookList() {
         return bankEntriesNotInBankBookList;
     }
@@ -151,6 +231,14 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
 
     public void setBankaccount(Integer bankaccount) {
         this.bankaccount = bankaccount;
+    }
+
+    public Long getBeId() {
+        return beId;
+    }
+
+    public void setBeId(Long beId) {
+        this.beId = beId;
     }
 
 }

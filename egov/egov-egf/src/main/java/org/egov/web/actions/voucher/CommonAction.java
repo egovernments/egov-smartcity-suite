@@ -119,11 +119,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-/**
- * @author msahoo We cannot change here the transaction mode to readonly since it is aslo called from save or edit actions. These
- * we can change once we set the ajax submit
- *
- */
 
 @Results({
         @Result(name = "bankAccountByBranch", location = "common-bankAccountByBranch.jsp"),

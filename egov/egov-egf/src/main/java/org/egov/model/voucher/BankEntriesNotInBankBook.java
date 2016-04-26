@@ -47,10 +47,11 @@ import java.util.Date;
 
 public class BankEntriesNotInBankBook {
 
+    private Long beId;
     private String refNum;
     private String type;
-    private String typeValue;
     private Date date;
+    private String dateId;
     private BigDecimal amount;
     private String remarks;
     private Long glcodeIdDetail;
@@ -130,12 +131,20 @@ public class BankEntriesNotInBankBook {
         this.createVoucher = createVoucher;
     }
 
-    public String getTypeValue() {
-        return typeValue;
+    public Long getBeId() {
+        return beId;
     }
 
-    public void setTypeValue(String typeValue) {
-        this.typeValue = typeValue;
+    public void setBeId(Long beId) {
+        this.beId = beId;
+    }
+
+    public String getDateId() {
+        return dateId;
+    }
+
+    public void setDateId(String dateId) {
+        this.dateId = dateId;
     }
 
 }

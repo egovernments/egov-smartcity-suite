@@ -114,7 +114,7 @@ public class BankEntriesNotInBankBookActionHelper {
     private BankEntriesService bankEntriesService;
 
     @Transactional
-    public CVoucherHeader create(CVoucherHeader voucherHeader, Integer bankaccount,
+    public void create(CVoucherHeader voucherHeader, Integer bankaccount,
             List<BankEntriesNotInBankBook> bankEntriesNotInBankBookList) throws Exception {
         try {
             List<BrsEntries> bankEntries = new ArrayList<BrsEntries>();
@@ -123,42 +123,54 @@ public class BankEntriesNotInBankBookActionHelper {
             Bankaccount bankAccount = bankAccountService.findById(bankaccount.longValue(), false);
             CChartOfAccounts coa = new CChartOfAccounts();
             for (BankEntriesNotInBankBook object : bankEntriesNotInBankBookList) {
-                bankEntry = new BrsEntries();
-                bankEntryMis = new BrsEntrieMis();
-                bankEntry.setBankaccountId(bankAccount);
-                bankEntry.setRefNo(object.getRefNum());
-                bankEntry.setType(object.getType());
-                bankEntry.setTxnDate(object.getDate());
-                bankEntry.setTxnAmount(object.getAmount());
-                bankEntry.setRemarks(object.getRemarks());
-                coa = chartOfAccountsHibernateDAO.findById(Long.valueOf(object.getGlcodeDetail()), false);
-                bankEntry.setGlCodeId(coa);
-                if (voucherHeader.getVouchermis().getFunction() != null
-                        && voucherHeader.getVouchermis().getFunction().getId() != null)
-                    bankEntryMis.setFunction(functionDAO.getFunctionById(voucherHeader.getVouchermis().getFunction().getId()));
-                if (voucherHeader.getVouchermis().getDepartmentid() != null)
-                    bankEntryMis.setDepartment(departmentService.getDepartmentById(voucherHeader.getVouchermis()
-                            .getDepartmentid()
-                            .getId()));
-                if (voucherHeader.getFundId() != null)
-                    bankEntryMis.setFund(fundDAO.fundById(voucherHeader.getFundId().getId(), false));
-                if (voucherHeader.getVouchermis().getSchemeid() != null)
-                    bankEntryMis.setScheme(schemeDAO.findById(voucherHeader.getVouchermis().getSchemeid().getId(), false));
-                if (voucherHeader.getVouchermis().getSubschemeid() != null)
-                    bankEntryMis.setSubscheme(subSchemeDAO
-                            .findById(voucherHeader.getVouchermis().getSubschemeid().getId(), false));
-                if (voucherHeader.getVouchermis().getFundsource() != null)
-                    bankEntryMis.setFundsource(fundSourceDAO.findById(voucherHeader.getVouchermis().getFundsource().getId(),
-                            false));
-                if (voucherHeader.getVouchermis().getFunctionary() != null)
-                    bankEntryMis.setFunctionary(functionaryDAO
-                            .findById(voucherHeader.getVouchermis().getFunctionary().getId(), false));
-                bankEntryMis.setBankentries(bankEntry);
-                bankEntry.getBankentriesMis().add(bankEntryMis);
-                if (object.getCreateVoucher() != null && object.getCreateVoucher())
-                    bankEntry.setVoucherHeaderId(createVoucher(voucherHeader, object, bankAccount, coa));
-                bankEntries.add(bankEntry);
 
+                if (object.getBeId() != null && object.getCreateVoucher() != null && object.getCreateVoucher()) {
+                    bankEntry = new BrsEntries();
+                    bankEntry = bankEntriesService.findById(object.getBeId(), false);
+                    object.setDate(bankEntry.getTxnDate());
+                    object.setType(bankEntry.getType());
+                    object.setAmount(bankEntry.getTxnAmount());
+                    bankEntry.setVoucherHeaderId(createVoucher(voucherHeader, object, bankAccount, bankEntry.getGlCodeId()));
+                    bankEntriesService.update(bankEntry);
+                } else {
+                    bankEntry = new BrsEntries();
+                    bankEntryMis = new BrsEntrieMis();
+                    bankEntry.setBankaccountId(bankAccount);
+                    bankEntry.setRefNo(object.getRefNum());
+                    bankEntry.setType(object.getType());
+                    bankEntry.setTxnDate(object.getDate());
+                    bankEntry.setTxnAmount(object.getAmount());
+                    bankEntry.setRemarks(object.getRemarks());
+                    coa = chartOfAccountsHibernateDAO.findById(Long.valueOf(object.getGlcodeDetail()), false);
+                    bankEntry.setGlCodeId(coa);
+                    if (voucherHeader.getVouchermis().getFunction() != null
+                            && voucherHeader.getVouchermis().getFunction().getId() != null)
+                        bankEntryMis
+                                .setFunction(functionDAO.getFunctionById(voucherHeader.getVouchermis().getFunction().getId()));
+                    if (voucherHeader.getVouchermis().getDepartmentid() != null)
+                        bankEntryMis.setDepartment(departmentService.getDepartmentById(voucherHeader.getVouchermis()
+                                .getDepartmentid()
+                                .getId()));
+                    if (voucherHeader.getFundId() != null)
+                        bankEntryMis.setFund(fundDAO.fundById(voucherHeader.getFundId().getId(), false));
+                    if (voucherHeader.getVouchermis().getSchemeid() != null)
+                        bankEntryMis.setScheme(schemeDAO.findById(voucherHeader.getVouchermis().getSchemeid().getId(), false));
+                    if (voucherHeader.getVouchermis().getSubschemeid() != null)
+                        bankEntryMis.setSubscheme(subSchemeDAO
+                                .findById(voucherHeader.getVouchermis().getSubschemeid().getId(), false));
+                    if (voucherHeader.getVouchermis().getFundsource() != null)
+                        bankEntryMis.setFundsource(fundSourceDAO.findById(voucherHeader.getVouchermis().getFundsource().getId(),
+                                false));
+                    if (voucherHeader.getVouchermis().getFunctionary() != null)
+                        bankEntryMis.setFunctionary(functionaryDAO
+                                .findById(voucherHeader.getVouchermis().getFunctionary().getId(), false));
+                    bankEntryMis.setBankentries(bankEntry);
+                    bankEntry.getBankentriesMis().add(bankEntryMis);
+                    if (object.getCreateVoucher() != null && object.getCreateVoucher())
+                        bankEntry.setVoucherHeaderId(createVoucher(voucherHeader, object, bankAccount, coa));
+                    bankEntries.add(bankEntry);
+
+                }
             }
             for (BrsEntries object : bankEntries) {
                 bankEntriesService.persist(object);
@@ -174,7 +186,6 @@ public class BankEntriesNotInBankBookActionHelper {
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
         }
-        return null;
     }
 
     @Transactional

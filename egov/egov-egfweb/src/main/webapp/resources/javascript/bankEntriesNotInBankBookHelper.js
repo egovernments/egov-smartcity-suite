@@ -40,6 +40,33 @@
 var BANKENTRIESNOTINBANKBOOKLIST = 'bankEntriesNotInBankBookList';
 var bankEntriesNotInBankBookTableIndex = 0;
 var bankEntriesNotInBankBooksTable;
+function updateGridBENIBB(field, index, value) {
+
+	document.getElementById(BANKENTRIESNOTINBANKBOOKLIST + '[' + index + '].'
+			+ field).value = value;
+	var obj = document.getElementById(BANKENTRIESNOTINBANKBOOKLIST + '['
+			+ index + '].' + field);
+	var beId = document.getElementById('bankEntriesNotInBankBookList[' + index
+			+ '].beId').value;
+	if (field != "beId" && beId != "")
+		jQuery(obj).attr("disabled", true);
+
+}
+function updateGridDateBENIBB(index) {
+
+	document.getElementById(BANKENTRIESNOTINBANKBOOKLIST + '[' + index
+			+ '].date').value = document
+			.getElementById(BANKENTRIESNOTINBANKBOOKLIST + '[' + index
+					+ '].dateId').value;
+	var beId = document.getElementById('bankEntriesNotInBankBookList[' + index
+			+ '].beId').value;
+	if (beId != "")
+		jQuery(
+				document.getElementById(BANKENTRIESNOTINBANKBOOKLIST + '['
+						+ index + '].date')).attr("disabled", true);
+
+}
+
 function createTextFieldFormatterBENIBB(prefix, suffix) {
 	return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData)) ? oData : "";
@@ -86,7 +113,19 @@ function createCheckBoxFormatterBENIBB(prefix, suffix) {
 function createDateFormatterBENIBB(prefix, suffix) {
 	return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData)) ? oData : "";
-		el.innerHTML = '<input type="text" id="'
+		el.innerHTML = '<s:date name="'
+				+ prefix
+				+ '['
+				+ bankEntriesNotInBankBookTableIndex
+				+ ']'
+				+ suffix
+				+ 'Id" id="'
+				+ prefix
+				+ '['
+				+ bankEntriesNotInBankBookTableIndex
+				+ ']'
+				+ suffix
+				+ 'Id" format="dd/MM/yyyy" /> <input type="text" id="'
 				+ prefix
 				+ '['
 				+ bankEntriesNotInBankBookTableIndex
@@ -122,8 +161,10 @@ function createDropdownFormatterBENIBB(prefix) {
 				value : bankEntriesNotInBankBookTableIndex
 			};
 
-			YAHOO.util.Event.addListener(selectEl, "change", onDropdownChange,
-					selectedIndex, this);
+			/*
+			 * YAHOO.util.Event.addListener(selectEl, "change",
+			 * onDropdownChange, selectedIndex, this);
+			 */
 
 		}
 
@@ -164,7 +205,67 @@ function setValue(obj) {
 	if (obj.checked) {
 		console.log("true");
 		obj.value = true;
-	}else{
+	} else {
 		obj.value = false;
 	}
+}
+
+function loadBankAccount(obj) {
+	if (obj.options[obj.selectedIndex].value != -1) {
+		var branchId = obj.options[obj.selectedIndex].value;
+		// bootbox.alert("heelo"+x);
+		populatebankaccount({
+			branchId : branchId
+		});
+	}
+
+}
+
+function loadBankBranch(obj) {
+	if (obj.options[obj.selectedIndex].value != -1) {
+		var bankId = obj.options[obj.selectedIndex].value;
+		// bootbox.alert("heelo"+x);
+		populatebank_branch({
+			bankId : bankId
+		});
+	}
+
+}
+function loadBank(obj) {
+	if (obj.options[obj.selectedIndex].value != -1) {
+		var fundId = obj.options[obj.selectedIndex].value;
+		// bootbox.alert("heelo"+x);
+		populatebank({
+			fundId : fundId
+		});
+	}
+
+}
+
+function validate() {
+	var flag = true;
+	for (var i = 0; i < bankEntriesNotInBankBookTableIndex; i++) {
+		var type = document.getElementById('bankEntriesNotInBankBookList[' + i
+				+ '].type').value;
+		var glcode = document.getElementById('bankEntriesNotInBankBookList['
+				+ i + '].glcodeDetail').value;
+		var date = document.getElementById('bankEntriesNotInBankBookList[' + i
+				+ '].date').value;
+		var amount = document.getElementById('bankEntriesNotInBankBookList['
+				+ i + '].amount').value;
+		if (glcode == null || glcode == 0) {
+			bootbox.alert('Please select account code  for row ' + (i + 1));
+			flag = false;
+		} else if (type == null || type == 0) {
+			bootbox.alert('Please select type for row ' + (i + 1));
+			flag = false;
+		} else if (date == null || date == '') {
+			bootbox.alert('Please select date for row ' + (i + 1));
+			flag = false;
+		} else if (amount == null || amount == '') {
+			bootbox.alert('Please enter amount for row  ' + (i + 1));
+			flag = false;
+		}
+	}
+	return flag;
 }
