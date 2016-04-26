@@ -68,6 +68,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -194,6 +195,7 @@ public class LetterOfAcceptanceService {
         if (estimateNumbers.isEmpty())
             estimateNumbers.add("");
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
+                .addOrder(Order.asc("workOrderDate"))
                 .createAlias("wo.contractor", "woc")
                 .createAlias("egwStatus", "status");
         if (searchRequestLetterOfAcceptance != null) {

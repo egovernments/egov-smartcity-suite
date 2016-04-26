@@ -39,8 +39,6 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
@@ -87,12 +85,6 @@ public class AjaxLetterOfAcceptanceController {
     public @ResponseBody String ajaxSearch(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrder> searchLoaList = letterOfAcceptanceService.searchLetterOfAcceptance(searchRequestLetterOfAcceptance);
-        Collections.sort(searchLoaList, new Comparator<WorkOrder>() {
-            @Override
-            public int compare(WorkOrder w1, WorkOrder w2){
-                return w1.getWorkOrderDate().compareTo(w2.getWorkOrderDate());
-            }
-        });
         final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJson(searchLoaList))
                 .append("}").toString();
         return result;
