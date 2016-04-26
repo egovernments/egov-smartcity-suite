@@ -61,27 +61,26 @@ public class AdvertisementPenaltyRatesService {
 
     public Double findPenaltyRatesByNumberOfDays(Long numberOfDays) {
         if (numberOfDays != null) {
-            AdvertisementPenaltyRates penaltyRate = penaltyRatesRepository.findPenaltyRatesByNumberOfDays(Double.valueOf(numberOfDays));
+            AdvertisementPenaltyRates penaltyRate = penaltyRatesRepository.findPenaltyRatesByNumberOfDays(Double
+                    .valueOf(numberOfDays));
             if (penaltyRate != null) {
                 return penaltyRate.getPercentage();
             }
         }
         return Double.valueOf(0);
     }
-    
-    public List<AdvertisementPenaltyRates> findPenaltyRatesInAscendingOrder()
-    {
+
+    public List<AdvertisementPenaltyRates> findPenaltyRatesInAscendingOrder() {
         return penaltyRatesRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
     }
-    
+
     @Transactional
-    public AdvertisementPenaltyRates createPenaltyRates(final AdvertisementPenaltyRates advertisementPenaltyRates)
-    {
+    public AdvertisementPenaltyRates createPenaltyRates(final AdvertisementPenaltyRates advertisementPenaltyRates) {
         return penaltyRatesRepository.save(advertisementPenaltyRates);
     }
 
     @Transactional
-    public void delete(final AdvertisementPenaltyRates rate){
-         penaltyRatesRepository.delete(rate);
+    public void delete(final AdvertisementPenaltyRates rate) {
+        penaltyRatesRepository.delete(rate);
     }
 }

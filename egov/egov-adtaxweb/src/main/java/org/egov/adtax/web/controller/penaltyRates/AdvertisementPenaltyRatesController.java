@@ -36,17 +36,10 @@ public class AdvertisementPenaltyRatesController {
 
         if (hoardingPenaltyRates != null) {
 
-            for (AdvertisementPenaltyRates rate : rateList) {
-
-                for (AdvertisementPenaltyRates advtPenaltyRates : hoardingPenaltyRates.getAdvtPenaltyRatesList()) {
-
-                    if (advtPenaltyRates.getId() != null && rate.getId().equals(advtPenaltyRates.getId())) {
-                        penaltyRatesService.createPenaltyRates(advtPenaltyRates);
-                    } else if (advtPenaltyRates.getId() == null) {
-                        penaltyRatesService.createPenaltyRates(advtPenaltyRates);
-                    }
-                }
+            for (AdvertisementPenaltyRates advtPenaltyRates : hoardingPenaltyRates.getAdvtPenaltyRatesList()) {
+                penaltyRatesService.createPenaltyRates(advtPenaltyRates);
             }
+
             for (AdvertisementPenaltyRates rate : rateList) {
                 if (!hoardingPenaltyRates.getAdvtPenaltyRatesList().contains(rate)) {
                     penaltyRatesService.delete(rate);
