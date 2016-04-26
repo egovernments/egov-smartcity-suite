@@ -65,7 +65,7 @@ $(document).ready(function(){
 		}, {
 			displayKey : 'name',
 			source : contractorSearch.ttAdapter()
-		}).on('typeahead:selected', function(event, data){            
+		}).on('typeahead:selected typeahead:autocompleted', function(event, data){            
 			$("#contractorCode").val(data.code);    
 			$("#contractor").val(data.value);   
 	    });		
