@@ -38,6 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
+	$('#report-footer').hide();
 	$('#btndownloadpdf').hide();
 	$('#btndownloadexcel').hide();
 	$('#balanceAvailable').html("");
@@ -99,10 +100,11 @@ function getFormData($form){
 
     return indexed_array;
 }
-
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");		
 	jQuery('.report-section').removeClass('display-hide');
+	//$('#dailyCollReport-table').show();
+	//reportdatatable= $('#dailyCollReport-table');
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
@@ -128,7 +130,6 @@ function callAjaxSearch() {
 						$('td:eq(9)',row).html(parseFloat(Math.round(data.cumulativeTotal * 100) / 100).toFixed(2));
 					if(data.balanceAvailable != "")
 						$('td:eq(10)',row).html(parseFloat(Math.round(data.balanceAvailable * 100) / 100).toFixed(2));
-
 					$('#btndownloadpdf').show();
 					$('#btndownloadexcel').show();
 					$('td:eq(0)',row).html(index+1);
@@ -139,7 +140,7 @@ function callAjaxSearch() {
 					return row;
 				},
 				aaSorting: [],				
-				columns : [ { 
+				"columns" : [{
 					"data" : "", "sClass" : "text-center"} ,{ 
 					"data" : "appropriationNumber", "sClass" : "text-left"} ,{
 					"data" : "appropriationDate", "sClass" : "text-left" },{
@@ -150,7 +151,68 @@ function callAjaxSearch() {
 					"data" : "estimateDate", "sClass" : "text-left"} ,{
 					"data" : "estimateValue", "sClass" : "text-right"} ,{
 					"data" : "cumulativeTotal", "sClass" : "text-right"} ,{
-					"data" : "balanceAvailable", "sClass" : "text-right"
-					}]
-				});
-			}
+					"data" : "balanceAvailable", "sClass" : "text-right"}],
+					  "footerCallback" : function(row, data, start, end, display) {
+							var api = this.api(), data;
+							if (data.length == 0) {
+								jQuery('#report-footer').hide();
+							} else {
+								jQuery('#report-footer').show(); 
+							}
+							if (data.length > 0) {
+								updateTotalFooter(9, api);
+								updateTotalFooter(10, api);
+							}
+						},
+						"aoColumnDefs" : [ {
+							"aTargets" : [9,10],
+							"mRender" : function(data, type, full) {
+								return formatNumberInr(data);    
+							}
+						} ]		
+					});
+	}
+function updateTotalFooter(colidx, api) {
+	// Remove the formatting to get integer data for summation
+	var intVal = function(i) {
+		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
+				: typeof i === 'number' ? i : 0;
+	};
+
+	// Total over all pages
+	total = api.column(colidx).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	});
+
+	// Total over this page
+	pageTotal = api.column(colidx, {
+		page : 'current'
+	}).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	}, 0);
+
+	// Update footer
+	jQuery(api.column(colidx).footer()).html(
+			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
+					+ ')');
+}
+
+//inr formatting number
+function formatNumberInr(x) {
+	if (x) {
+		x = x.toString();
+		var afterPoint = '';
+		if (x.indexOf('.') > 0)
+			afterPoint = x.substring(x.indexOf('.'), x.length);
+		x = Math.floor(x);
+		x = x.toString();
+		var lastThree = x.substring(x.length - 3);
+		var otherNumbers = x.substring(0, x.length - 3);
+		if (otherNumbers != '')
+			lastThree = ',' + lastThree;
+		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
+				+ lastThree + afterPoint;
+		return res;
+	}
+	return x;
+}

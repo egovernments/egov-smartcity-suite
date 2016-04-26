@@ -42,11 +42,16 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-center">
-		<spring:message code="title.estimateappropriationregister.searchresult" /></div>
+		<spring:message
+			code="title.estimateappropriationregister.searchresult" />
+	</div>
 	<div id="balanceAvailable" class="text-center"></div>
-	<div id="errorMessage" style="display: none;"><spring:message code="error.lineestimate.loa.search" /></div>
+	<div id="errorMessage" style="display: none;">
+		<spring:message code="error.lineestimate.loa.search" />
+	</div>
 	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-responsive table-hover multiheadertbl"
+		<table
+			class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
 				<tr>
@@ -63,16 +68,33 @@
 					<th><spring:message code="lbl.balanceavailable" /></th>
 				</tr>
 			</thead>
-			<tbody class="no-pointer">
+			<tbody>
+			<tfoot id="report-footer">
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>Latest status</td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tfoot>
 			</tbody>
 		</table>
 	</div>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button style="display: none;" type='button' class='btn btn-primary' id="btndownloadpdf">
+			<button style="display: none;" type='button' class='btn btn-primary'
+				id="btndownloadpdf">
 				<spring:message code='lbl.download.pdf' />
 			</button>
-			<button style="display: none;" type='button' class='btn btn-primary' id="btndownloadexcel">
+			<button style="display: none;" type='button' class='btn btn-primary'
+				id="btndownloadexcel">
 				<spring:message code='lbl.download.excel' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'

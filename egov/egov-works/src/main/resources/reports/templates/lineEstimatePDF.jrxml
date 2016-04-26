@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-22T16:34:32 -->
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-04-26T18:25:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lineEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e48ceff3-3e96-4152-8bcd-78fa1c9fed2b">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -329,7 +329,7 @@
 		<band height="170">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField pattern="###0.00">
-				<reportElement x="445" y="0" width="95" height="18" uuid="f1e8ba12-7874-4c9a-953c-09042fb73bc9"/>
+				<reportElement stretchType="RelativeToTallestObject" x="445" y="0" width="95" height="18" uuid="f1e8ba12-7874-4c9a-953c-09042fb73bc9"/>
 				<box topPadding="2" leftPadding="0" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -340,17 +340,17 @@
 				<textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="392" y="86" width="150" height="22" uuid="d542eb8c-b1c6-4893-956c-bcf4ac73757a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="392" y="86" width="150" height="22" uuid="d542eb8c-b1c6-4893-956c-bcf4ac73757a"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{zonalCommissioner}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="372" y="105" width="170" height="22" uuid="3550ddfc-c86a-480f-92d2-35cd17f53a54"/>
+				<reportElement stretchType="RelativeToTallestObject" x="372" y="105" width="170" height="22" uuid="3550ddfc-c86a-480f-92d2-35cd17f53a54"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="20" y="0" width="425" height="18" uuid="a00e7ca6-f70b-4b1b-b487-3cb2b02c1474"/>
+				<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="425" height="18" uuid="a00e7ca6-f70b-4b1b-b487-3cb2b02c1474"/>
 				<box topPadding="2" leftPadding="0" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -361,14 +361,14 @@
 				<text><![CDATA[Total :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="15" y="125" width="50" height="16" uuid="f00cf1f4-96b6-4d3b-9841-d841a093763e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="15" y="125" width="50" height="16" uuid="f00cf1f4-96b6-4d3b-9841-d841a093763e"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Copy to]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="55" y="148" width="330" height="20" uuid="b7166d18-aca9-462e-904f-4059755e05f6"/>
+				<reportElement stretchType="RelativeToTallestObject" x="55" y="148" width="330" height="20" uuid="b7166d18-aca9-462e-904f-4059755e05f6"/>
 				<text><![CDATA[Superindent Engineer/Executive Engineer, for neceessary action.]]></text>
 			</staticText>
 		</band>

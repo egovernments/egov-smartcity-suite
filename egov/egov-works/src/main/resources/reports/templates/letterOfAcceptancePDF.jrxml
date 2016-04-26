@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-22T12:51:27 -->
+<!-- 2016-04-26T16:49:50 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.util.*"/>
@@ -143,24 +143,26 @@
 	<pageHeader>
 		<band height="232" splitType="Stretch">
 			<textField>
-				<reportElement key="" positionType="Float" x="14" y="172" width="538" height="30" uuid="26f4dd0e-fe43-49cf-bd06-e426fe28cfcf">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="14" y="172" width="538" height="30" uuid="26f4dd0e-fe43-49cf-bd06-e426fe28cfcf">
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("nomination")]]></printWhenExpression>
 				</reportElement>
+				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on " + $P{modeOfAllotment} + " based at estimate rates."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" positionType="Float" x="15" y="178" width="530" height="30" uuid="2f8740f9-5c3a-4169-a4dd-45b906c44feb">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="15" y="178" width="530" height="30" uuid="2f8740f9-5c3a-4169-a4dd-45b906c44feb">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("tendering")]]></printWhenExpression>
 				</reportElement>
-				<textElement markup="none"/>
+				<textElement textAlignment="Justified" markup="none"/>
 				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on tender basis at tender finalised rates"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" positionType="Float" x="16" y="177" width="530" height="30" uuid="1761c46d-2c30-4a44-9c41-1e287186d34d">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="16" y="177" width="530" height="30" uuid="1761c46d-2c30-4a44-9c41-1e287186d34d">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("ePROCUREMENT")]]></printWhenExpression>
 				</reportElement>
+				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you by e -procurement at tender finalised rates."]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -243,9 +245,10 @@
 				<text><![CDATA[4.]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="15" y="201" width="529" height="30" uuid="e13dc80c-5f00-4442-ba72-5123025ee505">
+				<reportElement stretchType="RelativeToTallestObject" x="15" y="201" width="529" height="30" uuid="e13dc80c-5f00-4442-ba72-5123025ee505">
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("ePROCUREMENT")]]></printWhenExpression>
 				</reportElement>
+				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	The above work is entrusted to you by e procurement basis and the work should be started within 3 days of receipt of this order and should be completed within........."]]></textFieldExpression>
 			</textField>
 		</band>
@@ -253,7 +256,7 @@
 	<summary>
 		<band height="221">
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="16" y="158" width="490" height="63" uuid="4d655106-ffd0-43b3-bd42-3cfcd79633f7"/>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="16" y="154" width="490" height="63" uuid="4d655106-ffd0-43b3-bd42-3cfcd79633f7"/>
 				<textElement>
 					<paragraph lineSpacing="1_1_2" lineSpacingSize="1.0"/>
 				</textElement>
@@ -267,11 +270,11 @@
 				<text><![CDATA[Yours Faithfullly]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="403" y="117" width="151" height="30" uuid="c66e26df-0e70-4ef2-b4b6-2a5dfe4bc8f8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="403" y="117" width="151" height="30" uuid="c66e26df-0e70-4ef2-b4b6-2a5dfe4bc8f8"/>
 				<textFieldExpression><![CDATA[$P{ward} +" , "+ $P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="403" y="105" width="137" height="42" uuid="b3a0845c-626b-49bd-b3a2-6e99b82110ae"/>
+				<reportElement stretchType="RelativeToTallestObject" x="403" y="105" width="137" height="42" uuid="b3a0845c-626b-49bd-b3a2-6e99b82110ae"/>
 				<textFieldExpression><![CDATA[$P{technicalSanctionByDesignation}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -279,15 +282,17 @@
 				<text><![CDATA[	Please note that if you fail to start the work and complete within the stipulated time, the work will be cancelled and EMD/ASD recieved from you will be forfeited as per rules.]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="15" y="-30" width="537" height="30" uuid="40a8f677-9449-4892-b82a-f90a9690d550">
+				<reportElement stretchType="RelativeToTallestObject" x="15" y="-30" width="537" height="30" uuid="40a8f677-9449-4892-b82a-f90a9690d550">
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("nomination")]]></printWhenExpression>
 				</reportElement>
+				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	The above work is entrusted to you on nomination basis and the work should be started within 3 days of receipt of this order and should be completed within................."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="13" y="-29" width="546" height="30" uuid="e3d8772d-69af-4582-a437-7fea724cc22e">
+				<reportElement stretchType="RelativeToTallestObject" x="13" y="-29" width="539" height="30" uuid="e3d8772d-69af-4582-a437-7fea724cc22e">
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("tendering")]]></printWhenExpression>
 				</reportElement>
+				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	The above work is entrusted to you on tender basis and the work should be started within 3 days of receipt of this order and should be completed within................."]]></textFieldExpression>
 			</textField>
 		</band>
