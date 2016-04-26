@@ -57,7 +57,7 @@
 
 	function getData() {
 		if (validateMandatoryField()) {
-			doAfterSubmit();
+			//doAfterSubmit();
 			getFilterName();
 			doLoadingMask();
 			var frmdate = document.getElementById('fromDate').value;

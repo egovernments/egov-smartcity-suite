@@ -1143,7 +1143,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
-                                "Payment date is less than RTGS Date" + chqAssgn.getVoucherNumber());
+                                " RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             } else if (resultMap.containsKey(chqAssgn.getBankAccountId().toString())) {
                 resultMap.get(chqAssgn.getBankAccountId().toString()).add(chqAssgn);
@@ -1155,7 +1155,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
-                                "Payment date is less than RTGS Date" + chqAssgn.getVoucherNumber());
+                                "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             } else {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
@@ -1169,7 +1169,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
-                                "Payment date is less than RTGS Date" + chqAssgn.getVoucherNumber());
+                                "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             }
         try {
