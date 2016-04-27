@@ -127,12 +127,13 @@ jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
 					<div align="center">
 						<table border="0" width="100%" cellspacing="0">
 							<tr>
-								<td class="greybox" width="25%"><s:text name="voucher.date" /><span
+								<td class="greybox" width="12%"><s:text name="voucher.date" /><span
 									class="mandatory1">*</span></td>
 								<td class="greybox" width="25%">
 									<div name="daterow">
+									<s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
 										<s:textfield id="voucherDate" name="voucherDate"
-											data-date-end-date="0d"
+											data-date-end-date="0d" value="%{voucherDateId}"
 											onkeyup="DateFormat(this,this.value,event,false,'3')"
 											placeholder="DD/MM/YYYY"
 											class="form-control
