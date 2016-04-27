@@ -89,18 +89,22 @@ public class EstimateAppropriationRegisterJSONAdaptor implements JsonSerializer<
                 jsonObject.addProperty("estimateValue", budgetFolioDetail.getWorkValue());
             else
                 jsonObject.addProperty("estimateValue", "");
-            if(budgetFolioDetail.getCumulativeExpensesIncurred() != null)
+            if(budgetFolioDetail.getCumulativeTotal() != null)
                 jsonObject.addProperty("cumulativeTotal", budgetFolioDetail.getCumulativeTotal());
             else
                 jsonObject.addProperty("cumulativeTotal", "");
-            if(budgetFolioDetail.getCumulativeExpensesIncurred() != null)
+            if(budgetFolioDetail.getBalanceAvailable() != null)
                 jsonObject.addProperty("balanceAvailable", budgetFolioDetail.getBalanceAvailable());
             else
                 jsonObject.addProperty("balanceAvailable", "");
-            if(budgetFolioDetail.getCumulativeExpensesIncurred() != null)
+            if(budgetFolioDetail.getActualBalanceAvailable() != null)
                 jsonObject.addProperty("actualBalanceAvailable", budgetFolioDetail.getActualBalanceAvailable());
             else
                 jsonObject.addProperty("actualBalanceAvailable", "");
+            if(budgetFolioDetail.getCumulativeExpensesIncurred() != null)
+                jsonObject.addProperty("cumulativeExpensesIncurred", budgetFolioDetail.getCumulativeExpensesIncurred());
+            else
+                jsonObject.addProperty("cumulativeExpensesIncurred", "");
             
             jsonObject.addProperty("id", budgetFolioDetail.getSrlNo());
         }

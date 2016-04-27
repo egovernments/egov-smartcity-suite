@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-26T16:49:50 -->
+<!-- 2016-04-27T14:51:52 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.util.*"/>
@@ -11,7 +11,7 @@
 	<parameter name="ward" class="java.lang.String"/>
 	<parameter name="workOrderNumber" class="java.lang.String"/>
 	<parameter name="workOrderDate" class="java.lang.String"/>
-	<parameter name="agreementAmount" class="java.lang.Double"/>
+	<parameter name="agreementAmount" class="java.lang.String"/>
 	<parameter name="contractorName" class="java.lang.String"/>
 	<parameter name="contractorAddress" class="java.lang.String"/>
 	<parameter name="panNo" class="java.lang.String"/>
@@ -119,7 +119,7 @@
 				<textFieldExpression><![CDATA[$P{panNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="422" y="197" width="138" height="17" uuid="380512b6-aa6b-480e-b382-6251c009a526"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="422" y="197" width="122" height="17" uuid="380512b6-aa6b-480e-b382-6251c009a526"/>
 				<textFieldExpression><![CDATA[$P{bank}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
@@ -131,7 +131,7 @@
 				<textFieldExpression><![CDATA[$P{subject}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="400" y="121" width="154" height="30" uuid="a8b732df-3893-4da0-acac-cb2c3e3406aa"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="400" y="121" width="144" height="30" uuid="a8b732df-3893-4da0-acac-cb2c3e3406aa"/>
 				<textFieldExpression><![CDATA[$P{ward} +", "+ $P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -143,14 +143,14 @@
 	<pageHeader>
 		<band height="232" splitType="Stretch">
 			<textField>
-				<reportElement key="" stretchType="RelativeToTallestObject" x="14" y="172" width="538" height="30" uuid="26f4dd0e-fe43-49cf-bd06-e426fe28cfcf">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="14" y="172" width="529" height="30" uuid="26f4dd0e-fe43-49cf-bd06-e426fe28cfcf">
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("nomination")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on " + $P{modeOfAllotment} + " based at estimate rates."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" stretchType="RelativeToTallestObject" x="15" y="178" width="530" height="30" uuid="2f8740f9-5c3a-4169-a4dd-45b906c44feb">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="15" y="178" width="528" height="30" uuid="2f8740f9-5c3a-4169-a4dd-45b906c44feb">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("tendering")]]></printWhenExpression>
 				</reportElement>
@@ -158,7 +158,7 @@
 				<textFieldExpression><![CDATA["	It is to inform you that the above work is assigned to you on tender basis at tender finalised rates"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" stretchType="RelativeToTallestObject" x="16" y="177" width="530" height="30" uuid="1761c46d-2c30-4a44-9c41-1e287186d34d">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="16" y="177" width="528" height="30" uuid="1761c46d-2c30-4a44-9c41-1e287186d34d">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("ePROCUREMENT")]]></printWhenExpression>
 				</reportElement>
@@ -168,13 +168,6 @@
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="91" y="104" width="255" height="20" uuid="c5cab8ba-c704-4774-9064-6079e99a86d1"/>
 				<text><![CDATA[5. Head of account                                        :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="103" y="83" width="79" height="20" uuid="b3a91a73-1431-499a-be1d-02931a627fd0"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[EMD]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="91" y="64" width="255" height="20" uuid="fed3e46b-e61f-465c-87e8-64ebc81afa23"/>
@@ -216,40 +209,43 @@
 				<reportElement stretchType="RelativeToBandHeight" x="317" y="44" width="238" height="21" uuid="e7092ed1-f0d2-4ea0-8ef3-1e261731d68d"/>
 				<textFieldExpression><![CDATA[$P{amountOfEstimate}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="#0.00#">
 				<reportElement x="316" y="65" width="239" height="21" uuid="b41208ca-ae80-4e94-adc1-3c0e2f2ff801"/>
 				<textFieldExpression><![CDATA[$P{agreementAmount}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="185" y="84" width="138" height="21" uuid="269bdd98-a0be-4fe4-aac6-037f5e5e34ca"/>
+			<textField isStretchWithOverflow="true" pattern="###0.00#">
+				<reportElement stretchType="RelativeToTallestObject" x="185" y="84" width="138" height="21" uuid="269bdd98-a0be-4fe4-aac6-037f5e5e34ca"/>
 				<textFieldExpression><![CDATA[($P{emd}.equals("0.0") || $P{emd}.equals("0"))?"N/A":"Rs. "+$P{emd}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="#0.000">
 				<reportElement stretchType="RelativeToBandHeight" x="367" y="84" width="188" height="21" uuid="3bf765ce-0fbe-49fc-965c-e5626afd176e"/>
 				<textFieldExpression><![CDATA[($P{asd}.equals("0.0") || $P{asd}.equals("0"))?"N/A":"Rs. "+$P{asd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="316" y="104" width="244" height="40" uuid="e8cad337-4112-41e5-bd9d-21139c01b5ed"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="316" y="104" width="227" height="40" uuid="e8cad337-4112-41e5-bd9d-21139c01b5ed"/>
 				<textFieldExpression><![CDATA[$P{headOfAccount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="316" y="126" width="244" height="20" uuid="54bd8dd1-7a07-4515-95e5-66fdb78f827f"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="316" y="126" width="228" height="20" uuid="54bd8dd1-7a07-4515-95e5-66fdb78f827f"/>
 				<textFieldExpression><![CDATA[$P{modeOfAllotment}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="92" y="126" width="255" height="20" uuid="2c574dbe-aac6-404a-a6fb-56ec05525f1a"/>
 				<text><![CDATA[6. Moad of allotment                                     :]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="91" y="83" width="49" height="30" uuid="fb07ab35-5aae-4543-8d32-6f354f765209"/>
-				<text><![CDATA[4.]]></text>
-			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="15" y="201" width="529" height="30" uuid="e13dc80c-5f00-4442-ba72-5123025ee505">
+				<reportElement stretchType="RelativeToTallestObject" x="15" y="201" width="527" height="30" uuid="e13dc80c-5f00-4442-ba72-5123025ee505">
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("ePROCUREMENT")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	The above work is entrusted to you by e procurement basis and the work should be started within 3 days of receipt of this order and should be completed within........."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="91" y="83" width="79" height="20" uuid="fe5ee1c0-5f0c-48c4-9e11-b9817cd91415"/>
+				<textElement markup="styled">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["4. <style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> EMD </style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -270,7 +266,7 @@
 				<text><![CDATA[Yours Faithfullly]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="403" y="117" width="151" height="30" uuid="c66e26df-0e70-4ef2-b4b6-2a5dfe4bc8f8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="403" y="117" width="141" height="30" uuid="c66e26df-0e70-4ef2-b4b6-2a5dfe4bc8f8"/>
 				<textFieldExpression><![CDATA[$P{ward} +" , "+ $P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -282,14 +278,14 @@
 				<text><![CDATA[	Please note that if you fail to start the work and complete within the stipulated time, the work will be cancelled and EMD/ASD recieved from you will be forfeited as per rules.]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="15" y="-30" width="537" height="30" uuid="40a8f677-9449-4892-b82a-f90a9690d550">
+				<reportElement stretchType="RelativeToTallestObject" x="15" y="-30" width="527" height="30" uuid="40a8f677-9449-4892-b82a-f90a9690d550">
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("nomination")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	The above work is entrusted to you on nomination basis and the work should be started within 3 days of receipt of this order and should be completed within................."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="13" y="-29" width="539" height="30" uuid="e3d8772d-69af-4582-a437-7fea724cc22e">
+				<reportElement stretchType="RelativeToTallestObject" x="13" y="-29" width="531" height="30" uuid="e3d8772d-69af-4582-a437-7fea724cc22e">
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("tendering")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified"/>

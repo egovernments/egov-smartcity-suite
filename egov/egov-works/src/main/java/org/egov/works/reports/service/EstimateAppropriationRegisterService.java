@@ -153,7 +153,7 @@ public class EstimateAppropriationRegisterService {
                 budgetFolioDetail.setEstimateNo(led.getEstimateNumber());
                 budgetFolioDetail.setNameOfWork(led.getNameOfWork());
                 budgetFolioDetail.setWorkValue(led.getEstimateAmount().doubleValue());
-                budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getCreatedDate()));
+                budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getLineEstimateDate()));
                 if(led.getProjectCode() != null)
                     budgetFolioDetail.setWorkIdentificationNumber(led.getProjectCode().getCode());
 

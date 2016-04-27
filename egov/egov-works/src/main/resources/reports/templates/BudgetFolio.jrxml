@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-26T18:25:06 -->
+<!-- 2016-04-27T13:03:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BudgetFolio" pageWidth="875" pageHeight="595" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="571536ea-4ec2-408b-b49f-9fddb4041eec">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -67,12 +67,12 @@
 				<textFieldExpression><![CDATA["Budget Head 	    : "]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="431" y="49" width="342" height="30" uuid="a2f5f4e1-ad76-4537-987d-561f6dce9812"/>
-				<textFieldExpression><![CDATA["Function 		: " +$P{functionCode}+ "-"+$P{function}]]></textFieldExpression>
+				<reportElement x="431" y="49" width="131" height="30" uuid="a2f5f4e1-ad76-4537-987d-561f6dce9812"/>
+				<textFieldExpression><![CDATA["Function 		: " ]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="431" y="81" width="342" height="30" uuid="477f3554-f5b1-4a46-85ab-fbc60860e394"/>
-				<textFieldExpression><![CDATA["Fund 	   		: " +$P{fund}]]></textFieldExpression>
+				<reportElement x="431" y="81" width="131" height="30" uuid="477f3554-f5b1-4a46-85ab-fbc60860e394"/>
+				<textFieldExpression><![CDATA["Fund 	   		: " ]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="154" y="16" width="524" height="30" uuid="b79a9617-a071-4a85-a3c4-086adc4a6604"/>
@@ -92,6 +92,14 @@
 			<textField isStretchWithOverflow="true" pattern="###0.00#">
 				<reportElement stretchType="RelativeToTallestObject" x="123" y="81" width="308" height="30" uuid="c4c7bb5c-31c5-4cf3-a929-d44f8445f96b"/>
 				<textFieldExpression><![CDATA[$P{budgetHead}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="49" width="213" height="30" uuid="11c77f12-10e5-4ced-b835-a330ca8707ec"/>
+				<textFieldExpression><![CDATA[$P{functionCode}+ "-"+$P{function}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="81" width="213" height="30" uuid="53e29892-4f6e-4008-bd52-48d2c2951a4b"/>
+				<textFieldExpression><![CDATA[$P{fund}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -271,7 +279,7 @@ Date]]></text>
 				</box>
 				<textFieldExpression><![CDATA[$F{estimateNo}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#00.00#">
+			<textField isStretchWithOverflow="true" pattern="#0.00#">
 				<reportElement stretchType="RelativeToTallestObject" x="203" y="0" width="73" height="30" uuid="8f994f92-2baf-4329-843f-0ecf97ddf649">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -282,7 +290,7 @@ Date]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{appropriatedValue}.toString($F{appropriatedValue})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{appropriatedValue}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="366" y="0" width="86" height="30" uuid="40198ab4-496a-4107-b1bd-b83e8bf04e0a"/>

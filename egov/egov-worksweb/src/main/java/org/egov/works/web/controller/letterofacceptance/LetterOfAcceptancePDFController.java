@@ -110,7 +110,7 @@ public class LetterOfAcceptancePDFController {
         if (workOrder != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            final DecimalFormat df = new DecimalFormat("#.##");
+            final DecimalFormat df = new DecimalFormat("0.00");
             final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder
                     .getEstimateNumber());
 
@@ -137,7 +137,7 @@ public class LetterOfAcceptancePDFController {
                     .getBankaccount() : "");
             reportParams.put("subject", lineEstimateDetails.getNameOfWork());
             reportParams.put("modeOfAllotment", lineEstimateDetails.getLineEstimate().getModeOfAllotment().toString());
-            reportParams.put("agreementAmount", Double.valueOf(df.format(workOrder.getWorkOrderAmount())));
+            reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
             reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
             reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
             reportParams.put("WINCode", lineEstimateDetails.getProjectCode().getCode());

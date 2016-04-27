@@ -103,8 +103,6 @@ function getFormData($form){
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");		
 	jQuery('.report-section').removeClass('display-hide');
-	//$('#dailyCollReport-table').show();
-	//reportdatatable= $('#dailyCollReport-table');
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
@@ -133,7 +131,7 @@ function callAjaxSearch() {
 					$('#btndownloadpdf').show();
 					$('#btndownloadexcel').show();
 					$('td:eq(0)',row).html(index+1);
-					if(index == reportdatatable.fnSettings().fnRecordsTotal() - 1) {
+					if(index == 0) {
 						var balanceAvailable = "Available Balance : " + parseFloat(Math.round(data.actualBalanceAvailable * 100) / 100).toFixed(2);
 						$('#balanceAvailable').html(balanceAvailable);
 					}
@@ -160,59 +158,15 @@ function callAjaxSearch() {
 								jQuery('#report-footer').show(); 
 							}
 							if (data.length > 0) {
-								updateTotalFooter(9, api);
-								updateTotalFooter(10, api);
+								$('td:eq(9)',row).html(parseFloat(Math.round(data[0].cumulativeExpensesIncurred * 100) / 100).toFixed(2));
+								$('td:eq(10)',row).html(parseFloat(Math.round(data[0].actualBalanceAvailable * 100) / 100).toFixed(2));
 							}
 						},
 						"aoColumnDefs" : [ {
 							"aTargets" : [9,10],
 							"mRender" : function(data, type, full) {
-								return formatNumberInr(data);    
+								return data;    
 							}
 						} ]		
 					});
 	}
-function updateTotalFooter(colidx, api) {
-	// Remove the formatting to get integer data for summation
-	var intVal = function(i) {
-		return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1
-				: typeof i === 'number' ? i : 0;
-	};
-
-	// Total over all pages
-	total = api.column(colidx).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	});
-
-	// Total over this page
-	pageTotal = api.column(colidx, {
-		page : 'current'
-	}).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	}, 0);
-
-	// Update footer
-	jQuery(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
-					+ ')');
-}
-
-//inr formatting number
-function formatNumberInr(x) {
-	if (x) {
-		x = x.toString();
-		var afterPoint = '';
-		if (x.indexOf('.') > 0)
-			afterPoint = x.substring(x.indexOf('.'), x.length);
-		x = Math.floor(x);
-		x = x.toString();
-		var lastThree = x.substring(x.length - 3);
-		var otherNumbers = x.substring(0, x.length - 3);
-		if (otherNumbers != '')
-			lastThree = ',' + lastThree;
-		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",")
-				+ lastThree + afterPoint;
-		return res;
-	}
-	return x;
-}
