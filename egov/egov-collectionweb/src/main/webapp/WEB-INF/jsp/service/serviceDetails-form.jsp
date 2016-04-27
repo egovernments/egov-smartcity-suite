@@ -74,50 +74,51 @@ function validate(){
 	}
 	 <s:if test="%{isFieldMandatory('fund')}"> 
      if(null != document.getElementById('fundId') && document.getElementById('fundId').value == -1){
-    
             document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.fundcode.errormessage" />'+  "<br>";
+            dom.get("error_area").style.display="block";
             valid=false;
      }
      </s:if>
 	     <s:if test="%{isFieldMandatory('department')}"> 
 	     if(null!= document.getElementById('deptId') && document.getElementById('deptId').value == -1){
-	
 	            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.deptcode.errormessage" />'+ '<br>';
+	            dom.get("error_area").style.display="block";
 	            valid=false;
 	     }
 		</s:if>
 		<s:if test="%{isFieldMandatory('scheme')}"> 
 		     if(null!=document.getElementById('schemeId') &&  document.getElementById('schemeId').value == -1){
-		
 		            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.schemeId.errormessage" />'+ '<br>';
+		            dom.get("error_area").style.display="block";
 		            valid=false;
 		     }
 		</s:if>
 		<s:if test="%{isFieldMandatory('subscheme')}"> 
 		     if(null!= document.getElementById('subschemeId') && document.getElementById('subschemeId').value == -1){
-		
 		            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.subschemeId.errormessage" />'+ '<br>';
+		            dom.get("error_area").style.display="block";
 		            valid=false;
 		     }
 		</s:if>
 		<s:if test="%{isFieldMandatory('functionary')}"> 
 		     if(null!=document.getElementById('receiptMisc.idFunctionary.id') &&  document.getElementById('receiptMisc.idFunctionary.id').value == -1){
-		
 		            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.functionarycode.errormessage" />'+ '<br>';
+		            dom.get("error_area").style.display="block";
 		            valid=false;
 		     }
 		</s:if>
 		<s:if test="%{isFieldMandatory('fundsource')}"> 
 		     if(null !=document.getElementById('receiptMisc.fundsource.id') &&  document.getElementById('receiptMisc.fundsource.id').value == -1){
-		
 		            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.fundsourcecode.errormessage" />'+ '<br>';
+		            dom.get("error_area").style.display="block";
 		            valid=false;
 		    }
 		</s:if>
 		<s:if test="%{isFieldMandatory('function')}">                     
 		 if(null!= document.getElementById('functionId') && document.getElementById('functionId').value == -1){
-			 document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.functioncode.errormessage" />'+ '<br>';                                
-			valid=false;
+			 document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.functioncode.errormessage" />'+ '<br>';
+			 dom.get("error_area").style.display="block";                                
+			 valid=false;
 		 }            
 		</s:if>
 		window.scroll(0,0);
