@@ -188,7 +188,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
-    private FinancialYearHibernateDAO finHibernateDao;
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
     @Autowired
     private SimpleWorkflowService<AbstractEstimate> abstractEstimateWorkflowService;
     private Long stateId;
@@ -929,9 +929,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
     protected CFinancialYear getCurrentFinancialYear() {
         if (abstractEstimate.getEstimateDate() != null)
-            return finHibernateDao.getFinYearByDate(abstractEstimate.getEstimateDate());
+            return financialYearHibernateDAO.getFinYearByDate(abstractEstimate.getEstimateDate());
         else
-            return finHibernateDao.getFinYearByDate(new Date());
+            return financialYearHibernateDAO.getFinYearByDate(new Date());
     }
 
     public List<MultiYearEstimate> getActionMultiYearEstimateValues() {

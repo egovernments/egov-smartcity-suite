@@ -56,6 +56,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.model.bills.EgBilldetails;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -63,6 +64,7 @@ import org.springframework.transaction.annotation.Transactional;
  *         comment go to Window - Preferences - Java - Code Style - Code
  *         Templates
  */
+@Repository
 @Transactional(readOnly = true)
 public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
     @Transactional

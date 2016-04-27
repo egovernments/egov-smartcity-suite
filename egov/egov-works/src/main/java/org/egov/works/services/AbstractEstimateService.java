@@ -93,7 +93,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     @Autowired
     private ProjectCodeGenerator projectcodeGenerator;
     @Autowired
-    private FinancialYearHibernateDAO finHibernateDao;
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
     @Autowired
     private ProjectCodeService projectCodeService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
@@ -239,8 +239,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         else
             budgetAppDate = new Date();
         // CFinancialYear
-        // estimateDate_finYear=finHibernateDao.getFinancialYearByDate(financialDetail.getAbstractEstimate().getEstimateDate());
-        final CFinancialYear budgetApprDate_finYear = finHibernateDao.getFinYearByDate(budgetAppDate);
+        // estimateDate_finYear=financialYearHibernateDAO.getFinancialYearByDate(financialDetail.getAbstractEstimate().getEstimateDate());
+        final CFinancialYear budgetApprDate_finYear = financialYearHibernateDAO.getFinYearByDate(budgetAppDate);
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(financialDetail.getBudgetGroup().getId());
         boolean flag = false;
@@ -755,18 +755,18 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     public CFinancialYear getCurrentFinancialYear(final Date estimateDate) {
-        return finHibernateDao.getFinYearByDate(estimateDate);
+        return financialYearHibernateDAO.getFinYearByDate(estimateDate);
     }
 
     public CFinancialYear getPreviousFinancialYear() {
-        return finHibernateDao.getFinancialYearById(Long.parseLong(finHibernateDao.getPrevYearFiscalId()));
+        return financialYearHibernateDAO.getFinancialYearById(Long.parseLong(financialYearHibernateDAO.getPrevYearFiscalId()));
     }
 
     public Date getLatestApprYearEndDate(final FinancialDetail financialDetail) {
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
                 "getLatestBudgetUsageForEstimate", financialDetail.getAbstractEstimate().getId());
         if (estimateAppropriation != null)
-            return finHibernateDao.getFinancialYearById(
+            return financialYearHibernateDAO.getFinancialYearById(
                     estimateAppropriation.getBudgetUsage().getFinancialYearId().longValue()).getEndingDate();
         else
             return new Date();
@@ -778,9 +778,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         Long finYearId = null;
         final List<Long> budgetheadid = new ArrayList<Long>();
         if (date == null)
-            finYearId = finHibernateDao.getFinYearByDate(new Date()).getId();
+            finYearId = financialYearHibernateDAO.getFinYearByDate(new Date()).getId();
         else
-            finYearId = finHibernateDao.getFinYearByDate(date).getId();
+            finYearId = financialYearHibernateDAO.getFinYearByDate(date).getId();
         if (estimate.getFinancialDetails() != null && estimate.getFinancialDetails().size() > 0) {
             final FinancialDetail financialDetail = estimate.getFinancialDetails().get(0);
             budgetheadid.add(financialDetail.getBudgetGroup().getId());
@@ -876,7 +876,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
         if (balance.doubleValue() >= depApprAmnt) {
             DepositWorksUsage depositWorksUsage = new DepositWorksUsage();
-            final CFinancialYear budgetApprDate_finYear = finHibernateDao.getFinYearByDate(appDate);
+            final CFinancialYear budgetApprDate_finYear = financialYearHibernateDAO.getFinYearByDate(appDate);
             depositWorksUsage.setTotalDepositAmount(creditBalance);
             depositWorksUsage.setConsumedAmount(new BigDecimal(depApprAmnt));
             depositWorksUsage.setReleasedAmount(BigDecimal.ZERO);
@@ -930,7 +930,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             final BudgetUsage budgetUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
         final Integer finYearId = budgetUsage.getFinancialYearId();
-        final Date endingDate = finHibernateDao.getFinancialYearById(finYearId.longValue()).getEndingDate();
+        final Date endingDate = financialYearHibernateDAO.getFinancialYearById(finYearId.longValue()).getEndingDate();
         estimateAppropriation = estimateAppropriationService.findByNamedQuery("getBudgetUsageForEstimateByFinYear",
                 abstractEstimate.getId(), finYearId.intValue());
 
@@ -948,7 +948,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     private void persistDepositCodeAppDetails(final DepositWorksUsage depositWorksUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
-        final int finYearId = finHibernateDao.getFinYearByDate(new Date()).getId().intValue();
+        final int finYearId = financialYearHibernateDAO.getFinYearByDate(new Date()).getId().intValue();
         final BigDecimal creditBalance = depositWorksUsage.getTotalDepositAmount();
         final AbstractEstimate abstractEstimate = depositWorksUsage.getAbstractEstimate();
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(abstractEstimate
@@ -979,7 +979,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         estimateAppropriation = estimateAppropriationService.findByNamedQuery("getLatestBudgetUsageForEstimate",
                 abstractEstimate.getId());
         final Integer finYearId = estimateAppropriation.getBudgetUsage().getFinancialYearId();
-        final Date endingDate = finHibernateDao.getFinancialYearById(finYearId.longValue()).getEndingDate();
+        final Date endingDate = financialYearHibernateDAO.getFinancialYearById(finYearId.longValue()).getEndingDate();
         estimateAppropriation.setBalanceAvailable(getBudgetAvailable(abstractEstimate, endingDate));
         estimateAppropriation.setBudgetUsage(budgetUsage);
         estimateAppropriationService.persist(estimateAppropriation);
