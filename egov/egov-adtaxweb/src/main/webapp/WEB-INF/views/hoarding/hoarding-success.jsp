@@ -11,10 +11,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title text-center" align="center">
-						<spring:message code="${message}" />
-						<c:if test="${not empty approverName}">
-							${approverName} ~ ${nextDesign}
-						</c:if>
+						<c:out value="${message}" />  
 					</div>
 				</div>
 			</div>

@@ -52,6 +52,8 @@ import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.demand.model.EgDemandDetails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,6 +66,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/hoarding")
 public class UpdateLegacyAdvertisementController extends HoardingControllerSupport {
 
+	@Autowired
+	private ResourceBundleMessageSource messageSource;
+	
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
         return advertisementPermitDetailService.findBy(Long.valueOf(id));
@@ -88,9 +93,9 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
     public String updateHoarding(@PathVariable final String id, final Model model) {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         final Advertisement advertisement = advertisementPermitDetail.getAdvertisement();
-
         if(advertisement==null)
-        {   model.addAttribute("message", "msg.collection.updateRecordNotAllowed");
+        {   
+        	model.addAttribute("message", "msg.collection.updateRecordNotAllowed");
             return "collectAdvtax-error";
         }
         Boolean taxAlreadyCollectedForDemandInAnyYear = checkTaxAlreadyCollectedForAdvertisement(advertisement);
@@ -102,7 +107,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         }
         if (taxAlreadyCollectedForDemandInAnyYear) {
             model.addAttribute("message", "msg.collection.taxAlreadyCollected");
-            return "collectAdvtax-error";
+            return "collectAdvtax-error";  
         }
         
         if(advertisement!=null && advertisement.getDemandId()!=null){
@@ -126,17 +131,19 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
             final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
             final Model model) {
 
-        validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib);
+        validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib); 
 
         if (resultBinder.hasErrors())
             return "hoarding-updateLegacy";
         try {
             updateHoardingDocuments(advertisementPermitDetail);
             advertisementPermitDetailService.updateAdvertisementPermitDetailForLegacy(advertisementPermitDetail);
-            redirAttrib.addFlashAttribute("message", "hoarding.update.success");
+            String message = messageSource.getMessage("hoarding.update.success",
+                    new String[] { advertisementPermitDetail.getApplicationNumber() }, null);
+            redirAttrib.addFlashAttribute("message", message); 
             return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
         } catch (final HoardingValidationError e) {
-            resultBinder.rejectValue(e.fieldName(), e.errorCode());
+            resultBinder.rejectValue(e.fieldName(), e.errorCode());    
             return "hoarding-updateLegacy";
         }
     }

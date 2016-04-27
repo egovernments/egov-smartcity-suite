@@ -53,6 +53,8 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
 import org.egov.infra.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -62,6 +64,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hoarding")
 public class CreateLegacyAdvertisementController extends HoardingControllerSupport {
+	
+	@Autowired
+	private ResourceBundleMessageSource messageSource;
 
     @RequestMapping(value = "createLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
@@ -114,7 +119,9 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
             }
 
         advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, null, null, null, null);
-        redirAttrib.addFlashAttribute("message", "hoarding.create.success");
+        String message = messageSource.getMessage("hoarding.create.success",
+                new String[] { advertisementPermitDetail.getApplicationNumber(),advertisementPermitDetail.getPermissionNumber()}, null);
+        redirAttrib.addFlashAttribute("message", message);
         // return "redirect:/hoarding/createLegacy";
         return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
     }
