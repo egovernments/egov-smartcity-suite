@@ -40,7 +40,7 @@
 package org.egov.config.search;
 
 public enum Index {
-    PGR, APPLICATION, WATERCHARGES, COLLECTION, ADVERTISEMENT;
+    PGR, APPLICATION, WATERCHARGES, COLLECTION, ADVERTISEMENT, APPTIS;
 
     @Override
     public String toString() {
