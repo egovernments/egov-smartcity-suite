@@ -39,7 +39,6 @@
  */
 package org.egov.commons.dao;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -121,7 +120,7 @@ public class BankaccountHibernateDAO  {
      */
     public List<Bankaccount> getBankAccountByBankBranch(final Integer bankBranchId) {
         final Query qry = getCurrentSession().createQuery(
-                "from Bankaccount bankacc where bankacc.bankbranch.id=:bankBranchId ");
+                "from Bankaccount bankacc where bankacc.isactive=true and bankacc.bankbranch.id=:bankBranchId ");
         qry.setInteger("bankBranchId", bankBranchId);
         List<Bankaccount> bankAccount = null;
         if (qry.list().size() != 0) {
