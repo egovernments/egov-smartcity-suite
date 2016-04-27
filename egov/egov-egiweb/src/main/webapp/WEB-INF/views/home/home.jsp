@@ -108,6 +108,12 @@
 		    <div class="loading-indicator"><i class="fa fa-spinner fa-pulse fa-2x"></i></div>
 		</div>
 		<div class="page-container horizontal-menu">
+			<div class="search">
+				<input type="text" id="searchtree"><span class="fa fa-search searchicon"></span>
+			</div>
+			<div class="search_list">
+				<div class="list"><ul class="ullist"></ul></div>
+			</div>
 			<header class="navbar navbar-fixed-top border-header"><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
 				<div class="navbar-inner">
@@ -492,7 +498,7 @@
 		        document.getElementById("loading").style.display = "none";
 				document.getElementById("loadingMask").style.display = "none";
 		    });
-			$('#new-pass').popover({ trigger: "focus",placement: "bottom"})
+			$('#new-pass').popover({ trigger: "focus",placement: "bottom"});
 		</script>
 	</body>
 </html>																						

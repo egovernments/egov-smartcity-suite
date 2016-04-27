@@ -209,7 +209,7 @@ public class HomeController {
     private String prepareApplicationMenu(final List<MenuLink> menuLinks, final User user) {
         final Menu menu = new Menu();
         menu.setId("menuID");
-        menu.setTitle("Hi, " + user.getName());
+        menu.setTitle(" ");
         menu.setIcon("fa fa-reorder");
         menu.setItems(new LinkedList<Menu>());
         final List<MenuLink> favourites = moduleService.getUserFavouritesMenuLinks(user.getId());

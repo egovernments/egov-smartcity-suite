@@ -222,6 +222,135 @@ $(document).ready(function()
 	    $('#inboxsearch').trigger('keyup');
 	});
 	
+	//search menu item in tree
+	$('.search_list').hide();//Initially hide search item section
+
+	var menujson = [];
+	var count = 0;
+	var ind = 0;
+	var offsetht = 0;
+	var offsetbottomht = 0;
+	var set = 0;
+    
+	$('#searchtree').on('keyup', function(e){
+		
+		switch(e.keyCode) {
+    	
+	        case 38: /// up arrow
+	        	e.preventDefault();
+	        	count = (count - 1) > 0 ? (count - 1) : 0;
+                ind = (count - 1) > 0 ? (count - 1) : 0;
+                //console.log('Count:'+count+'<--->Index:'+ind);
+                if(count > 0){
+                    $('.ullist li').removeClass('focus');
+                    $('.ullist li').eq(ind).addClass('focus');
+                    //console.log('Top offset:'+$('.ullist li.focus').offset().top+'<--->List top:'+$('.list').position().top );
+                    if($('.ullist li.focus').offset().top <= 68){
+						offsetbottomht = (($('.list').position().top + ($(window).height() -63 - 48 -29)) > 0) ? 0 : ($('.list').position().top + ($(window).height() -63 - 48 -29));
+						$('.list').animate({ top : offsetbottomht }, 500);
+						set = 0;
+						offsetht = 0;
+                    }
+                }
+                break;
+                
+	        case 40: // down arrow
+	        	e.preventDefault();
+	        	// Store the reference to our top level link
+	        	var link = $(this);
+
+	        	// Find the ul li element that acts as the search item
+	        	var dropdown = link.parent('.search').parent('.page-container.horizontal-menu').find('.ullist li');
+	        	
+                // If there is a UL available, place focus on the first focusable element within
+                if(dropdown.length > 0){
+                    // Make sure to stop event bubbling
+                    if(count >= dropdown.length){
+                    	//console.log('Bottom failed');
+                    }else{
+                    	count = count + 1;
+	                    ind = count - 1;
+	                    $('.ullist li').removeClass('focus');
+	                    //console.log('Count:'+count+'<--->Index:'+ind);
+	                    $('.ullist li').eq(ind).addClass('focus');
+	                    //console.log('Top offset:'+$('.ullist li.focus').offset().top+'<--->Window Height:'+($(window).height() - 29 - 30));
+	                    if($('.ullist li.focus').offset().top > ($(window).height() - 60)){
+		                    set = $('.ullist li.focus').offset().top -63 -48;
+		                    offsetht += set;
+	                    	$('.list').animate({ top: -(offsetht)+'px' }, 500);
+	                    }
+                    }
+                }
+                break;
+
+			case 13: /// enter key
+	        	$('.ullist').find('li.focus a').click();
+                break;
+
+			case 27: /// Escape key
+				$('#searchtree').val('');
+				$('#searchtree').trigger('blur');
+				clearsearchlist();
+                break;
+
+            default : //Logic for search menu tree
+            	menujson = [];
+           	    count = 0;
+				ind = 0;
+				$('.list').css('top','0px');
+				
+				if($(this).val().length > 3){
+					
+					var result = getObject(menuItems, $(this).val());
+					//console.log('Menu JSON:'+JSON.stringify(result));
+					
+					$('.list ul').html('');
+					
+					//Load dropdown values withrespect to json
+					if ( result.length == 0 ) {
+						$('.search_list').hide();
+					}else{
+						searchlist_height = $( window ).height() -63 -49 -29;
+						$('.search_list').show();
+						$('.search_list').height(searchlist_height);
+						$.each(result, function(k, v) {
+							$('.search_list .list ul').append('<li><a href='+v.link+' class="open-popup" data-strwindname='+v.id+'>'+v.name+'</a></li>');
+						});
+						//console.log($('.list').innerHeight());
+						if($('.list').innerHeight() <= $('.search_list').innerHeight()){
+							$('.search_list').css('overflow-y', 'hidden');
+						}else{
+							$('.search_list').css('overflow-y', 'scroll');
+						}
+					}
+				}else{
+					//Menu JSON empty when seach key length less than 3
+					clearsearchlist();
+				}
+            	break;
+                
+        }
+	});
+
+	$(document).on('focus', '#searchtree', function(){
+		 $(this).attr('placeholder', 'Search menu item...');
+		 $('.searchicon').hide();
+	}).on('blur', '#searchtree', function(){
+		if($(this).val().length > 0){
+			$('.searchicon').hide();
+		}else{
+			$(this).removeAttr('placeholder');
+			$('.searchicon').show();
+		}
+	});
+
+	//prevent cursor from moving while using arrow keys
+	$('input').bind('keydown', function(e){
+	    if(e.keyCode == '38' || e.keyCode == '40'){
+	        e.preventDefault();
+	    }
+	});
+
 });
 
 var response_json= [];
@@ -400,4 +529,48 @@ function inboxloadmethod(){
 	}else if(focussedmenu == 'notifications'){
 		notifications();
 	}
+}
+
+function getObject(theObject, searchkey) {
+	searchkey = searchkey.toLowerCase();
+    var result = null;
+    if(theObject instanceof Array) {
+        for(var i = 0; i < theObject.length; i++) {
+            result = getObject(theObject[i], searchkey);
+        }
+    }
+    else
+    {
+        for(var prop in theObject) {
+            //console.log(prop + ': ' + theObject[prop]);
+            if(prop == 'name') {
+                if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0){
+                	//console.log(theObject);
+                	if(theObject.link != 'javascript:void(0);'){
+                		var obj = {};
+                		obj['id'] = theObject.id;
+                		obj['name'] = theObject.name;
+                		obj['link'] = theObject.link;
+                		menujson.push(obj);
+                		return theObject;
+                	}
+                }
+            }
+            if(theObject[prop] instanceof Object || theObject[prop] instanceof Array){
+	            //console.log('came for inner object iteration');
+            	result = getObject(theObject[prop], searchkey);
+            }
+        }
+    }
+    return menujson;
+}
+
+function clearsearchlist(){
+	menujson = [];
+	//Show No results in dropdown or hide it
+	$('.search_list').hide();
+	$('.list ul').html('');
+	$('.list').css('top','0px');
+	offsetht = 0;
+	offsetbottomht = 0;
 }
