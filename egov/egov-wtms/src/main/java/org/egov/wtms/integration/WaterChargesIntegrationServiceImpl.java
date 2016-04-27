@@ -166,7 +166,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
         for (final WaterConnection waterConnection : waterConnections) {
             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                     .findByConsumerCodeAndConnectionStatus(waterConnection.getConsumerCode(), ConnectionStatus.ACTIVE);
-            if (waterConnection != null)
+            if (waterConnectionDetails != null)
                 consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
                         waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
 
