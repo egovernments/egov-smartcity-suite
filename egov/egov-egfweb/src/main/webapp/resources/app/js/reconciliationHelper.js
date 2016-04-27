@@ -213,7 +213,7 @@ function validate() {
 	//bootbox.alert(reconDate.toString('MM-dd-yyyy'));
 	if(reconDate<toDate)
 	{
-	bootbox.alert("Reconciliation Date must be higher or equal to Bank Statement To Date");
+	bootbox.alert("Reconciliation Date must be greater than or equal to Bank Statement To Date");
 	return false;
 	}
 	}
