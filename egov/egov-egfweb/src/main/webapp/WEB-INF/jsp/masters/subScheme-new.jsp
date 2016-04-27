@@ -88,7 +88,17 @@
 			return true; 
 		}
 
-		
+		function checkuniquenesscode(){
+	    	document.getElementById('codeuniquecode').style.display ='none';
+			var code = document.getElementById('code').value;
+			populatecodeuniquecode({code:code});		
+	    }
+	    
+	    function checkuniquenessname(){
+	    	document.getElementById('uniquename').style.display ='none';
+			var name = document.getElementById('name').value;
+			populateuniquename({name:name});		
+	    }
 	    
 </script>
 
@@ -110,7 +120,14 @@
 			<div style="color: green" align="left">
 				<s:actionmessage />
 			</div>
-			
+			<div style="color: red" align="left">
+			<div  class="errorstyle" style="display: none" id="codeuniquecode" >
+				<s:text name="subscheme.code.already.exists" />
+			</div>
+			<div class="errorstyle" style="display: none" id="uniquename" >
+				<s:text name="subscheme.name.already.exists" />
+			</div>
+			</div>
 			<s:token />
 
 			<s:form id="subSchemeForm" name="subSchemeForm" action="subScheme"
@@ -131,28 +148,24 @@
 						<td class="bluebox" width="20%"><strong>Name<span
 								class="mandatory1"> *</span></strong>
 								</td>
-								<s:if test="showMode == 'new'">
+								<%-- <s:if test="showMode == 'new'"> --%>
 						<td class="bluebox"><s:textfield id="name" name="name"
-								value="%{subScheme.name}" cssStyle="width: 250px" /></td>
-								</s:if>
-								<s:else> 
-								<td class="bluebox"><s:textfield id="name" name="name" style="background-color:#DCDCDC; color:black;" 
-								value="%{subScheme.name}"  readonly="true"/></td></s:else>  
+								value="%{subScheme.name}" cssStyle="width: 250px" onblur="checkuniquenessname();" /></td>
+								<egov:uniquecheck id="uniquename" name="uniquename"
+						fieldtoreset="name" fields="['Value']"
+						url='masters/subScheme-nameUniqueCheck.action' />
 								
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
 						<td class="greybox"><strong>Code</strong><span
 							class="mandatory1"> *</span></td>
-							<s:if test="showMode == 'new'">
+							<%-- <s:if test="showMode == 'new'"> --%>
 						<td class="greybox"><s:textfield id="code" name="code"
-								value="%{subScheme.code}"  /></td>
-								</s:if>
-								<s:else>
-								
-								<td class="greybox" > <s:textfield id="code" name="code" style="background-color:#DCDCDC; color:black;"
-								value="%{subScheme.code}"  readonly="true" /></td>
-								</s:else>
+								value="%{subScheme.code}"  onblur="checkuniquenesscode();" /></td>
+								<egov:uniquecheck id="codeuniquecode" name="codeuniquecode"
+						fieldtoreset="code" fields="['Value']"
+						url='masters/subScheme-codeUniqueCheck.action' />
 								
 						<td class="greybox"><strong>Valid From</strong><span
 							class="mandatory1"> *</span></td>
