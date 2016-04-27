@@ -41,9 +41,11 @@
 <%@ page language="java"%>
 <html>
 <head>
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+<link rel="stylesheet"
+	href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
 	TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 </head>
@@ -665,7 +667,7 @@
 				}
 			</s:if>
 			if(!balanceCheck()){
-				bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
+				bootbox.confirm("Insufficient Bank Balance. Do you want to process ?", function(result) {
 					  if(result)
 						  {
 						  	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
