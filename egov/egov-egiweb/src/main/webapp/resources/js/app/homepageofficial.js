@@ -304,7 +304,7 @@ $(document).ready(function()
 					var result = getObject(menuItems, $(this).val());
 					//console.log('Menu JSON:'+JSON.stringify(result));
 					
-					$('.list ul').html('');
+					$('.search_list .list ul').html('');
 					
 					//Load dropdown values withrespect to json
 					if ( result.length == 0 ) {
@@ -333,15 +333,18 @@ $(document).ready(function()
 	});
 
 	$(document).on('focus', '#searchtree', function(){
-		 $(this).attr('placeholder', 'Search menu item...');
 		 $('.searchicon').hide();
 	}).on('blur', '#searchtree', function(){
 		if($(this).val().length > 0){
 			$('.searchicon').hide();
 		}else{
-			$(this).removeAttr('placeholder');
 			$('.searchicon').show();
 		}
+	});
+	
+	$('.searchicon').click(function(){
+		$(this).hide();
+		$('#searchtree').focus();
 	});
 
 	//prevent cursor from moving while using arrow keys
@@ -350,6 +353,50 @@ $(document).ready(function()
 	        e.preventDefault();
 	    }
 	});
+	
+	function getObject(theObject, searchkey) {
+		searchkey = searchkey.toLowerCase();
+	    var result = null;
+	    if(theObject instanceof Array) {
+	        for(var i = 0; i < theObject.length; i++) {
+	            result = getObject(theObject[i], searchkey);
+	        }
+	    }
+	    else
+	    {
+	        for(var prop in theObject) {
+	            //console.log(prop + ': ' + theObject[prop]);
+	            if(prop == 'name') {
+	                if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0){
+	                	//console.log(theObject);
+	                	if(theObject.link != 'javascript:void(0);'){
+	                		var obj = {};
+	                		obj['id'] = theObject.id;
+	                		obj['name'] = theObject.name;
+	                		obj['link'] = theObject.link;
+	                		menujson.push(obj);
+	                		return theObject;
+	                	}
+	                }
+	            }
+	            if(theObject[prop] instanceof Object || theObject[prop] instanceof Array){
+		            //console.log('came for inner object iteration');
+	            	result = getObject(theObject[prop], searchkey);
+	            }
+	        }
+	    }
+	    return menujson;
+	}
+
+	function clearsearchlist(){
+		menujson = [];
+		//Show No results in dropdown or hide it
+		$('.search_list').hide();
+		$('.list ul').html('');
+		$('.list').css('top','0px');
+		offsetht = 0;
+		offsetbottomht = 0;
+	}
 
 });
 
@@ -529,48 +576,4 @@ function inboxloadmethod(){
 	}else if(focussedmenu == 'notifications'){
 		notifications();
 	}
-}
-
-function getObject(theObject, searchkey) {
-	searchkey = searchkey.toLowerCase();
-    var result = null;
-    if(theObject instanceof Array) {
-        for(var i = 0; i < theObject.length; i++) {
-            result = getObject(theObject[i], searchkey);
-        }
-    }
-    else
-    {
-        for(var prop in theObject) {
-            //console.log(prop + ': ' + theObject[prop]);
-            if(prop == 'name') {
-                if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0){
-                	//console.log(theObject);
-                	if(theObject.link != 'javascript:void(0);'){
-                		var obj = {};
-                		obj['id'] = theObject.id;
-                		obj['name'] = theObject.name;
-                		obj['link'] = theObject.link;
-                		menujson.push(obj);
-                		return theObject;
-                	}
-                }
-            }
-            if(theObject[prop] instanceof Object || theObject[prop] instanceof Array){
-	            //console.log('came for inner object iteration');
-            	result = getObject(theObject[prop], searchkey);
-            }
-        }
-    }
-    return menujson;
-}
-
-function clearsearchlist(){
-	menujson = [];
-	//Show No results in dropdown or hide it
-	$('.search_list').hide();
-	$('.list ul').html('');
-	$('.list').css('top','0px');
-	offsetht = 0;
-	offsetbottomht = 0;
 }

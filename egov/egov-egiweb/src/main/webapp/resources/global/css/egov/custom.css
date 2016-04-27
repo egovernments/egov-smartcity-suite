@@ -238,14 +238,6 @@ label.error {
   color: #fff;
   background: #6b4f2c;
 }
-.page-container.horizontal-menu .search .searchicon {
-  position: absolute;
-  left: 14px;
-  top: 18px;
-  color: #fff;
-  cursor: pointer;
-  pointer-events: none;
-}
 .page-container.horizontal-menu .search #searchtree::-webkit-input-placeholder {
   color: #fff;
 }
@@ -254,6 +246,13 @@ label.error {
 }
 .page-container.horizontal-menu .search #searchtree::-moz-placeholder {
   color: #fff;
+}
+.page-container.horizontal-menu .search .searchicon {
+  position: absolute;
+  left: 14px;
+  top: 18px;
+  color: #fff;
+  cursor: pointer;
 }
 .page-container.horizontal-menu .search_list {
   position: absolute;
