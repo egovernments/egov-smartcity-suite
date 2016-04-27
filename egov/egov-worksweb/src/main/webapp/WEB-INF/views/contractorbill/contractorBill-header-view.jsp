@@ -43,16 +43,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <form:hidden path="id" name="id" value="${id}" class="form-control table-input hidden-input"/>
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0"
-			style="text-align: left">
-			<div class="add-margin error-msg">
 				<spring:hasBindErrors name="contractorBillRegister">
-		       		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+		       		<div class="alert alert-danger col-md-10 col-md-offset-1">
+			      			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+			      	</div>
 		       	</spring:hasBindErrors>
-			</div>
-			<div class="panel-body">
+		       	
 			<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.billnumber" />
@@ -88,7 +84,7 @@
 					<div class="col-xs-3 add-margin view-content">
 					<c:choose>
 						<c:when test="${contractorBillRegister.egBillregistermis.partyBillDate != null }">
-							<td><fmt:formatDate value="${contractorBillRegister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" /></td>
+							<fmt:formatDate value="${contractorBillRegister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" />
 						</c:when>
 					<c:otherwise>
 						<td><c:out default="N/A" value="N/A" />
@@ -168,13 +164,32 @@
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.mb.referencenumber" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<form:hidden path="mbHeader.id"  value="${contractorBillRegister.mbHeader.id}" /> 
+						<c:out value="${contractorBillRegister.mbHeader.mbRefNo}" /> 
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.mb.pagenumber" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out value="${contractorBillRegister.mbHeader.fromPageNo}" /> - <c:out value="${contractorBillRegister.mbHeader.toPageNo}" />
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.mb.date" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<fmt:formatDate value="${contractorBillRegister.mbHeader.mbDate}" pattern="dd/MM/yyyy" />
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.createdby" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${createdbybydesignation} - ${contractorBillRegister.createdBy.name }" />
 					</div> 
 				</div>
-			</div>
-		</div>
-	</div>
-</div>

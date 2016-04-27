@@ -181,11 +181,11 @@
 									id="addArrearsButton" value="Add Arrears" 
 									onclick="window.location='/ptis/addarrears/form/<s:property value="%{basicProperty.upicNo}" />'" />
 				</s:if> --%>
-				<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE.toUpperCase())}">
+				<%-- <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE.toUpperCase())}">
 				<input type="button" class="buttonsubmit" name="editOwner"
 									id="editOwner" value="Edit Owner" 
 									onclick="window.location='/ptis/editowner/<s:property value="%{basicProperty.upicNo}" />'" />
-				</s:if>					
+				</s:if>	 --%>				
 				<br/><br/> <!-- common buttons starts here -->
 				<s:if test="%{!property.getIsExemptedFromTax()}">			
 				<input type="button" class="buttonsubmit" name="btnViewDCB" id="btnViewDCB" value="View DCB"

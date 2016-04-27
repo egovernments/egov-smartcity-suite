@@ -40,6 +40,7 @@
 
 package org.egov.wtms.web.controller.reports;
 
+import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -52,6 +53,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -182,16 +184,27 @@ public class GenerateConnectionBillController {
     public @ResponseBody void searchResult(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException {
         String result = null;
-        final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
+        List<GenerateConnectionBill> generateConnectionBillList = new ArrayList<>();
+        generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
                         request.getParameter("connectionType"), request.getParameter("consumerCode"),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
-        final List<GenerateConnectionBill> generateconnectionBillList = generateConnectionBillService
+        final int count = generateConnectionBillList.size();
+        LOGGER.info("Total count of records-->"+Long.valueOf(count));
+        List<GenerateConnectionBill> generateconnectionBillList = new ArrayList<>();
+        if (Long.valueOf(count)<1000){
+            generateconnectionBillList = generateConnectionBillService
                 .getBillData(generateConnectionBillList);
-        result = new StringBuilder("{ \"data\":").append(toJSON(generateconnectionBillList)).append("}").toString();
+        }
+        else
+        {
+             generateconnectionBillList = new ArrayList<>();
+        }
+        result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList)).append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
+        
     }
 
     @RequestMapping(value = "/result/{consumerCode}", method = GET)
@@ -240,7 +253,8 @@ public class GenerateConnectionBillController {
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
                         request.getParameter("connectionType"), request.getParameter("consumerCode"),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
-
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Number of Bills : " + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
         final List<InputStream> pdfs = new ArrayList<InputStream>();
 
         for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
@@ -259,7 +273,8 @@ public class GenerateConnectionBillController {
                 LOGGER.debug("Entered into executeJob" + e);
                 continue;
             }
-
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
         try {
             if (!pdfs.isEmpty()) {
                 final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -357,6 +372,8 @@ public class GenerateConnectionBillController {
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
                         request.getParameter("connectionType"), request.getParameter("consumerCode"),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Number of BIlls : " + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
         try {
             ZipOutputStream zipOutputStream = null;
             if (null != generateConnectionBillList || generateConnectionBillList.size() >= 0) {

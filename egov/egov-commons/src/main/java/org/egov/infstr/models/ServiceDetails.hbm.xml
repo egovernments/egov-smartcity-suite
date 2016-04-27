@@ -90,7 +90,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			column="scheme" fetch="select" />
 		<many-to-one name="subscheme" class="org.egov.commons.SubScheme"
 			column="subscheme" fetch="select" />
-	
+		<many-to-one name="function" class="org.egov.commons.CFunction"
+			column="function" fetch="select" />
 			
 		<many-to-one name="serviceCategory" class="org.egov.infstr.models.ServiceCategory"
 			column="servicecategory" fetch="select" />	

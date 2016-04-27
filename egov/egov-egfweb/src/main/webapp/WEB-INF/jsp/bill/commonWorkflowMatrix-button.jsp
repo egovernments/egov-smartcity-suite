@@ -20,13 +20,13 @@
 	    if ((name=="Reject" || name=="reject")) {
 	    	var approverComments = document.getElementById("approverComments").value;
 	    	if (approverComments == null || approverComments == "") {
-	    		alert("Please Enter Approver Remarks ");
+	    		bootbox.alert("Please Enter Approver Remarks ");
 				return false;
 	    	}
 		}
 		<s:if test="%{getNextAction()!='END'}">
 	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
-	        alert("Please Select the Approver ");
+	    	bootbox.alert("Please Select the Approver ");
 			return false;
 	    }
 	   

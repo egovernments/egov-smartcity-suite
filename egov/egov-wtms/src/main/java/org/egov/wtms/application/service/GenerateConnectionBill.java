@@ -46,7 +46,7 @@ public class GenerateConnectionBill {
     private String applicationType;
     private String connectionType;
     private String hscNo;
-    private String assementNo;
+    private String assessmentNo;
     private String ulbName;
     private String ownerName;
     private String revenueWard;
@@ -103,12 +103,12 @@ public class GenerateConnectionBill {
         this.hscNo = hscNo;
     }
 
-    public String getAssementNo() {
-        return assementNo;
+    public String getAssessmentNo() {
+        return assessmentNo;
     }
 
-    public void setAssementNo(final String assementNo) {
-        this.assementNo = assementNo;
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
     }
 
     public String getUlbName() {

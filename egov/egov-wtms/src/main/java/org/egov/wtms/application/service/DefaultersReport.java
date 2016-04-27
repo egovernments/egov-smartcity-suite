@@ -59,7 +59,6 @@ public class DefaultersReport {
     private BigDecimal aggrArrearPenalyDue;
     private BigDecimal aggrCurrPenalyDue;
     private BigDecimal fromAmount;
-
     private BigDecimal toAmount;
     private String duePeriodFrom;
 

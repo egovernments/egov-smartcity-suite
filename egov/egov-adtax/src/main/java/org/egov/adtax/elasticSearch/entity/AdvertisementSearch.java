@@ -42,34 +42,31 @@ package org.egov.adtax.elasticSearch.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.infra.search.elastic.Indexable;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
 import org.elasticsearch.common.geo.GeoPoint;
 
-public class AdvertisementSearch extends AdvertisementPermitDetail {
+public class AdvertisementSearch implements Indexable {
 
 	@Override
 	public String getIndexId() {
 		return EgovThreadLocals.getCityCode() + "-" + applicationNumber;
 	}
 
-	@Searchable(name = "zone", group = Searchable.Group.CLAUSES)
-	private String zone;
-
-	@Searchable(name = "ward", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "revwardname", group = Searchable.Group.CLAUSES)
 	private String ward;
 
-	@Searchable(name = "locality", group = Searchable.Group.SEARCHABLE)
+	@Searchable(name = "locationname", group = Searchable.Group.SEARCHABLE)
 	private String locality;
 
-	@Searchable(name = "block", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "blockname", group = Searchable.Group.CLAUSES)
 	private String block;
 
-	@Searchable(name = "electionward", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "adminwardname", group = Searchable.Group.CLAUSES)
 	private String electionWard;
 
-	@Searchable(name = "street", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "streetname", group = Searchable.Group.CLAUSES)
 	private String street;
 
 	@Searchable(name = "createdDate", group = Searchable.Group.COMMON)
@@ -78,8 +75,8 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 	@Searchable(name = "advertisementnumber", group = Searchable.Group.SEARCHABLE)
 	private String advertisementNumber;
 
-	@Searchable(name = "assessment_number", group = Searchable.Group.CLAUSES)
-	private String assessment_number;
+	@Searchable(name = "ptassesmentno", group = Searchable.Group.CLAUSES)
+	private String assessmentNumber;
 
 	@Searchable(name = "propertytype", group = Searchable.Group.CLAUSES)
 	private String propertyType;
@@ -99,10 +96,10 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 	@Searchable(name = "address", group = Searchable.Group.SEARCHABLE)
 	private String address;
 
-	@Searchable(name = "advertisementcreatedby", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "createdby", group = Searchable.Group.CLAUSES)
 	private String advertisementCreatedBy;
 
-	@Searchable(name = "status", group = Searchable.Group.SEARCHABLE)
+	@Searchable(name = "status", group = Searchable.Group.CLAUSES)
 	private String advertisement_status;
 
 	@Searchable(name = "type", group = Searchable.Group.CLAUSES)
@@ -111,19 +108,13 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 	@Searchable(name = "islegacy", group = Searchable.Group.CLAUSES)
 	private Boolean islegacy;
 
-	@Searchable(name = "penaltycalculationdate", group = Searchable.Group.CLAUSES)
-	private Date penaltyCalculationDate;
-
 	@Searchable(name = "electricityservicenumber", group = Searchable.Group.CLAUSES)
 	private String electricityServiceNumber;
-
-	@Searchable(name = "pendingTax", group = Searchable.Group.CLAUSES)
-	private BigDecimal pendingTax;
 
 	@Searchable(name = "applicationdate", group = Searchable.Group.CLAUSES)
 	private Date applicationDate;
 
-	@Searchable(name = "applicationnumber", group = Searchable.Group.SEARCHABLE)
+	@Searchable(name = "consumernumber", group = Searchable.Group.SEARCHABLE)
 	private String applicationNumber;
 
 	@Searchable(name = "permissionnumber", group = Searchable.Group.SEARCHABLE)
@@ -146,9 +137,6 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 
 	@Searchable(name = "permissionenddate", group = Searchable.Group.CLAUSES)
 	private Date permissionEndDate;
-
-	@Searchable(name = "isactive", group = Searchable.Group.CLAUSES)
-	private Boolean isActive;
 
 	@Searchable(name = "mobilenumber", group = Searchable.Group.CLAUSES)
 	private String mobileNumber;
@@ -183,16 +171,13 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 	@Searchable(name = "totalheight", group = Searchable.Group.CLAUSES)
 	private Double totalHeight;
 
-	@Searchable(name = "currentstate", group = Searchable.Group.CLAUSES)
-	private String current_state;
-
 	@Searchable(name = "deactivationremarks", group = Searchable.Group.CLAUSES)
 	private String deactivationRemarks;
 
 	@Searchable(name = " deactivationdate", group = Searchable.Group.CLAUSES)
 	private Date deactivationDate;
 
-	@Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "cityname", group = Searchable.Group.CLAUSES)
 	private String ulbName;
 
 	@Searchable(name = "districtname", group = Searchable.Group.CLAUSES)
@@ -201,44 +186,51 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 	@Searchable(name = "regionname", group = Searchable.Group.CLAUSES)
 	private String regionName;
 
-	@Searchable(name = "ulbgrade", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "citygrade", group = Searchable.Group.CLAUSES)
 	private String ulbGrade;
 
-	@Searchable(name = "ulbcode", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "citycode", group = Searchable.Group.CLAUSES)
 	private String ulbCode;
 
-	@Searchable(name = "tax_demand", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "taxdemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal tax_demand;
 
-	@Searchable(name = "tax_collected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "taxcollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal tax_collected;
 
-	@Searchable(name = "encroachmentfee_demand", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "encroachmentfeedemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal encroachmentfee_demand;
 
-	@Searchable(name = "encroachmentfee_collected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "encroachmentfeecollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal encroachmentfee_collected;
 
-	@Searchable(name = "arrears_demand", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "arreardemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal arrears_demand;
 
-	@Searchable(name = "arrears_collected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "arrearcollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal arrears_collected;
 
-	@Searchable(name = "penalty_demand", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "penaltydemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal penalty_demand;
 
-	@Searchable(name = "penalty_collected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "penaltycollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal penalty_collected;
 
-	@Searchable(name = "totalamount", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "totaldemand", group = Searchable.Group.CLAUSES)
 	private BigDecimal totalamount;
 
-	@Searchable(name = "totalamountcollected", group = Searchable.Group.CLAUSES)
+	@Searchable(name = "totalcollection", group = Searchable.Group.CLAUSES)
 	private BigDecimal totalamountcollected;
 
 	@Searchable(name = "advertisementlocation", group = Searchable.Group.CLAUSES)
 	private GeoPoint advertisementLocation;
+	
+	@Searchable(name = "totalbalance", group = Searchable.Group.CLAUSES)
+	private BigDecimal totalbalance;
+	
+	@Searchable(name = "consumername", group = Searchable.Group.SEARCHABLE)
+	private String consumerName;
+
 
 	public AdvertisementSearch(final String advertisementNumber,
 			final String ulbName, final String ulbCode, final Date createdDate,
@@ -255,14 +247,6 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 
 	public AdvertisementSearch() {
 		// TODO Auto-generated constructor stub
-	}
-
-	public String getZone() {
-		return zone;
-	}
-
-	public void setZone(String zone) {
-		this.zone = zone;
 	}
 
 	public String getWard() {
@@ -409,28 +393,12 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 		this.advertisementCreatedBy = advertisementCreatedBy;
 	}
 
-	public Date getPenaltyCalculationDate() {
-		return penaltyCalculationDate;
-	}
-
-	public void setPenaltyCalculationDate(Date penaltyCalculationDate) {
-		this.penaltyCalculationDate = penaltyCalculationDate;
-	}
-
 	public String getElectricityServiceNumber() {
 		return electricityServiceNumber;
 	}
 
 	public void setElectricityServiceNumber(String electricityServiceNumber) {
 		this.electricityServiceNumber = electricityServiceNumber;
-	}
-
-	public BigDecimal getPendingTax() {
-		return pendingTax;
-	}
-
-	public void setPendingTax(BigDecimal pendingTax) {
-		this.pendingTax = pendingTax;
 	}
 
 	public Date getApplicationDate() {
@@ -495,14 +463,6 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 
 	public void setPermissionEndDate(Date permissionEndDate) {
 		this.permissionEndDate = permissionEndDate;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
 	}
 
 	public String getAdvertiser() {
@@ -591,14 +551,6 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 
 	public void setAdvertisementLocation(GeoPoint advertisementLocation) {
 		this.advertisementLocation = advertisementLocation;
-	}
-
-	public String getAssessment_number() {
-		return assessment_number;
-	}
-
-	public void setAssessment_number(String assessment_number) {
-		this.assessment_number = assessment_number;
 	}
 
 	public String getAddress() {
@@ -746,20 +698,27 @@ public class AdvertisementSearch extends AdvertisementPermitDetail {
 		this.uom = uom;
 	}
 
-	public String getCurrent_state() {
-		return current_state;
+	public String getAssessmentNumber() {
+		return assessmentNumber;
 	}
 
-	public void setCurrent_state(String current_state) {
-		this.current_state = current_state;
+	public void setAssessmentNumber(String assessmentNumber) {
+		this.assessmentNumber = assessmentNumber;
 	}
 
-	public static AdvertisementSearch method(
-			AdvertisementPermitDetail advPermitDetail) {
-		AdvertisementSearch advPermitDetailIndex = null;
-		if (advPermitDetail instanceof AdvertisementSearch) {
-			advPermitDetailIndex = (AdvertisementSearch) advPermitDetail; // downcasting
-		}
-		return advPermitDetailIndex;
+	public BigDecimal getTotalbalance() {
+		return totalbalance;
+	}
+
+	public void setTotalbalance(BigDecimal totalbalance) {
+		this.totalbalance = totalbalance;
+	}
+
+	public String getConsumerName() {
+		return consumerName;
+	}
+
+	public void setConsumerName(String consumerName) {
+		this.consumerName = consumerName;
 	}
 }

@@ -81,27 +81,29 @@
 					align="center">
 					<tr align="center">
 						<div class="headingsmallbg">
-							<td><span class="bold">Bank Details</span></td>
+							<td class="bluebgheadtd" width="100%" colspan="5"><strong
+								style="font-size: 15px;">Bank Details</strong></td>
 						</div
 					</tr>
 				</table>
+				</br>
 				<table border="0" width="100%">
 
 					<tr>
 						<td class="bluebox "></td>
-						<td class="bluebox">Bank</td>
+						<td class="bluebox">Bank <span class="mandatory1">*</span></td>
 						<td class="bluebox"><s:property
 								value="bankaccount.bankbranch.bank.name" /></td>
-						<td class="bluebox">Bank Branch</td>
+						<td class="bluebox">Bank Branch <span class="mandatory1">*</span></td>
 						<td class="bluebox"><s:property
 								value="bankaccount.bankbranch.branchname" /></td>
 					</tr>
 					<tr>
 						<td class="bluebox "></td>
-						<td class="greybox">Account Number</td>
+						<td class="greybox">Account Number <span class="mandatory1">*</span></td>
 						<td class="greybox"><s:property
 								value="bankaccount.accountnumber" /></td>
-						<td class="greybox">Fund</td>
+						<td class="greybox">Fund <span class="mandatory1">*</span></td>
 						<td class="greybox"><s:property value="bankaccount.fund.name" /></td>
 					</tr>
 				</table>
@@ -114,8 +116,9 @@
 				<tr align="center">
 
 					<div class="headingsmallbg">
-						<td><span class="bold">Add New Cheque </span></td>
-					</div>
+					<td class="bluebgheadtd" width="100%" colspan="5"><strong
+								style="font-size: 15px;">Add New Cheque</strong></td>
+					</div>  
 
 				</tr>
 			</table>
@@ -175,7 +178,7 @@
 
 					<td align="center" style="text-align: center"><input
 						type="button" name="Done" onclick="updateGridData()"
-						class="buttongeneral" value="Click to add new cheque"
+						class="buttonsubmit" value="Click to add new cheque"
 						align="middle" /></td>
 
 				</tr>

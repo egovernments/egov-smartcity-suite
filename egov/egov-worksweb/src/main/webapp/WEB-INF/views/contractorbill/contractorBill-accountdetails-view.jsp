@@ -41,13 +41,16 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="panel panel-primary" data-collapsed="0">
-<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.debit.details"/>
-		</div>
+
+
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message  code="lbl.debit.details"/>
 	</div>
-	<div class="panel-body">
+</div>
+
+<div style="padding: 0 15px;">
 		<table class="table table-bordered" id="tbldebitdetails-view">
 			<thead>
 				<tr>
@@ -76,18 +79,20 @@
 		</table>
 	</div>
 
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.credit.details"/>
-		</div>
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message  code="lbl.credit.details"/>
 	</div>
-	
-	<div class="panel-heading">
-		<div class="panel-title">
+</div>
+
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
 			<spring:message  code="lbl.deductions"/>
-		</div>
 	</div>
-	<div class="panel-body">
+</div>
+
+<div style="padding: 0 15px;">
 		<table class="table table-bordered" id="tblcreditdetails-view">
 			<thead>
 				<tr>
@@ -114,14 +119,15 @@
 			</c:forEach>
 			</tbody>
 		</table>
+</div>
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message  code="lbl.netpayable"/>
 	</div>
+</div>
 	
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.netpayable"/>
-		</div>
-	</div>
-	<div class="panel-body">
+	<div style="padding: 0 15px;">
 		<table class="table table-bordered" id="tblnetpayable-view"> 
 			<thead>
 				<tr>
@@ -149,4 +155,3 @@
 			</tbody>
 		</table>
 	</div>
-</div>

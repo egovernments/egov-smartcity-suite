@@ -40,91 +40,127 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.credit.details"/>
-		</div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+
+
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message code="lbl.credit.details" />
 	</div>
-	
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.deductions"/>
-		</div>
+</div>
+
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message code="lbl.deductions" />
 	</div>
-	<input type="hidden" value="${billDetailes.size()}" id="detailsSize" /> 
+	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.billDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblcreditdetails">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.account.code"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.account.code"/></th>
 					<th><spring:message code="lbl.account.head"/></th>
-					<th><spring:message code="lbl.credit.amount"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.credit.amount"/></th>
 					<th><spring:message code="lbl.action"/></th> 					
 				</tr>
 			</thead>
 			<tbody>
-				<tr id="deductionRow">
-					<td>
-						<input type="text" id="billDetailes[1].creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation creditGlcode" data-pattern="number" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
-						<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="billDetailes[1].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input creditglcodeid"/> 
-						<form:errors path="billDetailes[1].glcodeid" cssClass="add-margin error-msg" /> 
-					</td>
-					<td>
-						<input type="text" id="billDetailes[1].creditAccountHead" name="billDetailes[1].creditAccountHead" value="${billDetailes[1].creditAccountHead}" class="form-control creditaccountheadname" disabled>  
-					</td>
-					<td>
-						<form:input path="billDetailes[1].creditamount" id="billDetailes[1].creditamount" name="billDetailes[1].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
-						<form:errors path="billDetailes[1].creditamount" cssClass="add-margin error-msg" /> 
-					</td> 
-					<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
-					 <span class="add-padding" onclick="deleteDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
-				</tr>
+				<c:choose>
+					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
+						<tr id="deductionRow">
+							<td>
+								<input type="text" id="billDetailes[1].creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+								<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="billDetailes[1].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input creditglcodeid"/> 
+								<form:errors path="billDetailes[1].glcodeid" cssClass="add-margin error-msg" /> 
+							</td>
+							<td>
+								<input type="text" id="billDetailes[1].creditAccountHead" name="billDetailes[1].creditAccountHead" value="${billDetailes[1].creditAccountHead}" class="form-control creditaccountheadname" disabled>  
+							</td>
+							<td>
+								<form:input path="billDetailes[1].creditamount" id="billDetailes[1].creditamount" name="billDetailes[1].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+								<form:errors path="billDetailes[1].creditamount" cssClass="add-margin error-msg" /> 
+							</td> 
+							<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
+							 <span class="add-padding" onclick="deleteDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+						</tr>
+					</c:when>
+					<c:otherwise>
+						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" begin="1">
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable}">
+								<tr id="deductionRow">
+									<td>
+										<%-- <form:hidden path="billDetailes[${item.index }].id" value="${billDetail.id}"/> --%>
+										<input type="text" id="billDetailes[${item.index }].creditGlcode" name="billDetailes[${item.index }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input patternvalidation creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+										<form:hidden path="billDetailes[${item.index }].glcodeid" name="billDetailes[${item.index }].glcodeid" value="${billDetail.glcodeId}" id="billDetailes[${item.index }].glcodeid" class="form-control table-input hidden-input creditglcodeid"/> 
+										<form:errors path="billDetailes[${item.index }].glcodeid" cssClass="add-margin error-msg" /> 
+									</td>
+									<td>
+										<input type="text" id="billDetailes[${item.index }].creditAccountHead" name="billDetailes[${item.index }].creditAccountHead" value="${billDetail.accountHead}" class="form-control creditaccountheadname" disabled>  
+									</td>
+									<td>
+										<form:input path="billDetailes[${item.index }].creditamount" id="billDetailes[${item.index }].creditamount" name="billDetailes[${item.index }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+										<form:errors path="billDetailes[${item.index }].creditamount" cssClass="add-margin error-msg" /> 
+									</td> 
+									<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
+									 <span class="add-padding" onclick="deleteDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+								</tr>
+							</c:if>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
 			</tbody>
 		</table>
 	<%-- 	<div class="col-sm-12 text-center">
 			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addDeductionRow()"><spring:message code="lbl.addrow" /></button>
 		</div> --%>
+</div>
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message code="lbl.netpayable" />
 	</div>
-	
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message  code="lbl.netpayable"/>
-		</div>
-	</div>
-	<div class="panel-body">
-		<table class="table table-bordered" id="tblnetpayable">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.account.code"/><span class="mandatory"></span></th>
+</div>
+
+<div style="padding: 0 15px;">
+	<table class="table table-bordered" id="tblnetpayable">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.account.code" /><span
+					class="mandatory"></span></th>
 				<%-- 	<th><spring:message code="lbl.account.head"/></th> --%>
-					<th><spring:message code="lbl.credit.amount"/></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>
-						<form:select path="" data-first-option="false" name="netPayableAccountCode" id="netPayableAccountCode" class="form-control" required="required">
-							<form:option value="">
-								<spring:message code="lbl.select" />
+				<th><spring:message code="lbl.credit.amount" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<form:hidden path="" name="netPayableAccountId" id="netPayableAccountId" value="${netPayableAccountId}"/>
+					<form:hidden path="" name="netPayableAccountCodeId" id="netPayableAccountCodeId" value="${netPayableAccountCode}"/>
+					<form:select path="" data-first-option="false"
+						name="netPayableAccountCode" id="netPayableAccountCode"
+						class="form-control" required="required">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<c:forEach var="coa" items="${netPayableAccounCodes}">
+							<form:option value="${coa.id}">
+								<c:out value="${coa.glcode} - ${coa.name}" />
 							</form:option>
-							<c:forEach var="coa" items="${netPayableAccounCodes}">
-						        <form:option value="${coa.id}"><c:out value="${coa.glcode} - ${coa.name}"/></form:option>  
-						    </c:forEach>   
-							<%-- <form:options items="${netPayableAccounCodes}" itemLabel="glcode" itemValue="id" />  --%>
-						</form:select>
-						<%-- <form:errors path="netPayableAccountCode" cssClass="add-margin error-msg" /> --%>
-					</td>
-					<!-- <td> 
+						</c:forEach>
+						<%-- <form:options items="${netPayableAccounCodes}" itemLabel="glcode" itemValue="id" />  --%>
+					</form:select> <%-- <form:errors path="netPayableAccountCode" cssClass="add-margin error-msg" /> --%>
+				</td>
+				<!-- <td> 
 						<input type="text" id="creditAccountHead" class="form-control" disabled> 
 					</td> -->
-					<td>
-						<input type="text" id="netPayableAmount" name="netPayableAmount" value="${netPayableAmount}" class="form-control text-right" readonly="true">
-						<%-- <form:errors path="netPayableAmount" cssClass="add-margin error-msg" /> --%>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+				<td><input type="text" id="netPayableAmount"
+					name="netPayableAmount" value="${netPayableAmount}"
+					class="form-control text-right" readonly="true"> <%-- <form:errors path="netPayableAmount" cssClass="add-margin error-msg" /> --%>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>

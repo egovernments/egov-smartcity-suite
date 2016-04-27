@@ -415,6 +415,7 @@ public final class CollectionConstants {
 	public static final String Mandatory = "M";
 	public static final String MISMandatoryAttributesModule = "EGF";
 	public static final String MISMandatoryAttributesKey = "DEFAULTTXNMISATTRRIBUTES";
+	public static final String MISMandatoryAttributesKeyCollection = "DEFAULTTXNMISATTRRIBUTESCOLLECTION";
 
 	public static final String CHAIRPERSON = "CHAIRPERSON";
 	public static final String CHALLAN_TEMPLATE_NAME = "collection_challan";

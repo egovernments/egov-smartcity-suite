@@ -50,6 +50,10 @@
 		<c:if test="${not empty message}">
              <div role="alert">${message}</div>
          </c:if>
+        <spring:hasBindErrors name="propertyPipeSize">
+        		<form:errors path="propertyType" cssClass="add-margin error-msg" />		
+          		<%--<form:errors path="pipeSize" cssClass="add-margin error-msg" />--%>
+        	</spring:hasBindErrors>
 	<div class="panel-body custom-form">
 		<div class="form-group">
     		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" />:<span class="mandatory"></span></label>
@@ -60,7 +64,6 @@
 				</form:option>
 				<form:options items="${propertyTypeList}" itemValue="id" itemLabel="name" />
 			</form:select>		
-			<form:errors path="propertyType" cssClass="add-margin error-msg" />					
 		</div>
 	 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize.mm" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
@@ -73,7 +76,6 @@
 						<%-- <form:options items="${pipeSize}" itemValue="id" itemLabel="" /> --%>
 						</c:forEach>
 					</form:select>		
-					<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
 				</div> 
 				<div class="form-group" id="statusdiv">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>

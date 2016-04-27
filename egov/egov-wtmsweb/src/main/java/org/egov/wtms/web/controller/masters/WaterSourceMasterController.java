@@ -75,42 +75,11 @@ public class WaterSourceMasterController {
 
     @RequestMapping(value = "/waterSourceTypeMaster", method = RequestMethod.POST)
     public String createWaterSourceTypeMaster(@Valid @ModelAttribute final WaterSource waterSource,
-            final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder,
-            final BindingResult errors) {
-        if (resultBinder.hasErrors())
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors())
             return "water-source-master";
-
-        final WaterSource watersourceObj = waterSourceService.findByCodeAndWaterSourceType(waterSource.getCode(),
-                waterSource.getWaterSourceType());
-
-        if (watersourceObj != null) {
-            redirectAttrs.addFlashAttribute(" WaterSource", watersourceObj);
-            model.addAttribute("message", "Entered Code and Water Source Type already exists.");
-            viewForm(model);
-            return "water-source-master";
-        } else {
-            final WaterSource waterSourceCodeObj = waterSourceService.findByCodeIgnoreCase(waterSource.getCode());
-            if (waterSourceCodeObj != null) {
-                redirectAttrs.addFlashAttribute("WaterSource", waterSourceCodeObj);
-                model.addAttribute("message", "Entered Code already exist.");
-                viewForm(model);
-                return "water-source-master";
-            } else {
-
-                final WaterSource waterSourceNameObj = waterSourceService
-                        .findByWaterSourceTypeIgnoreCase(waterSource.getWaterSourceType());
-                if (waterSourceNameObj != null) {
-                    redirectAttrs.addFlashAttribute("WaterSource", waterSourceNameObj);
-                    model.addAttribute("message", "Entered Water Source Type already exist.");
-                    viewForm(model);
-                    return "water-source-master";
-                } else {
-                    waterSourceService.createWaterSource(waterSource);
-                    redirectAttrs.addFlashAttribute("waterSource", waterSource);
-                }
-            }
-        }
-
+        waterSourceService.createWaterSource(waterSource);
+        redirectAttrs.addFlashAttribute("waterSource", waterSource);
         return getWaterSourceTypeList(model);
     }
 
@@ -132,9 +101,9 @@ public class WaterSourceMasterController {
 
     @RequestMapping(value = "/waterSourceTypeMaster/{waterSourceId}", method = RequestMethod.POST)
     public String editWaterSourceTypeData(@Valid @ModelAttribute final WaterSource waterSource,
-            @PathVariable final long waterSourceId, final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
+            @PathVariable final long waterSourceId) {
+        if (errors.hasErrors())
             return "water-source-master";
         waterSourceService.updateWaterSource(waterSource);
         redirectAttrs.addFlashAttribute("WaterSource", waterSource);

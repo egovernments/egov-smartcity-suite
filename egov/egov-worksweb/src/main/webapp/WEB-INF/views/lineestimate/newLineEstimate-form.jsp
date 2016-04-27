@@ -42,11 +42,13 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-		<div style="font-weight:bold; color:green; text-align:center;">
+		
 			<c:if test="${lineEstimate.getId() != null}">
-				<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
+				<div class="alert alert-success">
+					<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
+				</div>
 			</c:if>
-		</div>
+		
 		<form:form name="lineEstimateForm" role="form" action="create" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<div class="row">

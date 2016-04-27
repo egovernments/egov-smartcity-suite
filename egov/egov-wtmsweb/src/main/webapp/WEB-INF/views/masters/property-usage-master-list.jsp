@@ -48,10 +48,10 @@
 	<input type="hidden" name="waterPropertyUsageList" id="waterPropertyUsageList" value="${waterPropertyUsageList}">
 	<input type="hidden" id="waterPropertyUsageid" name="waterPropertyUsageid" value="${waterPropertyUsage.id}" />
 	<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-body custom-form ">
-			<c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert">${message}</div>
+	<c:if test="${not empty message}">
+                <div role="alert">${message}</div>
              </c:if>
+		<div class="panel-body custom-form ">
 			<c:choose>
 				<c:when test="${waterPropertyUsageList.isEmpty()}">
 					<div class="form-group" align="center">No Master Data</div>

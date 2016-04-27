@@ -63,6 +63,7 @@ function addFileInputField() {
 	inputFile.setAttribute("type", "file");
 	inputFile.setAttribute("name", "file");
 	inputFile.setAttribute("id", "file" + trNo);
+	inputFile.setAttribute("class", "padding-10");
 	inputFile.setAttribute("onchange", "isValidFile(this.id)");
 	td.appendChild(inputFile);
 	tr.appendChild(td);

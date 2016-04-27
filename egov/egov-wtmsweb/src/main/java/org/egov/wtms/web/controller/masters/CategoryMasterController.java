@@ -74,44 +74,15 @@ public class CategoryMasterController {
     }
 
     @RequestMapping(value = "/categoryMaster", method = RequestMethod.POST)
-    public String addCategoryMasterData(@Valid @ModelAttribute final ConnectionCategory connectionCategory,
-            final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
+    public String addCategoryMasterData(@Valid @ModelAttribute final ConnectionCategory connectionCategory,final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model ) {
+        if (errors.hasErrors())
             return "category-master";
-
-        final ConnectionCategory connectioncategoryObj = connectionCategoryService
-                .findByNameAndCode(connectionCategory.getName(), connectionCategory.getCode());
-
-        if (connectioncategoryObj != null) {
-            redirectAttrs.addFlashAttribute("ConnectionCategory", connectioncategoryObj);
-            model.addAttribute("message", "Entered Code and Category Type already exists.");
-            viewForm(model);
-            return "category-master";
-        } else {
-            final ConnectionCategory connectionCategoryNameObj = connectionCategoryService
-                    .findByNameIgnoreCase(connectionCategory.getName());
-            if (connectionCategoryNameObj != null) {
-                redirectAttrs.addFlashAttribute("UsageType", connectionCategoryNameObj);
-                model.addAttribute("message", "Entered Category Type already exist.");
-                viewForm(model);
-                return "category-master";
-            } else {
-                final ConnectionCategory connectionCategoryCodeObj = connectionCategoryService
-                        .findByCodeIgnoreCase(connectionCategory.getCode());
-                if (connectionCategoryCodeObj != null) {
-                    redirectAttrs.addFlashAttribute("UsageType", connectionCategoryCodeObj);
-                    model.addAttribute("message", "Entered Code already exist.");
-                    viewForm(model);
-                    return "category-master";
-                } else {
                     connectionCategoryService.createConnectionCategory(connectionCategory);
                     redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);
-                }
-
-            }
-        }
-        return getCategoryMasterList(model);
-    }
+                    return getCategoryMasterList(model);
+            
+ }
 
     @RequestMapping(value = "/categoryMaster/list", method = GET)
     public String getCategoryMasterList(final Model model) {
@@ -130,10 +101,9 @@ public class CategoryMasterController {
     }
 
     @RequestMapping(value = "/categoryMaster/{connectionCategoryId}", method = RequestMethod.POST)
-    public String editCategoryMasterData(@Valid @ModelAttribute final ConnectionCategory connectionCategory,
-            @PathVariable final long connectionCategoryId, final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
+    public String editCategoryMasterData(@Valid @ModelAttribute final ConnectionCategory connectionCategory, final BindingResult errors
+            , final RedirectAttributes redirectAttrs, final Model model,@PathVariable final long connectionCategoryId) {
+        if (errors.hasErrors())
             return "category-master";
         connectionCategoryService.updateConnectionCategory(connectionCategory);
         redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);

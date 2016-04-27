@@ -19,6 +19,15 @@ public class ReconcileBean {
 	private Date reconciliationDate;
 	private Date bankStatementDate;
 	private Long ihId;
+	private String voucherNumber;
+	private Integer limit;
+	private String instrumentNo;
+	
+	private BigDecimal creditAmount;
+	private BigDecimal debitAmount;
+	private BigDecimal otherCreditAmount;
+	private BigDecimal otherDebitAmount;
+	
 	
 	public Long getBranchId() {
 		return branchId;
@@ -98,6 +107,48 @@ public class ReconcileBean {
 	}
 	public void setIhId(Long ihId) {
 		this.ihId = ihId;
+	}
+	public String getVoucherNumber() {
+		return voucherNumber;
+	}
+	public void setVoucherNumber(String voucherNumber) {
+		this.voucherNumber = voucherNumber;
+	}
+	public Integer getLimit() {
+		return limit;
+	}
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+	public String getInstrumentNo() {
+		return instrumentNo;
+	}
+	public void setInstrumentNo(String instrumentNo) {
+		this.instrumentNo = instrumentNo;
+	}
+	public BigDecimal getCreditAmount() {
+		return creditAmount;
+	}
+	public void setCreditAmount(BigDecimal creditAmount) {
+		this.creditAmount = creditAmount;
+	}
+	public BigDecimal getDebitAmount() {
+		return debitAmount;
+	}
+	public void setDebitAmount(BigDecimal debitAmount) {
+		this.debitAmount = debitAmount;
+	}
+	public BigDecimal getOtherCreditAmount() {
+		return otherCreditAmount;
+	}
+	public void setOtherCreditAmount(BigDecimal otherCreditAmount) {
+		this.otherCreditAmount = otherCreditAmount;
+	}
+	public BigDecimal getOtherDebitAmount() {
+		return otherDebitAmount;
+	}
+	public void setOtherDebitAmount(BigDecimal otherDebitAmount) {
+		this.otherDebitAmount = otherDebitAmount;
 	}
 	
 }

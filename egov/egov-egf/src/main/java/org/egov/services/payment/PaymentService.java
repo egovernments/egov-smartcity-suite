@@ -69,6 +69,7 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
@@ -137,6 +138,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     private  PersistenceService persistenceService;
     @Autowired
     private AssignmentService assignmentService;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
     @Autowired
@@ -2769,7 +2772,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         ih.setIsPayCheque("1");
         // ih.setInstrumentType(instType);
         ih.setInstrumentAmount(amount);
-        ih.setSerialNo(serialNo);
+        ih.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNo),false));
         // instrumentHeaderMap.put(VoucherConstant.INSTRUMENT_NUMBER, chqNo);
         ih.setInstrumentDate(date);
         // ih.setBank(account.getBankbranch().getBank().getCode());

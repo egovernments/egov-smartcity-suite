@@ -43,7 +43,6 @@ package org.egov.wtms.web.controller.search;
 import static java.util.Arrays.asList;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
-
 import java.util.List;
 
 import org.egov.config.search.Index;
@@ -62,9 +61,7 @@ import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
-import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
-import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.search.sort.SortOrder;
@@ -91,7 +88,7 @@ public class WaterTaxSearchController {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -107,8 +104,8 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 1st Entry "CSC Operator" order by value
-     * asc
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
+     * List Contals 1st Entry "CSC Operator" order by value asc
      *
      * @return String if Logged in User is CSC Operattor
      */
@@ -146,8 +143,8 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 4th Entry "ULB Operator" order by value
-     * asc
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
+     * List Contals 4th Entry "ULB Operator" order by value asc
      *
      * @return String if Logged in User is ULB Operattor
      */
@@ -168,7 +165,6 @@ public class WaterTaxSearchController {
     }
 
     /**
-     *
      * @return String if Logged in User is SUPER USER
      */
     @ModelAttribute("superUserRole")
@@ -190,8 +186,29 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 3th Entry "Water Tax Approver" order by
-     * value asc
+     * @return String if Logged in User is Property Administrator
+     */
+    @ModelAttribute("administratorRole")
+    public String getAdminstratorRole() {
+        String userRole = "";
+        User currentUser = null;
+
+        if (EgovThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        else
+            currentUser = securityUtils.getCurrentUser();
+        for (final Role userrole : currentUser.getRoles())
+            if (userrole.getName().equals(WaterTaxConstants.ROLE_ADMIN)) {
+                userRole = userrole.getName();
+                break;
+            }
+
+        return userRole;
+    }
+
+    /**
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
+     * List Contals 3th Entry "Water Tax Approver" order by value asc
      *
      * @return String if Logged in User is Water Tax Approver
      */
@@ -214,7 +231,8 @@ public class WaterTaxSearchController {
     }
 
     /**
-     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection" List Contals 5th Entry "Operator"
+     * Assumptions: assuming appconfig Key "RolesForSearchWaterTaxConnection"
+     * List Contals 5th Entry "Operator"
      *
      * @return String if Logged in User is Operator
      */
@@ -233,6 +251,7 @@ public class WaterTaxSearchController {
             }
         return userRole;
     }
+
     @ModelAttribute("billcollectionRole")
     public String getBillOperatorUserRole() {
         String userRole = "";
@@ -248,12 +267,11 @@ public class WaterTaxSearchController {
             }
         return userRole;
     }
-  
+
     public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
-        return  boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD,
+                REVENUE_HIERARCHY_TYPE);
     }
-   
 
     @RequestMapping(method = RequestMethod.GET)
     public String newSearchForm(final Model model) {

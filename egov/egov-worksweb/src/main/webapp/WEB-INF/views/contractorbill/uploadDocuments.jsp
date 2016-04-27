@@ -49,18 +49,33 @@
 	.file-ellipsis {
 		width : auto !Important;
 	}
+	
+	.padding-10
+	{
+	  padding:10px;
+	}
+	
+	.margin-10
+	{
+	  margin:10px;
+	}
+	
 </style>
-<div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
-	<div class="panel-heading">
-		<div class="panel-title">
+
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
 			<c:if test="${mode != 'view' && mode != 'readOnly' }">
 				<spring:message code="lbl.upload.document" />
 			</c:if>
 			<c:if test="${mode == 'view' || mode == 'readOnly' }">
 				<spring:message code="lbl.documents" />
 			</c:if>
-		</div>
 	</div>
+</div>
+
+<div style="padding: 0 15px;">
+
 	<c:if test="${contractorBillRegister.documentDetails != null &&  !contractorBillRegister.documentDetails.isEmpty()}">
 		<c:forEach items="${contractorBillRegister.documentDetails }" var="documentDetials">
 			<a href="/egi/downloadfile?fileStoreId=${documentDetials.fileStore.fileStoreId}&moduleName=WMS">${documentDetials.fileStore.fileName }</a><br />
@@ -80,7 +95,7 @@
 						 	<table id="uploadertbl" width="100%"><tbody>
 						 		<tr id="row1">			 				
 									<td>
-										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)">
+										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
 									</td>
 								</tr>									 										
 						 	</tbody></table>
@@ -88,7 +103,7 @@
 					</tr>
 					<tr>
 						<td align="left">
-							<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
+							<button id="attachNewFileBtn" type="button" class="btn btn-primary margin-10" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
 						</td>
 					</tr>
 				</tbody>

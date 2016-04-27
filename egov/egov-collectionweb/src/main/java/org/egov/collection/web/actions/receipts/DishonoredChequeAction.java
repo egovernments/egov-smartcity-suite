@@ -160,7 +160,6 @@ public class DishonoredChequeAction extends SearchFormAction {
         setPageSize(30);
         super.search();
         prepareResults();
-        chequeDate = null;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("DishonoredChequeAction | list | End");
         return SEARCH;

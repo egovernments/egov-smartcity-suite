@@ -42,8 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<div class="page-container" id="page-container">
-	<div class="main-content">
 		<form:form name="loaViewForm" action="" role="form"
 			modelAttribute="workOrder" id="workOrder"
 			class="form-horizontal form-groups-bordered" method="GET">
@@ -250,8 +248,7 @@
 				<jsp:include page="uploadDocuments.jsp" />
 			</c:if>
 		</form:form>
-	</div>
-</div>
+	
 <div class="row">
 	<div class="col-sm-12 text-center">
 		<a href='javascript:void(0)' class='btn btn-default'

@@ -41,9 +41,12 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +57,8 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -154,11 +159,17 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("lineEstimateDetails", lineEstimateDetails);
             model.addAttribute("workOrder", workOrder);
             model.addAttribute("netPayableAmount", request.getParameter("netPayableAmount"));
+            model.addAttribute("netPayableAccountCode", request.getParameter("netPayableAccountCode"));
             model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
+
+            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
+            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
 
             prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
 
             model.addAttribute("mode", "edit");
+
+            model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister));
 
             return "contractorBill-form";
         } else {
@@ -183,11 +194,21 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     contractorBillNumberGenerator.generateContractorBillNumber(contractorBillRegister));
 
             contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
-
-            final ContractorBillRegister savedContractorBillRegister = contractorBillRegisterService
-                    .create(contractorBillRegister, lineEstimateDetails, files, approvalPosition,
-                            approvalComment, null, workFlowAction);
-
+            ContractorBillRegister savedContractorBillRegister = null;
+            try {
+                savedContractorBillRegister = contractorBillRegisterService
+                        .create(contractorBillRegister, lineEstimateDetails, files, approvalPosition,
+                                approvalComment, null, workFlowAction);
+            } catch (final ValidationException e) {
+                // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
+                // checkBudgetAndGenerateBANumber API call. Needs to replace with errors.reject
+                throw new ApplicationRuntimeException("error.contractorbill.budgetcheck.insufficient.amount");
+                /*
+                 * for (final ValidationError error : e.getErrors()) { if(error.getMessage().contains("Budget Check failed for "))
+                 * { errors.reject(messageSource.getMessage("error.contractorbill.budgetcheck.insufficient.amount",null,null)+". "
+                 * +error.getMessage()); } else errors.reject(error.getMessage()); }
+                 */
+            }
             final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
                     savedContractorBillRegister.getState(), savedContractorBillRegister.getId(), approvalPosition);
 
@@ -266,6 +287,35 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                         .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
 
+        if (contractorBillRegister.getMbHeader() != null) {
+            if (StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
+                resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
+
+            if (contractorBillRegister.getMbHeader().getMbDate() == null)
+                resultBinder.rejectValue("mbHeader.mbDate", "error.mbdate.required");
+
+            if (contractorBillRegister.getMbHeader().getFromPageNo() == null)
+                resultBinder.rejectValue("mbHeader.fromPageNo", "error.frompageno.required");
+
+            if (contractorBillRegister.getMbHeader().getToPageNo() == null)
+                resultBinder.rejectValue("mbHeader.toPageNo", "error.topageno.required");
+
+            if (contractorBillRegister.getMbHeader().getFromPageNo() == 0
+                    || contractorBillRegister.getMbHeader().getToPageNo() == 0)
+                resultBinder.reject("error.validate.mb.pagenumbers.zero", "error.validate.mb.pagenumbers.zero");
+
+            if (contractorBillRegister.getMbHeader().getFromPageNo() != null
+                    && contractorBillRegister.getMbHeader().getToPageNo() != null
+                    && contractorBillRegister.getMbHeader().getFromPageNo() > contractorBillRegister.getMbHeader().getToPageNo())
+                resultBinder.reject("error.validate.mb.frompagenumber.greaterthan.topagenumber",
+                        "error.validate.mb.frompagenumber.greaterthan.topagenumber");
+
+            if (contractorBillRegister.getMbHeader().getMbDate() != null
+                    && contractorBillRegister.getMbHeader().getMbDate()
+                            .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
+                resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
+        }
+
         if (StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
             resultBinder.reject("error.netpayable.accountcode.required", "error.netpayable.accountcode.required");
         if (StringUtils.isBlank(request.getParameter("netPayableAmount"))
@@ -302,10 +352,17 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             final String nextDesign) {
         String message = "";
 
-        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString()))
-            message = messageSource.getMessage("msg.contractorbill.create.success",
-                    new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
-        else if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.APPROVED.toString()))
+        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())) {
+            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber()))
+                message = messageSource.getMessage("msg.contractorbill.create.success.with.budgetappropriation",
+                        new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign,
+                                contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber() },
+                        null);
+            else
+                message = messageSource.getMessage("msg.contractorbill.create.success",
+                        new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
+
+        } else if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.APPROVED.toString()))
             message = messageSource.getMessage("msg.contractorbill.approved.success",
                     new String[] { contractorBillRegister.getBillnumber() }, null);
         else if (contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
@@ -412,6 +469,42 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         egBillPaydetail.setEgBilldetailsId(billDetails);
         egBillPaydetail.setLastUpdatedTime(new Date());
         return egBillPaydetail;
+    }
+
+    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister) {
+        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> billDetails = new HashMap<String, Object>();
+
+        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
+            if (egBilldetails.getDebitamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getDebitamount());
+                billDetails.put("isDebit", true);
+                billDetails.put("isNetPayable", false);
+            } else if (egBilldetails.getCreditamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getCreditamount());
+                billDetails.put("isDebit", false);
+                if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
+                        && contractorPayableAccountList.contains(coa))
+                    billDetails.put("isNetPayable", true);
+                else
+                    billDetails.put("isNetPayable", false);
+
+            }
+            billDetailsList.add(billDetails);
+        }
+        return billDetailsList;
     }
 
 }

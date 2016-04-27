@@ -42,9 +42,6 @@
  */
 package org.egov.web.actions.contra;
 
-
-
-import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -80,7 +77,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentHeader;
@@ -115,7 +112,8 @@ import com.exilant.exility.common.TaskFailedException;
         @Result(name = "new", location = "contraBTB-new.jsp"),
         @Result(name = "edit", location = "contraBTB-edit.jsp"),
         @Result(name = "reverse", location = "contraBTB-reverse.jsp"),
-        @Result(name = "view", location = "contraBTB-view.jsp")
+        @Result(name = "view", location = "contraBTB-view.jsp"),
+        @Result(name = "success", location = "contraBTB-success.jsp")
 })
 public class ContraBTBAction extends BaseVoucherAction {
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
@@ -140,11 +138,11 @@ public class ContraBTBAction extends BaseVoucherAction {
     private String sourceGlcode;
     private String destinationGlcode;
     private ContraJournalVoucher contraVoucher;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private InstrumentService instrumentService;
     private String mode;
     @Autowired
@@ -199,7 +197,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     public void prepare() {
         super.prepare();
         ModeOfCollectionMap = new LinkedHashMap<String, String>();
-        ModeOfCollectionMap.put(MDC_CHEQUE, MDC_CHEQUE);
+        // ModeOfCollectionMap.put(MDC_CHEQUE, MDC_CHEQUE);
         ModeOfCollectionMap.put(MDC_OTHER, MDC_OTHER);
         final List<CChartOfAccounts> glCodeList = persistenceService
                 .findAllBy("from CChartOfAccounts coa where coa.purposeId=8 and coa.classification=4 and coa.isActiveForPosting=true order by coa.glcode ");
@@ -258,8 +256,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 if (contraBean.getModeOfCollection().equals(MDC_CHEQUE))
                     validateChqNumber(contraBean.getChequeNumber(), contraVoucher.getFromBankAccountId().getId(), voucherHeader);
             voucherHeader = contraBTBActionHelper.create(contraBean, contraVoucher, voucherHeader);
-            addActionMessage(getText("transaction.success")
-                    + voucherHeader.getVoucherNumber());
+            addActionMessage("Bank to Bank Transfer "+ getText("transaction.success") + " with Voucher number: "+ voucherHeader.getVoucherNumber());
             setVhId(voucherHeader.getId());
             LoadAjaxedDropDowns();
             if (LOGGER.isDebugEnabled())
@@ -275,7 +272,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
-        return NEW;
+        return SUCCESS;
     }
 
     /**
@@ -615,12 +612,19 @@ public class ContraBTBAction extends BaseVoucherAction {
     @SkipValidation
     @Action(value = "/contra/contraBTB-newform")
     public String newform() {
-        reset();
-        LoadAjaxedDropDowns();
-        loadDefalutDates();
-        final Date currDate = new Date();
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        contraBean.setChequeDate(sdf.format(currDate));
+        try {
+
+            reset();
+            LoadAjaxedDropDowns();
+            loadDefalutDates();
+            final Date currDate = new Date();
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            contraBean.setChequeDate(sdf.format(currDate));
+            voucherDate = sdf.parse(sdf.format(currDate));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return NEW;
     }
 
@@ -783,14 +787,13 @@ public class ContraBTBAction extends BaseVoucherAction {
                     || contraBean.getToBankAccountId().equals("-1"))
                 addFieldError("contraBean.toBankAccountId()",
                         getText("toBankAccountId.required"));
-            if (contraBean.getToFundId() != null && !contraBean.getToFundId().equals("-1")) {
-                final Fund toFund = (Fund) persistenceService.find("from Fund where id=?", contraBean.getToFundId());
-                if (!toFund.getCode().equalsIgnoreCase("03"))
-                    if (contraBean.getToDepartment() == null
-                            || contraBean.getToDepartment().equals("-1"))
-                        addFieldError("contraBean.contraBean.toDepartment()",
-                                getText("toDepartment.required"));
-            }
+            /*
+             * if (contraBean.getToFundId() != null && !contraBean.getToFundId().equals("-1")) { final Fund toFund = (Fund)
+             * persistenceService.find("from Fund where id=?", contraBean.getToFundId()); if
+             * (!toFund.getCode().equalsIgnoreCase("03")) if (contraBean.getToDepartment() == null ||
+             * contraBean.getToDepartment().equals("-1")) addFieldError("contraBean.contraBean.toDepartment()",
+             * getText("toDepartment.required")); }
+             */
             if (voucherHeader.getVouchermis().getDepartmentid() == null
                     || voucherHeader.getVouchermis().getDepartmentid().getId() == null) {
                 addFieldError("voucherHeader.vouchermis.departmentid.id",
@@ -822,6 +825,10 @@ public class ContraBTBAction extends BaseVoucherAction {
                         || contraBean.getSourceGlcode().equals("-1"))
                     addFieldError("contraBean.sourceGlcode",
                             getText("sourceGlcode.required"));
+                if (contraBean.getToDepartment() == null
+                        || contraBean.getToDepartment().equals("-1"))
+                    addFieldError("contraBean.contraBean.toDepartment()",
+                            getText("toDepartment.required"));
             }
 
             if (getAmount() == null)
@@ -1661,7 +1668,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 if (!generalled.getGlcode().equalsIgnoreCase(contraVoucher.getToBankAccountId().getChartofaccounts()
                         .getGlcode()))
                     contraBean.setDestinationGlcode(generalled.getGlcode());
-        }else{
+        } else {
             generalLedgerDesList = persistenceService.findAllBy(
                     "from CGeneralLedger where voucherHeaderId.refvhId = ?",
                     voucherHeader.getId());

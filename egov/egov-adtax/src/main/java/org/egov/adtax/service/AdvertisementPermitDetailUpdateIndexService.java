@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.adtax.elasticSearch.entity.AdvertisementSearch;
 import org.egov.adtax.elasticSearch.service.AdvertisementIndexService;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -25,7 +24,6 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -78,16 +76,11 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	         } else
 	             user = securityUtils.getCurrentUser();
 	         
-	         // To create and update the same advertisement index
-	         AdvertisementPermitDetail savedAdvPermitDetailIndx = new AdvertisementSearch();
-	         BeanUtils.copyProperties(advertisementPermitDetail,savedAdvPermitDetailIndx);   //downcasting
-	         AdvertisementSearch advertisementSearch = AdvertisementSearch.method(savedAdvPermitDetailIndx);
-	         
 	         // For legacy application - create only advertisementIndex
 	         if (advertisementPermitDetail.getAdvertisement().getLegacy()
-	                 && (null == advertisementPermitDetail.getId() || null != advertisementPermitDetail.getId()
-	                 && advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED))) {
-	        	 advertisementIndexService.createAdvertisementIndex(advertisementSearch); 
+	                 && (null == advertisementPermitDetail.getId() || (null != advertisementPermitDetail.getId()
+	                 && advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)))) {
+	        	 advertisementIndexService.createAdvertisementIndex(advertisementPermitDetail); 
 	             return;
 	         }
 	         
@@ -102,8 +95,8 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	        			 || advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)
 	        			 || advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))
 	        		){
-        		     applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription().toString());
- 	                 applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
+        		     applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription());
+ 	                 applicationIndex.setOwnername(user!=null?user.getUsername() + "::" + user.getName():"");
 	        		 
  	                 // Set application index status to approved on advertisement approval
  	                 if(advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)){
@@ -114,7 +107,7 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	 	                applicationIndex.setApplicantName(applicantName);
 	 	                applicationIndex.setApplicantAddress(address);
 	 	                applicationIndex.setMobileNumber(advertisementPermitDetail.getAgency()!=null?
-		                		 advertisementPermitDetail.getAgency().getMobileNumber().toString():"");
+		                		 advertisementPermitDetail.getAgency().getMobileNumber():"");
 	 	                applicationIndex.setApproved(ApprovalStatus.APPROVED);
 	 	                applicationIndex.setClosed(ClosureStatus.NO);
 	        		 }
@@ -135,7 +128,7 @@ public class AdvertisementPermitDetailUpdateIndexService {
  	                 applicationIndexService.updateApplicationIndex(applicationIndex);
 	        	 }
 	        	 //create advertisement index
-	        	 advertisementIndexService.createAdvertisementIndex(advertisementSearch);
+	        	 advertisementIndexService.createAdvertisementIndex(advertisementPermitDetail);
 	        	 
 	         } else {   // Create New ApplicationIndex on create advertisement
 	        	 final String strQuery = "select md from EgModules md where md.name=:name";
@@ -155,11 +148,11 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
 	                		 AdvertisementTaxConstants.MODULE_NAME, advertisementPermitDetail.getApplicationNumber(),
 	                         advertisementPermitDetail.getApplicationDate(), advertisementPermitDetail.getState().getNatureOfTask(), applicantName, 
-	                         advertisementPermitDetail.getStatus().getDescription().toString(),
-	                         url, address.toString(), user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+	                         advertisementPermitDetail.getStatus().getDescription(),
+	                         url, address, user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
 
 	                 applicationIndexBuilder.mobileNumber(advertisementPermitDetail.getAgency()!=null?
-	                		 advertisementPermitDetail.getAgency().getMobileNumber().toString():"");
+	                		 advertisementPermitDetail.getAgency().getMobileNumber():"");
 	                 applicationIndexBuilder.aadharNumber(null);
 	                 applicationIndexBuilder.approved(ApprovalStatus.UNKNOWN);
                 	 applicationIndexBuilder.closed(ClosureStatus.NO);

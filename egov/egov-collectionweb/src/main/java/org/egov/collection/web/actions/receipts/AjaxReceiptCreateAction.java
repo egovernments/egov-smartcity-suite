@@ -330,6 +330,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         return "entities";
     }
 
+    @Action(value = "/receipts/ajaxReceiptCreate-getDetailTypeForService")
     public String getDetailTypeForService() throws Exception {
 
         value = "";

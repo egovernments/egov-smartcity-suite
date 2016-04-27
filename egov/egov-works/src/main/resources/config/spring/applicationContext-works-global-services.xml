@@ -69,6 +69,16 @@
 		<property name="type" value="org.egov.works.models.masters.Contractor"/>
 	</bean>
 	
+	<bean id="assetsForEstimateService" parent="persistenceService"
+		scope="prototype">
+		<property name="type"
+			value="org.egov.works.models.estimate.AssetsForEstimate" />
+	</bean>
+	
+	<bean id="projectCodeService" class="org.egov.works.services.ProjectCodeService">
+		<property name="type" value="org.egov.works.models.estimate.ProjectCode"/>
+	</bean>
+	
 	<bean id="worksUtils" class="org.egov.works.utils.WorksUtils"/>
 	
 	<bean id="LineEstimatePersistenceService" parent="persistenceService">

@@ -367,7 +367,11 @@ public class ChallanAction extends BaseFormAction {
                             receiptHeader.getChallan().getChallanNumber() }));
 
         if (CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName))
-            return SUCCESS;
+        {
+        	  addActionMessage(getText(
+                      "challan.validatesuccess.message"));
+            return viewChallan();
+        }
         return viewChallan();
     }
 

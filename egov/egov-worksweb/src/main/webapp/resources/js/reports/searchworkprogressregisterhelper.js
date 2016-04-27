@@ -37,7 +37,10 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
+$createdDate="";
 jQuery('#btnsearch').click(function(e) {
+	$('#btndownloadpdf').hide();
+	$('#btndownloadexcel').hide();
 	var adminSanctionFromDate = '';
 	var adminSanctionToDate = '';
 	if($('#adminSanctionFromDate').val() != "") {
@@ -53,8 +56,46 @@ jQuery('#btnsearch').click(function(e) {
 			bootbox.alert('Admin Sanction To Date should be greater than Admin Sanction From Date');
 		}
 	}
-	if(flag)
+	if(flag && $('form').valid())
 		callAjaxSearch();
+	
+	var spillOver = document.getElementById("spillOverFlag");
+    var spillOverFlag = spillOver.checked ? true : false;
+    
+	var queryParameters = "Work Progress Register Report ";
+	if(spillOverFlag)
+		queryParameters = "Work Progress Register for Spill Over Line Estimates ";
+	
+	if (adminSanctionFromDate != ""
+			|| adminSanctionToDate != ""
+			|| $('#workIdentificationNumber').val() != ""
+			|| $('#contractor').val() != ""
+			|| $('#department').val() != "")
+		queryParameters += "for ";
+	if(adminSanctionFromDate != "" && adminSanctionToDate != "") {
+		queryParameters += "Date Range : " + $('#adminSanctionFromDate').val() + " - " + $('#adminSanctionToDate').val() + ", ";
+	}
+    if(adminSanctionFromDate != "" && adminSanctionToDate == "") {
+        queryParameters += "Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
+    }
+    if(adminSanctionToDate != "" && adminSanctionFromDate == "") {
+        queryParameters += "Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
+    }
+    if($('#workIdentificationNumber').val() != "") {
+        queryParameters += "Work Identification Number : " + $('#workIdentificationNumber').val() + ", ";
+    }
+    if($('#contractor').val() != "") {
+        queryParameters += "Contractor : " + $('#contractor').val() + ", ";
+    }
+    if($('#department').val() != "") {
+        queryParameters += "Department : " + $('#department').find(":selected").text() + ", ";
+    }
+    
+    if (queryParameters.endsWith(", "))
+        queryParameters = queryParameters.substring(0, queryParameters.length - 2);
+    
+    $('#searchCriteria').html(queryParameters);
+    
 });
 
 $('#btndownloadpdf').click(function() {
@@ -134,7 +175,39 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
+					$('#btndownloadpdf').show();
+					$('#btndownloadexcel').show();
 					$('td:eq(0)',row).html(index+1);
+					if(data.adminSanctionAmount != "")
+						$('td:eq(13)',row).html(parseFloat(Math.round(data.adminSanctionAmount * 100) / 100).toFixed(2));
+					else
+						$('td:eq(13)',row).html('NA');
+					if(data.estimateAmount != "")
+						$('td:eq(15)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
+					else
+						$('td:eq(15)',row).html('NA');
+					if(data.agreementAmount != "")
+						$('td:eq(19)',row).html(parseFloat(Math.round(data.agreementAmount * 100) / 100).toFixed(2));
+					else
+						$('td:eq(19)',row).html('NA');
+					if(data.billAmount != "")
+						$('td:eq(23)',row).html(parseFloat(Math.round(data.billAmount * 100) / 100).toFixed(2));
+					else
+						$('td:eq(23)',row).html('NA');
+					if(data.totalBillPaidSoFar != "")
+						$('td:eq(24)',row).html(parseFloat(Math.round(data.totalBillPaidSoFar * 100) / 100).toFixed(2));
+					else
+						$('td:eq(24)',row).html('NA');
+					if(data.balanceValueOfWorkToBill != "")
+						$('td:eq(25)',row).html(parseFloat(Math.round(data.balanceValueOfWorkToBill * 100) / 100).toFixed(2));
+					else
+						$('td:eq(25)',row).html('NA');
+					if(index == reportdatatable.fnSettings().fnRecordsTotal() - 1) {
+						$createdDate = data.createdDate;
+						var dataRunmTime = "The information in this report is not real time, it provides information of the transactions that happened till " + $createdDate;
+						$('#dataRun').html(dataRunmTime);
+					}
+					
 					return row;
 				},
 				aaSorting: [],				
@@ -152,9 +225,9 @@ function callAjaxSearch() {
 					"data" : "typeOfWork", "sClass" : "text-left"} ,{
 					"data" : "subTypeOfWork", "sClass" : "text-left"} ,{
 					"data" : "adminSanctionAuthorityDate", "sClass" : "text-left"} ,{
-					"data" : "technicalSanctionAuthorityDate", "sClass" : "text-right"}, {
-					"data" : "estimateAmount", "sClass" : "text-right"}, {
 					"data" : "adminSanctionAmount", "sClass" : "text-right"}, {
+					"data" : "technicalSanctionAuthorityDate", "sClass" : "text-center"}, {
+					"data" : "estimateAmount", "sClass" : "text-right"}, {
 					"data" : "modeOfAllotment", "sClass" : "text-right"}, {
 					"data" : "agreementNumberDate", "sClass" : "text-right"}, {
 					"data" : "contractorCodeName", "sClass" : "text-right"}, {
@@ -162,7 +235,7 @@ function callAjaxSearch() {
 					"data" : "latestMbNumberDate", "sClass" : "text-right"}, {
 					"data" : "latestBillNumberDate", "sClass" : "text-right"}, {
 					"data" : "billType", "sClass" : "text-right"}, {
-					"data" : "agreementAmount", "sClass" : "text-right"}, {
+					"data" : "billAmount", "sClass" : "text-right"}, {
 					"data" : "totalBillPaidSoFar", "sClass" : "text-right"}, {
 					"data" : "balanceValueOfWorkToBill", "sClass" : "text-right"
 					}]				

@@ -54,13 +54,15 @@ public class BankReconciliationSummary {
 			+" AND ( (ih.ispaycheque='0' and ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
 			+" AND ih.transactionnumber is not null";
 		
-		String brsEntryQuery=" SELECT (sum(case when ih.ispaycheque='1' then "+instrumentsForBrsEntryTotal+" else 0 end))  AS \"brs_creditTotalBrsEntry\", "
-		+" (sum(case when ih.ispaycheque='0' then "+instrumentsForBrsEntryTotal+"else 0 end ) ) AS \"brs_debitTotalBrsEntry\" "
-		+" FROM egf_instrumentheader ih, bankentries br	WHERE   ih.bankAccountId = :bankAccountId"
-		+" AND IH.transactiondate >= :fromDate  "
-		+" AND IH.transactiondate <= :toDate "
-		+" AND ( (ih.ispaycheque='0' and ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='Deposited'))or (ih.ispaycheque='1' and  ih.id_status=(select id from egw_status where moduletype='Instrument'  and description='New'))) "
-		+" AND br.instrumentHeaderid=ih.id and ih.transactionnumber is not null"	;
+		
+		
+		String brsEntryQuery="select (sum(case when be.type='Receipt' then (case when be.voucherheaderid is null then be.txnamount else 0 end) else 0 end))AS \"brs_creditTotalBrsEntry\","
+				+"(sum(case when be.type='Payment' then (case when be.voucherheaderid is null then be.txnamount else 0 end) else 0 end))AS \"brs_debitTotalBrsEntry\""
+				+"FROM  bankentries be WHERE   be.bankAccountId = :bankAccountId and be.voucherheaderid is null AND be.txndate >=:fromDate   AND be.txndate <= :toDate";
+
+
+		
+		
 	
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query  for  total : "+totalQuery);
 		if(LOGGER.isInfoEnabled())     LOGGER.info("  query  for other than cheque/DD: "+otherTotalQuery);

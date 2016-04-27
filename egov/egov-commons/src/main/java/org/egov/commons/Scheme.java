@@ -65,7 +65,7 @@ public class Scheme implements java.io.Serializable {
 
     private Date validto;
 
-    private Boolean isactive;
+    private Boolean isactive=false;
 
     private String description;
 
@@ -142,7 +142,15 @@ public class Scheme implements java.io.Serializable {
 
   
 
-    public boolean isIsactive() {
+    public Boolean getIsactive() {
+		return isactive;
+	}
+
+	public void setIsactive(Boolean isactive) {
+		this.isactive = isactive;
+	}
+
+	public boolean isIsactive() {
 		return isactive;
 	}
 

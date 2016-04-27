@@ -1235,7 +1235,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setAckMessage("Property data entry saved in the system successfully and created with Assessment No "
                 + upicNo);
         // setApplicationNoMessage(" with application number : ");
-        
+        propService.updateAssessmentSeq();
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);

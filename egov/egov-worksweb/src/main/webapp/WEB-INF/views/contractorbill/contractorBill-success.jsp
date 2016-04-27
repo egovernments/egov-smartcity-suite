@@ -43,7 +43,7 @@
 <div class="page-container" id="page-container">
 <input type="hidden" id="id" value="${contractorBillRegister.id }" />
 	<div class="main-content">
-		<div style="font-weight:bold; color:green; text-align:center;">
+		<div class="alert text-center" style="color:green;">
 			<c:if test="${contractorBillRegister.getId() != null}">
 				<c:out value="${message }" />
 			</c:if>
@@ -51,7 +51,9 @@
 		<div class="row">
 			<div class="col-sm-12 text-center">
 				<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+				<c:if test="${contractorBillRegister.billstatus == 'APPROVED' }">
 				<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.contractorbillpdf" /></a>
+				</c:if>
 			</div>
 		</div>
 	</div>

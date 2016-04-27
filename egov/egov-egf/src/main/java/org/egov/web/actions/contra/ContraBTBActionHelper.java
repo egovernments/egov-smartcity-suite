@@ -104,6 +104,7 @@ public class ContraBTBActionHelper {
     public CVoucherHeader create(ContraBean contraBean, ContraJournalVoucher contraVoucher, CVoucherHeader voucherHeader)
             throws Exception {
         try {
+            voucherHeader2 = null;
             final List<InstrumentHeader> instrumentList = instrumentService.addToInstrument(createInstruments(contraBean,
                     contraVoucher, voucherHeader));
             if (contraBean.getToFundId() != null && !voucherHeader.getFundId().getId().equals(contraBean.getToFundId()))
@@ -125,7 +126,15 @@ public class ContraBTBActionHelper {
                 contraVoucher2 = addOrupdateContraJournalVoucher(
                         contraVoucher2, instrumentList2.get(0), voucherHeader2, contraBean);
                 updateInstrument(instrumentList2.get(0), voucherHeader2);
-            }
+            } else {
+                List<Map<String, Object>> iList = new ArrayList<Map<String, Object>>();
+                iList = createInstrumentsForReceipt(contraBean,
+                        contraVoucher, voucherHeader);
+                final List<InstrumentHeader> receiptInstrumentList = instrumentService.addToInstrument(iList);
+                updateInstrument(receiptInstrumentList.get(0), voucherHeader);
+                contraVoucher = addOrupdateContraJournalVoucher(contraVoucher,
+                        receiptInstrumentList.get(0), voucherHeader, contraBean);
+            }   
         } catch (final ValidationException e)
         {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
@@ -205,7 +214,7 @@ public class ContraBTBActionHelper {
                 // change this to advice type later
                 iMap
                         .put("Instrument type",
-                                FinancialConstants.INSTRUMENT_TYPE_ONLINE);
+                                FinancialConstants.INSTRUMENT_TYPE_ADVICE);
             }
             iMap.put("Is pay cheque", "0");
             iList.add(iMap);
@@ -294,7 +303,7 @@ public class ContraBTBActionHelper {
             // change this to advice type later
             iMap
                     .put("Instrument type",
-                            FinancialConstants.INSTRUMENT_TYPE_ONLINE);
+                            FinancialConstants.INSTRUMENT_TYPE_ADVICE);
         }
         iMap.put("Is pay cheque", "1");
         iList.add(iMap);
@@ -375,7 +384,7 @@ public class ContraBTBActionHelper {
             headerDetails.remove(VoucherConstant.FUNDSOURCECODE);
             headerDetails.remove(VoucherConstant.DIVISIONID);
             headerDetails.remove(VoucherConstant.FUNCTIONARYCODE);
-            headerDetails.put(VoucherConstant.REFVOUCHER,voucher.getId());
+            headerDetails.put(VoucherConstant.REFVOUCHER, voucher.getId());
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, contraBean.getAmount()
                     .toString());

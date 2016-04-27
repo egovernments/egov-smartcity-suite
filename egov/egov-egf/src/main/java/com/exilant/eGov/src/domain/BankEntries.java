@@ -45,9 +45,6 @@
  */
 package com.exilant.eGov.src.domain;
 
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,11 +54,13 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.model.brs.BrsEntries;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.exilant.eGov.src.transactions.brs.BrsEntries;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
@@ -238,7 +237,7 @@ public class BankEntries {
             pstmt.setString(0, bankAccId);
             rs = pstmt.list();
 
-            for (final Object[] element : rs) {
+           /* for (final Object[] element : rs) {
                 brs = new BrsEntries();
                 brs.setId(element[0].toString());
                 brs.setRefNo(element[1].toString());
@@ -250,7 +249,7 @@ public class BankEntries {
                 brs.setGlCodeId(element[6].toString());
                 brs.setInstrumentHeaderId(element[7].toString());
                 al.add(brs);
-            }
+            }*/
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw taskExc;
@@ -312,8 +311,8 @@ public class BankEntries {
             brs = new BrsEntries();
             brs.setVoucherNumber(element[4].toString());
             brs.setCgnum(element[3].toString());
-            brs.setVoucherHeaderId(element[0].toString());
-            brs.setInstrumentHeaderId(element[1].toString());
+        /*    brs.setVoucherHeaderId(element[0].toString());
+            brs.setInstrumentHeaderId(element[1].toString());*/
             brs.setPayinSlipVHeaderId(element[2].toString());
             brs.setVoucherType(element[5].toString());
             brs.setFundId(element[6].toString());

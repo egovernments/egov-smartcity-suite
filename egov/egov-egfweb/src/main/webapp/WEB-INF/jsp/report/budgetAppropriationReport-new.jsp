@@ -38,81 +38,98 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet"
-	type="text/css" />
-<link href="/EGF/css/commonegov.css" rel="stylesheet" type="text/css" />
+<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}"
+	rel="stylesheet" type="text/css" />
 <script>
-
-var budName="";
-var depName="";
-var fndName="";
-var funcName="";
-var callback = {
-		success: function(o){
-			document.getElementById('loading').style.display ='none';
-			document.getElementById('result').innerHTML=o.responseText;
+	var budName = "";
+	var depName = "";
+	var fndName = "";
+	var funcName = "";
+	var callback = {
+		success : function(o) {
+			document.getElementById('result').innerHTML = o.responseText;
 			undoLoadingMask();
-			},
-			failure: function(o) {
-			document.getElementById('loading').style.display ='none';
+		},
+		failure : function(o) {
 			undoLoadingMask();
-		    }
-}
+		}
+	}
 
-function getData(){
-	if(validateMandatoryField()){
-		doAfterSubmit();
-		getFilterName();
-		doLoadingMask();
-		var frmdate=document.getElementById('fromDate').value;
-		var todate=document.getElementById('toDate').value;
-		//bootbox.alert("<<<>>>"+budName+"<<>>"+depName+"<<>>"+fndName+"<<<>>>"+funcName);
-		var url = '/EGF/report/budgetAppropriationReport!ajaxGenerateReport.action?showDropDown=false'
-					+'&model.budgetDetail.executingDepartment.id='+document.getElementById('department').value
-					+'&model.budgetDetail.function.id='+document.getElementById('function').value
-					+'&model.budgetDetail.fund.id='+document.getElementById('fund').value
-					+'&model.budgetDetail.budget.id='+document.getElementById('budget').value
-					+'&budgetName='+budName
-					+'&fromDate='+frmdate
-					+'&toDate='+todate
-					+'&deptName='+depName
-					+'&fundName='+fndName
-					+'&functionName='+funcName;
-		
-		YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
-		return true;
-	}return false;           
-}
-function getFilterName(){
-	budName=document.getElementById("budget").options[document.getElementById("budget").selectedIndex].text; 
-	if(document.getElementById("function").value!=null && document.getElementById("function").value!=''){
-		funcName=document.getElementById("function").options[document.getElementById("function").selectedIndex].text;
-	}else{ funcName=""; }
-	if(document.getElementById("department").value!=null && document.getElementById("department").value!=''){
-		depName=document.getElementById("department").options[document.getElementById("department").selectedIndex].text;
-	}else{ 	depName="";	}
-	if(document.getElementById("fund").value!=null && document.getElementById("fund").value!=''){
-		fndName=document.getElementById("fund").options[document.getElementById("fund").selectedIndex].text;
-	}else{	fndName=""; }
-}
+	function getData() {
+		if (validateMandatoryField()) {
+			//doAfterSubmit();
+			getFilterName();
+			doLoadingMask();
+			var frmdate = document.getElementById('fromDate').value;
+			var todate = document.getElementById('toDate').value;
+			//bootbox.alert("<<<>>>"+budName+"<<>>"+depName+"<<>>"+fndName+"<<<>>>"+funcName);
+			var url = '/EGF/report/budgetAppropriationReport-ajaxGenerateReport.action?showDropDown=false'
+					+ '&model.budgetDetail.executingDepartment.id='
+					+ document.getElementById('department').value
+					+ '&model.budgetDetail.function.id='
+					+ document.getElementById('function').value
+					+ '&model.budgetDetail.fund.id='
+					+ document.getElementById('fund').value
+					+ '&model.budgetDetail.budget.id='
+					+ document.getElementById('budget').value
+					+ '&budgetName='
+					+ budName
+					+ '&fromDate='
+					+ frmdate
+					+ '&toDate='
+					+ todate
+					+ '&deptName='
+					+ depName
+					+ '&fundName='
+					+ fndName
+					+ '&functionName=' + funcName;
 
-function validateMandatoryField(){
-	var budgetval=document.getElementById('budget');
-	var frmdate=document.getElementById('fromDate').value;
-	var todate=document.getElementById('toDate').value;
-	if(budgetval.value==null || budgetval.value==''){
-		bootbox.alert("Please Select Budget");
-		return false;
-	}if(frmdate=='' || todate=='' ){
-		bootbox.alert("Please Select Date Range");
+			YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
+			return true;
+		}
 		return false;
 	}
-	doLoadingMask();
-	return true;
-}
-function doAfterSubmit(){
-		document.getElementById('loading').style.display ='block';
-}
+	function getFilterName() {
+		budName = document.getElementById("budget").options[document
+				.getElementById("budget").selectedIndex].text;
+		if (document.getElementById("function").value != null
+				&& document.getElementById("function").value != '') {
+			funcName = document.getElementById("function").options[document
+					.getElementById("function").selectedIndex].text;
+		} else {
+			funcName = "";
+		}
+		if (document.getElementById("department").value != null
+				&& document.getElementById("department").value != '') {
+			depName = document.getElementById("department").options[document
+					.getElementById("department").selectedIndex].text;
+		} else {
+			depName = "";
+		}
+		if (document.getElementById("fund").value != null
+				&& document.getElementById("fund").value != '') {
+			fndName = document.getElementById("fund").options[document
+					.getElementById("fund").selectedIndex].text;
+		} else {
+			fndName = "";
+		}
+	}
+
+	function validateMandatoryField() {
+		var budgetval = document.getElementById('budget');
+		var frmdate = document.getElementById('fromDate').value;
+		var todate = document.getElementById('toDate').value;
+		if (budgetval.value == null || budgetval.value == '') {
+			bootbox.alert("Please Select Budget");
+			return false;
+		}
+		if (frmdate == '' || todate == '') {
+			bootbox.alert("Please Select Date Range");
+			return false;
+		}
+		doLoadingMask();
+		return true;
+	}
 </script>
 
 <style type="text/css">
@@ -154,8 +171,8 @@ th.bluebgheadtd {
 					<td class="bluebox"><s:text name="report.department" /></td>
 					<td class="bluebox" width="8%"><s:select
 							name="budgetDetail.executingDepartment" id="department"
-							list="dropdownData.departmentList" listKey="id"
-							listValue="name" headerKey="" headerValue="----Select----"
+							list="dropdownData.departmentList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Select----"
 							value="budgetDetail.executingDepartment.id" /></td>
 
 				</tr>
@@ -169,7 +186,7 @@ th.bluebgheadtd {
 							value="budgetDetail.function.id" /></td>
 
 					<td class="greybox" width="8%"><s:text name="report.budget" /><span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="greybox"><s:select name="budgetDetail.budget"
 							id="budget" list="dropdownData.budList" listKey="id"
 							listValue="name" headerKey="" headerValue="----Select----"
@@ -179,29 +196,25 @@ th.bluebgheadtd {
 				<tr>
 					<td class="bluebox" width="4%"></td>
 					<td class="bluebox" width="8%"><s:text name="report.fromdate" /><span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="bluebox" width="8%"><s:date name="fromDate"
 							format="dd/MM/yyyy" var="fromDateId" /> <s:textfield
-							name="budgetAppropriationReport.fromDate" id="fromDate"
-							value="%{fromDateId}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('budgetAppropriationReport.fromDate',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
-					</td>
+							id="fromDate" name="budgetAppropriationReport.fromDate"
+							value="%{fromDateId}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 					<td class="bluebox" width="8%"><s:text name="report.todate" /><span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="bluebox"><s:date name="toDate" id="toDateId"
-							format="dd/MM/yyyy" /> <s:textfield
-							name="budgetAppropriationReport.toDate" id="toDate"
-							value="%{toDateId}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('budgetAppropriationReport.toDate',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							format="dd/MM/yyyy" /> <s:textfield id="toDate"
+							name="budgetAppropriationReport.toDate" value="%{toDateId}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 			</table>
-			<div align="left" class="mandatory">
+			<div align="left" class="mandatory1">
 				*
 				<s:text name="report.mandatory.fields" />
 			</div>
@@ -216,11 +229,6 @@ th.bluebgheadtd {
 					onclick="javascript:window.close()" class="button" />
 			</div>
 
-		</div>
-		<div id="loading" class="loading"
-			style="width: 700; height: 700; display: none" align="center">
-			<blink style="color: red">Searching processing, Please
-				wait...</blink>
 		</div>
 	</s:form>
 </div>

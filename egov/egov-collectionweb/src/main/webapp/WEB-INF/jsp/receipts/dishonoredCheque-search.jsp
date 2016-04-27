@@ -146,11 +146,14 @@
 			return false;
 		}
 		var referenceNum = "";
+		var refFlag = false;
 		for (i = 0; i < len; i++) {
+			refFlag = false;
 			if (dishonorcheck[i].checked) {
 				referenceNum = referenceNo[i].value;
+				refFlag = true;
 			}
-			if (referenceNum == null || referenceNum == "") {
+			if (refFlag == true && (referenceNum == null || referenceNum == "")) {
 				bootbox.alert("Please enter	Reference No for selected Cheque/DD Number.");
 				undoLoadingMask();
 				return false;
@@ -173,81 +176,7 @@
 		}
 		return false;
 	}
-	function dishonorSelectedChq() {
-		var value = new Array();
-		var voucherHeaderIds = new Array();
-		var dishonorcheck = document.getElementsByName("selectedCheque");
-		var receiptHdrId = document.getElementsByName("receiptHeaderId");
-		var instrmntHdrId = document.getElementsByName("instrumentHeaderId");
-		var voucherHdrId = document.getElementsByName("voucherHeaderId");
-		var referenceNo = document.getElementsByName("referenceNo");
-		var len = dishonorcheck.length;
-		var i = 0, x = 0;
-		var flag = "";
-		var receiptId = "";
-		var instrmndId = "";
-		var voucherId = "";
 
-		if (len > 0) {
-			for (i = 0; i < len; i++) {
-				if (dishonorcheck[i].checked) {
-					receiptId = receiptHdrId[i].value;
-					instrmndId = instrmntHdrId[i].value;
-					voucherId = voucherHdrId[i].value;
-					break;
-				}
-			}
-			if (receiptId != "") {
-				value[x++] = instrmndId;
-				voucherHeaderIds[x-1] = voucherId;
-				for (var j = i + 1; j < len; j++) { 
-					if (dishonorcheck[j].checked) {
-						if (receiptId == receiptHdrId[j].value) {
-							value[x++] = instrmntHdrId[j].value;
-							voucherHeaderIds[x-1] = voucherHdrId[j].value;
-							flag = true;
-							if (flag == "false" && flag != "") {
-								bootbox
-										.alert("Please Choose only cheques from the same Receipt No.");
-								return false;
-							}
-						} else if (receiptId != receiptHdrId[j].value) {
-							flag = false;
-							break;
-						}
-
-					}
-				}
-
-				if (flag == "false" && flag != "") {
-					bootbox
-							.alert("Please Choose only cheques from the same Receipt No.");
-					return false;
-				}
-
-			}
-		}
-		if (value.length == 0) {
-			bootbox.alert("Please Choose Cheques to Dishonor.");
-			return false;
-		}
-		var referenceNum = "";
-		for (i = 0; i < len; i++) {
-			if (dishonorcheck[i].checked) {
-				referenceNum = referenceNo[i].value;
-			}
-			if (referenceNum == null || referenceNum == "") {
-				bootbox.alert("Please enter	Reference No for selected cheque.");
-				return false;
-			}
-			console.log(referenceNum);
-		}
-		if ((flag == "true" || flag == "") && value.length > 0) {
-			document.dishonorForm.action = '/collection/receipts/dishonoredCheque-dishonorCheque.action?instHeaderIds='
-					+ value+'&voucherHeaderIds='+voucherHeaderIds;
-			document.dishonorForm.submit();
-		}
-	}
 	function openVoucher(vid){
 		console.log('vid--->'+vid);
 		var url = "/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
@@ -292,9 +221,8 @@
 							headerKey="-1" headerValue="---Choose---"
 							listKey="bank.id + '-' + id"
 							listValue="bank.name + ' ' + branchname"
-							value="%{bank.id + '-' + id}"
-							onchange="getAccountNumbers(this.value);" /> <egov:ajaxdropdown
-							id="accountNumber" fields="['Text','Value']"
+							onchange="getAccountNumbers(this.value);" value="%{bankBranchId}" />
+						<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
 							dropdownId='accountNumber'
 							url='receipts/dishonoredCheque-getAccountNumbers.action'
 							selectedValue="%{bank.id + '-' + id}" /></td>
@@ -327,10 +255,10 @@
 
 					<td class="greybox"><s:text
 							name="dishonorcheque.cheque.dd.date" />:<span class="mandatory1">*</span></td>
+					<s:date name="chequeDate" var="chqDate" format="dd/MM/yyyy" />
 					<td class="greybox"><s:textfield id="chequeDate"
-							name="chequeDate" data-date-end-date="0d"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							name="chequeDate" value="%{chqDate}" placeholder="DD/MM/YYYY"
+							cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 			</table>

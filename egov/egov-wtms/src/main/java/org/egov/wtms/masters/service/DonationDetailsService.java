@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.List;
+
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
@@ -81,6 +83,10 @@ public class DonationDetailsService {
 
     public DonationDetails findByDonationHeader(final DonationHeader donationHeader) {
         return donationDetailsRepository.findByDonationHeader(donationHeader);
+    }
+    
+    public List<DonationDetails> findAll() {
+        return donationDetailsRepository.findAll();
     }
 
     // findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize

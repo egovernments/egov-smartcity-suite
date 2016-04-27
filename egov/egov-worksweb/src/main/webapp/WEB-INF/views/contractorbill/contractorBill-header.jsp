@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+<form:hidden path="billamount" name="billamount" id="billamount" />
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">

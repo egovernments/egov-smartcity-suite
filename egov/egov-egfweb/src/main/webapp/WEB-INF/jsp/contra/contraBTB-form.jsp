@@ -41,8 +41,9 @@
 	<td class="bluebox" colspan="5">
 		<table width="100%" cellspacing="0" cellpadding="0" border="0">
 			<tr>
-				<th class="bluebgheadtd" width="100%" colspan="5"><STRONG><s:text
-							name="contra.fromBank.header" /></STRONG></th>
+				<th class="bluebgheadtd" width="100%" colspan="5"><strong
+					style="font-size: 15px;"><s:text
+							name="contra.fromBank.header" /></strong></th>
 			</tr>
 		</table>
 	</td>
@@ -88,8 +89,9 @@
 	<td class="bluebox" colspan="5">
 		<table width="100%" cellspacing="0" cellpadding="0" border="0">
 			<tr>
-				<th class="bluebgheadtd" width="100%" colspan="5"><STRONG><s:text
-							name="contra.toBank.header" /></STRONG></th>
+				<th class="bluebgheadtd" width="100%" colspan="5"><strong
+					style="font-size: 15px;"><s:text
+							name="contra.toBank.header" /></strong></th>
 			</tr>
 		</table>
 	</td>
@@ -105,14 +107,15 @@
 				headerKey="" headerValue="----Choose----" /></td>
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('department')}">
-		<td class="greybox"><s:text name="voucher.department" /> <s:if
+		<td id="interFundRow1" style="visibility: hidden" class="greybox"><s:text
+				name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
-		<td class="greybox"><s:select name="contraBean.toDepartment"
-				id="contraBean.toDepartment" list="dropdownData.departmentList"
-				listKey="id" listValue="name" headerKey=""
-				headerValue="----Choose----"
+		<td id="interFundRow2" style="visibility: hidden" class="greybox"><s:select
+				name="contraBean.toDepartment" id="contraBean.toDepartment"
+				list="dropdownData.departmentList" listKey="id" listValue="name"
+				headerKey="" headerValue="----Choose----"
 				value="voucherHeader.vouchermis.departmentid.id"
 				onChange="populateApproverDept(this);" /></td>
 	</s:if>
@@ -152,7 +155,7 @@
 	<td class="greybox"></td>
 	<td class="greybox"></td>
 </tr>
-<tr id="interFundRow" style="visibility: hidden">
+<tr id="interFundRow3" style="visibility: hidden">
 	<td class="greybox"></td>
 	<td class="greybox"><s:text name="Source Inter Fund code" />
 	<td class="greybox"><span class="mandatory1">*</span> <s:select
@@ -175,7 +178,7 @@
 		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:radio name="contraBean.modeOfCollection"
 			id="modeOfCollection" list="%{modeOfCollectionMap}"
-			onclick="toggleChequeAndRefNumber(this)" /></td>
+			onclick="toggleChequeAndRefNumber(this)" checked="checked"/></td>
 	<td class="bluebox"></td>
 	<td class="bluebox"></td>
 </tr>
@@ -183,17 +186,17 @@
 <tr id="chequeGrid">
 	<td class="greybox"></td>
 	<td class="greybox"><span id="mdcNumber"><s:text
-				name="contra.chequeNumber" /></span> <span class="greybox"><span
+				name="contra.refNumber" /></span> <span class="greybox"><span
 			class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="contraBean.chequeNumber"
 			id="chequeNum" value="%{contraBean.chequeNumber}" /></td>
 	<td class="greybox"><span id="mdcDate"><s:text
-				name="contra.chequeDate" /></span></td>
-	<td class="greybox"><s:textfield name="contraBean.chequeDate"
-			id="chequeDate" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-		<a href="javascript:show_calendar('cbtbform.chequeDate');"
-		style="text-decoration: none">&nbsp;<img tabIndex="-1"
-			src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+				name="contra.refDate" /></span></td>
+	<td class="greybox"><s:textfield id="chequeDate"
+			name="contraBean.chequeDate" data-date-end-date="0d"
+			onkeyup="DateFormat(this,this.value,event,false,'3')"
+			placeholder="DD/MM/YYYY" class="form-control datepicker"
+			data-inputmask="'mask': 'd/m/y'" /></td>
 
 </tr>
 

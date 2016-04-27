@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -142,6 +144,10 @@ public class WaterTaxCollection extends TaxCollection {
                 updateWaterConnDetailsStatus(demand, billRcptInfo);
                 updateWaterTaxIndexes(demand);
             }
+            else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)){
+                updateCollForChequeBounce(demand, billRcptInfo);
+            	updateWaterTaxIndexes(demand);
+            }
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
         } catch (final Exception e) {
@@ -149,7 +155,16 @@ public class WaterTaxCollection extends TaxCollection {
             throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
     }
-
+    
+    
+    private void updateCollForChequeBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
+                + " with BillReceiptInfo - " + billRcptInfo);
+        cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+        demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
+        updateDmdDetForRcptCancel(demand, billRcptInfo);
+        LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " + demand);
+    }
     /**
      * @param demand Updates WaterConnectionDetails Object once Collection Is done. send Record move to Commissioner and Send SMS
      * and Email after Collection
@@ -206,7 +221,6 @@ public class WaterTaxCollection extends TaxCollection {
 
         final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new HashMap<String, Map<String, EgDemandDetails>>();
         Map<String, EgDemandDetails> demandDetailByReason = null;
-
         EgDemandReason dmdRsn = null;
         String installmentDesc = null;
 
@@ -286,8 +300,9 @@ public class WaterTaxCollection extends TaxCollection {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-            && !rcptAccInfo.getIsRevenueAccount()) {
+        	 if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && (!rcptAccInfo.getIsRevenueAccount())) {
+            	
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String[] installsplit = desc[1].split("#");

@@ -40,14 +40,10 @@
 package org.egov.infra.web.controller.common;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,37 +66,27 @@ public class FileDownloadController {
     public static final String LOGO_IMAGE_PATH = "/resources/global/images/";
     public static final String CITY_LOGO_KEY = "citylogo";
 
-    @Qualifier("localDiskFileStoreService")
-    @Autowired
-    private FileStoreService fileStoreService;
-
     @Autowired
     private FileStoreUtils fileStoreUtils;
-
-    @Autowired
-    private FileStoreMapperRepository fileStoreMapperRepository;
 
     @RequestMapping
     public void download(@RequestParam String fileStoreId, @RequestParam String moduleName,
                          @RequestParam(defaultValue = "false") boolean toSave,
                          HttpServletResponse response) throws IOException {
-        this.fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, toSave, response);
+        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, toSave, response);
     }
 
     @RequestMapping("/logo")
     public String download(@RequestParam String fileStoreId, @RequestParam String moduleName, HttpSession session) throws IOException, ServletException {
-        Path image = Paths.get(session.getServletContext().getRealPath(LOGO_IMAGE_PATH) + File.separator + fileStoreId + ImageUtils.JPG_EXTN);
-        if (!Files.exists(image)) {
-            if (session.getAttribute(CITY_LOGO_KEY) != null && session.getAttribute(CITY_LOGO_KEY).toString().contains(fileStoreId)) {
-                FileStoreMapper fileStoreMapper = this.fileStoreMapperRepository.findByFileStoreId(fileStoreId);
-                if (fileStoreMapper != null) {
-                    File file = this.fileStoreService.fetch(fileStoreMapper, moduleName);
-                    Files.copy(file.toPath(), image);
-                }
+        String logoPath =  LOGO_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN;
+        Path logoRealPath = Paths.get(session.getServletContext().getRealPath(LOGO_IMAGE_PATH)+ File.separator + fileStoreId + ImageUtils.JPG_EXTN);
+        if (!Files.exists(logoRealPath)) {
+            String cityLogoKey = (String)session.getAttribute(CITY_LOGO_KEY);
+            if ( cityLogoKey != null && cityLogoKey.contains(fileStoreId)) {
+                this.fileStoreUtils.copyFileToPath(logoRealPath, fileStoreId, moduleName);
             }
         }
-        String logoPath = LOGO_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN;
-        session.setAttribute(CITY_LOGO_KEY, logoPath);
+
         return "forward:"+logoPath;
     }
 

@@ -58,6 +58,12 @@
 		scope="prototype" autowire-candidate="default">
 		<property name="type" value="org.egov.commons.Bank" />
 	</bean>
+	
+	<bean id="bankEntriesService" class="org.egov.services.instrument.BankEntriesService"
+		scope="prototype" autowire-candidate="default">
+		<property name="type" value="org.egov.model.brs.BrsEntries" />
+	</bean>
+	
 
 	<bean id="instrumentVoucherService" class="org.egov.services.instrument.InstrumentVoucherService" >
 		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentVoucher" />

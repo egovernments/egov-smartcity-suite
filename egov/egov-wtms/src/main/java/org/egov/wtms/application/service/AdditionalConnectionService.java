@@ -87,7 +87,7 @@ public class AdditionalConnectionService {
                     "err.validate.addconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() },
-                            null);
+                    null);
         else {
             if (null != assessmentDetails.getPropertyDetails()
                     && null != assessmentDetails.getPropertyDetails().getTaxDue()
@@ -101,10 +101,10 @@ public class AdditionalConnectionService {
                 if (waterTaxDueforParent.doubleValue() > 0)
                     if (validationMessage.equalsIgnoreCase(""))
                         validationMessage = messageSource
-                        .getMessage("err.validate.primary.connection.watertax.due", null, null);
+                                .getMessage("err.validate.primary.connection.watertax.due", null, null);
                     else
                         validationMessage = validationMessage + " and " + messageSource
-                        .getMessage("err.validate.primary.connection.watertax.due", null, null);
+                                .getMessage("err.validate.primary.connection.watertax.due", null, null);
                 if (parentWaterConnectionDetail.getConnection().getId() != null)
                     if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
                         if (validationMessage.equalsIgnoreCase(""))

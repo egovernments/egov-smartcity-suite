@@ -261,6 +261,7 @@ public class WorksConstants {
 
     public static final String WORKORDER = "WorkOrder";
     public static final String CONTRACTORBILL = "CONTRACTORBILL";
+    public static final String MBHEADER = "MBHeader";
 
     public static final String BOUNDARY_TYPE_WARD = "Ward";
     public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";
@@ -281,6 +282,8 @@ public class WorksConstants {
 
     public static final String CONTRACTOR_NETPAYABLE_PURPOSE = "Creditors-Contractor Payable";
     public static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
-    
+
     public static final String HEADING_WORK_PROGRESS_REGISTER_REPORT = "Work Progress Register Report";
+
+    public static final String HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT = "Estimate Appropriation Register Report";
 }

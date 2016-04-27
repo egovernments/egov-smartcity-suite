@@ -510,4 +510,24 @@ public class ComplaintService {
         criteria.add(Restrictions.eq("complaint.assignee", positionMasterService.getCurrentPositionForUser(user.getId())));
         return criteria.list();
     }
+    
+    public Page<Complaint> getMyPendingGrievances(final int page, final int pageSize) {
+        final int offset = page - 1;
+        final String[] pendingStatus = { "REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED" };
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), pendingStatus, new PageRequest(offset, pageSize));
+    }
+    
+    public Page<Complaint> getMyCompletedGrievances(final int page, final int pageSize) {
+        final int offset = page - 1;
+        final String[] completedStatus = { "COMPLETED", "WITHDRAWN", "CLOSED" };
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), completedStatus, new PageRequest(offset, pageSize));
+    }
+  
+    public Page<Complaint> getMyRejectedGrievances(final int page, final int pageSize) {
+        final int offset = page - 1;
+        final String[] rejectedStatus = { "REJECTED" };
+        return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), rejectedStatus, new PageRequest(offset, pageSize));
+    }
+    
+    
 }

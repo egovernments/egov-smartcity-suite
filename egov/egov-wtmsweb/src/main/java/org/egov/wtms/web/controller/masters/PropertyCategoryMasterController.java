@@ -58,7 +58,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -92,24 +91,13 @@ public class PropertyCategoryMasterController {
 
     @RequestMapping(value = "/propertyCategoryMaster", method = RequestMethod.POST)
     public String addPropertyCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
-            final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
-            return "property-category-master";
-
-        final PropertyCategory propertyCategoryObj = propertyCategoryService.findByPropertyTypeAndCategory(
-                propertyCategory.getPropertyType(), propertyCategory.getConnectionCategory());
-
-        if (propertyCategoryObj != null) {
+            final BindingResult errors, final Model model) {
+        if (errors.hasErrors()) {
             model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
-            redirectAttrs.addFlashAttribute("propertyCategory", propertyCategoryObj);
-            model.addAttribute("message", "Selected Property Type and Category Type already exists.");
-            viewForm(model);
             return "property-category-master";
-        } else {
+        } else
             propertyCategoryService.createPropertyCategory(propertyCategory);
-            redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
-        }
         return getPropertyCategoryMasterList(model);
     }
 
@@ -132,12 +120,13 @@ public class PropertyCategoryMasterController {
 
     @RequestMapping(value = "/propertyCategoryMaster/{propertyCategoryId}", method = RequestMethod.POST)
     public String editPropertyCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
-            @PathVariable final long propertyCategoryId, final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
+            final BindingResult errors, final Model model, @PathVariable final long propertyCategoryId) {
+        if (errors.hasErrors()) {
+            model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
+            model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
             return "property-category-master";
-        propertyCategoryService.updatePropertyCategory(propertyCategory);
-        redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
+        } else
+            propertyCategoryService.updatePropertyCategory(propertyCategory);
         return getPropertyCategoryMasterList(model);
     }
 

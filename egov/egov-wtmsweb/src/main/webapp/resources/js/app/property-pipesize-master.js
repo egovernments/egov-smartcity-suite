@@ -8,12 +8,14 @@ $(document).ready(function(){
 		}
 	
 	else if(activeDiv=='true'){
+		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
 	$("#resetid").click(function(){
 		$("#propertypipesizeform")[0].reset();
+		window.open("/wtms/masters/propertyPipeSizeMaster/", "_self");
 		})
 	
  });

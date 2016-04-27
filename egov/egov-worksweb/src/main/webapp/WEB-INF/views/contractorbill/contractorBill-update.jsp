@@ -42,12 +42,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container">        
-   <div class="main-content">			
+
 		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>' "> 
 			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" />
 			<input type="hidden" id="id" value="${contractorBillRegister.id }" /> 
+			<input type="hidden" name="mode" id="mode" value="${mode }" />
 			<div class="row">
 				<div class="col-md-12"> 
 					<div class="panel panel-primary" data-collapsed="0">
@@ -62,26 +62,33 @@
 						</div>
 						<div>
 							<spring:hasBindErrors name="contractorBillRegister">
-				        		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+					       		<div class="alert alert-danger col-md-10 col-md-offset-1">
+						      			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+						      	</div>
 				        	</spring:hasBindErrors>
 				        </div>
 						<div class="panel-body">
 							<c:if test="${mode == 'edit'}">
 								<jsp:include page="contractorBill-header.jsp"/>
+								<jsp:include page="contractorBill-mbdetails.jsp"/>
+								<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
+								<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
 							</c:if>
 							<c:if test="${mode == 'view' || mode == 'readOnly' }">
 								<jsp:include page="contractorBill-header-view.jsp"/>
 								<jsp:include page="contractorBill-accountdetails-view.jsp"/>
 							</c:if>
 						<%-- 	<jsp:include page="contractorBill-details.jsp"/> --%>
-						<c:if test="${mode == 'view' || mode == 'readOnly' && !contractorBillRegister.documentDetails.isEmpty()}">
+						<c:if test="${!contractorBillRegister.documentDetails.isEmpty()}">
 							<jsp:include page="uploadDocuments.jsp"/>
 						</c:if>
 						<c:if test="${mode == 'readOnly'}">
 						<div class="row">
 							<div class="col-sm-12 text-center">
 								<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+								<c:if test="${contractorBillRegister.billstatus == 'APPROVED' }">
 								<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.contractorbillpdf" /></a>
+								</c:if>
 							</div>
 						</div>
 						</c:if>
@@ -106,8 +113,6 @@
 			</div>
 			</c:if>
 		</form:form>  
-	</div>
-</div>
+	
 <script src="<c:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/js/searchcontractorbill.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

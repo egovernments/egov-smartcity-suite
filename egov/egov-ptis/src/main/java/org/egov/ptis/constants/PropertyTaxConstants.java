@@ -815,7 +815,7 @@ public interface PropertyTaxConstants {
 
     public static final BigDecimal FIRST_REBATETAX_PERC = new BigDecimal("4");
     public static final BigDecimal SECOND_REBATETAX_PERC = new BigDecimal("2");
-    public static final BigDecimal CHQ_BOUNCE_PENALTY = new BigDecimal("1000");
+    public static final BigDecimal CHQ_BOUNCE_PENALTY = new BigDecimal("750");
 
     // Penalty
     public static final String ARR_LP_DATE_CONSTANT = "01/06/2010";

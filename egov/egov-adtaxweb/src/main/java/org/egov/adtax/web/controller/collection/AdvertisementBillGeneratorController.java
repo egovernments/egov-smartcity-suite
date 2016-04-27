@@ -45,10 +45,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseCollection;
+import org.egov.adtax.entity.AgencyWiseCollectionSearch;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.AdvertisementService;
@@ -85,7 +87,7 @@ public class AdvertisementBillGeneratorController {
     private @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;
     private String ADVERTISEMENT_BILLNUMBER = "SEQ_advertisementbill_NUMBER";
 
-    
+ /*
     @RequestMapping(value = "/collectTaxByAgency/{agencyName}/{hoardingIds}/{total}", method = GET)
     public String collectFeeByAgency(final Model model, @PathVariable final String hoardingIds,
             @PathVariable final String agencyName, @PathVariable final BigDecimal total) {
@@ -125,8 +127,96 @@ public class AdvertisementBillGeneratorController {
             return "collectAdvtax-error";
         }
         // return "collectAdvtax-error";
+    }*/
+    
+    @RequestMapping(value = "/collectTaxByAgency", method = POST)
+    public String collectFeeByAgencytest(final Model model,  final String hoardingIds,final String agencyName, final BigDecimal total) {
+
+        if (hoardingIds != null && agencyName != null) {
+            final String hoardingList[] = hoardingIds.split("~");
+            if (hoardingList != null && hoardingList.length > 0 && hoardingList[0] != null && hoardingList[0] != "") {
+         
+              List<AgencyWiseCollectionSearch> agencyWiseCollectionList= agencyWiseCollectionService.buildAgencyWiseCollectionSearch(hoardingList);
+             
+                if (agencyWiseCollectionList != null && agencyWiseCollectionList.size() > 0) {
+
+                    AgencyWiseCollectionSearch agencyWiseCollectionSearch = new AgencyWiseCollectionSearch();
+                    agencyWiseCollectionSearch.setAgencyName(agencyName);
+                    agencyWiseCollectionSearch.setAgencyWiseCollectionList(agencyWiseCollectionList);
+                    model.addAttribute("agencyWiseCollectionSearch", agencyWiseCollectionSearch);
+                    return "agencyWiseTaxCollect";
+                }else
+                {
+                    model.addAttribute("message", "msg.collection.noPendingTax");
+                    return "collectAdvtax-error";
+                }
+                
+            } else {
+
+                model.addAttribute("message", "msg.collection.noPendingTax");
+                return "collectAdvtax-error";
+            }
+        } else {
+            model.addAttribute("message", "msg.collection.noPendingTax");
+            return "collectAdvtax-error";
+        }
+        // return "collectAdvtax-error";
     }
 
+
+    @RequestMapping(value = "/collectTaxByAgency/{agencyName}", method = POST) 
+    public String successView(@PathVariable("agencyName") final String agencyName,
+            final Model model,  @ModelAttribute  AgencyWiseCollectionSearch agencyWiseCollectionSearch) {
+        StringBuffer hoardings = new StringBuffer();
+     
+        if (agencyWiseCollectionSearch != null && agencyWiseCollectionSearch.getAgencyWiseCollectionList() != null
+                && agencyWiseCollectionSearch.getAgencyWiseCollectionList().size() > 0) {
+            for (AgencyWiseCollectionSearch searchResult : agencyWiseCollectionSearch.getAgencyWiseCollectionList()) {
+                if(searchResult.isSelectedForCollection())
+                hoardings.append(searchResult.getAdvertisementPermitId()).append("~");
+            }
+            final String hoardingList[] = hoardings.toString().split("~");
+            if (hoardingList != null && hoardingList.length > 0 && hoardingList[0] != null && hoardingList[0] != "") {
+
+                // From List of Hoardings, Saved demand details in Agencywise
+                // collection table and send billable object.
+                // Iterate hordingids, get demand pending,penalty amount and
+                // build agencywisecollection detail object.
+                final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);
+
+                final AgencyWiseCollection agencyWiseCollection = agencyWiseCollectionService
+                        .buildAgencyWiseObjectByHoardings(hoardingList);
+
+                agencyWiseCollection.setAgency(agencyService.findByName(agencyName));
+                agencyWiseCollection.setBillNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
+                        "%s%06d", "", referenceNumber)));
+                agencyWiseCollectionService.createAgencyWiseCollection(agencyWiseCollection);
+
+                agencyWiseBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
+                        "%s%06d", "", referenceNumber)));
+                agencyWiseBillable.setAgencyWiseCollection(agencyWiseCollection);
+                model.addAttribute("collectxml", agencyWiseBillServiceImpl.getBillXML(agencyWiseBillable));
+
+                return "collectAdvtax-redirection";
+            }
+        } else {
+            model.addAttribute("message", "msg.collection.noPendingTax");
+            return "collectAdvtax-error";
+        }
+        return "collectAdvtax-redirection";
+    }
+    
+    @RequestMapping(value = "/getPendingTaxByAgency/{agencyName}", method = GET)
+    public String getAgencyWiseDetail(final Model model, 
+            @PathVariable final String agencyName) {
+
+        if (agencyName != null) {
+            model.addAttribute("agency", agencyService.findByName(agencyName));
+        }
+        
+        return null;
+        
+    }
     @RequestMapping(value = "/generatebill/{collectionType}/{id}", method = GET)
     public String showCollectFeeForm(final Model model, @PathVariable final String collectionType,
             @PathVariable final String id) {

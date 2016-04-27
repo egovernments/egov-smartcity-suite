@@ -39,8 +39,12 @@
  */
 package org.egov.adtax.elasticSearch.service;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 import org.egov.adtax.elasticSearch.entity.AdvertisementSearch;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
@@ -62,20 +66,23 @@ public class AdvertisementIndexService {
 	private CityService cityService;
 
 	@Autowired
-	private BoundaryService boundaryService;	
+	private BoundaryService boundaryService;
+	
+	@Autowired
+	private AdvertisementDemandService advertisementDemandService;
 	
 	@Indexing(name = Index.ADVERTISEMENT, type = IndexType.ADVERTISEMENTSEARCH)
-	public AdvertisementSearch createAdvertisementIndex(AdvertisementSearch advertisementSearchIndex){ 
-		
-		if(advertisementSearchIndex.getStatus()!=null &&
-	   			 (advertisementSearchIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)
-	   			 ||	advertisementSearchIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXAMOUNTPAID)
-	   			 || advertisementSearchIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)
-	   			 || advertisementSearchIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))
+	public AdvertisementSearch createAdvertisementIndex(final AdvertisementPermitDetail advertisementPermitDetailIndex){ 
+		AdvertisementSearch advertisementSearch = null;
+		if(advertisementPermitDetailIndex.getStatus()!=null &&
+	   			 (advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)
+	   			 ||	advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXAMOUNTPAID)
+	   			 || advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)
+	   			 || advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))
   		){
-			advertisementSearchIndex =createOrUpdateAdvIndex(advertisementSearchIndex);
+			advertisementSearch  =createOrUpdateAdvIndex(advertisementPermitDetailIndex);
 		}
-		return advertisementSearchIndex;
+		return advertisementSearch;
 	}
 	
 	public AdvertisementSearch createOrUpdateAdvIndex(final AdvertisementPermitDetail advertisementPermitDetail){
@@ -83,50 +90,104 @@ public class AdvertisementIndexService {
 		final AdvertisementSearch advertisementSearch = new AdvertisementSearch(advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
 				 cityWebsite.getName(),cityWebsite.getGrade(), advertisementPermitDetail.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
 					cityWebsite.getGrade());
-		advertisementSearch.setAddress(advertisementPermitDetail.getAdvertisement().getAddress());
+		advertisementSearch.setAddress(advertisementPermitDetail.getAdvertisement().getAddress()!=null?advertisementPermitDetail.getAdvertisement().getAddress():"");
 		advertisementSearch.setAdvertisementClass(advertisementPermitDetail.getAdvertisement().getRateClass().getDescription());
 		advertisementSearch.setAdvertisementCreatedBy(advertisementPermitDetail.getAdvertisement().getCreatedBy().getName());
 		advertisementSearch.setAdvertisement_duration(advertisementPermitDetail.getAdvertisementDuration().name());
 		advertisementSearch.setAdvertisementNumber(advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
 		advertisementSearch.setAdvertisement_status(advertisementPermitDetail.getAdvertisement().getStatus().name());
 		advertisementSearch.setType(advertisementPermitDetail.getAdvertisement().getType().name());
-		advertisementSearch.setAdvertiser(advertisementPermitDetail.getAdvertiser());
-		advertisementSearch.setAdvertiserParticular(advertisementPermitDetail.getAdvertisementParticular());
+		advertisementSearch.setAdvertiser(advertisementPermitDetail.getAdvertiser()!=null?advertisementPermitDetail.getAdvertiser():"");
+		advertisementSearch.setAdvertiserParticular(advertisementPermitDetail.getAdvertisementParticular()!=null?advertisementPermitDetail.getAdvertisementParticular():"");
 		advertisementSearch.setAgencyName(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():"");
 		advertisementSearch.setApplicationDate(advertisementPermitDetail.getApplicationDate());
 		advertisementSearch.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
 		advertisementSearch.setBlock(advertisementPermitDetail.getAdvertisement().getBlock()!=null?advertisementPermitDetail.getAdvertisement().getBlock().getName():"");
-		advertisementSearch.setBreadth(advertisementPermitDetail.getBreadth());
-		advertisementSearch.setCategory(advertisementPermitDetail.getAdvertisement().getCategory().getName());
+		advertisementSearch.setBreadth(advertisementPermitDetail.getBreadth()!=null?advertisementPermitDetail.getBreadth():0.0);
+		advertisementSearch.setCategory(advertisementPermitDetail.getAdvertisement().getCategory().getName());  
 		advertisementSearch.setCreatedDate(advertisementPermitDetail.getAdvertisement().getCreatedDate());
-		//advertisementSearch.setCurrent_state(advertisementPermitDetail.getState().getValue());
 		advertisementSearch.setElectionWard(advertisementPermitDetail.getAdvertisement().getElectionWard()!=null?advertisementPermitDetail.getAdvertisement().getElectionWard().getName():"");
-		advertisementSearch.setElectricityServiceNumber(advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber());
-		advertisementSearch.setEncroachmentFee(advertisementPermitDetail.getEncroachmentFee());
-		advertisementSearch.setIsActive(advertisementPermitDetail.getIsActive());
+		advertisementSearch.setElectricityServiceNumber(advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber()!=null?advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber():"");
+		advertisementSearch.setEncroachmentFee(advertisementPermitDetail.getEncroachmentFee()!=null?advertisementPermitDetail.getEncroachmentFee():BigDecimal.ZERO);
 		advertisementSearch.setIslegacy(advertisementPermitDetail.getAdvertisement().getLegacy());
 		advertisementSearch.setLength(advertisementPermitDetail.getLength());
-		advertisementSearch.setLocality(advertisementPermitDetail.getAdvertisement().getLocality().getName());
+		advertisementSearch.setLocality(advertisementPermitDetail.getAdvertisement().getLocality()!=null?advertisementPermitDetail.getAdvertisement().getLocality().getName():"");
 		advertisementSearch.setMeasurement(advertisementPermitDetail.getMeasurement());
 		advertisementSearch.setMobileNumber(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getMobileNumber():"");
-		advertisementSearch.setOwnerDetail(advertisementPermitDetail.getOwnerDetail());
-		advertisementSearch.setPenaltyCalculationDate(advertisementPermitDetail.getAdvertisement().getPenaltyCalculationDate());
-		advertisementSearch.setPendingTax(advertisementPermitDetail.getAdvertisement().getPendingTax());
+		advertisementSearch.setOwnerDetail(advertisementPermitDetail.getOwnerDetail()!=null?advertisementPermitDetail.getOwnerDetail():"");
 		advertisementSearch.setPermissionEndDate(advertisementPermitDetail.getPermissionenddate());
 		advertisementSearch.setPermissionNumber(advertisementPermitDetail.getPermissionNumber());
 		advertisementSearch.setPermissionStartDate(advertisementPermitDetail.getPermissionstartdate());
 		advertisementSearch.setPermitStatus(advertisementPermitDetail.getStatus().getDescription());
-		advertisementSearch.setAssessment_number(advertisementPermitDetail.getAdvertisement().getPropertyNumber());
+		advertisementSearch.setAssessmentNumber(advertisementPermitDetail.getAdvertisement().getPropertyNumber()!=null?advertisementPermitDetail.getAdvertisement().getPropertyNumber():"");
 		advertisementSearch.setPropertyType(advertisementPermitDetail.getAdvertisement().getPropertyType().name());
 		advertisementSearch.setRevenueInspector(advertisementPermitDetail.getAdvertisement().getRevenueInspector().getName());
 		advertisementSearch.setStreet(advertisementPermitDetail.getAdvertisement().getStreet()!=null?advertisementPermitDetail.getAdvertisement().getStreet().getName():"");
 		advertisementSearch.setSubCategory(advertisementPermitDetail.getAdvertisement().getSubCategory().getCode());
 		advertisementSearch.setTaxAmount(advertisementPermitDetail.getTaxAmount());
-		advertisementSearch.setTotalHeight(advertisementPermitDetail.getTotalHeight());
+		advertisementSearch.setTotalHeight(advertisementPermitDetail.getTotalHeight()!=null?advertisementPermitDetail.getTotalHeight():0.0);
 		advertisementSearch.setUom(advertisementPermitDetail.getUnitOfMeasure().getCode());
-		advertisementSearch.setWard(advertisementPermitDetail.getAdvertisement().getWard().getName());
-		advertisementSearch.setWidth(advertisementPermitDetail.getWidth());
-		advertisementSearch.setZone(advertisementPermitDetail.getAdvertisement().getWard().getParent().getName());
+		advertisementSearch.setWard(advertisementPermitDetail.getAdvertisement().getWard()!=null?advertisementPermitDetail.getAdvertisement().getWard().getName():"");
+		advertisementSearch.setWidth(advertisementPermitDetail.getWidth()!=null?advertisementPermitDetail.getWidth():0.0);
+		advertisementSearch.setConsumerName(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():
+       	advertisementPermitDetail.getOwnerDetail());
+		
+		// Demand and Collection Details
+		advertisementSearch.setTax_demand(advertisementPermitDetail.getAdvertisement().getDemandId().getBaseDemand());
+		advertisementSearch.setTax_collected(advertisementPermitDetail.getAdvertisement().getDemandId().getAmtCollected());
+		
+		Map<String, Map<String, BigDecimal>> demandCollectionMap = advertisementDemandService.getReasonWiseDemandAndCollection(advertisementPermitDetail);
+        
+		
+		advertisementSearch.setEncroachmentfee_demand(
+				demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE)!=null ?
+						(demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE).get("demandAmount")!=null?
+								demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE).get("demandAmount"):
+									BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setEncroachmentfee_collected(
+				demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE)!=null?
+						(demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE).get("collectedAmount")!=null?
+							demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE).get("collectedAmount"):
+								BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setArrears_demand(
+				demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX)!=null ?
+						(demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX).get("demandAmount")!=null?
+								demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX).get("demandAmount"):
+									BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setArrears_collected(
+				demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX)!=null ?
+						(demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX).get("collectedAmount")!=null?
+								demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX).get("collectedAmount"):
+									BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setPenalty_demand(
+				demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_PENALTY)!=null ?
+						(demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_PENALTY).get("demandAmount")!=null?
+								demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_PENALTY).get("demandAmount"):
+									BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setPenalty_collected(
+				demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_PENALTY)!=null ?
+						(demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_PENALTY).get("collectedAmount")!=null?
+								demandCollectionMap.get(AdvertisementTaxConstants.DEMANDREASON_PENALTY).get("collectedAmount"):
+									BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setTotalamount(
+				demandCollectionMap.get("Total")!=null ?
+						(demandCollectionMap.get("Total").get("totalAmount")!=null?
+								demandCollectionMap.get("Total").get("totalAmount"):
+									BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setTotalamountcollected(
+				demandCollectionMap.get("Total")!=null ?
+						(demandCollectionMap.get("Total").get("totalAmountCollected")!=null?
+								demandCollectionMap.get("Total").get("totalAmountCollected"):
+									BigDecimal.ZERO):BigDecimal.ZERO);
+		
+		advertisementSearch.setTotalbalance(advertisementSearch.getTotalamount().subtract(advertisementSearch.getTotalamountcollected()));
 		
 		if (advertisementPermitDetail.getAdvertisement().getLatitude()!= 0.0 && advertisementPermitDetail.getAdvertisement().getLongitude()!=0.0) {
 			advertisementSearch.setAdvertisementLocation(new GeoPoint(advertisementPermitDetail.getAdvertisement().getLatitude(), advertisementPermitDetail.getAdvertisement().getLongitude()));

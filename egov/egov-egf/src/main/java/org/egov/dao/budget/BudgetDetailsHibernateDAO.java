@@ -1009,7 +1009,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         Integer functionaryid = null;
         Integer schemeid = null;
         Integer subschemeid = null;
-        Integer boundaryid = null;
+        Long boundaryid = null;
         Integer fundid = null;
         final Long budgetheadid = null;
         Date fromdate = null;
@@ -1030,7 +1030,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (paramMap.get(Constants.SUBSCHEMEID) != null)
                 subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
             if (paramMap.get(Constants.BOUNDARYID) != null)
-                boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
+                boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
             /*
              * if(paramMap.get(BUDGETHEADID)!=null) budgetheadid =
              * (Long)paramMap.get(BUDGETHEADID);
@@ -1186,7 +1186,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         Integer functionaryid = null;
         Integer schemeid = null;
         Integer subschemeid = null;
-        Integer boundaryid = null;
+        Long boundaryid = null;
         Integer fundid = null;
         List<BudgetGroup> budgetHeadList = null;
         Long financialyearid = null;
@@ -1206,7 +1206,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (paramMap.get(Constants.FUNDID) != null)
                 fundid = (Integer) paramMap.get(Constants.FUNDID);
             if (paramMap.get(Constants.BOUNDARYID) != null)
-                boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
+                boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
             if (paramMap.get(BUDGETHEADID) != null)
                 budgetHeadList = (List) paramMap.get(BUDGETHEADID);
             if (paramMap.get("financialyearid") != null)
@@ -1217,7 +1217,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                         + ",schemeid " + schemeid + ",subschemeid " + subschemeid + ",boundaryid " + boundaryid
                         + ",budgetheadids " + budgetHeadList + ",financialyearid " + financialyearid);
 
-            query = prepareQuery(deptid.intValue(), functionid, functionaryid, schemeid, subschemeid, boundaryid,
+            query = prepareQuery(deptid.intValue(), functionid, functionaryid, schemeid, subschemeid, boundaryid!=null?boundaryid.intValue():null,
                     fundid);
 
             // handle the list
@@ -2174,7 +2174,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         Integer functionaryid = null;
         Integer schemeid = null;
         Integer subschemeid = null;
-        Integer boundaryid = null;
+        Long boundaryid = null;
         Integer fundid = null;
         Long glcodeid = null;
         Date fromdate = null;
@@ -2197,7 +2197,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             if (paramMap.get(Constants.SUBSCHEMEID) != null)
                 subschemeid = (Integer) paramMap.get(Constants.SUBSCHEMEID);
             if (paramMap.get(Constants.BOUNDARYID) != null)
-                boundaryid = (Integer) paramMap.get(Constants.BOUNDARYID);
+                boundaryid = (Long) paramMap.get(Constants.BOUNDARYID);
             if (paramMap.get(GLCODEID) != null)
                 glcodeid = (Long) paramMap.get(GLCODEID);
             if (paramMap.get(Constants.ASONDATE) != null)

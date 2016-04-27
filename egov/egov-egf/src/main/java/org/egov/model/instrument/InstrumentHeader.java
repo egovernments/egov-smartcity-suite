@@ -47,6 +47,7 @@ import java.util.Set;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.ECSType;
@@ -59,11 +60,8 @@ import org.egov.infstr.models.ECSType;
 
 public class InstrumentHeader extends BaseModel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3412036578900689029L;
-    // Fields
+
     private Accountdetailtype detailTypeId;
     private Bankaccount bankAccountId;
     private EgwStatus statusId;
@@ -80,20 +78,20 @@ public class InstrumentHeader extends BaseModel {
     private String payee;
     private String bankBranchName;
     private String surrendarReason;
-    private String serialNo;
+    private CFinancialYear serialNo;
     private ECSType ECSType;
-
-    public String getSerialNo() {
-        return serialNo;
-    }
-
-    public void setSerialNo(final String serialNo) {
-        this.serialNo = serialNo;
-    }
 
     private Set<InstrumentVoucher> instrumentVouchers = new HashSet<InstrumentVoucher>(0);
 
     // Property accessors
+
+    public CFinancialYear getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(CFinancialYear serialNo) {
+        this.serialNo = serialNo;
+    }
 
     /**
      * @return the instrumentVouchers
@@ -424,10 +422,10 @@ public class InstrumentHeader extends BaseModel {
 
         final StringBuffer str = new StringBuffer(1024);
         str.append("id:").append(id)
-        .append("Number:").append(instrumentNumber)
-        .append("Date:").append(instrumentDate)
-        .append("Amount:").append(instrumentAmount)
-        .append("Type:").append(instrumentType);
+                .append("Number:").append(instrumentNumber)
+                .append("Date:").append(instrumentDate)
+                .append("Amount:").append(instrumentAmount)
+                .append("Type:").append(instrumentType);
         return str.toString();
     }
 

@@ -61,7 +61,7 @@
         <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
        
-	 <many-to-one name="statusId" class="org.egov.commons.EgwStatus" fetch="select">
+		<many-to-one name="statusId" class="org.egov.commons.EgwStatus" fetch="select">
             <column name="ID_STATUS" precision="22" scale="0" not-null="true" />
         </many-to-one>
         <many-to-one name="bankId" class="org.egov.commons.Bank" fetch="select">
@@ -110,9 +110,9 @@
             <column name="SURRENDARREASON" length="100" />
             
         </property>
-         <property name="serialNo" type="java.lang.String">
-            <column name="serialNo" length="16" />
-            </property>
+        <many-to-one name="serialNo" class="org.egov.commons.CFinancialYear" fetch="select">
+            <column name="serialNo" precision="22" scale="0"  />
+        </many-to-one>
          
         <many-to-one name="ECSType" class="org.egov.infstr.models.ECSType" fetch="select">
 			 <column name="ECSTYPE" precision="22" scale="0" />

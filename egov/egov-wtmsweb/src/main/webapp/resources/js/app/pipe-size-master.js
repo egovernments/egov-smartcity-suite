@@ -41,18 +41,20 @@ $(document).ready(function(){
 	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false' && 'true'){
+	if (activeDiv =='false'){
 		$('#statusdiv').hide();
 	     $('#addnewid').hide();
 		}
 	
 	else if(activeDiv =='true'){
+		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
 	$("#resetid").click(function(){
 		$("#pipesizeform")[0].reset();
+		window.open("/wtms/masters/pipesizeMaster/", "_self");
 		})
 	$( "#pipesizeid" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
@@ -96,7 +98,6 @@ function addNew()
 
 function edit(pipeSize)
 {
-	
 	window.open("/wtms/masters/pipesizeMaster/"+pipeSize, "_self");
 	
 }

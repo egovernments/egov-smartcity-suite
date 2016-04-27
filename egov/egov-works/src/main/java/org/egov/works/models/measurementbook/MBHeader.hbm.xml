@@ -54,11 +54,8 @@
 			not-null="true" fetch="select" />
 		<many-to-one name="workOrderEstimate"
 			class="org.egov.works.models.workorder.WorkOrderEstimate" column="WORKORDER_ESTIMATE_ID"
-			not-null="true" fetch="select" />
-		<many-to-one name="mbPreparedBy"
-			class="org.egov.pims.model.PersonalInformation" column="PREPARED_BY"
-			not-null="true" fetch="select" />
-		<many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" fetch="select" />
+			fetch="select" />
+		<many-to-one name="egBillregister" class="org.egov.works.contractorbill.entity.ContractorBillRegister" column="BILLREGISTER_ID" fetch="select" />
 		
 		<property name="mbRefNo" type="string">
 			<column name="MB_REFNO" length="100" not-null="true"/>
@@ -73,13 +70,10 @@
 			<column name="TO_PAGE_NO" precision="20" />
 		</property>		
 		<property name="mbAbstract" type="string">
-			<column name="ABSTRACT" length="1024" not-null="true"/>
+			<column name="ABSTRACT" length="1024" />
 		</property>		
 		<property name="contractorComments" type="string">
 			<column name="CONTRACTOR_COMMENTS" length="1024" />
-		</property>
-		<property name="documentNumber" type="long">
-			<column name="DOCUMENT_NUMBER" /> 
 		</property>
 		<property name="mbAmount" type="java.math.BigDecimal">
             <column name="MB_AMOUNT" precision="22" scale="2"  />

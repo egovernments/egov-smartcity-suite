@@ -58,7 +58,6 @@ import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -113,9 +112,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     private SchemeService schemeService;
 
     @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
     private FileStoreService fileStoreService;
 
     @Autowired
@@ -135,7 +131,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
 
@@ -192,7 +188,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                     approvalComment, null, workFlowAction);
             model.addAttribute("lineEstimate", newLineEstimate);
 
-            final String pathVars = worksUtils.getPathVars(newLineEstimate.getStatus(), newLineEstimate.getState(), newLineEstimate.getId(), approvalPosition);
+            final String pathVars = worksUtils.getPathVars(newLineEstimate.getStatus(), newLineEstimate.getState(),
+                    newLineEstimate.getId(), approvalPosition);
 
             return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
         }
@@ -203,7 +200,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
@@ -300,15 +297,16 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final String message = getMessageByStatus(lineEstimate, approverName, nextDesign);
 
         model.addAttribute("message", message);
-        
+
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
-            List<String> basMessages = new ArrayList<String>();
+            final List<String> basMessages = new ArrayList<String>();
             Integer count = 1;
-            for(LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                 final LineEstimateAppropriation lea = lineEstimateAppropriationService
                         .findLatestByLineEstimateDetails_EstimateNumber(led.getEstimateNumber());
                 final String tempMessage = messageSource.getMessage("msg.lineestimatedetails.budgetsanction.success",
-                        new String[] { count.toString(), led.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() }, null);
+                        new String[] { count.toString(), led.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() },
+                        null);
                 basMessages.add(tempMessage);
                 count++;
             }

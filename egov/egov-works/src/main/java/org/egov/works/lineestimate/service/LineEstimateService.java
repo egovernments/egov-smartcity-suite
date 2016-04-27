@@ -96,7 +96,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -160,9 +159,6 @@ public class LineEstimateService {
 
     @Autowired
     private UserService userService;
-    
-    @Autowired
-    private ResourceBundleMessageSource messageSource;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -279,8 +275,8 @@ public class LineEstimateService {
             if (lineEstimateSearchRequest.getAdminSanctionToDate() != null)
                 criteria.add(Restrictions.le("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionToDate()));
 
-            criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag())); 
-                
+            criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
+
         }
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -322,10 +318,10 @@ public class LineEstimateService {
                             lineEstimateForLoaSearchRequest.getWorkIdentificationNumber()));
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
                 criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
-            
+
                 criteria.add(Restrictions.eq("lineEstimate.spillOverFlag", lineEstimateForLoaSearchRequest.isSpillOverFlag()));
             }
-            
+
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();
         } else
@@ -392,7 +388,7 @@ public class LineEstimateService {
         return lineEstimateForLoaSearchResults;
     }
 
-    public List<Hashtable<String, Object>> getHistory(final State state, List<StateHistory> history) {
+    public List<Hashtable<String, Object>> getHistory(final State state, final List<StateHistory> history) {
         User user = null;
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
@@ -562,9 +558,8 @@ public class LineEstimateService {
                     .getId(),
                     appropriationAmount.doubleValue(), budgetheadid);
 
-            if (!flag) {
+            if (!flag)
                 throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
-            }
         }
     }
 
@@ -793,16 +788,16 @@ public class LineEstimateService {
         }
         return newLineEstimate;
     }
-    
-    public List<String> getEstimateNumberForDepartment(Long departmentId) {
-        return  lineEstimateDetailsRepository.findEstimateNumbersForDepartment(departmentId);
+
+    public List<String> getEstimateNumberForDepartment(final Long departmentId) {
+        return lineEstimateDetailsRepository.findEstimateNumbersForDepartment(departmentId);
     }
-    
-    public List<String> getEstimateNumbersForWorkIdentificationNumber(String workIdentificationNumber) {
-        return  lineEstimateDetailsRepository.findEstimateNumbersForWorkIdentificationNumber(workIdentificationNumber);
+
+    public List<String> getEstimateNumbersForWorkIdentificationNumber(final String workIdentificationNumber) {
+        return lineEstimateDetailsRepository.findEstimateNumbersForWorkIdentificationNumber(workIdentificationNumber);
     }
-    
-    public List<String> getEstimateNumbersForSpillOverFlag(boolean spillOverFlag) {
-        return  lineEstimateDetailsRepository.findEstimateNumbersForSpillOverFlag(spillOverFlag);
+
+    public List<String> getEstimateNumbersForSpillOverFlag(final boolean spillOverFlag) {
+        return lineEstimateDetailsRepository.findEstimateNumbersForSpillOverFlag(spillOverFlag);
     }
 }

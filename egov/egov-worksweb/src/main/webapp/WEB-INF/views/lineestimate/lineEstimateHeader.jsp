@@ -46,6 +46,7 @@
 			<spring:message code="header.lineestimate" />
 		</div>
 	</div>
+	<form:hidden path="" value="${lineEstimate.function.id }" id="functionId"/>
 	<div class="panel-body custom-form">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.date" /><span class="mandatory"></span></label>
@@ -110,12 +111,10 @@
 			<div class="col-sm-3 add-margin">
 				<form:radiobutton path="workCategory" id="slum" value="SLUM_WORK" onclick="showSlumFields();" required="required" />
 			</div>
-			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.nonslum" /><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-3 add-margin">
-					<form:radiobutton path="workCategory" id="nonslum" value="NON_SLUM_WORK" onclick="disableSlumFields()" required="required" />
-				</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.nonslum" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<form:radiobutton path="workCategory" id="nonslum" value="NON_SLUM_WORK" onclick="disableSlumFields()" required="required" />
 			</div>
 		</div>
 		<div id="slumfields" style="display: none">
@@ -212,7 +211,7 @@
 						<spring:message code="lbl.select" />
 					</form:option>
 					<c:forEach var="functions" items="${functions}">
-						<form:option value="${functions.id}"><c:out value="${functions.name} - ${functions.code}"/></form:option>  
+						<form:option value="${functions.id}"><c:out value="${functions.code} - ${functions.name}"/></form:option>  
 					</c:forEach>   
 				</form:select>
 				<form:errors path="function" cssClass="add-margin error-msg" />

@@ -50,6 +50,10 @@
 			<c:if test="${not empty message}">
                 <div role="alert">${message}</div>
              </c:if>
+             <spring:hasBindErrors name="waterPropertyUsage">
+        		<form:errors path="propertyType" cssClass="add-margin error-msg" />
+          		<%-- <form:errors path="usageType" cssClass="add-margin error-msg" /> --%>
+        	</spring:hasBindErrors>
  		<div class="panel-body custom-form">
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.propertytype" />:<span class="mandatory"></span></label>
@@ -58,7 +62,7 @@
 						<form:option value=""><spring:message code="lbl.select"/></form:option>
 						<form:options items="${propertyType}" itemValue="id" itemLabel="name" />
 					</form:select>
-						<form:errors path="propertyType" cssClass="add-margin error-msg" />
+						
 				</div>
 			 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.usagetype" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
@@ -66,7 +70,6 @@
 						<form:option value=""><spring:message code="lbl.select"/></form:option>
 						<form:options items="${usageType}" itemValue="id" itemLabel="name" />
 					</form:select>
-						<form:errors path="usageType" cssClass="add-margin error-msg" />
 				</div>
 			</div>
 			<div class="form-group">
@@ -78,10 +81,10 @@
 						</div>
 					</div>	
 				</div>
+				
 				<input type="hidden" name="waterPropertyUsage" value="${waterPropertyUsage.id}" />
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>	
-
-			<div class="form-group text-center">
+ 			<div class="form-group text-center">
 				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
 				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
 				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>

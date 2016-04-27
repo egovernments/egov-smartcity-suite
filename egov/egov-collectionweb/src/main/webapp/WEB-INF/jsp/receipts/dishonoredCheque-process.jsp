@@ -76,8 +76,7 @@
 		var showGlTable = dom.get("showGlEntry");
 		//jQuery(showGlTable).removeClass("display-hide");
 		var amount = document.getElementsByName("amount");
-		var showGlDebitAmount = document
-				.getElementsByName("showGlDebitAmount");
+		var showGlDebitAmount = document.getElementsByName("showGlDebitAmount");
 		var len = amount.length;
 		var totalAmount = 0;
 		for (i = 0; i < len; i++) {
@@ -100,16 +99,18 @@
 
 		var showGlLen = showGlGlcode.length;
 		for (i = 0; i < showGlLen; i++) {
-			if (receiptGLDetails != "") {
+			if (!(Number(showGlCreditAmount[i].innerText) <= 0 && Number(showGlDebitAmount[i].innerText) <= 0)) {
+				if (receiptGLDetails != "") {
 
-				receiptGLDetails = receiptGLDetails + ","
-						+ showGlGlcode[i].innerText + "-"
-						+ Number(showGlDebitAmount[i].innerText) + "-"
-						+ Number(showGlCreditAmount[i].innerText);
-			} else {
-				receiptGLDetails = showGlGlcode[i].innerText + "-"
-						+ Number(showGlDebitAmount[i].innerText) + "-"
-						+ Number(showGlCreditAmount[i].innerText);
+					receiptGLDetails = receiptGLDetails + ","
+							+ showGlGlcode[i].innerText + "-"
+							+ Number(showGlDebitAmount[i].innerText) + "-"
+							+ Number(showGlCreditAmount[i].innerText);
+				} else {
+					receiptGLDetails = showGlGlcode[i].innerText + "-"
+							+ Number(showGlDebitAmount[i].innerText) + "-"
+							+ Number(showGlCreditAmount[i].innerText);
+				}
 			}
 		}
 
@@ -122,18 +123,21 @@
 
 		var showRemittanceGlLen = showRemittanceGlGlcode.length;
 		for (i = 0; i < showRemittanceGlLen; i++) {
-			if (remittanceGLDetails != "") {
+			if (!(Number(showRemittanceGlCreditAmount[i].innerText) <= 0 && Number(showRemittanceGlDebitAmount[i].innerText) <= 0)) {
+				if (remittanceGLDetails != "") {
 
-				remittanceGLDetails = remittanceGLDetails + ","
-						+ showRemittanceGlGlcode[i].innerText + "-"
-						+ Number(showRemittanceGlDebitAmount[i].innerText)
-						+ "-"
-						+ Number(showRemittanceGlCreditAmount[i].innerText);
-			} else {
-				remittanceGLDetails = showRemittanceGlGlcode[i].innerText + "-"
-						+ Number(showRemittanceGlDebitAmount[i].innerText)
-						+ "-"
-						+ Number(showRemittanceGlCreditAmount[i].innerText);
+					remittanceGLDetails = remittanceGLDetails + ","
+							+ showRemittanceGlGlcode[i].innerText + "-"
+							+ Number(showRemittanceGlDebitAmount[i].innerText)
+							+ "-"
+							+ Number(showRemittanceGlCreditAmount[i].innerText);
+				} else {
+					remittanceGLDetails = showRemittanceGlGlcode[i].innerText
+							+ "-"
+							+ Number(showRemittanceGlDebitAmount[i].innerText)
+							+ "-"
+							+ Number(showRemittanceGlCreditAmount[i].innerText);
+				}
 			}
 		}
 		var receiptGLDetails1 = dom.get("receiptGLDetails");

@@ -53,7 +53,7 @@
 			class="org.egov.works.models.measurementbook.MBHeader" column="MBHEADER_ID"
 			not-null="true" fetch="select" />
 		
-		<many-to-one name="egBillregister" class="org.egov.model.bills.EgBillregister" column="BILLREGISTER_ID" fetch="select" not-null="true" />
+		<many-to-one name="egBillregister" class="org.egov.works.contractorbill.entity.ContractorBillRegister" column="BILLREGISTER_ID" fetch="select" not-null="true" />
 	</class>
 	<query name="getMBListForCancelledBill">
 		<![CDATA[

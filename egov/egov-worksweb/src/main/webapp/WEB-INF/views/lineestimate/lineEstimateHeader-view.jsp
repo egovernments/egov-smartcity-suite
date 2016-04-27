@@ -48,23 +48,29 @@
 		<div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			<c:choose>
-			<c:when test="${mode == 'readOnly' && lineEstimate.spillOverFlag == 'true' }">
-			<div class="panel-heading">
-				<div class="panel-title"><spring:message code="header.spilloverlineestimate" /></div>
-			</div>
-			 </c:when> 
-			<c:otherwise>
-			<div class="panel-heading">
-				<div class="panel-title"><spring:message code="header.lineestimate" /></div>
-			</div>
-			</c:otherwise>
+				<c:when
+					test="${mode == 'readOnly' && lineEstimate.spillOverFlag == 'true' }">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message code="header.spilloverlineestimate" />
+						</div>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message code="header.lineestimate" />
+						</div>
+					</div>
+				</c:otherwise>
 			</c:choose>
-			
-			<div class="add-margin error-msg">
-				<spring:hasBindErrors name="lineEstimate">
-		       		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
-		       	</spring:hasBindErrors>
-			</div>
+
+			<spring:hasBindErrors name="lineEstimate">
+				<div class="alert alert-danger col-md-10 col-md-offset-1">
+					<form:errors path="*" cssClass="error-msg add-margin" />
+					<br />
+				</div>
+			</spring:hasBindErrors>
 			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
@@ -77,7 +83,8 @@
 						<spring:message code="lbl.date" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<fmt:formatDate value="${lineEstimate.lineEstimateDate }" pattern="dd/MM/yyyy"/>
+						<fmt:formatDate value="${lineEstimate.lineEstimateDate }"
+							pattern="dd/MM/yyyy" />
 					</div>
 				</div>
 				<div class="row add-border">
@@ -85,13 +92,15 @@
 						<spring:message code="lbl.department" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.executingDepartment.name}"></c:out>
+						<c:out default="N/A"
+							value="${lineEstimate.executingDepartment.name}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.subject" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<form:hidden path="id" name="id" value="${id}" class="form-control table-input hidden-input"/>
+						<form:hidden path="id" name="id" value="${id}"
+							class="form-control table-input hidden-input" />
 						<c:out default="N/A" value="${lineEstimate.subject}"></c:out>
 					</div>
 				</div>
@@ -114,7 +123,7 @@
 						<spring:message code="lbl.ward" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.ward.name}" /> 
+						<c:out default="N/A" value="${lineEstimate.ward.name}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.location" />
@@ -130,12 +139,12 @@
 					<c:choose>
 						<c:when test="${lineEstimate.workCategory == 'SLUM_WORK' }">
 							<div class="col-xs-3 add-margin view-content">
-								<spring:message code="lbl.slum"/>
+								<spring:message code="lbl.slum" />
 							</div>
 						</c:when>
 						<c:otherwise>
 							<div class="col-xs-3 add-margin view-content">
-								<spring:message code="lbl.nonslum"/>
+								<spring:message code="lbl.nonslum" />
 							</div>
 						</c:otherwise>
 					</c:choose>
@@ -146,7 +155,7 @@
 							<spring:message code="lbl.typeofslum" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out default="N/A" value="${lineEstimate.typeOfSlum}" /> 
+							<c:out default="N/A" value="${lineEstimate.typeOfSlum}" />
 						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.beneficiary" />
@@ -161,7 +170,7 @@
 						<spring:message code="lbl.natureofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.natureOfWork.name}" /> 
+						<c:out default="N/A" value="${lineEstimate.natureOfWork.name}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.typeofwork" />
@@ -175,7 +184,7 @@
 						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.subTypeOfWork.code}" /> 
+						<c:out default="N/A" value="${lineEstimate.subTypeOfWork.code}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.modeofallotment" />
@@ -184,22 +193,26 @@
 						<c:out default="N/A" value="${lineEstimate.modeOfAllotment}" />
 					</div>
 				</div>
-				<c:if test="${mode == 'readOnly' && lineEstimate.spillOverFlag == 'true' }" >
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.createdby" />
+				<c:if
+					test="${mode == 'readOnly' && lineEstimate.spillOverFlag == 'true' }">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.createdby" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<c:out default="N/A"
+								value="${createdbybydesignation } - ${lineEstimate.createdBy.name }"></c:out>
+						</div>
 					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${createdbybydesignation } - ${lineEstimate.createdBy.name }"></c:out>
-					</div>
-				</div>
 				</c:if>
 			</div>
 		</div>
-				<div class="panel panel-primary" data-collapsed="0"
+		<div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			<div class="panel-heading">
-				<div class="panel-title"><spring:message code="lbl.financialdetails" /></div>
+				<div class="panel-title">
+					<spring:message code="lbl.financialdetails" />
+				</div>
 			</div>
 			<div class="panel-body">
 				<div class="row add-border">
@@ -221,7 +234,7 @@
 						<spring:message code="lbl.budgethead" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.budgetHead.name}" /> 
+						<c:out default="N/A" value="${lineEstimate.budgetHead.name}" />
 					</div>
 				</div>
 				<div class="row add-border">
@@ -239,4 +252,4 @@
 					</div>
 				</div>
 			</div>
-	</div>
+		</div>

@@ -39,40 +39,36 @@
 #------------------------------------------------------------------------------- -->
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<div class="page-container" id="page-container">
-	<div class="main-content">
-		<form:form name="SearchRequestForLOA" role="form" action=""
-			modelAttribute="searchRequestLetterOfAcceptance"
-			id="searchRequestLetterOfAcceptance"
-			class="form-horizontal form-groups-bordered">
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="searchLOACreateContractor-form.jsp" />
-				</div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<form:hidden path="mbHeader.workOrder.id"  value="${workOrder.id}" /> 
+<form:hidden path="mbHeader.id"  value="${contractorBillRegister.mbHeader.id}" /> 
+<form:hidden path="mbHeader.egBillregister.id"  value="${contractorBillRegister.id}" />
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.referencenumber" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="mbRefNo" path="mbHeader.mbRefNo" maxlength="32" required="required" />
+		<form:errors path="mbHeader.mbRefNo" cssClass="add-margin error-msg" />		
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.mb.pagenumber" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+			<div class="col-sm-6">
+				<form:input class="form-control patternvalidation" data-pattern="number" id="fromPageNo" path="mbHeader.fromPageNo" maxlength="4" required="required" placeholder="From" />
+				<form:errors path="mbHeader.fromPageNo" cssClass="add-margin error-msg" />	
 			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type='button' class='btn btn-primary' id="btnsearch">
-						<spring:message code='lbl.search' />
-					</button>
-					<a href='javascript:void(0)' class='btn btn-default'
-						onclick='self.close()'><spring:message code='lbl.close' /></a>
-				</div>
+			<div class="col-sm-6">
+				<form:input class="form-control patternvalidation" data-pattern="number" id="toPageNo" path="mbHeader.toPageNo" maxlength="4" required="required" placeholder="To" />
+				<form:errors path="mbHeader.toPageNo" cssClass="add-margin error-msg" /> 
 			</div>
-		</form:form>
 	</div>
 </div>
-<jsp:include page="searchLOaContractorBill-searchResult.jsp" />
-<script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
-<script
-	src="<c:url value='/resources/js/searchloacreatecontractorbill.js?rnd=${app_release_no}'/>"></script>
+
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.date" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin">
+		<form:input id="mbDate" path="mbHeader.mbDate" class="form-control datepicker" data-date-end-date="0d" required="required"  />
+		<form:errors path="mbHeader.mbDate" cssClass="add-margin error-msg" />
+		<input type="hidden" id="errorMBDate" value="<spring:message code='error.validate.mbdate.lessthan.loadate' />" />
+	</div>
+</div>

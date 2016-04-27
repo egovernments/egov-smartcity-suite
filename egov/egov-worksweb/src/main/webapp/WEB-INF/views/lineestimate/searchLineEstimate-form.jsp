@@ -47,7 +47,7 @@
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.administartive.sanctionno" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.administartive.sanctionno" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionNumber" id="adminSanctionNumber" class="form-control" placeholder="Type first 3 letters of Admin Sanction Number"/>
 				<form:errors path="adminSanctionNumber" cssClass="add-margin error-msg" />
@@ -62,7 +62,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
@@ -74,7 +74,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fund" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="fund" data-first-option="false" class="form-control" id="fund">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -92,7 +92,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.budgethead" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.budgethead" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="budgetHead" data-first-option="false" id="budgetHead" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -107,7 +107,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
 			<div class="col-sm-3 add-margin">
 			<form:checkbox path="spillOverFlag" id="spillOverFlag" />
 			</div>

@@ -102,11 +102,10 @@ function callAjaxSearch() {
 							'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
 									+ data.workOrderId + '\')">'
 									+ data.workOrderNumber + '</a>');
-					$('td:eq(11)', row)
-							.html(
-									'<select id="actionDropdown" class="form-control" onchange="renderAction('
-											+ data.id
-											+ ', this.value)"><option value="">Select from below</option><option value="1">View</option><option value="2">View PDF</option></select>');
+					if(data.billStatus == 'APPROVED')
+						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option><option value="2">View PDF</option></select>');
+					else
+						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option></select>');
 					return row;
 				},
 				aaSorting : [],

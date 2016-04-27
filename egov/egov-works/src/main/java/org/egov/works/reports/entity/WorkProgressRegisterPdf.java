@@ -97,7 +97,7 @@ public class WorkProgressRegisterPdf {
         return ward;
     }
 
-    public void setWard(String ward) {
+    public void setWard(final String ward) {
         this.ward = ward;
     }
 
@@ -105,7 +105,7 @@ public class WorkProgressRegisterPdf {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(final String location) {
         this.location = location;
     }
 
@@ -113,7 +113,7 @@ public class WorkProgressRegisterPdf {
         return workCategory;
     }
 
-    public void setWorkCategory(String workCategory) {
+    public void setWorkCategory(final String workCategory) {
         this.workCategory = workCategory;
     }
 
@@ -121,7 +121,7 @@ public class WorkProgressRegisterPdf {
         return typeOfSlum;
     }
 
-    public void setTypeOfSlum(String typeOfSlum) {
+    public void setTypeOfSlum(final String typeOfSlum) {
         this.typeOfSlum = typeOfSlum;
     }
 
@@ -129,7 +129,7 @@ public class WorkProgressRegisterPdf {
         return beneficiary;
     }
 
-    public void setBeneficiary(String beneficiary) {
+    public void setBeneficiary(final String beneficiary) {
         this.beneficiary = beneficiary;
     }
 
@@ -137,7 +137,7 @@ public class WorkProgressRegisterPdf {
         return nameOfWork;
     }
 
-    public void setNameOfWork(String nameOfWork) {
+    public void setNameOfWork(final String nameOfWork) {
         this.nameOfWork = nameOfWork;
     }
 
@@ -145,7 +145,7 @@ public class WorkProgressRegisterPdf {
         return winCode;
     }
 
-    public void setWinCode(String winCode) {
+    public void setWinCode(final String winCode) {
         this.winCode = winCode;
     }
 
@@ -153,7 +153,7 @@ public class WorkProgressRegisterPdf {
         return fund;
     }
 
-    public void setFund(String fund) {
+    public void setFund(final String fund) {
         this.fund = fund;
     }
 
@@ -161,7 +161,7 @@ public class WorkProgressRegisterPdf {
         return function;
     }
 
-    public void setFunction(String function) {
+    public void setFunction(final String function) {
         this.function = function;
     }
 
@@ -169,7 +169,7 @@ public class WorkProgressRegisterPdf {
         return budgetHead;
     }
 
-    public void setBudgetHead(String budgetHead) {
+    public void setBudgetHead(final String budgetHead) {
         this.budgetHead = budgetHead;
     }
 
@@ -177,7 +177,7 @@ public class WorkProgressRegisterPdf {
         return typeOfWork;
     }
 
-    public void setTypeOfWork(String typeOfWork) {
+    public void setTypeOfWork(final String typeOfWork) {
         this.typeOfWork = typeOfWork;
     }
 
@@ -185,7 +185,7 @@ public class WorkProgressRegisterPdf {
         return subTypeOfWork;
     }
 
-    public void setSubTypeOfWork(String subTypeOfWork) {
+    public void setSubTypeOfWork(final String subTypeOfWork) {
         this.subTypeOfWork = subTypeOfWork;
     }
 
@@ -193,7 +193,7 @@ public class WorkProgressRegisterPdf {
         return adminSanctionAuthorityDate;
     }
 
-    public void setAdminSanctionAuthorityDate(String adminSanctionAuthorityDate) {
+    public void setAdminSanctionAuthorityDate(final String adminSanctionAuthorityDate) {
         this.adminSanctionAuthorityDate = adminSanctionAuthorityDate;
     }
 
@@ -201,7 +201,7 @@ public class WorkProgressRegisterPdf {
         return adminSanctionAmount;
     }
 
-    public void setAdminSanctionAmount(String adminSanctionAmount) {
+    public void setAdminSanctionAmount(final String adminSanctionAmount) {
         this.adminSanctionAmount = adminSanctionAmount;
     }
 
@@ -209,7 +209,7 @@ public class WorkProgressRegisterPdf {
         return technicalSanctionAuthorityDate;
     }
 
-    public void setTechnicalSanctionAuthorityDate(String technicalSanctionAuthorityDate) {
+    public void setTechnicalSanctionAuthorityDate(final String technicalSanctionAuthorityDate) {
         this.technicalSanctionAuthorityDate = technicalSanctionAuthorityDate;
     }
 
@@ -217,7 +217,7 @@ public class WorkProgressRegisterPdf {
         return estimateAmount;
     }
 
-    public void setEstimateAmount(String estimateAmount) {
+    public void setEstimateAmount(final String estimateAmount) {
         this.estimateAmount = estimateAmount;
     }
 
@@ -225,7 +225,7 @@ public class WorkProgressRegisterPdf {
         return modeOfAllotment;
     }
 
-    public void setModeOfAllotment(String modeOfAllotment) {
+    public void setModeOfAllotment(final String modeOfAllotment) {
         this.modeOfAllotment = modeOfAllotment;
     }
 
@@ -233,7 +233,7 @@ public class WorkProgressRegisterPdf {
         return agreementNumberDate;
     }
 
-    public void setAgreementNumberDate(String agreementNumberDate) {
+    public void setAgreementNumberDate(final String agreementNumberDate) {
         this.agreementNumberDate = agreementNumberDate;
     }
 
@@ -241,7 +241,7 @@ public class WorkProgressRegisterPdf {
         return contractorCodeName;
     }
 
-    public void setContractorCodeName(String contractorCodeName) {
+    public void setContractorCodeName(final String contractorCodeName) {
         this.contractorCodeName = contractorCodeName;
     }
 
@@ -249,7 +249,7 @@ public class WorkProgressRegisterPdf {
         return agreementAmount;
     }
 
-    public void setAgreementAmount(String agreementAmount) {
+    public void setAgreementAmount(final String agreementAmount) {
         this.agreementAmount = agreementAmount;
     }
 
@@ -257,7 +257,7 @@ public class WorkProgressRegisterPdf {
         return latestMbNumberDate;
     }
 
-    public void setLatestMbNumberDate(String latestMbNumberDate) {
+    public void setLatestMbNumberDate(final String latestMbNumberDate) {
         this.latestMbNumberDate = latestMbNumberDate;
     }
 
@@ -265,7 +265,7 @@ public class WorkProgressRegisterPdf {
         return latestBillNumberDate;
     }
 
-    public void setLatestBillNumberDate(String latestBillNumberDate) {
+    public void setLatestBillNumberDate(final String latestBillNumberDate) {
         this.latestBillNumberDate = latestBillNumberDate;
     }
 
@@ -273,7 +273,7 @@ public class WorkProgressRegisterPdf {
         return billtype;
     }
 
-    public void setBilltype(String billtype) {
+    public void setBilltype(final String billtype) {
         this.billtype = billtype;
     }
 
@@ -281,7 +281,7 @@ public class WorkProgressRegisterPdf {
         return billamount;
     }
 
-    public void setBillamount(String billamount) {
+    public void setBillamount(final String billamount) {
         this.billamount = billamount;
     }
 
@@ -289,7 +289,7 @@ public class WorkProgressRegisterPdf {
         return totalBillPaidSoFar;
     }
 
-    public void setTotalBillPaidSoFar(String totalBillPaidSoFar) {
+    public void setTotalBillPaidSoFar(final String totalBillPaidSoFar) {
         this.totalBillPaidSoFar = totalBillPaidSoFar;
     }
 
@@ -297,8 +297,8 @@ public class WorkProgressRegisterPdf {
         return balanceValueOfWorkToBill;
     }
 
-    public void setBalanceValueOfWorkToBill(String balanceValueOfWorkToBill) {
+    public void setBalanceValueOfWorkToBill(final String balanceValueOfWorkToBill) {
         this.balanceValueOfWorkToBill = balanceValueOfWorkToBill;
     }
-    
+
 }

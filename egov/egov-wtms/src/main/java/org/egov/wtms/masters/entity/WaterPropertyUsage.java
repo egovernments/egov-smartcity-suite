@@ -50,9 +50,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 @Entity
 @Table(name = "egwtr_property_usage")
+@CompositeUnique(fields = { "usageType",
+        "propertyType" }, enableDfltMsg = true, message = "{waterpropertyusage.validity.exist}")
 @SequenceGenerator(name = WaterPropertyUsage.SEQ_PROPERTY_USAGE, sequenceName = WaterPropertyUsage.SEQ_PROPERTY_USAGE, allocationSize = 1)
 public class WaterPropertyUsage extends AbstractAuditable {
 

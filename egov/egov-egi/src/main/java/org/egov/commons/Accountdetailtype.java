@@ -89,7 +89,7 @@ public class Accountdetailtype extends AbstractPersistable<Integer> implements j
 	private String attributename;
 
 	@NotNull
-	private BigDecimal nbroflevels;
+	private BigDecimal nbroflevels=BigDecimal.ZERO;
 	
 	private Boolean isactive;
 

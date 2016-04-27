@@ -41,14 +41,15 @@ $(document).ready(function(){
 	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false' && 'true'){
+	if (activeDiv =='false'){
 		$('#statusdiv').hide();
 	     $('#addnewid').hide();
 		}
 	
 	else if(activeDiv=='true'){
-			$('#statusdiv').show();
-			$('#addnewid').show();
+		$('#resetid').hide();
+		$('#statusdiv').show();
+		$('#addnewid').show();
 		}
 	
 	
@@ -64,6 +65,7 @@ $(document).ready(function(){
 
 $("#resetid").click(function(){
 	$("#categoryMasterform")[0].reset();
+	window.open("/wtms/masters/categoryMaster/", "_self");
 	});
 	
 $('#listid').click(function() {
@@ -82,5 +84,4 @@ function addNew()
 function edit(connectionCategory)
 {
 	window.open("/wtms/masters/categoryMaster/"+connectionCategory, "_self");
-	
 }

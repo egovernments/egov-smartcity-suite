@@ -42,6 +42,8 @@ package org.egov.wtms.web.controller.masters;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.wtms.masters.entity.DocumentNames;
@@ -52,6 +54,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -77,38 +80,46 @@ public class DocumentNamesMasterController {
         documentNames = new DocumentNames();
         model.addAttribute("documentNames", documentNames);
         model.addAttribute("applicationTypes", applicationTypeService.findAll());
+        model.addAttribute("reqAttr", "false");
         return "document-name-master";
     }
 
     @RequestMapping(value = "/documentNamesMaster", method = RequestMethod.POST)
-    public String addCategoryMasterData(@Valid @ModelAttribute final DocumentNames documentNames,
-            final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
-        if (resultBinder.hasErrors())
+    public String addDocumentNamesData(@Valid @ModelAttribute final DocumentNames documentNames,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors()) {
+            model.addAttribute("applicationTypes", applicationTypeService.findAll());
             return "document-name-master";
-        DocumentNames documentnames = new DocumentNames();
-        documentnames = documentNamesService.findByApplicationTypeAndDocumentName(documentNames.getApplicationType(),
-                documentNames.getDocumentName().toUpperCase().trim());
-        if (documentnames != null) {
-            if (documentnames.isRequired() == documentNames.isRequired()) {
-                redirectAttrs.addFlashAttribute("documentNames", documentnames);
-                model.addAttribute("message", "Entered Document for the Chosen ApplicationType is already Exists");
-            } else {
-                documentnames.setRequired(documentNames.isRequired());
-                documentNamesService.updateDocumentName(documentnames);
-                redirectAttrs.addFlashAttribute("documentNames", documentnames);
-                if (documentnames.isRequired())
-                    model.addAttribute("message", "Entered Document for the Chosen ApplicationType is made mandatory");
-                else
-                    model.addAttribute("message",
-                            "Entered Document for the Chosen ApplicationType is made non-mandatory");
-            }
-        } else {
-            documentNames.setDocumentName(documentNames.getDocumentName().trim());
-            documentNames.setActive(true);
+        } else
             documentNamesService.createDocumentName(documentNames);
-            redirectAttrs.addFlashAttribute("documentNames", documentNames);
-            model.addAttribute("message", "Documents data created successfully");
-        }
-        return "document-master-success";
+        return getDocumentNamesList(model);
+
+    }
+
+    @RequestMapping(value = "/documentNamesMaster/list", method = GET)
+    public String getDocumentNamesList(final Model model) {
+        final List<DocumentNames> documentNamesList = documentNamesService.findAll();
+        model.addAttribute("documentNamesList", documentNamesList);
+        return "document-name-master-list";
+    }
+
+    @RequestMapping(value = "/documentNamesMaster/{documentNameId}", method = GET)
+    public String getDocumentNamesMasterDetails(final Model model, @PathVariable final String documentNameId) {
+        final DocumentNames documentNames = documentNamesService.findOne(Long.parseLong(documentNameId));
+        model.addAttribute("documentNames", documentNames);
+        model.addAttribute("applicationTypes", applicationTypeService.findAll());
+        model.addAttribute("reqAttr", "true");
+        return "document-name-master";
+    }
+
+    @RequestMapping(value = "/documentNamesMaster/{documentNameId}", method = RequestMethod.POST)
+    public String editDocumentNamesMasterData(@Valid @ModelAttribute final DocumentNames documentNames,
+            final BindingResult errors, final Model model, @PathVariable final long documentNameId) {
+        if (errors.hasErrors()) {
+            model.addAttribute("applicationTypes", applicationTypeService.findAll());
+            return "document-name-master";
+        } else
+            documentNamesService.updateDocumentName(documentNames);
+        return getDocumentNamesList(model);
     }
 }

@@ -1,4 +1,4 @@
-<!-- #-------------------------------------------------------------------------------
+/*#-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
@@ -36,42 +36,43 @@
 # 	   or trademarks of eGovernments Foundation.
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
-		<spring:message code="title.letterofacceptance.search" />
-	</div>
-	<div id="errorMessage" style="display: none;">
-		<spring:message code="error.loa.contractorbill.search" />
-	</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
-			id="resultTable">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.select" /></th>
-					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.loanumber" /></th>
-					<th><spring:message code="lbl.loadate" /></th>
-					<th><spring:message code="lbl.contractornamecode" /></th>
-					<th><spring:message code="lbl.nameofwork" /></th>
-					<th><spring:message code="lbl.workidentificationnumber" /></th>
-					<th><spring:message code="lbl.agreement.amount" /></th>
-				</tr>
-			</thead>
-			<tbody class="no-pointer">
-			</tbody>
-		</table>
-	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<button type='button' class='btn btn-primary' id="btncreateloa">
-				<spring:message code='lbl.createcontractorbill' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div>
-</div>
+#-------------------------------------------------------------------------------*/
+$(document).ready(function(){
+	
+	var mandatoryDiv = $('#reqAttr').val();
+	if (mandatoryDiv =='false'){
+			$('#addnewid').hide();
+		}
+	
+	else if(mandatoryDiv=='true'){
+			$('#resetid').hide();
+			$('#reqdiv').show();
+			$('#addnewid').show();
+		}
+	
+	$("#resetid").click(function(){
+		$("#documentNamesform")[0].reset();
+		window.open("/wtms/masters/documentNamesMaster/", "_self");
+		})
+	
+ });
+
+$('#listid').click(function() {
+	window.open("/wtms/masters/documentNamesMaster/list", "_self");
+ });
+
+$('#addnewid').click(function() {
+	window.open("/wtms/masters/documentNamesMaster/", "_self");
+});
+
+function addNew()
+{
+	window.open("/wtms/masters/documentNamesMaster/", "_self");
+}
+
+function edit(documentNames)
+{
+	
+	window.open("/wtms/masters/documentNamesMaster/"+documentNames, "_self");
+	
+}

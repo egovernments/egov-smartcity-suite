@@ -62,6 +62,7 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ECSType;
 import org.egov.infstr.services.PersistenceService;
@@ -131,7 +132,8 @@ public class InstrumentService {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
-
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     // Business methods
     /**
      * Accepts the list of instruments and save the same to instrument object The values that needs to be passed are:<br>
@@ -414,6 +416,27 @@ public class InstrumentService {
         if (instrMap.get(INSTRUMENT_NUMBER) != null)
             instrHeader.setInstrumentNumber((String) instrMap
                     .get(INSTRUMENT_NUMBER));
+        if (instrMap.get(BANK_CODE) != null) {
+            final Bank bank = getBank(instrMap.get(BANK_CODE).toString());
+            if (bank == null)
+                throw new ApplicationRuntimeException(BANK_CODE + "'"
+                        + instrMap.get(BANK_CODE).toString()
+                        + "' is not defined in the system ");
+            else
+                instrHeader.setBankId(bank);
+        } 
+
+        // applicable for payment
+        if (instrMap.get(BANKACCOUNTID) != null) {
+            final Bankaccount bankaccount = getBankaccount(instrMap.get(
+                    BANKACCOUNTID).toString());
+            if (bankaccount == null)
+                throw new ApplicationRuntimeException(BANKACCOUNTID + "'"
+                        + instrMap.get(BANKACCOUNTID).toString()
+                        + "' is not defined in the system ");
+            else
+                instrHeader.setBankAccountId(bankaccount);
+        }
     }
 
     private void validateAndAssignCheque(InstrumentHeader instrHeader,
@@ -426,8 +449,8 @@ public class InstrumentService {
         if (instrMap.get(INSTRUMENT_SERIALNO) == null)
             instrHeader.setSerialNo(null);
         else
-            instrHeader.setSerialNo(instrMap.get(INSTRUMENT_SERIALNO)
-                    .toString());
+            instrHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(instrMap.get(INSTRUMENT_SERIALNO)
+                    .toString()),false));
         if (instrMap.get(INSTRUMENT_DATE) == null)
             throw new IllegalArgumentException(INSTRUMENT_DATE + IS_NULL);
         else if (new Date().compareTo((Date) instrMap.get(INSTRUMENT_DATE)) == -1)
@@ -861,8 +884,8 @@ public class InstrumentService {
     public InstrumentHeader getInstrumentHeader(final Long bankaccountId,
             final String instrumentNo, final String payTo, final String serialNo) {
         return instrumentHeaderService
-                .find(" from InstrumentHeader where bankAccountId.id=? and instrumentNumber=? and payTo=? and serialNo=? ",
-                        bankaccountId, instrumentNo, payTo, serialNo);
+                .find(" from InstrumentHeader where bankAccountId.id=? and instrumentNumber=? and payTo=? and serialNo.id=? ",
+                        bankaccountId, instrumentNo, payTo, Long.valueOf(serialNo));
     }
 
     @Transactional
@@ -907,8 +930,8 @@ public class InstrumentService {
             list = instrumentHeaderService
                     .findAllBy(
                             "from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque='1' and "
-                                    + "serialNo=?", chequeNumber,
-                            instrumentType.getId(), bankAccountId, serialNo);
+                                    + "serialNo.id=?", chequeNumber,
+                            instrumentType.getId(), bankAccountId, Long.valueOf(serialNo));
         else
             list = instrumentHeaderService
                     .findAllBy(
@@ -938,12 +961,12 @@ public class InstrumentService {
         final List<InstrumentHeader> list = instrumentHeaderService
                 .findAllBy(
                         "from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and statusId in (?) "
-                                + "and serialNo=?",
+                                + "and serialNo.id=?",
                         chequeNumber,
                         instrumentType.getId(),
                         bankAccountId,
                         getStatusId(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS),
-                        serialNo);
+                        Long.valueOf(serialNo));
         if (list != null && list.size() > 0)
             return true;
         return false;

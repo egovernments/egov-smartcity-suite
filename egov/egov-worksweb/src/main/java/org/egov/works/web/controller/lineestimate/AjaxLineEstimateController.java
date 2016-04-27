@@ -103,10 +103,10 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private LineEstimateJsonAdaptor lineEstimateJsonAdaptor;
-    
+
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -200,22 +200,21 @@ public class AjaxLineEstimateController {
     public @ResponseBody List<String> findworkIdNumbersForLoa(@RequestParam final String name) {
         return lineEstimateService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(name);
     }
-    
+
     @RequestMapping(value = "/ajax-assignmentByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<User> getAssignmentByDepartmentAndDesignation(
-            @RequestParam("approvalDesignation") Long approvalDesignation, @RequestParam("approvalDepartment") Long approvalDepartment) {
-        List<User> users = new ArrayList<User>();
+            @RequestParam("approvalDesignation") final Long approvalDesignation,
+            @RequestParam("approvalDepartment") final Long approvalDepartment) {
+        final List<User> users = new ArrayList<User>();
         List<Assignment> assignments = new ArrayList<Assignment>();
         if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
-                && approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
+                && approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1)
             assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(approvalDepartment,
                     approvalDesignation, new Date());
-        }
-        
-        for(Assignment assignment : assignments) {
+
+        for (final Assignment assignment : assignments)
             users.add(userService.getUserById(assignment.getEmployee().getId()));
-        }
-        
+
         return users;
     }
 }

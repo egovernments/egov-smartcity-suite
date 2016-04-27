@@ -41,6 +41,7 @@ package org.egov.web.actions.masters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -51,6 +52,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -59,6 +62,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -81,6 +85,8 @@ public class SchemeAction extends BaseFormAction {
     public static final String VIEW = "view";
     private static final Logger LOGGER = Logger.getLogger(SchemeAction.class);
     List<Scheme> schemeList;
+    @Autowired
+    @Qualifier("schemeService")
     private SchemeService schemeService;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
@@ -176,6 +182,8 @@ public class SchemeAction extends BaseFormAction {
     @Action(value = "/masters/scheme-edit")
     public String edit() {
         try {
+        	scheme.setLastModifiedDate(new Date());
+        	scheme.setLastModifiedBy((User)schemeService.getSession().load(User.class, EgovThreadLocals.getUserId()));
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
             LOGGER.error("ValidationException in creating Scheme" + e.getMessage());
@@ -199,6 +207,8 @@ public class SchemeAction extends BaseFormAction {
             LOGGER.debug("............................Creating New Scheme method.......................");
 
         try {
+        	scheme.setCreatedDate(new Date());
+        	scheme.setCreatedBy((User)schemeService.getSession().load(User.class, EgovThreadLocals.getUserId()));
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
             LOGGER.error("ValidationException in create Scheme" + e.getMessage());

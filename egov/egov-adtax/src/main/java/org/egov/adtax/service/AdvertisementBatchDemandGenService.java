@@ -39,6 +39,7 @@
  */
 package org.egov.adtax.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -79,6 +80,9 @@ public class AdvertisementBatchDemandGenService {
     
     @Autowired
     private AdvertisementBatchDemandGenRepository batchDemandGenRepository;
+    
+    @Autowired
+    private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -106,7 +110,8 @@ public class AdvertisementBatchDemandGenService {
         int totalRecordsProcessed = 0;
 
         List<AdvertisementBatchDemandGenerate> advBatchDmdGenResult = findActiveBatchDemands();
-        LOGGER.info("advBatchDmdGenResult "+advBatchDmdGenResult.size());        
+        LOGGER.info("advBatchDmdGenResult "+advBatchDmdGenResult.size());  
+        List<Advertisement> advertisements = new ArrayList<Advertisement>();
         if (advBatchDmdGenResult != null && !advBatchDmdGenResult.isEmpty()) {
 
             final AppConfigValues totalRecordToFeatch = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -136,7 +141,7 @@ public class AdvertisementBatchDemandGenService {
                 if (advDmdGenerationInstallment != null) {
                     if (previousInstallment != null && previousInstallment.size() > 0) {
 
-                        List<Advertisement> advertisements = advertisementService
+                       advertisements = advertisementService
                                 .findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
                                         previousInstallment.get(0), Integer.valueOf(totalRecordToFeatch.getValue()));
                         // totalRecordsProcessed= advertisements.size();
@@ -149,11 +154,14 @@ public class AdvertisementBatchDemandGenService {
                                 advertisements, previousInstallment, advDmdGenerationInstallment);
 
                     }
-                }
+                } 
             }
             advDmdGen.setActive(false);
             advDmdGen.setTotalRecords(totalRecordsProcessed);
             updateAdvertisementBatchDemandGenerate(advDmdGen);
+            for (Advertisement advertisement : advertisements) {
+            	advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisement.getActiveAdvertisementPermit());
+            }
         }
         return totalRecordsProcessed;
     }

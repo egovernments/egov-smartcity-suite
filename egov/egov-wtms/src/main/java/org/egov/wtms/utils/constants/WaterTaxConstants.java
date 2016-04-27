@@ -107,6 +107,7 @@ public class WaterTaxConstants {
     public static final String ROLE_SUPERUSER = "Super User";
     public static final String ROLE_CITIZEN = "Citizen";
     public static final String ROLE_OPERATOR = "Operator";
+    public static final String ROLE_ADMIN = "Property Administrator";
 
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";
@@ -207,6 +208,7 @@ public class WaterTaxConstants {
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
+    public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
     public static final String WF_RECONNECTIONACKNOWLDGEENT_BUTTON = "Generate Reconnection Ack";
     public static final String WATER_RATES_NONMETERED_PTMODULE = "Property Tax";
 

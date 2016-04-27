@@ -42,6 +42,7 @@ $(document).ready(function(){
 	
 	creditGlcode_initialize();	
 	replaceBillTypeChar();
+	calculateNetPayableAmount();
 	
 	var currentState = $('#currentState').val();
 	if(currentState == 'Created') {
@@ -73,13 +74,21 @@ $(document).ready(function(){
 				var partyBillDate = $('#partyBillDate').data('datepicker').date;
 				if(workOrderDate > partyBillDate) {
 					bootbox.alert($('#errorPartyBillDate').val());
-					$('#partyBillDate').val("");
+					$('#partyBillDate').val(""); 
 					return false;
 				}
-				else {
-					document.forms[0].submit();	
+			}	
+			if($('#mbDate').val() != '') { 
+				var workOrderDate = $('#workOrderDate').data('datepicker').date;
+				var mbDate = $('#mbDate').data('datepicker').date;
+				if(workOrderDate > mbDate) {
+					bootbox.alert($('#errorMBDate').val());
+					$('#mbDate').val("");
+					return false;
 				}
 			}	
+			if(!validateMBPageNumbers())
+				return false;
 			if(!validateNetPayableAmount())
 				return false;
 			return validateWorkFlowApprover(button);
@@ -87,9 +96,12 @@ $(document).ready(function(){
 		return validateWorkFlowApprover(button);
 	});
 	
+	var netPayableAccountCodeId = $('#netPayableAccountCodeId').val();
 	$("#netPayableAccountCode").each(function() {
 		if($(this).children('option').length == 2) {
 		 	$(this).find('option').eq(1).prop('selected', true);
+		} else {
+			$(this).val(netPayableAccountCodeId);
 		}
 	});
 
@@ -270,6 +282,18 @@ function calculateNetPayableAmount(){
 	validateNetPayableAmount();
 }	
 
+function validateMBPageNumbers() { 
+	if(($('#fromPageNo').val() != '' && $('#fromPageNo').val() == 0) || ($('#toPageNo').val() != '' && $('#toPageNo').val() == 0)) {
+		bootbox.alert("MB Page Numbers should be greater than Zero!");
+		return false;
+	}
+	if($('#fromPageNo').val() != '' && $('#toPageNo').val() != '' && eval($('#fromPageNo').val()) > eval($('#toPageNo').val())) {
+		bootbox.alert("MB From Page Number cannot be greater than MB To Page Number!");
+		return false;
+	}
+	return true;
+}
+
 function validateNetPayableAmount() {
 	if($('#debitamount').val() != '' && $('#netPayableAmount').val() < 0) {
 		bootbox.alert("Net Payable amount cannot be less than zero!");
@@ -327,13 +351,14 @@ function creditGlcode_initialize() {
 	    datumTokenizer: function(d) { return d.tokens; },
 	    queryTokenizer: Bloodhound.tokenizers.whitespace,
 		   remote: {
-	            url: '/egworks/contractorbill/ajaxdeduction-coa?glCode=%QUERY',
+	            url: '/egworks/contractorbill/ajaxdeduction-coa?searchQuery=%QUERY',
 	            filter: function (data) {
 	                return $.map(data, function (ct) {
 	                    return {
 	                        id: ct.id,
 	                        name: ct.name,
-	                        glcode: ct.glcode
+	                        glcode: ct.glcode,
+	                        glcodesearch: ct.glcode+' ~ '+ct.name
 	                    };
 	                });
 	            }
@@ -348,7 +373,7 @@ function creditGlcode_initialize() {
 		minLength : 3
 		
 	}, {		    
-          displayKey: 'glcode',
+          displayKey: 'glcodesearch',
           source: custom.ttAdapter()
     }).on('typeahead:selected', function (event, data) {
     	$(this).parents("tr:first").find('.creditaccountheadname').val(data.name);
@@ -361,4 +386,9 @@ function resetCreditAccountDetails(obj){
 		$(obj).parents("tr:first").find('.creditglcodeid').val('');
 		$(obj).parents("tr:first").find('.creditaccountheadname').val('');
 	}
+}
+
+function renderPDF(){
+	var id = $('#id').val();
+	window.open("/egworks/contractorbill/contractorbillPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

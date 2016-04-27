@@ -100,7 +100,7 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private LineEstimateDetailsRepository lineEstimateDetailsRepository;
-    
+
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -220,7 +220,8 @@ public class LetterOfAcceptanceService {
 
     public List<WorkOrder> searchLetterOfAcceptanceForContractorBill(
             final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<String> estimateNumbers = lineEstimateService.getEstimateNumberForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+        final List<String> estimateNumbers = lineEstimateService
+                .getEstimateNumberForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
         if (estimateNumbers.isEmpty())
             estimateNumbers.add("");
         // TODO: replace fetching workorders by query with criteria alias
@@ -295,14 +296,13 @@ public class LetterOfAcceptanceService {
         return results;
     }
 
-    public Boolean validateContractorBillInWorkflowForWorkorder(Long workOrderId) {
+    public Boolean validateContractorBillInWorkflowForWorkorder(final Long workOrderId) {
         final List<String> results = letterOfAcceptanceRepository.getContractorBillInWorkflowForWorkorder(workOrderId,
                 ContractorBillRegister.BillStatus.CANCELLED.toString(), ContractorBillRegister.BillStatus.APPROVED.toString());
-        if(results.isEmpty())
+        if (results.isEmpty())
             return true;
         else
             return false;
     }
-
 
 }

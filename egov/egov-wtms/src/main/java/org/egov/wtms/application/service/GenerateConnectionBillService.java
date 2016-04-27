@@ -65,9 +65,9 @@ public class GenerateConnectionBillService {
     public List<GenerateConnectionBill> getBillReportDetails(final String zone, final String ward,
             final String propertyType, final String applicationType, final String connectionType,
             final String consumerCode, final String houseNumber, final String assessmentNumber) throws ParseException {
-
+        final long startTime = System.currentTimeMillis();
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assementNo\","
+        queryStr.append("select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\","
                 + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , "
                 + " dcbinfo.connectiontype as  \"connectionType\" from egwtr_mv_dcb_view dcbinfo"
                 + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on"
@@ -95,6 +95,11 @@ public class GenerateConnectionBillService {
             LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(GenerateConnectionBill.class));
         final List<GenerateConnectionBill> generateConnectionBillList = finalQuery.list();
+        final long endTime = System.currentTimeMillis();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("GenerateBill | SearchResult | Time taken(ms) " + (endTime - startTime));
+            LOGGER.debug("Exit from SearchResult method");
+        }
         return generateConnectionBillList;
     }
 

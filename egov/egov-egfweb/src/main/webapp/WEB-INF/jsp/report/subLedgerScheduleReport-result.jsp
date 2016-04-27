@@ -40,9 +40,8 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
- <font
-	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
-		<s:actionmessage /></font>
+<font style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
+	<s:actionmessage /></font>
 
 <s:if test="%{subLedgerScheduleDisplayList.size!=0 }">
 	<display:table name="subLedgerScheduleDisplayList"
@@ -50,11 +49,11 @@
 		style="width:100%;" cellpadding="0" cellspacing="0" export="true"
 		requestURI="subLedgerScheduleReport-ajaxSearch.action">
 		<display:caption>
-			<div class="headingsmallbgnew" align="center"
-				style="text-align: center; width: 98%;">
-				<b><s:property value="%{heading}" /></b>
-			</div>
 			<table width="100%" border="1" cellspacing="0" cellpadding="0">
+				<tr>
+					<th class="bluebgheadtd" width="100%" colspan="5"><strong
+						style="font-size: 15px;"> <s:property value="%{heading}" /></strong></th>
+				</tr>
 			</table>
 		</display:caption>
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"

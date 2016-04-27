@@ -71,6 +71,7 @@ import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infstr.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -427,15 +428,44 @@ public class ComplaintController extends ApiController {
     @RequestMapping(value = {
             ApiUrl.CITIZEN_GET_MY_COMPLAINT }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyComplaint(@PathVariable("page") final int page,
-            @PathVariable("pageSize") final int pageSize) {
+            @PathVariable("pageSize") final int pageSize, @RequestParam(value="complaintStatus", required=false) final String complaintStatus) {
 
         if (page < 1)
             return getResponseHandler().error("Invalid Page Number");
         try {
-            final Page<Complaint> pagelist = complaintService.getMyComplaint(page, pageSize);
-            final boolean hasNextPage = pagelist.getTotalElements() > page * pageSize;
-            return getResponseHandler().putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
-                    .setDataAdapter(new ComplaintAdapter()).success(pagelist.getContent());
+        	
+        	Page<Complaint> pagelist=null;
+        	boolean hasNextPage=false;
+        	if(StringUtils.isEmpty(complaintStatus) || complaintStatus.equals("ALL"))
+        	{
+        		pagelist = complaintService.getMyComplaint(page, pageSize);
+                hasNextPage = pagelist.getTotalElements() > page * pageSize;
+        	}
+        	else if(complaintStatus.equals("PENDING"))
+        	{
+        		pagelist = complaintService.getMyPendingGrievances(page, pageSize);
+                hasNextPage = pagelist.getTotalElements() > page * pageSize;
+        	}
+        	else if(complaintStatus.equals("COMPLETED"))
+        	{
+        		pagelist = complaintService.getMyCompletedGrievances(page, pageSize);
+                hasNextPage = pagelist.getTotalElements() > page * pageSize;
+        	}
+        	else if(complaintStatus.equals("REJECTED"))
+        	{
+        		pagelist = complaintService.getMyRejectedGrievances(page, pageSize);
+                hasNextPage = pagelist.getTotalElements() > page * pageSize;
+        	}
+        	
+        	if(pagelist!=null)
+        	{
+        		return getResponseHandler().putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
+                        .setDataAdapter(new ComplaintAdapter()).success(pagelist.getContent());
+        	}
+        	else{
+        		return getResponseHandler().error("Invalid Complaint Status!");
+        	}
+            
         } catch (final Exception e) {
         	LOGGER.error("EGOV-API ERROR ", e);
 			return getResponseHandler().error(getMessage("server.error"));

@@ -46,6 +46,7 @@ import static org.egov.search.domain.Filter.termsStringFilter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.egov.search.domain.Filter;
@@ -80,11 +81,14 @@ public class ApplicationSearchRequest {
     }
 
     public void setToDate(final String toDate) {
+        final Calendar cal = Calendar.getInstance();
         if (null != toDate)
             try {
+                cal.setTime(dtft.parse(toDate));
+                cal.add(Calendar.DAY_OF_YEAR, 1);
                 if (logger.isDebugEnabled())
-                    logger.debug("Date Range Till .. :" + ft.format(dtft.parse(toDate)));
-                this.toDate = ft.format(dtft.parse(toDate));
+                    logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
+                this.toDate = ft.format(cal.getTime());
             } catch (final ParseException e) {
                 e.printStackTrace();
             }

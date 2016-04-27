@@ -351,4 +351,3 @@
 		<script src="/egi/resources/js/app/login.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
 	</body>
 </html>
-<%session.invalidate();%>

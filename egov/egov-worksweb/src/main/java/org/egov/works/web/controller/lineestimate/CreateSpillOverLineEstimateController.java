@@ -57,7 +57,6 @@ import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -108,9 +107,6 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private SchemeService schemeService;
-
-    @Autowired
-    private DepartmentService departmentService;
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
@@ -237,7 +233,7 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
@@ -296,7 +292,8 @@ public class CreateSpillOverLineEstimateController {
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
 
             if (budgetAvailable.compareTo(totalAppropriationAmount) == -1)
-                errors.reject("error.budgetappropriation.amount", new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);
+                errors.reject("error.budgetappropriation.amount",
+                        new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);
         } catch (final ValidationException e) {
             // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
             // budgetDetailsDAO.getPlanningBudgetAvailable API call

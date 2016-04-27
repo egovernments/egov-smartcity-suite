@@ -54,6 +54,8 @@ $(document).ready(function(){
 	$('#wardInput').trigger('blur');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
+	$('#scheme').trigger('change');
+	
 	$('#typeofwork').trigger('blur');
 	$('#subTypeOfWork').trigger('blur');
 	
@@ -71,7 +73,14 @@ $(document).ready(function(){
 	
 	$('#estimateTotal').text(roundTo($('#estimateTotal').text()));
 
-
+	var functionId = $('#functionId').val();
+	if (functionId != "") {
+		$('#function option').each(function() {
+			if ($(this).val() == functionId)
+				$(this).prop('selected', true);
+		});
+	}
+	
 	return showSlumFieldsValue();
 });
 
@@ -140,7 +149,7 @@ function getSubSchemsBySchemeId(schemeId) {
 			return;
 			} else {
 				$.ajax({
-					url: "../lineestimate/getsubschemesbyschemeid/"+schemeId,     
+					url: "/egworks/lineestimate/getsubschemesbyschemeid/"+schemeId,     
 					type: "GET",
 					dataType: "json",
 					success: function (response) {
@@ -149,6 +158,7 @@ function getSubSchemsBySchemeId(schemeId) {
 						var responseObj = JSON.parse(response);
 						$.each(responseObj, function(index, value) {
 							$('#subScheme').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+							$('#subScheme').val($subSchemeId);
 						});
 					}, 
 					error: function (response) {

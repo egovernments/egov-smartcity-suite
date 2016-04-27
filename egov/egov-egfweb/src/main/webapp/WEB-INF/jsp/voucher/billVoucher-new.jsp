@@ -63,7 +63,7 @@
 			</div>
 			<div id="listid" style="display: block">
 				<br />
-				<div align="center">
+				<div align="left">
 					<font style='color: red; font-weight: bold'>
 						<p class="error-block" id="lblError"></p>
 					</font> <span class="mandatory1"> <font
@@ -90,19 +90,17 @@
 
 						<tr>
 							<td class="greybox">From Date</td>
-							<td class="greybox"><s:textfield
-									name="voucherTypeBean.voucherDateFrom" id="voucherDateFrom"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-								href="javascript:show_calendar('billVoucher.voucherDateFrom');"
-								style="text-decoration: none">&nbsp;<img tabIndex=-1
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							<td class="greybox"><s:textfield id="voucherDateFrom"
+									name="voucherTypeBean.voucherDateFrom" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 							<td class="greybox">To Date</td>
-							<td class="greybox"><s:textfield
-									name="voucherTypeBean.voucherDateTo" id="voucherDateTo"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-								href="javascript:show_calendar('billVoucher.voucherDateTo');"
-								style="text-decoration: none">&nbsp;<img tabIndex=-1
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							<td class="greybox"><s:textfield id="voucherDateTo"
+									name="voucherTypeBean.voucherDateTo" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" />
 						</tr>
 						<tr>
 							<td class="bluebox"><s:text name="bill.Number" /></td>
@@ -125,7 +123,7 @@
 						<td><s:submit value="Search" onclick="return validate()"
 								cssClass="buttonsubmit" />&nbsp;</td>
 						<td><input type="button" value="Reset" class="button"
-							onclick="return resetForm()" />&nbsp;</td>
+							onclick="return resetForm();" />&nbsp;</td>
 						<td><input type="button" value="Close"
 							onclick="javascript:window.close()" class="button" />&nbsp;</td>
 					</tr>
@@ -133,7 +131,7 @@
 			</div>
 		</div>
 		<s:if
-			test="%{preApprovedVoucherList.size!=0 || preApprovedVoucherList!=null}">
+			test="%{preApprovedVoucherList.size!=0 && preApprovedVoucherList!=null}">
 			<div id="listid" style="display: block">
 				<table width="100%" align="center" class="tablebottom">
 					<tr>
@@ -190,9 +188,6 @@ function onloadtask(){
 function validate()
 {
 	
-	var fromDate=document.getElementById('voucherDateFrom').value;
-	var toDate=document.getElementById('voucherDateTo').value;
-
 	var expType=document.getElementById('expType').value;
 	
 	
@@ -202,12 +197,6 @@ function validate()
 		return false;
 		}
 	
-	
-	 if (fromDate > toDate) {
-		bootbox.alert("Invalid Date Range! From Date cannot be after To Date!");
-		return false;
-		}  
-
 	
 	 document.billVoucher.action='${pageContext.request.contextPath}/voucher/billVoucher-lists.action';
 	 document.billVoucher.submit();
@@ -224,7 +213,7 @@ return true;
 	{
 
 		document.getElementById("expType").value=-1;
-		document.getElementById("deptLabel").value=-1;
+		document.getElementById("departmentid").value=-1;
 		document.getElementById("voucherDateFrom").value="";
 		document.getElementById("voucherDateTo").value="";
 		document.getElementById("billNumber").value="";

@@ -118,11 +118,13 @@
 			<div style="color: green">
 				<s:actionmessage />
 			</div>
-			<div class="errorstyle" style="display: none" id="codeuniquecode">
+			<div style="color: red">
+			<div  class="errorstyle" style="display: none" id="codeuniquecode" >
 				<s:text name="scheme.code.already.exists" />
 			</div>
-			<div class="errorstyle" style="display: none" id="uniquename">
+			<div class="errorstyle" style="display: none" id="uniquename" >
 				<s:text name="scheme.name.already.exists" />
+			</div>
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
@@ -153,7 +155,7 @@
 							list="dropdownData.fundDropDownList" listKey="id"
 							listValue="name" headerKey="" headerValue="----Select----"
 							value="scheme.fund.id" /></td>
-					<td class="bluebox">IsActive</td>
+					<td class="bluebox">Active</td>
 					<td class="bluebox"><s:checkbox id="isactive" name="isactive"
 							value="%{scheme.isactive}" /></td>
 				</tr>
@@ -161,23 +163,21 @@
 					<td style="width: 10%"></td>
 					<td class="greybox"><s:text name="scheme.startDate" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox"><s:date name="validfrom" id="validfromId"
-							format="dd/MM/yyyy" /> <s:textfield name="validfrom"
-							id="validfromId" value="%{scheme.validfrom}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('schemeForm.validfrom',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:date name="scheme.validfrom" id="validfromId" 
+							format="dd/MM/yyyy" /> <s:textfield id="validfromId"
+							name="validfrom" value="%{validfromId}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 
 					<td class="greybox"><s:text name="scheme.endDate" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox"><s:date name="validto" id="validtoId"
-							format="dd/MM/yyyy" /> <s:textfield name="validto" id="validtoId"
-							value="%{scheme.validto}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('schemeForm.validto',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:date name="scheme.validto" id="validtoId"
+							format="dd/MM/yyyy" /> <s:textfield id="validtoId"
+							name="validto" value="%{validtoId}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 				<tr>
 					<td style="width: 10%"></td>

@@ -48,10 +48,8 @@
 				<table border="0" cellspacing="0" cellpadding="0"
 					class="tablebottom" width="100%">
 					<tr>
-						<td colspan="12">
-							<div class="subheadsmallnew">
-								<strong><s:property value="scheduleheading" /></strong>
-							</div>
+						<td class="bluebgheadtd" width="100%"  colspan="12">
+							<s:property value="scheduleheading" /> </strong>
 						</td>
 					</tr>
 					<tr>
@@ -81,11 +79,11 @@
 						<th class="bluebgheadtd"><s:text name="" /></th>
 						<s:iterator value="incomeExpenditureStatement.funds" status="stat">
 							<th class="bluebgheadtd" width="15%" align="center" colspan="1"><s:text
-									name="report.currentTotals" />
-								<s:property value="currentYearToDate" /></th>
+									name="report.currentTotals" /> <s:property
+									value="currentYearToDate" /></th>
 							<th class="bluebgheadtd" width="15%" align="center" colspan="1"><s:text
-									name="report.previousTotals" />
-								<s:property value="previousYearToDate" /></th>
+									name="report.previousTotals" /> <s:property
+									value="previousYearToDate" /></th>
 						</s:iterator>
 					</tr>
 					</tr>

@@ -45,18 +45,18 @@ $(document).ready(function(){
 		{
 		$('#statusdiv').hide();
 	     $('#addnewid').hide();
+	     $('#resetid').show();
 		}
 	
 	else if(activeDiv=='true')
 		{
+		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
 	
-	$("#resetid").click(function(){
-		$("#waterSourceMasterform")[0].reset();
-		})
+	
 	$( "#code" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
 	    if(textValue ==''){
@@ -79,6 +79,12 @@ $('#listid').click(function() {
 	window.open("/wtms/masters/waterSourceTypeMaster/list", "_self");
  });
 
+$("#resetid").click(function(){
+	$("#waterSourceMasterform")[0].reset();
+	window.open("/wtms/masters/waterSourceTypeMaster/", "_self");
+	});
+
+
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/waterSourceTypeMaster/", "_self");
 });
@@ -90,7 +96,6 @@ function addNew()
 
 function edit(waterSource)
 {
-	
 	window.open("/wtms/masters/waterSourceTypeMaster/"+waterSource, "_self");
 	
 }

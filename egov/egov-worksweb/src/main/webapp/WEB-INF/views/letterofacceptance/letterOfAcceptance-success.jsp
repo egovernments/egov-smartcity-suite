@@ -43,7 +43,7 @@
 <div class="page-container" id="page-container">
 	<div class="main-content">
 	<input type="hidden" id="id" value="${workOrder.id }" />
-		<div style="font-weight:bold; color:green; text-align:center;">
+		<div class="alert text-center" style="color:green;">
 			<c:if test="${workOrder.getId() != null}">
 				<spring:message code="loa.create.success" arguments="${workOrder.getWorkOrderNumber()}"/>
 			</c:if>

@@ -488,11 +488,6 @@ function checkForCurrentDate(obj)
 	       dom.get("challan_dateerror_area").style.display="block";
 	       document.getElementById("challan_dateerror_area").innerHTML+=
 					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
-		   var keyCode = document.all? window.event.keyCode:event.which;
-		   if(keyCode==9) {
-	       window.scroll(0,0);
-		   }
-		   window.scroll(0,0);
 	       return false;
 	   }
    }
@@ -800,7 +795,9 @@ function autocompletecodeBank(obj,myEvent)
 				oAutoComp.useShadow = true;
 				oAutoComp.maxResultsDisplayed = 15;
 				oAutoComp.useIFrame = true;
-				
+				bankfuncObj.applyLocalFilter = true;
+				bankfuncObj.queryMatchContains = true;
+				oAutoComp.minQueryLength = 0;
 			}
 		}
 		yuiflagBank[currRow] = 1;
@@ -1009,12 +1006,6 @@ function validate()
 	 	<div class="highlight2"><s:text name="challan.findchallan.message" /></div>
 	</div>
 
-	<s:if test="%{model.id==null || hasErrors()}" >
-		<div class="buttonbottom" >
-			<input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
-		</div>
-	</s:if>
-
 </s:if>
 <s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
 	
@@ -1024,6 +1015,8 @@ function validate()
 		<%@ include file='challandetails.jsp'%>
 		</td>
 		</tr>
+		<s:if test="%{!hasErrors()}" >
+		<div>
  		<tr>
     	<td>
     		<div class="subheadnew">
@@ -1222,8 +1215,10 @@ function validate()
 			<!-- for card-->
 			</table> <!-- End of mode of payments table -->
      </td></tr>
+     </div>
+     </s:if>
 </table> <!--  main table ends -->
-
+<s:if test="%{!hasErrors()}" >
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
@@ -1238,6 +1233,12 @@ function validate()
       <input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
 </div>
 </s:if>
+</s:if>
+<s:if test="%{model.id==null || hasErrors()}" >
+		<div class="buttonbottom" >
+			<input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
+		</div>
+	</s:if>
 </div>
 
 

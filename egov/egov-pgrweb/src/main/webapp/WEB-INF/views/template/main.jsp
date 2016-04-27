@@ -83,6 +83,8 @@
                 </div>
 				<tiles:insertAttribute name="footer"/>
         </div>
+        <input type="hidden" value="${sessionScope.citylat}" id="getcitylat">
+        <input type="hidden" value="${sessionScope.citylng}" id="getcitylng">
         <div class="modal fade loader-class" data-backdrop="static">
 			<div class="modal-dialog">
 					<div class="modal-body">
@@ -111,9 +113,5 @@
 					</div>
 			</div>
 		</div>
-		<script>
-			var citylat = ${sessionScope.citylat};
-			var citylng = ${sessionScope.citylng};
-		</script>
     </body>
 </html>

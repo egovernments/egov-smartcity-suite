@@ -160,11 +160,12 @@
 							<s:textfield id="rtgsRefNoMap['%{#count}']" name="rtgsRefNoMap['%{#count}']" value=""/>       
 						</td>         -->
 						<td class="greybox"><s:text name="chq.assignment.rtgs.date" /><span
-							class="mandatory1">*</span> <s:textfield
-								id="rtgsdateMap[%{#count}]" name="rtgsdateMap[%{#count}]"
-								value="%{rtgsdateMap[#count]}" onchange="updateDate(this)"
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /> <!-- <a href="javascript:show_calendar('forms[0].rtgsdateMap[%{#count}]');" style="text-decoration:none">&nbsp;
-								<img src="/egi/resources/erp2/images/calendaricon.gif" border="0"/></a><br/>(dd/mm/yyyy)  -->
+							class="mandatory1">*</span> <s:date name="rtgsdateMap[%{#count}]" id="rtgsdateMap[%{#count}]" 
+							format="dd/MM/yyyy" /> <s:textfield id="rtgsdateMap[%{#count}]"
+							name="rtgsdateMap[%{#count}]" value="%{rtgsdateMap[%{#count}]}" data-date-end-date="0d"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" />
 						</td>
 					</s:if>
 				</tr>

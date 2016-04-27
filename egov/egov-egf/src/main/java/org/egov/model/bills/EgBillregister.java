@@ -56,6 +56,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -128,6 +129,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @Transient
     private Date approvedOn;
 
+    @OrderBy("id")
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillregister", targetEntity = EgBilldetails.class)
     private Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
 

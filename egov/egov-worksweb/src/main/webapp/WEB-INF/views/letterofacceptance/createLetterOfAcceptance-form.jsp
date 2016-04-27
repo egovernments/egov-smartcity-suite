@@ -41,9 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="page-container">        
-   <div class="main-content">			
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>			
 		<form:form id="createLetterOfAcceptanceForm" class="form-horizontal form-groups-bordered" modelAttribute="workOrder" role="form" action="loa-save" method="post" enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-md-12"> 
@@ -53,15 +51,18 @@
 						</div>
 						<div>
 							<spring:hasBindErrors name="workOrder">
-				        		<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+				        		<div class="alert alert-danger col-md-10 col-md-offset-1">
+						      			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+						      	</div>
 				        	</spring:hasBindErrors>
 				        </div>
 						<div class="panel-body">
 							<jsp:include page="estimateDetails-view.jsp"/>
 							<jsp:include page="letterOfAcceptance-details.jsp"/>
-							<jsp:include page="uploadDocuments.jsp"/>
 						</div>
 					</div>
+					
+					<jsp:include page="uploadDocuments.jsp"/>
 				</div>
 			</div>	
 			<div class="row">
@@ -71,6 +72,4 @@
 				</div>
 			</div>
 		</form:form>  
-	</div>
-</div>
 <script src="<c:url value='/resources/js/letterofacceptance.js?rnd=${app_release_no}'/>"></script>

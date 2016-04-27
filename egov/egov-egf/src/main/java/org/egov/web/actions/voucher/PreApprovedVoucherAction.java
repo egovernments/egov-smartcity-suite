@@ -30,9 +30,6 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
-
-
-import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,8 +76,8 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.masters.model.AccountEntity;
@@ -111,8 +108,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @Results({
-        @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify-beforeModify", params = { "namespace",
-                "/voucher","voucherId", "${voucherId}"}),
+        @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify-beforeModify", params = {
+                "namespace",
+                "/voucher", "voucherId", "${voucherId}" }),
         @Result(name = "view", location = "preApprovedVoucher-view.jsp"),
         @Result(name = PreApprovedVoucherAction.VOUCHEREDIT, location = "preApprovedVoucher-voucheredit.jsp"),
         @Result(name = "billview", location = "preApprovedVoucher-billview.jsp"),
@@ -132,11 +130,11 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     protected WorkflowBean workflowBean = new WorkflowBean();
     protected EisCommonService eisCommonService;
-    
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired EgovCommon egovCommon;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    private EgovCommon egovCommon;
     @Autowired
     @Qualifier("preApprovedActionHelper")
     private PreApprovedActionHelper preApprovedActionHelper;
@@ -148,16 +146,21 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
     protected EisUtilService eisService;
-    private @Autowired static BillsService billsService;
-    private @Autowired AppConfigValueService appConfigValuesService;
-    private @Autowired BillsAccountingService billsAccountingService;
-    private @Autowired BillsService billsManager;
+    @Autowired
+    private static BillsService billsService;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private BillsAccountingService billsAccountingService;
+    @Autowired
+    private BillsService billsManager;
     private static final Logger LOGGER = Logger.getLogger(PreApprovedVoucherAction.class);
     protected FinancialYearHibernateDAO financialYearDAO;
     private final PreApprovedVoucher preApprovedVoucher = new PreApprovedVoucher();
     private List<PreApprovedVoucher> billDetailslist;
     private List<PreApprovedVoucher> subLedgerlist;
-    private @Autowired CreateVoucher createVoucher;
+    @Autowired
+    private CreateVoucher createVoucher;
     private ContraJournalVoucher contraVoucher;
     private static final String ERROR = "error";
 
@@ -185,11 +188,11 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private boolean showVoucherDate;
     private ScriptService scriptService;
     private String mode = "";
-    protected Long voucherId ;
-    
+    protected Long voucherId;
+    private EgBillregister billRegister ; 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     @Override
     public StateAware getModel() {
         return voucherHeader;
@@ -408,8 +411,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                 result = VOUCHEREDIT;
             else
                 result = "voucherview";
-
-       return result;
+        billRegister = (EgBillregister) persistenceService.find(
+                "select mis.egBillregister from EgBillregistermis mis where mis.voucherHeader.id=?", voucherHeader.getId());
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -518,6 +522,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         getMasterDataForBillVoucher();
         return "view";
     }
+
     @ValidationErrorPage("billview")
     @SkipValidation
     @Action(value = "/voucher/preApprovedVoucher-save")
@@ -572,10 +577,10 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             mode = "";
             if (e.getCause().getClass().equals(ValidationException.class))
             {
-                
+
                 final ValidationException s = (ValidationException) e;
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
-                errors.add(new ValidationError("exp",s.getErrors().get(0).getMessage()));
+                errors.add(new ValidationError("exp", s.getErrors().get(0).getMessage()));
                 throw new ValidationException(errors);
             }
             LOGGER.error(e.getMessage());
@@ -798,7 +803,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     public String getSourcePath() {
         String sourcePath;
-        if (voucherHeader.getGeneralledger().size() > 0)
+        if (voucherHeader != null && voucherHeader.getGeneralledger() != null && voucherHeader.getGeneralledger().size() > 0)
             sourcePath = voucherHeader.getVouchermis().getSourcePath();
         else
             sourcePath = egBillregister.getEgBillregistermis().getSourcePath();
@@ -1142,7 +1147,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         }
         else if (adt.getTablename().equalsIgnoreCase("RELATION"))
         {
-            final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=true", code);
+            final Relation relation = (Relation) getPersistenceService().find(" from Relation where code=? and isactive=true",
+                    code);
             if (relation == null)
                 values = index + "~" + ERROR;
             else
@@ -1406,6 +1412,14 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     public void setVoucherId(Long voucherId) {
         this.voucherId = voucherId;
+    }
+
+    public EgBillregister getBillRegister() {
+        return billRegister;
+    }
+
+    public void setBillRegister(EgBillregister billRegister) {
+        this.billRegister = billRegister;
     }
 
 }
