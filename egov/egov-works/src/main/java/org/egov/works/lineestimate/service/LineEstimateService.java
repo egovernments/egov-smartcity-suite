@@ -554,12 +554,14 @@ public class LineEstimateService {
             else
                 appropriationAmount = led.getEstimateAmount();
 
-            final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(new Date())
-                    .getId(),
-                    appropriationAmount.doubleValue(), budgetheadid);
+            if(appropriationAmount.compareTo(BigDecimal.ZERO) == 1) {
+                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(new Date())
+                        .getId(),
+                        appropriationAmount.doubleValue(), budgetheadid);
 
-            if (!flag)
-                throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
+                if (!flag)
+                    throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
+            }
         }
     }
 
