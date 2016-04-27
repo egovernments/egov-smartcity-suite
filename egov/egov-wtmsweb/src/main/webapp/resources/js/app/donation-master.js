@@ -105,6 +105,13 @@ $(document).ready(function(){
 	  $('#buttonid').click(function() {
 		  if ($( "#donationDetailsform" ).valid())
 			  {
+			  var val = parseFloat($('#donationAmount').val());
+			  if (isNaN(val) || (val === 0)  )
+			  {
+				  bootbox.alert("Please Enter Donation amount");
+			      return false;
+			     
+			  }
 				   var minimum = getMinimumPipeSizeInInch();
 					var maximum = getMaximumPipeSizeInInch();
 					if( (minimum > 0) && (maximum  > 0) ){
