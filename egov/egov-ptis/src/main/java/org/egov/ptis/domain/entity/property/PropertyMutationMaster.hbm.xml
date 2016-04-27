@@ -46,7 +46,7 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyMutationMaster" table="EGPT_MUTATION_MASTER">
 		<id
 			name="id" column="ID" type="long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 					<param name="sequence_name">SEQ_EGPT_MUTATION_MASTER</param>
 			</generator>
 		</id>

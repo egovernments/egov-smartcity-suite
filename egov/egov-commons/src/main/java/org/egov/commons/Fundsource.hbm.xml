@@ -6,7 +6,7 @@
 	<class name="org.egov.commons.Fundsource" table="FUNDSOURCE">
 		<id name="id" type="integer">
 			<column name="ID" not-null="true" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">seq_fundsource</param>
 			</generator>
 		</id>

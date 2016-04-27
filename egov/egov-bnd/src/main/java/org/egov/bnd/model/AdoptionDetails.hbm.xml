@@ -46,7 +46,7 @@
     <class name="org.egov.bnd.model.AdoptionDetails" table="EGBD_ADOPTIONDETAILS">        
         <id  name="id" type="long" unsaved-value="null" >
             <column name="ID" not-null="true"/>
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_ADOPTIONDETAILS</param>
 	    	</generator>
         </id>

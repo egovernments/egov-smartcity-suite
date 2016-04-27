@@ -8,7 +8,7 @@
     <class name="org.egov.demand.model.EgDemandReasonMaster" table="EG_DEMAND_REASON_MASTER" >
         <id name="id" type="java.lang.Long">
             <column name="ID"  />
-           <generator class="sequence">
+           <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 			<param name="sequence_name">SEQ_EG_DEMAND_REASON_MASTER</param>
 		   </generator>
         </id>

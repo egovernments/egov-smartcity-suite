@@ -49,7 +49,7 @@
 
 		<id name="id" unsaved-value="null" type="java.lang.Integer">
 			<column name="EGBD_CITIZENDETAILSID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_CITIZENBDDETAILS</param> 
 			</generator>
 		</id>

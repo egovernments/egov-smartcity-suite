@@ -45,7 +45,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	<class name="org.egov.works.models.masters.Overhead"
 		table="EGW_OVERHEAD">
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_OVERHEAD</param>
 			</generator>
 		</id>

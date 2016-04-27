@@ -50,7 +50,7 @@
 			column="ID"
 			type="long"
 			unsaved-value="null">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_CHEQUE_DEPT_MAPPING</param>
 			</generator>
 		</id>

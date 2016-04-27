@@ -6,7 +6,7 @@
 	<class name="org.egov.commons.ObjectType" table="EG_OBJECT_TYPE">
 
 		<id name="id" column="ID" type="int">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_OBJECT_TYPE</param>
 			</generator>
 		</id>

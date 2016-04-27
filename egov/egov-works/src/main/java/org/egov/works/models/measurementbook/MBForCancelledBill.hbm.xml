@@ -45,7 +45,7 @@
 	<class name="org.egov.works.models.measurementbook.MBForCancelledBill" table="EGW_CANCELLED_BILL">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_CANCELLED_BILL</param>
 			</generator>
 		</id>

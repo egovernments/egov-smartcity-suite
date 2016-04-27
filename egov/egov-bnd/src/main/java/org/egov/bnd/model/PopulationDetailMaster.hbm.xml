@@ -49,7 +49,7 @@
     <class name="org.egov.bnd.model.PopulationDetailMaster" table="EGBD_POPULATIONDETAILMASTER">
         <id name="id" >
             <column name="ID"/>
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_POPULATIONDETAILMASTER</param>
 			</generator>
         </id>

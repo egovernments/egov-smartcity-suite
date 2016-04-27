@@ -44,7 +44,7 @@
 	<class name="org.egov.model.budget.BudgetUsage" table="EGF_BUDGET_USAGE"> 
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGF_BUDGET_USAGE</param>
 			</generator>
 		</id>

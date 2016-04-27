@@ -43,7 +43,7 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.Schedule" table="EGTL_MSTR_SCHEDULE">
 		<id column="ID" name="id" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGTL_MSTR_SCHEDULE</param>
 			</generator>
 		</id>

@@ -45,7 +45,7 @@
     <class name="org.egov.billsaccounting.model.EgwWorksDeductions" table="EGW_WORKS_DEDUCTIONS" >
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 	    	   	   <param name="sequence_name">SEQ_EGW_WORKS_DEDUCTIONS</param>
 		</generator>
         </id>

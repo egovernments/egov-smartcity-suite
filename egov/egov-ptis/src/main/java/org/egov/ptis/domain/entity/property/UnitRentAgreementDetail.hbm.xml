@@ -47,7 +47,7 @@
 		polymorphism="explicit">
 		
 		<id name="id" column="ID" type="long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_UNIT_RENT_AGREEMENT_DETAIL</param>
 			</generator>
 		</id>

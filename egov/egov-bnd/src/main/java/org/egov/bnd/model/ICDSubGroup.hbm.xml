@@ -55,7 +55,7 @@
 
         <id name="id" type="long" >
             <column  name="SUBGROUPID" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_ICDSUBGROUP</param>
 			</generator>
         </id>

@@ -44,7 +44,7 @@
     <class name="org.egov.model.recoveries.RecoveryBankDetails" table="egf_recovery_bankdetails">
          <id name="id" type="long">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
             <param name="sequence_name">SEQ_EGF_RECOVERY_BANKDETAILS</param>
             </generator>
         </id>

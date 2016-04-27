@@ -6,7 +6,7 @@
 	<class name="org.egov.commons.ContractorGrade" table="EGW_CONTRACTOR_GRADE">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_CONTRACTOR_GRADE</param>
 			</generator>
 		</id>

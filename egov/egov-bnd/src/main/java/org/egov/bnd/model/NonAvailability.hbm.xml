@@ -46,7 +46,7 @@
 	<class name="org.egov.bnd.model.NonAvailability" table="EGBD_NONAVAILABILITYREGN">
 		<id name="id" unsaved-value="null">
 			<column name="ID" not-null="true" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_NONAVAILABILITYREGN</param>
 			</generator>
 		</id>

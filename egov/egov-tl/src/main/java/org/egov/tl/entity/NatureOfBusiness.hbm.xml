@@ -43,7 +43,7 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.NatureOfBusiness" table="EGTL_MSTR_BUSINESS_NATURE">
 		<id column="ID" name="id" type="long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGTL_MSTR_BUSINESS_NATURE</param>
 			</generator>
 		</id>

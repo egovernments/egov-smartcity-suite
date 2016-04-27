@@ -6,7 +6,7 @@
     <class name="org.egov.pims.model.EligCertType" table="EGEIS_ELIG_CERT_TYPE" >
         <id name="id" type="long">
             <column name="ID" precision="12" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
             	<param name="sequence_name">EGEIS_ELIG_CERT_TYPE_SEQ</param>
             </generator>
         </id>

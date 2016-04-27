@@ -45,7 +45,7 @@
 	<class name="org.egov.works.models.tender.WorksPackageDetails" table="EGW_WORKSPACKAGE_DETAILS">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">			
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_WORKSPACKAGE_DETAILS</param>
 			</generator>
 		</id>

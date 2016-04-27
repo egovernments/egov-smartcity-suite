@@ -46,7 +46,7 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyReference" table="EGPT_PROP_REF">
 		<id
 			name="idPropertyRef" column="ID_PROPREF" type="int">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 					<param name="sequence_name">SEQ_PROP_REF</param>
 			</generator>
 		</id>

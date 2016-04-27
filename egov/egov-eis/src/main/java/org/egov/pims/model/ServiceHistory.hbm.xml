@@ -10,7 +10,7 @@
 	name="idService"
 	column="ID"
 	type="int">
-	<generator class="sequence">
+	<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 		<param name="sequence_name">SEQ_SERVICE_HISTORY</param>
 	</generator>
 </id>

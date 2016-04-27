@@ -45,7 +45,7 @@
 
 	<class name="org.egov.tl.entity.Licensee" table="EGTL_LICENSEE">
 		<id name="id" column="ID" type="java.lang.Long" unsaved-value="null">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGTL_LICENSEE</param>
 			</generator>
 		</id>

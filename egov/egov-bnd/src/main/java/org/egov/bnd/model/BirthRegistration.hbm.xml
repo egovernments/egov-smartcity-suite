@@ -48,7 +48,7 @@
 		
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_BIRTHREGISTRATION</param>
 			</generator>
 		</id>

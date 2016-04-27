@@ -45,7 +45,7 @@
     <class name="org.egov.collection.entity.AccountPayeeDetail" table="EGCL_ACCOUNTPAYEEDETAILS">
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
-           <generator class="sequence" >
+           <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator" >
             <param name="sequence_name">SEQ_EGCL_ACCOUNTPAYEEDETAILS</param>
             </generator>
         </id>

@@ -46,7 +46,7 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyImpl" table="EGPT_PROPERTY"
 		polymorphism="explicit">
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGPT_PROPERTY</param>
 			</generator>
 		</id>

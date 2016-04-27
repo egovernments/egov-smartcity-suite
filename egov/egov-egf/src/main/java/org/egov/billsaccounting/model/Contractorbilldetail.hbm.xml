@@ -48,7 +48,7 @@
  <class name="org.egov.billsaccounting.model.Contractorbilldetail" table="CONTRACTORBILLDETAIL">
   <id name="id" type="integer">
    <column name="ID" precision="22" scale="0"/>
-   <generator class="sequence">
+   <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
     <param name="sequence_name">seq_CONTRACTORBILLDETAIL</param>
    </generator>
   </id>

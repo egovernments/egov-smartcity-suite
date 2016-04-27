@@ -44,7 +44,7 @@
     <class name="org.egov.asset.model.AssetCategory" table="EGASSET_ASSET_CATEGORY">
         <id name="id" type="java.lang.Long">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
             	<param name="sequence_name">seq_egasset_asset_category</param>
             </generator>
         </id>

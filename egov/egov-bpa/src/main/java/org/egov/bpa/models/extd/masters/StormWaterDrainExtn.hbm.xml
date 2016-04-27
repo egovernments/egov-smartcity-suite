@@ -6,7 +6,7 @@
     <class name="org.egov.bpa.models.extd.masters.StormWaterDrainExtn" table="EGBPAEXTND_STORMWATERDRAIN">
         <id name="id">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBPAEXTND_STORMWATERDRAIN</param> 
 			</generator>
         </id>

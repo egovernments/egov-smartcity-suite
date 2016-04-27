@@ -45,7 +45,7 @@
 	<class name="org.egov.works.models.contractorBill.AssetForBill" table="EGW_CONTRACTORBILL_ASSETS">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_CONTRACTORBILL_ASSETS</param>
 			</generator>
 		</id>

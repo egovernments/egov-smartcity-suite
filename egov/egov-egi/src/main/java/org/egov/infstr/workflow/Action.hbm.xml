@@ -44,7 +44,7 @@
 <hibernate-mapping auto-import="false">
 	<class name="org.egov.infstr.workflow.Action" table="EG_WF_ACTIONS">
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">EG_WF_ACTIONS_SEQ</param>
 			</generator>
 		</id>

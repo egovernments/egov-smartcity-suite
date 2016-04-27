@@ -6,7 +6,7 @@
     <class name="org.egov.bpa.models.extd.ApprdBuildingDetailsExtn" table="EGBPAEXTND_APPRD_BLDGDETAILS">
          <id name="id">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBPAEXTND_APPRD_BLDGDET</param>
 			</generator>
         </id>

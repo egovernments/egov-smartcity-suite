@@ -43,7 +43,7 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.LicenseSubCategoryDetails" table="egtl_subcategory_details">
 		<id column="ID" name="id" type="long">
-			<generator class="sequence"> 
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_egtl_subcategory_details</param>
 			</generator>
 		</id>

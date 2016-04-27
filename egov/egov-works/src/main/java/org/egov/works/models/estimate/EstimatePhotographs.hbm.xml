@@ -45,7 +45,7 @@
 		table="EGW_ESTIMATE_PHOTOGRAPHS">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_ESTIMATE_PHOTOGRAPHS</param>
 			</generator>
 		</id>

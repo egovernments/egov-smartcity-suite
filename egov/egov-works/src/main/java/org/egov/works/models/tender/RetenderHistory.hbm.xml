@@ -45,7 +45,7 @@
 	<class name="org.egov.works.models.tender.RetenderHistory" table="EGW_RETENDER_HISTORY">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">			
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_RETENDER_HISTORY</param>
 			</generator>
 		</id>

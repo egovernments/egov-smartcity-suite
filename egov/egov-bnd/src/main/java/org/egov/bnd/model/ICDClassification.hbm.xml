@@ -59,7 +59,7 @@
                 <column
                     name="ICDCLASSIFICATIONMASTID" 
                 />
-           <generator class="sequence">
+           <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_ICDCLASSIFICATIONMASTER</param>
 			</generator>
         </id>

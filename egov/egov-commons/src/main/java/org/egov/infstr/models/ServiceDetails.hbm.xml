@@ -45,7 +45,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 <hibernate-mapping>
 	<class name="org.egov.infstr.models.ServiceDetails" table="egcl_servicedetails" >
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">seq_egcl_servicedetails</param>
 			</generator>
 		</id>

@@ -28,7 +28,7 @@
 	<class name="org.egov.bnd.model.BndNameChange" table="EGBD_NAMECHANGE">
 
 		<id name="id" column="ID" type="int">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_NAMECHANGE</param>
 			</generator>
 		</id>

@@ -44,7 +44,7 @@
 	<class name="org.egov.works.models.masters.DepositCode" table="EGW_DEPOSITCODE">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence"> 
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_DEPOSITCODE</param>
 			</generator>
 		</id>

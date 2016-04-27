@@ -6,7 +6,7 @@
     <class name="org.egov.bpa.models.extd.masters.SurroundedBldgDtlsExtn" table="EGBPAEXTND_MSTR_SURNBLDGDTLS">
         <id name="id">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBPAEXTND_SURDBLDGDTLS</param>
 			</generator>
         </id>

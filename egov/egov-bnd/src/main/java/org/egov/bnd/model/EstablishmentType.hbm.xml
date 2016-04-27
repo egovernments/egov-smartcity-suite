@@ -56,7 +56,7 @@
         <id name="id" type="java.lang.Integer" >
                 <column name="ESTABLISHMENTTYPEID" />
         
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 			<param name="sequence_name">SEQ_EGBD_ESTABLISHMENTTYPE</param>     
 			</generator>
               

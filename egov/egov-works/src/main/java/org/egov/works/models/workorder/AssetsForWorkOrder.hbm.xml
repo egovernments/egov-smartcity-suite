@@ -44,7 +44,7 @@
     <class name="org.egov.works.models.workorder.AssetsForWorkOrder" table="EGW_WORKORDER_ASSETS" >
         <id name="id" type="long">
             <column name="ID"/>
-            <generator class="sequence" >
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator" >
             	<param name="sequence_name">SEQ_EGW_WORKORDER_ASSETS</param>
             </generator>
         </id>

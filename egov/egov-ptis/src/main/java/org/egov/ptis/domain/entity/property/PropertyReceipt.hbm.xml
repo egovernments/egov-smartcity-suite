@@ -45,7 +45,7 @@
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertyReceipt" table="EGPT_PROPERTY_RECEIPTS">
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGPTPROPERTY_RECEIPTS</param>
 			</generator>
 		</id>

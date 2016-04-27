@@ -44,7 +44,7 @@
     <class name="org.egov.model.recoveries.RemittanceSchedulerLog" table="egf_remittance_scheduler">
         <id
 			name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGF_REMITTANCE_SCHEDULER</param>
 			</generator>
 		</id>

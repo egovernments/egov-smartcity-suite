@@ -47,7 +47,7 @@
 
 		<id name="id" type="long" unsaved-value="null">
 			<column name="CITIZENRELATIONSHIPID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_CITIZENRELATIONSHIP</param>
 			</generator>
 		</id>

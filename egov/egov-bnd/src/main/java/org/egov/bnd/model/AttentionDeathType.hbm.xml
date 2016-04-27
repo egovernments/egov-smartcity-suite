@@ -46,7 +46,7 @@
 	<class name="org.egov.bnd.model.AttentionDeathType" table="EGBD_ATTBEFRDEATHMASTER">
 		<id name="id">
 			<column name="ATTBEFOREDEATHMASTID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_ATTBEFRDEATHMASTER</param>
 			</generator>
 		</id>

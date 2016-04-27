@@ -6,7 +6,7 @@
     <class name="org.egov.bpa.models.extd.AutoDcrDtlsExtn" table="EGBPAEXTND_AUTODCR_DETAILS">
        <id name="id">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBPAEXTND_AUTODCR_DTLS</param>
 			</generator>
         </id>

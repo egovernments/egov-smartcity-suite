@@ -42,7 +42,7 @@
 <hibernate-mapping >
 	<class name="org.egov.egf.masters.model.FundingAgency" table="EGF_FUNDINGAGENCY"> 
 		<id name="id" type="long" column="ID">
-	        <generator class="sequence">
+	        <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 	            <param name="sequence_name">SEQ_EGF_FUNDINGAGENCY</param>
 	        </generator>
 	    </id>	    

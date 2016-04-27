@@ -4,7 +4,7 @@
 <hibernate-mapping>
 	<class name="org.egov.lib.rrbac.model.AuthorizationRule" table="EG_AUTHORIZATION_RULE">
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_AUTH_RULE</param>
 			</generator>
 		</id>

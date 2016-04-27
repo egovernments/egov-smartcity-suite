@@ -43,7 +43,7 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.LicenseAppType" table="EGTL_MSTR_APP_TYPE">
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGTL_MSTR_APP_TYPE</param>
 			</generator>
 		</id>

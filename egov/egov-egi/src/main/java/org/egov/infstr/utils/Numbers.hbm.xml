@@ -45,7 +45,7 @@
 	<class name="org.egov.infstr.utils.Number" table="EG_NUMBER_GENERIC">
 		<id name="id">
 			<column name="ID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EG_NUMBER_GENERIC</param>
 			</generator>
 		</id>

@@ -5,7 +5,7 @@
 	<class name="org.egov.commons.Relationtype" table="RELATIONTYPE">
 		<id name="id" type="integer">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">seq_relationtype</param>
 			</generator>
 		</id>

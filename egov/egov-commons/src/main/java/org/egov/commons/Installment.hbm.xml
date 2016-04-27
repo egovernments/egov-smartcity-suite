@@ -5,7 +5,7 @@
 <hibernate-mapping>
 	<class name="org.egov.commons.Installment" table="EG_INSTALLMENT_MASTER">
 		<id name="id" column="ID">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EG_INSTALLMENT_MASTER</param>
 			</generator>
 		</id>

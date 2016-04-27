@@ -46,7 +46,7 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyStatus" table="EGPT_STATUS">
 		<id
 			name="ID" column="ID" type="int">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 					<param name="sequence_name">SEQ_EGPT_STATUS</param>
 			</generator>
 		</id>

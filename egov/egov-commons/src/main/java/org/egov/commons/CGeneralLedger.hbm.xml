@@ -5,7 +5,7 @@
 	<class name="org.egov.commons.CGeneralLedger" table="GENERALLEDGER"> 
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_GENERALLEDGER</param>
 			</generator>
 		</id>	

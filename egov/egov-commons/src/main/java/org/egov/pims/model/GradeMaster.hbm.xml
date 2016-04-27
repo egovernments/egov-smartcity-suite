@@ -4,7 +4,7 @@
 <hibernate-mapping>
 	<class name="org.egov.pims.model.GradeMaster" table="EGEIS_GRADE_MSTR">
 		<id name="id" column="GRADE_ID" type="int">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">EGPIMS_GRADE_MSTR_SEQ</param>
 			</generator>
 		</id>

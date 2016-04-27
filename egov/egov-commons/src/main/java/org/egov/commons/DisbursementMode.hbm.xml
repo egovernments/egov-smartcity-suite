@@ -5,7 +5,7 @@
     <class name="org.egov.commons.DisbursementMode" table="EG_DISBURSEMENT_MODE" >
         <id name="id" >
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence" >
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator" >
             <param name="sequence_name">SEQ_EG_DISBURSEMENT_MODE</param>
             </generator>
         </id>

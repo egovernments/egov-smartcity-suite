@@ -6,7 +6,7 @@
     <class name="org.egov.commons.EgSurrenderedCheques" table="EG_SURRENDERED_CHEQUES">
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
             <param name="sequence_name">SEQ_EG_SURRENDERED_CHEQUES</param>
             </generator>
         </id>

@@ -45,7 +45,7 @@
 	<class name="org.egov.tl.entity.MotorDetails" table="EGTL_MOTOR_DETAILS">
 		<id name="id" type="java.lang.Long">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGTL_MOTOR_DETAILS</param>
 			</generator>
 		</id>

@@ -48,7 +48,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			column="ID"
 			type="long"
 			unsaved-value="null">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_ESTIMATE_ACTIVITY</param>
 			</generator>
 		</id>

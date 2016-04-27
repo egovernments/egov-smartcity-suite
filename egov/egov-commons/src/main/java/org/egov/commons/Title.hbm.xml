@@ -5,7 +5,7 @@
     <class name="org.egov.commons.Title" table="EG_TITLE">
         <id name="id">
             <column name="ID" precision="12" scale="0" />
-            <generator class="sequence" >
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator" >
             <param name="sequence_name">SEQ_EG_TITLE</param>
             </generator>
         </id>

@@ -56,7 +56,7 @@
 
         <id name="id" type="java.lang.Integer" >
                 <column name="OCCUPATIONMASTERID" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
               <!--  
                   To add non XDoclet generator parameters, create a file named 
                   hibernate-generator-params-COccupation.xml 

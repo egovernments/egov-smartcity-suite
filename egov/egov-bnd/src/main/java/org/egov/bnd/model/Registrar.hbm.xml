@@ -46,7 +46,7 @@
 	<class name="org.egov.bnd.model.Registrar" table="EGBD_REGISTRAR">
 		<id name="id">
 			<column name="ID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_REGISTRAR</param>
 			</generator>
 		</id>

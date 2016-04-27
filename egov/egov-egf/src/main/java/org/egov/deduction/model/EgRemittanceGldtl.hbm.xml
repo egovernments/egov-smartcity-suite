@@ -45,7 +45,7 @@
     <class name="org.egov.deduction.model.EgRemittanceGldtl" table="EG_REMITTANCE_GLDTL">
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
             <param name="sequence_name">seq_eg_remittance_gldtl</param>
             </generator>
         </id>

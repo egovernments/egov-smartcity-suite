@@ -44,7 +44,7 @@
 	<class name="org.egov.works.models.estimate.DepositWorksUsage" table="EGW_DEPOSITWORKS_USAGE"> 
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGW_DEPOSITWORKS_USAGE</param>
 			</generator>
 		</id>

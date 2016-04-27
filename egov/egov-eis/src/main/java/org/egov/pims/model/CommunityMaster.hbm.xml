@@ -9,7 +9,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 							name="id"
 							column="COMMUNITY_ID"
 							type="int">
-							<generator class="sequence">
+							<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 								<param name="sequence_name">EGPIMS_COMMUNITY_SEQ</param>
 							</generator>
 				</id>

@@ -5,7 +5,7 @@
     <class name="org.egov.bpa.models.extd.CMDALetterToPartyExtn" table="EGBPAEXTND_CMDA_LETTERTOPARTY">
          <id name="id">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBPAEXTND_CMDA_LP</param>
 			</generator>
         </id>

@@ -29,7 +29,7 @@
 		table="EGPT_STRUC_CL">
 
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGPT_STRUC_CL</param>
 			</generator>
 		</id>

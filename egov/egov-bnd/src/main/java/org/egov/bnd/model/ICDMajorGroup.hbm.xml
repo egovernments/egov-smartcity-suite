@@ -53,7 +53,7 @@
 
         <id name="id" type="long" >
            <column name="MAJORGROUPID" />
-           <generator class="sequence">
+           <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_ICDMAJORGROUP</param>
 			</generator>
         </id>

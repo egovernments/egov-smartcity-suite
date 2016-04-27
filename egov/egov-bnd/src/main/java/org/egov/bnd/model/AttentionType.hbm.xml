@@ -47,7 +47,7 @@
         name="org.egov.bnd.model.AttentionType"    table="EGBD_ATTENTIONATDELIVERY">        
         <id  name="id">
             <column name="ATTENTIONATDELIVERYMASTERID"/>
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_ATTENTIONATDELIVERY</param>
 			</generator>
         </id>

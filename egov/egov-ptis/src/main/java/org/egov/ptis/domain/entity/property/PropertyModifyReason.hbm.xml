@@ -46,7 +46,7 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyModifyReason" table="EGPT_PROP_MODIFY_REASON">
 		<id
 			name="idReason" column="ID_REASON" type="int">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 					<param name="sequence_name">SEQ_PROP_MODIFY_REASON</param>
 			</generator>
 		</id>

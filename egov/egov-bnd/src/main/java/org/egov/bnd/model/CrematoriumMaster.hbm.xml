@@ -46,7 +46,7 @@
 	<class name="org.egov.bnd.model.CrematoriumMaster" table="EGBD_CREMATORIUMMASTER">
 		<id name="id">
 			<column name="ID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_CREMATORIUMMASTER</param>
 			</generator>
 		</id>

@@ -43,7 +43,7 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.UnitOfMeasurement" table="egtl_mstr_UnitOfMeasure">
 		<id column="ID" name="id" type="long">
-			<generator class="sequence"> 
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_egtl_mstr_UnitOfMeasure</param>
 			</generator>
 		</id>

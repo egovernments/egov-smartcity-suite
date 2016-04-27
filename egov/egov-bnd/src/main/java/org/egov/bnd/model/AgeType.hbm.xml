@@ -46,7 +46,7 @@
 	<class name="org.egov.bnd.model.AgeType" table="EGBD_AGETYPE">
 		<id name="id">
 			<column name="AGETYPEID" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 
 			</generator>
 		</id>

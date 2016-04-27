@@ -47,7 +47,7 @@
 		<!-- A squence pk generator -->
 		<id name="id" unsaved-value="null">
 			<column name="RELATIONMASTERID" not-null="true" />
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBD_RELATIONMASTER</param>
 			</generator>
 		</id>

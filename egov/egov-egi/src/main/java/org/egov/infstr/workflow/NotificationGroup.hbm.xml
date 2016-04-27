@@ -44,7 +44,7 @@
 <hibernate-mapping>
 	<class name="org.egov.infstr.workflow.NotificationGroup" table="EGDMS_NOTIFICATION_GROUP">
 		<id name="id" type="long" column="ID">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGDMS_NOTIFICATION_GROUP</param>
 			</generator>
 		</id>

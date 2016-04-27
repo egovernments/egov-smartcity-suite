@@ -5,7 +5,7 @@
    <class name="org.egov.bpa.models.extd.RegnApprovalInformationExtn" table="EGBPAEXTND_REGN_APPROVALINFO">
         <id name="id">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="sequence_name">SEQ_EGBPAEXTND_REGN_APPINFO</param>
 			</generator>
         </id>
