@@ -64,7 +64,7 @@
 				<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber" placeholder="Type first 3 letters of Work Order Number" />
 				<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractorcode.or.name" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="contractor" id="contractor" class="form-control" />
 				<form:errors path="contractor" cssClass="add-margin error-msg" />

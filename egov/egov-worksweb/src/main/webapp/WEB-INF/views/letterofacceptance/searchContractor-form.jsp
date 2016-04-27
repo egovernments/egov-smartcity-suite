@@ -49,7 +49,7 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.code" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="contractorCode" id="contractorCode" class="form-control" placeholder="Type first 3 letters of Contractor Name Or Code"/>
+				<form:input path="contractorCode" id="contractorCode" class="form-control" placeholder="Type first 3 letters of Contractor Code"/>
 				<form:errors path="contractorCode" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /></label>

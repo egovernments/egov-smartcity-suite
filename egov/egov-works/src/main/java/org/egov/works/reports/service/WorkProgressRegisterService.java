@@ -52,6 +52,7 @@ import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,8 +89,8 @@ public class WorkProgressRegisterService {
             if (workProgressRegisterSearchRequest.getContractor() != null) {
                 criteria.createAlias("contractor", "contractor");
                 criteria.add(Restrictions.or(Restrictions.ilike("contractor.code",
-                        workProgressRegisterSearchRequest.getContractor()), Restrictions.ilike("contractor.name",
-                                workProgressRegisterSearchRequest.getContractor())));
+                        workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE), Restrictions.ilike("contractor.name",
+                                workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE)));
             }
             if (workProgressRegisterSearchRequest.getAdminSanctionFromDate() != null)
                 criteria.add(Restrictions.ge("adminSanctionDate",
