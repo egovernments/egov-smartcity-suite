@@ -84,7 +84,7 @@ public class AjaxLetterOfAcceptanceController {
     private SearchLetterOfAcceptanceToCreateContractorBillJson searchLetterOfAcceptanceToCreateContractorBillJson;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Contractor> findLineEstimateNumbers(@RequestParam final String name) {
+    public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
         return contractorService.getContractorsByCodeOrName(name);
     }
 
@@ -157,6 +157,11 @@ public class AjaxLetterOfAcceptanceController {
     public @ResponseBody Boolean validateWorkOrderNumberForCreateContractorBill(
             @RequestParam("workOrderId") final Long workOrderId) {
         return letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
+    }
+    
+    @RequestMapping(value = "/ajaxcontractorsbycode-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Contractor> findContractorsByCode(@RequestParam final String name) {
+        return contractorService.getContractorsByCode(name);
     }
 
     @RequestMapping(value = "/ajax-contractorsforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

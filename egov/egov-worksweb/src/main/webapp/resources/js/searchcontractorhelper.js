@@ -7,11 +7,12 @@ $(document).ready(function(){
 				},
 				queryTokenizer : Bloodhound.tokenizers.whitespace,
 				remote : {
-					url : '/egworks/letterofacceptance/ajaxsearchcontractors-loa?contractorname=%QUERY',
+					url : '/egworks/letterofacceptance/ajaxcontractorsbycode-loa?name=%QUERY',
 					filter : function(data) {
 						return $.map(data, function(ct) {
 							return {
-								name : ct,
+								name : ct.name,
+								code : ct.code
 							};
 						});
 					}
@@ -25,8 +26,13 @@ $(document).ready(function(){
 				highlight : true,
 				minLength : 3
 			}, {
-				displayKey : 'name',
-				source : contractorSearch.ttAdapter()
+				displayKey : 'code',
+				source : contractorSearch.ttAdapter(),
+				templates: {
+			        suggestion: function (item) {
+			        	return item.code+' ~ '+item.name;
+			        }
+			    }
 			});
 });
 
@@ -82,10 +88,10 @@ function callAjaxSearch() {
 					"data" : "",
 					"sClass" : "text-center"
 				}, {
-					"data" : "name",
+					"data" : "code",
 					"sClass" : "text-center"
 				}, {
-					"data" : "code",
+					"data" : "name",
 					"sClass" : "text-center"
 				} ]
 			});

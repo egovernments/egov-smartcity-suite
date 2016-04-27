@@ -71,7 +71,7 @@
 			<div class="col-sm-3 add-margin">
 				<form:select path="contractorClass" data-first-option="false" id="contractorClass" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
-					<form:options items="${contractorClasses}" itemValue="id" itemLabel="name" />
+					<form:options items="${contractorClasses}" itemValue="id" itemLabel="grade" />
 				</form:select>
 				<form:errors path="contractorClass" cssClass="add-margin error-msg" />
 			</div>

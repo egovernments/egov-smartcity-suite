@@ -320,9 +320,9 @@ public class LetterOfAcceptanceService {
             if (searchRequestContractor.getContractorClass() != null)
                 criteria.add(Restrictions.ge("grade.id", searchRequestContractor.getContractorClass()));
             if (searchRequestContractor.getContractorCode() != null)
-                criteria.add(Restrictions.ilike("contractor.code", searchRequestContractor.getContractorCode(), MatchMode.ANYWHERE));
+                criteria.add(Restrictions.eq("contractor.code", searchRequestContractor.getContractorCode()).ignoreCase());
             if (searchRequestContractor.getNameOfAgency() != null)
-                criteria.add(Restrictions.eq("contractor.name", searchRequestContractor.getNameOfAgency()));
+                criteria.add(Restrictions.ilike("contractor.name", searchRequestContractor.getNameOfAgency(), MatchMode.ANYWHERE));
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();

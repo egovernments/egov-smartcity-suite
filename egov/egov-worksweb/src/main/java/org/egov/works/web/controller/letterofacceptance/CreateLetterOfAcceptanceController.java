@@ -52,6 +52,7 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceNumberGenerat
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.services.ContractorGradeService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,9 @@ public class CreateLetterOfAcceptanceController {
     
     @Autowired
     private DepartmentService departmentService;
+    
+    @Autowired
+    private ContractorGradeService contractorGradeService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
@@ -179,6 +183,7 @@ public class CreateLetterOfAcceptanceController {
             @ModelAttribute final SearchRequestContractor searchRequestContractor,
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("contractorClasses", contractorGradeService.getAllContractorGrades());
         model.addAttribute("searchRequestContractor", searchRequestContractor);
         return "contractor-search";
     }
