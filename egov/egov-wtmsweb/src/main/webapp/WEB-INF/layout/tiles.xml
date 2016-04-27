@@ -310,9 +310,9 @@
         <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master-list.jsp"/>
     </definition>
-   <definition name="application-process-time-master-list" extends="base_layout">
+     <definition name="application-process-master-list" extends="base_layout">
         <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master-list"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-master-list.jsp"/>
     </definition>
-    
+   
 </tiles-definitions>

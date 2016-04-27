@@ -47,14 +47,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 @Entity
-@Table(name = "egwtr_application_process_time", uniqueConstraints = @UniqueConstraint(columnNames = { "applicationtype",
-        "category" }) )
+@Table(name = "egwtr_application_process_time")
+@CompositeUnique(fields = { "applicationType",
+        "category" }, enableDfltMsg = true, message = "{application.validity.exist}")
 @SequenceGenerator(name = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, sequenceName = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, allocationSize = 1)
 public class ApplicationProcessTime extends AbstractAuditable {
 
@@ -67,12 +68,12 @@ public class ApplicationProcessTime extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "applicationtype", nullable = false)
+    @JoinColumn(name = "applicationtype")
     private ApplicationType applicationType;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "category", nullable = false)
+    @JoinColumn(name = "category")
     private ConnectionCategory category;
 
     @NotNull
