@@ -37,8 +37,16 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-
-	callAjaxSearch();
+	
+	var contractorCode = $('#contractorCode').val();
+	var nameOfAgency = $('#nameOfAgency').val();
+	var contractorClass = $('#contractorClass').val();
+	var department = $('#department').val();
+	
+	if(contractorCode != '' || nameOfAgency != '' || contractorClass != '' || department != '')
+		callAjaxSearch();
+	else
+		bootbox.alert("At least one search criteria is mandatory!");
 });
 
 function getFormData($form) {
