@@ -94,7 +94,7 @@ public class WorkProgressRegisterPDFController {
             queryParameters += "for ";
 
         if (adminSanctionFromDate != null && adminSanctionToDate != null)
-            queryParameters += "Date Range : " + sdf.format(adminSanctionFromDate) + " - " + sdf.format(adminSanctionFromDate)
+            queryParameters += "Date Range : " + sdf.format(adminSanctionFromDate) + " - " + sdf.format(adminSanctionToDate)
                     + ", ";
         if (adminSanctionFromDate != null && adminSanctionToDate == null)
             queryParameters += "Admin Sanction From Date : " + adminSanctionFromDate + ", ";
@@ -225,6 +225,10 @@ public class WorkProgressRegisterPDFController {
                     pdf.setBillamount(wpr.getBillamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setBillamount("NA");
+                if (wpr.getTotalBillAmount() != null)
+                    pdf.setTotalBillAmount(wpr.getTotalBillAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                else
+                    pdf.setTotalBillAmount("NA");
                 if (wpr.getTotalBillPaidSoFar() != null)
                     pdf.setTotalBillPaidSoFar(wpr.getTotalBillPaidSoFar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else

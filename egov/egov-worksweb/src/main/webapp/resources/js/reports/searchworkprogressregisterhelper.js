@@ -194,14 +194,18 @@ function callAjaxSearch() {
 						$('td:eq(23)',row).html(parseFloat(Math.round(data.billAmount * 100) / 100).toFixed(2));
 					else
 						$('td:eq(23)',row).html('NA');
-					if(data.totalBillPaidSoFar != "")
-						$('td:eq(24)',row).html(parseFloat(Math.round(data.totalBillPaidSoFar * 100) / 100).toFixed(2));
+					if(data.totalBillAmount != "")
+						$('td:eq(24)',row).html(parseFloat(Math.round(data.totalBillAmount * 100) / 100).toFixed(2));
 					else
 						$('td:eq(24)',row).html('NA');
-					if(data.balanceValueOfWorkToBill != "")
-						$('td:eq(25)',row).html(parseFloat(Math.round(data.balanceValueOfWorkToBill * 100) / 100).toFixed(2));
+					if(data.totalBillPaidSoFar != "")
+						$('td:eq(25)',row).html(parseFloat(Math.round(data.totalBillPaidSoFar * 100) / 100).toFixed(2));
 					else
 						$('td:eq(25)',row).html('NA');
+					if(data.balanceValueOfWorkToBill != "")
+						$('td:eq(26)',row).html(parseFloat(Math.round(data.balanceValueOfWorkToBill * 100) / 100).toFixed(2));
+					else
+						$('td:eq(26)',row).html('NA');
 					if(index == 0) {
 						$createdDate = data.createdDate;
 						var dataRunmTime = "The information in this report is not real time, it provides information of the transactions that happened till " + $createdDate;
@@ -236,6 +240,7 @@ function callAjaxSearch() {
 					"data" : "latestBillNumberDate", "sClass" : "text-right"}, {
 					"data" : "billType", "sClass" : "text-right"}, {
 					"data" : "billAmount", "sClass" : "text-right"}, {
+					"data" : "totalBillAmount", "sClass" : "text-right"}, {
 					"data" : "totalBillPaidSoFar", "sClass" : "text-right"}, {
 					"data" : "balanceValueOfWorkToBill", "sClass" : "text-right"
 					}]				

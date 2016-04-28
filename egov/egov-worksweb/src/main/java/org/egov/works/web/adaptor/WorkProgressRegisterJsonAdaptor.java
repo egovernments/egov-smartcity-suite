@@ -138,6 +138,10 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("billAmount", workProgressRegister.getBillamount());
             else
                 jsonObject.addProperty("billAmount", "");
+            if (workProgressRegister.getTotalBillAmount() != null)
+                jsonObject.addProperty("totalBillAmount", workProgressRegister.getTotalBillAmount());
+            else
+                jsonObject.addProperty("totalBillAmount", "");
             if (workProgressRegister.getTotalBillPaidSoFar() != null)
                 jsonObject.addProperty("totalBillPaidSoFar", workProgressRegister.getTotalBillPaidSoFar());
             else

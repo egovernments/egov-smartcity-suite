@@ -88,6 +88,8 @@ public class WorkProgressRegisterPdf {
     private String billtype;
 
     private String billamount;
+    
+    private String totalBillAmount;
 
     private String totalBillPaidSoFar;
 
@@ -283,6 +285,14 @@ public class WorkProgressRegisterPdf {
 
     public void setBillamount(final String billamount) {
         this.billamount = billamount;
+    }
+
+    public String getTotalBillAmount() {
+        return totalBillAmount;
+    }
+
+    public void setTotalBillAmount(String totalBillAmount) {
+        this.totalBillAmount = totalBillAmount;
     }
 
     public String getTotalBillPaidSoFar() {

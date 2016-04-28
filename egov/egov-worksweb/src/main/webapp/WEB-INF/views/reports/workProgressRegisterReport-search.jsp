@@ -74,6 +74,7 @@
 					<th><spring:message code="lbl.lastest.bill.number.date" /></th>
 					<th><spring:message code="lbl.lastest.bill.type" /></th>
 					<th><spring:message code="lbl.lastest.bill.amount" /></th>
+					<th><spring:message code="lbl.total.bill.amount" /></th>
 					<th><spring:message code="lbl.total.bills.paid" /></th>
 					<th><spring:message code="lbl.balance.value.to.bill" /></th>
 				</tr>

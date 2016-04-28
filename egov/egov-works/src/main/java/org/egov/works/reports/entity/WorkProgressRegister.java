@@ -179,6 +179,8 @@ public class WorkProgressRegister extends AbstractAuditable {
     private String billtype;
 
     private BigDecimal billamount;
+    
+    private BigDecimal totalBillAmount;
 
     private BigDecimal totalBillPaidSoFar;
 
@@ -430,6 +432,14 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     public void setBillamount(final BigDecimal billamount) {
         this.billamount = billamount;
+    }
+
+    public BigDecimal getTotalBillAmount() {
+        return totalBillAmount;
+    }
+
+    public void setTotalBillAmount(BigDecimal totalBillAmount) {
+        this.totalBillAmount = totalBillAmount;
     }
 
     public BigDecimal getTotalBillPaidSoFar() {
