@@ -826,18 +826,19 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * Gives the current installment
+     * Gives the first half of the current financial year
      *
-     * @return Installment the current installment for PT module
+     * @return Installment - the first half of the current financial year for PT module
      */
     public static Installment getCurrentInstallment() {
         final Query query = HibernateUtil
                 .getCurrentSession()
                 .createQuery("select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
-                + " and installment.fromDate >= finYear.startingDate and cast(installment.toDate as date) <= finYear.endingDate order by installment.id ");
+                + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
         query.setString("moduleName", PropertyTaxConstants.PTMODULENAME);
         query.setDate("currDate", new Date());
-        return (Installment) query.list().get(0);
+        List<Installment> installments = query.list();
+        return installments.get(0);
     }
 
     /**
@@ -2536,11 +2537,9 @@ public class PropertyTaxUtil {
     
     public Map<String,Installment> getInstallmentsForCurrYear(Date currDate) {
         Map<String,Installment> currYearInstMap = new HashMap<String,Installment>();
-        Module module = moduleDao.getModuleByName(PTMODULENAME);
-        final String query = "select installment from Installment installment,CFinancialYear finYear where installment.module =:module  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
-                + " and installment.fromDate >= finYear.startingDate and cast(installment.toDate as date) <= finYear.endingDate order by installment.id ";
+        final String query = "select installment from Installment installment,CFinancialYear finYear where installment.module.name = '"+PTMODULENAME+"'  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
+                + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.id ";
         final Query qry = persistenceService.getSession().createQuery(query.toString());
-        qry.setLong("module", module.getId());
         qry.setDate("currDate", currDate);
         List<Installment> installments = qry.list();
         currYearInstMap.put(CURRENTYEAR_FIRST_HALF, installments.get(0));

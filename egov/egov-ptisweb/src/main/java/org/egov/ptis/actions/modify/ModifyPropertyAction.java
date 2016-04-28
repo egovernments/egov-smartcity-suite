@@ -59,6 +59,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_BIFURCATE_PROPERTY;
@@ -428,9 +429,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox) {
                 final Map<String, BigDecimal> propertyTaxDetails = propService.getCurrentPropertyTaxDetails(basicProp
                         .getActiveProperty());
-                currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
-                currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
-                        propertyTaxDetails.get(CURR_COLL_STR));
+                Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails, new Date());
+                currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
+                currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
                 arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                         propertyTaxDetails.get(ARR_COLL_STR));
                 currentWaterTaxDue = propertyService.getWaterTaxDues(basicProp.getUpicNo());
