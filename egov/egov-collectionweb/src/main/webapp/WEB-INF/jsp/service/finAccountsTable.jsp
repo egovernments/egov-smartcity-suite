@@ -79,6 +79,16 @@
 			
 			        
 		});
+
+		if(jQuery('#isviewmode'))
+		{
+			if(jQuery('#isviewmode').val()==="true")
+			{
+				accountsDetailTable.hideColumn('Add');
+				accountsDetailTable.hideColumn('Delete');
+			}
+		}
+		
 		<s:iterator value="accountDetails" status="stat">
 				accountsDetailTable.addRow({SlNo:accountsDetailTable.getRecordSet().getLength()+1,
 					"glcodeid":'<s:property value="glCodeId.id"/>',
@@ -138,6 +148,15 @@
 				}
 			}        
 		});
+		
+		if(jQuery('#isviewmode'))
+		{
+			if(jQuery('#isviewmode').val()==="true")
+			{
+				subLedgersTable.hideColumn('Add');
+				subLedgersTable.hideColumn('Delete');
+			}
+		}
 		<s:iterator value="subledgerDetails" status="stat">
 				subLedgersTable.addRow({SlNo:subLedgersTable.getRecordSet().getLength()+1,
 					"glcode":'<s:property value=".serviceAccountDetail.glCodeId.glcode"/>',

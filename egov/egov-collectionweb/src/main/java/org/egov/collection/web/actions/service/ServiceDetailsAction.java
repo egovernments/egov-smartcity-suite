@@ -337,12 +337,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     private boolean validateAccountDetails() {
         int index = 0;
         for (final ServiceAccountDetails account : accountDetails)
-            if (null != account.getGlCodeId() && null != account.getGlCodeId().getGlcode()
-                    && account.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-                addActionError(getText("service.accdetail.amountZero", new String[] { "" + ++index,
-                        account.getGlCodeId().getGlcode() }));
-                return Boolean.FALSE;
-            } else if (account.getAmount().compareTo(BigDecimal.ZERO) > 0
+            if (account.getAmount().compareTo(BigDecimal.ZERO) > 0
                     && (null == account.getGlCodeId() || null == account.getGlCodeId().getId())) {
                 addActionError(getText("service.accdetail.accmissing", new String[] { "" + ++index }));
                 return Boolean.FALSE;
