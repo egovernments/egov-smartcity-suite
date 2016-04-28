@@ -259,7 +259,7 @@ public class LineEstimateService {
                 .createAlias("lineEstimateDetails", "lineEstimateDetail");
         if (lineEstimateSearchRequest != null) {
             if (lineEstimateSearchRequest.getAdminSanctionNumber() != null)
-                criteria.add(Restrictions.eq("adminSanctionNumber", lineEstimateSearchRequest.getAdminSanctionNumber()));
+                criteria.add(Restrictions.eq("adminSanctionNumber", lineEstimateSearchRequest.getAdminSanctionNumber()).ignoreCase());
             if (lineEstimateSearchRequest.getBudgetHead() != null)
                 criteria.add(Restrictions.eq("budgetHead.id", lineEstimateSearchRequest.getBudgetHead()));
             if (lineEstimateSearchRequest.getExecutingDepartment() != null)
@@ -269,7 +269,7 @@ public class LineEstimateService {
             if (lineEstimateSearchRequest.getFund() != null)
                 criteria.add(Restrictions.eq("fund.id", lineEstimateSearchRequest.getFund().intValue()));
             if (lineEstimateSearchRequest.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("lineEstimateNumber", lineEstimateSearchRequest.getEstimateNumber()));
+                criteria.add(Restrictions.eq("lineEstimateNumber", lineEstimateSearchRequest.getEstimateNumber()).ignoreCase());
             if (lineEstimateSearchRequest.getAdminSanctionFromDate() != null)
                 criteria.add(Restrictions.ge("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
             if (lineEstimateSearchRequest.getAdminSanctionToDate() != null)

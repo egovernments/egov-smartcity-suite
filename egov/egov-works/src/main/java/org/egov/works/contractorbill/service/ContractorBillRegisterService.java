@@ -408,7 +408,7 @@ public class ContractorBillRegisterService {
                 criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforWIN));
             }
             if (searchRequestContractorBill.getContractorName() != null)
-                criteria.add(Restrictions.eq("cbrwocont.name", searchRequestContractorBill.getContractorName()));
+                criteria.add(Restrictions.eq("cbrwocont.name", searchRequestContractorBill.getContractorName()).ignoreCase());
             if (searchRequestContractorBill.getDepartment() != null) {
                 final List<String> estimateNumbers = lineEstimateService
                         .getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());

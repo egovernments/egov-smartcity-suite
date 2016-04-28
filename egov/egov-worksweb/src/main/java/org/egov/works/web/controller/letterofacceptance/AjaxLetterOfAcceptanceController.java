@@ -44,7 +44,6 @@ import java.util.List;
 
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
-import org.egov.works.letterofacceptance.entity.SearchResultLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.master.services.ContractorService;
 import org.egov.works.models.masters.Contractor;

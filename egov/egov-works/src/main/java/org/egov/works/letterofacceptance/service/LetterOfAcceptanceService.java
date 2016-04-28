@@ -203,18 +203,18 @@ public class LetterOfAcceptanceService {
                 .createAlias("egwStatus", "status");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()));
+                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getFromDate() != null)
                 criteria.add(Restrictions.ge("workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
             if (searchRequestLetterOfAcceptance.getToDate() != null)
                 criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
             if (searchRequestLetterOfAcceptance.getName() != null)
-                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()));
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getFileNumber() != null)
                 criteria.add(
                         Restrictions.ilike("fileNumber", searchRequestLetterOfAcceptance.getFileNumber(), MatchMode.ANYWHERE));
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()));
+                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
                 criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
             if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
@@ -239,17 +239,17 @@ public class LetterOfAcceptanceService {
 
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()));
+                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getFromDate() != null)
                 criteria.add(Restrictions.ge("workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
             if (searchRequestLetterOfAcceptance.getToDate() != null)
                 criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
             if (searchRequestLetterOfAcceptance.getName() != null)
-                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()));
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getFileNumber() != null)
-                criteria.add(Restrictions.eq("fileNumber", searchRequestLetterOfAcceptance.getFileNumber()));
+            criteria.add(Restrictions.ilike("fileNumber", searchRequestLetterOfAcceptance.getFileNumber(), MatchMode.ANYWHERE));
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()));
+                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
                 criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
             if (workOrderNumbers != null && !workOrderNumbers.isEmpty())
