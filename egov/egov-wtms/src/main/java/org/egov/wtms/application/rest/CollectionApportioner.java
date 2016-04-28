@@ -124,7 +124,9 @@ public class CollectionApportioner {
             receiptDetail.setOrdernumber(Long.valueOf(billDetail.getOrderNo()));
             receiptDetail.setDescription(billDetail.getDescription());
             receiptDetail.setIsActualDemand(true);
+            if(billDetail.getFunctionCode()!=null){
             receiptDetail.setFunction(functionDAO.getFunctionByCode(billDetail.getFunctionCode()));
+            }
             receiptDetail.setAccounthead(chartOfAccountsDAO.getCChartOfAccountsByGlCode(glCode));
             receiptDetail.setCramountToBePaid(balance.amount);
             receiptDetail.setDramount(BigDecimal.ZERO);
