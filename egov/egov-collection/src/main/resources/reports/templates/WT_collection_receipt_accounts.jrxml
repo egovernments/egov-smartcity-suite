@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-27T16:57:28 -->
+<!-- 2016-04-28T12:21:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="097af81c-f4bf-4e72-9596-ed5b89f2e492">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -62,7 +62,7 @@
 	<group name="REPORT_GROUP">
 		<groupExpression><![CDATA["DUMMY_GROUP"]]></groupExpression>
 		<groupFooter>
-			<band height="20">
+			<band height="22">
 				<printWhenExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)]]></printWhenExpression>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="280" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="dab8e3d3-0c4d-443d-9108-32f871812975"/>
@@ -93,12 +93,9 @@
 					<textFieldExpression><![CDATA[$V{totalAmount}]]></textFieldExpression>
 				</textField>
 			</band>
-			<band height="20">
-				<printWhenExpression><![CDATA[!$V{currentTotal}.equals(BigDecimal.ZERO)]]></printWhenExpression>
-			</band>
-			<band height="21">
+			<band height="39">
 				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="280" y="-19" width="275" height="19" uuid="54cdcec1-afd0-4a18-912e-7dbaaea065d7"/>
+					<reportElement stretchType="RelativeToTallestObject" x="280" y="-1" width="275" height="19" uuid="54cdcec1-afd0-4a18-912e-7dbaaea065d7"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -111,8 +108,22 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalAmount}.equals(BigDecimal.ZERO) ? "" : $V{totalAmount}]]></textFieldExpression>
 				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="19" width="555" height="20" uuid="c41b713e-90f0-472d-8b94-fa7faf2d1cf5"/>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Amount (in words): " + ReportUtil.amountInWords($V{totalAmount})]]></textFieldExpression>
+				</textField>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="-19" width="280" height="19" uuid="033523d4-d5ca-4a54-931b-184948b00d69"/>
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="-1" width="280" height="19" uuid="033523d4-d5ca-4a54-931b-184948b00d69"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -126,22 +137,7 @@
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 			</band>
-			<band>
-				<textField isStretchWithOverflow="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="-20" width="555" height="20" uuid="c41b713e-90f0-472d-8b94-fa7faf2d1cf5"/>
-					<box leftPadding="5" rightPadding="5">
-						<pen lineWidth="0.5"/>
-						<topPen lineWidth="0.5"/>
-						<leftPen lineWidth="0.5"/>
-						<bottomPen lineWidth="0.5"/>
-						<rightPen lineWidth="0.5"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Amount (in words): " + ReportUtil.amountInWords($V{totalAmount})]]></textFieldExpression>
-				</textField>
-			</band>
+			<band height="1"/>
 		</groupFooter>
 	</group>
 	<columnHeader>
