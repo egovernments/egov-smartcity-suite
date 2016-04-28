@@ -115,7 +115,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;

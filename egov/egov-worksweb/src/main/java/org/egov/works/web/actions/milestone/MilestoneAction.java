@@ -55,6 +55,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.milestone.Milestone;
@@ -307,7 +308,7 @@ public class MilestoneAction extends BaseFormAction {
         this.id = id;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         return milestoneWorkflowService.getValidActions(milestone);
     }
 

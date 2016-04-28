@@ -84,7 +84,7 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;

@@ -62,7 +62,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.workflow.Action;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.pims.commons.Designation;
@@ -585,8 +585,8 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
          budgetDetailWorkflowService = workflowService;
      }
 
-     public List<Action> getValidActions() {
-         List<Action> validButtons = null;
+     public List<WorkflowAction> getValidActions() {
+         List<WorkflowAction> validButtons = null;
          if (isReferenceBudget(getTopBudget())) {
              if (LOGGER.isInfoEnabled())
                  LOGGER.info("Budget is Reference budget hence cannot be saved to sent for approval");

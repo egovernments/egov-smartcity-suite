@@ -37,104 +37,112 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.workflow;
 
+package org.egov.infra.messaging.custom.entity;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Position;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import static org.egov.infra.messaging.custom.entity.NotificationGroup.SEQ_EG_NOTIFICATION_GROUP;
 
-import org.egov.infstr.models.BaseModel;
-import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.Length;
+@Entity
+@Table(name = "EG_NOTIFICATION_GROUP")
+@SequenceGenerator(name = SEQ_EG_NOTIFICATION_GROUP, sequenceName = SEQ_EG_NOTIFICATION_GROUP, allocationSize = 1)
+public class NotificationGroup extends AbstractAuditable {
 
-public class NotificationGroup extends BaseModel {
+    private static final long serialVersionUID = -6657657337034880987L;
 
-	private static final long serialVersionUID = 1L;
+    public static final String SEQ_EG_NOTIFICATION_GROUP = "SEQ_EG_NOTIFICATION_GROUP";
 
-	@Length(min = 1, max = 100, message = "err.grpname")
-	private String groupName;
-	@Length(max = 250, message = "err.grpdesc")
-	private String groupDesc;
-	@NotNull(message = "err.effdt")
+    @Id
+    @GeneratedValue(generator = SEQ_EG_NOTIFICATION_GROUP, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
+
+	@Length(min = 1, max = 100)
+    @SafeHtml
+	private String name;
+
+	@Length(max = 250)
+    @SafeHtml
+	private String description;
+
+	@NotNull
 	private Date effectiveDate;
-	private char active;
-	@Valid
+
+    private boolean active;
+
+    //Should think about using UserGroup rather than depending on EIS, when add this feature.
+    //It should be an many to many relation with notification_users table, contains group id and UserGroup id
+    @Transient
 	private Set<Position> members;
 
-	/**
-	 * @return the groupName
-	 */
-	public String getGroupName() {
-		return groupName;
+	@Override
+	protected void setId(Long id) {
+        this.id = id;
 	}
 
-	/**
-	 * @param groupName the groupName to set
-	 */
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
+	@Override
+	public Long getId() {
+		return id;
 	}
 
-	/**
-	 * @return the groupDesc
-	 */
-	public String getGroupDesc() {
-		return groupDesc;
+	public String getName() {
+		return this.name;
 	}
 
-	/**
-	 * @param groupDesc the groupDesc to set
-	 */
-	public void setGroupDesc(String groupDesc) {
-		this.groupDesc = groupDesc;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	/**
-	 * @return the effectiveDate
-	 */
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public Date getEffectiveDate() {
-		return effectiveDate;
+		return this.effectiveDate;
 	}
 
-	/**
-	 * @param effectiveDate the effectiveDate to set
-	 */
 	public void setEffectiveDate(Date effectiveDate) {
 		this.effectiveDate = effectiveDate;
 	}
 
-	/**
-	 * @return the members
-	 */
 	public Set<Position> getMembers() {
-		return members;
+		return this.members;
 	}
 
-	/**
-	 * @param members the members to set
-	 */
 	public void setMembers(Set<Position> members) {
 		this.members = members;
 	}
 
-	/**
-	 * @return the active
-	 */
-	public char getActive() {
-		return active;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	/**
-	 * @param active the active to set
-	 */
-	public void setActive(char active) {
-		this.active = active;
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
 	@Override
 	public String toString() {
-		return this.groupName;
+		return name;
 	}
 }

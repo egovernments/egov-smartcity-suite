@@ -71,6 +71,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -970,7 +971,7 @@ public class TenderNegotiationAction extends SearchFormAction {
         this.mode = mode;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         return workflowService.getValidActions(tenderResponse);
     }
 

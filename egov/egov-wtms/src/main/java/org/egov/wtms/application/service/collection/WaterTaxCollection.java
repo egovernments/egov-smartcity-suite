@@ -71,7 +71,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;

@@ -60,6 +60,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
@@ -239,7 +240,7 @@ public class ContractorAdvanceRequisitionAction extends BaseFormAction {
         }
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         return workflowService.getValidActions(contractorAdvanceRequisition);
     }
 

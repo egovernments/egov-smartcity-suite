@@ -62,7 +62,7 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;

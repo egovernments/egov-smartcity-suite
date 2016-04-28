@@ -40,6 +40,7 @@
 package org.egov.web.actions.budget;
 
 
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.ByteArrayInputStream;
@@ -81,7 +82,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
@@ -1263,8 +1263,8 @@ public class BudgetProposalAction extends BaseFormAction {
             return true;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
-        List<org.egov.infstr.workflow.Action> validButtons = null;
+    public List<WorkflowAction> getValidActions() {
+        List<WorkflowAction> validButtons = null;
         validButtons = budgetWorkflowService.getValidActions(getTopBudget());
         return validButtons;
 

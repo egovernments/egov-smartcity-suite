@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.workflow;
+
+package org.egov.infra.workflow.matrix.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;

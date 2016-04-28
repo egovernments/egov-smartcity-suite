@@ -85,7 +85,7 @@ import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.infstr.utils.NumberToWord;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBilldetails;

@@ -65,7 +65,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;

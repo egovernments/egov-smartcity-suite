@@ -97,7 +97,7 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;

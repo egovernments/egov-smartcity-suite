@@ -82,6 +82,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.Page;
@@ -851,7 +852,7 @@ public class WorkOrderAction extends BaseFormAction {
         return totalAmt;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         return workOrderWorkflowService.getValidActions(workOrder);
     }
 

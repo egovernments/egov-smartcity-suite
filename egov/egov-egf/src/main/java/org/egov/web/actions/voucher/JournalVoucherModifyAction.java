@@ -35,6 +35,7 @@ package org.egov.web.actions.voucher;
 
 
 
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infstr.services.PersistenceService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -389,8 +390,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     }
 
     @SkipValidation
-    public List<Action> getValidActions(final String purpose) {
-        final List<Action> validButtons = new ArrayList<Action>();
+    public List<WorkflowAction> getValidActions(final String purpose) {
+        final List<WorkflowAction> validButtons = new ArrayList<WorkflowAction>();
         final List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons", ScriptService.createContext(
                 "eisCommonServiceBean", eisCommonService, "userId", EgovThreadLocals.getUserId().intValue(), "date", new Date(),
                 "purpose", purpose));
@@ -398,8 +399,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         {
             if ("invalid".equals(s))
                 break;
-            final Action action = (Action) getPersistenceService().find(
-                    " from org.egov.infstr.workflow.Action where type='CVoucherHeader' and name=?", s.toString());
+            final WorkflowAction action = (WorkflowAction) getPersistenceService().find(
+                    " from WorkflowAction where type='CVoucherHeader' and name=?", s.toString());
             validButtons.add(action);
         }
         return validButtons;

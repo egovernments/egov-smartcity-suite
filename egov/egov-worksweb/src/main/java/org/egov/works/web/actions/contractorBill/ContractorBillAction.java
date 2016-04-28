@@ -98,6 +98,7 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
@@ -1847,7 +1848,7 @@ public class ContractorBillAction extends BaseFormAction {
         this.departmentService = departmentService;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         return workflowService.getValidActions(contractorBillRegister);
     }
 

@@ -37,27 +37,73 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.workflow;
 
-import org.egov.infstr.models.BaseModel;
+package org.egov.infra.workflow.entity;
 
-public class Action extends BaseModel {
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
 
-    private static final long serialVersionUID = 1L;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "EG_WF_ACTION")
+@SequenceGenerator(name = WorkflowAction.SEQ_WF_ACTION, sequenceName = WorkflowAction.SEQ_WF_ACTION, allocationSize = 1)
+@NamedQueries({
+        @NamedQuery(name = WorkflowAction.BY_NAME_AND_TYPE, query = "Select a from WorkflowAction as a where a.name=? and a.type=?"),
+        @NamedQuery(name = WorkflowAction.IN_NAMES_AND_TYPE, query = "Select a from WorkflowAction as a where a.type= ? and a.name in (:param_1)"),
+        @NamedQuery(name = WorkflowAction.BY_TYPE, query = "Select a from WorkflowAction as a where a.type=?") })
+public class WorkflowAction extends AbstractAuditable {
+
+    private static final long serialVersionUID = -7940804129929823917L;
     public static final String BY_NAME_AND_TYPE = "BY_NAME_AND_TYPE";
     public static final String IN_NAMES_AND_TYPE = "IN_NAMES_AND_TYPE";
+    public static final String BY_TYPE = "BY_TYPE";
 
+    public static final String SEQ_WF_ACTION = "SEQ_EG_WF_ACTION";
+
+    @Id
+    @GeneratedValue(generator = SEQ_WF_ACTION, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
+
+    @NotNull
+    @Length(min = 1, max = 255)
     private String name;
+
+    @NotNull
+    @Length(min = 1, max = 1024)
     private String description;
+
+    @NotNull
+    @Length(min = 1, max = 255)
     private String type;
 
-    private Action() {
+    protected WorkflowAction() {
     }
 
-    public Action(final String name, final String type, final String description) {
+    public WorkflowAction(final String name, final String type, final String description) {
         this.name = name;
         this.type = type;
         this.description = description;
+    }
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -72,15 +118,15 @@ public class Action extends BaseModel {
         return type;
     }
 
-    protected void setName(String name) {
+    protected void setName(final String name) {
         this.name = name;
     }
 
-    protected void setDescription(String description) {
+    protected void setDescription(final String description) {
         this.description = description;
     }
 
-    protected void setType(String type) {
+    protected void setType(final String type) {
         this.type = type;
     }
 }

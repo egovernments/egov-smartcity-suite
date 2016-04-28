@@ -70,7 +70,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.Money;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;

@@ -49,8 +49,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_APPROVED;
@@ -67,7 +65,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSPECTOR_REJECTED;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -76,8 +73,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -88,7 +83,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -96,7 +91,6 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;

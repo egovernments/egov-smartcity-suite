@@ -48,10 +48,10 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
-import org.egov.infstr.workflow.Action;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
@@ -73,7 +73,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SimpleWorkflowService<T extends StateAware> implements WorkflowService<T> {
 
     private final PersistenceService<T, Long> stateAwarePersistenceService;
-    private PersistenceService<Action, Long> actionPersistenceService;
+    private PersistenceService<WorkflowAction, Long> actionPersistenceService;
     
     @Autowired
     private ScriptService scriptService;
@@ -82,13 +82,13 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         this.stateAwarePersistenceService = stateAwarePersistenceService;
     }
 
-    public void setActionPersistenceService(final PersistenceService<Action, Long> actionPersistenceService) {
+    public void setActionPersistenceService(final PersistenceService<WorkflowAction, Long> actionPersistenceService) {
         this.actionPersistenceService = actionPersistenceService;
     }
 
     @Override
-    public T transition(final Action action, final T stateAware, final String comments) {
-        scriptService.executeScript(getScript(stateAware, action.getName()), ScriptService.createContext("action", this,
+    public T transition(final WorkflowAction workflowAction, final T stateAware, final String comments) {
+        scriptService.executeScript(getScript(stateAware, workflowAction.getName()), ScriptService.createContext("action", this,
                 "wfItem", stateAware, "persistenceService", this.stateAwarePersistenceService, "workflowService", this,
                 "comments", comments));
         return this.stateAwarePersistenceService.persist(stateAware);
@@ -96,24 +96,24 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
     @Override
     public T transition(final String actionName, final T stateAware, final String comment) {
-        final List<Action> actions = this.actionPersistenceService.findAllByNamedQuery(Action.BY_NAME_AND_TYPE,
+        final List<WorkflowAction> workflowActions = this.actionPersistenceService.findAllByNamedQuery(WorkflowAction.BY_NAME_AND_TYPE,
                 actionName, stateAware.getStateType());
-        Action action = new Action(actionName, stateAware.getStateType(), actionName);
-        if (!actions.isEmpty())
-            action = actions.get(0);
-        return transition(action, stateAware, comment);
+        WorkflowAction workflowAction = new WorkflowAction(actionName, stateAware.getStateType(), actionName);
+        if (!workflowActions.isEmpty())
+            workflowAction = workflowActions.get(0);
+        return transition(workflowAction, stateAware, comment);
     }
 
     @Override
-    public List<Action> getValidActions(final T stateAware) {
+    public List<WorkflowAction> getValidActions(final T stateAware) {
         final String scriptName = stateAware.getStateType() + ".workflow.validactions";
         final Script trasitionScript = this.scriptService.getByName(scriptName);
         final List<String> actionNames = (List<String>) scriptService.executeScript(trasitionScript,
                 ScriptService.createContext("wfItem", stateAware, "workflowService", this, "persistenceService",
                         this.stateAwarePersistenceService));
-        final List<Action> savedActions = this.actionPersistenceService.findAllByNamedQuery(Action.IN_NAMES_AND_TYPE,
+        final List<WorkflowAction> savedWorkflowActions = this.actionPersistenceService.findAllByNamedQuery(WorkflowAction.IN_NAMES_AND_TYPE,
                 stateAware.getStateType(), actionNames);
-        return savedActions.isEmpty() ? createActions(stateAware, actionNames) : savedActions;
+        return savedWorkflowActions.isEmpty() ? createActions(stateAware, actionNames) : savedWorkflowActions;
     }
 
     public Object execute(final T stateAware) {
@@ -143,11 +143,11 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         return script;
     }
 
-    private List<Action> createActions(final T stateAware, final List<String> actionNames) {
-        final List<Action> actions = new ArrayList<Action>();
+    private List<WorkflowAction> createActions(final T stateAware, final List<String> actionNames) {
+        final List<WorkflowAction> workflowActions = new ArrayList<WorkflowAction>();
         for (final String action : actionNames)
-            actions.add(new Action(action, stateAware.getStateType(), action));
-        return actions;
+            workflowActions.add(new WorkflowAction(action, stateAware.getStateType(), action));
+        return workflowActions;
     }
 
     @Override

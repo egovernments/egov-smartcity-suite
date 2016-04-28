@@ -76,7 +76,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;

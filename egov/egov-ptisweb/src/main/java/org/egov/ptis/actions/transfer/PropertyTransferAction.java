@@ -41,7 +41,6 @@ package org.egov.ptis.actions.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
@@ -100,7 +99,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;

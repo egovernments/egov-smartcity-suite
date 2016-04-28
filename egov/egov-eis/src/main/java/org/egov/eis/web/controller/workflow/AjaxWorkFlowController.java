@@ -50,7 +50,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.infstr.workflow.CustomizedWorkFlowService;
+import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

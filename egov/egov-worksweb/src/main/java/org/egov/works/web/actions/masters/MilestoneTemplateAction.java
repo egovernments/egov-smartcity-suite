@@ -55,6 +55,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
@@ -316,7 +317,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
         this.id = id;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         return milestoneTemplateWorkflowService.getValidActions(template);
     }
 

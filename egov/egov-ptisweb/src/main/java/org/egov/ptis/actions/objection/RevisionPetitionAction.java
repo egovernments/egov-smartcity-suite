@@ -120,7 +120,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;

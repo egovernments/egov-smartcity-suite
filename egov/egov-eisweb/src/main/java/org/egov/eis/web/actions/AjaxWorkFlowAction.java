@@ -54,8 +54,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.workflow.CustomizedWorkFlowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 

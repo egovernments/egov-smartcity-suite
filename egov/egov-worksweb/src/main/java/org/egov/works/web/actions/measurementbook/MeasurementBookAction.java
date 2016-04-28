@@ -68,6 +68,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.utils.DateUtils;
@@ -920,7 +921,7 @@ public class MeasurementBookAction extends BaseFormAction {
     }
 
     // on jan 13 th workflow related
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         return workflowService.getValidActions(mbHeader);
     }
 

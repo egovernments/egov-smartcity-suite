@@ -47,8 +47,8 @@ import java.util.List;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.workflow.CustomizedWorkFlowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 
 /**
  * Generic WorkFlow Action. Can be extended by any action class that intends to provide Work flow functionality.

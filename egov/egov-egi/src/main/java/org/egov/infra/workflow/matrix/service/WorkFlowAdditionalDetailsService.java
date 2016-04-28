@@ -37,13 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.workflow;
+
+package org.egov.infra.workflow.matrix.service;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;

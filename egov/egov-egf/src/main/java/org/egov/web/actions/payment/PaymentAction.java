@@ -84,7 +84,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.Miscbilldetail;
