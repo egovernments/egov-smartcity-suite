@@ -833,11 +833,10 @@ public class PropertyTaxUtil {
     public static Installment getCurrentInstallment() {
         final Query query = HibernateUtil
                 .getCurrentSession()
-                .createQuery(
-                        "from Installment I where I.module.name = :moduleName and (I.fromDate <= :fromYear and I.toDate >=:toYear)");
+                .createQuery("select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
+                + " and installment.fromDate >= finYear.startingDate and cast(installment.toDate as date) <= finYear.endingDate order by installment.id ");
         query.setString("moduleName", PropertyTaxConstants.PTMODULENAME);
-        query.setDate("fromYear", new Date());
-        query.setDate("toYear", new Date());
+        query.setDate("currDate", new Date());
         return (Installment) query.list().get(0);
     }
 
@@ -2492,8 +2491,8 @@ public class PropertyTaxUtil {
             final String toDemand, final Integer limit,final String ownerShipType) {
         final StringBuffer query = new StringBuffer(300);
         query.append("select pmv from PropertyMaterlizeView pmv where pmv.propertyId is not null and pmv.isActive = true and pmv.isExempted=false ");
-        String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + (pmv.aggrCurrDmd - pmv.aggrCurrColl)) ";
-        String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + (pmv.aggrCurrDmd - pmv.aggrCurrColl))!=0 ";
+        String arrearBalanceCond = " ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl))) ";
+        String arrearBalanceNotZeroCond = " and ((pmv.aggrArrDmd - pmv.aggrArrColl) + ((pmv.aggrCurrFirstHalfDmd + pmv.aggrCurrSecondHalfDmd) - (pmv.aggrCurrFirstHalfColl + pmv.aggrCurrSecondHalfColl)))!=0 ";
         String orderByClause = " order by ";
         query.append(arrearBalanceNotZeroCond);
         if(StringUtils.isNotBlank(fromDemand) && StringUtils.isBlank(toDemand)){
@@ -2562,6 +2561,16 @@ public class PropertyTaxUtil {
         if (rebatePeriod != null && today.before(rebatePeriod.getRebateDate()))
             isActive = true;
         return isActive;
+    }
+    
+    public Date getEffectiveDateForProperty() {
+        Module module = moduleDao.getModuleByName(PTMODULENAME);
+        Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date()).getToDate();
+        Date dateBefore6Installments = new Date();
+        dateBefore6Installments.setDate(1);
+        dateBefore6Installments.setMonth(currInstToDate.getMonth() + 1);
+        dateBefore6Installments.setYear(currInstToDate.getYear() - 3);
+        return dateBefore6Installments;
     }
     
 }
