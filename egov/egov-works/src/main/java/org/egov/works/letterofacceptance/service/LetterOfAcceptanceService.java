@@ -46,6 +46,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -61,7 +62,6 @@ import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorksService;
@@ -327,5 +327,80 @@ public class LetterOfAcceptanceService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
+    
+    public List<String> findLoaWorkOrderNumberForMilestone(final String workOrderNumber) {
+        final List<WorkOrder> workorders = letterOfAcceptanceRepository
+                .findByWorkOrderNumberContainingIgnoreCaseAndEgwStatus_codeEquals(workOrderNumber, WorksConstants.APPROVED);
+        final List<String> results = new ArrayList<String>();
+        for (final WorkOrder details : workorders)
+            results.add(details.getWorkOrderNumber());
+        return results;
+    }
+    
+    public List<String> findWorkIdentificationNumbersToCreateMilestone(final String code) {
+        final List<String> workIdNumbers = letterOfAcceptanceRepository
+                .findWorkIdentificationNumberToCreateMilestone("%" + code + "%");
+        return workIdNumbers;
+    }
+    
+    public List<WorkOrder> getLoaForCreateMilestone(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final StringBuilder queryStr = new StringBuilder(500);
+        
+            buildWhereClause(searchRequestLetterOfAcceptance, queryStr);
+            final Query query = setParameterForMilestone(searchRequestLetterOfAcceptance, queryStr);
+            final List<WorkOrder> workOrderList = query.getResultList();
+            return workOrderList;      
+    }
+    
+    private void buildWhereClause(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
+        queryStr.append("select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status ");
+        queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.executingDepartment.id = :departmentName)");
+        
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
+            queryStr.append(" and wo.estimateNumber = (select led.estimateNumber from LineEstimateDetails led where led.projectCode = (select po.id from ProjectCode po where upper(po.code) = :workIdentificationNumber))");
 
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getEstimateNumber()))
+            queryStr.append(" and upper(wo.estimateNumber) = :estimateNumber");
+           
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkOrderNumber()))
+            queryStr.append(" and upper(wo.workOrderNumber) = :workOrderNumber");
+
+        if (searchRequestLetterOfAcceptance.getTypeOfWork() != null)
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.typeOfWork = :typeOfWork)");
+
+        if (searchRequestLetterOfAcceptance.getSubTypeOfWork() != null)
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.subTypeOfWork = subTypeOfWork)");
+        
+        if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.adminSanctionDate >= :adminSanctionFromDate)");
+
+        if (searchRequestLetterOfAcceptance.getAdminSanctionToDate() != null)
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.adminSanctionDate <= :adminSanctionFromDate)");
+    
+    }
+
+    private Query setParameterForMilestone(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+            qry.setParameter("status", WorksConstants.APPROVED);
+            qry.setParameter("moduleType", WorksConstants.WORKORDER);
+        if (searchRequestLetterOfAcceptance != null ) {
+            qry.setParameter("departmentName", searchRequestLetterOfAcceptance.getDepartmentName());
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
+            qry.setParameter("workIdentificationNumber", searchRequestLetterOfAcceptance.getWorkIdentificationNumber().toUpperCase());
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getEstimateNumber()))
+            qry.setParameter("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber().toUpperCase());
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkOrderNumber()))
+            qry.setParameter("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber().toUpperCase());
+        if (searchRequestLetterOfAcceptance.getTypeOfWork() != null)
+            qry.setParameter("typeOfWork", searchRequestLetterOfAcceptance.getTypeOfWork());
+        if (searchRequestLetterOfAcceptance.getSubTypeOfWork() != null)
+            qry.setParameter("subTypeOfWork", searchRequestLetterOfAcceptance.getSubTypeOfWork());
+        if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
+            qry.setParameter("adminSanctionFromDate", searchRequestLetterOfAcceptance.getAdminSanctionFromDate());
+        if (searchRequestLetterOfAcceptance.getAdminSanctionToDate() != null)
+            qry.setParameter("adminSanctionToDate", searchRequestLetterOfAcceptance.getAdminSanctionToDate());
+
+        }
+        return qry;
+    }
 }
