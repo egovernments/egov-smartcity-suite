@@ -314,5 +314,13 @@
         <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/application-process-master-list.jsp"/>
     </definition>
+     <definition name="meter-cost-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.meterCost.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/meter-cost-master.jsp"/>
+    </definition>
+    <definition name="meter-cost-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.meterCost.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/meter-cost-master-list.jsp"/>
+    </definition>
    
 </tiles-definitions>

@@ -43,53 +43,62 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<form:form method="post" action="" class="form-horizontal form-groups-bordered" id="pipesize-view" 
+<form:form method="post" action="" class="form-horizontal form-groups-bordered" id="metrCost-view" 
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<input type="hidden" name="pipeSizeList" id="pipeSizeList" value="${pipeSizeList}">
-	<input type="hidden" id="pipesizeid" name="pipesizeid" value="${pipeSize.id}" />
+	<input type="hidden" name="meterCostList" id="meterCostList" value="${meterCostList}">
+	<input type="hidden" id="metercostid" name="metercostid" value="${meterCost.id}" />
+
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-body custom-form ">
-				<c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
-                </c:if>
+			<c:if test="${not empty message}">
+                <div class="alert alert-success" role="alert">${message}</div>
+             </c:if>
 			<c:choose>
-				<c:when test="${pipeSizeList.isEmpty()}">
+				<c:when test="${meterCostList.isEmpty()}">
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
 				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
 					<thead>
 						<tr>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.code" /></div>
+							<th colspan="1"  width ="10">
+								<div align="center"><spring:message code="lbl.hscpipesize" /> </div>
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.hscpipesize.mm" /></div>
+							<th align="center" width="10">
+								<div align="center"><spring:message code="lbl.makeofthemeter" /> </div>
 							</th>
-							<th align="center" colspan="1">
+							<th align="center" width="5">
+								<div align="center"><spring:message code="lbl.metercost" /></div>
+							</th>
+							<th  colspan="1" width ="25">
 								<div align="center"><spring:message code="lbl.status"/></div>
 							</th>
-							<th colspan="1">
+							<th align="center" width="8">
 								<div align="center"><spring:message code="lbl.edit" /></div>
 							</th>
 						</tr>
 					</thead>
-					<c:forEach var="pipeSize" items="${pipeSizeList}">
+					<c:forEach var="meterCost" items="${meterCostList}">
 						<tr>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${pipeSize.code}" />
+									<c:out value="${meterCost.pipeSize.sizeInInch}" />
 								</div>
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${pipeSize.sizeInMilimeter}" />
+									<c:out value="${meterCost.meterMake}" />
+								</div>
+							</td>
+							<td colspan="1">
+								<div align="center">
+									<c:out value="${meterCost.amount}" />
 								</div>
 							</td>
 							<td colspan="1">
 								<div align="center">
 								<c:choose>
-									<c:when test="${pipeSize.active == 'true'}">
+									<c:when test="${meterCost.active == 'true'}">
 										<c:out value="ACTIVE" />
 									</c:when> 
 									<c:otherwise>
@@ -100,7 +109,7 @@
 							</td>
 							<td colspan="1">
 								<div align="center">
-									<a href="javascript:void(0);" onclick="edit('<c:out value="${pipeSize.id}" />');">Edit</a>
+									<a href="javascript:void(0);" onclick="edit('<c:out value="${meterCost.id}" />');">Edit</a>
 								</div>
 							</td>
 						</tr>
@@ -115,9 +124,11 @@
 		</div>
 	</div>
 </form:form>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>" type="text/javascript"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>" type="text/javascript"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>" type="text/javascript"></script>
-<script src="<c:url value='/resources/js/app/pipe-size-master.js?rnd=${app_release_no}'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
+	            type="text/javascript"></script>
+                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+	            type="text/javascript"></script>
+                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
+	            type="text/javascript"></script>
+	            <script src="<c:url value='/resources/js/app/meter-cost-master.js?rnd=${app_release_no}'/>"></script>

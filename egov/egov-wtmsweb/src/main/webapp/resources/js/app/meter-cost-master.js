@@ -41,48 +41,42 @@ $(document).ready(function(){
 	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false'){
+	if (activeDiv =='false')
+		{
 		$('#statusdiv').hide();
 	     $('#addnewid').hide();
 		}
 	
-	else if(activeDiv =='true'){
+	else if(activeDiv=='true')
+		{
 		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
 	$("#resetid").click(function(){
-		$("#pipesizeform")[0].reset();
-		window.open("/wtms/masters/pipesizeMaster/", "_self");
-		})
-	$( "#pipesizeid" ).focusout(function() {
+		$("#meterCostform")[0].reset();
+		window.open("/wtms/masters/meterCostMaster/", "_self");
+		});
+
+	$( "#meterMark" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
-	    if(textValue ==0 || textValue =='' ){
-	       $.trim($(this).val('')); //to set it blank
+	    if(textValue =='' ){
+	    	$.trim($(this).val('')); //to set it blank
 	    } else {
+	    	 
 	       return true;
 	    }
 	});
-	$('#pipesizeid').blur(function(){
-		textValue =  $.trim($(this).val());
-		 if(textValue !=0 || textValue !='' ){
-			var pipeSizeInInch = textValue * 0.039370;
-			result = parseFloat(pipeSizeInInch).toFixed(3);
-			$("#pipesizeInInch").val(result);
-		 }
-	});
-	$("#pipesizeInInch").attr('disabled','disabled');
-	
 	
  });
 $('#buttonid').click(function() {
-	  if ($( "#pipesizeform" ).valid())
+	  if ($( "#meterCostform" ).valid())
 		  {
-		  var val = parseFloat($('#pipesizeid').val());
+		  var val = parseFloat($('#amountid').val());
 		  if (isNaN(val) || (val === 0)  )
 		  {
-			  bootbox.alert("Please Enter sizeInMilimeter");
+			  bootbox.alert("Please Enter Meter Cost");
 		      return false;
 		    } 
 		  else{
@@ -91,22 +85,23 @@ $('#buttonid').click(function() {
 			}
 		  }
 });
-	
 $('#listid').click(function() {
-	 window.open("/wtms/masters/pipesizeMaster/list", "_self");
-	});
+	window.open("/wtms/masters/meterCostMaster/list", "_self");
+ });
+
+
 
 $('#addnewid').click(function() {
-	window.open("/wtms/masters/pipesizeMaster/", "_self");
+	window.open("/wtms/masters/meterCostMaster/", "_self");
 });
 
 function addNew()
 {
-	window.open("/wtms/masters/pipesizeMaster/", "_self");
+	window.open("/wtms/masters/meterCostMaster/", "_self");
 }
 
-function edit(pipeSize)
+function edit(meterCost)
 {
-	window.open("/wtms/masters/pipesizeMaster/"+pipeSize, "_self");
+	window.open("/wtms/masters/meterCostMaster/"+meterCost, "_self");
 	
 }
