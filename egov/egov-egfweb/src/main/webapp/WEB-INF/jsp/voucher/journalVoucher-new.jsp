@@ -222,12 +222,12 @@
 	function onSubmit()
 	{
 		if(validateJV()){
-				document.jvcreateform.action='/EGF/voucher/journalVoucher-create.action';
-	    		document.jvcreateform.submit();
+			document.jvcreateform.action='/EGF/voucher/journalVoucher-create.action';
+	    	return true;
 				
-			}else{
-				return false;
-				}
+		}else{
+			return false;
+		}
 	}
 	function validateJV()
 	{

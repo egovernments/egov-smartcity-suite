@@ -431,22 +431,17 @@ function onSubmit()
 		return false;
 	}
 	else if(!balanceCheck()){
-		bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
-			  if(result)
-				  {
-				  	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-					document.dbpform.submit();
-				  }
-			  else
-				  {
-				  console.log("else");
-				  }
-			}); 
+		 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+		 if (msg == true) {
+		   	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+			return true;
+		 } else {
+		   	return false;
+		  } 
 	}else{
 		document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
 		return true;
 		}
-	return false;
 }
 </SCRIPT>
 </body>

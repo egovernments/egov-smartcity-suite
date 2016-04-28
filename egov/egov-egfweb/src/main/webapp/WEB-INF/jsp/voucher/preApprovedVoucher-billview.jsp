@@ -92,7 +92,7 @@ function onSubmit()
 	var voucherdate =document.getElementById('voucherDate').value ;
 	if(voucherdate!=null && voucherdate!=""){
 		document.preApprovedVoucher.action='${pageContext.request.contextPath}/voucher/preApprovedVoucher-save.action';
-		document.preApprovedVoucher.submit();
+		return true;
 	}else{
 		bootbox.alert("Please select voucher date");
 		return false;
@@ -131,7 +131,8 @@ jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
 									class="mandatory1">*</span></td>
 								<td class="greybox" width="25%">
 									<div name="daterow">
-									<s:date name="voucherDate" id="voucherDateId" format="dd/MM/yyyy"/>
+										<s:date name="voucherDate" id="voucherDateId"
+											format="dd/MM/yyyy" />
 										<s:textfield id="voucherDate" name="voucherDate"
 											data-date-end-date="0d" value="%{voucherDateId}"
 											onkeyup="DateFormat(this,this.value,event,false,'3')"

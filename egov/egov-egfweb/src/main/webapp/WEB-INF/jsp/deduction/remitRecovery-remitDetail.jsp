@@ -45,13 +45,15 @@
 
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
-<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet"
-	type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css?rnd=${app_release_no}" rel="stylesheet"
-	type="text/css" />
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}"
+	rel="stylesheet" type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css?rnd=${app_release_no}"
+	rel="stylesheet" type="text/css" />
+<link rel="stylesheet"
+	href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
 	TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <title><s:text name="remit.recovery.create.title" /></title>
@@ -214,21 +216,18 @@ function onSubmit()
 		// re-disabled the set of inputs that you previously
 		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
 		 if(!balanceCheck()){
-				bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
-					if(result)
-					  {
-						document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
-						document.remittanceForm.submit();
-					  }
-				  else
-					  {
-					  console.log("else");
-					  }
-					}); 
-			}else{
-				document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
-				document.remittanceForm.submit();
-				}
+
+			 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+			 if (msg == true) {
+				 document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+				return true;
+			 } else {
+			   	return false;
+			}
+		}else{
+			document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+			return true;
+		}
 		
 	}
 		return false;
