@@ -68,7 +68,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-    @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -91,6 +91,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private CollectionsUtil collectionsUtil;
     private Integer branchId;
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
+    private Boolean isListData = false;
 
     // Added for Manual Work Flow
     private Integer positionUser;
@@ -107,23 +108,9 @@ public class BankRemittanceAction extends BaseFormAction {
         this.collectionsUtil = collectionsUtil;
     }
 
-    @Override
-    public String execute() throws Exception {
-        return list();
-    }
-
+    @Action(value = "/receipts/bankRemittance-newform")
     public String newform() {
-        return NEW;
-    }
-
-    @Action(value = "/receipts/bankRemittance-list")
-    public String list() {
         populateBankAccountList();
-        final long startTimeMillis = System.currentTimeMillis();
-        paramList = receiptHeaderService.findAllRemitanceDetails(getJurisdictionBoundary());
-        final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-
-        LOGGER.info("$$$$$$ Time taken to populate the remittance list (ms) = " + elapsedTimeMillis);
         return NEW;
     }
 
@@ -159,6 +146,7 @@ public class BankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/bankRemittance-listData")
     public String listData() {
+        isListData = true;
         populateBankAccountList();
         final String serviceFundQueryStr = "select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
@@ -222,11 +210,9 @@ public class BankRemittanceAction extends BaseFormAction {
         accountNumber = (BigInteger) queryResults;
         accountNumberId = accountNumber != null ? accountNumber.intValue() : accountNumberId;
         if (accountNumber == null || accountNumber.equals(-1) || accountNumber != null
-                && accountNumber.intValue() != accountNumberId) {
-            list();
+                && accountNumber.intValue() != accountNumberId)
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
-        }
         voucherHeaderValues = receiptHeaderService.createBankRemittance(getServiceNameArray(),
                 getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
                 getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
@@ -447,6 +433,14 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setAccountNumberId(final Integer accountNumberId) {
         this.accountNumberId = accountNumberId;
+    }
+
+    public Boolean getIsListData() {
+        return isListData;
+    }
+
+    public void setIsListData(Boolean isListData) {
+        this.isListData = isListData;
     }
 
 }
