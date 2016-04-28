@@ -39,57 +39,70 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-		$('#statusdiv').hide();
-		var activeDiv = $('#reqAttr').val();
-		if (activeDiv =='false')
-			{
-			$('#statusdiv').hide();
-		     $('#addnewid').hide();
-			}
-		
-		else if(activeDiv=='true')
-			{
-			$('#resetid').hide();
-			$('#statusdiv').show();
-			 $('#addnewid').show();
-			}
-		
-		
-		$("#resetid").click(function(){
-			$("#applicationProcessTimeform")[0].reset();
-			window.open("/wtms/masters/applicationProcessTime/", "_self");
-			})
-	
-});
-$('#buttonid').click(function() {
-	  if ($( "#applicationProcessTimeform" ).valid())
+	$('#statusdiv').hide();
+	var activeDiv = $('#reqAttr').val();
+	if (activeDiv =='false')
 		{
-		  $.ajax({
-        url: '/wtms/ajax-getapplicationprocesstime',
-        type: "GET",
-        data: {
-        	applicationType: $('#applicationType').val(),
-        	categoryType: $('#connectionCategorie').val(),
-        },
-        dataType : 'json',
-        success: function (response) {
+		$('#statusdiv').hide();
+	    $('#addnewid').hide();
+	    $('#buttonid').click(function() {
+	   	applicationValidation();
+	    });
+		}
+	
+	else if(activeDiv=='true')
+		{
+		$('#resetid').hide();
+		$('#statusdiv').show();
+		$('#addnewid').show();
+		
+		$("#buttonid").click(function(){
+			if ($( "#applicationProcessTimeform" ).valid()){
+				document.forms[0].submit();
+				return true;
+			}
+			})
+		
+		
+		}
+	
+	
+	$("#resetid").click(function(){
+		$("#applicationProcessTimeform")[0].reset();
+		window.open("/wtms/masters/applicationProcessTime/", "_self");
+		})
+
+});
+
+
+function applicationValidation(){
+	 if ($( "#applicationProcessTimeform" ).valid())
+		{
+		 $.ajax({
+     url: '/wtms/ajax-getapplicationprocesstime',
+     type: "GET",
+     data: {
+     	applicationType: $('#applicationType').val(),
+     	categoryType: $('#connectionCategorie').val(),
+     },
+     dataType : 'json',
+     success: function (response) {
 			console.log("success"+response);
 			if(response > 0){
 				var res = overwriteprocesstime(response)
 				if(res==false)
 				return false;
-    			}
+ 			}
 			else{
-				 document.forms[0].submit();
-				 return true;
+				document.forms[0].submit();
+				return true;
 			}
 		},error: function (response) {
 			console.log("failed");
 		}
 	});
 		}
-    });
-	
+}
 
 function overwriteprocesstime(res)
 {
