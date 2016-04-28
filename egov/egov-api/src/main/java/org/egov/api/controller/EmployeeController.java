@@ -44,29 +44,36 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.egov.api.adapter.ForwardDetailsAdapter;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
+import org.egov.api.model.ForwardDetails;
 import org.egov.api.model.InboxItem;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
@@ -90,6 +97,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
@@ -120,6 +128,9 @@ public class EmployeeController extends ApiController {
     InboxRenderServiceDeligate<StateAware> inboxRenderServiceDelegate;
     @Autowired
     private ComplaintService complaintService;
+    
+    @Autowired
+    private EISServeable eisService;
 
     @RequestMapping(value = ApiUrl.EMPLOYEE_INBOX_LIST_WFT_COUNT, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getWorkFlowTypesWithItemsCount(final HttpServletRequest request) {
@@ -171,6 +182,37 @@ public class EmployeeController extends ApiController {
         } catch (final Exception ex) {
             LOGGER.error("EGOV-API ERROR ", ex);
             return ApiResponse.newInstance().error(getMessage("server.error"));
+        }
+    }
+    
+    @RequestMapping(value = ApiUrl.EMPLOYEE_FORWARD_DEPT_DESIGNATION_USER, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getForwardDetails(@RequestParam(value = "department", required = true) Integer departmentId, @RequestParam(value = "designation", required = false) Integer designationId) {
+        try {
+        	
+        	ForwardDetails forwardDetails=new ForwardDetails();
+        	
+        	//identify requesting for users or designations with this if condition
+        	if(departmentId!=null && designationId!=null)
+        	{
+        		final Set<User> users = new HashSet<>();
+                eisService.getUsersByDeptAndDesig(departmentId, designationId, new Date()).stream().forEach(user -> {
+                    user.getRoles().stream().forEach(role -> {
+                        if (role.getName().matches("Redressal Officer|Grievance Officer|Grievance Routing Officer"))
+                            users.add(user);
+                    });
+                });
+                forwardDetails.setUsers(users);
+        	}
+        	else if(departmentId!=null)
+        	{
+        		forwardDetails.setDesignations(eisService.getAllDesignationByDept(departmentId, new Date()));
+        	}
+        	        	
+            return getResponseHandler().setDataAdapter(new ForwardDetailsAdapter()).success(forwardDetails);
+            
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
         }
     }
 

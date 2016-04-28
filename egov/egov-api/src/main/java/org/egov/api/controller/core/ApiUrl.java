@@ -103,6 +103,12 @@ public class ApiUrl {
 	
 	public final static String EMPLOYEE_INBOX_LIST_FILTER_BY_WFT = "/employee/inbox/{workFlowType}/{resultsFrom}/{resultsTo}";
 	
+	public final static String EMPLOYEE_COMPLAINT_ACTIONS = "/employee/complaint/{complaintNo}/complaintActions";
+	
+	public final static String EMPLOYEE_FORWARD_DEPT_DESIGNATION_USER = "/employee/forwardDetails";
+	
+	public final static String EMPLOYEE_UPDATE_COMPLAINT = "/employee/complaint/update/{complaintNo}";
+	
 	public final static String EMPLOYEE_LOGOUT = "/employee/logout";
 	
 }
