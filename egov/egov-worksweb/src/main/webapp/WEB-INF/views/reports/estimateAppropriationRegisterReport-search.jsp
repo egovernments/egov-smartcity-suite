@@ -49,7 +49,7 @@
 	<div id="errorMessage" style="display: none;">
 		<spring:message code="error.lineestimate.loa.search" />
 	</div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="report-table-container">
 		<table
 			class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">
@@ -71,17 +71,9 @@
 			<tbody>
 			<tfoot id="report-footer">
 				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>Latest status</td>
-					<td></td>
-					<td></td>
+					<td colspan="9"><div class="text-right">Latest status</div></td>
+					<td ></td>
+					<td ></td>
 				</tr>
 			</tfoot>
 			</tbody>

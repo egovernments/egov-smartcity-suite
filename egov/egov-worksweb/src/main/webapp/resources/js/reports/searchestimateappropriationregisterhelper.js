@@ -158,8 +158,8 @@ function callAjaxSearch() {
 								jQuery('#report-footer').show(); 
 							}
 							if (data.length > 0) {
-								$('td:eq(9)',row).html(parseFloat(Math.round(data[0].cumulativeExpensesIncurred * 100) / 100).toFixed(2));
-								$('td:eq(10)',row).html(parseFloat(Math.round(data[0].actualBalanceAvailable * 100) / 100).toFixed(2));
+								$('td:eq(1)',row).html(parseFloat(Math.round(data[0].cumulativeExpensesIncurred * 100) / 100).toFixed(2));
+								$('td:eq(2)',row).html(parseFloat(Math.round(data[0].actualBalanceAvailable * 100) / 100).toFixed(2));
 							}
 						},
 						"aoColumnDefs" : [ {
