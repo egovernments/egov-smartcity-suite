@@ -48,9 +48,9 @@
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
  
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/fonts/fonts-min.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/datatable/assets/skins/sam/datatable.css'/>"/>	
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/assets/skins/sam/autocomplete.css'/>" />	
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 
@@ -64,32 +64,34 @@ body
 
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
 
-<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script> 
-<script type="text/javascript" src="/egi/commonyui/yui2.8/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/animation/animation-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/container/container_core-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/menu/menu-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/button/button-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/editor/editor-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/autocomplete/autocomplete-min.js" ></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script>  
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/dragdrop/dragdrop-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/element/element-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/connection/connection-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/datasource/datasource-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/datatable/datatable-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/animation/animation-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/container/container_core-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/menu/menu-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/button/button-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/editor/editor-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/autocomplete/autocomplete-min.js'/>" ></script>
 
-<script type="text/javascript" src="<egov:url path='/resources/js/helper.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/commonjs/calendar.js' context='/egi'/>" ></script>
-<script type="text/javascript" src="<c:url value='/javascript/calender.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/javascript/validations.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/helper.js?${app_release_no}'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/erp2/js/calendar.js?${app_release_no}'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/erp2/js/calender.js?${app_release_no}'/>"></script> 
+<script type="text/javascript" src="<c:url value='/resources/erp2/js/ajaxCommonFunctions.js?${app_release_no}'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/erp2/js/validations.js?${app_release_no}'/>"></script>
+
 <%-- <script type="text/javascript" src="<c:url value='/resources/js/prototype.js'/>"></script> --%>
-
 <%-- <script type="text/javascript" src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"> </script>
 <link rel="stylesheet" type="text/css" href="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>" /> --%>
-<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <!-- <script type="text/javascript" src="/egworks/resources/js/ajax-script.js"></script> -->
+
+<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" type="text/javascript"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+
 <script type="text/javascript" >
 window.document.onkeydown = function(event) { 
    	 switch (event.keyCode) { 
@@ -202,7 +204,7 @@ window.document.onkeydown = function(event) {
   </html>
 
 <%-- <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
-	    <div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message">Please wait....</span></div>
+	    <div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egworks/resources/erp2/images/bar_loader.gif"> <span id="message">Please wait....</span></div>
 	    <div id="BreadCrumb">
 	    	<egov:breadcrumb/>
 	    </div>

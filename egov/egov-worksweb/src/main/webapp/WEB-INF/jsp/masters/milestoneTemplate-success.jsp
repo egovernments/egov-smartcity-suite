@@ -39,7 +39,7 @@
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
 <%@page import="com.fasterxml.jackson.annotation.JsonInclude.Include"%>
-<script src="<egov:url path='/resources/js/works.js'/>"></script> 
+<script src="<egov:url path='/resources/js/works.js?${app_release_no}'/>"></script> 
 <html>
 <head>
 <title><s:text name="contractor.list" /></title>

@@ -2,7 +2,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>eGov - Access Denied</title>
-	<link href="/egi/css/commonegov.css" rel="stylesheet" type="text/css" />
+	<!-- <link href="/egworks/resources/erp2/css/commonegov.css" rel="stylesheet" type="text/css" /> -->
 	<style>
 .hiddenError {
 	display: none;
@@ -37,7 +37,7 @@
 						<tr>
 							<td width="59%">
 								<div class="logouttext">
-									<img src="/egi/resources/erp2/images/error.png" width="128" height="128" alt="Error" />									
+									<img src="/egworks/resources/erp2/images/error.png" width="128" height="128" alt="Error" />									
 									<span class="bold">
 									<br/>
 									You have insufficient permissions to perform this action.

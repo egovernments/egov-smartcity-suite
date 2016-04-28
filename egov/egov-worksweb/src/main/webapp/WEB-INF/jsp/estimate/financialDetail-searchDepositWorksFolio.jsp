@@ -42,7 +42,7 @@
   <head>
       <title><s:text name='page.title.depositWorksFolioReport'/></title>
   </head>
-	<script src="<egov:url path='resources/js/works.js'/>"></script>
+	<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
   	<script type="text/javascript">
   		var warnings=new Array();
 		warnings['improperDepositCodeSelection']='<s:text name="estimate.depositCode.warning.improperDepositCodeSelection"/>'
@@ -166,7 +166,7 @@
 		         
 		          <td class="whiteboxwk"><span class="mandatory">*</span><s:text name="depositWorksFolioReport.date" /></td>
 		          <td class="whitebox2wk"><s:date name="asOnDate" var="asOnDateFormatted" format="dd/MM/yyyy"/><s:textfield name="asOnDate" value="%{asOnDateFormatted}" id="asOnDate" cssClass="selectwk"  onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-                    <a href="javascript:show_calendar('forms[0].asOnDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+                    <a href="javascript:show_calendar('forms[0].asOnDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
                  </td>
 		    </tr>
 		    
@@ -215,7 +215,7 @@
 				<tr>
 					<td colspan="9" class="headingwk" align="left">
 						<div class="arrowiconwk">
-							<img src="/egi/resources/erp2/images/arrow.gif" />
+							<img src="/egworks/resources/erp2/images/arrow.gif" />
 						</div>
 
 						<div class="headerplacer">

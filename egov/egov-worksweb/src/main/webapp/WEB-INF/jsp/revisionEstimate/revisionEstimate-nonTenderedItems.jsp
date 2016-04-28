@@ -107,7 +107,7 @@ function recalculateTotalsOnDelete(record){
 		  changeQuantityGrandTotal = eval(document.getElementById("changeQuantityGrandTotal").innerHTML);
 	  document.getElementById("estimateValue").value=roundTo(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+changeQuantityGrandTotal);
 }
-var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
+var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egworks/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
 
 function createReadOnlyTextBoxFormatter(size,maxlength){
 var textboxFormatter = function(el, oRecord, oColumn, oData) {
@@ -353,7 +353,7 @@ function validateNonSorUomDropDown() {
 
 <table id="baseSORTable" width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-    	<td colspan="3" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div><div class="headplacer"><s:text name="revisionEstimate.nonTenderedSORItems" /></div></td>
+    	<td colspan="3" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/resources/erp2/images/arrow.gif'/>" /></div><div class="headplacer"><s:text name="revisionEstimate.nonTenderedSORItems" /></div></td>
     </tr>
 	<tr>        
 		<td class="whiteboxwk"><span class="mandatory">*</span><s:text name="estimate.scheduleCategory.name" />:</td>

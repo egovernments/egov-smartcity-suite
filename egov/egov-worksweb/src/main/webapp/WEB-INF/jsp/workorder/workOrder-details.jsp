@@ -362,13 +362,13 @@ var makeWODataTable = function() {
                       <table id="table-header" cellpadding="0" cellspacing="0" align="center">
                        <tr>
                       <td colspan="5" class="headingwk">
-                      		<div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div>
+                      		<div class="arrowiconwk"><image src="<egov:url path='/resources/erp2/images/arrow.gif'/>" /></div>
                       		<div class="headplacer"><s:text name='page.title.workorder.detail' /></div>
           				</td>	
           				<td align="right" class="headingwk" style="border-left-width: 0px">
           				 <s:if test="%{tenderResponse != null && tenderResponse.tenderResponseContractors.size != 1}"> 
 			       			<a id="addHref" href="#" onclick="getActivities();">
-			       			<img border="0" alt="Add Activities" src="/egi/resources/erp2/images/add.png" /></a>
+			       			<img border="0" alt="Add Activities" src="/egworks/resources/erp2/images/add.png" /></a>
 			       		</s:if>
 			       		</td>
                       </tr>
@@ -397,7 +397,7 @@ var makeWODataTable = function() {
 													<td width="8%"><s:property value='%{code}' /></td>
 													<td width="8%"><div align="right"><s:property value='%{quantity}' /></div></td>
 													<s:if test="%{code!=null && code!=''}">
-													<td width="25%"><s:property value='%{summary}' /><a href="#" class="hintanchor" onMouseover='showhint("<s:property value='%{description}' />", this, event, "300px")'><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a></td>
+													<td width="25%"><s:property value='%{summary}' /><a href="#" class="hintanchor" onMouseover='showhint("<s:property value='%{description}' />", this, event, "300px")'><img src="/egworks/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a></td>
 													</s:if>
 													<s:else>
 													<td width="25%"><s:property value='%{description}' /></td>

@@ -251,7 +251,7 @@ function validateDuplicate(records,oArgs){
 		 </s:iterator>
 		<table id="multiYearHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">
               	<tr>
-                	<td colspan="5" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div><div class="headplacer"><s:text name="multiYearEstimate.yearwiseEstimate" /></div></td>
+                	<td colspan="5" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/resources/erp2/images/arrow.gif'/>" /></div><div class="headplacer"><s:text name="multiYearEstimate.yearwiseEstimate" /></div></td>
               	</tr>
               	<tr>
                 	<td colspan="5">

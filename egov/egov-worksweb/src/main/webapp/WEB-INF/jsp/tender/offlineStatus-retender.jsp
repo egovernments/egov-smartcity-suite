@@ -45,7 +45,7 @@
 	</title>
 </head>
 <body onload="enableOrDisableRetendering();addElementsInLastColumn();" >
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 
 <script type="text/javascript">
 jQuery("#loadingMask").remove();
@@ -119,7 +119,7 @@ function addRTTable(tabid)
     aElem.setAttribute('onmouseout', "window.status='';return true;");
 
     var imgElem = document.createElement('img');
-    imgElem.setAttribute('src', "/egi/resources/erp2/images/calendar.png");
+    imgElem.setAttribute('src', "/resources/erp2/images/calendar.png");
     imgElem.setAttribute('id', "wsDateImg");
     imgElem.setAttribute('alt', "Calendar");
     imgElem.setAttribute('width', "16" );
@@ -190,7 +190,7 @@ function addRTColumn(tableId)
 		    aElem.setAttribute('onmouseout', "window.status='';return true;");
 
 		    var imgElem = document.createElement('img');
-		    imgElem.setAttribute('src', "/egi/resources/erp2/images/calendar.png");
+		    imgElem.setAttribute('src', "/resources/erp2/images/calendar.png");
 		    imgElem.setAttribute('id', "wsDateImg");
 		    imgElem.setAttribute('alt', "Calendar");
 		    imgElem.setAttribute('width', "16" );
@@ -443,7 +443,7 @@ function addNewRow(tableId)
 			    aElem.setAttribute('onmouseout', "window.status='';return true;");
 
 			    var imgElem = document.createElement('img');
-			    imgElem.setAttribute('src', "/egi/resources/erp2/images/calendar.png");
+			    imgElem.setAttribute('src', "/resources/erp2/images/calendar.png");
 			    imgElem.setAttribute('id', "wsDateImg");
 			    imgElem.setAttribute('alt', "Calendar");
 			    imgElem.setAttribute('width', "16" );
@@ -475,7 +475,7 @@ function addNewRow(tableId)
 			    newField.setAttribute('class', 'selectboldwk');
 
 			    var imgElem = document.createElement('img');
-			    imgElem.setAttribute('src', "/egi/resources/erp2/images/calendar.png");
+			    imgElem.setAttribute('src', "/resources/erp2/images/calendar.png");
 			    imgElem.setAttribute('id', "wsDateImg");
 			    imgElem.setAttribute('alt', "Calendar");
 			    imgElem.setAttribute('width', "16" );
@@ -827,7 +827,7 @@ function addElementsInLastColumn()
 			    aElem.setAttribute('onmouseout', "window.status='';return true;");
 
 			    var imgElem = document.createElement('img');
-			    imgElem.setAttribute('src', "/egi/resources/erp2/images/calendar.png");
+			    imgElem.setAttribute('src', "/resources/erp2/images/calendar.png");
 			    imgElem.setAttribute('id', "wsDateImg");
 			    imgElem.setAttribute('alt', "Calendar");
 			    imgElem.setAttribute('width', "16" );
@@ -877,7 +877,7 @@ function addElementsInLastColumn()
 			</tr>
 			<tr><td>&nbsp;</td></tr>
 			<tr> 
-				<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+				<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 				<div class="headplacer" id="heading"><s:text name="set.status" />:</div></td>
 			</tr>
 			<tr>
@@ -919,7 +919,7 @@ function addElementsInLastColumn()
 							</s:iterator>
 							<td width="7%" class="tablesubheadwk">
 								<a id="statusrow" href="#" onclick="addNewRow('statustable');return false;">
-								<img border="0" alt="Add Status" src="/egi/resources/erp2/images/add.png" /></a>
+								<img border="0" alt="Add Status" src="/egworks/resources/erp2/images/add.png" /></a>
 							</td>
 						</tr>
 						<s:if test="%{!rowloop.isEmpty()}">
@@ -946,14 +946,14 @@ function addElementsInLastColumn()
 									        		 onkeyup="DateFormat(this,this.value,event,false,'3')"   onblur="isvalidFormat(this)"/>
 									        		 <a href="#" name="dateHref" id='dateHref[0]'
 									        		 onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-									        		 <img src="/egi/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
+									        		 <img src="/egworks/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
 									       			  border="0" align="absmiddle" /></a>
 									       	</td>		  
 										</s:else>
 								   </s:iterator>
 						   			<td width="7%" align="right" class="whitebox3wka" style="border-left-width: 0px">
 							       		<a id="delHref" name="delHref" href="#" >
-							       		<img border="0" alt="Delete Estimates" src="/egi/resources/erp2/images/cancel.png" /></a>
+							       		<img border="0" alt="Delete Estimates" src="/egworks/resources/erp2/images/cancel.png" /></a>
 						       		</td>
 								</tr>
 								<script>RETENDER_HISTORY_TABLE_INDEX++;</script>							   
@@ -975,14 +975,14 @@ function addElementsInLastColumn()
 										onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="isvalidFormat(this)"/>
 										<a href="javascript:formCalendarRefST(0,1);" id="dateHref[0]" name="dateHref"
 											onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-											<img src="/egi/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
+											<img src="/egworks/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
 							    				border="0" align="absmiddle" /></a>
 							    	<input type="hidden" name="retenderHistoryList[0].egwStatus.id" id="hiddenStatusInfo[0]" />
 							    	<script>RETENDER_HISTORY_LIST_INDEX++;</script>			
 								</td>
 								<td width="7%" align="right" class="whitebox3wka" style="border-left-width: 0px">
 									<a id="delHref" name="delHref" href="#" onclick="deleterow(this)">
-									<img border="0" alt="Delete Estimates" src="/egi/resources/erp2/images/cancel.png" /></a>
+									<img border="0" alt="Delete Estimates" src="/egworks/resources/erp2/images/cancel.png" /></a>
 								</td>
 								<script>RETENDER_HISTORY_TABLE_INDEX++;</script>
 							</tr>
@@ -1021,7 +1021,7 @@ function addElementsInLastColumn()
 									<s:textfield value="%{statusDateFormat}" size="25" id='retenderInfoList[%{#iterStatus.index}].retenderDate' cssClass="selectboldwk" 
 						        		 disabled="true" />
 						        		 <a href="#" name="dateHref" id='dateHref[0]'>
-						        		 <img src="/egi/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
+						        		 <img src="/egworks/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
 						       			  border="0" align="absmiddle" /></a>
 						       	</td>	
 						       	<td  class="whitebox3wka" width="7%">

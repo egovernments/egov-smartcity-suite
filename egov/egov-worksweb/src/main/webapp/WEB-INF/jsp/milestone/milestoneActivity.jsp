@@ -159,14 +159,14 @@ function calculateTotalPercentage(){
 		<table id="temptActvTable" width="100%" border="0" cellspacing="0" cellpadding="0">              	
               	<tr>
                 	<td colspan="9" class="headingwk" style="border-right-width: 0px" align="left">
-                		<div class="arrowiconwk"><image src="/egi/resources/erp2/images/arrow.gif" /></div>
+                		<div class="arrowiconwk"><image src="/egworks/resources/erp2/images/arrow.gif" /></div>
                 		<div class="headplacer" >Milestone Details</div>
                 	</td>
                 	<td  align="right" class="headingwk" style="border-left-width: 0px">
                 	<s:if test="%{mode=='view' || model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED'}">
                 	</s:if>
                 	<s:else>
-                		<a id="temptActvRow" href="#" onclick="validatePercentage();return false;"><img height="16" border="0" width="16" alt="Add Template Activity" src="/egi/resources/erp2/images/add.png" /></a>
+                		<a id="temptActvRow" href="#" onclick="validatePercentage();return false;"><img height="16" border="0" width="16" alt="Add Template Activity" src="/egworks/resources/erp2/images/add.png" /></a>
                 	</s:else>
                 	</td>
               	</tr>

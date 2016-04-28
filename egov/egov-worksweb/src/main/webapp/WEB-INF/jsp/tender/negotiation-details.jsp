@@ -154,7 +154,7 @@ var descriptionFormatter = function(el, oRecord, oColumn, oData) {
     markup="<span class='yui-dt-liner'>"+value+"</span>"+hint.replace(/@fulldescription@/g,escapeSpecialChars(oRecord.getData('FullDescription')))
     el.innerHTML = markup;
 }
-var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
+var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egworks/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
 
 function createHiddenFormatter(el, oRecord, oColumn, oData){
 var hiddenFormatter = function(el, oRecord, oColumn, oData) {
@@ -611,7 +611,7 @@ function confirmDefaultRate(obj){
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" id="rateContractTable" name="rateContractTable">
 	<tr>
-		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name="tenderNegotiation.tab.details" /></div></td>
 	</tr>
 	
@@ -631,7 +631,7 @@ function confirmDefaultRate(obj){
         <td class="whitebox2wk"><input type="text" name="tenderPercAgnstMarketRate" id="tenderPercAgnstMarketRate" value='<s:property value="%{tenderPercAgnstMarketRate}" />'  readonly="readonly" tabIndex="-1" class="selectamountwk" size="10"/></td>                         
 	 	<td class="whiteboxwk"><s:text name='tenderNegotiation.asOnDate'/>: </td>
 	 	<td class="whitebox2wk"><input type="text" name="asOnDate" value='<s:property value="%{asOnDate}" />' id="asOnDate" class="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-         <a href="javascript:show_calendar('forms[0].asOnDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+         <a href="javascript:show_calendar('forms[0].asOnDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
          <span id='errorasOnDate' style="display:none;color:red;font-weight:bold">&nbsp;x</span>
          <input type='button' class="buttonadd" value='Re-Calculate' onClick='getMarketValueAsOnDate();getTenderPercAgainstMarketRate(this);'/>
         </td>  
@@ -644,7 +644,7 @@ function confirmDefaultRate(obj){
  
  <table width="100%" border="0" cellspacing="0" cellpadding="0" id="itemRateContractTable" name="itemRateContractTable">
 	<tr>
-		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name="tenderNegotiation.tab.details" /></div></td>
 		<td align="right" class="headingwk" style="border-left-width: 0px">
        		<input type="checkbox" name="sorRateDiffItemRateChk" id="sorRateDiffItemRateChk" onclick="confirmDefaultRate(this)"/>&nbsp;<s:text name='tenderNegotiation.defaultsortonegotiatedrate' />

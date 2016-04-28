@@ -42,7 +42,7 @@
 <html>
 <title><s:text name="revisionEstimate.label.title" /></title>
 <body class="yui-skin-sam" onload="defaultApproverDept();noBack();" onpageshow="if(event.persisted) noBack();" onunload=""> 
-<script src="<egov:url path='resources/js/works.js'/>"></script> 
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script> 
 
 <script>
 window.history.forward(1);
@@ -193,7 +193,7 @@ function showChangeQtyDtlsTab(){
             <div id="revEst_header">
  				<table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	 				<tr>
-	                	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+	                	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 	                	<div class="headplacer"><s:text name="estimate.header" />:</div></td>
 	                </tr>
 	                

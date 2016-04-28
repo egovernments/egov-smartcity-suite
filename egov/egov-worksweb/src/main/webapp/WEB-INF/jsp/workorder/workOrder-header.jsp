@@ -47,7 +47,7 @@
 	<tr>
 		<td colspan="4" class="headingwk">
 			<div class="arrowiconwk">
-				<img src="/egi/resources/erp2/images/arrow.gif" />
+				<img src="/egworks/resources/erp2/images/arrow.gif" />
 			</div>
 			<div class="headplacer">
 				<s:text name="page.header.negotiation" />
@@ -292,7 +292,7 @@
         		 onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="isvalidFormat(this)"/>
         		 <a href="javascript:show_calendar('forms[0].workOrderDate',null,null,'DD/MM/YYYY');" id="dateHref2"
         		 onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-        		 <img src="/egi/resources/erp2/images/calendar.png" id="wpDateImg" alt="Calendar" width="16" height="16" 
+        		 <img src="/egworks/resources/erp2/images/calendar.png" id="wpDateImg" alt="Calendar" width="16" height="16" 
        			  border="0" align="absmiddle" /></a> 
 	    </td>
    </tr>

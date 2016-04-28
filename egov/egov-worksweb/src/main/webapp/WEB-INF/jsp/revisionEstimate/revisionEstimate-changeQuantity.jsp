@@ -171,7 +171,7 @@ function recalculateChangeQuantityTotalsOnDelete(record){
 	  document.getElementById("estimateValue").value=roundTo(grandTotal+nonSorGrandTotal+eval(document.getElementById("changeQuantityGrandTotal").innerHTML));
 	 	  
 }
-var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
+var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egworks/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
 
 function createRateRecIdHiddenFormatter(size,maxlength){
 var textboxFormatter = function(el, oRecord, oColumn, oData) {
@@ -524,11 +524,11 @@ function validateLumpSumItems(obj,tableName, error){
 <table id="changeQuantityHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr>
 	    	<td colspan="9" class="headingwk" style="border-right-width: 0px">
-	    		<div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div>
+	    		<div class="arrowiconwk"><image src="<egov:url path='/resources/erp2/images/arrow.gif'/>" /></div>
 	    		<div class="headplacer" ><s:text name="revisionEstimate.changeQuantity" /></div>
 	    	</td>
            	<td  align="right" id="addChangeQuantityButtn" class="headingwk" style="border-left-width: 0px">
-           	   	<a id="addChangeQuantityRow" href="#" onclick="addChangeQuantity();"><img height="16" border="0" width="16" alt="Add Items" src="/egi/resources/erp2/images/add.png" /></a>
+           	   	<a id="addChangeQuantityRow" href="#" onclick="addChangeQuantity();"><img height="16" border="0" width="16" alt="Add Items" src="/egworks/resources/erp2/images/add.png" /></a>
             </td>
         </tr> 
               

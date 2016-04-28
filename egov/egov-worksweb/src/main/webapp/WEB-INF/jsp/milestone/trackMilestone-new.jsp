@@ -44,7 +44,7 @@
 <title><s:text name='page.title.milestone.track'/></title>
 <body onload="init();noBack();" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 
 <script>
 window.history.forward(1);

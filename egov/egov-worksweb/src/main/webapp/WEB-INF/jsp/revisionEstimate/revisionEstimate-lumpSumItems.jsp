@@ -299,11 +299,11 @@ function addRowToNonSor(){
 <table id="nonSorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">              	
    <tr>
       	<td colspan="9" class="headingwk" style="border-right-width: 0px">
-			<div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div>
+			<div class="arrowiconwk"><image src="<egov:url path='/resources/erp2/images/arrow.gif'/>" /></div>
 			<div class="headplacer" ><s:text name="revisionEstimate.lumpSumItems" /></div>
 		</td>
 		<td  align="right" class="headingwk" style="border-left-width: 0px">
-	   		<a id="addnonSorRow" href="#" onclick="addRowToNonSor();"><img height="16" border="0" width="16" alt="Add Non-SOR" src="/egi/resources/erp2/images/add.png" /></a>
+	   		<a id="addnonSorRow" href="#" onclick="addRowToNonSor();"><img height="16" border="0" width="16" alt="Add Non-SOR" src="/egworks/resources/erp2/images/add.png" /></a>
        	</td>
    	</tr> 
    	<tr>

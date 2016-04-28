@@ -160,7 +160,7 @@ var activityDescFormatterNT = function(el, oRecord, oColumn, oData) {
     el.innerHTML = markup;
 }
 
-var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egi/resources/erp2/images/help.gif"	alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>';
+var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egworks/resources/erp2/images/help.gif"	alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>';
 
 
 function createQuantityTextboxFormatter(prefix){
@@ -853,13 +853,13 @@ function hideOther(recordId,mode){
 				<tr>
 					<td colspan="6" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="/egi/resources/erp2/images/arrow.gif" />
+							<img src="/egworks/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer"><s:text name="measurementbook.nontendered.details"/></div>
 					</td>
 					<td align="right" class="headingwk" style="border-left-width: 0px">
                 		<a href="#" onclick="addOtherActivity('nonTendered');">
-                		<img height="16" border="0" width="16" alt="Add Non-SOR" src="/egi/resources/erp2/images/add.png" />
+                		<img height="16" border="0" width="16" alt="Add Non-SOR" src="/egworks/resources/erp2/images/add.png" />
                 		</a>
                 	</td>
 				</tr>
@@ -938,13 +938,13 @@ function hideOther(recordId,mode){
 				<tr>
 					<td colspan="6" class="headingwk">
 						<div class="arrowiconwk">
-							<img src="/egi/resources/erp2/images/arrow.gif" />
+							<img src="/egworks/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer"><s:text name="measurementbook.lumpsum.details"/></div>
 					</td>
 					<td align="right" class="headingwk" style="border-left-width: 0px">
                 		<a href="#" onclick="addOtherActivity('lumpSum');">
-                		<img height="16" border="0" width="16" alt="Add Non-SOR" src="/egi/resources/erp2/images/add.png" />
+                		<img height="16" border="0" width="16" alt="Add Non-SOR" src="/egworks/resources/erp2/images/add.png" />
                 		</a>
                 	</td>
 				</tr>

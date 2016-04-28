@@ -191,7 +191,7 @@ function validateAmts(obj) {
 									<td colspan="4" class="headingwk">
 										<div class="arrowiconwk">
 											<img
-												src="/egi/resources/erp2/images/arrow.gif" />
+												src="/egworks/resources/erp2/images/arrow.gif" />
 										</div>
 										<div class="headplacer">
 											<s:text name="label.search" />
@@ -245,7 +245,7 @@ function validateAmts(obj) {
 											onfocus="javascript:vDateType='3';"	onkeyup="DateFormat(this,this.value,event,false,'3')" />
 										<a href="javascript:show_calendar('forms[0].billDateFrom',null,null,'DD/MM/YYYY');"
 											onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> 
-											<img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
+											<img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
 										</a>
 									</td>
 									<td class="whiteboxwk">
@@ -257,7 +257,7 @@ function validateAmts(obj) {
 											onfocus="javascript:vDateType='3';"	onkeyup="DateFormat(this,this.value,event,false,'3')" />
 										<a href="javascript:show_calendar('forms[0].billDateTo',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"
 											onmouseout="window.status='';return true;"> 
-											<img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
+											<img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
 										</a>
 									</td>
 								</tr>

@@ -545,11 +545,11 @@ function createDropdownFormatterForRecovery(listObj,postfixFieldValue, prefixkey
 </script>
 
 	<tr>
-	  	<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+	  	<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 	   		<div class="headplacer"><s:text name="contractorBill.subheader.statutorydedcution" /></div>
 		</td>
 		<td align="right" class="headingwk" style="border-left-width: 0px">
-	      <a id="statutorydeductionrow" href="#" onclick="statutoryDeductionsDataTable.addRow({SlNo:statutoryDeductionsDataTable.getRecordSet().getLength()+1});return false;"><img height="16" border="0" width="16" alt="Add Statutory-Deductions" src="/egi/resources/erp2/images/add.png" /></a>
+	      <a id="statutorydeductionrow" href="#" onclick="statutoryDeductionsDataTable.addRow({SlNo:statutoryDeductionsDataTable.getRecordSet().getLength()+1});return false;"><img height="16" border="0" width="16" alt="Add Statutory-Deductions" src="/egworks/resources/erp2/images/add.png" /></a>
 	    </td>
 	</tr>
 	<tr>

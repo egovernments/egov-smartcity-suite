@@ -585,7 +585,7 @@ LatestMBDateFailureHandler = function(){
 <div class="errorstyle" id="contractorBill_error" style="display: none;"></div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>	<s:hidden name="sourcepage" id="sourcepage" value="%{sourcepage}"/>	
-		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name="contractorBill.subHeader.workOrderDetails" /></div></td>
 	</tr>	
 	<tr>
@@ -727,7 +727,7 @@ LatestMBDateFailureHandler = function(){
 	</tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr>		
-		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name="contractorBill.billDetails" /></div></td>
 	</tr>
 	<tr>
@@ -736,7 +736,7 @@ LatestMBDateFailureHandler = function(){
         <td class="greyboxwk"><span class="mandatory">*</span><s:text name='contractorBill.billDate'/>: </td>        
         <td class="greybox2wk"><s:date name="billdate" var="billDateFormat" format="dd/MM/yyyy"/>
          <s:textfield name="billdate" value="%{billDateFormat}" id="billdate" cssClass="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" onBlur="populateHeaderDetails();calculateStatutoryDeduction();validateYearEndAppropriation();" onChange="populateHeaderDetails();calculateStatutoryDeduction();validateYearEndAppropriation();"/>
-         <a href="javascript:show_calendar('forms[0].billdate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img id="billDateImage" src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+         <a href="javascript:show_calendar('forms[0].billdate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img id="billDateImage" src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
           <s:hidden id='hiddenbillDate' name='hiddenbillDate' />
          </td>
 	</tr>
@@ -747,7 +747,7 @@ LatestMBDateFailureHandler = function(){
          <td id="completiondateText" class="whitebox2wk">
          <s:date name="completionDate" var="completionDateFormat" format="dd/MM/yyyy"/>
          <s:textfield name="completionDate" value="%{completionDateFormat}" id="completionDate" cssClass="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" onblur="validateWorkCompletionDate(this)" />
-         <a href="javascript:show_calendar('forms[0].completionDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+         <a href="javascript:show_calendar('forms[0].completionDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
         </td>
         <td class="whiteboxwk">&nbsp;</td>        
         <td class="whitebox2wk">&nbsp;</td>
@@ -759,7 +759,7 @@ LatestMBDateFailureHandler = function(){
         <td class="greyboxwk"><span class="mandatory">*</span><s:text name='contractorBill.bill.Date'/>: </td>        
         <td class="greybox2wk"><s:date name="partyBillDate" var="conbillDateFor" format="dd/MM/yyyy"/>
          <s:textfield name="partyBillDate" value="%{conbillDateFor}" id="conbillDate" cssClass="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" onblur="validateAgainstBillDate(this)" />
-         <a href="javascript:show_calendar('forms[0].conbillDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+         <a href="javascript:show_calendar('forms[0].conbillDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
        </td>
 	</tr>
 	<tr id="trTenderedNonTendered">
@@ -799,7 +799,7 @@ LatestMBDateFailureHandler = function(){
 	
 	<tr><td>&nbsp;</td></tr>
 	<tr>		
-		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name='contractorBill.mb.details' /></div></td>
 	</tr>
 	<tr>

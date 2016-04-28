@@ -41,7 +41,7 @@
 <html>
 	<title><s:text name='measurementbook.title'/></title>
 	<body id="home" onload="checkRCEst();populateDesignation();disableenable();disableEnableOther('nonTendered');disableEnableOther('lumpSum');calculateMBTotal();noBack();" onpageshow="if(event.persisted) noBack();" onunload="">
-	<script src="<egov:url path='resources/js/works.js'/>"></script>
+	<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 
 <script>
 jQuery("#loadingMask").remove();

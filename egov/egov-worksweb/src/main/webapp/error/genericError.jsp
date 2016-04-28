@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>eGov - Error Page</title>
-	<link href="/egi/css/commonegov.css" rel="stylesheet" type="text/css" />
+	<!-- <link href="/egworks/resources/erp2/css/commonegov.css" rel="stylesheet" type="text/css" /> -->
 	<style>
 .hiddenError {
 	display: none;
@@ -26,7 +26,7 @@
 </style>
 </head>
 <body>
-	<!-- <div id="loadImg" class="loadImg"><img src="/egi/resources/erp2/images/loading.gif"  />&nbsp;<span class="loadspan">Please wait... Sending error report...</span></div> -->
+	<!-- <div id="loadImg" class="loadImg"><img src="/egworks/resources/erp2/images/loading.gif"  />&nbsp;<span class="loadspan">Please wait... Sending error report...</span></div> -->
 	<div class="formmainbox">
 		<div class="insidecontent">
 			<div class="errorroundbox2">
@@ -38,7 +38,7 @@
 						<tr>
 							<td width="59%">
 								<div class="logouttext">
-									<img src="/egi/resources/erp2/images/error.png" width="128" height="128"
+									<img src="/egworks/resources/erp2/images/error.png" width="128" height="128"
 										alt="Error" />
 									<div class="oopstext">
 										Oops! Sorry your request cannot be processed!

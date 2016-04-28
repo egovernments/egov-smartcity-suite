@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<script src="<egov:url path='resources/js/works.js'/>"></script> 
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script> 
 <html>
 <head>
 	<title><s:text name='page.title.search.contractorbill' /></title>
@@ -296,7 +296,7 @@ var estimateNoSearchSelectionHandler = function(sType, arguments){
 		<td>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-	        	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+	        	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 	            <div class="headplacer"><s:text name="page.subheader.search.estimate" /></div></td>
 	        </tr>
 
@@ -355,7 +355,7 @@ var estimateNoSearchSelectionHandler = function(sType, arguments){
 										<a	href="javascript:show_calendar('forms[0].fromDate',null,null,'DD/MM/YYYY');"
 											onmouseover="window.status='Date Picker';return true;"
 											onmouseout="window.status='';return true;"> <img
-												src="/egi/resources/erp2/images/calendar.png"
+												src="/egworks/resources/erp2/images/calendar.png"
 												alt="Calendar" width="16" height="16" border="0"
 												align="absmiddle" />
 										</a>
@@ -370,7 +370,7 @@ var estimateNoSearchSelectionHandler = function(sType, arguments){
 													<a	href="javascript:show_calendar('forms[0].toDate',null,null,'DD/MM/YYYY');"
 														onmouseover="window.status='Date Picker';return true;"
 														onmouseout="window.status='';return true;"> <img
-															src="/egi/resources/erp2/images/calendar.png"
+															src="/egworks/resources/erp2/images/calendar.png"
 															alt="Calendar" width="16" height="16" border="0"
 															align="absmiddle" />
 													</a>

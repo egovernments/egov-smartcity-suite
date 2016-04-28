@@ -24,7 +24,7 @@
 		</td>
 		<td align="right" width="10%" class="headingwk" style="border-left-width: 0px">
        		<a id="delHref" href="#" onclick="deleterow(this)">
-       		<img border="0" alt="Delete Estimates" src="/egi/resources/erp2/images/cancel.png" /></a>
+       		<img border="0" alt="Delete Estimates" src="/egworks/resources/erp2/images/cancel.png" /></a>
        	</td>
 	</tr>
 </s:iterator>	
