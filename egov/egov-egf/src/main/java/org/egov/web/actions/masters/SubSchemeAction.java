@@ -269,15 +269,15 @@ public class SubSchemeAction extends BaseFormAction {
         if (uniqueCode) {
             if (!subScheme.getCode().equals("") && subScheme.getId() != null)
             	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=? and id!=?",
-                		subScheme.getCode(), subScheme.getId());
+                		subScheme.getCode().toLowerCase(), subScheme.getId());
             else if (!subScheme.getCode().equals(""))
-            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?", subScheme.getCode());
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?", subScheme.getCode().toLowerCase());
             uniqueCode = false;
         } else if (!subScheme.getName().equals("") && subScheme.getId() != null)
-        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=? and id!=?", subScheme.getName(),
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=? and id!=?", subScheme.getName().toLowerCase(),
             		subScheme.getId());
         else if (!subScheme.getName().equals(""))
-        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?", subScheme.getName());
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?", subScheme.getName().toLowerCase());
         if (subScheme_validate != null)
             isDuplicate = true;
         

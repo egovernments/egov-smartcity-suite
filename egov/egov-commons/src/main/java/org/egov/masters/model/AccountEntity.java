@@ -66,7 +66,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name="AccountEntityMaster")
 @SequenceGenerator(name = AccountEntity.SEQ, sequenceName = AccountEntity.SEQ, allocationSize = 1)
-@Unique(id = "id", tableName = "AccountEntityMaster", fields = { "code" }, columnName = { "code" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "AccountEntityMaster", fields = { "code","name" }, columnName = { "code","name" }, enableDfltMsg = true)
 public class AccountEntity extends AbstractPersistable<Integer> implements java.io.Serializable, EntityType {
 
 	private static final long serialVersionUID = 1L;

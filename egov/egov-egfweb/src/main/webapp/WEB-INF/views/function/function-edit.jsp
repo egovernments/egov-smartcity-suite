@@ -39,7 +39,7 @@
   -->
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="../update" modelAttribute="function"
+<form:form role="form" action="/EGF/function/update" modelAttribute="function"
 	id="functionform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="function-form.jsp"%>

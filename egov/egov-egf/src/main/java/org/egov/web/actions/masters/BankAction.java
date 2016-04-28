@@ -164,12 +164,12 @@ public class BankAction extends BaseFormAction {
     }
 
     private void checkUniqueBankCode() {
-        final Bank bank = bankService.find("from Bank where code=?", this.bank.getCode());
+        final Bank bank = bankService.find("from Bank where lower(code)=?", this.bank.getCode().toLowerCase());
         writeToAjaxResponse(String.valueOf(bank == null));
     }
 
     private void checkUniqueBankName() {
-        final Bank bank = bankService.find("from Bank where name=?", this.bank.getName());
+        final Bank bank = bankService.find("from Bank where lower(name)=?", this.bank.getName().toLowerCase());
         writeToAjaxResponse(String.valueOf(bank == null));
     }
 
