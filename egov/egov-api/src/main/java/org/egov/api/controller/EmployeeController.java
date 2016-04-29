@@ -39,22 +39,6 @@
  */
 package org.egov.api.controller;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.ForwardDetailsAdapter;
 import org.egov.api.adapter.UserAdapter;
@@ -98,6 +82,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.workflow.entity.StateAware.byCreatedDateComparator;
+import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
@@ -220,7 +218,7 @@ public class EmployeeController extends ApiController {
 
     private List<InboxItem> createInboxData(final List<StateAware> inboxStates) {
         final List<InboxItem> inboxItems = new LinkedList<>();
-        inboxStates.sort(byCreatedDate());
+        inboxStates.sort(byCreatedDateComparator());
         for (final StateAware stateAware : inboxStates) {
             final State state = stateAware.getCurrentState();
             final WorkflowTypes workflowTypes = getWorkflowType(stateAware.getStateType());
@@ -253,25 +251,6 @@ public class EmployeeController extends ApiController {
             }
         }
         return inboxItems;
-    }
-
-    private Comparator<? super StateAware> byCreatedDate() {
-        return (stateAware_1, stateAware_2) -> {
-            int returnVal = 1;
-            if (stateAware_1 == null)
-                returnVal = stateAware_2 == null ? 0 : -1;
-            else if (stateAware_2 == null)
-                returnVal = 1;
-            else {
-                final Date first_date = stateAware_1.getState().getCreatedDate();
-                final Date second_date = stateAware_2.getState().getCreatedDate();
-                if (first_date.after(second_date))
-                    returnVal = -1;
-                else if (first_date.equals(second_date))
-                    returnVal = 0;
-            }
-            return returnVal;
-        };
     }
 
     @SuppressWarnings("unchecked")
