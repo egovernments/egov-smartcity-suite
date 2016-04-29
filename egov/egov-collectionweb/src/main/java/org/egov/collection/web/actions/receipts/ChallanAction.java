@@ -95,7 +95,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.NumberUtil;
+import org.egov.infra.utils.NumberUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.hibernate.StaleObjectStateException;

@@ -102,7 +102,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.MoneyUtils;
+import org.egov.infra.utils.MoneyUtils;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;

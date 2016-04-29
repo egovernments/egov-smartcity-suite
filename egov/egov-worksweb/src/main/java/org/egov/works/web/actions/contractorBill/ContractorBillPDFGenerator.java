@@ -56,7 +56,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWord;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.model.PersonalInformation;

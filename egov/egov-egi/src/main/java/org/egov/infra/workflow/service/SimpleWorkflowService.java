@@ -50,7 +50,7 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;

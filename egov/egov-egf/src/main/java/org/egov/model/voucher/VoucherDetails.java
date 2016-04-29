@@ -46,7 +46,7 @@ import java.math.BigDecimal;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.StringUtils;
 
 /**
  * @author msahoo

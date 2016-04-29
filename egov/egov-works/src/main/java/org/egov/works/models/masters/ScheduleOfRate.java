@@ -56,7 +56,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 

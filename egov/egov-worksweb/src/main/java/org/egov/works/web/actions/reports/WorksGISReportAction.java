@@ -60,7 +60,7 @@ import org.egov.infstr.models.GeoLatLong;
 import org.egov.infstr.models.GeoLocation;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.GeoLocationConstants;
-import org.egov.infstr.utils.NumberUtil;
+import org.egov.infra.utils.NumberUtil;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderEstimate;

@@ -9,7 +9,7 @@
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="java.util.*"/>
-	<import value="org.egov.infstr.utils.NumberUtil"/>
+	<import value="org.egov.infra.utils.NumberUtil"/>
 	<parameter name="zonalCommissioner" class="java.lang.String"/>
 	<parameter name="zonalCommissionerCapital" class="java.lang.String"/>
 	<parameter name="present" class="java.lang.String"/>

@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.utils;
+
+package org.egov.infra.utils;
 
 import java.text.DecimalFormat;
 import java.text.FieldPosition;

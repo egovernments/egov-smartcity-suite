@@ -61,7 +61,7 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.NumberUtil;
+import org.egov.infra.utils.NumberUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.slf4j.Logger;

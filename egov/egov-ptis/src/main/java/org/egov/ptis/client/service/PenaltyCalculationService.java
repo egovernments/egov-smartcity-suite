@@ -69,7 +69,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.MoneyUtils;
+import org.egov.infra.utils.MoneyUtils;
 import org.egov.ptis.client.bill.PenaltyBill;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;

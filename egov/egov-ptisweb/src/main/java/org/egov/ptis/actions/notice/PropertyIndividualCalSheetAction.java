@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.notice;
 
-import static org.egov.infstr.utils.MoneyUtils.roundOffTwo;
+import static org.egov.infra.utils.MoneyUtils.roundOffTwo;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNotZero;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;

@@ -58,9 +58,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bank;
-import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.utils.BankAccountType;
-import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -69,7 +67,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.services.masters.BankService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
@@ -201,7 +198,7 @@ public class BankAction extends BaseFormAction {
                 .findAllBy("SELECT name,id FROM CChartOfAccounts WHERE glcode LIKE '450%' AND classification=2 AND  UPPER(name) LIKE '%BANK%' ORDER BY glcode");
         final StringBuilder accountdetailtypeJson = new StringBuilder("{\"\":\"\",");
         for (final Object[] accType : accounttypes) {
-            accType[0] = org.egov.infstr.utils.StringUtils.escapeJavaScript((String) accType[0]);
+            accType[0] = org.egov.infra.utils.StringUtils.escapeJavaScript((String) accType[0]);
             accountdetailtypeJson.append("\"").append(accType[1] + "#" + accType[0]).append("\"").append(":").append("\"")
             .append(accType[0]).append("\"").append(",");
         }

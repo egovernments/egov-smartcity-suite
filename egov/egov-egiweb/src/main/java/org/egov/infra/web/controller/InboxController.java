@@ -64,7 +64,7 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.workflow.entity.StateAware.byCreatedDateComparator;
-import static org.egov.infstr.utils.StringUtils.escapeSpecialChars;
+import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
 
 @Controller
 @RequestMapping("/inbox")
