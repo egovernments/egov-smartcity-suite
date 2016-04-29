@@ -37,31 +37,31 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.models;
 
-import java.util.HashMap;
-import java.util.Map;
+package org.egov.infra.gis.model;
 
-public class GeoKmlInfo {
+import java.math.BigDecimal;
 
-	private Map<String, String> wardWiseColor = new HashMap<String, String>();
+public class GeoLatLong {
 
-	private Map<String, String> colorCodes = new HashMap<String, String>();
+	private BigDecimal latitude;
 
-	public Map<String, String> getWardWiseColor() {
-		return wardWiseColor;
+	private BigDecimal longitude;
+
+	public BigDecimal getLatitude() {
+		return latitude;
 	}
 
-	public void setWardWiseColor(Map<String, String> wardWiseColor) {
-		this.wardWiseColor = wardWiseColor;
+	public BigDecimal getLongitude() {
+		return longitude;
 	}
 
-	public Map<String, String> getColorCodes() {
-		return colorCodes;
+	public void setLatitude(BigDecimal latitude) {
+		this.latitude = latitude;
 	}
 
-	public void setColorCodes(Map<String, String> colorCodes) {
-		this.colorCodes = colorCodes;
+	public void setLongitude(BigDecimal longitude) {
+		this.longitude = longitude;
 	}
 
 }

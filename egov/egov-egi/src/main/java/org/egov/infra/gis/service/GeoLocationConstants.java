@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.services;
+
+package org.egov.infra.gis.service;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.services;
+
+package org.egov.infra.gis.service;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -53,8 +54,8 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.models.GeoKmlInfo;
-import org.egov.infstr.models.GeoLocation;
+import org.egov.infra.gis.model.GeoKmlInfo;
+import org.egov.infra.gis.model.GeoLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
