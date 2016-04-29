@@ -50,7 +50,7 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.Money;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBHeader;

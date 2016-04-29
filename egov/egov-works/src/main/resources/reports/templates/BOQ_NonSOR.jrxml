@@ -49,8 +49,8 @@
 	<field name="nonSor" class="org.egov.works.models.estimate.NonSor"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="uom" class="org.egov.common.entity.UOM"/>
-	<field name="rate" class="org.egov.infstr.models.Money"/>
-	<field name="amount" class="org.egov.infstr.models.Money"/>
+	<field name="rate" class="org.egov.infra.persistence.entity.component.Money"/>
+	<field name="amount" class="org.egov.infra.persistence.entity.component.Money"/>
 	<variable name="description" class="java.lang.String">
 		<variableExpression><![CDATA[$F{schedule}==null?$F{nonSor}.getDescription():$F{schedule}.getDescription()]]></variableExpression>
 	</variable>

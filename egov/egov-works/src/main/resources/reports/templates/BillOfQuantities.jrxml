@@ -59,7 +59,7 @@
 	<field name="uom" class="org.egov.common.entity.UOM">
 		<fieldDescription><![CDATA[uom]]></fieldDescription>
 	</field>
-	<field name="rate" class="org.egov.infstr.models.Money">
+	<field name="rate" class="org.egov.infra.persistence.entity.component.Money">
 		<fieldDescription><![CDATA[rate]]></fieldDescription>
 	</field>
 	<field name="schedule" class="org.egov.works.models.masters.ScheduleOfRate">
@@ -68,10 +68,10 @@
 	<field name="quantity" class="java.lang.Double">
 		<fieldDescription><![CDATA[quantity]]></fieldDescription>
 	</field>
-	<field name="amount" class="org.egov.infstr.models.Money">
+	<field name="amount" class="org.egov.infra.persistence.entity.component.Money">
 		<fieldDescription><![CDATA[amount]]></fieldDescription>
 	</field>
-	<field name="SORCurrentRate" class="org.egov.infstr.models.Money">
+	<field name="SORCurrentRate" class="org.egov.infra.persistence.entity.component.Money">
 		<fieldDescription><![CDATA[SORCurrentRate]]></fieldDescription>
 	</field>
 	<variable name="description" class="java.lang.String">

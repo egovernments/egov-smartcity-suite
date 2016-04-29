@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.models;
+
+package org.egov.infra.persistence.entity.component;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;

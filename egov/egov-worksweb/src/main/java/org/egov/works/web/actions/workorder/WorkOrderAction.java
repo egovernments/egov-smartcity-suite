@@ -84,7 +84,7 @@ import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.models.Money;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.utils.DateUtils;

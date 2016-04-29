@@ -43,7 +43,7 @@ import java.util.Date;
 
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.Money;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
 import org.joda.time.LocalDate;

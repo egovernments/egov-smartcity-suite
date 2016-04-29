@@ -58,7 +58,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.GeoLatLong;
 import org.egov.infstr.models.GeoLocation;
-import org.egov.infstr.models.Money;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infstr.services.GeoLocationConstants;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.works.models.masters.Contractor;
