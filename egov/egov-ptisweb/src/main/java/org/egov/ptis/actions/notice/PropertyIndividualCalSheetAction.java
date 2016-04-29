@@ -70,7 +70,7 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.bean.PropertyCalSheetInfo;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;

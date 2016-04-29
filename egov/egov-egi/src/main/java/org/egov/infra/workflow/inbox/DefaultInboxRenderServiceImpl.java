@@ -39,7 +39,7 @@
  */
 package org.egov.infra.workflow.inbox;
 
-import static org.egov.infstr.utils.DateUtils.constructDateRange;
+import static org.egov.infra.utils.DateUtils.constructDateRange;
 
 import java.text.ParseException;
 import java.util.Date;

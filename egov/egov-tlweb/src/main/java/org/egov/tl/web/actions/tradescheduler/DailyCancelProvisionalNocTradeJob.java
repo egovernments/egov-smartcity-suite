@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.LicenseStatusValues;

@@ -56,7 +56,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;

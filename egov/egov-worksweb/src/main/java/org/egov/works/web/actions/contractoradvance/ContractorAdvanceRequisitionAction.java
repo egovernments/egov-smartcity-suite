@@ -62,7 +62,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;

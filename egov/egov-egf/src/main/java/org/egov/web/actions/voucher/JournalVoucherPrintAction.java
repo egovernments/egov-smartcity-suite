@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
-import static org.egov.infstr.utils.DateUtils.getFormattedDate;
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,7 +75,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowAction;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.services.bills.BillsService;
 import org.egov.services.budget.BudgetAppropriationService;

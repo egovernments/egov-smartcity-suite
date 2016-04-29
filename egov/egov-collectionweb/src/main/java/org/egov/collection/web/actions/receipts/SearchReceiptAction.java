@@ -57,7 +57,7 @@ import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")

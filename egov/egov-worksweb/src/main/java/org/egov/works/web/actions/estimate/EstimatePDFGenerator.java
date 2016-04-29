@@ -58,7 +58,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.works.models.estimate.AbstractEstimate;

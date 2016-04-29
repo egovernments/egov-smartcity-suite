@@ -2387,7 +2387,7 @@ public class PropertyTaxUtil {
             VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
             if (vacancyRemission != null) {
                 if (vacancyRemission.getStatus().equalsIgnoreCase(PropertyTaxConstants.VR_STATUS_APPROVED)) {
-                    if (org.egov.infstr.utils.DateUtils.isSameDay(vacancyRemission.getVacancyToDate(), new Date())) {
+                    if (DateUtils.isSameDay(vacancyRemission.getVacancyToDate(), new Date())) {
                         vrFlag = true;
                     } else if (vacancyRemission.getVacancyToDate().compareTo(new Date()) < 0) {
                         vrFlag = true;

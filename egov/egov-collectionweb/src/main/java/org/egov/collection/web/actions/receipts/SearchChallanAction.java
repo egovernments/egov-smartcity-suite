@@ -56,7 +56,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 
 @ParentPackage("egov")
 @Results({ @Result(name = SearchChallanAction.SUCCESS, location = "searchChallan.jsp") })

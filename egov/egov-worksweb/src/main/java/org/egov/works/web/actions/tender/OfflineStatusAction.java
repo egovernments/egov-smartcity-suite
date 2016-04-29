@@ -59,7 +59,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.Retender;
 import org.egov.works.models.tender.RetenderHistory;

@@ -87,7 +87,7 @@ import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.models.Money;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;

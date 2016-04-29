@@ -67,7 +67,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.ptis.client.bill.PenaltyBill;

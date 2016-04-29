@@ -84,7 +84,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetGroup;
