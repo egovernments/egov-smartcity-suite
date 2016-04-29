@@ -351,7 +351,16 @@ $( ".workflow-submit" ).click(function( e ) {
 				e.preventDefault();
 				return false;
 			}else{ 
-				document.forms['advertisementform'].submit();
+				if(document.getElementById("workFlowAction").value!=null 
+						&& document.getElementById("workFlowAction").value=='Reject'
+						&& document.getElementById("nextAction").value=='Rejected')
+				{
+					if(confirm("Advertisement will be cancelled. Do you want to proceed?"))
+						document.forms['advertisementform'].submit(); 
+					else
+						return false;
+				}else 
+					document.forms['advertisementform'].submit();
 			}
 		}else{
 			e.preventDefault();
