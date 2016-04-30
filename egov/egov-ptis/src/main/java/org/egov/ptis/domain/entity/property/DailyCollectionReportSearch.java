@@ -62,6 +62,7 @@ public class DailyCollectionReportSearch {
     private String status;
     private String revenueWard;
     private String searchText;
+    private String ulbName;
     private List<String> consumerCode = new ArrayList<String>();
 
     private static final Logger logger = Logger.getLogger(DailyCollectionReportSearch.class);
@@ -143,9 +144,18 @@ public class DailyCollectionReportSearch {
     public void setConsumerCode(List<String> consumerCode) {
         this.consumerCode = consumerCode;
     }
+    
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
 
     public Filters searchCollectionFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
+        andFilters.add(termsStringFilter("clauses.cityname", ulbName));
         andFilters.add(termsStringFilter("clauses.channel", collectionMode));
         andFilters.add(termsStringFilter("clauses.status", status));
         andFilters.add(termsStringFilter("clauses.receiptCreator", collectionOperator));
@@ -163,6 +173,7 @@ public class DailyCollectionReportSearch {
 
     public Filters searchProperyForWardFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
+        andFilters.add(termsStringFilter("clauses.cityname", ulbName));
         andFilters.add(termsStringFilter("clauses.revwardname", revenueWard));
         if (logger.isDebugEnabled())
             logger.debug("finished property tax filters");
