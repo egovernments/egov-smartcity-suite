@@ -40,22 +40,6 @@
 package org.egov.services.deduction;
 
 
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
@@ -77,7 +61,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.deduction.AutoRemittanceBean;
 import org.egov.model.payment.Paymentheader;
@@ -95,6 +78,21 @@ import org.hibernate.type.IntegerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author mani

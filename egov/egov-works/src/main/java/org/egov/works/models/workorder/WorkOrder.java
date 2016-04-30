@@ -39,6 +39,25 @@
  */
 package org.egov.works.models.workorder;
 
+import org.egov.commons.EgwStatus;
+import org.egov.eis.entity.Employee;
+import org.egov.infra.persistence.entity.Auditable;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.ValidateDate;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.measurementbook.MBHeader;
+import org.egov.works.models.revisionEstimate.RevisionType;
+import org.egov.works.models.tender.OfflineStatus;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,26 +66,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.egov.commons.EgwStatus;
-import org.egov.eis.entity.Employee;
-import org.egov.infra.persistence.entity.Auditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infra.utils.DateUtils;
-import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.models.masters.Contractor;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.revisionEstimate.RevisionType;
-import org.egov.works.models.tender.OfflineStatus;
-import org.hibernate.validator.constraints.Length;
 
 public class WorkOrder extends StateAware implements Auditable {
 

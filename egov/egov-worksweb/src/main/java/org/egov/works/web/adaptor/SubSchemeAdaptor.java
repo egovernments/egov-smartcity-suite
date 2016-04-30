@@ -39,14 +39,13 @@
  */
 package org.egov.works.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.commons.SubScheme;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.commons.SubScheme;
+
+import java.lang.reflect.Type;
 
 public class SubSchemeAdaptor implements JsonSerializer<SubScheme> {
 

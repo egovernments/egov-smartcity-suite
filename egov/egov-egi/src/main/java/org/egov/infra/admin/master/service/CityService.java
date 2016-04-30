@@ -39,11 +39,6 @@
  */
 package org.egov.infra.admin.master.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.messaging.MessagingService;
@@ -53,6 +48,10 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

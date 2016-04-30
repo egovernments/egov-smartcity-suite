@@ -39,12 +39,12 @@
  ******************************************************************************/
 package com.exilant.exility.updateservice;
 
-import java.sql.Connection;
-
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.dataservice.SQLTask;
+
+import java.sql.Connection;
 
 public class SQLExecutionTask extends AbstractTask
 {

@@ -39,9 +39,8 @@
  */
 package org.egov.infra.rest.client;
 
-import java.io.IOException;
-import java.util.HashMap;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -49,8 +48,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.HashMap;
 
 @Service
 public class SimpleRestClient {

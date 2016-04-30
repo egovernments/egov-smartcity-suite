@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page errorPage="/error/error.jsp" language="java" import="java.sql.*,org.egov.infstr.utils.HibernateUtil,java.util.*,org.egov.infstr.utils.*,org.hibernate.SQLQuery,org.egov.infra.admin.master.entity.Module,org.apache.log4j.Logger,org.egov.infra.exception.ApplicationRuntimeException" %>
+<%@ page errorPage="/error/error.jsp" language="java" import="java.util.Enumeration,java.util.HashMap,java.util.Iterator,java.util.List,java.util.Map" %>
 <%String values = "";
 	List list=null;
 	String xmlConfigName=null;

@@ -39,8 +39,6 @@
  */
 package org.egov.asset.service.impl;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.asset.model.AssetCategory;
 import org.egov.asset.model.AssetCategoryNumberGenrator;
@@ -50,6 +48,8 @@ import org.egov.asset.service.AssetCategoryService;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+import java.util.List;
 
 /**
  * This class will expose all asset category related operations.

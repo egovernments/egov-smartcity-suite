@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.reports;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  *

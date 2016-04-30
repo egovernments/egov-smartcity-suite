@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.recovery;
 
-import java.math.BigDecimal;
-
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
 
 /**
  * EgptWarrantfee entity. @author MyEclipse Persistence Tools

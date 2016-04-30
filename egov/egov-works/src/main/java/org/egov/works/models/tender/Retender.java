@@ -39,11 +39,11 @@
  */
 package org.egov.works.models.tender;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.egov.infstr.models.BaseModel;
 
 public class Retender extends BaseModel {
 

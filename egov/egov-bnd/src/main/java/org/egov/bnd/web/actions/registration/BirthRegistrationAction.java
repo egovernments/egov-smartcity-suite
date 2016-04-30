@@ -39,33 +39,18 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.registration;
 
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
+import com.opensymphony.xwork2.validator.annotations.EmailValidator;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
+import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bnd.client.utils.BndRuleBook;
-import org.egov.bnd.model.AdoptionDetails;
-import org.egov.bnd.model.AttentionType;
-import org.egov.bnd.model.BirthRegistration;
-import org.egov.bnd.model.BndNameChange;
-import org.egov.bnd.model.CRelation;
-import org.egov.bnd.model.CitizenBDDetails;
-import org.egov.bnd.model.DeliveryMethod;
-import org.egov.bnd.model.Education;
-import org.egov.bnd.model.Establishment;
-import org.egov.bnd.model.Occupation;
-import org.egov.bnd.model.PlaceType;
-import org.egov.bnd.model.RegKeys;
-import org.egov.bnd.model.Registrar;
-import org.egov.bnd.model.RegistrationUnit;
-import org.egov.bnd.model.Religion;
+import org.egov.bnd.model.*;
 import org.egov.bnd.services.reports.PaymentReportService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
@@ -80,11 +65,11 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.EmailValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
-import com.opensymphony.xwork2.validator.annotations.ValidatorType;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 
 @Validations(requiredFields = {

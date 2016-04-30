@@ -39,10 +39,10 @@
  */
 package org.egov.dcb.bean;
 
-import java.util.Map;
-
 import org.egov.collection.integration.models.PaymentInfoCard.CARDTYPE;
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.util.Map;
 
 public class CreditCardPayment extends Payment {
 	public final static String CREDITCARDNO = "creditCardNo";

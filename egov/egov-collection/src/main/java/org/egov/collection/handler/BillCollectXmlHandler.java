@@ -39,12 +39,11 @@
  */
 package org.egov.collection.handler;
 
-import org.egov.collection.integration.models.BillDetails;
-import org.egov.collection.integration.models.BillInfoImpl;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.BooleanConverter;
 import com.thoughtworks.xstream.converters.basic.DateConverter;
+import org.egov.collection.integration.models.BillDetails;
+import org.egov.collection.integration.models.BillInfoImpl;
 
 public class BillCollectXmlHandler {
     private static final String DATE_FORMAT_DDMMYYY = "dd/MM/yyyy";

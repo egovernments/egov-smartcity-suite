@@ -1,8 +1,8 @@
 package org.egov.model.contra;
 
-import java.util.List;
-
 import org.egov.commons.Accountdetailtype;
+
+import java.util.List;
 
 public class TransactionSummarySearchDto {
 	

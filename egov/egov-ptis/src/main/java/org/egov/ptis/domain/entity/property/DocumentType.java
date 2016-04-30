@@ -39,6 +39,10 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.ptis.domain.entity.enums.TransactionType;
+import org.hibernate.search.annotations.DocumentId;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -50,10 +54,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.ptis.domain.entity.enums.TransactionType;
-import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "egpt_document_type")

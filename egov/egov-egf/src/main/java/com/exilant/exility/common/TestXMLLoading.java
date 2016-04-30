@@ -39,10 +39,10 @@
  ******************************************************************************/
 package com.exilant.exility.common;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author raghu.bhandi

@@ -39,9 +39,9 @@
  */
 package org.egov.tl.entity;
 
-import java.util.Date;
-
 import org.egov.demand.model.EgDemand;
+
+import java.util.Date;
 
 public class LicenseDemand extends EgDemand {
     private static final long serialVersionUID = 1L;

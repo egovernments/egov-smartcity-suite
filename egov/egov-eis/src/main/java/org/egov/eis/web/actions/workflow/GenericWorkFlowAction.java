@@ -39,16 +39,16 @@
  */
 package org.egov.eis.web.actions.workflow;
 
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 
 /**
  * Generic WorkFlow Action. Can be extended by any action class that intends to provide Work flow functionality.

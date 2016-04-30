@@ -39,6 +39,9 @@
  */
 package org.egov.tl.entity;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.tl.entity.enums.ProcessStatus;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -51,9 +54,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.tl.entity.enums.ProcessStatus;
 
 @Entity
 @Table(name = "egtl_demandgenerationlogdetail")

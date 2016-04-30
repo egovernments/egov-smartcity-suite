@@ -1,4 +1,4 @@
-<%@ page errorPage="/error/error.jsp" language="java" import="java.sql.*,org.egov.infstr.utils.HibernateUtil,java.util.*,org.egov.infstr.utils.*,org.hibernate.SQLQuery,org.egov.infstr.commons.Module,org.apache.log4j.Logger,org.egov.EGOVRuntimeException" %>
+<%@ page errorPage="/error/error.jsp" language="java" import="org.egov.EGOVRuntimeException,org.egov.infstr.commons.Module,java.util.Enumeration,java.util.HashMap,java.util.Iterator,java.util.List,java.util.Map" %>
 <%String values = "";
 	List list=null;
 	String xmlConfigName=null;

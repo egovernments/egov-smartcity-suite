@@ -38,13 +38,10 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ page import=" org.egov.lib.rrbac.services.RbacManager,
-		org.egov.lib.rrbac.services.RbacManagerHome,
-		org.egov.infstr.utils.ServiceLocator,
-		org.egov.infstr.utils.HibernateUtil,
-		org.hibernate.LockMode,
-		 org.egov.lib.rrbac.model.Action
-		 org.apache.log4j.Logger;"
+<%@ page import=" org.egov.infstr.utils.ServiceLocator,
+		org.egov.lib.rrbac.model.Action,
+		org.egov.lib.rrbac.services.RbacManager,
+		org.egov.lib.rrbac.services.RbacManagerHome"
 %>
 
 <%

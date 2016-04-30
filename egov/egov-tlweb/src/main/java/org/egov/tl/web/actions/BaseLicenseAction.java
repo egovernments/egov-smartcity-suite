@@ -39,18 +39,6 @@
  */
 package org.egov.tl.web.actions;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -76,10 +64,10 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.utils.NumberToWord;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.utils.NumberToWord;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseCategory;
@@ -101,6 +89,17 @@ import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.web.actions.domain.CommonAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results({

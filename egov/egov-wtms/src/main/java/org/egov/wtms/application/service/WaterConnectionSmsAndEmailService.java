@@ -39,10 +39,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
-
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -56,6 +52,10 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Iterator;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

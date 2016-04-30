@@ -39,13 +39,6 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
@@ -59,6 +52,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/vacancyremission/")

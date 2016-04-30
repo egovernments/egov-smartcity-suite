@@ -39,15 +39,15 @@
  */
 package org.egov.collection.integration.services;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This interface needs to be implemented by any billing application that integrates with the eGov collection system. <br>

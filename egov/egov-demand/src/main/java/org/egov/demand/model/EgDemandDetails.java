@@ -39,14 +39,14 @@
  */
 package org.egov.demand.model;
 
+import org.egov.commons.EgwStatus;
+import org.egov.infra.exception.ApplicationRuntimeException;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * EgDemandDetails entity.

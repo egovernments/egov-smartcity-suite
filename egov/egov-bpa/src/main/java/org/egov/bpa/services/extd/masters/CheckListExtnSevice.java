@@ -40,17 +40,16 @@
 package org.egov.bpa.services.extd.masters;
 
 
+import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
+import org.egov.bpa.models.extd.masters.ChecklistExtn;
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
-import org.egov.bpa.models.extd.masters.ChecklistExtn;
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class CheckListExtnSevice extends PersistenceService<ChecklistExtn, Long>
 	{

@@ -1,12 +1,5 @@
 package org.egov.bpa.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -14,9 +7,13 @@ import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
-import org.egov.lib.admbndry.BoundaryDAO;
-import org.egov.lib.admbndry.BoundaryTypeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class BoundaryUtil {

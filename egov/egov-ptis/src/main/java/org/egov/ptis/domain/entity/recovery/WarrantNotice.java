@@ -38,11 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
  ******************************************************************************/
 package org.egov.ptis.domain.entity.recovery;
-import java.util.Date;
 
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.notice.PtNotice;
+
+import java.util.Date;
 
 /**
  * Warrant Notice(NMC-Notice156) entity. @author MyEclipse Persistence Tools

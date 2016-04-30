@@ -39,15 +39,14 @@
  ******************************************************************************/
 package org.egov.collection.web.actions.citizen.reports;
 
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-
-import org.egov.collection.entity.OnlinePaymentResult;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.collection.entity.OnlinePaymentResult;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 public class OnlinePaymentResultAdaptor implements JsonSerializer<OnlinePaymentResult> {
 

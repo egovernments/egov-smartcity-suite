@@ -39,10 +39,10 @@
  */
 package org.egov.bpa.models.extd.masters;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.infstr.models.BaseModel;
 
 @SuppressWarnings("serial")
 public class BpaFeeDetailExtn extends BaseModel {

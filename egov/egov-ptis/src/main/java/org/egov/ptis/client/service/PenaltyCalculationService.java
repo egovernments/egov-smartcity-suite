@@ -39,37 +39,14 @@
  ******************************************************************************/
 package org.egov.ptis.client.service;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_BREAKUP;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.LP_PERCENTAGE_CONSTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_PRATIVRUTTA;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.infra.utils.MoneyUtils;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PenaltyBill;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -86,6 +63,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_BREAKUP;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.LP_PERCENTAGE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_PRATIVRUTTA;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 
 /**
  * Provieds api's for penalty calculation

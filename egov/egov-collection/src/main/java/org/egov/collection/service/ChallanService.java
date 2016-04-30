@@ -39,8 +39,6 @@
  */
 package org.egov.collection.service;
 
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
@@ -50,6 +48,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * Provides services related to receipt header

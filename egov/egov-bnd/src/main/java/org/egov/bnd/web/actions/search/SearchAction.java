@@ -39,11 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.search;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -57,6 +52,11 @@ import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.search.SearchQuery;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Namespace("/search")
 @Transactional(readOnly = true)

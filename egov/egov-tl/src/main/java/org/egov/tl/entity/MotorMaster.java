@@ -39,11 +39,11 @@
  */
 package org.egov.tl.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class MotorMaster extends BaseModel {
     private static final long serialVersionUID = 1L;

@@ -39,19 +39,9 @@
  */
 package org.egov.tl.web.actions.search;
 
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.io.IOUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -69,9 +59,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 
 /**
  * The Class TradeSearchAction.

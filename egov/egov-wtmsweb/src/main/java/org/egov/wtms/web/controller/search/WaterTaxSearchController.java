@@ -40,11 +40,6 @@
 
 package org.egov.wtms.web.controller.search;
 
-import static java.util.Arrays.asList;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-
-import java.util.List;
-
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -72,6 +67,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @Controller
 @RequestMapping(value = "/search/waterSearch/")

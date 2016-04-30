@@ -7,12 +7,12 @@
 
 package org.egov.demand.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 

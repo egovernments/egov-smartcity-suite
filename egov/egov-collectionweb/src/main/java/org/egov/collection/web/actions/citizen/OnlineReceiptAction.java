@@ -39,22 +39,6 @@
  */
 package org.egov.collection.web.actions.citizen;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -92,6 +76,21 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),

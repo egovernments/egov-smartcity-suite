@@ -39,13 +39,12 @@
  ******************************************************************************/
 package com.exilant.exility.dataservice;
 
-import java.sql.Connection;
-import java.sql.Statement;
+import org.apache.log4j.Logger;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import org.apache.log4j.Logger;
+import java.sql.Connection;
+import java.sql.Statement;
 
 public class DBHandler {
 

@@ -39,12 +39,12 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
+import org.egov.utils.Constants;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egov.utils.Constants;
 
 public class ChequeIssueRegisterDisplay {
     private Date chequeDate;

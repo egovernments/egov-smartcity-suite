@@ -39,6 +39,10 @@
  */
 package org.egov.pims.commons;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,11 +54,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
 
 @Entity
 @Table(name = "eg_position")

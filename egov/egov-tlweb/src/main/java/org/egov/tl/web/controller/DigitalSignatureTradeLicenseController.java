@@ -39,19 +39,6 @@
  ******************************************************************************/
 package org.egov.tl.web.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -63,9 +50,9 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
@@ -75,6 +62,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  *

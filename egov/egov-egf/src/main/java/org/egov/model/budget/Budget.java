@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.model.budget;
 
-import java.util.Date;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -48,6 +46,8 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.Date;
 
 @Unique(fields = "name", id = "id", columnName = "NAME", tableName = "EGF_BUDGET", message = "budget.name.isunique")
 public class Budget extends StateAware {

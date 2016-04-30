@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 
 @Entity

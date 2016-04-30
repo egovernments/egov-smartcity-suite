@@ -30,19 +30,19 @@
  */
 package org.egov.api.model;
 
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import static org.egov.search.domain.Filter.queryStringFilter;
+import static org.egov.search.domain.Filter.rangeFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
 public class ComplaintSearchRequest {
     private String searchText;

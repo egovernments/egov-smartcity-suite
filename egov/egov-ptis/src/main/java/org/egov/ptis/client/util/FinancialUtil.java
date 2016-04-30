@@ -39,28 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.client.util;
 
-import static org.egov.billsaccounting.services.VoucherConstant.VOUCHERNUMBER;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DEMAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DEMAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEPT_CODE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_TAX_PAYABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_EG_MODULES_ID;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -72,7 +50,28 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.egov.billsaccounting.services.VoucherConstant.VOUCHERNUMBER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DEMAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DEMAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEPT_CODE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_TAX_PAYABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_EG_MODULES_ID;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 /**
  * @author subhash

@@ -40,9 +40,6 @@
 
 package org.egov.collection.web.actions.reports;
 
-import java.util.Date;
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -54,6 +51,9 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Action class for Online Trasaction Report

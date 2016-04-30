@@ -45,11 +45,6 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -57,6 +52,11 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This is the interface for the Property which reperesents the Status and Source of each Property. Every Property Object has some

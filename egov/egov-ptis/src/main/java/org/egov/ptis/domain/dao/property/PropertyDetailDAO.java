@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
+
+import java.util.List;
 
 public interface PropertyDetailDAO {
 

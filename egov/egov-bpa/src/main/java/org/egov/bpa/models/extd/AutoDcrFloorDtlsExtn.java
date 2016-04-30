@@ -39,10 +39,10 @@
  */
 package org.egov.bpa.models.extd;
 
-import java.math.BigDecimal;
-
 import org.egov.bpa.models.extd.masters.BuildingUsageExtn;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
 
 public class AutoDcrFloorDtlsExtn extends BaseModel {
 

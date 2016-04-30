@@ -39,20 +39,6 @@
  */
 package org.egov.infra.workflow.entity;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -61,6 +47,19 @@ import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
+
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @MappedSuperclass
 @Searchable

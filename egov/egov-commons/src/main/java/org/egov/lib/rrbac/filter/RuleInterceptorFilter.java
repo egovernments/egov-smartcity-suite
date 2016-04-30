@@ -39,24 +39,13 @@
  */
 package org.egov.lib.rrbac.filter;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ActionService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.AuthorizationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.AuthorizationException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -65,6 +54,16 @@ import org.egov.lib.rrbac.model.AuthorizationRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * This Filter is used to put rules on actions based on Authentication. 

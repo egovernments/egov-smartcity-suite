@@ -47,13 +47,13 @@ package com.exilant.exility.service;
  * This class is either invoked direclty by the ServieAgent from the Web-Tier or it can be called
  *  by the corresponding SLSB
  */
-import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.ExilServiceInterface;
 import com.exilant.exility.dataservice.JobService;
+import org.apache.log4j.Logger;
+
+import java.sql.Connection;
 
 public class DataService implements ExilServiceInterface {
     private static DataService singletonInstance;

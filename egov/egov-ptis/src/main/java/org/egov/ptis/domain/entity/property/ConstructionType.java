@@ -46,10 +46,10 @@
 
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.infra.admin.master.entity.User;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import org.egov.infra.admin.master.entity.User;
 
 /**
  * <p>

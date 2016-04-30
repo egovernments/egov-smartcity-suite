@@ -41,9 +41,7 @@ package org.egov.bpa.services.extd.common;
 
 //import static org.egov.portal.utils.ServiceConstants.USER_TYPE_SURVEYOR;
 
-import org.egov.bpa.constants.BpaConstants;
-import org.egov.bpa.models.extd.RegistrationExtn;
-//TODO: Removed from POrtal ProjectSurveyor and below things from 
+//TODO: Removed from POrtal ProjectSurveyor and below things from
 /*import org.egov.portal.model.ActiveServiceRegistry;
 import org.egov.portal.model.ServiceRequestRegistry;
 import org.egov.portal.services.PortalIntegrationService;

@@ -39,13 +39,6 @@
  ******************************************************************************/
 package org.egov.demand.dao;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.demand.model.BillReceipt;
@@ -66,7 +59,12 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository(value = "demandGenericDAO")
 public class DemandGenericHibDao implements DemandGenericDao {

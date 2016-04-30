@@ -45,19 +45,18 @@
 
 package org.egov.ptis.domain.dao.property;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Repository(value = "taxPercentageforDatesDAO")
 @Transactional(readOnly = true)

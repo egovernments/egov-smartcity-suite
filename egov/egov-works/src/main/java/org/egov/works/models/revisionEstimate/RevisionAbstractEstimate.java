@@ -39,12 +39,12 @@
  */
 package org.egov.works.models.revisionEstimate;
 
+import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.models.estimate.Activity;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.Activity;
 
 public class RevisionAbstractEstimate extends AbstractEstimate {
 

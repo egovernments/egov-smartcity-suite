@@ -39,13 +39,13 @@
  */
 package org.egov.bpa.models.extd;
 
+import org.egov.commons.EgwStatus;
+import org.egov.infra.workflow.entity.StateAware;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.workflow.entity.StateAware;
 
 public class RegistrationFeeExtn extends StateAware {
 

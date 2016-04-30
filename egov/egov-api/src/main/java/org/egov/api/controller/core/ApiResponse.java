@@ -1,14 +1,13 @@
 package org.egov.api.controller.core;
 
-import org.egov.api.adapter.DataAdapter;
-import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.egov.api.adapter.DataAdapter;
+import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class ApiResponse {
 

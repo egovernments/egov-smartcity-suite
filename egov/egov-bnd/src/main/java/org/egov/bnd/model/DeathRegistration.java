@@ -39,12 +39,12 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.bnd.utils.BndConstants;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.persistence.entity.Address;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeathRegistration extends Registration implements Cloneable {
 

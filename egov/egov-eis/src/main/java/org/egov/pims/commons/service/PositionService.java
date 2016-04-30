@@ -39,11 +39,6 @@
  */
 package org.egov.pims.commons.service;
 
-import java.util.Date;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
@@ -54,6 +49,10 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
 
 public class PositionService extends PersistenceService<Position, Integer> {  
 	

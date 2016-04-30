@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+
 import java.util.Date;
 import java.util.List;
-
-import org.egov.ptis.domain.entity.property.PropertyUsage;
 
 public interface PropertyUsageDAO {
 

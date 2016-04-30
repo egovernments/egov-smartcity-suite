@@ -39,11 +39,6 @@
  */
 package org.egov.demand.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgBill;
 import org.hibernate.Criteria;
@@ -51,6 +46,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository(value = "egBillReceiptDAO")
 @Transactional(readOnly = true)

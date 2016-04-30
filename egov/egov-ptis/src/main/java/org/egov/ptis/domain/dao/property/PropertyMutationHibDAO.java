@@ -39,15 +39,14 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository(value = "propertyMutationDAO")
 @Transactional(readOnly = true)

@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.client.util;
 
-import java.util.Comparator;
-
 import org.egov.ptis.domain.entity.property.CurrFloorDmdCalcMaterializeView;
+
+import java.util.Comparator;
 /**
  * 
  * @author subhash

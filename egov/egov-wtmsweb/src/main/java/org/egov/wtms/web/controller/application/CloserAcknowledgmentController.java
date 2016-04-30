@@ -39,9 +39,6 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
@@ -56,6 +53,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping(value = "/application")

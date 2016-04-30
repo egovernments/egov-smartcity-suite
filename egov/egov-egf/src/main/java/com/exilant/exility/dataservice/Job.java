@@ -39,11 +39,11 @@
  ******************************************************************************/
 package com.exilant.exility.dataservice;
 
-import java.sql.Connection;
-
 import com.exilant.eGov.src.domain.User;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
+
+import java.sql.Connection;
 
 /*
  * This class should not be called by programmers directly. call to this has to

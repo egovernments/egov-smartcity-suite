@@ -1,9 +1,5 @@
 package org.egov.api.oauth2.provider;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
@@ -17,6 +13,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {

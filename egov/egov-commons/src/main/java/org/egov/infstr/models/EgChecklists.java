@@ -39,10 +39,10 @@
  */
 package org.egov.infstr.models;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import org.egov.infra.admin.master.entity.AppConfigValues;
 
 
 public class EgChecklists implements Serializable {

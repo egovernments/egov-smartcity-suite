@@ -39,12 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.services.registration;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.bnd.model.Addiction;
 import org.egov.bnd.model.CitizenAddiction;
@@ -61,6 +55,12 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public class DeathRegistrationService extends PersistenceService<DeathRegistration, Long> {

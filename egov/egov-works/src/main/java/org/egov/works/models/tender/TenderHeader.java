@@ -39,13 +39,6 @@
  */
 package org.egov.works.models.tender;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -54,6 +47,12 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TenderHeader extends BaseModel {
 

@@ -39,6 +39,10 @@
  */
 package org.egov.infra.workflow.entity;
 
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -50,10 +54,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "EG_WF_TYPES")

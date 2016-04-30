@@ -39,14 +39,13 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import java.lang.reflect.Type;
-
-import org.egov.wtms.application.service.GenerateConnectionBill;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.wtms.application.service.GenerateConnectionBill;
+
+import java.lang.reflect.Type;
 
 public class GenerateConnectionBillAdaptor implements JsonSerializer<GenerateConnectionBill> {
 

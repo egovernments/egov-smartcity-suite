@@ -39,31 +39,6 @@
  */
 package org.egov.infra.config.persistence;
 
-import static org.hibernate.cfg.AvailableSettings.AUTOCOMMIT;
-import static org.hibernate.cfg.AvailableSettings.AUTO_CLOSE_SESSION;
-import static org.hibernate.cfg.AvailableSettings.CACHE_REGION_FACTORY;
-import static org.hibernate.cfg.AvailableSettings.DEFAULT_BATCH_FETCH_SIZE;
-import static org.hibernate.cfg.AvailableSettings.DIALECT;
-import static org.hibernate.cfg.AvailableSettings.GENERATE_STATISTICS;
-import static org.hibernate.cfg.AvailableSettings.JTA_PLATFORM;
-import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT;
-import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT_CONNECTION_PROVIDER;
-import static org.hibernate.cfg.AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER;
-import static org.hibernate.cfg.AvailableSettings.ORDER_INSERTS;
-import static org.hibernate.cfg.AvailableSettings.ORDER_UPDATES;
-import static org.hibernate.cfg.AvailableSettings.USE_MINIMAL_PUTS;
-import static org.hibernate.cfg.AvailableSettings.USE_QUERY_CACHE;
-import static org.hibernate.cfg.AvailableSettings.USE_SECOND_LEVEL_CACHE;
-import static org.hibernate.cfg.AvailableSettings.USE_STREAMS_FOR_BINARY;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
-import javax.sql.DataSource;
-
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -80,6 +55,15 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.SharedCacheMode;
+import javax.persistence.ValidationMode;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hibernate.cfg.AvailableSettings.*;
 
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)

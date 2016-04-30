@@ -38,7 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
-<%@page  import="com.exilant.eGov.src.reports.LongAmountWrapper,org.egov.infstr.utils.EGovConfig,java.io.*,com.exilant.eGov.src.reports.*,java.io.*,java.util.*,java.sql.*,javax.sql.*,javax.naming.InitialContext,com.exilant.GLEngine.*"%>
+<%@page  import="com.exilant.eGov.src.reports.CashBook,com.exilant.eGov.src.reports.GeneralLedgerReportBean,org.egov.infstr.utils.EGovConfig"%>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
 <html>

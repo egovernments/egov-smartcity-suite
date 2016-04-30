@@ -39,8 +39,6 @@
  ******************************************************************************/
 package com.exilant.exility.dataservice;
 
-import java.sql.Connection;
-
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
@@ -48,6 +46,8 @@ import com.exilant.exility.updateservice.BulkTask;
 import com.exilant.exility.updateservice.InsertTask;
 import com.exilant.exility.updateservice.SQLExecutionTask;
 import com.exilant.exility.updateservice.UpdateTask;
+
+import java.sql.Connection;
 
 public class JobStep {
     private static final String TYPE_USERTASK = "userTask";

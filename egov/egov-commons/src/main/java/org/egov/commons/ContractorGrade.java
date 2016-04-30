@@ -39,12 +39,6 @@
  */
 package org.egov.commons;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.validation.constraints.Min;
-
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -52,6 +46,11 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Min;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 @Unique(fields = { "grade" }, id = "id", tableName = "EGW_CONTRACTOR_GRADE", columnName = { "GRADE" }, message = "contractorGrade.grade.isunique")
 public class ContractorGrade extends BaseModel {

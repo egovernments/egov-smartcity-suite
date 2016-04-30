@@ -39,15 +39,15 @@
  */
 package org.egov.ptis.domain.formatter;
 
-import java.text.ParseException;
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
+
+import java.text.ParseException;
+import java.util.Locale;
 
 @Component("basicPropertyImplFormatter")
 public class BasicPropertyImplFormatter implements Formatter<BasicPropertyImpl> {

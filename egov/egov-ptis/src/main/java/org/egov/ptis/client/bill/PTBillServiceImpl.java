@@ -39,26 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.client.bill;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_MUTATION_FEE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_FEE_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.DemandGenericDao;
@@ -88,6 +68,25 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_MUTATION_FEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_FEE_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 public class PTBillServiceImpl extends BillServiceInterface {
     private static final Logger LOGGER = Logger.getLogger(PTBillServiceImpl.class);

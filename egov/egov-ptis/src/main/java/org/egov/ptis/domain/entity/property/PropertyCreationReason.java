@@ -45,10 +45,10 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * This class defines the reasons for the New property Creation

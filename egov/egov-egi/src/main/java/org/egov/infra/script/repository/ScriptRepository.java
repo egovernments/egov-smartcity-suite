@@ -39,13 +39,12 @@
  */
 package org.egov.infra.script.repository;
 
-import java.util.Date;
-
 import org.egov.infra.script.entity.Script;
-import org.joda.time.DateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
 
 @Repository
 public interface ScriptRepository extends JpaRepository<Script, Long> {

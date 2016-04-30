@@ -39,13 +39,8 @@
  */
 package org.egov.restapi.web.rest;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.MediaType;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
@@ -66,8 +61,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user

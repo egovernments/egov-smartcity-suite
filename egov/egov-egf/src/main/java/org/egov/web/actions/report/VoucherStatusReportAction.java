@@ -31,20 +31,7 @@
 package org.egov.web.actions.report;
 
 
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.opensymphony.xwork2.validator.annotations.Validation;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -71,10 +58,9 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.services.Page;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.payment.Paymentheader;
-import org.egov.model.receipt.ReceiptVoucher;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
@@ -82,9 +68,19 @@ import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.VoucherSearchAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",

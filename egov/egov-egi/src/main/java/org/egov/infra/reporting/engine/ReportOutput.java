@@ -39,9 +39,9 @@
  */
 package org.egov.infra.reporting.engine;
 
-import java.io.Serializable;
-
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+
+import java.io.Serializable;
 
 /**
  * Class to represent a generated report

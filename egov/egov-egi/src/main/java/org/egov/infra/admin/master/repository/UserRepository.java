@@ -39,13 +39,6 @@
  */
 package org.egov.infra.admin.master.repository;
 
-import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.QueryHint;
-
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -54,6 +47,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.QueryHint;
+import java.util.List;
+import java.util.Set;
+
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

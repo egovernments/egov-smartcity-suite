@@ -38,9 +38,10 @@
  */
 package org.egov.adtax.entity;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -54,11 +55,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.demand.model.EgDemand;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "EGADTAX_AGENCYWISECOLLECTION")

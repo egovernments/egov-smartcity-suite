@@ -39,13 +39,6 @@
  */
 package org.egov.wtms.application.service.collection;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgDemandDao;
@@ -73,6 +66,13 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)

@@ -39,11 +39,6 @@
  */
 package org.egov.collection.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfoImpl;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
@@ -53,6 +48,11 @@ import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.model.instrument.InstrumentHeader;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The challan information class. Provides details of a challan.

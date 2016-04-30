@@ -1,24 +1,10 @@
 package org.egov.bpa.services.extd.common;
 
-import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
-import static org.egov.bpa.constants.BpaConstants.CATEGORY_FEE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.masters.BpaFeeDetailExtn;
 import org.egov.bpa.models.extd.masters.BpaFeeExtn;
 import org.egov.commons.Installment;
-//import org.egov.commons.dao.CommonsDaoFactory;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.DemandGenericHibDao;
@@ -35,6 +21,20 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
+import static org.egov.bpa.constants.BpaConstants.CATEGORY_FEE;
+
+//import org.egov.commons.dao.CommonsDaoFactory;
 
 @Transactional(readOnly = true)
 public class BpaDmdCollExtnService {

@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.registration;
 
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Map;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
+import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -62,10 +62,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
-import com.opensymphony.xwork2.validator.annotations.ValidatorType;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Map;
 
 
 @Validations(

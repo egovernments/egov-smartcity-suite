@@ -39,24 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.search;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GISCITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.GISVERSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -80,7 +63,22 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.AREA_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GISCITY;
+import static org.egov.ptis.constants.PropertyTaxConstants.GISVERSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
 @ParentPackage("egov")
 @Validations

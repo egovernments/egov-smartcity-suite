@@ -39,11 +39,11 @@
  */
 package org.egov.works.models.contractorBill;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+
+import java.util.Date;
+import java.util.List;
 
 public class WorkCompletionInfo {
 

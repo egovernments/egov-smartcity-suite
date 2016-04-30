@@ -39,20 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.service.bill;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUARTZ_BULKBILL_JOBS;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -84,6 +70,20 @@ import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUARTZ_BULKBILL_JOBS;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 
 /**
  * Provides API to Generate a Demand Notice or the Bill giving the break up of

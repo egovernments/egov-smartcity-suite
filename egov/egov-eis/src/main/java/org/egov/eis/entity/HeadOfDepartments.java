@@ -39,6 +39,10 @@
  */
 package org.egov.eis.entity;
 
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -48,10 +52,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "egeis_employee_hod")

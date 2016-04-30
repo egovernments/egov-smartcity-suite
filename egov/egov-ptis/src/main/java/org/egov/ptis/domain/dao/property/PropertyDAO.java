@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -55,6 +52,9 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public interface PropertyDAO {
 

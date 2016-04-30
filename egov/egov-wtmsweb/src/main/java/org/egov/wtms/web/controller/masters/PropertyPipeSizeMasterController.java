@@ -40,12 +40,6 @@
 
 package org.egov.wtms.web.controller.masters;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.wtms.masters.entity.PropertyPipeSize;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyPipeSizeService;
@@ -58,6 +52,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/masters")

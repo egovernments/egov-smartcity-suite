@@ -3,10 +3,6 @@
  */
 package org.egov.infstr.models;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationError;
@@ -14,6 +10,10 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author manoranjan

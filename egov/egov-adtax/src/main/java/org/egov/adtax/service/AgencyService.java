@@ -38,14 +38,14 @@
  */
 package org.egov.adtax.service;
 
-import java.util.List;
-
 import org.egov.adtax.entity.Agency;
 import org.egov.adtax.entity.enums.AgencyStatus;
 import org.egov.adtax.repository.AgencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

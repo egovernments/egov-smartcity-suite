@@ -39,18 +39,9 @@
  ******************************************************************************/
 package org.egov.dcb.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
 import org.egov.DCBException;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBRecord;
@@ -68,6 +59,14 @@ import org.egov.demand.model.EgReasonCategory;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Module;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class DCBServiceImpl implements DCBService {
 

@@ -39,10 +39,10 @@
  ******************************************************************************/
 package com.exilant.exility.common;
 
-import java.sql.Connection;
-
 import com.exilant.exility.dataservice.DataExtractor;
 import com.exilant.exility.updateservice.DataUpdater;
+
+import java.sql.Connection;
 
 /**
  * @author raghu.bhandi Exilant Consulting

@@ -40,10 +40,10 @@
 
 package org.egov.wtms.masters.entity;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class PayWaterTaxDetails implements Serializable {
     /**

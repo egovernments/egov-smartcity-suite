@@ -30,11 +30,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -50,6 +45,11 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Action class for "Approve Collections"

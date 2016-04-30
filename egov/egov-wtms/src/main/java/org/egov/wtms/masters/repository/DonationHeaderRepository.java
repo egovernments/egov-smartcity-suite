@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.masters.repository;
 
-import java.util.List;
-
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.PropertyType;
@@ -49,6 +47,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface DonationHeaderRepository extends JpaRepository<DonationHeader, Long> {

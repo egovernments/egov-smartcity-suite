@@ -39,16 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.registration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -72,6 +62,16 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 @Namespace("/registration")

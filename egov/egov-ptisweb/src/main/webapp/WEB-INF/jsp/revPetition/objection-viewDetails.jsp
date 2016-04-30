@@ -39,12 +39,11 @@
 -->
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="org.egov.ptis.constants.PropertyTaxConstants" %>
 
 
 <html>
-	<head>
-		<title><s:text name="objectionView.det"></s:text></title>
+<head>
+	<title><s:text name="objectionView.det"></s:text></title>
 		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body class="yui-skin-sam">

@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.demand.dao;
 
-import java.util.List;
-
 import org.egov.demand.model.EgdmCollectedReceipt;
+
+import java.util.List;
 
 public interface EgdmCollectedReceiptDao {
 	

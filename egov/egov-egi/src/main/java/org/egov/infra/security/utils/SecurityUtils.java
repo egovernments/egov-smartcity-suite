@@ -39,8 +39,6 @@
  */
 package org.egov.infra.security.utils;
 
-import java.util.Optional;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.SecureUser;
@@ -49,6 +47,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class SecurityUtils {

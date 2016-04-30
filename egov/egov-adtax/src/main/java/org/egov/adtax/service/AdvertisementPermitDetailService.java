@@ -38,15 +38,6 @@
  */
 package org.egov.adtax.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingAgencyWiseSearch;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
@@ -69,6 +60,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

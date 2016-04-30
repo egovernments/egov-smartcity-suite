@@ -39,13 +39,6 @@
  */
 package org.egov.adtax.service.collection;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseCollection;
@@ -73,6 +66,12 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

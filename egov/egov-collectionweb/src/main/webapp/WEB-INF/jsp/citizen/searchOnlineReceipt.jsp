@@ -39,7 +39,6 @@
 
 
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ page import="org.egov.commons.EgwStatus,java.util.*"%>
 <link rel="stylesheet" type="text/css" href="<egov:url path='/yui/assets/skins/sam/autocomplete.css'/>" />
 <head>
 	<title><s:text name="searchOnlineReceipts.title"/></title>

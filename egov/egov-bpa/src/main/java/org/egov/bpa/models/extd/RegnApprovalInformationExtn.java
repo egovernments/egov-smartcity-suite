@@ -39,10 +39,10 @@
  */
 package org.egov.bpa.models.extd;
 
-import java.util.Date;
-
 import org.egov.bpa.models.extd.masters.ChangeOfUsageExtn;
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class RegnApprovalInformationExtn extends BaseModel {

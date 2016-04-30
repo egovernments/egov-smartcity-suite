@@ -39,12 +39,12 @@
  */
 package org.egov.asset.service;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 public class AppService {
     private static final Logger logger = Logger.getLogger(AppService.class);

@@ -40,15 +40,7 @@
 /**
  *
  */
-package org.egov.services.deduction;import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+package org.egov.services.deduction;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CVoucherHeader;
@@ -57,7 +49,6 @@ import org.egov.dao.voucher.VoucherHibernateDAO;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.deduction.RemittanceBean;
 import org.egov.utils.Constants;
 import org.egov.utils.VoucherHelper;
@@ -66,6 +57,14 @@ import org.egov.web.actions.report.AutoRemittanceBeanReport;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @author manoranjan

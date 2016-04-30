@@ -1,11 +1,9 @@
 package org.egov.ptis.actions.reports;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.io.IOUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -17,10 +15,10 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

@@ -46,20 +46,18 @@
 
 package org.egov.deduction.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.deduction.model.EgRemittance;
-import org.egov.model.budget.BudgetDetail;
 import org.egov.model.recoveries.Recovery;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  * TODO Brief Description of the purpose of the class/interface

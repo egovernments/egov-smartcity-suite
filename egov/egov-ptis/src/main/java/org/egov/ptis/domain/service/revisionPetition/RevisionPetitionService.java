@@ -39,10 +39,6 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -58,9 +54,9 @@ import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -71,6 +67,10 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     private static final Logger LOGGER = Logger.getLogger(RevisionPetitionService.class);

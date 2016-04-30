@@ -39,13 +39,6 @@
  */
 package org.egov.tl.web.actions.domain;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -68,6 +61,13 @@ import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Results({
         @Result(name = "ward", location = "commonAjax-ward.jsp"),

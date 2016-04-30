@@ -40,9 +40,9 @@
 
 package org.egov.ptis.wtms;
 
-import java.math.BigDecimal;
-
 import org.joda.time.DateTime;
+
+import java.math.BigDecimal;
 
 public class ConsumerConsumption {
     String hscno;

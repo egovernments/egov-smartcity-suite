@@ -39,8 +39,14 @@
  */
 package org.egov.infra.admin.master.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.annotations.Expose;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,19 +58,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
-
-import com.google.gson.annotations.Expose;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "eg_appconfig")

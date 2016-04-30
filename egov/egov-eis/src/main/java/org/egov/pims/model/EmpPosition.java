@@ -39,6 +39,13 @@
  */
 package org.egov.pims.model;
 
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
+import org.hibernate.search.annotations.DocumentId;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,13 +58,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
-import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "EGEIS_POST_CREATION")

@@ -39,14 +39,14 @@
  */
 package org.egov.pims.model;
 
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.pims.commons.Designation;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pims.commons.Designation;
 
 public class SearchEmpDTO implements java.io.Serializable
 {

@@ -39,15 +39,14 @@
  ******************************************************************************/
 package com.exilant.exility.updateservice;
 
+import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
 import java.math.BigInteger;
 import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.Query;
 
 public class PrimaryKeyGenerator
 {

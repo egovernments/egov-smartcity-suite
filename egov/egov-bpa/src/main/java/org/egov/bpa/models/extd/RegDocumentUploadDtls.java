@@ -39,7 +39,6 @@
  */
 package org.egov.bpa.models.extd;
 
-import org.apache.struts.upload.FormFile;
 import org.egov.infstr.models.BaseModel;
 
 public class RegDocumentUploadDtls extends BaseModel{

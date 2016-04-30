@@ -32,11 +32,6 @@
  *
  */
 package org.egov.dao.voucher;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,7 +47,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -60,6 +54,11 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Manoranjan

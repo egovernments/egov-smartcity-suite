@@ -39,14 +39,6 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.math.BigDecimal;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
-
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -69,6 +61,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
+import java.math.BigDecimal;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/application")

@@ -39,10 +39,10 @@
  */
 package org.egov.commons.service;
 
-import java.util.List;
-
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationException;
+
+import java.util.List;
 
 /**
  * 

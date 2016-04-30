@@ -39,6 +39,9 @@
  */
 package org.egov.works.lineestimate.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.model.budget.BudgetUsage;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -49,9 +52,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.model.budget.BudgetUsage;
 
 @Entity
 @Table(name = "EGW_LINEESTIMATE_APPROPRIATION")

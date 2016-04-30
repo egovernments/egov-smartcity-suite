@@ -39,17 +39,8 @@
  */
 package org.egov.infra.web.controller.admin.masters;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletResponse;
-
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -69,8 +60,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 public class GenericMasterAjaxController {

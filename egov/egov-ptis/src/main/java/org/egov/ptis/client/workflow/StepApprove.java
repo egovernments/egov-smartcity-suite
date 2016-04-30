@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.client.workflow;
 
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATION_PENDING;
-
-import org.egov.ptis.domain.entity.property.PropertyImpl;
 
 public class StepApprove extends WorkflowActionStep {
 

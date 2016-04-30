@@ -37,12 +37,10 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
-<%@ page import="java.util.*" %>
-<%@ page import="org.egov.infstr.utils.*" %>
+<%@ include file="/includes/taglibs.jsp" %>
 <html>
 <head>
-<title><s:text name='gis.report.title' /></title>
+	<title><s:text name='gis.report.title' /></title>
 </head>
 <body onload="loadDependentDDs();">
 	<div id="worksGISError" class="errorstyle" style="display:none;"></div>

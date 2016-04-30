@@ -1,21 +1,17 @@
 package org.egov.api.adapter;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.pgr.entity.Complaint;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-
-import net.sf.json.JSONArray;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.pgr.entity.Complaint;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
 
 public class ComplaintAdapter extends DataAdapter<Complaint> {
 

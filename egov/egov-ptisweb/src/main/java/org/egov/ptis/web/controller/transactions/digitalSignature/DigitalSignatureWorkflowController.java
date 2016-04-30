@@ -39,32 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.transactions.digitalSignature;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_PROPERTY_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Date;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.FileUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -75,8 +49,8 @@ import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
@@ -94,6 +68,31 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_PROPERTY_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 
 /**
  * @author subhash

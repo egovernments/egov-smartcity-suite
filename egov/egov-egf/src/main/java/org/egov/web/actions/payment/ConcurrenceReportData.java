@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.sql.Date;
-
-import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class ConcurrenceReportData {

@@ -39,15 +39,15 @@
  */
 package org.egov.commons.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.commons.Relation;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 

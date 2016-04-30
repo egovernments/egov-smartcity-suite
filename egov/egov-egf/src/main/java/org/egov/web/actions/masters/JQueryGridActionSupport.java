@@ -39,21 +39,14 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.Page;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.web.actions.masters.JQueryGridActionSupport.MultipleSearchFilter.Rule;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
@@ -61,9 +54,13 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
 
 /**
  * This will supports Action classes to integrate with jqgrid, to do pagination, searching, filtering (single and group) and ajax

@@ -39,13 +39,8 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -62,8 +57,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/report/baseRegister")

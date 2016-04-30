@@ -39,11 +39,10 @@
 #------------------------------------------------------------------------------- -->
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ page import="org.egov.ptis.constants.PropertyTaxConstants"%>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <html>
 <head>
-<title><s:text name='transferProperty' /></title>
+	<title><s:text name='transferProperty' /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
 	jQuery("#loadingMask").remove();

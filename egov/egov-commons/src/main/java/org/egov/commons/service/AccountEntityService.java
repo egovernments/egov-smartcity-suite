@@ -1,31 +1,27 @@
 package org.egov.commons.service;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Transient;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.Metamodel;
-
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.repository.AccountEntityRepository;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.masters.model.AccountEntity;
-import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Metamodel;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service 

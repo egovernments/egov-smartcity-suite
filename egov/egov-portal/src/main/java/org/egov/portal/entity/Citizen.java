@@ -38,8 +38,9 @@
  */
 package org.egov.portal.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.infra.admin.master.entity.Device;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.UserType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -48,10 +49,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.egov.infra.admin.master.entity.Device;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.enums.UserType;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "egp_citizen")

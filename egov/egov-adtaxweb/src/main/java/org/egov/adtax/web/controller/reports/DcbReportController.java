@@ -39,9 +39,7 @@
  */
 package org.egov.adtax.web.controller.reports;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
+import com.google.gson.GsonBuilder;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.search.contract.HoardingSearch;
@@ -58,7 +56,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.GsonBuilder;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/reports")

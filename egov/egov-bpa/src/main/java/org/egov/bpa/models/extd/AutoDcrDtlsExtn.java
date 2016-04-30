@@ -39,11 +39,10 @@
  */
 package org.egov.bpa.models.extd;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.infstr.models.BaseModel;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class AutoDcrDtlsExtn extends BaseModel {
 	

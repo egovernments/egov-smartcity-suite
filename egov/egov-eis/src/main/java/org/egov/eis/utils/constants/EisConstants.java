@@ -39,8 +39,6 @@
  */
 package org.egov.eis.utils.constants;
 
-import java.util.Date;
-
 public class EisConstants {
 
 	public static final String ROLE_EMPLOYEE = "Employee";

@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.infra.admin.master.entity.Boundary;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Set;
-
-import org.egov.infra.admin.master.entity.Boundary;
 
 public class PropertyMaterlizeView implements Serializable {
 

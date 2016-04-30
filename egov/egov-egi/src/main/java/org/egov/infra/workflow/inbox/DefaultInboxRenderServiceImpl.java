@@ -39,15 +39,8 @@
  */
 package org.egov.infra.workflow.inbox;
 
-import static org.egov.infra.utils.DateUtils.constructDateRange;
-
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.FetchMode;
@@ -55,6 +48,13 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.infra.utils.DateUtils.constructDateRange;
 
 /**
  * Every module which is having StateAware should initialize this with their own

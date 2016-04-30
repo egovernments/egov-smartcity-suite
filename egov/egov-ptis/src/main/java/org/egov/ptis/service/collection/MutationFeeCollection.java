@@ -39,13 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.service.collection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
@@ -60,6 +53,13 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 
 public class MutationFeeCollection extends TaxCollection {
 

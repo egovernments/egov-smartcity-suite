@@ -39,15 +39,15 @@
  */
 package org.egov.bpa.services.extd.common;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.bpa.models.extd.ApprdBuildingDetailsExtn;
 import org.egov.bpa.models.extd.ApprdBuildingFloorDtlsExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Transactional(readOnly=true)
 public class ApprdBldgDetailExtnService extends PersistenceService<ApprdBuildingDetailsExtn, Long>{

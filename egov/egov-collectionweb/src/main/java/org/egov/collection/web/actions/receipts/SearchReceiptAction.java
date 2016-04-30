@@ -39,11 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -53,12 +48,17 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({

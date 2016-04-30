@@ -39,12 +39,12 @@
  */
 package org.egov.commons;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * This class represents an Installment. Every installment has an year, it should start from the current financial year, and it is

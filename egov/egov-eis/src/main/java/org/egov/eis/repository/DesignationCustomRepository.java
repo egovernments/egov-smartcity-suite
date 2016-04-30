@@ -39,10 +39,10 @@
  */
 package org.egov.eis.repository;
 
+import org.egov.pims.commons.Designation;
+
 import java.util.Date;
 import java.util.List;
-
-import org.egov.pims.commons.Designation;
 
 public interface DesignationCustomRepository {
 

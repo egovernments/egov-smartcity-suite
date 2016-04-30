@@ -39,13 +39,7 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
@@ -53,7 +47,11 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Unique(fields = "code", id = "id", tableName = "EGW_SCHEDULECATEGORY", columnName = "CODE", message = "scheduleCategory.code.isunique")
 public class ScheduleCategory extends BaseModel {

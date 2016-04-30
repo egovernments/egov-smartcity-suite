@@ -39,11 +39,6 @@
  */
 package org.egov.wtms.integration;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -55,6 +50,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterChargesThirdPartyService {
 

@@ -39,15 +39,15 @@
  ******************************************************************************/
 package org.egov.bnd.services.search;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.model.DeathRegistration;
 import org.egov.bnd.model.Registration;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public class SearchByReceiptService extends PersistenceService<Registration, Long> {

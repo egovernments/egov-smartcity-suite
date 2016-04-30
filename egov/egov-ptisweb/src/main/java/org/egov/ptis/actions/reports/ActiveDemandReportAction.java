@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static java.lang.Boolean.FALSE;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -58,7 +49,14 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.Boolean.FALSE;
 
 /**
  * 

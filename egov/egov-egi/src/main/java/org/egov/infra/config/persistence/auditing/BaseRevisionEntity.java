@@ -39,13 +39,13 @@
  */
 package org.egov.infra.config.persistence.auditing;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 import org.egov.infra.config.persistence.auditing.listener.AuditableEntityListener;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "REVINFO")

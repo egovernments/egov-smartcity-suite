@@ -39,14 +39,14 @@
  ******************************************************************************/
 package com.exilant.exility.common;
 
+import org.apache.log4j.Logger;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author raghu.bhandi

@@ -39,10 +39,10 @@
  */
 package org.egov.works.models.masters;
 
-import javax.validation.constraints.NotNull;
-
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 
 public class NatureOfWork extends BaseModel {
 

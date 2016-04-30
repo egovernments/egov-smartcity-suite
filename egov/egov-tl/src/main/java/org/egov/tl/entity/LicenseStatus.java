@@ -39,9 +39,9 @@
  */
 package org.egov.tl.entity;
 
-import java.util.Date;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.util.Date;
 
 public class LicenseStatus implements java.io.Serializable {
 

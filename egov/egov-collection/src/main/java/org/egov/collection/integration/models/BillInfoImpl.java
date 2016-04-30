@@ -39,12 +39,12 @@
  */
 package org.egov.collection.integration.models;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 @XStreamAlias("bill-collect")
 public class BillInfoImpl implements BillInfo {

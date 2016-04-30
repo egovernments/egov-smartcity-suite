@@ -1,8 +1,8 @@
 package org.egov.ptis.domain.model;
 
-import java.io.Serializable;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
+
+import java.io.Serializable;
 
 
 @SuppressWarnings("serial")

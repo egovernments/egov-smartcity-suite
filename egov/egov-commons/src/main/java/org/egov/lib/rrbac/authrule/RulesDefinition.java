@@ -39,9 +39,9 @@
  */
 package org.egov.lib.rrbac.authrule;
 
-import java.util.Set;
-
 import org.egov.infra.admin.master.entity.Boundary;
+
+import java.util.Set;
 
 public class RulesDefinition {
 	public boolean jurisCompare(final Boundary userBoundary, final Boundary objectBoundary) {

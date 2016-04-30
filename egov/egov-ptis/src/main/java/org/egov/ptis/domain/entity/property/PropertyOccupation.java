@@ -45,10 +45,10 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Date;
 
 /**
  * <p>

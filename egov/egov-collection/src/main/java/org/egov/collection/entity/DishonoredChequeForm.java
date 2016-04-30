@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.collection.entity;
 
-import java.util.Date;
-
 import org.apache.struts.action.ActionForm;
+
+import java.util.Date;
 
 public class DishonoredChequeForm extends ActionForm
 {

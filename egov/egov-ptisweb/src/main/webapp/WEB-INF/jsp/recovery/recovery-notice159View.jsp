@@ -39,10 +39,9 @@
 #-------------------------------------------------------------------------------
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="org.egov.ptis.constants.PropertyTaxConstants" %>
 
 <html>
-	<head>
+<head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/recovery.js"></script>
 		<title><s:text name="recovery"></s:text></title>
 		<link href="<c:url value='/css/headertab.css'/>" rel="stylesheet" type="text/css" />

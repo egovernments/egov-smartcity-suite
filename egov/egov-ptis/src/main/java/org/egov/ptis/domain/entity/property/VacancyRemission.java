@@ -39,9 +39,7 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import org.egov.infra.workflow.entity.StateAware;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -58,8 +56,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.workflow.entity.StateAware;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @Table(name = "egpt_vacancy_remission")

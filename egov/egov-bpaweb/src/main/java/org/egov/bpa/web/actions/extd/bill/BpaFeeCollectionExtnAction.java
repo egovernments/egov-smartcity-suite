@@ -39,8 +39,6 @@
  */
 package org.egov.bpa.web.actions.extd.bill;
 
-import java.net.URLEncoder;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -52,6 +50,8 @@ import org.egov.bpa.services.extd.bill.BpaBillableExtn;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.net.URLEncoder;
 
 /**
  * 

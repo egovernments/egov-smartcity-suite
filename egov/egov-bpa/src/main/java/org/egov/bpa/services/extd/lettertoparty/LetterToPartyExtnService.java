@@ -1,11 +1,5 @@
 package org.egov.bpa.services.extd.lettertoparty;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.CMDALetterToPartyExtn;
@@ -21,6 +15,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public class LetterToPartyExtnService extends

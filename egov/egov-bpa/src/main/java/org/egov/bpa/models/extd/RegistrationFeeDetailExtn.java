@@ -39,10 +39,10 @@
  */
 package org.egov.bpa.models.extd;
 
-import java.math.BigDecimal;
-
 import org.egov.bpa.models.extd.masters.BpaFeeExtn;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
 
 public class RegistrationFeeDetailExtn extends BaseModel {
 

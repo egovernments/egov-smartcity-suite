@@ -39,11 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.client.handler;
 
-import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.BooleanConverter;
 import com.thoughtworks.xstream.converters.basic.DateConverter;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 
 public class TaxCalculationInfoXmlHandler {
 

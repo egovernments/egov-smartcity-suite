@@ -40,19 +40,18 @@
 /**
  *
  */
-package org.egov.services.financingsource;import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.util.List;
+package org.egov.services.financingsource;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Fundsource;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
+import java.util.List;
 
 /**
  * @author manoranjan

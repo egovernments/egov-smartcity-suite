@@ -39,11 +39,11 @@
  */
 package org.egov.asset.service.impl;
 
-import java.util.List;
-
 import org.egov.asset.model.AssetActivities;
 import org.egov.asset.service.AssetActivitiesService;
 import org.egov.infstr.services.PersistenceService;
+
+import java.util.List;
 
 public class AssetActivitiesServiceImpl extends BaseServiceImpl<AssetActivities, Long>
         implements AssetActivitiesService {

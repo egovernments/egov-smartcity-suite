@@ -39,16 +39,9 @@
  */
 package org.egov.collection.web.actions.citizen.reports;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.io.IOUtils;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.collection.service.CollectionReportService;
@@ -63,8 +56,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class OnlinePaymentReportController {

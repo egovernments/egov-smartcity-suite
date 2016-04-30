@@ -39,13 +39,12 @@
  ******************************************************************************/
 package com.exilant.exility.service;
 
-import java.sql.Connection;
-
-import org.apache.log4j.Logger;
-
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.ExilServiceInterface;
 import com.exilant.exility.dataservice.SQLTask;
+import org.apache.log4j.Logger;
+
+import java.sql.Connection;
 
 public class DescriptionService implements ExilServiceInterface
 {

@@ -39,22 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.collection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -74,6 +58,22 @@ import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 
 @Namespace("/collection")
 @ResultPath("/WEB-INF/jsp/")

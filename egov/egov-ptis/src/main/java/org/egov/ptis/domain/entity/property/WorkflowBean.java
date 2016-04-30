@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Designation;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class WorkflowBean {
 	private String actionName;

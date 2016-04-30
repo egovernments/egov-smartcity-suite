@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.demand;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.Area;
+
+import java.math.BigDecimal;
 
 /**
  * Data Carrier for Floor Wise Demand and other factors. Used primarily during

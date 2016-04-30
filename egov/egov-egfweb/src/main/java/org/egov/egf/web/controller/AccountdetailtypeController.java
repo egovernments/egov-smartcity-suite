@@ -1,12 +1,7 @@
 package org.egov.egf.web.controller;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import javax.validation.Valid;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.egf.web.adaptor.AccountdetailtypeJsonAdaptor;
@@ -24,8 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/accountdetailtype")

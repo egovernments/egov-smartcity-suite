@@ -40,10 +40,6 @@
 
 package org.egov.eis.web.controller.masters.designation;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +50,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequestMapping("/designation/update")

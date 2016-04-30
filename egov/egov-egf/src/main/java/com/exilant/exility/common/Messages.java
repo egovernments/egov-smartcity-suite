@@ -39,11 +39,11 @@
  ******************************************************************************/
 package com.exilant.exility.common;
 
-import java.net.URL;
-import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 import org.egov.infstr.utils.EGovConfig;
+
+import java.net.URL;
+import java.util.HashMap;
 
 /**
  * @author raghu.bhandi

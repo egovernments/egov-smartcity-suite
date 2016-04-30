@@ -39,19 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.transactions.writeOff;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_PENALTY_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_PENALTY_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
-
-import java.math.BigDecimal;
-import java.util.Map;
-
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -71,6 +58,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.math.BigDecimal;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_PENALTY_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_PENALTY_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_PENALTY_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 
 /**
  * The Class WriteOffController.

@@ -39,39 +39,6 @@
  */
 package org.egov.ptis.domain.service.property;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_INSPECTOR_REJECTED;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -82,8 +49,8 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -106,6 +73,16 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)

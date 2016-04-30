@@ -39,14 +39,14 @@
  */
 package org.egov.infra.admin.master.service;
 
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author subhash

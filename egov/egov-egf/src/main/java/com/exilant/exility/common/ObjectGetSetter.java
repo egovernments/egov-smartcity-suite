@@ -39,14 +39,14 @@
  ******************************************************************************/
 package com.exilant.exility.common;
 
+import org.apache.log4j.Logger;
+import org.xml.sax.Attributes;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.xml.sax.Attributes;
 
 /**
  * Static utility Class to set/get field of/from an object we will not worry about any exception. We only promised that we will

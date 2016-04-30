@@ -39,10 +39,10 @@
  */
 package org.egov.works.models.estimate;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.io.File;
 import java.util.Date;
-
-import org.egov.infstr.models.BaseModel;
 
 public class EstimatePhotographs extends BaseModel {
 

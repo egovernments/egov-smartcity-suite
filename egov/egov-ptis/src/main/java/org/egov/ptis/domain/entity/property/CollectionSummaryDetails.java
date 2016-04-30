@@ -42,8 +42,6 @@ package org.egov.ptis.domain.entity.property;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import org.egov.collection.entity.ReceiptDetail;
-
 public class CollectionSummaryDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;

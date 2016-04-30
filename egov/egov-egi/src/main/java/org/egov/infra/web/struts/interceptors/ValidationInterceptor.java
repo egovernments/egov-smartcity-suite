@@ -39,10 +39,9 @@
  */
 package org.egov.infra.web.struts.interceptors;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-
+import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.ValidationAware;
+import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -50,9 +49,9 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageForward;
 
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ValidationAware;
-import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class ValidationInterceptor extends AbstractInterceptor {
 

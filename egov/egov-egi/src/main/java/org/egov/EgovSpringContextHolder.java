@@ -39,11 +39,11 @@
  */
 package org.egov;
 
-import javax.persistence.EntityManagerFactory;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+
+import javax.persistence.EntityManagerFactory;
 
 /**
  * Do not use this unless you are not able to use spring for injecting

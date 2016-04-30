@@ -39,44 +39,9 @@
  */
 package org.egov.bpa.services.extd.register;
 
-import static org.egov.bpa.constants.BpaConstants.OWNER_ADDRESS;
-import static org.egov.bpa.constants.BpaConstants.PROPERTY_ADDRESS;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
-import org.egov.bpa.models.extd.BpaAddressExtn;
-import org.egov.bpa.models.extd.CMDALetterToPartyExtn;
-import org.egov.bpa.models.extd.DocketFloorDetails;
-import org.egov.bpa.models.extd.DocketViolations;
-import org.egov.bpa.models.extd.InspectMeasurementDtlsExtn;
-import org.egov.bpa.models.extd.InspectionDetailsExtn;
-import org.egov.bpa.models.extd.InspectionExtn;
-import org.egov.bpa.models.extd.LetterToPartyExtn;
-import org.egov.bpa.models.extd.LpChecklistExtn;
-import org.egov.bpa.models.extd.RegistrationChecklistExtn;
-import org.egov.bpa.models.extd.RegistrationExtn;
-import org.egov.bpa.models.extd.RegistrationFeeDetailExtn;
-import org.egov.bpa.models.extd.RegistrationFeeExtn;
-import org.egov.bpa.models.extd.RegnAutoDcrDtlsExtn;
-import org.egov.bpa.models.extd.RegnAutoDcrExtn;
-import org.egov.bpa.models.extd.RegnOfficialActionsExtn;
-import org.egov.bpa.models.extd.RegnStatusDetailsExtn;
-import org.egov.bpa.models.extd.RejectionChecklistExtn;
-import org.egov.bpa.models.extd.ReportFeesDetailsExtn;
+import org.egov.bpa.models.extd.*;
 import org.egov.bpa.models.extd.masters.BpaFeeExtn;
 import org.egov.bpa.models.extd.masters.BuildingCategoryExtn;
 import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
@@ -102,19 +67,13 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.EgovThreadLocals;
-/*import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.StringUtils;
-/*import org.egov.infstr.utils.UtilityMethods;phionix todo*/
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-/*import org.egov.pims.commons.service.EisCommonsManager;
-import org.egov.pims.service.EisManager;*/
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -126,6 +85,30 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.bpa.constants.BpaConstants.OWNER_ADDRESS;
+import static org.egov.bpa.constants.BpaConstants.PROPERTY_ADDRESS;
+
+/*import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
+/*import org.egov.infstr.utils.UtilityMethods;phionix todo*/
+/*import org.egov.pims.commons.service.EisCommonsManager;
+import org.egov.pims.service.EisManager;*/
 
 @Transactional(readOnly=true)
 public class RegisterBpaExtnService extends PersistenceService<RegistrationExtn, Long> {

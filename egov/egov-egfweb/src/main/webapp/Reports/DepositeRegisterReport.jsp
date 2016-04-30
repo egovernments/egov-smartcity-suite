@@ -40,18 +40,17 @@
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ page buffer = "16kb" %>
-<%@page import="com.exilant.eGov.src.reports.*"%>
 <%@page import="org.apache.log4j.Logger"%>
 <html>
 <head>
-<title>Deposit Register Report</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta http-equiv="KEYWORDS" content="">
-<meta http-equiv="DESCRIPTION" content="">
+	<title>Deposit Register Report</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="KEYWORDS" content="">
+	<meta http-equiv="DESCRIPTION" content="">
 
-<link rel=stylesheet href="../css/egov.css" type="text/css" media="screen, print" />
+	<link rel=stylesheet href="../css/egov.css" type="text/css" media="screen, print"/>
 
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
+	<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js?rnd=${app_release_no}"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js?rnd=${app_release_no}"></SCRIPT>
 <script language="javascript" src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>

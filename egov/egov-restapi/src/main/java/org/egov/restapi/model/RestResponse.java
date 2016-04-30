@@ -1,9 +1,9 @@
 package org.egov.restapi.model;
 
+import org.egov.collection.integration.models.RestReceiptInfo;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egov.collection.integration.models.RestReceiptInfo;
 
 public class RestResponse extends RestReceiptInfo  {
 	

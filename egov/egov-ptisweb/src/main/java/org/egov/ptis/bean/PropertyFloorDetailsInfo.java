@@ -39,16 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
-import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_BEGIN;
-import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_END;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -57,6 +47,16 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
+import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_BEGIN;
+import static org.egov.ptis.constants.PropertyTaxConstants.STYLE_TAG_END;
 
 /**
  * The property floor details object

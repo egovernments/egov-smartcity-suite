@@ -42,11 +42,11 @@
  */
 package org.egov.model.instrument;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.commons.CVoucherHeader;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author Mani

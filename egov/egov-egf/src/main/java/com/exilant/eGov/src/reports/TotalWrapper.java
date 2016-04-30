@@ -39,13 +39,12 @@
  ******************************************************************************/
 package com.exilant.eGov.src.reports;
 
-import java.text.DecimalFormat;
-import java.util.List;
-
+import com.exilant.GLEngine.DayBook;
 import org.apache.log4j.Logger;
 import org.displaytag.decorator.TableDecorator;
 
-import com.exilant.GLEngine.DayBook;
+import java.text.DecimalFormat;
+import java.util.List;
 
 /**
  * This decorator only does a summing of different groups in the reporting style examples...

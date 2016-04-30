@@ -39,11 +39,6 @@
  */
 package org.egov.infra.config.persistence.migration;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.sql.DataSource;
-
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -53,6 +48,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class DBMigrationConfiguration {

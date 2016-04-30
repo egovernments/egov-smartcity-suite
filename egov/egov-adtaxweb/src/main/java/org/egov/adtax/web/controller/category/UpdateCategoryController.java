@@ -39,11 +39,6 @@
  */
 package org.egov.adtax.web.controller.category;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import javax.validation.Valid;
-
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +50,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/category")

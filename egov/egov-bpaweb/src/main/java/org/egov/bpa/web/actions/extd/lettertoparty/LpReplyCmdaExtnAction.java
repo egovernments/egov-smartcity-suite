@@ -39,10 +39,6 @@
  */
 package org.egov.bpa.web.actions.extd.lettertoparty;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -67,6 +63,10 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Transactional(readOnly = true)
 @Namespace("/lettertoparty")

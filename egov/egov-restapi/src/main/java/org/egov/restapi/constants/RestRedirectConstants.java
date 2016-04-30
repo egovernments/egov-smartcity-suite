@@ -3,8 +3,6 @@ package org.egov.restapi.constants;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.map.HashedMap;
-
 public class RestRedirectConstants {
 
 	private static Map<String,String> code_ulbNames =new HashMap<String,String>();;

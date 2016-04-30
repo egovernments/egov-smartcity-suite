@@ -39,10 +39,10 @@
  */
 package org.egov.bpa.models.extd;
 
-import java.util.Comparator;
-
 import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Comparator;
 
 public class RejectionChecklistExtn extends BaseModel implements Comparator<RejectionChecklistExtn>, Comparable<RejectionChecklistExtn>{
 

@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
-
 import org.hibernate.validator.constraints.Range;
+
+import java.util.Date;
 
 /**
  * Represents the rent agreement details for the unit

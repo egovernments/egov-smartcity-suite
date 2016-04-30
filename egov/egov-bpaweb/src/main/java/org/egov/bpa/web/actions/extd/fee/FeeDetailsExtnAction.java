@@ -39,17 +39,6 @@
  */
 package org.egov.bpa.web.actions.extd.fee;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -75,6 +64,17 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 @Results({ @Result(name = "NOACCESS", type = "stream", location = "returnStream", params = {
 		"contentType", "text/plain" }) })

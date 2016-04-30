@@ -38,16 +38,15 @@
  */
 package org.egov.tl.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.FeeType;
-import org.egov.tl.entity.LicenseSubCategoryDetails;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.tl.entity.FeeMatrixDetail;
+import org.egov.tl.entity.FeeType;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
+
+import java.lang.reflect.Type;
 
 public class FeeMatrixAdaptor implements JsonSerializer<FeeMatrixDetail> {
     @Override

@@ -40,7 +40,7 @@
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <!-- <%@ page buffer = "16kb" %> -->
-<%@page  import="com.exilant.eGov.src.reports.LongAmountWrapper,org.egov.infstr.utils.EGovConfig,java.io.*,com.exilant.eGov.src.reports.*,java.io.*,java.util.*,java.sql.*,javax.sql.*,javax.naming.InitialContext,com.exilant.GLEngine.*"%>
+<%@page  import="com.exilant.GLEngine.GeneralLedgerBean,org.egov.infstr.utils.EGovConfig"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">

@@ -39,6 +39,14 @@
  */
 package org.egov.infra.admin.master.entity;
 
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,14 +57,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eg_citypreferences")

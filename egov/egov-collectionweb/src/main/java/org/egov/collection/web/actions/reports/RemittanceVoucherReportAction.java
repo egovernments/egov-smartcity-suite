@@ -3,13 +3,6 @@
  */
 package org.egov.collection.web.actions.reports;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -19,14 +12,16 @@ import org.egov.collection.service.CollectionReportService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.web.actions.receipts.AjaxBankRemittanceAction;
 import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Results({ @Result(name = RemittanceVoucherReportAction.INDEX, location = "remittanceVoucherReport-index.jsp"),
     @Result(name = RemittanceVoucherReportAction.REPORT, location = "remittanceVoucherReport-report.jsp") })

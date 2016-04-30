@@ -38,10 +38,12 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <%@page import="org.egov.infra.exception.ApplicationRuntimeException"%>
-<%@page import="org.hibernate.jdbc.ReturningWork"%>
-<%@ page language="java" import="org.egov.infstr.security.utils.SecurityUtils,java.sql.*,org.egov.infstr.utils.HibernateUtil" %>
+<%@page import="org.egov.infstr.security.utils.SecurityUtils"%>
+<%@ page language="java" import="org.egov.infstr.utils.HibernateUtil,org.hibernate.jdbc.ReturningWork,java.sql.Connection" %>
+<%@ page import="java.sql.PreparedStatement" %>
+<%@ page import="java.sql.ResultSet" %>
 
-	<%
+<%
 	    final String tablename = SecurityUtils.checkSQLInjection(request.getParameter("tableName"));
 		final String whereclause = SecurityUtils.checkSQLInjection(request.getParameter("whereClause"));
 		final String result = HibernateUtil.getCurrentSession().doReturningWork(new ReturningWork<String>(){

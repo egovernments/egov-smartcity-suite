@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.Installment;
+
+import java.math.BigDecimal;
 
 
 /**

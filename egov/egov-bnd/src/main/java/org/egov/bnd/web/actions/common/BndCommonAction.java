@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.common;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -70,9 +67,13 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-//import org.egov.mdm.masters.administration.State;
 import org.egov.pims.commons.Position;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+
+//import org.egov.mdm.masters.administration.State;
 
 /**
  * This is a common action class defined for bnd module. It supports for

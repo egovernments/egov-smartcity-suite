@@ -39,18 +39,7 @@
 
 package org.egov.adtax.web.controller.deactivate;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.Agency;
@@ -62,7 +51,6 @@ import org.egov.adtax.service.AgencyService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.GenericController;
-import org.egov.adtax.web.controller.agency.AgencyController;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +64,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/deactivate")

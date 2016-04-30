@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
-import java.util.Date;
-
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
+
+import java.util.Date;
 
 public class Registrar extends StateAware {
 

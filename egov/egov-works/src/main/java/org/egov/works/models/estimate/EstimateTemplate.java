@@ -39,13 +39,6 @@
  */
 package org.egov.works.models.estimate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.commons.EgwTypeOfWork;
@@ -53,6 +46,12 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_ESTIMATE_TEMPLATE", columnName = {
         "CODE" }, message = "estimateTemplate.code.isunique")

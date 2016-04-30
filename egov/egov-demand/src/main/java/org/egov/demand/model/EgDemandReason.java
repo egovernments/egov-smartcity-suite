@@ -39,14 +39,13 @@
  */
 package org.egov.demand.model;
 
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.Installment;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.EgfAccountcodePurpose;
-import org.egov.commons.Installment;
 
 /**
  * EgDemandReason entity.

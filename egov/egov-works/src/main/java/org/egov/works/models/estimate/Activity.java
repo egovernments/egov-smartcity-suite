@@ -39,22 +39,21 @@
  */
 package org.egov.works.models.estimate;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-
 import org.egov.common.entity.UOM;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infra.persistence.entity.component.Money;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.models.revisionEstimate.RevisionType;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class Activity extends BaseModel {
 

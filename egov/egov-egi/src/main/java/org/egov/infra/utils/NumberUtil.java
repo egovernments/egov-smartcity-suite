@@ -40,11 +40,11 @@
 
 package org.egov.infra.utils;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
-import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * Number Utility methods

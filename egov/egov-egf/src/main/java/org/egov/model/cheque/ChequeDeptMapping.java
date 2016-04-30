@@ -42,9 +42,9 @@
  */
 package org.egov.model.cheque;
 
-import java.io.Serializable;
-
 import org.egov.infra.admin.master.entity.Department;
+
+import java.io.Serializable;
 
 /**
  * @author manoranjan

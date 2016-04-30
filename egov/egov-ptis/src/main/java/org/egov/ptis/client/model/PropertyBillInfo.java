@@ -45,29 +45,6 @@
 
 package org.egov.ptis.client.model;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DMD;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.waterRates;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -84,6 +61,29 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DMD;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.waterRates;
 
 public class PropertyBillInfo {
 

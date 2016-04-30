@@ -45,13 +45,13 @@ package com.exilant.exility.updateservice;
  * All methods are static. constructor is private to ensure that no one instantiates it
  */
 
+import org.apache.log4j.Logger;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
 
 public class DataType {
 

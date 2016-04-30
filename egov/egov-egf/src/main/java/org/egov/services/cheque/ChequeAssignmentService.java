@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.services.cheque;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
@@ -63,7 +54,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.payment.ChequeAssignment;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
@@ -71,9 +61,17 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ChequeAssignmentService extends PersistenceService<Paymentheader, Long> {
 

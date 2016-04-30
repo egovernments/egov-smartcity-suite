@@ -40,14 +40,14 @@
 
 package org.egov.bnd.model;
 
+import org.apache.log4j.Logger;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.User;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.User;
 
 public class FeeCollection {
 

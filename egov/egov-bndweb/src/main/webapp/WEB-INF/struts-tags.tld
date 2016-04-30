@@ -40,7 +40,7 @@
    *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
    ******************************************************************************/
 -->
-<taglib xmlns:j2ee="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+<taglib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0">
   <tlib-version>2.2.3</tlib-version>
   <short-name>s</short-name>
   <uri>/struts-tags</uri>

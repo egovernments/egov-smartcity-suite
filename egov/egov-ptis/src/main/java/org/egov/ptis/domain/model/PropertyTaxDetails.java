@@ -39,12 +39,12 @@
  */
 package org.egov.ptis.domain.model;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 /**

@@ -39,12 +39,6 @@
  */
 package org.egov.eis.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.repository.PositionHierarchyRepository;
 import org.egov.eis.repository.PositionMasterRepository;
@@ -54,6 +48,12 @@ import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vaibhav.K

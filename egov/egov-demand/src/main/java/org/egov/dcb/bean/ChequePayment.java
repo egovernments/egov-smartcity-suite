@@ -39,13 +39,13 @@
  */
 package org.egov.dcb.bean;
 
+import org.apache.log4j.Logger;
+import org.egov.infra.exception.ApplicationRuntimeException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class ChequePayment extends Payment {
 

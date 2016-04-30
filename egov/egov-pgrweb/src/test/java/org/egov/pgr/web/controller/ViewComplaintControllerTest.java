@@ -39,13 +39,6 @@
  */
 package org.egov.pgr.web.controller;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -58,6 +51,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 public class ViewComplaintControllerTest extends AbstractContextControllerTest<ViewComplaintController> {
 

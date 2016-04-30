@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.domain.model.calculator;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("taxcalculationinfo")
 public abstract class TaxCalculationInfo {

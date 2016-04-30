@@ -46,13 +46,6 @@
 
 package org.egov.dao.recoveries;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.model.recoveries.EgDeductionDetails;
@@ -60,6 +53,12 @@ import org.egov.model.recoveries.Recovery;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Iliyaraja s TODO To change the template for this generated type

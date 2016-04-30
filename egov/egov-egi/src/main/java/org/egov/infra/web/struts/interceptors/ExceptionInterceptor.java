@@ -39,8 +39,6 @@
  */
 package org.egov.infra.web.struts.interceptors;
 
-import org.egov.infstr.utils.HibernateUtil;
-
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.ExceptionHolder;
 import com.opensymphony.xwork2.interceptor.ExceptionMappingInterceptor;

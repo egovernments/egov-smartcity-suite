@@ -39,12 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-
-import java.util.List;
-import java.util.Map;
-
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -59,7 +54,11 @@ import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

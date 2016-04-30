@@ -39,14 +39,14 @@
  */
 package org.egov.restapi.model;
 
-import static org.egov.search.domain.Filter.queryStringFilter;
+import org.egov.search.domain.Filter;
+import org.egov.search.domain.Filters;
+import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
+import static org.egov.search.domain.Filter.queryStringFilter;
 
 public class WaterConnectionSearchRequest {
 

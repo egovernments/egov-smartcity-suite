@@ -39,7 +39,7 @@
  */
 package org.egov.wtms.masters.entity;
 
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,8 +52,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import java.util.Date;
 
 @Entity
 @Table(name = "egwtr_water_rates_details")

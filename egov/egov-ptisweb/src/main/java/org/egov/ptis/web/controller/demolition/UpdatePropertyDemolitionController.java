@@ -39,28 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.demolition;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -84,6 +62,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Controller
 @RequestMapping(value = "/demolition/update/{id}")

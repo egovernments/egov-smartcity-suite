@@ -39,11 +39,6 @@
  ******************************************************************************/
 package org.egov.services.recoveries;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.EgPartytype;
 import org.egov.commons.EgwTypeOfWork;
@@ -55,6 +50,11 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.utils.Constants;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class RecoveryService extends PersistenceService<Recovery, Long> {
 

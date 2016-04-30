@@ -1,22 +1,9 @@
 package org.egov.adtax.web.controller;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.penalty.AdvertisementTaxCalculator;
-import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -30,6 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 public class AjaxController {

@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.objection;
 
-import java.util.Date;
-
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.Date;
 
 /**
  * @author manoranjan

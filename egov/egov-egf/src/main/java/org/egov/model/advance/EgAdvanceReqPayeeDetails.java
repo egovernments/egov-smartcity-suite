@@ -39,12 +39,12 @@
  ******************************************************************************/
 package org.egov.model.advance;
 
+import org.egov.commons.Accountdetailtype;
+import org.egov.model.recoveries.Recovery;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.commons.Accountdetailtype;
-import org.egov.model.recoveries.Recovery;
 
 public class EgAdvanceReqPayeeDetails implements Serializable {
     /**

@@ -38,11 +38,6 @@
  */
 package org.egov.tl.service;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.tl.entity.License;
@@ -50,6 +45,11 @@ import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 @Service
 public class TradeLicenseSmsAndEmailService {

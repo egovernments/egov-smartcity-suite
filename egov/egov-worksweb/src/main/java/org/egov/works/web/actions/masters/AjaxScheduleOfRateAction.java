@@ -39,15 +39,6 @@
  */
 package org.egov.works.web.actions.masters;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -56,6 +47,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.utils.WorksConstants;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletResponseAware {
 

@@ -39,17 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.utils.MoneyUtils.roundOff;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -65,6 +54,17 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.utils.MoneyUtils.roundOff;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
+import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
 
 @Transactional(readOnly = true)
 public class BoundaryWisePropUsgeDelegate {

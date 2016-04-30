@@ -39,15 +39,14 @@
  ******************************************************************************/
 package com.exilant.exility.updateservice;
 
+import com.exilant.exility.common.DataCollection;
+import com.exilant.exility.common.TaskFailedException;
+import org.apache.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import org.apache.log4j.Logger;
-
-import com.exilant.exility.common.DataCollection;
-import com.exilant.exility.common.TaskFailedException;
 
 /**
  * @author raghu.bhandi, Exilant Consulting

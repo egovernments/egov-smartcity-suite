@@ -39,8 +39,6 @@
  */
 package org.egov.works.web.actions.masters;
 
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -49,6 +47,8 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.master.services.ScheduleCategoryService;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({

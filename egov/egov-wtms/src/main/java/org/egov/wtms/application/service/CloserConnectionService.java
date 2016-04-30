@@ -30,8 +30,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.math.BigDecimal;
-
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -47,6 +45,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Service
 @Transactional(readOnly = true)

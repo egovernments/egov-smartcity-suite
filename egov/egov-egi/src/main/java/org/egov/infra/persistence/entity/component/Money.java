@@ -40,10 +40,9 @@
 
 package org.egov.infra.persistence.entity.component;
 
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.text.DecimalFormat;
-
-import javax.validation.constraints.Min;
 
 public class Money implements Serializable {
 	private static final long serialVersionUID = 1L;

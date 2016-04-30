@@ -42,11 +42,11 @@
  */
 package org.egov.model.voucher;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.utils.StringUtils;
+
+import java.math.BigDecimal;
 
 /**
  * @author msahoo

@@ -30,9 +30,6 @@
  */
 package org.egov.wtms.elasticSearch.service;
 
-import java.math.BigDecimal;
-import java.util.Iterator;
-
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -49,6 +46,9 @@ import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Iterator;
 
 @Service
 @Transactional(readOnly = true)

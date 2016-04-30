@@ -40,15 +40,15 @@
 
 package org.egov.infra.workflow.matrix.service;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class WorkFlowAdditionalDetailsService extends PersistenceService<WorkFlowAdditionalRule, Long> {
 

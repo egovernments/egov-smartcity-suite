@@ -39,8 +39,8 @@
  */
 package org.egov.restapi.web.rest;
 
-import static java.util.Arrays.asList;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.search.domain.Page;
@@ -55,8 +55,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static java.util.Arrays.asList;
 
 @RestController
 public class RestApplicationSearchController {

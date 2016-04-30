@@ -40,10 +40,6 @@
 
 package org.egov.wtms.web.controller.search;
 
-import java.math.BigDecimal;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -62,6 +58,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 
 @Controller
 @RequestMapping(value = "/search/waterSearch/")

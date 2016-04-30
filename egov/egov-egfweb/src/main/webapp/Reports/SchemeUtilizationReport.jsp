@@ -40,16 +40,15 @@
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ page buffer = "16kb" %>
-<%@page import="com.exilant.eGov.src.reports.SchemeUtilizationReport,java.util.ArrayList,java.text.SimpleDateFormat,java.util.Date,java.util.LinkedHashMap,java.util.Iterator"%>
-<%@ page import="org.apache.log4j.Logger"%>
+<%@page import="com.exilant.eGov.src.reports.SchemeUtilizationReport,org.apache.log4j.Logger,java.util.ArrayList,java.util.Iterator,java.util.LinkedHashMap"%>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta http-equiv="KEYWORDS" content="">
-<meta http-equiv="DESCRIPTION" content="">
-<META http-equiv=pragma content=no-cache>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="KEYWORDS" content="">
+	<meta http-equiv="DESCRIPTION" content="">
+	<META http-equiv=pragma content=no-cache>
 
-<link rel=stylesheet href="../css/egov.css?rnd=${app_release_no}" type="text/css" media="screen" />
+	<link rel=stylesheet href="../css/egov.css?rnd=${app_release_no}" type="text/css" media="screen" />
 <link rel=stylesheet href="../css/print.css?rnd=${app_release_no}" type="text/css" media="print" />
 
 

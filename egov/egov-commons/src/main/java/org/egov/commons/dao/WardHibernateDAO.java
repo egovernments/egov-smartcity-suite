@@ -39,8 +39,6 @@
  */
 package org.egov.commons.dao;
 
-import org.egov.commons.CWard;
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 @Repository

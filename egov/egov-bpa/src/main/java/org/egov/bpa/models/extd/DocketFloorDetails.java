@@ -41,8 +41,6 @@ package org.egov.bpa.models.extd;
 
 import java.math.BigDecimal;
 
-import org.egov.infstr.models.BaseModel;
-
 public class DocketFloorDetails {
 
 	private Long id;

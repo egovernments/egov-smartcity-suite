@@ -40,13 +40,6 @@
 
 package org.egov.adtax.web.controller.collection;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseCollection;
@@ -69,6 +62,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/hoarding")

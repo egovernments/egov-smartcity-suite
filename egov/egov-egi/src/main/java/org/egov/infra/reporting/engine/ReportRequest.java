@@ -39,13 +39,13 @@
  */
 package org.egov.infra.reporting.engine;
 
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.util.ReportUtil;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.util.ReportUtil;
 
 /**
  * Class representing the input passed for report generation.

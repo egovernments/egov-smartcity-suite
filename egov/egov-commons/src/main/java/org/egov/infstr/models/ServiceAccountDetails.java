@@ -1,11 +1,10 @@
 package org.egov.infstr.models;
 
+import org.egov.commons.CChartOfAccounts;
+
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
 
 public class ServiceAccountDetails {
 	

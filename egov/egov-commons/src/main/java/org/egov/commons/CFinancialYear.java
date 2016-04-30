@@ -39,9 +39,11 @@
  */
 package org.egov.commons;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,12 +57,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 @Entity

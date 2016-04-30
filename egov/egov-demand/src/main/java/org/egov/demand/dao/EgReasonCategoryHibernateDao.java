@@ -39,14 +39,13 @@
  ******************************************************************************/
 package org.egov.demand.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.demand.model.EgReasonCategory;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository(value = "egReasonCategoryDAO")
 public class EgReasonCategoryHibernateDao implements EgReasonCategoryDao {

@@ -39,14 +39,13 @@
  */
 package org.egov.collection.xml.converter;
 
-import org.egov.collection.integration.models.ReceiptInstrumentInfo;
-import org.egov.collection.integration.models.ReceiptInstrumentInfoImpl;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.egov.collection.integration.models.ReceiptInstrumentInfo;
+import org.egov.collection.integration.models.ReceiptInstrumentInfoImpl;
 
 public class ReceiptInstrumentInfoConverter implements Converter {
 

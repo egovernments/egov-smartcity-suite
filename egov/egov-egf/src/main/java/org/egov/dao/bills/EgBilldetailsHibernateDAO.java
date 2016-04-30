@@ -45,12 +45,6 @@
  */
 package org.egov.dao.bills;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.model.bills.EgBilldetails;
@@ -58,6 +52,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author Administrator TODO To change the template for this generated type

@@ -40,8 +40,6 @@
 
 package org.egov.infra.security.utils;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
@@ -49,6 +47,8 @@ import org.owasp.validator.html.Policy;
 import org.owasp.validator.html.PolicyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * VirtualSanitizer.java This class used to sanitise user input from possible XSS attacks.

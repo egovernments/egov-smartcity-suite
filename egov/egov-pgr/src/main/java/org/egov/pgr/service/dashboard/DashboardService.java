@@ -39,8 +39,15 @@
  */
 package org.egov.pgr.service.dashboard;
 
-import static org.egov.infra.utils.DateUtils.endOfGivenDate;
-import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.pgr.repository.dashboard.DashboardRepository;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -55,16 +62,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.pgr.repository.dashboard.DashboardRepository;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 @Transactional(readOnly = true)
 @Service

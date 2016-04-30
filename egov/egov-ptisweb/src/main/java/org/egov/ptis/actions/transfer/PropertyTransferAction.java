@@ -39,43 +39,7 @@
  */
 package org.egov.ptis.actions.transfer;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.opensymphony.xwork2.ActionContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -100,8 +64,8 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -120,7 +84,20 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.ActionContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Results({
         @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),

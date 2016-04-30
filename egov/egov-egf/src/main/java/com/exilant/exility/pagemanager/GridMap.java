@@ -39,11 +39,10 @@
  ******************************************************************************/
 package com.exilant.exility.pagemanager;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.exilant.exility.common.DataCollection;
 import org.apache.log4j.Logger;
 
-import com.exilant.exility.common.DataCollection;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author raghu.bhandi, Exilant Consulting

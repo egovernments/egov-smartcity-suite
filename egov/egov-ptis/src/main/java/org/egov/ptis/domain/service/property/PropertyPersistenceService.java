@@ -1,11 +1,5 @@
 package org.egov.ptis.domain.service.property;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
@@ -15,9 +9,9 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.utils.DateUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -27,6 +21,12 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PropertyPersistenceService extends PersistenceService<BasicProperty, Long> {
 

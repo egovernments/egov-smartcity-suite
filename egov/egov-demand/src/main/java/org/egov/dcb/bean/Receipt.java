@@ -39,14 +39,14 @@
  */
 package org.egov.dcb.bean;
 
+import org.egov.commons.Installment;
+import org.egov.demand.model.EgdmCollectedReceipt;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.egov.commons.Installment;
-import org.egov.demand.model.EgdmCollectedReceipt;
 
 public class Receipt {
     private static final String REASON_CODE_NA = "N/A";

@@ -1,5 +1,6 @@
 <%@ page language="java"
-	import="org.egov.infstr.security.utils.SecurityUtils,java.sql.*,org.egov.infstr.utils.HibernateUtil,org.egov.infstr.utils.database.utils.EgovDatabaseManager"%>
+	import="org.egov.infstr.security.utils.SecurityUtils,org.egov.infstr.utils.database.utils.EgovDatabaseManager,java.sql.Connection,java.sql.PreparedStatement"%>
+<%@ page import="java.sql.ResultSet" %>
 
 <%
 	String tablename = SecurityUtils.checkSQLInjection(request.getParameter("tablename"));

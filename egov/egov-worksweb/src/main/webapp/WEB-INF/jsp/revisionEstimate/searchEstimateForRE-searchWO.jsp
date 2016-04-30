@@ -37,11 +37,10 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
-<%@ page import="java.util.*" %>
+<%@ include file="/includes/taglibs.jsp" %>
 <html>
-	<head>
-		<title><s:text name='page.title.search.workorder' /></title>
+<head>
+	<title><s:text name='page.title.search.workorder' /></title>
 	</head>
 <script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 

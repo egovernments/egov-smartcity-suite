@@ -42,20 +42,6 @@
  */
 package org.egov.model.contra;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
@@ -66,6 +52,17 @@ import org.egov.commons.Fundsource;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
 
 /**
  * @author msahoo

@@ -38,18 +38,7 @@
  */
 package org.egov.restapi.filter;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.entity.Source;
@@ -62,7 +51,16 @@ import org.egov.restapi.constants.RestRedirectConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
-import net.sf.json.JSONObject;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 //This is an unnecessary class, the existence of this filter is due to customer is not ready to
 //change their existing system to call appropriate url from their apps.

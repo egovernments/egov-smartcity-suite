@@ -39,14 +39,14 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.hibernate.criterion.Criterion;
+
+import java.util.Date;
+import java.util.List;
 
 public interface BoundaryCategoryDao {
 

@@ -39,11 +39,6 @@
  */
 package org.egov.collection.web.actions.citizen;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -53,6 +48,11 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceDetails;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({

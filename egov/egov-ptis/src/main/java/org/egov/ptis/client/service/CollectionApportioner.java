@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.client.service;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -56,6 +47,15 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
 
 public class CollectionApportioner {
 

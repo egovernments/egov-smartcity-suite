@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static java.math.BigDecimal.ZERO;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.infra.exception.ApplicationException;
@@ -57,6 +48,14 @@ import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static java.math.BigDecimal.ZERO;
 
 /**
  * This Action class is used to generate the a report called Zone wise Property

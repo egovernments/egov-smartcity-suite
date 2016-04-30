@@ -39,14 +39,6 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import static java.util.Arrays.asList;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -73,6 +65,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Arrays.asList;
 
 @Controller
 @RequestMapping(value = "/report/dailyCollection")

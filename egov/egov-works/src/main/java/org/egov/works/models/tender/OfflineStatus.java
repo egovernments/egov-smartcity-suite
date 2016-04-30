@@ -39,14 +39,13 @@
  */
 package org.egov.works.models.tender;
 
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 public class OfflineStatus extends BaseModel {
 

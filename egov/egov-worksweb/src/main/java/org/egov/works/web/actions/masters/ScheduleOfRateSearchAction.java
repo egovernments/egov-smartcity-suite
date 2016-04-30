@@ -39,9 +39,6 @@
  */
 package org.egov.works.web.actions.masters;
 
-import java.util.Date;
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -50,6 +47,9 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
+
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ScheduleOfRateSearchAction.SEARCH_RESULTS, location = "scheduleOfRateSearch-searchResults.jsp"),

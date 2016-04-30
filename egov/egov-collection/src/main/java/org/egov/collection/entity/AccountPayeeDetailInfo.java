@@ -39,14 +39,14 @@
  */
 package org.egov.collection.entity;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.math.BigDecimal;
 
 /**
  * The AccountPayeeDetail information class. Provides details of a

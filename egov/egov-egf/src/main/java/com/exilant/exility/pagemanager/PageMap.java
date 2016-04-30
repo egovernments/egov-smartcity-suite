@@ -39,16 +39,14 @@
  ******************************************************************************/
 package com.exilant.exility.pagemanager;
 
-import java.util.Enumeration;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.MessageList;
 import com.exilant.exility.common.Messages;
+import org.apache.log4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * PageMap describes the mapping between the data elements in a page on the client side and the entity/attribute on the server. It

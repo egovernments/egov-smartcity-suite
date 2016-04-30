@@ -39,23 +39,6 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
 import org.egov.eis.entity.Assignment;
@@ -94,6 +77,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/application")

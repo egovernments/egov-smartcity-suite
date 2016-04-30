@@ -39,6 +39,23 @@
  */
 package org.egov.works.models.tender;
 
+import org.apache.commons.lang.StringUtils;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.Auditable;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.models.estimate.Activity;
+import org.egov.works.utils.WorksConstants;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,24 +66,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringUtils;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.Auditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infra.utils.DateUtils;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.Activity;
-import org.egov.works.utils.WorksConstants;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 
 public class WorksPackage extends StateAware implements Auditable {
 

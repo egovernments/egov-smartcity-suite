@@ -1,18 +1,17 @@
 package org.egov.restapi.filter;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import org.apache.log4j.Logger;
+import org.egov.infra.web.utils.WebUtils;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.egov.infra.web.utils.WebUtils;
-import org.springframework.stereotype.Component;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 @Component
 public class RestRedirect {
 

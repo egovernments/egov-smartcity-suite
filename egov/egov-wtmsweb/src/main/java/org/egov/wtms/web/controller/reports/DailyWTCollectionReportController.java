@@ -39,18 +39,8 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
@@ -66,8 +56,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/report/dailyWTCollectionReport/search")

@@ -39,13 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
@@ -53,10 +46,15 @@ import org.egov.ptis.domain.entity.property.TaxPerc;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Repository(value = "taxPercDAO")
 @Transactional(readOnly = true)

@@ -39,19 +39,18 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.works.models.workflow.WorkFlow;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author vikas

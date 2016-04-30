@@ -40,21 +40,20 @@
 package org.egov.pims.model;
 
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeType;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.hibernate.Query;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**

@@ -1,12 +1,5 @@
 package org.egov.adtax.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.adtax.elasticSearch.service.AdvertisementIndexService;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -26,6 +19,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class AdvertisementPermitDetailUpdateIndexService {

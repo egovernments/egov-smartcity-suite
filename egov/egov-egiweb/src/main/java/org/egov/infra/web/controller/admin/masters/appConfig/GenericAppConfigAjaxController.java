@@ -39,13 +39,6 @@
  */
 package org.egov.infra.web.controller.admin.masters.appConfig;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigService;
@@ -57,6 +50,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Repository
 @RequestMapping(value = "/appConfig")

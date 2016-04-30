@@ -39,9 +39,8 @@
  */
 package org.egov.adtax.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -58,9 +57,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "EGADTAX_RATES")

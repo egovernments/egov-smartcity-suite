@@ -39,38 +39,14 @@
  ******************************************************************************/
 package org.egov.ptis.actions.notice;
 
-import static org.egov.infra.utils.MoneyUtils.roundOffTwo;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNotZero;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
-import static org.egov.ptis.constants.PropertyTaxConstants.CENTRALGOVT_BUILDING_ALV_PERCENTAGE;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMAND_CALSHEET;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATEGOVT_BUILDING_ALV_PERCENTAGE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SqFt;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.bean.PropertyCalSheetInfo;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;
@@ -89,6 +65,30 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import static org.egov.infra.utils.MoneyUtils.roundOffTwo;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNotZero;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
+import static org.egov.ptis.constants.PropertyTaxConstants.CENTRALGOVT_BUILDING_ALV_PERCENTAGE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_CALSHEET_FOR_GOVT_PROPS;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMAND_CALSHEET;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATEGOVT_BUILDING_ALV_PERCENTAGE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SqFt;
 
 @Transactional(readOnly = true)
 public class PropertyIndividualCalSheetAction extends BaseFormAction {

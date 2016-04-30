@@ -39,13 +39,6 @@
  */
 package org.egov.bpa.services.extd.bill;
 
-import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.BpaAddressExtn;
 import org.egov.bpa.models.extd.RegistrationExtn;
@@ -62,6 +55,13 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
 
 @SuppressWarnings("unchecked")
 public class BpaBillableExtn  extends AbstractBillable  {

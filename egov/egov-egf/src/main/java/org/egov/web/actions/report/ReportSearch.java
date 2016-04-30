@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -53,6 +50,9 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+
+import java.util.Date;
+import java.util.List;
 
 public class ReportSearch {
     private Department department;

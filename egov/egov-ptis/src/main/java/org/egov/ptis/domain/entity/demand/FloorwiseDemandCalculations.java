@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.demand;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.Floor;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * This class represents Floorwise Demand Calculations and this class

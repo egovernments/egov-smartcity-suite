@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.egov.model.instrument.InstrumentVoucher;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public class BankBookViewEntry {

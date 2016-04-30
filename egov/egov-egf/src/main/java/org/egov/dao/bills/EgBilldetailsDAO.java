@@ -51,10 +51,11 @@ package org.egov.dao.bills;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-import java.math.BigDecimal;
-import java.util.List;
 
 import org.egov.model.bills.EgBilldetails;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public interface EgBilldetailsDAO {
     public BigDecimal getOtherBillsAmount(Long minGlCodeId, Long maxGlCodeId, Long majGlCodeId, String finYearID,

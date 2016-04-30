@@ -39,15 +39,14 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.reports;
 
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-
-import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
+
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 
 public class CurrentInstDCBResultAdaptor implements JsonSerializer<CurrentInstDCBReportResult> {
 

@@ -1,13 +1,12 @@
 package org.egov.eis.web.controller.masters.position;
 
-import java.lang.reflect.Type;
-
-import org.egov.pims.commons.Position;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.pims.commons.Position;
+
+import java.lang.reflect.Type;
 
 public class PositionAdaptor implements JsonSerializer<Position> {
 	@Override

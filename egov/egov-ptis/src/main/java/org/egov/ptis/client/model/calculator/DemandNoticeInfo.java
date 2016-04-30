@@ -1,10 +1,5 @@
 package org.egov.ptis.client.model.calculator;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.util.ReportUtil;
@@ -14,9 +9,14 @@ import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.context.annotation.Scope;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

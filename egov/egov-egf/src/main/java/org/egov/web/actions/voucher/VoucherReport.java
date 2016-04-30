@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFunction;
@@ -52,7 +50,8 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 public class VoucherReport {
     private CGeneralLedger generalLedger = new CGeneralLedger();

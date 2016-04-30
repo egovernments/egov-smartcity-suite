@@ -39,10 +39,10 @@
  */
 package org.egov.wtms.masters.entity;
 
+import org.egov.ptis.domain.model.ErrorDetails;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import org.egov.ptis.domain.model.ErrorDetails;
 
 @SuppressWarnings("serial")
 public class WaterReceiptDetails implements Serializable {

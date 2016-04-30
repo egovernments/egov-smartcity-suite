@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.search;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -52,6 +49,9 @@ import org.egov.bnd.services.search.SearchByReceiptService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
 
 @ParentPackage("egov")
 @Transactional(readOnly = true)

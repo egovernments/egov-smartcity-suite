@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.utils;
 
+import org.egov.infstr.utils.EGovConfig;
+
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import org.egov.infstr.utils.EGovConfig;
 
 /**
  *

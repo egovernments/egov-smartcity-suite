@@ -37,8 +37,8 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@tag import="org.egov.infra.workflow.service.WorkflowService"%>
-<%@ tag isELIgnored="false" import="java.util.List,org.springframework.context.ApplicationContext,org.springframework.web.servlet.support.RequestContextUtils,org.egov.infra.workflow.entity.WorkflowAction" %>
+<%@tag import="org.egov.infra.workflow.entity.WorkflowAction"%>
+<%@ tag isELIgnored="false" import="org.egov.infra.workflow.service.WorkflowService,org.springframework.context.ApplicationContext,org.springframework.web.servlet.support.RequestContextUtils,java.util.List" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>

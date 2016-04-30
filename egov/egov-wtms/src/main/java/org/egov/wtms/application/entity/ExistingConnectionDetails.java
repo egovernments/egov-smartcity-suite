@@ -1,6 +1,8 @@
 package org.egov.wtms.application.entity;
 
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,10 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Date;
 
 @Entity
 @Table(name = "egwtr_existing_connection_details")

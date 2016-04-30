@@ -39,27 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DAILY_COLLECTION;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -91,6 +70,27 @@ import org.hibernate.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DAILY_COLLECTION;
 
 /**
  * 

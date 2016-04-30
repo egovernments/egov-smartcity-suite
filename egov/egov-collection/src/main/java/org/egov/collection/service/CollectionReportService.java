@@ -39,18 +39,6 @@
  */
 package org.egov.collection.service;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
@@ -61,6 +49,17 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class CollectionReportService {

@@ -40,24 +40,22 @@
 package org.egov.bpa.services.extd.masters;
 
 
-
+import org.egov.bpa.constants.BpaConstants;
+import org.egov.bpa.models.extd.masters.BpaFeeDetailExtn;
+import org.egov.bpa.models.extd.masters.BpaFeeExtn;
+import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.bpa.constants.BpaConstants;
-import org.egov.bpa.models.extd.masters.BpaFeeDetailExtn;
-import org.egov.bpa.models.extd.masters.BpaFeeExtn;
-import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
-import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly=true)
 public class BpaFeeExtnService extends PersistenceService<BpaFeeExtn, Long>
 {

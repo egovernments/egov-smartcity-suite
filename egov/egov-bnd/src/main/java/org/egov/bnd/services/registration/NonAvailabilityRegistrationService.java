@@ -39,15 +39,15 @@
  ******************************************************************************/
 package org.egov.bnd.services.registration;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.bnd.model.NonAvailability;
 import org.egov.bnd.services.common.NumberGenerationService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public class NonAvailabilityRegistrationService extends PersistenceService<NonAvailability, Long> {

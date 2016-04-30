@@ -45,7 +45,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-
 import redis.clients.jedis.Protocol;
 import redis.embedded.RedisServer;
 

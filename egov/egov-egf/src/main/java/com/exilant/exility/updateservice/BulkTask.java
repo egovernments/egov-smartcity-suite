@@ -39,11 +39,11 @@
  ******************************************************************************/
 package com.exilant.exility.updateservice;
 
-import java.sql.Connection;
-
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
+
+import java.sql.Connection;
 
 public class BulkTask extends AbstractTask
 {

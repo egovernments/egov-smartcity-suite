@@ -42,15 +42,10 @@
  */
 package org.egov.services.cheque;
 
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Bankaccount;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
@@ -60,6 +55,10 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
 
 public class AccountChequesService extends PersistenceService<AccountCheques, Long> {
 

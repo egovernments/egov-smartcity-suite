@@ -39,8 +39,13 @@
  */
 package org.egov.adtax.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.adtax.entity.enums.AgencyStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.validation.regex.Constants;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,14 +62,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.egov.adtax.entity.enums.AgencyStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "EGADTAX_AGENCY")

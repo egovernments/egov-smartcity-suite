@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.client.model;
 
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+
 import java.math.BigDecimal;
 import java.util.List;
-
-import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 
 /**
  * ConsolidatedUnitTaxCalReport class is used to provide consolidated Unit tax

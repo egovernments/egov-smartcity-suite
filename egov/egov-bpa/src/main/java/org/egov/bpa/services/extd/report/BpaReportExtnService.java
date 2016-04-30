@@ -39,19 +39,6 @@
  */
 package org.egov.bpa.services.extd.report;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
@@ -75,6 +62,19 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infstr.utils.DateUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class BpaReportExtnService  {
 	private Logger LOGGER = Logger.getLogger(getClass());

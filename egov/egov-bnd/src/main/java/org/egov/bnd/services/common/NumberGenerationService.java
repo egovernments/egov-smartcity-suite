@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.services.common;
 
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.model.DeathRegistration;
@@ -53,6 +51,8 @@ import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.utils.BndDateUtils;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Transactional(readOnly = true)
 public class NumberGenerationService {

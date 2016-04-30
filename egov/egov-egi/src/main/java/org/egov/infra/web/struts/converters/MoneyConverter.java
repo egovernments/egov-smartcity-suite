@@ -39,10 +39,10 @@
  */
 package org.egov.infra.web.struts.converters;
 
-import java.util.Map;
-
 import org.apache.struts2.util.StrutsTypeConverter;
 import org.egov.infra.persistence.entity.component.Money;
+
+import java.util.Map;
 
 public class MoneyConverter extends StrutsTypeConverter {
 

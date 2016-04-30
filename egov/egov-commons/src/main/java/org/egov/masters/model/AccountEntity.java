@@ -39,10 +39,14 @@
  */
 package org.egov.masters.model;
 
-import java.util.Date;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.utils.EntityType;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 
-import javax.annotation.Generated;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -53,14 +57,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.utils.EntityType;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
+import java.util.Date;
 
 
 @Entity

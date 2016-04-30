@@ -39,12 +39,11 @@
  */
 package org.egov.infra.persistence.validator;
 
-import java.util.regex.Pattern;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
+import java.util.regex.Pattern;
 
 public class OptionalPatternValidator implements ConstraintValidator<OptionalPattern, Object> {
 

@@ -39,10 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -54,6 +50,10 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({

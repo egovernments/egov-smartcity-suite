@@ -39,25 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static java.util.Calendar.YEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BAKAYAFERIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -72,13 +53,31 @@ import org.egov.ptis.bean.DemandCollInfo;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.bean.TaxInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static java.util.Calendar.YEAR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PATTERN_BEGINS_WITH_1TO9;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BAKAYAFERIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

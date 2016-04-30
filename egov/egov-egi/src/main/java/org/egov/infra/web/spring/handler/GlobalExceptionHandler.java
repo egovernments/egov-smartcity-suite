@@ -39,8 +39,6 @@
  */
 package org.egov.infra.web.spring.handler;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +49,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

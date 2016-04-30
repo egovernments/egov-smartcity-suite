@@ -39,6 +39,14 @@
  */
 package org.egov.eis.entity;
 
+import org.egov.commons.Bank;
+import org.egov.commons.Bankbranch;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.utils.EntityType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Position;
+import org.hibernate.search.annotations.DocumentId;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -48,14 +56,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.commons.Bank;
-import org.egov.commons.Bankbranch;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.utils.EntityType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Position;
-import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "eg_drawingofficer")

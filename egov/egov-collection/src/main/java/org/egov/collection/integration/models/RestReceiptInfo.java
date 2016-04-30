@@ -39,10 +39,10 @@
  */
 package org.egov.collection.integration.models;
 
-import java.math.BigDecimal;
-
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
+
+import java.math.BigDecimal;
 
 
 public class RestReceiptInfo {

@@ -38,11 +38,11 @@
  */
 package org.egov.adtax.repository;
 
-import java.util.List;
-
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.commons.Installment;
+
+import java.util.List;
 
 public interface AdvertisementRepositoryCustom {
 

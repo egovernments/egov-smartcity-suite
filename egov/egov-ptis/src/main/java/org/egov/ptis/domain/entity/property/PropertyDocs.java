@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import java.io.Serializable;
-
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infstr.models.BaseModel;
+
+import java.io.Serializable;
 
 /**
  * This class defines Property Master Documents i.e all the Documents which have

@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.model.payment;
 
+import org.egov.commons.Bankaccount;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.commons.Bankaccount;
 
 public class ChequeAssignment implements java.io.Serializable{
     private Long voucherid;

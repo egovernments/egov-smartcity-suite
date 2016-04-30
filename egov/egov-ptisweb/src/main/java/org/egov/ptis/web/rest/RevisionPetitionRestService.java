@@ -39,19 +39,8 @@
  */
 package org.egov.ptis.web.rest;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
@@ -67,8 +56,17 @@ import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user

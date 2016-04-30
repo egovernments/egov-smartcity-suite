@@ -39,9 +39,8 @@
  ******************************************************************************/
 package org.egov.ptis.client.model.calculator;
 
-import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 
 @XStreamAlias("taxdetail")
 public class APMiscellaneousTaxDetail extends MiscellaneousTaxDetail {

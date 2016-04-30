@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import static java.math.BigDecimal.ZERO;
-
 import java.math.BigDecimal;
 import java.util.Date;
+
+import static java.math.BigDecimal.ZERO;
 
 /**
  * 

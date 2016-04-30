@@ -47,7 +47,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;

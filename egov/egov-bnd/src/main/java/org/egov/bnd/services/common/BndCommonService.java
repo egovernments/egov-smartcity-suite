@@ -39,18 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.services.common;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.egov.bnd.model.AdoptionInstitute;
 import org.egov.bnd.model.BnDCitizen;
 import org.egov.bnd.model.BndFeeTypes;
@@ -60,7 +48,6 @@ import org.egov.bnd.model.City;
 import org.egov.bnd.model.Disease;
 import org.egov.bnd.model.Establishment;
 import org.egov.bnd.model.EstablishmentType;
-//import org.egov.bnd.model.FeeCollection;
 import org.egov.bnd.model.PlaceType;
 import org.egov.bnd.model.Registrar;
 import org.egov.bnd.model.Registration;
@@ -81,12 +68,24 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.config.dao.AppConfigValuesDAO;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EGovConfig;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+//import org.egov.bnd.model.FeeCollection;
 
 /**
  * This is a common service class defined for bnd module. It is used to interact

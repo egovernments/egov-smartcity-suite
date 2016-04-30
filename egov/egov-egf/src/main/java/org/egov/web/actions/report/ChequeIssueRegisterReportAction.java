@@ -38,22 +38,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.report;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import net.sf.jasperreports.engine.JRException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -72,18 +58,28 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.search.domain.resource.DateType;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @Results(value = {
 		@Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),

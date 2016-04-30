@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.StateAware;
+
+import java.math.BigDecimal;
 
 public class NonAvailability extends StateAware {
     private static final long serialVersionUID = 4204662679487898122L;

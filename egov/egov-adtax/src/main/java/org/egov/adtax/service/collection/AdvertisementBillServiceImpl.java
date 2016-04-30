@@ -39,18 +39,6 @@
  */
 package org.egov.adtax.service.collection;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -61,12 +49,22 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

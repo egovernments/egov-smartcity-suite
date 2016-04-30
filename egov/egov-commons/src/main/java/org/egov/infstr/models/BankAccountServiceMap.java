@@ -39,10 +39,10 @@
  */
 package org.egov.infstr.models;
 
-import java.util.Date;
-
 import org.egov.commons.Bankaccount;
 import org.egov.infra.admin.master.entity.Department;
+
+import java.util.Date;
 
 public class BankAccountServiceMap extends BaseModel {
 	/**

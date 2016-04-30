@@ -39,6 +39,16 @@
  */
 package org.egov.pgr.entity;
 
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.search.domain.Searchable;
+import org.egov.search.util.Serializer;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.json.simple.JSONObject;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,16 +60,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
-import org.egov.search.util.Serializer;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.json.simple.JSONObject;
 
 @Entity
 @Unique(id = "id", tableName = "egpgr_complainttype", fields = { "name", "code" }, columnName = { "name", "code" }, enableDfltMsg = true)

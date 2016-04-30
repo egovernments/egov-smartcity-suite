@@ -39,8 +39,8 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.masters;
 
-import java.util.Collections;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -53,8 +53,7 @@ import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.egov.infra.persistence.entity.Address;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.Collections;
 
 
 @Validations(requiredFields = {

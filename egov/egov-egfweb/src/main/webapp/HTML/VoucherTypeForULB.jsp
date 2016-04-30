@@ -48,7 +48,7 @@ It will read the Value from egf_config.xml for the current ULB And Returns 'Auto
 */
 
 
-<%@ page import="com.exilant.eGov.src.transactions.VoucherTypeForULB,org.apache.log4j.Logger;" %>
+<%@ page import="com.exilant.eGov.src.transactions.VoucherTypeForULB,org.apache.log4j.Logger" %>
 
 
 <% 

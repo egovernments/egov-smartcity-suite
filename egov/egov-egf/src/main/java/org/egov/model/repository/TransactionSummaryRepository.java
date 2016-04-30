@@ -3,7 +3,6 @@ package org.egov.model.repository;
 
 import org.egov.model.contra.TransactionSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 

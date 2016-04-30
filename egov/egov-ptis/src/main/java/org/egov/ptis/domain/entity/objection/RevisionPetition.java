@@ -39,17 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.objection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.validation.Valid;
-
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -57,6 +46,16 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.Valid;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
 /**
  * @author manoranjan

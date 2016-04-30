@@ -39,18 +39,6 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgDemandDetailsDao;
 import org.egov.demand.model.EgDemandDetails;
@@ -74,6 +62,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/application")

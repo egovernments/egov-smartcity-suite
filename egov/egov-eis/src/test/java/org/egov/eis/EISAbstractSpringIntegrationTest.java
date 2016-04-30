@@ -39,8 +39,6 @@
  */
 package org.egov.eis;
 
-import javax.transaction.Transactional;
-
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
@@ -48,6 +46,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import javax.transaction.Transactional;
 
 /**
  * @author Vaibhav.K

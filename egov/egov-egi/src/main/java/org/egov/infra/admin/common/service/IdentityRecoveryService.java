@@ -39,10 +39,6 @@
  */
 package org.egov.infra.admin.common.service;
 
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
-
 import org.egov.infra.admin.common.entity.IdentityRecovery;
 import org.egov.infra.admin.common.repository.IdentityRecoveryRepository;
 import org.egov.infra.admin.master.entity.User;
@@ -53,6 +49,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)

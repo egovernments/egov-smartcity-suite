@@ -39,14 +39,14 @@
  ******************************************************************************/
 package org.egov.services.deduction;
 
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.model.recoveries.RemittanceSchedulerLog;
 import org.egov.utils.FinancialConstants;
 import org.quartz.StatefulJob;
+
+import java.util.Date;
 
 public class RemittanceJob extends AbstractQuartzJob implements StatefulJob {
 

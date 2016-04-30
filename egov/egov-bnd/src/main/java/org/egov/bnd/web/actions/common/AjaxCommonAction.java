@@ -39,13 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.common;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
@@ -74,6 +67,13 @@ import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Results({ @Result(name = AjaxCommonAction.AJAX_RESULT, type = "stream", location = "returnStream", params = {
         "contentType", "text/plain" }) })

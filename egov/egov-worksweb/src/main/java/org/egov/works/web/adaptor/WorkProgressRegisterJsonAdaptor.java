@@ -1,8 +1,9 @@
 package org.egov.works.web.adaptor;
 
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.reports.entity.WorkProgressRegister;
@@ -10,10 +11,8 @@ import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 @Component
 public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgressRegister> {

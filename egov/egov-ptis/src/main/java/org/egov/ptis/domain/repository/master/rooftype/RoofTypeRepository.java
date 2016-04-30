@@ -39,11 +39,11 @@
  */
 package org.egov.ptis.domain.repository.master.rooftype;
 
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.RoofType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface RoofTypeRepository extends JpaRepository<RoofType, Long> {

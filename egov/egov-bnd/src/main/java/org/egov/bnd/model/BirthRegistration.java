@@ -39,14 +39,14 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
+import org.egov.bnd.utils.BndConstants;
+import org.egov.exceptions.EGOVRuntimeException;
+import org.egov.infra.persistence.entity.Address;
+
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.egov.bnd.utils.BndConstants;
-import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.persistence.entity.Address;
 
 public class BirthRegistration extends Registration implements Cloneable {
     private static final long serialVersionUID = -8427361865321338155L;

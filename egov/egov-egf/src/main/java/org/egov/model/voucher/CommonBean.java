@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.model.voucher;
 
+import org.egov.utils.FinancialConstants;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
-
-import org.egov.utils.FinancialConstants;
 
 public class CommonBean {
     private String chequeInHand;

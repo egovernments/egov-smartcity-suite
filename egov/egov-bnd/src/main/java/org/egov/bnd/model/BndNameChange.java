@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.portal.entity.Citizen;
+
+import java.util.Date;
 
 public class BndNameChange {
 

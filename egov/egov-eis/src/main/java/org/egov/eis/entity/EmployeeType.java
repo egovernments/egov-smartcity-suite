@@ -39,6 +39,12 @@
  */
 package org.egov.eis.entity;
 
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.regex.Constants;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,13 +56,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
-
-import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egeis_employeetype")

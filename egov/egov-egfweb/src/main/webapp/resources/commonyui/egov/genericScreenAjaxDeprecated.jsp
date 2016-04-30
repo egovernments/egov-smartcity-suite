@@ -1,6 +1,8 @@
-<%@ page language="java" import="java.sql.*,org.egov.infstr.utils.HibernateUtil" %>
+<%@ page language="java" import="org.egov.infstr.utils.HibernateUtil,java.sql.Connection" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="java.sql.Statement" %>
 
-	<%
+<%
 	Connection con=null;
 	ResultSet rs=null;
 	Statement stmt=null;

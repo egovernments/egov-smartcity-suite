@@ -1,9 +1,5 @@
 package org.egov.ptis.scheduler;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
@@ -19,6 +15,10 @@ import org.quartz.DisallowConcurrentExecution;
 import org.quartz.StatefulJob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This job activates the demand after 21 days for the properties.

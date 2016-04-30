@@ -39,16 +39,15 @@
  */
 package org.egov.infra.web.support.json.adapter;
 
-import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import org.egov.infra.admin.master.entity.Boundary;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.infra.admin.master.entity.Boundary;
+
+import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class BoundaryAdapter implements JsonSerializer<Boundary> {
 

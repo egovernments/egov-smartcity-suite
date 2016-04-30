@@ -39,18 +39,18 @@
  */
 package org.egov.infstr.models;
 
+import org.hibernate.HibernateException;
+import org.hibernate.MappingException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.usertype.ParameterizedType;
+import org.hibernate.usertype.UserType;
+
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Properties;
-
-import org.hibernate.HibernateException;
-import org.hibernate.MappingException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.usertype.ParameterizedType;
-import org.hibernate.usertype.UserType;
 
 public class EnumUserType implements UserType, ParameterizedType {
 

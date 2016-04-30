@@ -39,9 +39,9 @@
  ******************************************************************************/
 package com.exilant.eGov.src.reports;
 
-import java.text.DecimalFormat;
-
 import org.displaytag.decorator.ColumnDecorator;
+
+import java.text.DecimalFormat;
 
 /**
  * Simple column decorator which formats a Amount.

@@ -39,6 +39,12 @@
  */
 package org.egov.pgr.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Designation;
+import org.egov.search.domain.Searchable;
+import org.egov.search.util.Serializer;
+import org.json.simple.JSONObject;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,12 +57,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Designation;
-import org.egov.search.domain.Searchable;
-import org.egov.search.util.Serializer;
-import org.json.simple.JSONObject;
 
 @Entity
 @Table(name = "egpgr_escalation")

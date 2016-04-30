@@ -39,10 +39,6 @@
  */
 package org.egov.adtax.service.penalty;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-
 import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -51,6 +47,10 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

@@ -39,10 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.services.reports;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.egov.bnd.model.BndPaymentReport;
 import org.egov.bnd.services.common.BndCommonService;
 import org.egov.bnd.utils.BndConstants;
@@ -53,6 +49,10 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Transactional(readOnly = true)
 public class PaymentReportService extends PersistenceService<BndPaymentReport, Long> {

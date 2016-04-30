@@ -40,11 +40,6 @@
 
 package org.egov.wtms.web.controller.elasticSearch;
 
-import static java.util.Arrays.asList;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
@@ -70,6 +65,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 @Controller
 @RequestMapping(value = "/elastic/appSearch/")

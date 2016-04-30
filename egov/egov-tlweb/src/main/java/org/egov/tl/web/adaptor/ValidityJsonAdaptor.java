@@ -38,14 +38,13 @@
  */
 package org.egov.tl.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.tl.entity.Validity;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.tl.entity.Validity;
+
+import java.lang.reflect.Type;
 
 public class ValidityJsonAdaptor implements JsonSerializer<Validity> {
     @Override

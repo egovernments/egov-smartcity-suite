@@ -40,16 +40,15 @@
 
 package org.egov.infra.web.support.json.adapter;
 
-import java.io.IOException;
-
-import org.hibernate.proxy.HibernateProxy;
-
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import org.hibernate.proxy.HibernateProxy;
+
+import java.io.IOException;
 
 /**
  * This TypeAdapter unproxies Hibernate proxied objects, and serializes them

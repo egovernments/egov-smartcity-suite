@@ -39,12 +39,12 @@
  */
 package org.egov.works.models.tender;
 
-import javax.validation.Valid;
-
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.masters.Contractor;
+
+import javax.validation.Valid;
 
 public class TenderResponseQuotes extends BaseModel {
 

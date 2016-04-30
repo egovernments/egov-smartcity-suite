@@ -39,11 +39,6 @@
  */
 package org.egov.infra.web.controller.admin.masters.boundarytype;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -55,6 +50,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value ="/boundarytype/create")

@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.model.advance;
 
-import java.util.Date;
-
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
@@ -50,6 +48,8 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+
+import java.util.Date;
 
 public class EgAdvanceRequisitionMis implements java.io.Serializable {
 

@@ -39,12 +39,11 @@
  */
 package org.egov.infra.web.struts.interceptors;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.struts2.ServletActionContext;
-
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import org.apache.struts2.ServletActionContext;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class CacheControlInterceptor extends AbstractInterceptor {
 

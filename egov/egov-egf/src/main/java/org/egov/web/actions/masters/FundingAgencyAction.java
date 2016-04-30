@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -54,6 +51,9 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.exception.ConstraintViolationException;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 

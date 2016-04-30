@@ -45,13 +45,12 @@
  */
 package com.exilant.exility.updateservice;
 
-import java.sql.Connection;
-
-import org.apache.log4j.Logger;
-
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
+import org.apache.log4j.Logger;
+
+import java.sql.Connection;
 
 /**
  * @author deepthi.kollipara

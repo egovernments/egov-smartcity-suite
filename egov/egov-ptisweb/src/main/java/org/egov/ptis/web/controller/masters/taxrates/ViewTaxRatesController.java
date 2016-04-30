@@ -39,13 +39,6 @@
  */
 package org.egov.ptis.web.controller.masters.taxrates;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES;
-import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES_TEMP;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.ptis.master.service.TaxRatesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +47,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES_TEMP;
 
 @Controller
 @RequestMapping(value = "/taxrates/view")

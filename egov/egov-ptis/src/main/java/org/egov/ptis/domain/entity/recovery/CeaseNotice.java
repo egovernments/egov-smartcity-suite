@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.recovery;
 
-import java.util.Date;
-
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.Date;
 
 /**
  * CeaseNotice(NMC-Notice159) entity. @author MyEclipse Persistence Tools

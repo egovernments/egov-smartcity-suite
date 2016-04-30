@@ -39,7 +39,9 @@
  */
 package org.egov.infra.security.audit.entity;
 
-import java.util.Date;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -52,10 +54,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
+import java.util.Date;
 
 @Entity
 @Table(name = "eg_systemaudit")

@@ -39,12 +39,6 @@
  */
 package org.egov.works.master.services;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -67,6 +61,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {

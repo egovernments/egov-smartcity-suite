@@ -39,17 +39,16 @@
  */
 package org.egov.restapi.web.rest;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-
-import org.egov.search.domain.Document;
-import org.egov.search.domain.SearchResult;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.search.domain.Document;
+import org.egov.search.domain.SearchResult;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
 
 public class ApplicationSearchAdaptor implements JsonSerializer<SearchResult> {
 

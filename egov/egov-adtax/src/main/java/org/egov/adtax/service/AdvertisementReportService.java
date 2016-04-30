@@ -38,13 +38,6 @@
  */
 package org.egov.adtax.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.repository.AdvertisementRepository;
 import org.egov.adtax.search.contract.HoardingDcbReport;
@@ -58,6 +51,13 @@ import org.egov.demand.model.EgdmCollectedReceipt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

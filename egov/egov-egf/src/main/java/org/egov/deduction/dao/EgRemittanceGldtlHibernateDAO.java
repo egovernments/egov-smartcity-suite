@@ -46,14 +46,13 @@
 
 package org.egov.deduction.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.deduction.model.EgRemittanceGldtl;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  * TODO Brief Description of the purpose of the class/interface

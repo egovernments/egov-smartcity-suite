@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.transactions.digitalSignature;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
@@ -60,6 +51,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 @Controller
 @RequestMapping(value = "/digitalSignature")

@@ -1,8 +1,8 @@
 package org.egov.ptis.client.model.calculator;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.Installment;
+
+import java.math.BigDecimal;
 
 public class DemandNoticeDetailsInfo {
 

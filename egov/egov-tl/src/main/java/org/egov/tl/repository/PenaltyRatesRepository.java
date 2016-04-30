@@ -39,14 +39,14 @@
  */
 package org.egov.tl.repository;
 
-import java.util.List;
-
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PenaltyRatesRepository extends JpaRepository<PenaltyRates, Long> {

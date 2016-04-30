@@ -39,14 +39,6 @@
  */
 package org.egov.bpa.services.extd.bill;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.commons.Installment;
@@ -55,7 +47,15 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 
 @SuppressWarnings("unchecked")

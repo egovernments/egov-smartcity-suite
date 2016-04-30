@@ -38,10 +38,10 @@
  */
 package org.egov.adtax.repository;
 
-import java.util.List;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.search.contract.HoardingSearch;
+
+import java.util.List;
 
 public interface AdvertisementPermitDetailRepositoryCustom {
 

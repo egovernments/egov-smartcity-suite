@@ -40,11 +40,11 @@
 
 package org.egov.restapi.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+
+import java.io.Serializable;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class CreatePropertyDetails implements Serializable {

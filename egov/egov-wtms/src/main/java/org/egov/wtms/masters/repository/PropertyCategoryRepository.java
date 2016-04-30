@@ -39,13 +39,13 @@
  */
 package org.egov.wtms.masters.repository;
 
-import java.util.List;
-
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PropertyCategoryRepository extends JpaRepository<PropertyCategory, Long> {

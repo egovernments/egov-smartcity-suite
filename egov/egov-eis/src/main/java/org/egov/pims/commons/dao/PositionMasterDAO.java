@@ -39,12 +39,6 @@
  */
 package org.egov.pims.commons.dao;
 
-import java.io.Serializable;
-import java.util.Iterator;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -52,6 +46,11 @@ import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.Serializable;
+import java.util.Iterator;
 
 // Referenced classes of package org.egov.infstr.commons.dao:
 //            PositionMaster

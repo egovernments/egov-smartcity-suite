@@ -39,9 +39,6 @@
  */
 package org.egov.wtms.masters.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.repository.PropertyTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +48,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

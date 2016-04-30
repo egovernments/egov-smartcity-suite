@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.recovery;
 
-import javax.validation.Valid;
-
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+
+import javax.validation.Valid;
 
 /**
  * Recovery entity. @author MyEclipse Persistence Tools

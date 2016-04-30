@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.model.cheque;
 
-import java.util.Date;
-
 import org.egov.commons.Bankaccount;
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Date;
 
 public class AccountCheques extends BaseModel {
     private static final long serialVersionUID = 1L;

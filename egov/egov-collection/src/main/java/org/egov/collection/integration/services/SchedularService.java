@@ -39,10 +39,6 @@
  */
 package org.egov.collection.integration.services;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -57,6 +53,10 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public class SchedularService {

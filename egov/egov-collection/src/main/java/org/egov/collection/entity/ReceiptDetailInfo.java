@@ -39,10 +39,10 @@
  */
 package org.egov.collection.entity;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
+
+import java.math.BigDecimal;
 
 /**
  * Used By Miscellaneous Receipts and Challan to create account details, Rebate

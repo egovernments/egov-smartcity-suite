@@ -39,6 +39,17 @@
  ******************************************************************************/
 package com.exilant.exility.common;
 
+import org.apache.log4j.Logger;
+import org.xml.sax.Attributes;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -48,18 +59,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Stack;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.log4j.Logger;
-import org.xml.sax.Attributes;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author raghu.bhandi

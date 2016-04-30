@@ -39,14 +39,14 @@
  */
 package org.egov.portal.entity;
 
-import java.util.Date;
-
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
+
+import java.util.Date;
 
 /**
  * Builder class for Citizen Inbox

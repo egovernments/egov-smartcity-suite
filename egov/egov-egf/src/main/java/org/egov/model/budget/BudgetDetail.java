@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.model.budget;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
 import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
@@ -58,6 +49,14 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BudgetDetail extends StateAware {
     private static final long serialVersionUID = 5908792258911500512L;

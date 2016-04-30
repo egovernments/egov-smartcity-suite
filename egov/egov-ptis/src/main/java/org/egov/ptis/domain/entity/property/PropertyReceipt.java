@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.infstr.models.BaseModel;
 
 public class PropertyReceipt extends BaseModel{
 

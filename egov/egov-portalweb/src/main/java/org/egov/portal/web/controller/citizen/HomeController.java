@@ -39,11 +39,6 @@
  */
 package org.egov.portal.web.controller.citizen;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -56,6 +51,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/home")

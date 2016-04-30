@@ -1,9 +1,5 @@
 package org.egov.eis.web.controller.masters.position;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.eis.service.DeptDesigService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
@@ -20,6 +16,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/position/create")

@@ -39,9 +39,6 @@
  */
 package org.egov.ptis.master.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -50,6 +47,9 @@ import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Service for PropertyUsage

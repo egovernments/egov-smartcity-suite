@@ -39,12 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.domain.entity.property.Category;
 import org.hibernate.Criteria;
@@ -55,6 +49,11 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)

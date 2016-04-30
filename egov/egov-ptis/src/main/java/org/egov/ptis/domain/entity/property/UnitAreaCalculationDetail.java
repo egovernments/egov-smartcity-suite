@@ -39,9 +39,8 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import java.math.BigDecimal;
-
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  *

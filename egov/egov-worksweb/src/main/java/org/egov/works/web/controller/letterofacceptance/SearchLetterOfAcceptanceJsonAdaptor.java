@@ -1,13 +1,12 @@
 package org.egov.works.web.controller.letterofacceptance;
 
-import java.lang.reflect.Type;
-
-import org.egov.works.models.milestone.Milestone;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.works.models.milestone.Milestone;
+
+import java.lang.reflect.Type;
 
 public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<Milestone> {
     @Override

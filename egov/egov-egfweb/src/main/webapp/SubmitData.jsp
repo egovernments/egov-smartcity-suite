@@ -39,9 +39,11 @@
   -->
 <%@page language = "java"
    import = "com.exilant.exility.common.DataCollection"
-   import = "com.exilant.exility.pagemanager.*"
-   import = "java.security.*"
+   import = "com.exilant.exility.pagemanager.PageMap"
+   import = "com.exilant.exility.pagemanager.PageMaps"
 %>
+<%@ page import="com.exilant.exility.pagemanager.SecurityGuard" %>
+<%@ page import="com.exilant.exility.pagemanager.ServiceAgent" %>
 <%
 	PageMap pm ;
 	DataCollection dc;

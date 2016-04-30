@@ -39,6 +39,9 @@
  ******************************************************************************/
 package org.egov.bnd.utils;
 
+import org.egov.bnd.model.Registration;
+import org.egov.infstr.utils.DateUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,9 +49,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-
-import org.egov.bnd.model.Registration;
-import org.egov.infstr.utils.DateUtils;
 
 public abstract class BndDateUtils {
 

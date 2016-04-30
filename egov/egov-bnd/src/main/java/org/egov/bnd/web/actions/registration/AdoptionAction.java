@@ -39,6 +39,10 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.registration;
 
+import com.opensymphony.xwork2.validator.annotations.EmailValidator;
+import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
+import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -50,11 +54,6 @@ import org.egov.bnd.utils.BndConstants;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.opensymphony.xwork2.validator.annotations.EmailValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
-import com.opensymphony.xwork2.validator.annotations.ValidatorType;
 
 @Validations(requiredStrings = {
         @RequiredStringValidator(fieldName = "adoptionDetail.adopteeMother.firstName", message = "", key = BndConstants.REQUIRED),

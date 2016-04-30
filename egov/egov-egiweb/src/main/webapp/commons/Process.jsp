@@ -38,10 +38,10 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@page import="org.hibernate.jdbc.ReturningWork"%>
+<%@page import="org.egov.infra.exception.ApplicationRuntimeException"%>
 <%@ page language="java" contentType="text/plain; charset=UTF-8" pageEncoding="UTF-8"
-import="org.egov.infstr.security.utils.SecurityUtils,java.sql.*,java.util.HashMap,java.util.Date,java.text.*,
-org.egov.infstr.utils.*,org.egov.infstr.utils.HibernateUtil,org.egov.infra.exception.ApplicationRuntimeException" %>
+import="org.egov.infstr.security.utils.SecurityUtils,org.egov.infstr.utils.EGovConfig,org.egov.infstr.utils.HibernateUtil,org.hibernate.jdbc.ReturningWork,java.sql.Connection,
+java.sql.PreparedStatement,java.sql.ResultSet" %>
 <%!org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger("Process.jsp");
 
 public String processResultSet(ResultSet rs) {

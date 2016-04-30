@@ -39,10 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.services.search;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.model.CitizenRelation;
 import org.egov.bnd.model.DeathRegistration;
@@ -64,6 +60,10 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 
 @Transactional(readOnly = true)
 public class SearchService extends PersistenceService<Registration, Long> {

@@ -1,12 +1,11 @@
 package org.egov.api.adapter;
 
-import java.lang.reflect.Type;
-
-import org.egov.pgr.entity.Complaint;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import org.egov.pgr.entity.Complaint;
+
+import java.lang.reflect.Type;
 
 public class TestAdapter extends DataAdapter<Complaint> {
 

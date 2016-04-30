@@ -39,6 +39,9 @@
  */
 package org.egov.wtms.masters.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.wtms.masters.entity.enums.DemandNoticeIssueFrequency;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -49,9 +52,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.wtms.masters.entity.enums.DemandNoticeIssueFrequency;
 
 @Entity
 @Table(name = "egwtr_demandnotice_penalty_period")

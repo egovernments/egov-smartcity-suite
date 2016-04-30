@@ -39,12 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -52,6 +46,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.List;
 
 @Repository(value = "propertyUsageDAO")
 @Transactional(readOnly = true)

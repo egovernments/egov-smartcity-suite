@@ -39,30 +39,22 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.google.gson.GsonBuilder;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bank;
-import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 public class BankBranchAction extends JQueryGridActionSupport {

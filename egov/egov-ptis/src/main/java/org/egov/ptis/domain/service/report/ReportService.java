@@ -39,20 +39,6 @@
  */
 package org.egov.ptis.domain.service.report;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.RegionalHeirarchy;
@@ -78,6 +64,20 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
 
 @Transactional(readOnly = true)
 public class ReportService {

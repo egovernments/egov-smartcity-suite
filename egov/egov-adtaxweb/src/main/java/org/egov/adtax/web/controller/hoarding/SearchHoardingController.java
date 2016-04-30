@@ -39,17 +39,7 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
@@ -70,7 +60,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/hoarding")

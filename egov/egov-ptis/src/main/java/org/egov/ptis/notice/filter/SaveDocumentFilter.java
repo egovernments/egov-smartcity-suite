@@ -39,10 +39,8 @@
  ******************************************************************************/
 package org.egov.ptis.notice.filter;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import org.egov.ptis.domain.dao.property.NoticeDAO;
+import org.egov.ptis.notice.PtNotice;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -51,9 +49,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
-
-import org.egov.ptis.domain.dao.property.NoticeDAO;
-import org.egov.ptis.notice.PtNotice;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 
 /**
  * passes on a subclass of HttpServletResponseWrapper in order to replace the

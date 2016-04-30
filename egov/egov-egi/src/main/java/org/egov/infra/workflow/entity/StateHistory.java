@@ -39,8 +39,9 @@
  */
 package org.egov.infra.workflow.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.pims.commons.Position;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,10 +55,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.Position;
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Immutable

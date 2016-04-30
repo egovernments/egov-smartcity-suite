@@ -42,10 +42,10 @@
  */
 package org.egov.model.report;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.infstr.models.BaseModel;
 
 /**
  * @author mani

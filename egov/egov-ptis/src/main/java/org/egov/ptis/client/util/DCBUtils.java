@@ -39,16 +39,16 @@
  ******************************************************************************/
 package org.egov.ptis.client.util;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.ORDERED_DEMAND_RSNS_LIST;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ORDERED_DEMAND_RSNS_LIST;
 
 public class DCBUtils {
 

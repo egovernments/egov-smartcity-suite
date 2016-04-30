@@ -39,12 +39,6 @@
  */
 package org.egov.pgr.repository;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintStatusMapping;
@@ -53,6 +47,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Set;
 
 public class ComplaintStatusMappingRepositoryImpl implements ComplaintStatusMappingRepoCustom {
 

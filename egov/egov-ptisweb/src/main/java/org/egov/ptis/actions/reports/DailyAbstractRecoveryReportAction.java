@@ -39,23 +39,14 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EDU_CESS_ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EDU_CESS_CURRENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EGS_CESS_ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_EGS_CESS_CURRENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_FIRE_SERVICE_TAX_ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_FIRE_SERVICE_TAX_CURRENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_GENERAL_TAX_ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_GENERAL_TAX_CURRENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_GENERAL_WATER_TAX_ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_GENERAL_WATER_TAX_CURRENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_LIGHTINGTAX_ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_LIGHTINGTAX_CURRENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_SEWERAGE_TAX_ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_SEWERAGE_TAX_CURRENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DAILY_ABSTRACT_RECOVERY_REPORT;
+import org.apache.struts2.convention.annotation.Action;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.ptis.bean.RecoveryInfo;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -64,15 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Result;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.ptis.bean.RecoveryInfo;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * 

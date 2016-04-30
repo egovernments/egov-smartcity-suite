@@ -39,7 +39,15 @@
  */
 package org.egov.infra.admin.master.entity;
 
-import java.util.Date;
+import com.google.gson.annotations.Expose;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,17 +60,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.google.gson.annotations.Expose;
+import java.util.Date;
 
 @Entity
 @Table(name = "eg_appconfig_values")

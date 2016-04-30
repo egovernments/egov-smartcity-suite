@@ -37,11 +37,13 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-	<%@page import="org.egov.infra.exception.ApplicationRuntimeException"%>
-<%@page import="org.egov.infra.exception.ApplicationExceptionpage import="org.hibernate.jdbc.ReturningWork"%>
-<%@ page language="java" import="java.sql.*,org.egov.infstr.utils.HibernateUtil,org.egov.infstr.utils.EGovConfig" %>
+	<%@page import="org.egov.infra.exception.ApplicationExceptionpage"%>
+<%@page import="org.egov.infra.exception.ApplicationRuntimeException" org.hibernate.jdbc.ReturningWork"%>
+<%@ page language="java" import="org.egov.infstr.utils.EGovConfig,org.egov.infstr.utils.HibernateUtil,java.sql.Connection" %>
+<%@ page import="java.sql.PreparedStatement" %>
+<%@ page import="java.sql.ResultSet" %>
 
-	<%
+<%
 	    //Based on the xmlQueryName, we retrieve the query from appl_sqlconfig.xml
 		String applXmlName = request.getParameter("applXmlName");
 		String xmlTagName = request.getParameter("xmlTagName");

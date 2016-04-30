@@ -39,15 +39,15 @@
  */
 package org.egov.wtms.elasticSearch.entity;
 
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
+import org.egov.search.domain.Filter;
+import org.egov.search.domain.Filters;
+import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
+import static org.egov.search.domain.Filter.queryStringFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
 public class ConnectionSearchRequest {
     private String searchText;

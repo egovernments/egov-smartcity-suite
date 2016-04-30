@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.demand.dao;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.demand.model.BillReceipt;
@@ -53,6 +50,9 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Module;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 
 public interface DemandGenericDao {

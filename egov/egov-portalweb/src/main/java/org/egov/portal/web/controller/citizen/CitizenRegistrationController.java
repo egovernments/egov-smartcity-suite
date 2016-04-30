@@ -38,9 +38,6 @@
  */
 package org.egov.portal.web.controller.citizen;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.security.utils.RecaptchaUtils;
 import org.egov.infra.validation.ValidatorUtils;
@@ -54,6 +51,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value = "/citizen")

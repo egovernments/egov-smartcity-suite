@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.masters;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -67,6 +58,14 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.services.masters.BankService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({

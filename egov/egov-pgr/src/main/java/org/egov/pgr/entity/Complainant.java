@@ -39,6 +39,14 @@
  */
 package org.egov.pgr.entity;
 
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.validation.regex.Constants;
+import org.egov.search.domain.Searchable;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,14 +56,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
-
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.validation.regex.Constants;
-import org.egov.search.domain.Searchable;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egpgr_complainant")

@@ -42,10 +42,6 @@
 package org.egov.pims.service;
 
 //@author deepak
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
@@ -60,6 +56,11 @@ import org.egov.pims.model.GenericMaster;
 import org.egov.pims.model.LangKnown;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.model.ServiceHistory;
+
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 @Deprecated
 public interface EmployeeServiceOld 
 {

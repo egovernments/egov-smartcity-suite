@@ -39,10 +39,12 @@
  ******************************************************************************/
 package org.egov.model.instrument;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.workflow.entity.StateAware;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,13 +59,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "EGF_DISHONORCHEQUE")

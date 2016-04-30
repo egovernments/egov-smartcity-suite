@@ -39,11 +39,10 @@
  */
 package org.egov.infra.persistence.entity.component;
 
-import java.util.Date;
-
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.util.Date;
 
 @Embeddable
 public class Period {

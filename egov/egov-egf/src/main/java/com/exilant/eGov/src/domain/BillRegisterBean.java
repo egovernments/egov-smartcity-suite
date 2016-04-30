@@ -39,21 +39,11 @@
  ******************************************************************************/
 package com.exilant.eGov.src.domain;
 
+import com.exilant.exility.common.TaskFailedException;
+import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.exilant.exility.common.TaskFailedException;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 /**
  * @author Iliyaraja

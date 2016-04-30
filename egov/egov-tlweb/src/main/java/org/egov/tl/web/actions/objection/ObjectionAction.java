@@ -39,11 +39,8 @@
  */
 package org.egov.tl.web.actions.objection;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -63,8 +60,10 @@ import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Results({
         @Result(name = Constants.NEW, location = "objection-" + Constants.NEW + ".jsp"),

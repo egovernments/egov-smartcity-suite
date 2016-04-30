@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.ptis.client.model.ConsolidatedUnitTaxCalReport;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 

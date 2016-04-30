@@ -40,12 +40,12 @@
 package org.egov.bpa.services.extd.masters;
 
 
-import java.util.Date;
-
-import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
+import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 @Transactional(readOnly=true)
 public class ServiceTypeExtnService extends PersistenceService<ServiceTypeExtn, Long>
 {

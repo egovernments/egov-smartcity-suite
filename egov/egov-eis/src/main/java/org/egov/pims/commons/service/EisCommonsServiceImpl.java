@@ -39,14 +39,6 @@
  */
 package org.egov.pims.commons.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.admin.master.entity.User;
@@ -65,6 +57,13 @@ import org.hibernate.Session;
 import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 /**
  * @author Venkatesh.M.J
  * @version 1.2

@@ -39,11 +39,6 @@
  */
 package org.egov.infstr.models;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -53,6 +48,11 @@ import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGCL_SERVICEDETAILS", columnName = { "CODE" }, message = "masters.serviceDetailsCode.isunique")
 public class ServiceDetails extends BaseModel {

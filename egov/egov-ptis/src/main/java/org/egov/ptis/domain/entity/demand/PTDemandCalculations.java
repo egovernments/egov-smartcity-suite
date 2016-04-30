@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.demand;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Set;
-
 import org.egov.demand.model.DemandCalculations;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Set;
 
 /**
  * This interface represents Demand Calculations for Property Tax System.

@@ -39,14 +39,6 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.UOM;
@@ -54,11 +46,18 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infra.utils.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_SCHEDULEOFRATE", columnName = {
         "CODE" }, message = "sor.code.isunique")

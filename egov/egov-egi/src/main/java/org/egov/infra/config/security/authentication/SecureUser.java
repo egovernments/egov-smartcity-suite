@@ -39,16 +39,16 @@
  */
 package org.egov.infra.config.security.authentication;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class SecureUser implements UserDetails {
     private static final long serialVersionUID = -8756608845278722035L;

@@ -40,14 +40,13 @@
  */
 package org.egov.ptis.web.rest;
 
-import java.lang.reflect.Type;
-
-import org.egov.ptis.domain.entity.property.PropertyMutation;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
+
+import java.lang.reflect.Type;
 
 public class PropertyMutationAdaptor implements JsonSerializer<PropertyMutation> { 
 

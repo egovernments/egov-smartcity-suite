@@ -39,8 +39,6 @@
  */
 package org.egov.restapi.web.rest;
 
-import java.io.IOException;
-
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.WaterConnectionInfo;
@@ -57,13 +55,15 @@ import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
-import org.egov.wtms.masters.service.PropertyCategoryService;
 import org.egov.wtms.masters.service.PipeSizeService;
+import org.egov.wtms.masters.service.PropertyCategoryService;
 import org.egov.wtms.masters.service.PropertyPipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterPropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController
 public class RestWaterConnectionValidationService {

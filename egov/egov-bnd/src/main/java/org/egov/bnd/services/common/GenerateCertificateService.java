@@ -39,14 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.services.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpUtils;
-
 import org.egov.bnd.model.BirthRegistration;
 import org.egov.bnd.model.DeathRegistration;
 import org.egov.bnd.model.NonAvailability;
@@ -64,6 +56,13 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is a common service class defined for bnd module. This class will be

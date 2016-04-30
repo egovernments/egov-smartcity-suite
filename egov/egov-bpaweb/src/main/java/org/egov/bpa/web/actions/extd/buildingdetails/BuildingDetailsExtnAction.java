@@ -39,14 +39,6 @@
  */
 package org.egov.bpa.web.actions.extd.buildingdetails;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -68,6 +60,14 @@ import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Transactional(readOnly = true)
 @Namespace("/buildingdetails")

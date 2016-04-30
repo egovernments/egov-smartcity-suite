@@ -39,10 +39,10 @@
  */
 package org.egov.infra.persistence.validator;
 
+import org.egov.infra.persistence.validator.annotation.Required;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.egov.infra.persistence.validator.annotation.Required;
 
 public class RequiredValidator implements ConstraintValidator<Required, Object> {
 

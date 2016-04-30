@@ -39,10 +39,10 @@
  */
 package org.egov.infra.search.elastic.entity;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * Builder class for Application Index

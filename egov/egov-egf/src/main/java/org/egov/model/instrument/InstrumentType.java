@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.model.instrument;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.infstr.models.BaseModel;
 
 public class InstrumentType extends BaseModel {
     /**

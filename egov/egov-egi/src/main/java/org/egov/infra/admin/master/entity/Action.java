@@ -39,8 +39,8 @@
  */
 package org.egov.infra.admin.master.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -56,9 +56,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "eg_action")

@@ -39,16 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static java.util.Calendar.YEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_HEADWISEDMDCOLL;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Installment;
@@ -61,6 +51,16 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Calendar.YEAR;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_HEADWISEDMDCOLL;
 
 @ParentPackage("egov")
 public class HeadWiseDmdNdRecReportAction extends BaseFormAction{

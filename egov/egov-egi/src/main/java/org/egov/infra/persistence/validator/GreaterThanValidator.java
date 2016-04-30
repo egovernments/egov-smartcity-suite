@@ -39,12 +39,11 @@
  */
 package org.egov.infra.persistence.validator;
 
-import java.math.BigDecimal;
+import org.egov.infra.persistence.validator.annotation.GreaterThan;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.egov.infra.persistence.validator.annotation.GreaterThan;
+import java.math.BigDecimal;
 
 public class GreaterThanValidator implements ConstraintValidator<GreaterThan, Object> {
 

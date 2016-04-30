@@ -39,10 +39,6 @@
  */
 package org.egov.bpa.services.extd.inspection;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.InspectMeasurementDtlsExtn;
 import org.egov.bpa.models.extd.InspectionChecklistExtn;
@@ -56,14 +52,18 @@ import org.egov.bpa.models.extd.masters.LayoutMasterExtn;
 import org.egov.bpa.models.extd.masters.RoadWidthMasterExtn;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
 import org.egov.commons.EgwStatus;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Transactional(readOnly=true)
 public class InspectionExtnService extends PersistenceService<InspectionExtn, Long>{

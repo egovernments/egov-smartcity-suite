@@ -44,13 +44,13 @@ package org.egov.demand.interfaces;
  *
  */
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Module;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Any class that needs to generate a Bill must implement the Billable

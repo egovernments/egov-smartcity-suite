@@ -39,23 +39,22 @@
  */
 package org.egov.infstr.security.spring.filter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenticationFilter {
 

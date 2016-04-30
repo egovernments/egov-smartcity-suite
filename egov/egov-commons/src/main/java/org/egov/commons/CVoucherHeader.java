@@ -30,9 +30,8 @@
  */
 package org.egov.commons;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Set;
+import org.egov.infra.workflow.entity.StateAware;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -47,10 +46,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
-import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.search.annotations.DocumentId;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "VOUCHERHEADER")

@@ -42,6 +42,8 @@
  */
 package org.egov.web.actions.payment;
 
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -56,9 +58,6 @@ import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author mani

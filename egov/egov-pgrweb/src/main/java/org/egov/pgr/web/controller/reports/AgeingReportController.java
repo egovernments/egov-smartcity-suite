@@ -39,14 +39,8 @@
  */
 package org.egov.pgr.web.controller.reports;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.pgr.service.reports.AgeingReportService;
 import org.hibernate.SQLQuery;
@@ -63,8 +57,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/report")

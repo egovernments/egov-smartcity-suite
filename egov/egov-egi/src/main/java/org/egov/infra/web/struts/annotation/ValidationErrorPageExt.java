@@ -39,12 +39,12 @@
  */
 package org.egov.infra.web.struts.annotation;
 
-import static com.opensymphony.xwork2.Action.SUCCESS;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static com.opensymphony.xwork2.Action.SUCCESS;
 /**
  * Purpose of this annotation is same as {@link ValidationErrorPage}, In addition to 
  * main functionality, this annotation also provide two more annotation parameter<br/>

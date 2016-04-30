@@ -39,14 +39,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang.WordUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -68,6 +60,14 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class ReportGenerationService {

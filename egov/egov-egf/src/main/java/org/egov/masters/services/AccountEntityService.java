@@ -40,19 +40,18 @@
 /**
  *
  */
-package org.egov.masters.services;import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.util.ArrayList;
-import java.util.List;
+package org.egov.masters.services;
 
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.masters.model.AccountEntity;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author mani

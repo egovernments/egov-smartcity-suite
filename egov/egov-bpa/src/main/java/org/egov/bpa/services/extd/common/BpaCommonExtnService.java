@@ -39,22 +39,7 @@
  */
 package org.egov.bpa.services.extd.common;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
+import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
@@ -92,8 +77,6 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PersonalInformationService;
 import org.egov.exceptions.EGOVRuntimeException;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-/*import org.egov.infstr.workflow.WorkflowService;
-import org.egov.infstr.workflow.inbox.WorkFlowItemsService;*/
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
@@ -112,27 +95,16 @@ import org.egov.infstr.mail.Email;
 import org.egov.infstr.mail.Email.Builder;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.EGovConfig;
 import org.egov.infstr.utils.StringUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-/*import org.egov.lib.rjbac.user.UserRole;*/
 import org.egov.pims.commons.DeptDesig;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-/*import org.egov.pims.commons.service.EisCommonsManager;
-import org.egov.pims.empLeave.dao.HolidaysUlbDAO;
-import org.egov.pims.empLeave.dao.LeaveDAOFactory;
-import org.egov.pims.empLeave.model.CalendarYear;
-import org.egov.pims.empLeave.model.SaturdayHoliday;
-import org.egov.pims.empLeave.model.SecondSaturdayHoliday;
-import org.egov.pims.service.EisManager;*/
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeServiceImpl;
 import org.egov.pims.utils.EisManagersUtill;
 import org.egov.portal.entity.Citizen;
-/*import org.egov.portal.surveyor.model.Surveyor;
-import org.egov.portal.surveyor.model.SurveyorDetail;*/
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Criterion;
@@ -145,7 +117,34 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.ActionSupport;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+/*import org.egov.infstr.workflow.WorkflowService;
+import org.egov.infstr.workflow.inbox.WorkFlowItemsService;*/
+/*import org.egov.lib.rjbac.user.UserRole;*/
+/*import org.egov.pims.commons.service.EisCommonsManager;
+import org.egov.pims.empLeave.dao.HolidaysUlbDAO;
+import org.egov.pims.empLeave.dao.LeaveDAOFactory;
+import org.egov.pims.empLeave.model.CalendarYear;
+import org.egov.pims.empLeave.model.SaturdayHoliday;
+import org.egov.pims.empLeave.model.SecondSaturdayHoliday;
+import org.egov.pims.service.EisManager;*/
+/*import org.egov.portal.surveyor.model.Surveyor;
+import org.egov.portal.surveyor.model.SurveyorDetail;*/
 /*import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.model.BillReceipt;

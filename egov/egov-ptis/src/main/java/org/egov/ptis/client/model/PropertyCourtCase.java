@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.client.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+
+import java.io.Serializable;
+import java.util.Date;
 
 public class PropertyCourtCase implements Serializable {
 

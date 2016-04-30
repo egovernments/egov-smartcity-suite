@@ -40,15 +40,14 @@
 
 package org.egov.demand.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository(value = "egDemandReasonMasterDAO")
 @Transactional(readOnly = true)

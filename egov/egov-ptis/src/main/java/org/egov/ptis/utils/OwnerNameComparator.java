@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.utils;
 
-import java.util.Comparator;
-
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+
+import java.util.Comparator;
 
 public class OwnerNameComparator implements Comparator {
 	Integer orderNo1;

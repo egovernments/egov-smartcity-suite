@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.client.workflow;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
-
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
@@ -58,6 +49,15 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
+
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_GENERATED;
 
 /**
  *

@@ -39,12 +39,6 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -60,6 +54,12 @@ import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Result(name = BaseFormAction.SUCCESS, type = "stream", location = "egBillRegisterPDF", params = { "inputName",

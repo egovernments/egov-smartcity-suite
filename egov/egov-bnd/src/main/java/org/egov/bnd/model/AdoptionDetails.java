@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
-import java.util.Date;
-
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Date;
 
 public class AdoptionDetails extends BaseModel {
     private static final long serialVersionUID = -8079098623497302378L;

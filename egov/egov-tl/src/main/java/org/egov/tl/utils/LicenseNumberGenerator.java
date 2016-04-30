@@ -39,18 +39,17 @@
  */
 package org.egov.tl.utils;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.Serializable;
+import java.sql.SQLException;
 
 @Service
 public class LicenseNumberGenerator {

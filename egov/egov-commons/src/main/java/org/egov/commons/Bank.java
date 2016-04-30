@@ -39,12 +39,12 @@
  */
 package org.egov.commons;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Bank implements java.io.Serializable {
 

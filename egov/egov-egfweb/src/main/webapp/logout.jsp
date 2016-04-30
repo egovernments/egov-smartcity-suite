@@ -38,8 +38,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices" %>
+<%@ page import="javax.servlet.http.Cookie" %>
 
 <%
 if (request.getSession(false) != null) {

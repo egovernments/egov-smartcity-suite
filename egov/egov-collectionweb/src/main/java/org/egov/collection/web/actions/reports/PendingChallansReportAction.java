@@ -39,8 +39,6 @@
  */
 package org.egov.collection.web.actions.reports;
 
-import java.util.Date;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.collection.constants.CollectionConstants;
@@ -50,6 +48,8 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * Action class for pending challans report action

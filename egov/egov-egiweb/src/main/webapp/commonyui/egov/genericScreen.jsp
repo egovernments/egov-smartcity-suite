@@ -39,7 +39,10 @@
   --%>
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
-<%@ page language="java" import="org.egov.infstr.utils.EGovConfig,java.util.*" %>
+<%@ page language="java" import="org.egov.infstr.utils.EGovConfig,java.util.Enumeration" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.Map" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 

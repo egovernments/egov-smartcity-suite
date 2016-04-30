@@ -39,6 +39,13 @@
  */
 package org.egov.works.models.milestone;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.works.models.workflow.WorkFlow;
+import org.egov.works.models.workorder.WorkOrderEstimate;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -47,14 +54,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import javax.validation.Valid;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.works.models.workflow.WorkFlow;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 
 public class Milestone extends WorkFlow implements Comparable {
 

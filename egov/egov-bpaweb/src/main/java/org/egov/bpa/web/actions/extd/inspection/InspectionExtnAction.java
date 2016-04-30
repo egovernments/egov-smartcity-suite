@@ -39,21 +39,6 @@
  */
 package org.egov.bpa.web.actions.extd.inspection;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -93,11 +78,25 @@ import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
 import org.egov.commons.EgwStatus;
 import org.egov.exceptions.EGOVRuntimeException;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 @Transactional(readOnly = true)
 @Namespace("/inspection")

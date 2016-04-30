@@ -39,34 +39,6 @@
  */
 package org.egov.wtms.application.entity;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.entity.Source;
@@ -82,6 +54,16 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "egwtr_connectiondetails")

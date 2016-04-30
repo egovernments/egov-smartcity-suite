@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
-import java.util.Date;
-
 import org.egov.bnd.services.common.BndCommonService;
 import org.egov.bnd.services.registration.BirthRegistrationService;
 import org.egov.bnd.services.registration.DeathRegistrationService;
@@ -50,6 +48,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Date;
 
 public class ViewBirthDeathRegistration extends StateAware {
 

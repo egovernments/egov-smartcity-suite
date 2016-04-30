@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.model.brs;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.infstr.models.BaseModel;
 
 public class AutoReconcileBean extends BaseModel {
     private static final long serialVersionUID = -3495802029238920474L;

@@ -39,14 +39,14 @@
  ******************************************************************************/
 package org.egov.egf.revenue;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.instrument.InstrumentHeader;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class Grant extends BaseModel {
     private static final long serialVersionUID = 5059477505404700650L;

@@ -42,13 +42,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><s:text name="page.title"/></title>
-<%@ page import="org.egov.collection.constants.CollectionConstants" %>
-<script type="text/javascript">
-function onload(){
-	var form = document.createElement("form");
-	form.setAttribute("method", "POST");
-	
-	<s:iterator value="paymentRequest.requestParameters">
+	<script type="text/javascript">
+		function onload() {
+			var form = document.createElement("form");
+			form.setAttribute("method", "POST");
+
+			<s:iterator value="paymentRequest.requestParameters">
 		<s:if test='key.equals("paymentGatewayURL")'>
 		   var 	actionvalue =  '<s:property value='value' />';
 		   actionvalue = actionvalue.replace(/&amp;/g,'&');

@@ -39,7 +39,7 @@
   -->
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
-<%@page  import="com.exilant.eGov.src.reports.LongAmountWrapper,com.exilant.eGov.src.reports.*,java.io.*,java.util.*,java.sql.*,javax.sql.*,javax.naming.InitialContext,com.exilant.GLEngine.*,org.egov.infstr.utils.EGovConfig"%>
+<%@page  import="org.egov.infstr.utils.EGovConfig"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">

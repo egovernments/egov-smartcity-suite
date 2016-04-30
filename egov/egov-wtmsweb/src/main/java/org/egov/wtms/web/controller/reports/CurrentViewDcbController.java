@@ -40,17 +40,6 @@
 
 package org.egov.wtms.web.controller.reports;
 
-import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
@@ -61,7 +50,6 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.hibernate.SQLQuery;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -74,6 +62,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -82,6 +71,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
 
 @Controller
 @RequestMapping(value = "/viewDcb")

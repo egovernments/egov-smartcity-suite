@@ -39,22 +39,11 @@
  */
 package org.egov.bpa.web.actions.extd.common;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.bpa.constants.BpaConstants.STREET_BNDRY_TYPE;
-import static org.egov.bpa.constants.BpaConstants.WARD_BNDRY_TYPE;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.dispatcher.StreamResult;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
@@ -65,6 +54,16 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.lib.admbndry.BoundaryDAO;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.bpa.constants.BpaConstants.STREET_BNDRY_TYPE;
+import static org.egov.bpa.constants.BpaConstants.WARD_BNDRY_TYPE;
 @Transactional(readOnly = true)
 @Results( { @Result(name = AjaxExtnCommonAction.AJAX_RESULT, type = "stream", location = "returnStream", params = { "contentType","text/plain" }) })
 @ParentPackage("egov")

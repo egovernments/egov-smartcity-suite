@@ -39,8 +39,6 @@
  */
 package org.egov.collection.web.actions.service;
 
-import java.util.Collection;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -49,6 +47,8 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
+
+import java.util.Collection;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceCategoryAction.NEW, location = "serviceCategory-new.jsp"),

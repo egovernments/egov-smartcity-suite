@@ -39,17 +39,16 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infra.persistence.entity.component.Money;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OverheadRate extends BaseModel {
 

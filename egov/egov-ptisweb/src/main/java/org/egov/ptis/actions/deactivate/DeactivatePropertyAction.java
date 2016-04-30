@@ -44,26 +44,6 @@
 
 package org.egov.ptis.actions.deactivate;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_DEACTIVATE_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_STATUS_TYPE_DEACT;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -75,7 +55,6 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
@@ -94,6 +73,26 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_DEACTIVATE_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_STATUS_TYPE_DEACT;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.VOUCH_CREATE_RSN_DEACTIVATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

@@ -39,11 +39,11 @@
  */
 package org.egov.works.models.masters;
 
-import java.math.BigDecimal;
-
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
+
+import java.math.BigDecimal;
 
 public class MilestoneTemplateActivity extends BaseModel {
 

@@ -45,13 +45,13 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.commons.Installment;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>

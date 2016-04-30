@@ -39,6 +39,11 @@
  */
 package org.egov.infra.admin.common.entity;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -46,11 +51,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eg_favourites", uniqueConstraints = @UniqueConstraint(columnNames = { "userId", "actionId" }) )

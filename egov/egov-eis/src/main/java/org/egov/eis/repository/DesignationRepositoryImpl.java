@@ -39,15 +39,15 @@
  */
 package org.egov.eis.repository;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.pims.commons.Designation;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.egov.eis.entity.Assignment;
-import org.egov.pims.commons.Designation;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class DesignationRepositoryImpl implements DesignationCustomRepository {
 

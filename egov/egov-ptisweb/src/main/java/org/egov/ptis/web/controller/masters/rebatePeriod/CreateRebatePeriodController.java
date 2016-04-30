@@ -39,12 +39,9 @@
  */
 package org.egov.ptis.web.controller.masters.rebatePeriod;
 
-import javax.validation.Valid;
-
 import org.egov.commons.Installment;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -54,6 +51,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value ="/rebatePeriod/create")

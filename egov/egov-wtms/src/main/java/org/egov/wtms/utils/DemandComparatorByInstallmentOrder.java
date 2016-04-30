@@ -1,8 +1,8 @@
 package org.egov.wtms.utils;
 
-import java.util.Comparator;
-
 import org.egov.demand.model.EgDemandDetails;
+
+import java.util.Comparator;
 
 public class DemandComparatorByInstallmentOrder implements Comparator<EgDemandDetails> {
     @Override

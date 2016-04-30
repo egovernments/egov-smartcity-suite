@@ -41,19 +41,17 @@
 
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ page buffer = "16kb" %>
-<%@page  import="com.exilant.eGov.src.reports.*,java.io.*,java.util.*,javax.naming.InitialContext,org.apache.log4j.Logger"%>
+<%@page  import="org.apache.log4j.Logger,org.egov.infstr.utils.ServiceLocator,java.util.ArrayList,java.util.HashMap,java.util.List"%>
 <html>
 <head>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta http-equiv="KEYWORDS" content="">
-<meta http-equiv="DESCRIPTION" content="">
-<META http-equiv=pragma content=no-cache>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="KEYWORDS" content="">
+	<meta http-equiv="DESCRIPTION" content="">
+	<META http-equiv=pragma content=no-cache>
 
-<link rel=stylesheet href="../css/egov.css" type="text/css" media="screen, print" />
-<%@ page import="org.egov.infstr.utils.ServiceLocator"%>
-<%@ page import="org.egov.infstr.utils.HibernateUtil"%>
-<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
+	<link rel=stylesheet href="../css/egov.css" type="text/css" media="screen, print"/>
+	<SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js?rnd=${app_release_no}"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js?rnd=${app_release_no}"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js?rnd=${app_release_no}"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageValidator.js?rnd=${app_release_no}"></SCRIPT>

@@ -39,10 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -51,6 +47,10 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Results({
         @Result(name = ReceiptNumberSearchAction.SEARCH_RESULTS, location = "receiptNumberSearch-searchResults.jsp"),

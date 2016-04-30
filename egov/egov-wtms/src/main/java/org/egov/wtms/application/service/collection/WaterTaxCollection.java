@@ -39,20 +39,6 @@
  */
 package org.egov.wtms.application.service.collection;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -72,8 +58,8 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
@@ -88,6 +74,19 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 
 @Service
 @Transactional(readOnly = true)

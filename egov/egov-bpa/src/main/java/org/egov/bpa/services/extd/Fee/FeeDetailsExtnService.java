@@ -39,11 +39,6 @@
  */
 package org.egov.bpa.services.extd.Fee;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.InspectionExtn;
@@ -57,6 +52,11 @@ import org.egov.bpa.services.extd.common.FeeExtnService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Iterator;
+import java.util.List;
 @Transactional(readOnly=true)
 public class FeeDetailsExtnService extends PersistenceService{
 	

@@ -40,18 +40,12 @@
 /**
  *
  */
-package org.egov.services.report;import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+package org.egov.services.report;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.egf.masters.model.LoanGrantBean;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.Constants;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -59,6 +53,11 @@ import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author mani

@@ -50,13 +50,12 @@
 <%@ attribute name="isreadonly" required="false" %>
 
 <%@ tag import="org.egov.landestate.web.BoundaryUtil,
-		org.springframework.web.context.support.WebApplicationContextUtils,
-		org.springframework.web.context.WebApplicationContext,
-		java.util.Map,
-		java.util.Set,
-		java.util.List,
 		org.egov.lib.admbndry.Boundary,
-		org.egov.lib.admbndry.BoundaryType" %>
+		org.egov.lib.admbndry.BoundaryType,
+		org.springframework.web.context.WebApplicationContext,
+		org.springframework.web.context.support.WebApplicationContextUtils,
+		java.util.List,
+		java.util.Map" %>
 		
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>

@@ -39,18 +39,18 @@
  */
 package org.egov.bpa.services.extd.common;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.bpa.constants.BpaConstants;
+import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.egov.bpa.constants.BpaConstants;
-import org.egov.infstr.services.PersistenceService;
 /*import org.egov.portal.surveyor.model.Surveyor;//Phionix TODO
  import org.egov.portal.surveyor.model.SurveyorDetail;*/
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 public class UtilsExtnService {
 	private PersistenceService persistenceService;

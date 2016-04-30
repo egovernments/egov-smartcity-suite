@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.client.workflow;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
-
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 
 public class ActionModify extends WorkflowDetails {
 

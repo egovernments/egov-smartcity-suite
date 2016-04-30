@@ -42,22 +42,6 @@
  */
 package org.egov.ptis.actions.recovery;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_COURT_FEE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_NOTICE_FEE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WARRANT_FEE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -87,6 +71,22 @@ import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.FlushMode;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_COURT_FEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_NOTICE_FEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_WARRANT_FEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 
 /**
  * @author manoranjan

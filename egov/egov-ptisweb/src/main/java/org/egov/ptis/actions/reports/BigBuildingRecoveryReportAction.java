@@ -39,15 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BIGBUILDINGRECOVERY;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -61,6 +52,15 @@ import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BIGBUILDINGRECOVERY;
 
 @ParentPackage("egov")
 @Transactional(readOnly = true)

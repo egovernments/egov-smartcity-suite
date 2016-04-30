@@ -39,6 +39,10 @@
  */
 package org.egov.adtax.entity;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -46,10 +50,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.envers.Audited;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "EGADTAX_MSTR_PENALTYRATES")

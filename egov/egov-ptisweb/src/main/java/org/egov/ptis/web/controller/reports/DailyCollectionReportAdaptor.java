@@ -39,18 +39,16 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.apache.commons.lang3.StringUtils;
-import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
+
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 
 public class DailyCollectionReportAdaptor implements JsonSerializer<DailyCollectionReportResult> {
 

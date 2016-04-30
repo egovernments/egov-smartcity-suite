@@ -1,11 +1,11 @@
 package org.egov.infstr.models;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author manoranjan

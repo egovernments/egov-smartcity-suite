@@ -1,11 +1,11 @@
 package org.egov.services.instrument;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentOtherDetails;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Transactional(readOnly = true)
 public class InstrumentOtherDetailsService extends PersistenceService<InstrumentOtherDetails, Long> {

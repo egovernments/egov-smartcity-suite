@@ -39,22 +39,20 @@
  */
 package org.egov.pims.commons.dao;
 
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 // Referenced classes of package org.egov.infstr.commons.dao:
 //            DesignationMaster

@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.masters;
 
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -50,9 +52,6 @@ import org.egov.bnd.services.masters.AdoptionInstituteService;
 import org.egov.bnd.utils.BndConstants;
 import org.egov.bnd.web.actions.common.BndCommonAction;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "institutionCode", message = "", key = BndConstants.REQUIRED),

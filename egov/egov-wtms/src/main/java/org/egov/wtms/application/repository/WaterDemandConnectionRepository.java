@@ -39,13 +39,13 @@
  */
 package org.egov.wtms.application.repository;
 
-import java.util.List;
-
 import org.egov.demand.model.EgDemand;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface WaterDemandConnectionRepository extends JpaRepository<WaterDemandConnection, Long> {

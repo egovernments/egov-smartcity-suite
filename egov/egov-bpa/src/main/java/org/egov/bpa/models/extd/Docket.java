@@ -39,11 +39,11 @@
  */
 package org.egov.bpa.models.extd;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.infstr.models.BaseModel;
 
 public class Docket extends BaseModel {
 	

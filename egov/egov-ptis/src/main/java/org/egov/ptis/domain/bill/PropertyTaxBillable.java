@@ -39,25 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.bill;
 
-import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -90,6 +71,25 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 /**
  * @author satyam

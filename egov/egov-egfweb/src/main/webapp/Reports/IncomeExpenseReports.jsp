@@ -44,7 +44,7 @@
 -->	 
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ page buffer = "16kb" %>
-<%@ page  import="com.exilant.eGov.src.reports.IncomeExpenseReport,java.util.HashMap,org.apache.log4j.Logger,java.text.SimpleDateFormat,java.util.Date"%>
+<%@ page  import="com.exilant.eGov.src.reports.IncomeExpenseReport,org.apache.log4j.Logger,org.egov.commons.Functionary,org.egov.commons.service.CommonsManager,org.egov.commons.service.CommonsManagerHome"%>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
 <html>
@@ -57,16 +57,16 @@
 
 <link rel=stylesheet href="../css/egov.css?rnd=${app_release_no}" type="text/css" media="screen" />
 <link rel=stylesheet href="../css/print.css?rnd=${app_release_no}" type="text/css" media="print" />
-<%@ page import="java.util.List"%>
-<%@ page import="org.egov.lib.rjbac.dept.DepartmentImpl"%>
 <%@ page import="org.egov.infstr.utils.ServiceLocator"%>
-<%@ page import="org.egov.commons.Functionary"%>
+<%@ page import="org.egov.infstr.utils.database.utils.EgovDatabaseManager"%>
+<%@ page import="org.egov.lib.rjbac.dept.DepartmentImpl"%>
+<%@ page import="org.egov.lib.rjbac.dept.ejb.api.DepartmentManager"%>
+<%@ page import="org.egov.lib.rjbac.dept.ejb.api.DepartmentManagerHome"%>
 <%@ page import="java.sql.Connection"%>
 <%@ page import="java.sql.ResultSet"%>
 <%@ page import="java.sql.Statement"%>
-<%@ page import="org.egov.infstr.utils.database.utils.EgovDatabaseManager"%>
-<%@ page import="org.egov.lib.rjbac.dept.ejb.api.DepartmentManagerHome,org.egov.lib.rjbac.dept.ejb.api.DepartmentManager" %>
-<%@ page import="org.egov.commons.service.CommonsManagerHome,org.egov.commons.service.CommonsManager" %>
+<%@ page import="java.text.SimpleDateFormat,java.util.HashMap" %>
+<%@ page import="java.util.List" %>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/PageManager.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/ExilityParameters.js"></SCRIPT>
 <SCRIPT LANGUAGE="javascript" SRC="../exility/CookieManager.js"></SCRIPT>

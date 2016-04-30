@@ -40,7 +40,6 @@
 package org.egov.restapi.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @SuppressWarnings("serial")
 public class AssessmentsDetails implements Serializable {

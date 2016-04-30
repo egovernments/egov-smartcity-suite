@@ -40,11 +40,11 @@
 
 package org.egov.ptis.domain.model;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 @SuppressWarnings("serial")
 public class PayPropertyTaxDetails implements Serializable {

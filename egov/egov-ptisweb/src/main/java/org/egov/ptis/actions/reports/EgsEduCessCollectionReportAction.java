@@ -39,6 +39,29 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
+import org.apache.log4j.Logger;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.Installment;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.utils.StringUtils;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.ptis.bean.DemandCollInfo;
+import org.egov.ptis.bean.ReportInfo;
+import org.hibernate.SQLQuery;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.Calendar.APRIL;
@@ -54,29 +77,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_START_DATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_EGS_EDU_CESS_COLLECTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_EDU_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_EGS_CESS;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Installment;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.utils.StringUtils;
-import org.egov.ptis.bean.DemandCollInfo;
-import org.egov.ptis.bean.ReportInfo;
-import org.hibernate.SQLQuery;
 
 /**
  * 

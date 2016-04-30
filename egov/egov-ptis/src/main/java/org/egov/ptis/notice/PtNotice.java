@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.notice;
 
-import java.util.Date;
-
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+
+import java.util.Date;
 
 public class PtNotice implements java.io.Serializable {
     private Long id;

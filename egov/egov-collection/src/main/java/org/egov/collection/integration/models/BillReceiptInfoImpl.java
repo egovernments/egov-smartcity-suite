@@ -39,11 +39,6 @@
  */
 package org.egov.collection.integration.models;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ChallanInfo;
@@ -57,6 +52,11 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.model.instrument.InstrumentHeader;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The bill receipt information class. Provides details of a bill receipt.

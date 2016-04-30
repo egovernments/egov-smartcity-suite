@@ -38,12 +38,12 @@
  */
 package org.egov.dashboard.config;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Configuration
 @PropertySource(value = {

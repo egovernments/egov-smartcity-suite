@@ -39,12 +39,11 @@
  */
 package org.egov.bpa.services.extd.integration.AutoDcr;
 
-import java.io.StringReader;
+import org.egov.exceptions.EGOVRuntimeException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
-
-import org.egov.exceptions.EGOVRuntimeException;
+import java.io.StringReader;
 
 public class AutoDcrXMLConverter {
 	public AutoDcrXMLConverter() {

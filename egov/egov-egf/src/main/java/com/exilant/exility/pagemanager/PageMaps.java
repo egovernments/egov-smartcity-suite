@@ -50,15 +50,15 @@ package com.exilant.exility.pagemanager;
  *
  * getpageMap(mapName, refresh) would force a refresh. This may be required during testing stage
  */
-import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-
-import org.apache.log4j.Logger;
-import org.egov.infstr.utils.EGovConfig;
 
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.XMLLoader;
+import org.apache.log4j.Logger;
+import org.egov.infstr.utils.EGovConfig;
+
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
 
 /**
  * @author raghu.bhandi, Exilant Consulting

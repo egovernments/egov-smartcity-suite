@@ -39,13 +39,9 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.registration;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -81,9 +77,11 @@ import org.egov.infstr.utils.DateUtils;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Validations(requiredFields = {
         @RequiredFieldValidator(fieldName = "registrationDate", message = "", key = BndConstants.REQUIRED),

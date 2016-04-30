@@ -39,13 +39,11 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
-	default-lazy-init="true">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	   default-lazy-init="true">
 	<context:component-scan
 		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*, org.egov.egf.formatters.*" />
 

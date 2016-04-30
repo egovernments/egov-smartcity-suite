@@ -39,13 +39,6 @@
  */
 package org.egov.bpa.services.extd.Fee;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
@@ -63,12 +56,20 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
-/*import org.egov.infstr.workflow.WorkflowService;*/
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/*import org.egov.infstr.workflow.WorkflowService;*/
 
 @Transactional(readOnly = true)
 public class RegistrationFeeExtnService extends

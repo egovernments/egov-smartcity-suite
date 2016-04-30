@@ -39,15 +39,15 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
-import java.util.ArrayList;
-import java.util.Date;
-
 import org.egov.bnd.utils.BndConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class Registration extends StateAware {
 

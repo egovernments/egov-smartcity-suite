@@ -38,21 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  ******************************************************************************/
 package org.egov.web.actions.payment;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
+import com.exilant.eGov.src.domain.BankEntries;
+import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -82,7 +70,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.DishonorCheque;
 import org.egov.model.instrument.DishonorChequeDetails;
 import org.egov.model.instrument.InstrumentHeader;
@@ -99,12 +86,22 @@ import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.exilant.eGov.src.domain.BankEntries;
-import com.exilant.exility.common.TaskFailedException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 
 @Results({

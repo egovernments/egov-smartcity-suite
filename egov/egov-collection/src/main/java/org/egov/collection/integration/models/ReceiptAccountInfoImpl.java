@@ -39,11 +39,11 @@
  */
 package org.egov.collection.integration.models;
 
-import java.math.BigDecimal;
-
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+
+import java.math.BigDecimal;
 
 /**
  * Provides account information for receipts

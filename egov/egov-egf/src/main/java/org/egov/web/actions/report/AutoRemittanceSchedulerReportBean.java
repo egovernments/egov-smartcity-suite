@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-import java.util.Date;
-
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Transactional(readOnly = true)
 public class AutoRemittanceSchedulerReportBean {

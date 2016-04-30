@@ -39,16 +39,15 @@
  ******************************************************************************/
 package com.exilant.exility.dataservice;
 
-import java.net.URL;
-import java.sql.Connection;
-import java.util.HashMap;
-
-import org.egov.infstr.utils.EGovConfig;
-
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.common.XMLLoader;
+import org.egov.infstr.utils.EGovConfig;
+
+import java.net.URL;
+import java.sql.Connection;
+import java.util.HashMap;
 
 public class SQLTask extends AbstractTask {
     static private SQLTask singletonInstance;

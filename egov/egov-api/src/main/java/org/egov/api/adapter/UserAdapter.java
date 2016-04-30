@@ -1,14 +1,13 @@
 package org.egov.api.adapter;
 
-import java.lang.reflect.Type;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 import org.egov.portal.entity.Citizen;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import java.lang.reflect.Type;
 
 public class UserAdapter extends DataAdapter<Citizen> {
 

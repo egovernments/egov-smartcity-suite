@@ -39,14 +39,13 @@
  */
 package org.egov.infra.admin.master.repository;
 
-import java.util.List;
-import java.util.Set;
+import org.egov.infra.admin.master.entity.Role;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.egov.infra.admin.master.entity.Role;
+import java.util.List;
+import java.util.Set;
 
 public class ModuleRepositoryImpl implements ModuleRepositoryCustom {
 

@@ -39,12 +39,6 @@
  */
 package org.egov.adtax.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementBatchDemandGenerate;
@@ -58,6 +52,11 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

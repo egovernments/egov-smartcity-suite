@@ -39,11 +39,11 @@
  ******************************************************************************/
 package com.exilant.exility.dataservice;
 
-import java.sql.Connection;
-
 import com.exilant.exility.common.AbstractTask;
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
+
+import java.sql.Connection;
 
 /**
  * @author raghu.bhandi, Exilant Consulting

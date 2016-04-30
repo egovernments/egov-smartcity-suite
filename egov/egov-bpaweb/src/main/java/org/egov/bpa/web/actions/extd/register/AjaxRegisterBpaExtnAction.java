@@ -39,11 +39,11 @@
  */
 package org.egov.bpa.web.actions.extd.register;
 
-import java.util.List;
-
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
+
+import java.util.List;
 
 public class AjaxRegisterBpaExtnAction extends BaseFormAction {
 	

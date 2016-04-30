@@ -39,12 +39,6 @@
  */
 package org.egov.asset.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.displaytag.pagination.PaginatedList;
@@ -65,6 +59,12 @@ import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CommonAssetsService {
 

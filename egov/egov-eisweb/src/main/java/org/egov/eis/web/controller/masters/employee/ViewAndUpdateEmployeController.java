@@ -39,11 +39,6 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import javax.validation.Valid;
-
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
@@ -65,6 +60,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping(value = "/employee")

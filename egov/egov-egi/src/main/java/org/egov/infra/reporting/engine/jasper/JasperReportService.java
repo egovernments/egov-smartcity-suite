@@ -39,15 +39,6 @@
  */
 package org.egov.infra.reporting.engine.jasper;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -71,15 +62,23 @@ import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 import net.sf.jasperreports.engine.query.JRHibernateQueryExecuterFactory;
 import net.sf.jasperreports.engine.util.JRLoader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.AbstractReportService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infstr.utils.HibernateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Report service for generating reports using the JasperReports engine. Caches the report templates based on the template file to improve performance.

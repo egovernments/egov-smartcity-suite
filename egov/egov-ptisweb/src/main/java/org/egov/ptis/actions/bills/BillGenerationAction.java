@@ -45,22 +45,7 @@
 
 package org.egov.ptis.actions.bills;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMAND_BILL_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
-
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -103,7 +88,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMAND_BILL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 
 @ParentPackage("egov")
 @Validations

@@ -41,13 +41,6 @@
  *
  */
 package org.egov.services.report;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -55,7 +48,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.report.FundFlowBean;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -63,6 +55,13 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BooleanType;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author mani

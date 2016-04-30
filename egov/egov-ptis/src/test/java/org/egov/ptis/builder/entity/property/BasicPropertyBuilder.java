@@ -1,13 +1,13 @@
 package org.egov.ptis.builder.entity.property;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.junit.Ignore;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Ramki

@@ -39,12 +39,12 @@
  */
 package org.egov.bpa.models.extd;
 
+import org.egov.bpa.constants.BpaConstants;
+import org.egov.infra.admin.master.entity.Boundary;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
-import org.egov.bpa.constants.BpaConstants;
-import org.egov.infra.admin.master.entity.Boundary;
 
 public class FeesReportResultExtn {
 

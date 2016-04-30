@@ -39,10 +39,6 @@
  */
 package org.egov.bpa.services.extd.schedular;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.InspectionExtn;
@@ -50,13 +46,16 @@ import org.egov.bpa.models.extd.RegistrationExtn;
 import org.egov.bpa.services.extd.common.BpaCommonExtnService;
 import org.egov.bpa.services.extd.inspection.InspectionExtnService;
 import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
-import org.egov.commons.EgwStatus;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.utils.DateUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 /**

@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Area;
 import org.egov.exceptions.InvalidPropertyException;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Implementation Class for the BuildUpProperty

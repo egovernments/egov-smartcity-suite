@@ -39,15 +39,27 @@
  */
 package org.egov.ptis.web.rest;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonMethod;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.DrainageEnum;
+import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.LocalityDetails;
+import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
+import org.egov.ptis.domain.model.PayPropertyTaxDetails;
+import org.egov.ptis.domain.model.PropertyTaxDetails;
+import org.egov.ptis.domain.model.ReceiptDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -57,35 +69,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.property.Document;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.DrainageEnum;
-import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.domain.model.FloorDetails;
-import org.egov.ptis.domain.model.LocalityDetails;
-import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
-import org.egov.ptis.domain.model.NewPropertyDetails;
-import org.egov.ptis.domain.model.OwnerDetails;
-import org.egov.ptis.domain.model.PayPropertyTaxDetails;
-import org.egov.ptis.domain.model.PropertyTaxDetails;
-import org.egov.ptis.domain.model.ReceiptDetails;
-import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user

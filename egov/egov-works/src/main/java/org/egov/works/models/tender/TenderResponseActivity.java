@@ -39,15 +39,14 @@
  */
 package org.egov.works.models.tender;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.estimate.Activity;
+
+import javax.validation.Valid;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TenderResponseActivity extends BaseModel {
 

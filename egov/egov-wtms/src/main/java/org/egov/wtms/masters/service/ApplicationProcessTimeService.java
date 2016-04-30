@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.masters.service;
 
-import java.util.List;
-
 import org.egov.wtms.masters.entity.ApplicationProcessTime;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionCategory;
@@ -52,6 +50,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

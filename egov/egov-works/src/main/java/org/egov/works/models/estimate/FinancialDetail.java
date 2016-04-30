@@ -39,13 +39,6 @@
  */
 package org.egov.works.models.estimate;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
@@ -55,6 +48,12 @@ import org.egov.commons.SubScheme;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.budget.BudgetGroup;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class FinancialDetail extends BaseModel {
 

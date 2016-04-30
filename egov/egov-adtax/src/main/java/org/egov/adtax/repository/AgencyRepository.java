@@ -38,12 +38,12 @@
  */
 package org.egov.adtax.repository;
 
-import java.util.List;
-
 import org.egov.adtax.entity.Agency;
 import org.egov.adtax.entity.enums.AgencyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface AgencyRepository extends JpaRepository<Agency, Long> {

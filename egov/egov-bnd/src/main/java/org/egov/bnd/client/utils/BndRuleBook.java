@@ -39,17 +39,17 @@
  ******************************************************************************/
 package org.egov.bnd.client.utils;
 
+import org.egov.bnd.model.Registrar;
+import org.egov.bnd.model.Registration;
+import org.egov.bnd.utils.BndConstants;
+import org.egov.bnd.utils.BndDateUtils;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.egov.bnd.model.Registrar;
-import org.egov.bnd.model.Registration;
-import org.egov.bnd.utils.BndConstants;
-import org.egov.bnd.utils.BndDateUtils;
 
 /**
  * This is a single ton class This class defines what are the actions can be

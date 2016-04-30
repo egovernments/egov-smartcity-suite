@@ -39,11 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -61,6 +56,11 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),

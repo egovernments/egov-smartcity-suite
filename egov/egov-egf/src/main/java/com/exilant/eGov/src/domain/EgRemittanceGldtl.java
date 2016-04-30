@@ -39,21 +39,19 @@
  ******************************************************************************/
 package com.exilant.eGov.src.domain;
 
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
+import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.apache.log4j.Logger;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.exilant.exility.common.TaskFailedException;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 /**
  * TODO Brief Description of the purpose of the class/interface

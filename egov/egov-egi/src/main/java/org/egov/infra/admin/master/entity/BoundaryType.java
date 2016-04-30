@@ -39,7 +39,12 @@
  */
 package org.egov.infra.admin.master.entity;
 
-import java.util.Set;
+import com.google.gson.annotations.Expose;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,14 +56,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
-
-import com.google.gson.annotations.Expose;
+import java.util.Set;
 
 @Entity
 @Table(name = "EG_BOUNDARY_TYPE")

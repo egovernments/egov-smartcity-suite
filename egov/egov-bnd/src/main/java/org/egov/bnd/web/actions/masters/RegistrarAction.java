@@ -39,11 +39,8 @@
  ******************************************************************************/
 package org.egov.bnd.web.actions.masters;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -61,8 +58,10 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 @Validations(requiredFields = {

@@ -38,9 +38,11 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <%@page import="org.egov.infra.exception.ApplicationRuntimeException"%>
-<%@page import="org.hibernate.jdbc.ReturningWork"%>
-<%@ page language="java" import="org.egov.infstr.security.utils.SecurityUtils,java.sql.*,org.egov.infstr.utils.HibernateUtil"%>
-	<%
+<%@page import="org.egov.infstr.security.utils.SecurityUtils"%>
+<%@ page language="java" import="org.egov.infstr.utils.HibernateUtil,org.hibernate.jdbc.ReturningWork,java.sql.Connection"%>
+<%@ page import="java.sql.PreparedStatement" %>
+<%@ page import="java.sql.ResultSet" %>
+<%
 	    StringBuilder qStr = new StringBuilder();
 			final String type= request.getParameter("type");
 			final String uppercase = request.getParameter("uppercase");

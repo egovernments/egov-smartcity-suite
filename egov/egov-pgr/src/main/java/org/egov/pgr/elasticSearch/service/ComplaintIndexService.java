@@ -39,8 +39,6 @@
  */
 package org.egov.pgr.elasticSearch.service;
 
-import java.util.Date;
-
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.City;
@@ -52,6 +50,8 @@ import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)

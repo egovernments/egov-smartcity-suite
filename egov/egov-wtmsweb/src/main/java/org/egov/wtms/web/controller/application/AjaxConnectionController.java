@@ -30,12 +30,6 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
@@ -66,6 +60,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class AjaxConnectionController {

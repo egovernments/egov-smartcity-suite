@@ -40,37 +40,36 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="org.apache.struts.action.ActionMessage" %>
 
-<%@ page import=" org.apache.struts.action.ActionMessages"%><html>
-	<head>
-		<title>eGov  - Error</title>
-		<LINK rel="stylesheet" type="text/css" href="./css/egov.css">
-	</head>
+<html>
+<head>
+    <title>eGov - Error</title>
+    <LINK rel="stylesheet" type="text/css" href="./css/egov.css">
+</head>
 <body bgcolor="#FFFFFF">
 
 
 <center>
 
- <form>
-  <table align='center' id="table2" >
-   <tr>
-   <td>
-  
-   <!-- Body Begins -->
-  
-    <DIV id=paymain>
-          <DIV id=paym2>
-         <DIV id=m3>
-   <div align="center">      
-<center>
+    <form>
+        <table align='center' id="table2">
+            <tr>
+                <td>
 
-  <table  class="bordertable" summary style="border=1px solid;width=800px">
-    <tbody>
-      <tr>
-        <td  align="middle" height="27" >
-      	
-	<html:errors/>
+                    <!-- Body Begins -->
+
+                    <DIV id=paymain>
+                        <DIV id=paym2>
+                            <DIV id=m3>
+                                <div align="center">
+                                    <center>
+
+                                        <table class="bordertable" summary style="border=1px solid;width=800px">
+                                            <tbody>
+                                            <tr>
+                                                <td align="middle" height="27">
+
+                                                    <html:errors/>
 	
 	
         </td>

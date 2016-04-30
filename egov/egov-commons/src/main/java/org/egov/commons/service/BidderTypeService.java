@@ -39,9 +39,9 @@
  */
 package org.egov.commons.service;
 
-import java.util.List;
-
 import org.egov.commons.Bidder;
+
+import java.util.List;
 
 public interface BidderTypeService {
 

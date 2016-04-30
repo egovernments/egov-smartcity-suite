@@ -39,11 +39,6 @@
  */
 package org.egov.adtax.service.collection;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
@@ -56,13 +51,18 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

@@ -40,11 +40,11 @@
 
 package org.egov.wtms.web.controller.reports;
 
-import java.math.BigInteger;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
+
+import java.math.BigInteger;
+import java.util.List;
 
 public class DCBReportResult {
 

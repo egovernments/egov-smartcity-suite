@@ -39,8 +39,8 @@
  */
 package org.egov.wtms.masters.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -56,9 +56,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.wtms.masters.entity.enums.ConnectionType;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "egwtr_water_rates_header")

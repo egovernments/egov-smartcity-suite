@@ -1,15 +1,12 @@
 package org.egov.ptis.domain.service.calculator;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Set;
-
-import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Installment;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+
+import java.util.Date;
+import java.util.HashMap;
 
 /*******************************************************************************
  * eGov suite of products aim to improve the internal efficiency,transparency,

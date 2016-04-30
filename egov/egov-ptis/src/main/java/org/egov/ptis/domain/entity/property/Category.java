@@ -46,10 +46,10 @@
 
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.util.Date;
 import java.util.Set;
-
-import org.egov.infstr.models.BaseModel;
 
 /**
  * Category class is Primarily used in the Property Tax and is used to calculate

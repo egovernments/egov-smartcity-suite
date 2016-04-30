@@ -39,10 +39,9 @@
  ******************************************************************************/
 package com.exilant.exility.updateservice;
 
-import org.apache.log4j.Logger;
-
 import com.exilant.exility.common.DataCollection;
 import com.exilant.exility.common.TaskFailedException;
+import org.apache.log4j.Logger;
 
 //import com.exilant.exility.dataservice.*;
 

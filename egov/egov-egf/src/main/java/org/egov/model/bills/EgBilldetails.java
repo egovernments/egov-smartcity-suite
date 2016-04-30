@@ -39,10 +39,8 @@
  ******************************************************************************/
 package org.egov.model.bills;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -56,9 +54,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "EG_BILLDETAILS")

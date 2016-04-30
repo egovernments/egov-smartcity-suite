@@ -39,37 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.common;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.JSONObject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -84,14 +54,12 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
@@ -107,6 +75,31 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

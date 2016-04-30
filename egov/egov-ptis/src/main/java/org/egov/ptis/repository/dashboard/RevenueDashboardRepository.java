@@ -39,9 +39,17 @@
  ******************************************************************************/
 package org.egov.ptis.repository.dashboard;
 
-import static org.egov.infra.utils.DateUtils.endOfGivenDate;
-import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -55,17 +63,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.stereotype.Repository;
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 /**
  *

@@ -39,11 +39,6 @@
  */
 package org.egov.tl.web.actions.transfer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -65,6 +60,11 @@ import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({

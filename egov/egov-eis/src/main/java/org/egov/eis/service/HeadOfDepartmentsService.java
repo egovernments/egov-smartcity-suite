@@ -1,12 +1,12 @@
 package org.egov.eis.service;
 
-import java.util.List;
-
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

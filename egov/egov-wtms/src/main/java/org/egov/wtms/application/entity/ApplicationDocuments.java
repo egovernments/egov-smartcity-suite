@@ -39,9 +39,12 @@
  ******************************************************************************/
 package org.egov.wtms.application.entity;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.wtms.masters.entity.DocumentNames;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -58,13 +61,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.wtms.masters.entity.DocumentNames;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.web.multipart.MultipartFile;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "egwtr_application_documents")

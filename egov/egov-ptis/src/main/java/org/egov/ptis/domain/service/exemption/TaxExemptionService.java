@@ -1,31 +1,5 @@
 package org.egov.ptis.domain.service.exemption;
 
-import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.commons.Installment;
@@ -38,9 +12,9 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -63,6 +37,15 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.lang.Boolean.FALSE;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)

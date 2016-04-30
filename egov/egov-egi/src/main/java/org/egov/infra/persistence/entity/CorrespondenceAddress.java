@@ -39,10 +39,10 @@
  */
 package org.egov.infra.persistence.entity;
 
+import org.egov.infra.persistence.entity.enums.AddressType;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.enums.AddressType;
 
 @Entity
 @Table(name = "eg_correspondence_address")

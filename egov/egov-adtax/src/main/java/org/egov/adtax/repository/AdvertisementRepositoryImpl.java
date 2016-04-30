@@ -38,13 +38,6 @@
  */
 package org.egov.adtax.repository;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseResult;
@@ -59,6 +52,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @SuppressWarnings("all")
 @Transactional(readOnly = true)

@@ -39,10 +39,10 @@
  */
 package org.egov.demand.dao;
 
-import java.util.List;
-
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgBill;
+
+import java.util.List;
 
 public interface EgBillReceiptDao {
 

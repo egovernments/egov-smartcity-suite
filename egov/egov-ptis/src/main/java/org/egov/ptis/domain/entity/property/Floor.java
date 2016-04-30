@@ -45,15 +45,15 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.commons.Area;
 import org.egov.demand.model.DepreciationMaster;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>

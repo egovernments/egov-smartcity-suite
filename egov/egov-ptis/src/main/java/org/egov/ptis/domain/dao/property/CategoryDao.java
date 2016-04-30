@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.Category;
 import org.hibernate.criterion.Criterion;
+
+import java.util.Date;
+import java.util.List;
 
 public interface CategoryDao {
 

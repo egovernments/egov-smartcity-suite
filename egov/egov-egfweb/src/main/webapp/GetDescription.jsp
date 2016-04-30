@@ -38,9 +38,12 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <%@page language = "java"
-   import = "com.exilant.exility.common.*"
-   import = "com.exilant.exility.pagemanager.*"
+   import = "com.exilant.exility.common.DataCollection"
+   import = "com.exilant.exility.common.Messages"
 %>
+<%@ page import="com.exilant.exility.common.SafeJSString" %>
+<%@ page import="com.exilant.exility.pagemanager.SecurityGuard" %>
+<%@ page import="com.exilant.exility.pagemanager.ServiceAgent" %>
 <HTML>
 <head></head>
 <body>

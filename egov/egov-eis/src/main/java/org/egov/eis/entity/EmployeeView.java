@@ -39,7 +39,12 @@
  */
 package org.egov.eis.entity;
 
-import java.util.Date;
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,13 +53,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
+import java.util.Date;
 
 @Entity
 @Table(name = "view_egeis_employee")

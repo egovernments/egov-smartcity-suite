@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.client.util;
 
-import java.util.Comparator;
-
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+
+import java.util.Comparator;
 
 public enum UnitTaxInfoComparator implements Comparator<UnitTaxCalculationInfo> {
         UNIT_SORT {

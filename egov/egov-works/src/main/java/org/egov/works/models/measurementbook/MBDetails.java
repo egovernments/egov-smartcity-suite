@@ -39,10 +39,6 @@
  */
 package org.egov.works.models.measurementbook;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -51,6 +47,10 @@ import org.egov.infra.validation.regex.Constants;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.models.workorder.WorkOrderActivity;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MBDetails extends BaseModel {
 

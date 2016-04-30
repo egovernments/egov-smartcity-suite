@@ -39,14 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.bills;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -67,6 +59,14 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
 import org.egov.ptis.domain.service.bill.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

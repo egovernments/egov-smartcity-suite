@@ -38,11 +38,6 @@
  */
 package org.egov.adtax.service;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
@@ -55,6 +50,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

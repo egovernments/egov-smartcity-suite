@@ -39,11 +39,11 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.commons.Installment;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.commons.Installment;
 
 public class InstDmdCollMaterializeView implements Serializable {
 

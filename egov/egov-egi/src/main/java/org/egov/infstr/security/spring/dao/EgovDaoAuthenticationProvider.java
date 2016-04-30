@@ -39,8 +39,6 @@
  */
 package org.egov.infstr.security.spring.dao;
 
-import java.util.HashMap;
-
 import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -49,6 +47,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.HashMap;
 
 public class EgovDaoAuthenticationProvider extends DaoAuthenticationProvider {
 

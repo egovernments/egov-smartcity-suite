@@ -38,21 +38,21 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_FATHER;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_HUSBAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_MOTHER;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.workflow.entity.StateAware;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.workflow.entity.StateAware;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_FATHER;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_HUSBAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_MOTHER;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
 public class PropertyMutation extends StateAware {
 

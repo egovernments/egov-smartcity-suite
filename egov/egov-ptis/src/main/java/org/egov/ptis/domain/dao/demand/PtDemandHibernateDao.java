@@ -39,24 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.demand;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgBill;
@@ -73,10 +56,24 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 
 @Repository(value = "ptDemandDAO")
 public class PtDemandHibernateDao implements PtDemandDao {

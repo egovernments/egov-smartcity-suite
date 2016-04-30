@@ -39,7 +39,9 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
+import org.egov.commons.Installment;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.search.domain.Searchable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -50,10 +52,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.Installment;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
+import java.util.Date;
 
 @Entity
 @Table(name = "EGPT_REBATE_PERIOD")

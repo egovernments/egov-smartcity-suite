@@ -42,13 +42,13 @@
  */
 package org.egov.egf.masters.model;
 
-import java.math.BigDecimal;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.instrument.InstrumentHeader;
+
+import java.math.BigDecimal;
 
 /**
  * @author mani

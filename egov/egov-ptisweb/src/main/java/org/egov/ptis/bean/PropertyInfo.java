@@ -39,37 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.bean;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_HISTORY_TAX_DETAIL;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCC_COMMERCIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCC_OWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCC_TENANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Module;
@@ -89,6 +58,37 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_HISTORY_TAX_DETAIL;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCC_COMMERCIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCC_OWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OCC_TENANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_SHORTFORM;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 
 /**
  * The property information object

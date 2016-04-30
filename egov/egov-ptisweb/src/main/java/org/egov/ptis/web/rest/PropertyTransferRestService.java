@@ -39,33 +39,12 @@
  */
 package org.egov.ptis.web.rest;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sun.jersey.core.header.ContentDisposition;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.FormDataParam;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
@@ -83,8 +62,8 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -102,12 +81,31 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.sun.jersey.core.header.ContentDisposition;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
-import com.sun.jersey.multipart.FormDataParam;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 
 /**
  * The PropertyTransferRestService class is used as the RESTFul service to

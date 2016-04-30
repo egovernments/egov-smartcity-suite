@@ -39,10 +39,9 @@
  */
 package org.egov.commons;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,10 +58,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.utils.BankAccountType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "BANKACCOUNT")

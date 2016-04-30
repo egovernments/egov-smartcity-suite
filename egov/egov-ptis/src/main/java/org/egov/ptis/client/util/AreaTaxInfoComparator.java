@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.client.util;
 
-import java.util.Comparator;
-
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;
+
+import java.util.Comparator;
 
 public enum AreaTaxInfoComparator implements Comparator<AreaTaxCalculationInfo> {
     BASERATE_SORT {

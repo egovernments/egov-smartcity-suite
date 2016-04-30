@@ -39,11 +39,6 @@
  ******************************************************************************/
 package org.egov.model.instrument;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
@@ -51,6 +46,11 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.infstr.models.BaseModel;
 import org.egov.infstr.models.ECSType;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * EgfInstrumenHeader entity.

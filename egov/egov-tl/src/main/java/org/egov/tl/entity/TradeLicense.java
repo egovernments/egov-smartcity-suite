@@ -39,6 +39,13 @@
  */
 package org.egov.tl.entity;
 
+import org.apache.log4j.Logger;
+import org.egov.infra.utils.DateUtils;
+import org.egov.tl.utils.Constants;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -46,13 +53,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.egov.infra.utils.DateUtils;
-import org.egov.tl.utils.Constants;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {

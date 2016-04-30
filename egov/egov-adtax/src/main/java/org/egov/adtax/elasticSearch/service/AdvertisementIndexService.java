@@ -39,9 +39,6 @@
  */
 package org.egov.adtax.elasticSearch.service;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 import org.egov.adtax.elasticSearch.entity.AdvertisementSearch;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.service.AdvertisementDemandService;
@@ -57,6 +54,9 @@ import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

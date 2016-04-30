@@ -39,9 +39,9 @@
  */
 package org.egov.dcb.bean;
 
-import java.util.Map;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.util.Map;
 
 public class AtmPayment extends Payment {
     public final static String TRANSACTIONNUMBER = "transactionNumber";

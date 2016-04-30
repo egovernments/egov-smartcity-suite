@@ -39,10 +39,10 @@
  */
 package org.egov.collection.integration.models;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("payee")
 public class BillPayeeDetails {

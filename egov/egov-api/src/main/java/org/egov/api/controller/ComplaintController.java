@@ -29,30 +29,9 @@
  */
 package org.egov.api.controller;
 
-import static java.util.Arrays.asList;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
-
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.coobird.thumbnailator.Thumbnails;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -103,8 +82,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")

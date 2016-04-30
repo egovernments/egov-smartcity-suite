@@ -39,15 +39,8 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeAdaptor;
@@ -66,8 +59,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/employee")

@@ -1,7 +1,5 @@
 package org.egov.api.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
@@ -23,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Sheik

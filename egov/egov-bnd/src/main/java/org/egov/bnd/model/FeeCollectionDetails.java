@@ -45,10 +45,10 @@
  */
 package org.egov.bnd.model;
 
+import org.apache.log4j.Logger;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author administrator TODO To change the template for this generated type

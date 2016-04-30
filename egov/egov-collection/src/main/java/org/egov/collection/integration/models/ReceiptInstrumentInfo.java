@@ -39,10 +39,10 @@
  */
 package org.egov.collection.integration.models;
 
+import org.egov.commons.EgwStatus;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.commons.EgwStatus;
 
 public interface ReceiptInstrumentInfo {
 

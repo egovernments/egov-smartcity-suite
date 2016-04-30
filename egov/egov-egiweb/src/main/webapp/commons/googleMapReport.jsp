@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page import= "java.util.*"%>
+<%@ page import= "org.egov.infra.gis.model.GeoLocation"%>
 <%@page import="org.egov.infra.gis.service.GeoLocationConstants"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false">
@@ -49,7 +49,7 @@
   #map_canvas { height: 80%;width:80% }
 </style>
  
-<%@page import="org.egov.infra.gis.model.GeoLocation,org.egov.infra.gis.service.GeoLocationService,java.lang.reflect.Field" %>
+<%@page import="org.egov.infra.gis.service.GeoLocationService,java.util.List" %>
 <script type="text/javascript"><!--
 var allmarkers = []; 
 var marker;

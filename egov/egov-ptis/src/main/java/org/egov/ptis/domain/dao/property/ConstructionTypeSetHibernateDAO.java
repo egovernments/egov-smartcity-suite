@@ -39,13 +39,12 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.util.List;
+import org.egov.ptis.domain.entity.property.ConstructionTypeSet;
+import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.egov.ptis.domain.entity.property.ConstructionTypeSet;
-import org.hibernate.Session;
+import java.util.List;
 
 public class ConstructionTypeSetHibernateDAO implements ConstructionTypeSetDAO {
 	@PersistenceContext

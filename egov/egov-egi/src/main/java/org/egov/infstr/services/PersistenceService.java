@@ -39,20 +39,6 @@
  */
 package org.egov.infstr.services;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintViolation;
-import javax.validation.Path.Node;
-
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -80,6 +66,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Path.Node;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Transactional(readOnly = true)
 public class PersistenceService<T, ID extends Serializable> {

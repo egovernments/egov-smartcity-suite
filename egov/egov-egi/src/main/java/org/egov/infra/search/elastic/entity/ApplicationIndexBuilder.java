@@ -39,11 +39,11 @@
  */
 package org.egov.infra.search.elastic.entity;
 
-import java.util.Date;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
 import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
+
+import java.util.Date;
 
 /**
  * Builder class for Application Index

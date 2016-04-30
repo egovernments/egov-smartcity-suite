@@ -39,10 +39,10 @@
  */
 package org.egov.infra.web.utils;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class WebUtils {
 

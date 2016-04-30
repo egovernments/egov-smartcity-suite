@@ -39,11 +39,6 @@
  */
 package org.egov.adtax.service.penalty;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.service.AdvertisementPenaltyRatesService;
@@ -57,6 +52,11 @@ import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

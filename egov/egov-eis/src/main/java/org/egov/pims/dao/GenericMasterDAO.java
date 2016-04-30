@@ -39,17 +39,15 @@
  */
 package org.egov.pims.dao;
 
-import java.io.Serializable;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.model.GenericMaster;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.Serializable;
 /**
  * @author deepak
  *

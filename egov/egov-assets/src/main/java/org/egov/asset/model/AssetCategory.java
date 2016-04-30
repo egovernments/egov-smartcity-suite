@@ -39,12 +39,6 @@
  */
 package org.egov.asset.model;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.asset.util.AssetConstants;
 import org.egov.common.entity.UOM;
 import org.egov.commons.CChartOfAccounts;
@@ -54,6 +48,11 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET_CATEGORY", columnName = {
         "CODE" }, message = "assetcat.code.isunique")

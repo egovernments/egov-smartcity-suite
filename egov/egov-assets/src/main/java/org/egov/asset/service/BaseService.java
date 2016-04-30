@@ -39,10 +39,10 @@
  */
 package org.egov.asset.service;
 
+import org.egov.infstr.services.Page;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.egov.infstr.services.Page;
 
 /**
  * Base service class which will talk to PersistenceService

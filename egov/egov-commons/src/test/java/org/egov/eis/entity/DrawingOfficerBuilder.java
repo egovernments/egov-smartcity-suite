@@ -39,11 +39,11 @@
  */
 package org.egov.eis.entity;
 
-import java.lang.reflect.Field;
-
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
 import org.egov.pims.commons.Position;
+
+import java.lang.reflect.Field;
 
 public class DrawingOfficerBuilder {
 

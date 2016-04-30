@@ -39,17 +39,16 @@
  */
 package org.egov.pgr.service.reports;
 
-import java.util.Date;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)

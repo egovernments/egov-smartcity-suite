@@ -39,13 +39,13 @@
  */
 package org.egov.wtms.elasticSearch.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.infra.search.elastic.Indexable;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
 import org.elasticsearch.common.geo.GeoPoint;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class ConsumerSearch implements Indexable {
 

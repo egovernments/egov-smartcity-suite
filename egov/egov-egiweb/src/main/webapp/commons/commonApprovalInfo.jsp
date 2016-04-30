@@ -37,8 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@page import="java.util.*,
-                org.egov.infstr.utils.EgovMasterDataCaching"
+<%@page import="org.egov.infstr.utils.EgovMasterDataCaching,
+                java.util.ArrayList"
     %>
 
 <script>

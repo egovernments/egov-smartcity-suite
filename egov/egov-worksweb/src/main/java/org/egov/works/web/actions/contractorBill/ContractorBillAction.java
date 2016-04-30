@@ -39,25 +39,6 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.script.ScriptContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -95,6 +76,8 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -102,8 +85,6 @@ import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.NumberUtil;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregistermis;
@@ -133,6 +114,24 @@ import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.script.ScriptContext;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ContractorBillAction.PRINT, type = "stream", location = "CompletionCertificatePDF", params = {

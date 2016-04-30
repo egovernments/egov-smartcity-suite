@@ -33,8 +33,12 @@ package org.egov.commons;
 
 // Generated Jul 19, 2007 2:41:17 PM by Hibernate Tools 3.2.0.b9
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -45,13 +49,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name = "fund")

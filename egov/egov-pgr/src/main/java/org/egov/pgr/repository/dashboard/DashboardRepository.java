@@ -39,20 +39,6 @@
  */
 package org.egov.pgr.repository.dashboard;
 
-import static org.egov.infra.utils.DateUtils.endOfGivenDate;
-import static org.egov.infra.utils.DateUtils.startOfGivenDate;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -60,6 +46,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 @Repository
 @SuppressWarnings("all")

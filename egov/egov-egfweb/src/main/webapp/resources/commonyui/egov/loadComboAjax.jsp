@@ -1,6 +1,8 @@
-<%@ page language="java" import="org.egov.infstr.security.utils.SecurityUtils,java.sql.*,org.egov.infstr.utils.HibernateUtil,org.egov.infstr.utils.database.utils.EgovDatabaseManager" %>
+<%@ page language="java" import="org.egov.infstr.security.utils.SecurityUtils,org.egov.infstr.utils.HibernateUtil,org.egov.infstr.utils.database.utils.EgovDatabaseManager,java.sql.Connection" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="java.sql.Statement" %>
 
-	<%
+<%
 
 	Connection con=null;
 	ResultSet rs=null;

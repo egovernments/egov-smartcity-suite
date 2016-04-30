@@ -39,33 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.client.service.calculator;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_11_25;
-import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_1_10;
-import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_26_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCCUPANCY_ZONE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGE_RESIDENTIAL;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
@@ -90,6 +63,16 @@ import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 //TODO name class as client specific
 public class APTaxCalculator implements PropertyTaxCalculator {

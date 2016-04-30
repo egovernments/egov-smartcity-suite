@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.web.actions.report;
 
-import java.math.BigDecimal;
-
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Transactional(readOnly = true)
 public class AutoRemittanceBeanReport {

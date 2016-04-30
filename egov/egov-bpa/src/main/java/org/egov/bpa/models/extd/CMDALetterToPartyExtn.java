@@ -39,9 +39,9 @@
  */
 package org.egov.bpa.models.extd;
 
-import java.util.Date;
-
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Date;
 
 public class CMDALetterToPartyExtn extends BaseModel{
 	

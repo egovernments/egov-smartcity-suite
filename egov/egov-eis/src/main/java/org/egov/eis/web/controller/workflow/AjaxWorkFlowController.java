@@ -39,13 +39,9 @@
  */
 package org.egov.eis.web.controller.workflow;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
@@ -61,9 +57,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class AjaxWorkFlowController {

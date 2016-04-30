@@ -39,11 +39,6 @@
  */
 package org.egov.infra.persistence.validator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -51,6 +46,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class UniqueCheckValidator implements ConstraintValidator<Unique, Object> {
 

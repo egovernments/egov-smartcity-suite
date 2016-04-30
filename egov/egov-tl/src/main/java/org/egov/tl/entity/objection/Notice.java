@@ -39,9 +39,9 @@
  */
 package org.egov.tl.entity.objection;
 
-import java.util.Date;
-
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Date;
 
 public class Notice extends BaseModel {
     private static final long serialVersionUID = -6369641818759075953L;

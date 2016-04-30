@@ -39,19 +39,18 @@
  */
 package org.egov.works.models.milestone;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.works.models.workflow.WorkFlow;
+
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.validation.Valid;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.works.models.workflow.WorkFlow;
 
 public class TrackMilestone extends WorkFlow {
 

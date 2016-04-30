@@ -1,18 +1,17 @@
 package org.egov.model.service;
 
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-
 import org.egov.model.contra.TransactionSummary;
 import org.egov.model.repository.TransactionSummaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 
 @Service 

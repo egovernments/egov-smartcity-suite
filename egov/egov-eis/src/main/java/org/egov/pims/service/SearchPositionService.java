@@ -39,25 +39,22 @@
  */
 package org.egov.pims.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.egov.pims.dao.PersonalInformationHibernateDAO;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class SearchPositionService {

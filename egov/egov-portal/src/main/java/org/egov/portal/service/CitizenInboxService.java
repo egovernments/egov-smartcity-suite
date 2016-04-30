@@ -39,8 +39,6 @@
  */
 package org.egov.portal.service;
 
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.enums.MessageType;
@@ -48,6 +46,8 @@ import org.egov.portal.repository.CitizenInboxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Service for the CitizenInbox

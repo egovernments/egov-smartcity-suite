@@ -39,20 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.citizen.search;
 
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -70,7 +57,18 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

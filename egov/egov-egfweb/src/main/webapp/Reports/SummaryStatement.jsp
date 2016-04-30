@@ -78,7 +78,7 @@
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ page buffer = "16kb" %>
-<%@ page import="java.util.Date,java.util.ArrayList,com.exilant.eGov.src.reports.SummaryStatement,com.exilant.eGov.src.reports.SummaryStatementBean,java.text.SimpleDateFormat,org.apache.log4j.Logger;" %>
+<%@ page import="com.exilant.eGov.src.reports.SummaryStatement,com.exilant.eGov.src.reports.SummaryStatementBean,org.apache.log4j.Logger,java.util.ArrayList" %>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">

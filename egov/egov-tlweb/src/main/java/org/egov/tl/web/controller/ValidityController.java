@@ -38,10 +38,8 @@
  */
 package org.egov.tl.web.controller;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.tl.entity.Validity;
 import org.egov.tl.service.NatureOfBusinessService;
 import org.egov.tl.service.ValidityService;
@@ -60,8 +58,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/validity")

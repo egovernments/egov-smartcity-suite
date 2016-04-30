@@ -39,9 +39,9 @@
  */
 package org.egov.infra.scheduler;
 
-import java.io.Serializable;
-
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+
+import java.io.Serializable;
 
 /**
  * This interface basically servers as a generic Interface for egov scheduler job 

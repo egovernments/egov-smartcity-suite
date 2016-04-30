@@ -1,15 +1,6 @@
 package org.egov.adtax.web.controller.rate;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import com.google.gson.GsonBuilder;
 import org.egov.adtax.entity.AdvertisementRate;
 import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.HoardingCategory;
@@ -18,7 +9,6 @@ import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.service.AdvertisementRateService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.RatesClassService;
-//import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.service.UnitOfMeasureService;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -37,7 +27,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+//import org.egov.adtax.service.SubCategoryService;
 
 @Controller
 @RequestMapping(value = "/rates")

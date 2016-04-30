@@ -39,11 +39,6 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -58,6 +53,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")

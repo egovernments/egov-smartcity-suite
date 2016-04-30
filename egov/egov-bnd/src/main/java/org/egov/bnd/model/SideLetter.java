@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.bnd.model;
 
-import java.util.Date;
-
 import org.egov.infra.workflow.entity.StateAware;
+
+import java.util.Date;
 
 public class SideLetter extends StateAware {
 

@@ -39,11 +39,11 @@
  */
 package org.egov.bpa.models.extd;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.commons.Bank;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class RegistrationDDDetailsExtn extends BaseModel {
 

@@ -39,9 +39,9 @@
  */
 package org.egov.commons;
 
-import java.util.Date;
-
 import org.egov.infra.admin.master.entity.User;
+
+import java.util.Date;
 
 public class EgActiondetails implements java.io.Serializable {
 

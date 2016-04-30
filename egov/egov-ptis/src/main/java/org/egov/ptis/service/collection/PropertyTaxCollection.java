@@ -39,43 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.service.collection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_DEMANDRSN_GLCODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
-import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH_ADJUSTMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_SUBMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CHEQUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -101,8 +64,8 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infra.utils.MoneyUtils;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -112,6 +75,17 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * This class is used to persist Collections .This is used for the integration

@@ -39,22 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.modify;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_ADDRESS_CHANGE_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
-
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -77,6 +61,22 @@ import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_ADDRESS_CHANGE_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.END_APPROVER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTY_BY_UPICNO_AND_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

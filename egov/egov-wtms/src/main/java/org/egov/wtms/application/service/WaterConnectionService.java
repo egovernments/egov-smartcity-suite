@@ -39,11 +39,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.repository.WaterConnectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +48,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

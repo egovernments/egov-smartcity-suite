@@ -39,8 +39,9 @@
  */
 package org.egov.commons;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,10 +51,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name="ACCOUNTDETAILTYPE")

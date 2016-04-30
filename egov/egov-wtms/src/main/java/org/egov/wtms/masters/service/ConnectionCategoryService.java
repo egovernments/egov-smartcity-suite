@@ -39,9 +39,6 @@
  */
 package org.egov.wtms.masters.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.repository.ConnectionCategoryRepository;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -52,6 +49,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

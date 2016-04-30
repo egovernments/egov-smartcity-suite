@@ -39,17 +39,6 @@
  */
 package org.egov.wtms.application.service.collection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillDetails;
@@ -104,6 +93,17 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterTaxExternalService {

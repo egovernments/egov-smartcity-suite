@@ -39,14 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.recovery;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
 import org.egov.ptis.notice.PtNotice;
+
+import javax.validation.Valid;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * EgptWarrant entity. @author MyEclipse Persistence Tools

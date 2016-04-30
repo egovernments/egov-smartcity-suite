@@ -39,10 +39,6 @@
  */
 package org.egov.asset.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.asset.model.Asset;
 import org.egov.asset.model.AssetNumberGenrator;
@@ -55,6 +51,10 @@ import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This class will expose all asset master related operations.

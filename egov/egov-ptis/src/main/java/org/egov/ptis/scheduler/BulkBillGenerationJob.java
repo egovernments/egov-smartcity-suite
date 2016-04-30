@@ -42,17 +42,13 @@ package org.egov.ptis.scheduler;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-//import org.egov.infstr.config.dao.AppConfigValuesDAO;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.service.DemandBill.DemandBillService;
-import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+//import org.egov.infstr.config.dao.AppConfigValuesDAO;
 
 
 @Transactional

@@ -39,13 +39,8 @@
  */
 package org.egov.eis.web.controller.masters.designation;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;
@@ -60,8 +55,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/designation")

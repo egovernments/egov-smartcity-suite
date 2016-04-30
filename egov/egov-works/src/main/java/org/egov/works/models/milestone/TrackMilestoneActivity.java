@@ -39,18 +39,17 @@
  */
 package org.egov.works.models.milestone;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infstr.models.BaseModel;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class TrackMilestoneActivity extends BaseModel {
 

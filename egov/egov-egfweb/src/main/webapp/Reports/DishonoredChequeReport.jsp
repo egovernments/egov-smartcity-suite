@@ -40,8 +40,7 @@
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ page buffer = "64kb" %> 
-<%@page  import="com.exilant.eGov.src.reports.LongAmountWrapper,java.text.SimpleDateFormat,com.exilant.eGov.src.reports.*,javax.naming.InitialContext,java.io.*,
-			java.util.*,org.apache.log4j.Logger;"%>
+<%@page  import="com.exilant.eGov.src.reports.DishonoredChequeReport,org.apache.log4j.Logger"%>
 <html>
 <head>
 <title>Dishonored Cheque Report</title>

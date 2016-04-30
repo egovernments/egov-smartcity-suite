@@ -39,8 +39,17 @@
  */
 package org.egov.infra.admin.master.entity;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.search.domain.Searchable;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -53,18 +62,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Searchable

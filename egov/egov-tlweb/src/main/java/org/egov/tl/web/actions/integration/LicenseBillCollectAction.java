@@ -39,12 +39,6 @@
  */
 package org.egov.tl.web.actions.integration;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.dao.InstallmentDao;
@@ -58,6 +52,12 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @ParentPackage("egov")
 public class LicenseBillCollectAction extends BaseFormAction {

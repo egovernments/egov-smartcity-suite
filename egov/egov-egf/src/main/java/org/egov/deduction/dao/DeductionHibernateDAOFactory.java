@@ -47,14 +47,9 @@
 package org.egov.deduction.dao;
 
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.egov.deduction.model.EgRemittance;
-import org.egov.deduction.model.EgRemittanceDetail;
-import org.egov.deduction.model.EgRemittanceGldtl;
-import org.egov.deduction.model.Generalledgerdetail;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

@@ -40,11 +40,10 @@
 #  */
 #-------------------------------------------------------------------------------
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ page import=" org.egov.lib.rrbac.services.RbacManager,
-		org.egov.lib.rrbac.services.RbacManagerHome,
+<%@ page import=" org.egov.infra.admin.common.entity.Action,
 		org.egov.infstr.utils.ServiceLocator,
-		org.egov.infstr.utils.HibernateUtil,
-		org.hibernate.LockMode,org.egov.infra.admin.common.entity.Action;"
+		org.egov.lib.rrbac.services.RbacManager,
+		org.egov.lib.rrbac.services.RbacManagerHome"
 %>
 
 <%

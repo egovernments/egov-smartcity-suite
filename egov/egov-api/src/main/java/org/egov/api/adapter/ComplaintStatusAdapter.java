@@ -1,12 +1,11 @@
 package org.egov.api.adapter;
 
-import java.lang.reflect.Type;
-
-import org.egov.infra.workflow.entity.StateHistory;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import org.egov.infra.workflow.entity.StateHistory;
+
+import java.lang.reflect.Type;
 
 public class ComplaintStatusAdapter extends DataAdapter<StateHistory> {
 

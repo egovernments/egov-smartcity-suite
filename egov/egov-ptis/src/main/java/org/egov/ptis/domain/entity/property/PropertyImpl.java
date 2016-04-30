@@ -44,25 +44,6 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.exceptions.InvalidPropertyException;
@@ -72,6 +53,24 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 
 public class PropertyImpl extends StateAware implements Property {
 

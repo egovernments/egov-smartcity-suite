@@ -39,10 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.masters.wall;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.entity.property.WallType;
 import org.egov.ptis.master.service.WallTypeService;
@@ -55,6 +51,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Controller for Wall Type Master

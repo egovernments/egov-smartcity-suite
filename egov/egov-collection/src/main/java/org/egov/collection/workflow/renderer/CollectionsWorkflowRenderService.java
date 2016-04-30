@@ -40,15 +40,15 @@
 
 package org.egov.collection.workflow.renderer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl;
 import org.egov.infstr.services.PersistenceService;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Render service for collections workflow. Groups the receipt headers based on user + counter + service

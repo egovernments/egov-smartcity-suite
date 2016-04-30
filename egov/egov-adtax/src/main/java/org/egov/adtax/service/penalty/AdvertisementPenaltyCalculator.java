@@ -39,12 +39,12 @@
  */
 package org.egov.adtax.service.penalty;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.commons.Installment;
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 public interface AdvertisementPenaltyCalculator {
 

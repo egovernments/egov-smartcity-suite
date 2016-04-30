@@ -39,9 +39,9 @@
  */
 package org.egov.restapi.model;
 
-import java.io.Serializable;
-
 import org.egov.ptis.domain.entity.property.Document;
+
+import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class DocumentDetailsRequest implements Serializable {

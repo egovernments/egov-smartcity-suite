@@ -39,12 +39,11 @@
  ******************************************************************************/
 package com.exilant.eGov.src.chartOfAccounts;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.GLAccount;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.dataservice.DataExtractor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class CodeValidator {

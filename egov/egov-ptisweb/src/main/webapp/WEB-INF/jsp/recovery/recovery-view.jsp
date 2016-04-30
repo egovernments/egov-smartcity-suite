@@ -39,10 +39,9 @@
 #-------------------------------------------------------------------------------
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="org.egov.ptis.constants.PropertyTaxConstants" %>
 
 <html>
-	<head>
+<head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/recovery.js"></script>
 	<script type="text/javascript">
 		jQuery.noConflict();

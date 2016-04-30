@@ -39,14 +39,14 @@
  ******************************************************************************/
 package org.egov.model.advance;
 
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFunction;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
 
 public class EgAdvanceRequisitionDetails implements Serializable {
     /**

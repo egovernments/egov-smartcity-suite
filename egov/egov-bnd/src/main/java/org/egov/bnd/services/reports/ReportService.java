@@ -39,16 +39,7 @@
  ******************************************************************************/
 package org.egov.bnd.services.reports;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
-//import org.egov.bnd.model.FeeCollection;
 import org.egov.bnd.model.PopulationDetailMaster;
 import org.egov.bnd.model.RegistrationHistory;
 import org.egov.bnd.model.RegistrationUnit;
@@ -64,6 +55,16 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+//import org.egov.bnd.model.FeeCollection;
 
 @SuppressWarnings("unchecked")
 @Transactional(readOnly = true)

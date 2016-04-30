@@ -39,9 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.Floor;
+
+import java.util.List;
 
 public interface FloorDAO {
 	

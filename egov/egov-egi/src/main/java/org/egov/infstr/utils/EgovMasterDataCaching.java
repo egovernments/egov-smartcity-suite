@@ -39,9 +39,20 @@
  */
 package org.egov.infstr.utils;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.infinispan.manager.EmbeddedCacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -50,20 +61,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PreDestroy;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.infinispan.manager.EmbeddedCacheManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Deprecated
 public class EgovMasterDataCaching {

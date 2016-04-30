@@ -39,13 +39,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.SQLQuery;
@@ -53,6 +46,12 @@ import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

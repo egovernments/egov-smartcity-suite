@@ -39,16 +39,15 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import static java.math.BigDecimal.ZERO;
-
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
+import static java.math.BigDecimal.ZERO;
 
 public class UnitCalculationDetail {
 

@@ -39,11 +39,6 @@
  ******************************************************************************/
 package org.egov.demand.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillType;
 import org.hibernate.Query;
@@ -52,6 +47,10 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository(value = "egBillDAO")
 @Transactional(readOnly = true)

@@ -1,15 +1,14 @@
 package org.egov.api.adapter;
 
-import java.lang.reflect.Type;
-
-import org.egov.api.model.ComplaintAction;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintStatus;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import org.egov.api.model.ComplaintAction;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.pgr.entity.ComplaintStatus;
+
+import java.lang.reflect.Type;
 
 public class ComplaintActionAdapter extends DataAdapter<ComplaintAction> {
 	

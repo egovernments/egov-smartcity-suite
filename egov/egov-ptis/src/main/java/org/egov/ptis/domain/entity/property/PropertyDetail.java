@@ -45,10 +45,10 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.commons.Area;
+
 import java.util.Date;
 import java.util.List;
-
-import org.egov.commons.Area;
 
 /**
  * This is Interface for the Property Detail which contains all the details; like Area, , length, breadth, floor details etc which

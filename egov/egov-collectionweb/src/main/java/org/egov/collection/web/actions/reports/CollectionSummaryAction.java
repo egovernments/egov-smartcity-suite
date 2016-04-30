@@ -39,13 +39,6 @@
  */
 package org.egov.collection.web.actions.reports;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -60,6 +53,12 @@ import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Action class for the cash collection summary report

@@ -39,25 +39,7 @@
  */
 package org.egov.bpa.web.actions.extd.register;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import net.sf.jasperreports.engine.JRException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -66,34 +48,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.bpa.constants.BpaConstants;
-import org.egov.bpa.models.extd.ApplicantStatus;
-import org.egov.bpa.models.extd.BpaAddressExtn;
-import org.egov.bpa.models.extd.CMDALetterToPartyExtn;
-import org.egov.bpa.models.extd.Docket;
-import org.egov.bpa.models.extd.DocketConstructionStage;
-import org.egov.bpa.models.extd.DocketDocumentDetails;
-import org.egov.bpa.models.extd.DocketFloorDetails;
-import org.egov.bpa.models.extd.DocketViolations;
-import org.egov.bpa.models.extd.InspectionExtn;
-import org.egov.bpa.models.extd.LetterToPartyExtn;
-import org.egov.bpa.models.extd.LpChecklistExtn;
-import org.egov.bpa.models.extd.OfficialActions;
-import org.egov.bpa.models.extd.RegDocumentUpload;
-import org.egov.bpa.models.extd.RegistrationChecklistExtn;
-import org.egov.bpa.models.extd.RegistrationDDDetailsExtn;
-import org.egov.bpa.models.extd.RegistrationExtn;
-import org.egov.bpa.models.extd.RegistrationFeeDetailExtn;
-import org.egov.bpa.models.extd.RegistrationFeeExtn;
-import org.egov.bpa.models.extd.RegnApprovalInformationExtn;
-import org.egov.bpa.models.extd.RegnAutoDcrExtn;
-import org.egov.bpa.models.extd.RegnDetailsExtn;
-import org.egov.bpa.models.extd.RegnOfficialActionsExtn;
-import org.egov.bpa.models.extd.RegnOfficialActionsExtnView;
-import org.egov.bpa.models.extd.RegnStatusDetailsExtn;
-import org.egov.bpa.models.extd.RejectionChecklistExtn;
-import org.egov.bpa.models.extd.RejectionExtn;
-import org.egov.bpa.models.extd.ReportFeesDetailsExtn;
-import org.egov.bpa.models.extd.UsageOfConstruction;
+import org.egov.bpa.models.extd.*;
 import org.egov.bpa.models.extd.masters.BpaFeeExtn;
 import org.egov.bpa.models.extd.masters.BuildingCategoryExtn;
 import org.egov.bpa.models.extd.masters.CheckListDetailsExtn;
@@ -124,7 +79,6 @@ import org.egov.bpa.web.actions.extd.common.BpaExtnRuleBook;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.ObjectHistory;
-/*import org.egov.commons.service.CommonsManager;*/
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.exceptions.EGOVRuntimeException;
@@ -139,19 +93,38 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
-/*import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
 import org.egov.infstr.ValidationError;
 import org.egov.infstr.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
-/*import org.egov.pims.service.EisManager;*/
 import org.egov.pims.service.EisUtilService;
 import org.egov.portal.entity.Citizen;
 import org.hibernate.Criteria;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/*import org.egov.commons.service.CommonsManager;*/
+/*import org.egov.erpcollection.integration.models.BillReceiptInfo;*/
+/*import org.egov.pims.service.EisManager;*/
 
 @Transactional(readOnly = true)
 @Namespace("/extd/register")

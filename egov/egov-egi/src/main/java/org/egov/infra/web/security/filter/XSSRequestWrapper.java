@@ -39,10 +39,10 @@
  */
 package org.egov.infra.web.security.filter;
 
-import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
 
 /**
  * Request wrapper where it sanitize user inputs

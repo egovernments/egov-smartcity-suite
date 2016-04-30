@@ -39,8 +39,6 @@
  */
 package org.egov.bpa.services.extd.autoDcr;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.AutoDcrExtn;
@@ -51,6 +49,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
+import java.util.List;
 
 public class AutoDcrExtnService extends PersistenceService<RegnAutoDcrExtn, Long> {
 

@@ -1,10 +1,10 @@
 package org.egov.api.model;
 
-import java.util.List;
-import java.util.Set;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Designation;
+
+import java.util.List;
+import java.util.Set;
 
 public class ForwardDetails {
 	

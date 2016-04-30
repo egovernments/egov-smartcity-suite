@@ -39,15 +39,6 @@
  */
 package org.egov.pgr.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Optional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.PGRAbstractSpringIntegrationTest;
@@ -63,6 +54,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(
         loader = SpringockitoContextLoader.class,

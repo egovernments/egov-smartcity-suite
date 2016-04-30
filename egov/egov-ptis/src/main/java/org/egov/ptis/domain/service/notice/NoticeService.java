@@ -39,12 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.domain.service.notice;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-
-import java.io.InputStream;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -57,9 +51,15 @@ import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.util.Date;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 @Service 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

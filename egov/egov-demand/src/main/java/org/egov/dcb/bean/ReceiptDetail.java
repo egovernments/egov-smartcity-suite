@@ -39,9 +39,9 @@
  */
 package org.egov.dcb.bean;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.Installment;
+
+import java.math.BigDecimal;
 
 public class ReceiptDetail {
 	private static final String TO_STRING_SEP = ";";

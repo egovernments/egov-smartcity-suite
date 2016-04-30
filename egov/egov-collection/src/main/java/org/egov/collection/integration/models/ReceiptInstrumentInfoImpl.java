@@ -39,15 +39,15 @@
  */
 package org.egov.collection.integration.models;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.EgwStatus;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.FinancialConstants;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Provides instrument information for a receipt

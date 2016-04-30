@@ -39,8 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.web.controller.transactions.editOwner;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -60,6 +58,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/editowner/{assessmentNo}")

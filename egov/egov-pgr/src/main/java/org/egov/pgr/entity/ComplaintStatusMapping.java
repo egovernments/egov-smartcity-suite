@@ -39,6 +39,9 @@
  */
 package org.egov.pgr.entity;
 
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -50,9 +53,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "egpgr_complaintstatus_mapping")

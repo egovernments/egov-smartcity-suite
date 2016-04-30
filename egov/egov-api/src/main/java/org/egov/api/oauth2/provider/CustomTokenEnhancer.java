@@ -1,8 +1,5 @@
 package org.egov.api.oauth2.provider;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.security.authentication.SecureUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +7,9 @@ import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CustomTokenEnhancer extends TokenEnhancerChain{
 

@@ -39,15 +39,14 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infra.persistence.entity.component.Money;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SORRate extends BaseModel {
 

@@ -39,16 +39,15 @@
  */
 package org.egov.collection.xml.converter;
 
-import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.collection.integration.models.BillReceiptInfoImpl;
-import org.egov.collection.integration.models.ReceiptAccountInfo;
-import org.egov.collection.integration.models.ReceiptInstrumentInfo;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 
 public class BillReceiptInfoConverter implements Converter {
 

@@ -39,16 +39,6 @@
  */
 package org.egov.bpa.services.extd.bill;
 
-import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
-
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.RegistrationExtn;
@@ -69,13 +59,24 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
-/*import org.egov.infstr.commons.dao.GenericDaoFactory;*/
 import org.egov.infstr.services.PersistenceService;
-/*import org.egov.infstr.workflow.WorkflowService;*/
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
-/*import org.egov.portal.surveyor.model.Surveyor;*/
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.bpa.constants.BpaConstants.BPAMODULENAME;
+
+/*import org.egov.infstr.commons.dao.GenericDaoFactory;*/
+/*import org.egov.infstr.workflow.WorkflowService;*/
+/*import org.egov.portal.surveyor.model.Surveyor;*/
 
 @SuppressWarnings("unchecked")
 public class BpaFeeCollectionExtn extends TaxCollection {

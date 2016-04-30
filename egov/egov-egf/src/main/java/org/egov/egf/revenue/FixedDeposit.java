@@ -39,16 +39,16 @@
  ******************************************************************************/
 package org.egov.egf.revenue;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.instrument.InstrumentHeader;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class FixedDeposit extends BaseModel {
     /**

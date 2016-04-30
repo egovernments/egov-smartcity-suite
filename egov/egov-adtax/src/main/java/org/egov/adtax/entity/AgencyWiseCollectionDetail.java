@@ -38,7 +38,10 @@
  */
 package org.egov.adtax.entity;
 
-import java.math.BigDecimal;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -51,11 +54,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "EGADTAX_AGENCYWISECOLLECTION_DETAIL")

@@ -42,9 +42,6 @@
  */
 package org.egov.services.cheque;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.egov.commons.Bankaccount;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -52,6 +49,9 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.cheque.AccountCheques;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author mani

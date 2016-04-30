@@ -37,9 +37,8 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>  
-<%@ page import="org.egov.ptis.constants.PropertyTaxConstants" %>
-<s:if	test="basicProperty.recoveries.size()>0">
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
+<s:if test="basicProperty.recoveries.size()>0">
 		<tr>
 			<td colspan="5">
 				<div class="headingsmallbg">

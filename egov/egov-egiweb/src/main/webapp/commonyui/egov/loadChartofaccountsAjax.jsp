@@ -37,9 +37,10 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page language="java" import="java.sql.*,org.egov.infstr.utils.HibernateUtil" %>
+<%@ page language="java" import="java.sql.Connection,java.sql.ResultSet" %>
+<%@ page import="java.sql.Statement" %>
 
-	<%
+<%
 
 	Connection con=null;
 	ResultSet rs=null;

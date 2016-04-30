@@ -39,13 +39,13 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.property;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.TaxPerc;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 public interface TaxPercDAO {
 	

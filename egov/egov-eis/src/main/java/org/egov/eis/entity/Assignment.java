@@ -39,9 +39,15 @@
  */
 package org.egov.eis.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
+import org.egov.pims.model.GradeMaster;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,17 +62,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
-import org.egov.pims.model.GradeMaster;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.IndexedEmbedded;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "egeis_assignment")

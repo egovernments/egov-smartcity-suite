@@ -39,10 +39,10 @@
  */
 package org.egov.demand.model;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.infstr.models.BaseModel;
 
 public class BillReceipt extends BaseModel {
     private EgBill billId = null;

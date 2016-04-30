@@ -39,14 +39,13 @@
  */
 package org.egov.adtax.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.adtax.entity.Advertisement;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.adtax.entity.Advertisement;
+
+import java.lang.reflect.Type;
 
 public class HoardingAdaptor implements JsonSerializer<Advertisement> {
 

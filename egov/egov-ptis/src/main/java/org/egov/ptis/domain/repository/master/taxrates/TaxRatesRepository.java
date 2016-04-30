@@ -39,11 +39,11 @@
  */
 package org.egov.ptis.domain.repository.master.taxrates;
 
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface TaxRatesRepository extends JpaRepository<AppConfigValues, Long> {
 

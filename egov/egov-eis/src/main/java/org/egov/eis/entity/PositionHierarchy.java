@@ -39,6 +39,12 @@
  */
 package org.egov.eis.entity;
 
+import org.egov.commons.ObjectType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Position;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,12 +56,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.ObjectType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Position;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
 
 /**
  * @author Vaibhav.K

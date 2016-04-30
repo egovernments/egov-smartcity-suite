@@ -39,10 +39,10 @@
  ******************************************************************************/
 package org.egov.ptis.client.model;
 
-import java.math.BigDecimal;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import java.math.BigDecimal;
 
 @XStreamAlias("applicablefactor")
 public class ApplicableFactor {

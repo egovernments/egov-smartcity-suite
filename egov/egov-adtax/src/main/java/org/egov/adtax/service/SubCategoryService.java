@@ -39,15 +39,15 @@
  */
 package org.egov.adtax.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.SubCategorySearch;
 import org.egov.adtax.repository.SubCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

@@ -39,9 +39,6 @@
  */
 package org.egov.asset.web.actions.assetmaster;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.apache.log4j.Logger;
 import org.egov.asset.model.Asset;
 import org.egov.asset.model.AssetCategory;
@@ -53,6 +50,9 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public abstract class AssetBaseSearchAction extends SearchFormAction {
 

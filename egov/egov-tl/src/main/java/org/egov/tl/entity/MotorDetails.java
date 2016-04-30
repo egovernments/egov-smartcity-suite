@@ -39,9 +39,9 @@
  */
 package org.egov.tl.entity;
 
-import java.math.BigDecimal;
-
 import org.egov.infra.persistence.validator.annotation.Required;
+
+import java.math.BigDecimal;
 
 /**
  * TradelicInstalledMotor entity.

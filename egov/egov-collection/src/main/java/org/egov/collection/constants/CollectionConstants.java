@@ -39,10 +39,10 @@
  */
 package org.egov.collection.constants;
 
-import java.util.TreeMap;
-
 import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.FinancialConstants;
+
+import java.util.TreeMap;
 
 public final class CollectionConstants {
 	// General messages/words like YES/NO/ALL

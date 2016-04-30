@@ -39,14 +39,13 @@
  */
 package org.egov.asset.model;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.egov.asset.util.AssetIdentifier;
+import org.egov.infstr.models.BaseModel;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import org.egov.asset.util.AssetIdentifier;
-import org.egov.infstr.models.BaseModel;
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class AssetActivities extends BaseModel {
 

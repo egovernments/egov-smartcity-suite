@@ -39,10 +39,10 @@
  */
 package org.egov.works.models.estimate;
 
-import java.math.BigDecimal;
-
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.budget.BudgetUsage;
+
+import java.math.BigDecimal;
 
 public class AbstractEstimateAppropriation extends BaseModel {
 

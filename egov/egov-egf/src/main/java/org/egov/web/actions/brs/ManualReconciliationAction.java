@@ -39,11 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.brs;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -58,6 +53,11 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results({

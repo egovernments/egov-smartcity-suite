@@ -39,9 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.client.integration.bean;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.commons.Installment;
@@ -60,6 +57,9 @@ import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Map;
 
 public abstract class Property {
 

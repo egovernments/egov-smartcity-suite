@@ -42,14 +42,14 @@
  */
 package org.egov.egf.masters.model;
 
+import org.apache.log4j.Logger;
+import org.egov.commons.SubScheme;
+import org.egov.infstr.models.BaseModel;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.egov.commons.SubScheme;
-import org.egov.infstr.models.BaseModel;
 
 /**
  * @author mani used for both loans and grants

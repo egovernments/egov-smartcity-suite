@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.web.controller.rest;
 
-import java.io.IOException;
-
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.wtms.application.rest.WaterTaxDue;
@@ -51,6 +49,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController
 public class RestWaterTaxController {

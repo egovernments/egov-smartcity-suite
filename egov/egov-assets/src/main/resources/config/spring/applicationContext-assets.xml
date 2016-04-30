@@ -36,14 +36,12 @@
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org. -->
-<beans xmlns="http://www.springframework.org/schema/beans" 
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" 
-		xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa" 
-		xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
-			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd 
-			http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"  
-		default-lazy-init="true">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	   default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.asset" />
 

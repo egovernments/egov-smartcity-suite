@@ -39,13 +39,6 @@
  */
 package org.egov.wtms.application.workflow;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
-
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -54,8 +47,8 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -73,6 +66,13 @@ import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 
 /**
  * The Class ApplicationCommonWorkflow.

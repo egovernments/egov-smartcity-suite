@@ -39,9 +39,6 @@
  */
 package org.egov.bpa.web.actions.extd.portal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -55,6 +52,9 @@ import org.egov.bpa.services.extd.register.RegisterBpaExtnService;
 import org.egov.bpa.utils.ServiceType;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+
+import java.util.ArrayList;
+import java.util.List;
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 public class BuildingPlanCitizenRequestExtnAction extends BaseFormAction {

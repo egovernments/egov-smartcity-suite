@@ -1,24 +1,8 @@
 package org.egov.ptis.actions.reports;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.web.struts.actions.BaseFormAction.VIEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.COLL_MODES_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -44,9 +28,23 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.struts.actions.BaseFormAction.VIEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLL_MODES_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

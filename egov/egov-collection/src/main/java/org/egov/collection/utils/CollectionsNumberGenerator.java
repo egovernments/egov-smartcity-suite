@@ -39,12 +39,6 @@
  */
 package org.egov.collection.utils;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptHeader;
@@ -57,6 +51,12 @@ import org.egov.infstr.utils.SequenceNumberGenerator;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public class CollectionsNumberGenerator {

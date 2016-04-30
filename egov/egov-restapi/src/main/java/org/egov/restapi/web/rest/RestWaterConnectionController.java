@@ -39,12 +39,6 @@
  */
 package org.egov.restapi.web.rest;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-
-import javax.validation.Valid;
-
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
@@ -79,6 +73,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * Controller provides RESTful services to create new/additional/change of use water connection

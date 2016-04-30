@@ -1,12 +1,12 @@
 package org.egov.api.adapter;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 public class DataAdapter<T> implements JsonSerializer<T> {
 

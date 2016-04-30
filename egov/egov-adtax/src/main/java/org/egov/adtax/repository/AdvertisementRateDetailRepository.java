@@ -39,8 +39,6 @@
  */
 package org.egov.adtax.repository;
 
-import java.util.List;
-
 import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.RatesClass;
@@ -51,6 +49,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface AdvertisementRateDetailRepository extends JpaRepository<AdvertisementRatesDetails, Long> {

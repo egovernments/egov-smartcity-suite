@@ -39,17 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.reports;
 
-import static java.math.BigDecimal.ZERO;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.opensymphony.xwork2.ActionSupport;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -60,7 +50,15 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.ActionSupport;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static java.math.BigDecimal.ZERO;
 
 public class ZoneWiseDemandAction extends ActionSupport {
 	private static final Logger LOGGER = Logger.getLogger(ZoneWiseDemandAction.class);

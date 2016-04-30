@@ -38,13 +38,6 @@
  */
 package org.egov.adtax.repository;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.search.contract.HoardingSearch;
@@ -52,6 +45,12 @@ import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @SuppressWarnings("all")
 public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPermitDetailRepositoryCustom {

@@ -41,13 +41,6 @@ package org.egov.bpa.models.extd;
 
 // Generated 13 Nov, 2012 12:35:05 PM by Hibernate Tools 3.4.0.CR1
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.bpa.constants.BpaConstants;
 import org.egov.bpa.models.extd.masters.DocumentHistoryExtn;
 import org.egov.bpa.models.extd.masters.ServiceTypeExtn;
@@ -57,6 +50,13 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /*

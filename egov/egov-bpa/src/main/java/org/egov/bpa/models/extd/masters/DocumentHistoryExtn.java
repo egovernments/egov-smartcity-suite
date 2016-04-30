@@ -39,14 +39,14 @@
  */
 package org.egov.bpa.models.extd.masters;
 
+import org.egov.bpa.models.extd.RegistrationExtn;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infstr.models.BaseModel;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.bpa.models.extd.RegistrationExtn;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.models.BaseModel;
 
 
 public class DocumentHistoryExtn extends BaseModel{

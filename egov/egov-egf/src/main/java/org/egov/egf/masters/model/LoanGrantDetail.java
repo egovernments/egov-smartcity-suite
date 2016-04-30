@@ -42,11 +42,11 @@
  */
 package org.egov.egf.masters.model;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author mani Is used to store the funding patterns

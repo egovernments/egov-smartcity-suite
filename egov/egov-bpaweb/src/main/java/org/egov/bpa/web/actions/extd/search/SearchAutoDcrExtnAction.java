@@ -39,9 +39,6 @@
  */
 package org.egov.bpa.web.actions.extd.search;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -53,6 +50,9 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Transactional(readOnly = true)
 @ParentPackage("egov")

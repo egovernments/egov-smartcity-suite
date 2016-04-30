@@ -39,14 +39,14 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 
 public class CollectionSummary implements Serializable {
     /**

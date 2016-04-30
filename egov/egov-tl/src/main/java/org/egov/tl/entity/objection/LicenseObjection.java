@@ -39,12 +39,12 @@
  */
 package org.egov.tl.entity.objection;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocument;
+
+import java.util.Date;
+import java.util.List;
 
 public class LicenseObjection extends StateAware {
     private static final long serialVersionUID = 1L;

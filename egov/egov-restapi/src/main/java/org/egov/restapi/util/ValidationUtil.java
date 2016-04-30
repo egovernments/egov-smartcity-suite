@@ -1,7 +1,5 @@
 package org.egov.restapi.util;
 
-import java.util.List;
-
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -17,6 +15,8 @@ import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 @Service
 public class ValidationUtil {
     @Autowired

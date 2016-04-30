@@ -39,8 +39,11 @@
  */
 package org.egov.infra.search.elastic.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,12 +52,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * ApplicationIndex class

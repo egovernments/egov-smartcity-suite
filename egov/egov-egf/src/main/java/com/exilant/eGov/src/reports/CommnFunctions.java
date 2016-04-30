@@ -45,23 +45,20 @@
  */
 package com.exilant.eGov.src.reports;
 
+import com.exilant.exility.common.TaskFailedException;
+import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.Query;
-import org.springframework.stereotype.Service;
-
-import com.exilant.exility.common.TaskFailedException;
 
 /**
  * @author Lakshmi

@@ -50,9 +50,10 @@ package com.exilant.eGov.src.transactions;
  *
  * @Version 1.00
  */
-import java.sql.Connection;
 
 import com.exilant.exility.common.TaskFailedException;
+
+import java.sql.Connection;
 
 public interface CommonMethodsI {
 

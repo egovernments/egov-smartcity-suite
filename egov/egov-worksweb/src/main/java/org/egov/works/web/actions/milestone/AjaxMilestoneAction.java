@@ -39,11 +39,6 @@
  */
 package org.egov.works.web.actions.milestone;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -52,6 +47,11 @@ import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.models.milestone.Milestone;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class AjaxMilestoneAction extends BaseFormAction {
 

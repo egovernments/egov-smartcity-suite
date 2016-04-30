@@ -39,10 +39,10 @@
  */
 package org.egov.collection.integration.models;
 
-import java.math.BigDecimal;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import java.math.BigDecimal;
 
 @XStreamAlias("account")
 public class BillAccountDetails implements Comparable<BillAccountDetails> {

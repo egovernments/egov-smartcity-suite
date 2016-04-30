@@ -39,19 +39,18 @@
  ******************************************************************************/
 package com.exilant.exility.dataservice;
 
+import com.exilant.exility.common.DataCollection;
+import com.exilant.exility.common.ExilityParameters;
+import com.exilant.exility.common.ObjectGetSetter;
+import com.exilant.exility.common.TaskFailedException;
+import org.apache.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
-
-import org.apache.log4j.Logger;
-
-import com.exilant.exility.common.DataCollection;
-import com.exilant.exility.common.ExilityParameters;
-import com.exilant.exility.common.ObjectGetSetter;
-import com.exilant.exility.common.TaskFailedException;
 
 /**
  * TODO : 1. RS shpuld not go forward and back. We should use ArrayList and convert to Array. 2. set the right property of rs/con

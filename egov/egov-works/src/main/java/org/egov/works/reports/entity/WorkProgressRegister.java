@@ -39,23 +39,6 @@
  */
 package org.egov.works.reports.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.egov.commons.CFunction;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fund;
@@ -71,6 +54,22 @@ import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.models.masters.Contractor;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name = "EGW_MV_WORK_PROGRESS_REGISTER")

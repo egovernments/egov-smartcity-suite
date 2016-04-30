@@ -39,10 +39,6 @@
  */
 package org.egov.bpa.web.actions.extd.approve;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -59,6 +55,10 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Transactional(readOnly = true)
 @Namespace("/approve")

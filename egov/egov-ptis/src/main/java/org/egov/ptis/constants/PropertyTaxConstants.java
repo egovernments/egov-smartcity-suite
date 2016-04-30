@@ -39,6 +39,17 @@
  ******************************************************************************/
 package org.egov.ptis.constants;
 
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import static java.util.Calendar.APRIL;
 import static java.util.Calendar.AUGUST;
 import static java.util.Calendar.DECEMBER;
@@ -54,17 +65,6 @@ import static java.util.Calendar.SEPTEMBER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_COUNTER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public interface PropertyTaxConstants {
 

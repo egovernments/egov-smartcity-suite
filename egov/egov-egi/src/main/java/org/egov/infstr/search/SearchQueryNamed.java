@@ -39,10 +39,10 @@
  */
 package org.egov.infstr.search;
 
-import java.util.List;
-
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
+
+import java.util.List;
 
 /**
  * Represents a named query being used for search functionality

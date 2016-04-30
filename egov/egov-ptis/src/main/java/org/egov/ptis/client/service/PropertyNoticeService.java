@@ -39,37 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.client.service;
 
-import static java.math.BigDecimal.ROUND_HALF_UP;
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.CENTRAL_GOVT_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.MIXED_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.NONRESD_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_HISTORY_TAX_DETAIL;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCC_COMMERCIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCC_OWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCC_TENANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPTYPE_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.RESD_SHORTFORM;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATEGOVT_BUILDING_GENERALTAX_ADDITIONALDEDUCTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATE_GOVT_SHORTFORM;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -92,6 +61,20 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static java.math.BigDecimal.ROUND_HALF_UP;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 // [CODE REVIEW] put javadoc explaining what this new class is for. Is it only used for migrating the XML? If so, 
 // "PropertyNoticeService" is not the right name to use

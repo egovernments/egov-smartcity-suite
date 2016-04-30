@@ -38,15 +38,6 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
@@ -68,6 +59,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/hoarding")

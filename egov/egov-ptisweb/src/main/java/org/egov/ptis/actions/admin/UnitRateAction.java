@@ -39,17 +39,6 @@
  ******************************************************************************/
 package org.egov.ptis.actions.admin;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -59,8 +48,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
@@ -68,6 +57,17 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")

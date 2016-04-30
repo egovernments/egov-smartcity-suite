@@ -39,9 +39,6 @@
  */
 package org.egov.pgr.web.controller.complaint;
 
-import java.util.Hashtable;
-import java.util.List;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
@@ -51,6 +48,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Hashtable;
+import java.util.List;
 
 @Controller
 public class ViewComplaintController {

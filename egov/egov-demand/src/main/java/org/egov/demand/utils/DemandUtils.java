@@ -39,9 +39,6 @@
  */
 package org.egov.demand.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillAccountDetails;
@@ -51,6 +48,9 @@ import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillPayeeDetails;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DemandUtils {
 

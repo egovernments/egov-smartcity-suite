@@ -39,10 +39,10 @@
  */
 package org.egov.bpa.models.extd;
 
+import org.egov.infstr.models.BaseModel;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egov.infstr.models.BaseModel;
 
 public class RegDocumentUpload extends BaseModel{
 	

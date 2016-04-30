@@ -40,14 +40,13 @@
 
 package org.egov.infra.web.support.json.adapter;
 
-import java.lang.reflect.Type;
-
-import org.egov.infra.admin.master.entity.User;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.infra.admin.master.entity.User;
+
+import java.lang.reflect.Type;
 
 public class UserAdaptor implements JsonSerializer<User> {
 

@@ -39,10 +39,6 @@
  ******************************************************************************/
 package org.egov.demand.integration;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.InvalidAccountHeadException;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
@@ -56,6 +52,10 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 public class BillTaxCollection {
 

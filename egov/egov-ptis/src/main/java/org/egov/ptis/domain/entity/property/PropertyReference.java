@@ -46,9 +46,9 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
-
 import org.egov.exceptions.InvalidPropertyException;
+
+import java.util.Date;
 
 /**
  * @author Administrator TODO To change the template for this generated type

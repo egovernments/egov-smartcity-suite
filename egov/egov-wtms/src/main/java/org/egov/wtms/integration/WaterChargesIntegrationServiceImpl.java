@@ -40,13 +40,6 @@
 
 package org.egov.wtms.integration;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -67,6 +60,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrationService {

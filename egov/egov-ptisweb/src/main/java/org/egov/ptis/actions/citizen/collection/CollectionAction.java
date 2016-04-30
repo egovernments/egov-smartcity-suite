@@ -39,20 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.citizen.collection;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.util.List;
-import java.util.Map;
-
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -76,7 +63,19 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 
 @Namespace("/citizen/collection")
 @ResultPath("/WEB-INF/jsp/")

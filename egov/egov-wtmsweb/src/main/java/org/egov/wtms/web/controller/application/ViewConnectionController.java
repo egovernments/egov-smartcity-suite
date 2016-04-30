@@ -39,10 +39,6 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import java.math.BigDecimal;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -61,6 +57,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 
 @Controller
 @RequestMapping(value = "/application")

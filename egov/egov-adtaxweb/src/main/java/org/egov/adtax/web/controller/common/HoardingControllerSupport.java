@@ -38,9 +38,6 @@
  */
 package org.egov.adtax.web.controller.common;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingCategory;
@@ -73,6 +70,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Date;
+import java.util.List;
 
 public class HoardingControllerSupport extends GenericWorkFlowController {
     protected @Autowired AdvertisementPermitDetailService advertisementPermitDetailService;

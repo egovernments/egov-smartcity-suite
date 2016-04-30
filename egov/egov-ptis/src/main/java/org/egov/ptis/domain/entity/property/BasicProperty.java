@@ -39,16 +39,16 @@
  ******************************************************************************/
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is the interface for the BasicProperty which represents the Basic,
