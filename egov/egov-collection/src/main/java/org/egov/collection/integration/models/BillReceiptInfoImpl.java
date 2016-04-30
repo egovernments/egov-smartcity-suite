@@ -437,4 +437,9 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         return additionalInfo;
     }
 
+    @Override
+    public String getSource() {
+        return receiptHeader.getSource() == null ? "" : receiptHeader.getSource();
+    }
+
 }

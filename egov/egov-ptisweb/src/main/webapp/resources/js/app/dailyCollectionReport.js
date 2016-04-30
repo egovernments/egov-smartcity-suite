@@ -38,106 +38,73 @@
 	#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
+var tableContainer;
 jQuery(document).ready(function() {
 	$('#dailyCollectionReport-header').hide();
 	$('#report-footer').hide();
+	tableContainer=$('#dailyCollReport-table');
 $('#dailyCollectionReportSearch').click(function(e){
-		var fromDate = $("#fromDate").val();
-		var toDate = $("#toDate").val(); 
-		var mode = $("#mode").val();
-		var operator = $("#operator").val();
-		var status = $("#status").val();
-		var ward = $("#ward").val();
-		oTable= $('#dailyCollReport-table');
-		$('#dailyCollectionReport-header').show();
-        $("#resultDateLabel").html(fromDate+" - "+toDate);	
-		oTable.dataTable({
+	$.post("/ptis/report/dailyCollection", $('#dailyCollectionform').serialize())
+	.done(function (searchResult) {
+		//console.log(JSON.stringify(searchResult));
+		
+		tableContainer.dataTable({
+			destroy:true,
 			"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
-			"bDestroy": true,
 			"oTableTools" : {
 				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 				"aButtons" : [ 
 				               {
 					             "sExtends": "pdf",
-                                 "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
-                                 "sTitle": "Daily Collection Report",
-                                 "sPdfOrientation": "landscape"
+                                "sTitle": "Daily Collection Report",
+                                "sPdfOrientation": "landscape"
 				                },
 				                {
 						             "sExtends": "xls",
-	                                 "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
 	                                 "sTitle": "Daily Collection Report"
 					             },{
 						             "sExtends": "print",
-	                                 "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
 	                                 "sTitle": "Daily Collection Report"
-					               }],
+					              }],
 				
 			},
-			ajax : {
-				url : "/ptis/report/dailyCollection/result",
-				data : {
-					'fromDate' : fromDate,
-					'toDate' : toDate,
-					'collectionMode': mode,
-					'collectionOperator':operator,
-					'status':status,
-					'ward':ward
-				}
+			searchable:true,
+			data: searchResult,
+			columns: [
+			{title: 'Receipt Number', data: 'resource.clauses.receiptnumber'},
+			{title: 'Receipt Date',
+				render: function (data, type, full) {
+					if(full!=null && full.resource!=undefined &&  full.resource.searchable.receiptdate != undefined) {
+						var regDateSplit = full.resource.searchable.receiptdate.split("T")[0].split("-");		
+						return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+					}
+					else return "";
+		    	}
 			},
-			"columns" : [
-						  { "data" : "receiptNo" , "title": "Receipt no"},  
-						  { "data" : "receiptDate", "title": "Receipt date"},
-						  { "data" : "assessmentNumber", "title": "Assessment Number"},
-						  { "data" : "ownerName", "title": "Owner Name"},
-						  { "data" : "ward" , "title": "ward"},
-						  { "data" : "doorNumber", "title": "Door no	"},
-						  { "data" : "paidAt", "title": "Paid at"},
-						  { "data" : "paymentMode", "title": "Pay mode"},
-						  { "data" : "status", "title": "Status"},
-						  { "data" : "fromDate", "title": "Paid From date"}, 
-						  { "data" : "toDate", "title": "Paid To date"},
-						  { "data" : "arrearAmt", "title": "Arrear amount"},
-						  { "data" : "currAmt", "title": "Current amount"},
-						  { "data" : "totalPenalty", "title": "Total Penalty"},
-						  { "data" : "arrearLibCess","title": "Arrear Library cess"},
-						  { "data" : "currLibCess","title": "Current Library cess"},
-						  { "data" : "totalLibCess","title": "Total library cess"},
-						  { "data" : "totalRebate","title": "Rebate"}, 
-						  { "data" : "totalCollection", "title": "Total collection"}, 
-						  ],
-						  "aaSorting": [[2, 'desc']] ,
-						  "footerCallback" : function(row, data, start, end, display) {
-								var api = this.api(), data;
-								if (data.length == 0) {
-									jQuery('#report-footer').hide();
-								} else {
-									jQuery('#report-footer').show(); 
-								}
-								if (data.length > 0) {
-									updateTotalFooter(11, api);
-									updateTotalFooter(12, api);
-									updateTotalFooter(13, api);
-									updateTotalFooter(14, api);
-									updateTotalFooter(15, api);
-									updateTotalFooter(16, api);
-									updateTotalFooter(17, api);
-									updateTotalFooter(18, api);
-								}
-							},
-							"aoColumnDefs" : [ {
-								"aTargets" : [11,12,13,14,15,16,17,18],
-								"mRender" : function(data, type, full) {
-									return formatNumberInr(data);    
-								}
-							} ]		
-				});
-		e.stopPropagation();
+			{title: 'Assessment Number', data: 'resource.common.consumercode'},
+			{title: 'Owner Name', data: 'resource.searchable.consumername'},
+			{title: 'Paid At', data: 'resource.clauses.channel'},
+			{title: 'Payment mode', data: 'resource.clauses.paymentmode'},
+			{title: 'Status', data: 'resource.clauses.status'},
+			{title: 'Paid From', data: 'resource.searchable.installmentfrom'},
+			{title: 'Paid To', data: 'resource.searchable.installmentto'},
+			{title: 'Arrear Amount', data: 'resource.searchable.arrearamount'},
+			{title: 'Current Amount', data: 'resource.searchable.currentamount'},
+			{title: 'Total Penalty', data: 'resource.searchable.latepaymentcharges'},
+			{title: 'Arrear Library Cess', data: 'resource.searchable.arrearcess'},
+			{title: 'Current Library Cess', data: 'resource.searchable.currentcess'},
+			{title: 'Rebate Amount', data: 'resource.searchable.reductionamount'},
+			{title: 'Total Collection', data: 'resource.searchable.totalamount'},
+			],
+			"aaSorting": [[3, 'desc']]
+		});
+		
 	});
 	
+});
 });
 
 
@@ -186,4 +153,3 @@ function formatNumberInr(x) {
 	}
 	return x;
 }
-

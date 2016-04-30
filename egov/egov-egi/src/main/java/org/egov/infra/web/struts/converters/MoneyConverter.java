@@ -42,7 +42,7 @@ package org.egov.infra.web.struts.converters;
 import java.util.Map;
 
 import org.apache.struts2.util.StrutsTypeConverter;
-import org.egov.infstr.models.Money;
+import org.egov.infra.persistence.entity.component.Money;
 
 public class MoneyConverter extends StrutsTypeConverter {
 

@@ -47,7 +47,7 @@ import javax.validation.Valid;
 import org.egov.common.entity.UOM;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.Money;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.works.models.masters.ScheduleOfRate;
 
 public class EstimateTemplateActivity extends BaseModel {

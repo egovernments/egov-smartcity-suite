@@ -44,13 +44,17 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.services.ContractorGradeService;
 import org.egov.works.models.workorder.WorkOrder;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,6 +77,12 @@ public class CreateLetterOfAcceptanceController {
     private LetterOfAcceptanceService letterOfAcceptanceService;
     @Autowired
     private LetterOfAcceptanceNumberGenerator letterOfAcceptanceNumberGenerator;
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
+    @Autowired
+    private ContractorGradeService contractorGradeService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
@@ -166,6 +176,16 @@ public class CreateLetterOfAcceptanceController {
             resultBinder.rejectValue("fileDate", "error.loa.filedate");
         if (workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
             resultBinder.rejectValue("fileDate", "error.loa.workorderdate");
+    }
+    
+    @RequestMapping(value = "/contractorsearchform", method = RequestMethod.GET)
+    public String showSearchContractorForm(
+            @ModelAttribute final SearchRequestContractor searchRequestContractor,
+            final Model model) throws ApplicationException {
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("contractorClasses", contractorGradeService.getAllContractorGrades());
+        model.addAttribute("searchRequestContractor", searchRequestContractor);
+        return "contractor-search";
     }
 
 }

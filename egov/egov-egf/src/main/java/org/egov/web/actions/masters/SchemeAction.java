@@ -234,16 +234,16 @@ public class SchemeAction extends BaseFormAction {
             LOGGER.debug("......Scheme Unique check Begins......");
         if (uniqueCode) {
             if (!scheme.getCode().equals("") && scheme.getId() != null)
-                scheme_validate = (Scheme) persistenceService.find("from Scheme where code=? and id!=?",
-                        scheme.getCode(), scheme.getId());
+                scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(code)=? and id!=?",
+                        scheme.getCode().toLowerCase(), scheme.getId());
             else if (!scheme.getCode().equals(""))
-                scheme_validate = (Scheme) persistenceService.find("from Scheme where code=?", scheme.getCode());
+                scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(code)=?", scheme.getCode().toLowerCase());
             uniqueCode = false;
         } else if (!scheme.getName().equals("") && scheme.getId() != null)
-            scheme_validate = (Scheme) persistenceService.find("from Scheme where name=? and id!=?", scheme.getName(),
+            scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(name)=? and id!=?", scheme.getName().toLowerCase(),
                     scheme.getId());
         else if (!scheme.getName().equals(""))
-            scheme_validate = (Scheme) persistenceService.find("from Scheme where name=?", scheme.getName());
+            scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(name)=?", scheme.getName().toLowerCase());
         if (scheme_validate != null)
             isDuplicate = true;
         if (LOGGER.isDebugEnabled())

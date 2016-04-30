@@ -307,7 +307,6 @@
 			<div class="subheadnew">
 				<s:text name="bankRemittance.title" />
 			</div>
-			<logic:notEmpty name="paramList">
 					<div align="center">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
@@ -340,6 +339,7 @@
 							<input name="search" type="button" class="buttonsubmit"
 							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
+					<logic:notEmpty name="paramList">
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
 							export="false" requestURI="" excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray receiptDateArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
@@ -472,6 +472,7 @@
 							id="button" value="Close" onclick="window.close()" />
 					</div>
 					</logic:notEmpty>
+					<s:if test="%{isListData}">
 					<logic:empty name="paramList">
 						<div class="formmainbox">
 							<table width="90%" border="0" align="center" cellpadding="0"
@@ -489,8 +490,8 @@
 							<input name="buttonClose" type="button" class="button"
 								id="buttonClose" value="Close" onclick="window.close()" />
 						</div>
-
 					</logic:empty>
+					</s:if>
 		</div>
 	</s:form>
 </body>

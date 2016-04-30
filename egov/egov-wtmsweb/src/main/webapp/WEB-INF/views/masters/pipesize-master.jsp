@@ -86,7 +86,7 @@
 				 	<input type="hidden" name="pipeSize" value="${pipeSize.id}" />
 					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
 					<div class="form-group text-center" >
-						<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
+						<button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
 						<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
 						<button type="button" class="btn btn-primary" id="listid" onchange="replaceExemptionFormChar();" ><spring:message code="lbl.list"/></button>
 						<button type="button" class="btn btn-default" id="resetid"><spring:message code="lbl.reset"/></button>

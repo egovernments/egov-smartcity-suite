@@ -39,7 +39,7 @@
   --%>
 <%@ page import= "java.util.*"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<%@page import="org.egov.infstr.services.GeoLocationConstants, org.egov.infstr.utils.AppConfigTagUtil"%>
+<%@page import="org.egov.infra.gis.service.GeoLocationConstants, org.egov.infstr.utils.AppConfigTagUtil"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false">
 </script>

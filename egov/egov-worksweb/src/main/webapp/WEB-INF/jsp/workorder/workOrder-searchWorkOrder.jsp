@@ -39,7 +39,7 @@
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <html>
 	<head>
 		<title><s:text name='page.title.search.workorder' /></title>
@@ -500,7 +500,7 @@ var workOrderNumberSearchSelectionHandler = function(sType, arguments){
 												<td colspan="4" class="headingwk">
 													<div class="arrowiconwk">
 														<img
-															src="/egi/resources/erp2/images/arrow.gif" />
+															src="/egworks/resources/erp2/images/arrow.gif" />
 													</div>
 													<div class="headplacer">
 														<s:text name="page.subheader.search.workorder" />
@@ -578,7 +578,7 @@ var workOrderNumberSearchSelectionHandler = function(sType, arguments){
 														href="javascript:show_calendar('forms[0].fromDate',null,null,'DD/MM/YYYY');"
 														onmouseover="window.status='Date Picker';return true;"
 														onmouseout="window.status='';return true;"> <img
-															src="/egi/resources/erp2/images/calendar.png"
+															src="/egworks/resources/erp2/images/calendar.png"
 															alt="Calendar" width="16" height="16" border="0"
 															align="absmiddle" />
 													</a>
@@ -598,7 +598,7 @@ var workOrderNumberSearchSelectionHandler = function(sType, arguments){
 														href="javascript:show_calendar('forms[0].toDate',null,null,'DD/MM/YYYY');"
 														onmouseover="window.status='Date Picker';return true;"
 														onmouseout="window.status='';return true;"> <img
-															src="/egi/resources/erp2/images/calendar.png"
+															src="/egworks/resources/erp2/images/calendar.png"
 															alt="Calendar" width="16" height="16" border="0"
 															align="absmiddle" />
 													</a>

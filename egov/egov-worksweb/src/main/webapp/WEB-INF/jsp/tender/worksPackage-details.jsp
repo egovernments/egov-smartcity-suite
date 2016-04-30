@@ -120,11 +120,11 @@ function deleterow(obj)
 </script>
 <table id="wpDetailsTable" width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-          	<td colspan="5" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" />
+          	<td colspan="5" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" />
           	</div><div class="headplacer"><s:text name="wp.detils"/></div></td>
           	<td align="right" class="headingwk" style="border-left-width: 0px">
        		<a id="addHref" href="#" onclick="goToPath();return false;">
-       		<img border="0" alt="Add Estimates" src="/egi/resources/erp2/images/add.png" /></a>
+       		<img border="0" alt="Add Estimates" src="/egworks/resources/erp2/images/add.png" /></a>
        		</td>
        	</tr>
        	<td width="5%" class="tablesubheadwk">
@@ -176,7 +176,7 @@ function deleterow(obj)
 		</td>
 		<td align="right" width="10%" class="headingwk" style="border-left-width: 0px">
        		<a id="delHref" href="#" onclick="deleterow(this)">
-       		<img border="0" alt="Delete Estimates" src="/egi/resources/erp2/images/cancel.png" /></a>
+       		<img border="0" alt="Delete Estimates" src="/egworks/resources/erp2/images/cancel.png" /></a>
        	</td>
 	</tr>
 </s:iterator>	

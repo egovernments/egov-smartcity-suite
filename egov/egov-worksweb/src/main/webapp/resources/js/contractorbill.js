@@ -375,7 +375,7 @@ function creditGlcode_initialize() {
 	}, {		    
           displayKey: 'glcodesearch',
           source: custom.ttAdapter()
-    }).on('typeahead:selected', function (event, data) {
+    }).on('typeahead:selected typeahead:autocompleted', function (event, data) {
     	$(this).parents("tr:first").find('.creditaccountheadname').val(data.name);
     	$(this).parents("tr:first").find('.creditglcodeid').val(data.id);    
     });

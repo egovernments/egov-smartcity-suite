@@ -55,9 +55,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.models.GeoKmlInfo;
-import org.egov.infstr.services.GeoLocationConstants;
-import org.egov.infstr.services.GeoLocationService;
+import org.egov.infra.gis.model.GeoKmlInfo;
+import org.egov.infra.gis.service.GeoLocationConstants;
+import org.egov.infra.gis.service.GeoLocationService;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.URLTemplateLoader;

@@ -39,7 +39,6 @@
  ******************************************************************************/
 package org.egov.web.actions.payment;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +52,9 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -84,10 +85,19 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
     private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
 
     private Integer bankaccount;
+    
+    private Integer bank;
+    
+    private Integer bank_branch;
 
     private List<BankEntriesNotInBankBook> bankEntriesNotInBankBookList;
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
+    @Autowired
+    private BankBranchHibernateDAO bankBranchHibernateDAO;
+    @Autowired
+    private BankaccountHibernateDAO bankaccountHibernateDAO;
+    
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     @Autowired
@@ -97,6 +107,8 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
     private BankEntriesService bankEntriesService;
 
     private Long beId;
+    
+    private String mode;
 
     @Override
     public StateAware getModel() {
@@ -159,6 +171,9 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
             bankEntriesNotInBankBookList.add(new BankEntriesNotInBankBook());
         prepareNewform();
         addDropdownData("bankList", bankHibernateDAO.getAllBanksByFund(voucherHeader.getFundId().getId()));
+        addDropdownData("bankBranchList", bankBranchHibernateDAO.getAllBankBranchsByBank(bank));
+        addDropdownData("bankAccountList", bankaccountHibernateDAO.getBankAccountByBankBranch(bank_branch));
+        mode = "save";
         return NEW;
     }
 
@@ -239,6 +254,30 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
 
     public void setBeId(Long beId) {
         this.beId = beId;
+    }
+
+    public Integer getBank() {
+        return bank;
+    }
+
+    public void setBank(Integer bank) {
+        this.bank = bank;
+    }
+
+    public Integer getBank_branch() {
+        return bank_branch;
+    }
+
+    public void setBank_branch(Integer bank_branch) {
+        this.bank_branch = bank_branch;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
 }

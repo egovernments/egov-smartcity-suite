@@ -39,11 +39,13 @@
   -->
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<link href="<egov:url path='/resources/css/displaytagFormatted.css?rnd=${app_release_no}'/>"
+<link
+	href="<egov:url path='/resources/css/displaytagFormatted.css?rnd=${app_release_no}'/>"
 	rel="stylesheet" type="text/css" />
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title>RTGS Reference No Assignment</title>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
@@ -57,7 +59,8 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="RTGS Ref. No Assignment Search" />
 		</jsp:include>
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">RTGS Ref. No Assignment Search</div>
@@ -65,9 +68,8 @@
 				id="paymentTable">
 				<tr>
 					<th class="bluebgheadtdnew"><s:text
-							name="chq.assignment.select" />
-						<s:checkbox id="selectall" name="selectall"
-							onclick="checkAll(this)" /></th>
+							name="chq.assignment.select" /> <s:checkbox id="selectall"
+							name="selectall" onclick="checkAll(this)" /></th>
 					<th class="bluebgheadtdnew"><s:text name="Sl No" /></th>
 
 					<th class="bluebgheadtdnew"><s:text
@@ -116,8 +118,8 @@
 							</td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 									id="departmentName" name="rtgsList[%{#counter}].departmentName"
-									value="%{departmentName}" />
-								<s:property value="%{departmentName}" /></td>
+									value="%{departmentName}" /> <s:property
+									value="%{departmentName}" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 									id="voucherNumber" name="rtgsList[%{#counter}].voucherNumber"
 									value="%{voucherNumber}" /><a href="javascript:void(0);"
@@ -125,20 +127,17 @@
 										value="%{voucherNumber}" /></a>&nbsp;</td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 									id="voucherDate" name="rtgsList[%{#counter}].voucherDate"
-									value="%{voucherDate}" />
-								<s:date name="%{voucherDate}" var="tempPaymentDate"
-									format="dd/MM/yyyy" />
-								<s:date name="%{voucherDate}" format="dd/MM/yyyy" /> <s:hidden
+									value="%{voucherDate}" /> <s:date name="%{voucherDate}"
+									var="tempPaymentDate" format="dd/MM/yyyy" /> <s:date
+									name="%{voucherDate}" format="dd/MM/yyyy" /> <s:hidden
 									name="rtgsList[%{#counter}].tempPaymentDate"
 									value="%{tempPaymentDate}"></s:hidden></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 									id="paidTo" name="rtgsList[%{#counter}].paidTo"
-									value="%{paidTo}" />
-								<s:property value="%{paidTo}" /></td>
+									value="%{paidTo}" /> <s:property value="%{paidTo}" /></td>
 							<td style="text-align: right" class="blueborderfortdnew"><s:hidden
 									id="paidAmount" name="rtgsList[%{#counter}].paidAmount"
-									value="%{paidAmount}" />
-								<s:text name="format.number">
+									value="%{paidAmount}" /> <s:text name="format.number">
 									<s:param value="%{paidAmount}" />
 								</s:text></td>
 							<s:hidden id="bankAccountId"
@@ -160,13 +159,13 @@
 							<s:textfield id="rtgsRefNoMap['%{#count}']" name="rtgsRefNoMap['%{#count}']" value=""/>       
 						</td>         -->
 						<td class="greybox"><s:text name="chq.assignment.rtgs.date" /><span
-							class="mandatory1">*</span> <s:date name="rtgsdateMap[%{#count}]" id="rtgsdateMap[%{#count}]" 
-							format="dd/MM/yyyy" /> <s:textfield id="rtgsdateMap[%{#count}]"
-							name="rtgsdateMap[%{#count}]" value="%{rtgsdateMap[%{#count}]}" data-date-end-date="0d"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
-							data-inputmask="'mask': 'd/m/y'" />
-						</td>
+							class="mandatory1">*</span> <s:date name="rtgsdateMap[%{#count}]"
+								id="rtgsdateMap[%{#count}]" format="dd/MM/yyyy" /> <s:textfield
+								id="rtgsdateMapId" name="rtgsdateMap[%{#count}]"
+								value="%{rtgsdateMap[%{#count}]}" data-date-end-date="0d"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 					</s:if>
 				</tr>
 				</s:iterator>
@@ -221,7 +220,12 @@
 					bootbox.alert('Please select the payment voucher');
 					return false;
 				}
-				
+				if(document.getElementById('rtgsdateMapId').value=='')
+					{
+					
+					bootbox.alert('Please select RTGS Date ');
+					return false;
+					}
 				<s:if test="%{paymentMode=='rtgs'}">
 					//result= validateForRtgsMode();  
 				</s:if>    

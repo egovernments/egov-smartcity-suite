@@ -95,6 +95,7 @@ $(document).ready(function () {
 			}
 		},
 		onGroupItemClick: function () {
+			$('.search').hide();
 			menuheight = ($( window ).height() - 63);
 			ulheight =(menuheight - 115);
 			$('#menu').height(''+menuheight+'px');
@@ -110,6 +111,13 @@ $(document).ready(function () {
 		},
 		onBackItemClick : function () {
 			$('#menu_multilevelpushmenu ul').css('overflow-y','auto');
+			var event = arguments[0],
+            $menuLevelHolder = arguments[1],
+            options = arguments[2],
+            title = $menuLevelHolder.find( 'h2:first' ).text();
+			if(title == 'Applications' ||  title == 'Favourites'){
+				$('.search').show();
+			}
 		},
 		onCollapseMenuEnd : function () {
 			var w = $('#menu.homepage').width()+'px';
@@ -118,6 +126,9 @@ $(document).ready(function () {
 		onExpandMenuEnd : function () {
 			var w = $('#menu.homepage').width()+'px';
 			$('.inline-main-content').css('width', 'calc(100% - '+w+')');
+		},
+		onTitleItemClick : function () {
+			$('.search').show();
 		}
 	});
 	

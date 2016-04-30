@@ -46,6 +46,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CollectionIndexRepository extends JpaRepository<CollectionIndex, Long> {
 
-    CollectionIndex findByReceiptNumberAndUlbName(String receiptNumber, String ulbName);
+    CollectionIndex findByReceiptNumberAndCityName(String receiptNumber, String cityName);
 
 }

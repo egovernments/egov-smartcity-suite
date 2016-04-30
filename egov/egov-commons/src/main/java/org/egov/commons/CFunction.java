@@ -39,7 +39,6 @@
  */
 package org.egov.commons;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -49,16 +48,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name="Function")
-@SequenceGenerator(name = CFunction.SEQ, sequenceName = CFunction.SEQ)
-@Unique(id = "id", tableName = "Function", fields = { "code" }, columnName = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = CFunction.SEQ, sequenceName = CFunction.SEQ, allocationSize = 1)
+@Unique(id = "id", tableName = "Function", fields = { "code","name" }, columnName = { "code","name" }, enableDfltMsg = true)
 public class CFunction extends AbstractAuditable{
 	
 	private static final long serialVersionUID = 1L;
@@ -68,13 +67,13 @@ public class CFunction extends AbstractAuditable{
 	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id ;
 	
-	@NotNull
-	@Length(max=100)
+	
+    @Length(max = 100, min = 2)
+    @Required
 	private String name;
 	
-	@Column(unique = true)
-	@NotNull
-	@Length(max=50)
+	@Length(max = 50, min = 2)
+    @Required
 	private String code;
 	
 	@Length(max=50)

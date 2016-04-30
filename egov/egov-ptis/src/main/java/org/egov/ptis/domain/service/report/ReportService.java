@@ -48,7 +48,6 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -305,7 +304,7 @@ public class ReportService {
             result.setReceiptNumber(collectionIndex.getReceiptNumber());
             result.setReceiptDate(collectionIndex.getReceiptDate());
             result.setAssessmentNumber(collectionIndex.getConsumerCode());
-            result.setOwnerName(collectionIndex.getPayeeName());
+            result.setOwnerName(collectionIndex.getConsumerName());
             result.setPaidAt(collectionIndex.getChannel());
             result.setWard(basicProperty.getPropertyID().getWard().getName());
 

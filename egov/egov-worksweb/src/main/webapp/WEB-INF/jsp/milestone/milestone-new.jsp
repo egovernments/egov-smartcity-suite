@@ -43,7 +43,7 @@
 <title><s:text name='page.title.milestone'/></title>
 <body onload="populateDesignation();disableHeader();roundWorkOrderVallue();noBack();" onpageshow="if(event.persisted) noBack();" onunload="" class="yui-skin-sam">
 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 
 <script>
 window.history.forward(1);

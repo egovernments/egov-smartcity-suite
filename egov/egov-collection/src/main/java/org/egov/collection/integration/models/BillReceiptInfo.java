@@ -164,4 +164,6 @@ public interface BillReceiptInfo {
      * @return Any additional information to be printed in receipt
      */
     public abstract String getAdditionalInfo();
+    
+    public abstract String getSource();
 }

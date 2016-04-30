@@ -52,7 +52,7 @@ import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.Money;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.models.revisionEstimate.RevisionType;
 

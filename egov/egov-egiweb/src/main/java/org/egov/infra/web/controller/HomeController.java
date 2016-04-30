@@ -209,7 +209,7 @@ public class HomeController {
     private String prepareApplicationMenu(final List<MenuLink> menuLinks, final User user) {
         final Menu menu = new Menu();
         menu.setId("menuID");
-        menu.setTitle("Hi, " + user.getName());
+        menu.setTitle(" ");
         menu.setIcon("fa fa-reorder");
         menu.setItems(new LinkedList<Menu>());
         final List<MenuLink> favourites = moduleService.getUserFavouritesMenuLinks(user.getId());
@@ -234,7 +234,7 @@ public class HomeController {
 
     private void createFavouritesMenu(final List<MenuLink> favourites, final Menu menu) {
         final Menu favouritesMenu = createSubmenu("favMenu", "Favourites", "Favourites", "javascript:void(0);",
-                "fa fa-briefcase floatLeft", menu);
+                "fa fa-star floatLeft", menu);
         favourites.stream().forEach(favourite -> {
             final Menu appLinks = new Menu();
             appLinks.setId("fav-" + favourite.getId());

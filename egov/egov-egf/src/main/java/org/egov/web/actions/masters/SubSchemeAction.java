@@ -71,6 +71,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @Results({
     @Result(name = SubSchemeAction.NEW, location = "subScheme-new.jsp"),
     @Result(name = SubSchemeAction.SEARCH, location = "subScheme-search.jsp"),
+    @Result(name = SchemeAction.UNIQUECHECKFIELD, location = "subScheme-fieldUniqueCheck.jsp"),
     @Result(name = SubSchemeAction.VIEW, location = "subScheme-view.jsp") })
 public class SubSchemeAction extends BaseFormAction {
     private static final long serialVersionUID = -3712472100095261379L;
@@ -84,12 +85,12 @@ public class SubSchemeAction extends BaseFormAction {
     private int schemeId;
     private Long subSchemeId;
     private List<SubScheme> subSchemeList;
-    private List<SubScheme> subSchemeListCN;
     public static final String SEARCH = "search";
     public static final String VIEW = "view";
     private String showMode;
     private SubSchemeService subSchemeService;
-
+    public static final String UNIQUECHECKFIELD = "fieldUniqueCheck";
+    private boolean uniqueCode = false;
     private String code;
 	private String name;
     @Override
@@ -135,26 +136,7 @@ public class SubSchemeAction extends BaseFormAction {
         subScheme.setCreatedDate(new Date());
         subScheme.setCreatedBy(getLoggedInUser());
         subScheme.setLastmodifieddate(new Date());
-        subSchemeListCN = persistenceService
-				.findAllBy(
-						"from SubScheme where code=? or name=? ",code,name);
-        if(subSchemeListCN.size()!=0)
-        {
-        	for(SubScheme s:subSchemeListCN)
-        	{
-        if(name.equalsIgnoreCase(s.getName()))
-        {
-        	addActionError(getText("subscheme.name.already.exists"));
-        	
-        }
-        if(code.equalsIgnoreCase(s.getCode())) 
-        {
-        	addActionError(getText("subscheme.code.already.exists"));
-        	
-        }
-        	}
-        return NEW;
-        }
+       
         try {
             subSchemeService.persist(subScheme);
             subSchemeService.getSession().flush();
@@ -276,6 +258,45 @@ public class SubSchemeAction extends BaseFormAction {
         else
             dropdownData.put("subSchemeList", Collections.emptyList());
 
+    }
+    
+    
+    @SkipValidation
+    public boolean getCheckField() {
+    	SubScheme subScheme_validate = null;
+        boolean isDuplicate = false;
+        
+        if (uniqueCode) {
+            if (!subScheme.getCode().equals("") && subScheme.getId() != null)
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=? and id!=?",
+                		subScheme.getCode().toLowerCase(), subScheme.getId());
+            else if (!subScheme.getCode().equals(""))
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?", subScheme.getCode().toLowerCase());
+            uniqueCode = false;
+        } else if (!subScheme.getName().equals("") && subScheme.getId() != null)
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=? and id!=?", subScheme.getName().toLowerCase(),
+            		subScheme.getId());
+        else if (!subScheme.getName().equals(""))
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?", subScheme.getName().toLowerCase());
+        if (subScheme_validate != null)
+            isDuplicate = true;
+        
+        return isDuplicate;
+    }
+    
+    @SkipValidation
+    @Action(value = "/masters/subScheme-codeUniqueCheck")
+    public String codeUniqueCheck() {
+        
+        uniqueCode = true;
+        return UNIQUECHECKFIELD;
+    }
+
+    @SkipValidation
+    @Action(value = "/masters/subScheme-nameUniqueCheck")
+    public String nameUniqueCheck() {
+        
+        return UNIQUECHECKFIELD;
     }
 
     private User getLoggedInUser() {

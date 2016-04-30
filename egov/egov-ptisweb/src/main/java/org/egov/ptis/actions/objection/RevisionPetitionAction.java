@@ -62,6 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRI
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -119,8 +120,8 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
@@ -396,6 +397,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         objection.setObjectionNumber(applicationNumberGenerator.generate());
         objection.getBasicProperty().setStatus(
                 propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
+        objection.getBasicProperty().addPropertyStatusValues(propService.createPropStatVal(objection.getBasicProperty(), REVISIONPETITION_STATUS_CODE,
+                null, null, null, null, null));
         objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
         updateStateAndStatus(objection);
         addActionMessage(getText("objection.success") + objection.getObjectionNumber());
@@ -647,6 +650,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     PropertyTaxConstants.OBJECTION_ACCEPTED));
 	        objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
 	        objection.getProperty().setStatus(STATUS_ISACTIVE);
+	        propService.setWFPropStatValActive(objection.getBasicProperty());
         }
             
         updateStateAndStatus(objection);
@@ -1586,7 +1590,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         viewPropertyAction.setBasicPropertyDAO(basicPropertyDAO);
         viewPropertyAction.setPtDemandDAO(ptDemandDAO);
         viewPropertyAction.setPropertyId(propertyId);
-        viewPropertyAction.setPropertyTaxUtil(new PropertyTaxUtil());
+        viewPropertyAction.setPropertyTaxUtil(propertyTaxUtil);
         viewPropertyAction.setUserService(userService);
         viewPropertyAction.setSession(getSession());
         viewPropertyAction.viewForm();

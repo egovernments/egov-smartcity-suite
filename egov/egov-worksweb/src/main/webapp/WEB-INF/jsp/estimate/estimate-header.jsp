@@ -320,7 +320,7 @@ function jurisdictionSearchParameters(){
 	
 	<span>
 		<p>Loading Enclosure.....</p>
-		<img src="/egi/resources/erp2/images/loading.gif" alt="Help" width="50" height="50" border="0" />
+		<img src="/egworks/resources/erp2/images/loading.gif" alt="Help" width="50" height="50" border="0" />
 	</span>
 </div>
 

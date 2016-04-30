@@ -75,7 +75,7 @@ import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;

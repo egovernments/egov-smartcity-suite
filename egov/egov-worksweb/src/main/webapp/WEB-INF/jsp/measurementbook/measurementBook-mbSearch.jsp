@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script>
 function validateAndSubmit() {
    if(dom.get('mbStatus').value==-1 && dom.get('contractor').value==-1 && dom.get('workorderNoSearch').value==""
@@ -264,7 +264,7 @@ function toggleCancelRemarks(obj) {
 							<tr>
 								<td colspan="4" class="headingwk">
 									<div class="arrowiconwk">
-										<img src="/egi/resources/erp2/images/arrow.gif" />
+										<img src="/egworks/resources/erp2/images/arrow.gif" />
 									</div>
 									<div class="headplacer">
 										<s:text name='title.search.criteria' />
@@ -341,7 +341,7 @@ function toggleCancelRemarks(obj) {
 										href="javascript:show_calendar('forms[0].fromDate',null,null,'DD/MM/YYYY');"
 										onmouseover="window.status='Date Picker';return true;"
 										onmouseout="window.status='';return true;"> <img
-											src="/egi/resources/erp2/images/calendar.png"
+											src="/egworks/resources/erp2/images/calendar.png"
 											alt="Calendar" width="16" height="16" border="0"
 											align="absmiddle" />
 									</a>
@@ -362,7 +362,7 @@ function toggleCancelRemarks(obj) {
 											href="javascript:show_calendar('forms[0].toDate',null,null,'DD/MM/YYYY');"
 											onmouseover="window.status='Date Picker';return true;"
 											onmouseout="window.status='';return true;"> <img
-												src="/egi/resources/erp2/images/calendar.png"
+												src="/egworks/resources/erp2/images/calendar.png"
 												alt="Calendar" width="16" height="16" border="0"
 												align="absmiddle" />
 										</a>
@@ -420,7 +420,7 @@ function toggleCancelRemarks(obj) {
 											<td colspan="10" class="headingwk">
 												<div class="arrowiconwk">
 													<img
-														src="/egi/resources/erp2/images/arrow.gif" />
+														src="/egworks/resources/erp2/images/arrow.gif" />
 												</div>
 												<div class="headplacer">
 													<s:text name="title.search.result" />

@@ -47,7 +47,7 @@
 	</title>
 </head>
 <body onload="hideDataBasedOnMode();">
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script type="text/javascript">
 jQuery("#loadingMask").remove();
 function deleterow(obj)
@@ -277,7 +277,7 @@ function addGrid(tableId,trId)
           </tr>
           <tr><td>&nbsp;</td></tr>
 	 	 <tr> 
-		        <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		        <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
                 <div class="headplacer" id="heading"><s:text name="set.status" />:</div></td>
          </tr>
          <tr>
@@ -321,7 +321,7 @@ function addGrid(tableId,trId)
 			</td>
 			<td width="7%" class="tablesubheadwk">
 				 <a id="statusrow" href="#" onclick="addGrid('statustable','detailsRow');return false;">
-   		   						 <img border="0" alt="Add Status" src="/egi/resources/erp2/images/add.png" /></a>
+   		   						 <img border="0" alt="Add Status" src="/egworks/resources/erp2/images/add.png" /></a>
    		   			</td>
 			</tr>
 			<s:if test="%{!statusNameDetails.isEmpty()}">
@@ -341,12 +341,12 @@ function addGrid(tableId,trId)
         		 onkeyup="DateFormat(this,this.value,event,false,'3')"   onblur="isvalidFormat(this)"/>
         		 <a href="javascript:formCalendarRef('statusDate','0');" name="dateHref" id='dateHref[0]'
         		 onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-        		 <img src="/egi/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
+        		 <img src="/egworks/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
        			  border="0" align="absmiddle" /></a>
        		</td>
 			<td width="7%" align="right" class="whitebox3wka" style="border-left-width: 0px">
        		<a id="delHref" name="delHref" href="#" onclick="deleterow(this)">
-       		<img border="0" alt="Delete Estimates" src="/egi/resources/erp2/images/cancel.png" /></a>
+       		<img border="0" alt="Delete Estimates" src="/egworks/resources/erp2/images/cancel.png" /></a>
        		</td>
 			</tr>
 			</s:iterator>
@@ -367,12 +367,12 @@ function addGrid(tableId,trId)
         		 onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="isvalidFormat(this)"/>
         		 <a href="javascript:formCalendarRef('statusDate','0');" id="dateHref[0]" name="dateHref"
         		 onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-        		 <img src="/egi/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
+        		 <img src="/egworks/resources/erp2/images/calendar.png" id="wsDateImg" alt="Calendar" width="16" height="16" 
        			  border="0" align="absmiddle" /></a>
 			</td>
 			<td width="7%" align="right" class="whitebox3wka" style="border-left-width: 0px">
        		<a id="delHref" name="delHref" href="#" onclick="deleterow(this)">
-       		<img border="0" alt="Delete Estimates" src="/egi/resources/erp2/images/cancel.png" /></a>
+       		<img border="0" alt="Delete Estimates" src="/egworks/resources/erp2/images/cancel.png" /></a>
        		</td>
 			</tr>
 			</s:else>

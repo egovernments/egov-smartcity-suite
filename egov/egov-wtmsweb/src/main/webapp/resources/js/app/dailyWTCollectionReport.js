@@ -42,8 +42,39 @@ jQuery(document).ready(function() {
 	$('#dailyCollectionReport-header').hide();
 	$('#report-footer').hide();
 	
+	function validRange(start, end) {
+        var startDate = Date.parse(start);
+        var endDate = Date.parse(end);
+		
+        // Check the date range, 86400000 is the number of milliseconds in one day
+        var difference = (endDate - startDate) / (86400000 * 7);
+        if (difference < 0) {
+        	bootbox.alert("From date  should not be less than the To Date.");
+			$('#end_date').val('');
+			return false;
+			} else {
+			return true;
+		}
+        return true;
+	}
+	
+	
 $('#dailyCollectionReportSearch').click(function(e){
 		if($('form').valid()){
+			if($('#fromDate').val() != '' && $('#toDate').val() != ''){
+				var start = $('#fromDate').val();
+				var end = $('#toDate').val();
+				var stsplit = start.split("/");
+					var ensplit = end.split("/");
+					
+					start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+					end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+					if(!validRange(start,end))
+					{
+						
+					return false;
+					}
+			}
 			var fromDate = $("#fromDate").val();
 			var toDate = $("#toDate").val(); 
 			var mode = $("#mode").val();

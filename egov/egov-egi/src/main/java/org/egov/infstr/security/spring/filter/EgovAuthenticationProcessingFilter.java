@@ -52,7 +52,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.security.authentication.SecureUser;
-import org.egov.infstr.security.utils.SecurityConstants;
+import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;

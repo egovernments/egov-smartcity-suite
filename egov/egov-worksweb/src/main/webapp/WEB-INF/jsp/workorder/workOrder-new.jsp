@@ -43,7 +43,7 @@
 
 <body onload="getDefaults();load();disableForm();noBack();" onpageshow="if(event.persisted) noBack();" onunload="" > 
 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 
 <script>
 window.history.forward(1);

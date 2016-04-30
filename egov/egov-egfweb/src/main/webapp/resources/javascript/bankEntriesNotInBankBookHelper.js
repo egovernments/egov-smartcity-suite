@@ -269,3 +269,44 @@ function validate() {
 	}
 	return flag;
 }
+
+
+function enableAll() {
+	for (var i = 0; i < document.bankEntriesNotInBankBookform.length; i++)
+		document.bankEntriesNotInBankBookform.elements[i].disabled = false;
+}
+function disableAll() {
+	if(document.getElementById('fundId'))
+		document.getElementById('fundId').disabled = true;
+	
+	if(document.getElementById('vouchermis.function'))
+		document.getElementById('vouchermis.function').disabled = true;
+	
+	if(document.getElementById('vouchermis.departmentid'))
+		document.getElementById('vouchermis.departmentid').disabled = true;
+	
+	if(document.getElementById('schemeid'))
+		document.getElementById('schemeid').disabled = true;
+	
+	if(document.getElementById('subschemeid'))
+		document.getElementById('subschemeid').disabled = true;
+	
+	if(document.getElementById('vouchermis.functionary'))
+		document.getElementById('vouchermis.functionary').disabled = true;
+	
+	if(document.getElementById('fundsourceId'))
+		document.getElementById('fundsourceId').disabled = true;
+	
+	if(document.getElementById('vouchermis.divisionid'))
+		document.getElementById('vouchermis.divisionid').disabled = true;
+	
+	if(document.getElementById('bank'))
+		document.getElementById('bank').disabled = true;
+	
+	if(document.getElementById('bank_branch'))
+		document.getElementById('bank_branch').disabled = true;
+	
+	if(document.getElementById('bankaccount'))
+		document.getElementById('bankaccount').disabled = true;
+	
+}

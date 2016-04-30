@@ -42,7 +42,7 @@
 	<head>
 		<title><s:text name='contractoradvance.title.searchestimate' /></title>
 	</head>
-<script src="<egov:url path='resources/js/works.js'/>"></script>  
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>  
 
 <script type="text/javascript">
 function validateAndSubmit(){
@@ -132,7 +132,7 @@ var workOrderNumberSearchSelectionHandler = function(sType, arguments){
 										<tr>
 											<td width="100%" colspan="4" class="headingwk">
 												<div class="arrowiconwk">
-													<img src="/egi/resources/erp2/images/arrow.gif" />
+													<img src="/egworks/resources/erp2/images/arrow.gif" />
 												</div>
 												<div class="headplacer">
 													<s:text name="search.criteria" />
@@ -167,7 +167,7 @@ var workOrderNumberSearchSelectionHandler = function(sType, arguments){
 													onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" />
 												<a	href="javascript:show_calendar('forms[0].fromDate',null,null,'DD/MM/YYYY');"
 													onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> 
-													<img src="/egi/resources/erp2/images/calendar.png"
+													<img src="/egworks/resources/erp2/images/calendar.png"
 														alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
 												</a>
 											</td>
@@ -178,7 +178,7 @@ var workOrderNumberSearchSelectionHandler = function(sType, arguments){
 													onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" />
 												<a href="javascript:show_calendar('forms[0].toDate',null,null,'DD/MM/YYYY');"
 													onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;"> <img
-														src="/egi/resources/erp2/images/calendar.png"
+														src="/egworks/resources/erp2/images/calendar.png"
 														alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
 												</a>
 											</td>

@@ -43,7 +43,7 @@
 	<title><s:text name="create.wp"/></title>
 </head>
 <body onload="populateDetails();load();noBack();" onpageshow="if(event.persisted) noBack();" onunload="">
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <!-- <script src="../resources/js/jquery-1.7.2.min.js"></script> -->
 <script type="text/javascript" src="<c:url value='/resources/js/prototype.js'/>"></script>
 <script type="text/javascript">
@@ -293,7 +293,7 @@ function enableDepartment(){
 		<td>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-	        	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+	        	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 	            <div class="headplacer"><s:text name="wp.header"/></div></td>
 	        </tr>
 	        <tr>
@@ -322,7 +322,7 @@ function enableDepartment(){
         		 onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="dateChange()"/>
         		 <a href="javascript:show_calendar('forms[0].wpDate',null,null,'DD/MM/YYYY');" id="dateHref"
         		 onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-        		 <img src="/egi/resources/erp2/images/calendar.png" id="wpDateImg" alt="Calendar" width="16" height="16" 
+        		 <img src="/egworks/resources/erp2/images/calendar.png" id="wpDateImg" alt="Calendar" width="16" height="16" 
        			  border="0" align="absmiddle" /></a>
        			 </td>
 		   </tr>

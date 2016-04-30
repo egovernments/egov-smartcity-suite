@@ -134,9 +134,9 @@ function validateDecimalForOnePlace(val,errorId){
  }
 }
 
-function createDeleteImageFormatter(baseURL){
+function createDeleteImageFormatter(baseURL){ 
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/cancel.png";
+	    var imageURL=baseURL+"/resources/erp2/images/cancel.png";
 	    var id=oColumn.getKey()+oRecord.getId(); 
 	    markup='<img height="16" border="0" width="16" id="'+id+'" alt="Delete" src="'+imageURL+'"/>';
 	    el.innerHTML = markup;
@@ -146,7 +146,7 @@ function createDeleteImageFormatter(baseURL){
 
 function createAddImageFormatter(baseURL){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/add.png";
+	    var imageURL=baseURL+"/resources/erp2/images/add.png";
 	    markup='<img height="16" border="0" width="16" alt="Add" src="'+imageURL+'"/>'
 	    el.innerHTML = markup;
 	}
@@ -155,7 +155,7 @@ function createAddImageFormatter(baseURL){
 
 function createSearchImageFormatter(baseURL){
 	var searchImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/magnifier.png";
+	    var imageURL=baseURL+"/resources/erp2/images/magnifier.png";
 	    markup='<img height="16" border="0" width="16" alt="Search" src="'+imageURL+'"/>'
 	    el.innerHTML = markup;
 	}
@@ -164,7 +164,7 @@ function createSearchImageFormatter(baseURL){
 
 function viewImageFormatter(baseURL){
 	var searchImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/book_open.png";
+	    var imageURL=baseURL+"/resources/erp2/images/book_open.png";
 	    markup='<img height="16" border="0" width="16" alt="Search" src="'+imageURL+'"/>'
 	    el.innerHTML = markup;
 	}

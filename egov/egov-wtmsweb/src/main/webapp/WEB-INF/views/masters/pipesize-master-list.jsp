@@ -61,9 +61,7 @@
 					<thead>
 						<tr>
 							<th colspan="1">
-								<div align="center">
-									<spring:message code="lbl.code" />
-								</div>
+								<div align="center"><spring:message code="lbl.code" /></div>
 							</th>
 							<th colspan="1">
 								<div align="center"><spring:message code="lbl.hscpipesize.mm" /></div>

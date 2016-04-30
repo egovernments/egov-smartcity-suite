@@ -41,7 +41,7 @@
 
 <html>
 <title><s:text name="estimate.budgetfolio.header" /></title>
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 
 <script type="text/javascript">
 	function checkDate(obj){
@@ -199,7 +199,7 @@
 											onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/> 
 										<a href="javascript:show_calendar('forms[0].reportDate',null,null,'DD/MM/YYYY');"
 											onmouseover="window.status='Date Picker';return true;" onmouseout="window.status='';return true;">
-											<img src="/egi/resources/erp2/images/calendar.png"
+											<img src="/egworks/resources/erp2/images/calendar.png"
 												alt="Calendar" width="16" height="16" border="0"
 												align="absmiddle" />
 										</a>

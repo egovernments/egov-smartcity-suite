@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-23T14:06:13 -->
+<!-- 2016-04-27T12:30:28 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractorBillPDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e5b9c4d7-5374-4222-b26c-49c47331df4d">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -97,22 +97,14 @@
 				<textFieldExpression><![CDATA["Bill Type: "+$P{billType}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="13" y="21" width="337" height="18" uuid="88c88928-3a2b-4b2d-8ba7-bf1e1e95eaeb"/>
-				<textFieldExpression><![CDATA["Work Identification Number : "+$P{win}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="13" y="42" width="229" height="21" uuid="b4bffa11-c3aa-4ef9-9cac-f75c7711ed2a">
+				<reportElement stretchType="RelativeToTallestObject" x="13" y="26" width="229" height="21" uuid="b4bffa11-c3aa-4ef9-9cac-f75c7711ed2a">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textFieldExpression><![CDATA["Bill Number: "+$P{billNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="242" y="42" width="110" height="17" uuid="466ed181-9ac1-4e62-bed5-9171149d0190"/>
-				<textFieldExpression><![CDATA["Date: "+$P{billDate}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="378" y="42" width="179" height="20" uuid="2fecca54-49a1-4279-b954-77b75383f94a"/>
-				<textFieldExpression><![CDATA["Amount(Rs): "+$P{billAmount}]]></textFieldExpression>
+				<reportElement positionType="Float" x="13" y="42" width="544" height="20" uuid="2fecca54-49a1-4279-b954-77b75383f94a"/>
+				<textFieldExpression><![CDATA["Work Identification Number : "+$P{win}+ "    Date: "+$P{billDate}+ "    Amount(Rs): "+$P{billAmount}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="8" y="65" width="537" height="1" uuid="7fe53c70-926f-4c1a-97f6-3399e1809b2f"/>
@@ -214,6 +206,7 @@
 		<band height="14">
 			<textField>
 				<reportElement x="4" y="1" width="546" height="13" uuid="9d523b6e-e168-47f3-b0ef-d9b40bfcecbd"/>
+				<box leftPadding="0" bottomPadding="1" rightPadding="3"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA["Report Run Date: " + $P{reportRunDate} + " "]]></textFieldExpression>
 			</textField>
@@ -222,32 +215,32 @@
 	<summary>
 		<band height="458" splitType="Immediate">
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="410" y="439" width="138" height="19" uuid="8fa273fd-c09c-4ea2-9da0-5f9c8c74eae7"/>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="410" y="439" width="138" height="19" uuid="8fa273fd-c09c-4ea2-9da0-5f9c8c74eae7"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Examiner of account(s)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="236" y="440" width="100" height="18" uuid="1faa3185-ea4c-447e-ae80-064eed392ea2"/>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="236" y="440" width="100" height="18" uuid="1faa3185-ea4c-447e-ae80-064eed392ea2"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Supdt (Audit)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" x="13" y="439" width="100" height="18" uuid="591fd967-dc26-44e3-9b7c-faebe635864c"/>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="13" y="439" width="100" height="18" uuid="591fd967-dc26-44e3-9b7c-faebe635864c"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Auditor]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="425" y="336" width="100" height="30" uuid="3af787a9-4cd0-4aed-b95e-1ebb5c6efd03"/>
+				<reportElement stretchType="RelativeToTallestObject" x="425" y="336" width="100" height="30" uuid="3af787a9-4cd0-4aed-b95e-1ebb5c6efd03"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA["Signature Of" + "\r\n" + "(Drawing Officer)"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="220" y="337" width="126" height="30" uuid="26515f69-76c0-4919-ab6a-bc03d8b3fa27"/>
+				<reportElement stretchType="RelativeToTallestObject" x="220" y="337" width="126" height="30" uuid="26515f69-76c0-4919-ab6a-bc03d8b3fa27"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{approverName} + "\r\n" +"Approved by"+"\r\n" + "("+$P{approverDesignation} +")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="13" y="337" width="131" height="34" uuid="e8a4147a-6271-43d7-979f-8145cfe84dc7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="13" y="337" width="131" height="34" uuid="e8a4147a-6271-43d7-979f-8145cfe84dc7"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$P{creatorName} + "\r\n" +"Prepared by"+"\r\n" + "("+$P{creatorDesignation} +")"]]></textFieldExpression>
 			</textField>
@@ -261,7 +254,7 @@
 				<text><![CDATA[Certificate]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="13" y="88" width="528" height="170" uuid="85f2eca8-bc29-4914-9f64-1b202c7fa780"/>
+				<reportElement stretchType="RelativeToTallestObject" x="13" y="88" width="528" height="170" uuid="85f2eca8-bc29-4914-9f64-1b202c7fa780"/>
 				<textElement textAlignment="Justified"/>
 				<text><![CDATA[1. I Certify that the expenditure charged in this bill could not with due regard to the interest of the public service, be avoided. I certify that have been duly made to parties entitled to recieve when with the exemption noted below with exceed the balance of the permanent advance and will be paid on reciept of the money drawn on this bill, vouchers for all items of expenditure above Rs. 10/- in amount all work bills are attached to this bill save those notes below, which will be forworded as soon as the amount have been paid. I have as for as possible obtained vouchers for other sum, and i am responsible that they have been so cancelled that then cannot be used again.
 
@@ -277,7 +270,7 @@
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="13" y="33" width="532" height="30" uuid="a98a044c-379e-45f8-bd95-eaa1ae6e9ef2"/>
+				<reportElement x="13" y="33" width="532" height="33" uuid="a98a044c-379e-45f8-bd95-eaa1ae6e9ef2"/>
 				<textFieldExpression><![CDATA["Net Amount Payable : Rs. "+$P{netPayable} + " (" + $P{totalAmountWords} + ")"]]></textFieldExpression>
 			</textField>
 			<line>

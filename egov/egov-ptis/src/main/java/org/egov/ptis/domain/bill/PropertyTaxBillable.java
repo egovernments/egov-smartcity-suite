@@ -74,7 +74,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.MoneyUtils;
+import org.egov.infra.utils.MoneyUtils;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.service.PenaltyCalculationService;
 import org.egov.ptis.client.util.PropertyTaxUtil;

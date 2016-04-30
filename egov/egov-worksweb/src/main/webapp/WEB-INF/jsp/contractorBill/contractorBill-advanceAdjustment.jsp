@@ -121,7 +121,7 @@ function setupAdvanceAdjustmentValues(){
 </script>
 
 <tr>
-  	<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+  	<td colspan="3" class="headingwk" style="border-right-width: 0px"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
    		<div class="headplacer"><s:text name="contractorBill.subheader.advanceadjustment" /></div>
 	</td>
 	<td align="right" class="headingwk" style="border-left-width: 0px">
@@ -131,7 +131,7 @@ function setupAdvanceAdjustmentValues(){
 	 </script>
 	 </s:if>
 	<div id="addbtn">
-		<a href="#" onclick="calculateAdvanceAdjustment();return false;"><img border="0" alt="Add Row" src="/egi/resources/erp2/images/add.png" /></a>
+		<a href="#" onclick="calculateAdvanceAdjustment();return false;"><img border="0" alt="Add Row" src="/egworks/resources/erp2/images/add.png" /></a>
 	</div>
   	</td>
 </tr>

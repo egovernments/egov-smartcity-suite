@@ -167,8 +167,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 }
 
                 for (final Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
-                    // TODO think about, these beans to be client
-                    // specific
+                    // TODO think about, these beans to be client specific
                     if (betweenOrBefore(floorIF.getOccupancyDate(), installment.getFromDate(), installment.getToDate())) {
                         boundaryCategory = getBoundaryCategory(propertyZone, installment, floorIF.getPropertyUsage()
                                 .getId(), occupationDate, floorIF.getStructureClassification().getId());

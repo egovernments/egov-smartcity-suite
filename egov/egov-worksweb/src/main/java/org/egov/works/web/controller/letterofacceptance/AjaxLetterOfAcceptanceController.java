@@ -39,13 +39,18 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.master.services.ContractorService;
 import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.web.adaptor.LetterOfAcceptanceForMilestoneJSONAdaptor;
+import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,12 +77,18 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchLetterOfAcceptanceJsonAdaptor searchLetterOfAcceptanceJsonAdaptor;
+    
+    @Autowired
+    private SearchContractorJsonAdaptor searchContractorJsonAdaptor;
 
     @Autowired
     private SearchLetterOfAcceptanceToCreateContractorBillJson searchLetterOfAcceptanceToCreateContractorBillJson;
+    
+    @Autowired
+    private LetterOfAcceptanceForMilestoneJSONAdaptor letterOfAcceptanceForMilestoneJSONAdaptor;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Contractor> findLineEstimateNumbers(@RequestParam final String name) {
+    public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
         return contractorService.getContractorsByCodeOrName(name);
     }
 
@@ -150,6 +161,58 @@ public class AjaxLetterOfAcceptanceController {
     public @ResponseBody Boolean validateWorkOrderNumberForCreateContractorBill(
             @RequestParam("workOrderId") final Long workOrderId) {
         return letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
+    }
+    
+    @RequestMapping(value = "/ajaxcontractorsbycode-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Contractor> findContractorsByCode(@RequestParam final String name) {
+        return contractorService.getContractorsByCode(name);
+    }
+
+    @RequestMapping(value = "/ajax-contractorsforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxContractorSearch(final Model model,
+            @ModelAttribute final SearchRequestContractor searchRequestContractor) {
+        final List<ContractorDetail> contractorDetails = letterOfAcceptanceService.searchContractorDetails(searchRequestContractor);
+        final List<Contractor> contractors = new ArrayList<Contractor>();
+        for(ContractorDetail cd : contractorDetails) {
+            if(!contractors.contains(cd.getContractor()))
+                contractors.add(cd.getContractor());
+        }
+        final String result = new StringBuilder("{ \"data\":").append(toSearchContractorJson(contractors))
+                .append("}").toString();
+        return result;
+    }
+    
+    public Object toSearchContractorJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Contractor.class, searchContractorJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    @RequestMapping(value = "/ajaxloanumber-milestone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findLoaNumbersForMilestone(@RequestParam final String workOrderNumber) {
+        return letterOfAcceptanceService.findLoaWorkOrderNumberForMilestone(workOrderNumber);
+    }
+    
+    @RequestMapping(value = "/ajaxworkidentificationnumber-milestone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findworkIdNumbersForLoa(@RequestParam final String code) {
+        return letterOfAcceptanceService.findWorkIdentificationNumbersToCreateMilestone(code);
+    }
+
+    @RequestMapping(value = "/ajaxsearch-loaformilestone", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String showSearchLoaToCreateMilestone(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final List<WorkOrder> workOrder = letterOfAcceptanceService
+                .getLoaForCreateMilestone(searchRequestLetterOfAcceptance);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchContractorBillJson(workOrder))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toSearchContractorBillJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrder.class, letterOfAcceptanceForMilestoneJSONAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
     }
 
 }

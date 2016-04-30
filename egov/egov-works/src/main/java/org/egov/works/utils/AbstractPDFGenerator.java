@@ -43,7 +43,7 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.models.Money;
+import org.egov.infra.persistence.entity.component.Money;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;

@@ -39,42 +39,71 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-	  $('#buttonid').click(function() {
-		  if ($( "#applicationProcessTimeform" ).valid())
-			  {
-			   applicationprocesstimecombination();
-			  }
-		  		});
+	$('#statusdiv').hide();
+	var activeDiv = $('#reqAttr').val();
+	if (activeDiv =='false')
+		{
+		$('#statusdiv').hide();
+	    $('#addnewid').hide();
+	    $('#buttonid').click(function() {
+	   	applicationValidation();
+	    });
+		}
 	
-});
-function applicationprocesstimecombination()
-{
+	else if(activeDiv=='true')
+		{
+		$('#resetid').hide();
+		$('#statusdiv').show();
+		$('#addnewid').show();
+		
+		$("#buttonid").click(function(){
+			if ($( "#applicationProcessTimeform" ).valid()){
+				document.forms[0].submit();
+				return true;
+			}
+			})
+		
+		
+		}
+	
+	
+	$("#resetid").click(function(){
+		$("#applicationProcessTimeform")[0].reset();
+		window.open("/wtms/masters/applicationProcessTime/", "_self");
+		})
 
-	$.ajax({
-        url: '/wtms/ajax-getapplicationprocesstime',
-        type: "GET",
-        data: {
-        	applicationType: $('#applicationType').val(),
-        	categoryType: $('#connectionCategorie').val(),
-        },
-        dataType : 'json',
-        success: function (response) {
+});
+
+
+function applicationValidation(){
+	 if ($( "#applicationProcessTimeform" ).valid())
+		{
+		 $.ajax({
+     url: '/wtms/ajax-getapplicationprocesstime',
+     type: "GET",
+     data: {
+     	applicationType: $('#applicationType').val(),
+     	categoryType: $('#connectionCategorie').val(),
+     },
+     dataType : 'json',
+     success: function (response) {
 			console.log("success"+response);
 			if(response > 0){
 				var res = overwriteprocesstime(response)
 				if(res==false)
 				return false;
-    			}
+ 			}
 			else{
-				 document.forms[0].submit();
-				 return true;
+				document.forms[0].submit();
+				return true;
 			}
 		},error: function (response) {
 			console.log("failed");
 		}
-    });
-	
+	});
+		}
 }
+
 function overwriteprocesstime(res)
 {
 	var r=confirm("With entered combination,Processing time is present as "+res+ ",Do you want to overwrite it?")
@@ -89,3 +118,22 @@ function overwriteprocesstime(res)
 	}
 }
 
+$('#listid').click(function() {
+	window.open("/wtms/masters/applicationProcessTime/list", "_self");
+ });
+
+$('#addnewid').click(function() {
+	window.open("/wtms/masters/applicationProcessTime/", "_self");
+});
+
+function addNew()
+{
+	window.open("/wtms/masters/applicationProcessTime/", "_self");
+}
+
+function edit(applicationProcessTime)
+{
+	
+	window.open("/wtms/masters/applicationProcessTime/"+applicationProcessTime, "_self");
+	
+}

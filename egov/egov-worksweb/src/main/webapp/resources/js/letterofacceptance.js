@@ -65,7 +65,7 @@ $(document).ready(function(){
 		}, {
 			displayKey : 'name',
 			source : contractorSearch.ttAdapter()
-		}).on('typeahead:selected', function(event, data){            
+		}).on('typeahead:selected typeahead:autocompleted', function(event, data){            
 			$("#contractorCode").val(data.code);    
 			$("#contractor").val(data.value);   
 	    });		
@@ -181,3 +181,7 @@ $(document).ready(function(){
 			  return stringValue;
 			}
 });
+
+function searchContractor() {
+	window.open("/egworks/letterofacceptance/contractorsearchform", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}

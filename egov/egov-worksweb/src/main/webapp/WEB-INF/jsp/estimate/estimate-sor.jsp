@@ -128,7 +128,7 @@ function recalculateTotalsOnDelete(record){
 	  dom.get("grandTotal").innerHTML=roundTo(getNumericValueFromInnerHTML("grandTotal") -getNumber(record.getData("Total")));
 	  document.getElementById("estimateValue").value=roundTo(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+eval(document.getElementById("overHeadTotalAmnt").innerHTML));
 }
-var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
+var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egworks/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
 
 function createReadOnlyTextBoxFormatter(size,maxlength){
 var textboxFormatter = function(el, oRecord, oColumn, oData) {
@@ -411,7 +411,7 @@ function showProcessImage(event) {
 <!-- 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-         <td colspan="3" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div><div class="headplacer">SOR</div></td>
+         <td colspan="3" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div><div class="headplacer">SOR</div></td>
     </tr>
 </table>
 <table id="baseSORTable" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -430,7 +430,7 @@ function showProcessImage(event) {
 		    </div>
 	    </div>    
 		          
-		<td width="20%" class="whitebox2wk"><div><img src="/egi/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
+		<td width="20%" class="whitebox2wk"><div><img src="/egworks/resources/erp2/images/loading.gif" />Loading SOR's. Please wait..</div></td>
       </tr>
 </table>
 <table id="sorHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">              

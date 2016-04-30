@@ -91,7 +91,7 @@
 		var receiptHdrId = document.getElementsByName("receiptHeaderId");
 		var instrmntHdrId = document.getElementsByName("instrumentHeaderId");
 		var voucherHdrId = document.getElementsByName("voucherHeaderId");
-		var referenceNo = document.getElementsByName("referenceNo");
+		var referenceNo = document.getElementsByName("referenceNum");
 		var len = dishonorcheck.length;
 		var i = 0, x = 0;
 		var flag = "";
@@ -164,8 +164,9 @@
 			bootbox.confirm("Are you sure you want to process ?", function(result) {
 				  if(result)
 					  {
+					  console.log("referenceNum" + referenceNum);  
 						  document.dishonorForm.action = '/collection/receipts/dishonoredCheque-process.action?instHeaderIds='
-							+ value+'&voucherHeaderIds='+voucherHeaderIds;
+							+ value+'&voucherHeaderIds='+voucherHeaderIds+'&referenceNo='+referenceNum;
 						  document.dishonorForm.submit();
 					  }
 				  else
@@ -347,8 +348,8 @@
 											<display:column headerClass="bluebgheadtd"
 												class="blueborderfortd" title="Reference No"
 												style="width:20%;text-align:center">
-												<s:textfield name="referenceNo" style="width: 200px;"
-													id="referenceNo" cssClass="form-control" />
+												<s:textfield name="referenceNum" style="width: 200px;"
+													id="referenceNum" cssClass="form-control" />
 											</display:column>
 
 											<display:column headerClass="bluebgheadtd"

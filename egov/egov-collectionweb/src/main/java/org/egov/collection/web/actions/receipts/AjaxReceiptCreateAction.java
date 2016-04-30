@@ -400,10 +400,8 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     public String ajaxFinMiscDtlsByService() {
 
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final Long deptId = Long.valueOf(parameters.get("deptId")[0]);
-        final ServiceDetails service = (ServiceDetails) getPersistenceService().find(
-                "from ServiceDetails service  inner join fetch service.serviceDept dept where dept.id=? and "
-                        + "  service.isEnabled=true" + " and service.id=?", deptId, serviceId);
+        final ServiceDetails service =(ServiceDetails) getPersistenceService().findByNamedQuery(
+                CollectionConstants.QUERY_SERVICE_BY_ID, serviceId);
 
         final StringBuffer miscDetails = new StringBuffer();
         if (null != service)
@@ -411,13 +409,15 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                     .append(null != service.getScheme() ? service.getScheme().getId() : "-1").append('~') // scheme
                     .append(null != service.getSubscheme() ? service.getSubscheme().getId() : "-1").append('~') // subscheme
                     .append(null != service.getFundSource() ? service.getFundSource().getId() : "-1").append('~') // fundsource
-                    .append(null != service.getFunctionary() ? service.getFunctionary().getId() : "-1"); // functionary
+                    .append(null != service.getFunctionary() ? service.getFunctionary().getId() : "-1").append('~') // functionary
+                    .append(null != service.getFunction() ? service.getFunction().getId() : "-1"); // function
         else
             miscDetails.append("-1").append('~') // fund
                     .append("-1").append('~') // scheme
                     .append("-1").append('~') // subscheme
                     .append("-1").append('~') // fundsource
-                    .append("-1"); // functionary
+                    .append("-1").append('~')  // functionary
+                    .append("-1"); // function
         value = miscDetails.toString();
         return "result";
 
@@ -427,13 +427,9 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     public String ajaxFinAccDtlsByService() {
 
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final Long deptId = Long.valueOf(parameters.get("deptId")[0]);
-        final ServiceDetails service = (ServiceDetails) getPersistenceService().find(
-                "from ServiceDetails service  inner join fetch service.serviceDept dept where dept.id=? and "
-                        + " service.id=?", deptId, serviceId);
-
+        final ServiceDetails service =(ServiceDetails) getPersistenceService().findByNamedQuery(
+                CollectionConstants.QUERY_SERVICE_BY_ID, serviceId);
         accountDetails = new ArrayList<ServiceAccountDetails>();
-
         if (null != service)
             accountDetails.addAll(service.getServiceAccountDtls());
         else
@@ -446,10 +442,8 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService")
     public String ajaxFinSubledgerByService() {
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final Long deptId = Long.valueOf(parameters.get("deptId")[0]);
-        final ServiceDetails service = (ServiceDetails) getPersistenceService().find(
-                "from ServiceDetails service  inner join fetch service.serviceDept dept where dept.id=? and "
-                        + " service.id=?", deptId, serviceId);
+        final ServiceDetails service =(ServiceDetails) getPersistenceService().findByNamedQuery(
+                CollectionConstants.QUERY_SERVICE_BY_ID, serviceId);
         subledgerDetails = new ArrayList<ServiceSubledgerInfo>();
         ServiceSubledgerInfo servicInfo;
         if (null != service)

@@ -151,4 +151,9 @@
         <put-attribute name="body" value="/WEB-INF/views/reports/estimateAppropriationRegister-form.jsp"/>
     </definition>
     
+    <definition name="contractor-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.contractor" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchContractor-header.jsp"/>
+    </definition>
+    
 </tiles-definitions>

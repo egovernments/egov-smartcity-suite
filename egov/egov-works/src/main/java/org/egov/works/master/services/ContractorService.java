@@ -297,4 +297,21 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     public List<Contractor> getContractorsByCodeOrName(final String queryString) {
         return filterActiveEntities(queryString, 0, null);
     }
+    
+    public List<Contractor> getContractorsByCode(final String queryString) {
+        return filterActiveEntitiesByCode(queryString, 0, null);
+    }
+    
+    public List<Contractor> filterActiveEntitiesByCode(final String filterKey,
+            final int maxRecords, final Integer accountDetailTypeId) {
+        final Integer pageSize = maxRecords > 0 ? maxRecords : null;
+        final String param = "%" + filterKey.toUpperCase() + "%";
+        final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
+                +
+                "where cont.id=contractorDet.contractor.id and contractorDet.status.description=? and contractorDet.status.moduletype=? and upper(cont.code) like ? "
+                +
+                "order by cont.code,cont.name";
+        return findPageBy(qry, 0, pageSize,
+                "Active", "Contractor", param).getList();
+    }
 }

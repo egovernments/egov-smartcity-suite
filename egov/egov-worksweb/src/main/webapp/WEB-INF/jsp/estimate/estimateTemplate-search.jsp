@@ -79,7 +79,7 @@ function bodyOnLoad(){
 <title><s:text name='page.title.estimate.template.search'/></title>
 <body onload="bodyOnLoad()" class="yui-skin-sam">
 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
    
 <div class="new-page-header">
 	<s:text name="estimate.search.estimate.template"/>

@@ -39,9 +39,12 @@
  */
 package org.egov.adtax.service;
 
+import java.util.List;
+
 import org.egov.adtax.entity.AdvertisementPenaltyRates;
 import org.egov.adtax.repository.AdvertisementPenaltyRatesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +61,8 @@ public class AdvertisementPenaltyRatesService {
 
     public Double findPenaltyRatesByNumberOfDays(Long numberOfDays) {
         if (numberOfDays != null) {
-            AdvertisementPenaltyRates penaltyRate = penaltyRatesRepository.findPenaltyRatesByNumberOfDays(Double.valueOf(numberOfDays));
+            AdvertisementPenaltyRates penaltyRate = penaltyRatesRepository.findPenaltyRatesByNumberOfDays(Double
+                    .valueOf(numberOfDays));
             if (penaltyRate != null) {
                 return penaltyRate.getPercentage();
             }
@@ -66,4 +70,17 @@ public class AdvertisementPenaltyRatesService {
         return Double.valueOf(0);
     }
 
+    public List<AdvertisementPenaltyRates> findPenaltyRatesInAscendingOrder() {
+        return penaltyRatesRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
+    }
+
+    @Transactional
+    public AdvertisementPenaltyRates createPenaltyRates(final AdvertisementPenaltyRates advertisementPenaltyRates) {
+        return penaltyRatesRepository.save(advertisementPenaltyRates);
+    }
+
+    @Transactional
+    public void delete(final AdvertisementPenaltyRates rate) {
+        penaltyRatesRepository.delete(rate);
+    }
 }

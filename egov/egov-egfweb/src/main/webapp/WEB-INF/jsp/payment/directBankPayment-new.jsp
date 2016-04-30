@@ -374,13 +374,13 @@ function onLoadTask_new()
 				{
 						var vhId='<s:property value="voucherHeader.id"/>';
 						document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+vhId;
-						document.forms[0].submit();
+						return true;
 				}
 			else if(button=="Save_New")
 				{      	
 					document.forms[0].button.value='';
 				    document.forms[0].action = "directBankPayment-newform.action";
-				 	document.forms[0].submit();
+				 	return true;
 				}
 		}
 		
@@ -431,22 +431,17 @@ function onSubmit()
 		return false;
 	}
 	else if(!balanceCheck()){
-		bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
-			  if(result)
-				  {
-				  	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-					document.dbpform.submit();
-				  }
-			  else
-				  {
-				  console.log("else");
-				  }
-			}); 
+		 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+		 if (msg == true) {
+		   	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+			return true;
+		 } else {
+		   	return false;
+		  } 
 	}else{
 		document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-		document.dbpform.submit();
+		return true;
 		}
-	return false;
 }
 </SCRIPT>
 </body>

@@ -47,9 +47,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
-import org.egov.adtax.entity.enums.AdvertisementStructureType;
 import org.egov.adtax.search.contract.HoardingSearch;
-import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;

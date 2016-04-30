@@ -46,7 +46,7 @@
 	<meta http-equiv="Pragma" content="no-cache"/>
 	
 <link href="<c:url value='/resources/css/works.css'/>" rel="stylesheet" type="text/css" />
-<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<%-- <link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" /> --%>
 
 </HEAD>
 

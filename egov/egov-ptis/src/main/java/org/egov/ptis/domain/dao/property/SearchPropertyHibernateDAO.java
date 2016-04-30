@@ -71,6 +71,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -755,7 +756,7 @@ public class SearchPropertyHibernateDAO implements SearchPropertyDAO {
 
 			Boundary boundary = boundaryService.getBoundaryById(boundaryID.longValue());
 			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-			String finEndDate = sdf.format(org.egov.infstr.utils.DateUtils.getFinancialYear().getEndOnOnDate());
+			String finEndDate = sdf.format(DateUtils.getFinancialYear().getEndOnOnDate());
 			StringBuffer qryStr = new StringBuffer(2000);
 			qryStr.append("select distinct pi From PropertyImpl pi inner join pi.basicProperty bp inner join "
 					+ "pi.ptDemandARVSet rv where rv.toDate = to_date('" + finEndDate + "','dd/mm/yyyy') and "

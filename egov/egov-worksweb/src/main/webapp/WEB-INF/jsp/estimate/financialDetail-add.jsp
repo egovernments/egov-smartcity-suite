@@ -298,7 +298,7 @@ function validateDataBeforeSave(financialDetailForm) {
 	<div class="rbcontent2">
    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
-                <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+                <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
                   <div class="headplacer" align="left"><s:text name='page.title.financial.information'/></div></td>
               </tr>
               <tr>
@@ -380,7 +380,7 @@ function validateDataBeforeSave(financialDetailForm) {
 	              </tr>
 	          </s:if>
               <tr>
-                <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+                <td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
                   <div class="headplacer" align="left"><s:text name='page.title.scheme.information'/></div></td>
               </tr>
               <tr>

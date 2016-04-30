@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script>
 
 function validateAndSubmit() {
@@ -145,7 +145,7 @@ function returnBackToParent() {
 						<tr>
 							<td colspan="4" class="headingwk">
 								<div class="arrowiconwk">
-									<img src="/egi/resources/erp2/images/arrow.gif" />
+									<img src="/egworks/resources/erp2/images/arrow.gif" />
 								</div>
 								<div class="headplacer">
 									<s:text name='title.search.criteria' />
@@ -214,7 +214,7 @@ function returnBackToParent() {
 										<td colspan="7" class="headingwk">
 											<div class="arrowiconwk">
 												<img
-													src="/egi/resources/erp2/images/arrow.gif" />
+													src="/egworks/resources/erp2/images/arrow.gif" />
 											</div>
 											<div class="headplacer">
 												<s:text name="title.search.result" />
@@ -245,7 +245,7 @@ function returnBackToParent() {
 														title="Description" titleKey="workOrder.activitySearch.description" style="width:40%;text-align:left">
 													<s:if test="%{#attr.currentRow.activity.schedule}">
 														<s:property value="#attr.currentRow.activity.schedule.summary" />
-														<a href="#" class="hintanchor" onMouseover='showhint("<s:property value='%{#attr.currentRow.activity.schedule.description}' />", this, event, "300px")'><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>
+														<a href="#" class="hintanchor" onMouseover='showhint("<s:property value='%{#attr.currentRow.activity.schedule.description}' />", this, event, "300px")'><img src="/egworks/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>
 													</s:if>	
 													<s:else>
 														<s:property value="#attr.currentRow.activity.nonSor.description" />

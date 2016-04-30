@@ -63,12 +63,13 @@ public class MeterCostService {
         this.meterCostRepository = meterCostRepository;
     }
 
-    public MeterCost findBy(final Long meterCostId) {
+    public MeterCost findOne(final Long meterCostId) {
         return meterCostRepository.findOne(meterCostId);
     }
 
     @Transactional
     public MeterCost createMeterCost(final MeterCost meterCost) {
+        meterCost.setActive(true);
         return meterCostRepository.save(meterCost);
     }
 
@@ -78,7 +79,7 @@ public class MeterCostService {
     }
 
     public List<MeterCost> findAll() {
-        return meterCostRepository.findAll(new Sort(Sort.Direction.ASC, "meterMake"));
+        return meterCostRepository.findAll(new Sort(Sort.Direction.DESC, "meterMake"));
     }
 
     public List<MeterCost> findByMeterMake(final String meterMake) {

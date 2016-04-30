@@ -39,19 +39,22 @@
  */
 package org.egov.commons.dao;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Bankbranch;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class BankBranchHibernateDAO  {
+public class BankBranchHibernateDAO {
     @Transactional
     public Bankbranch update(final Bankbranch entity) {
         getCurrentSession().update(entity);
@@ -80,14 +83,30 @@ public class BankBranchHibernateDAO  {
     @PersistenceContext
     private EntityManager entityManager;
 
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-   
-
     public List<Bankbranch> getAllBankBranchs() {
         return getCurrentSession().createQuery("from Bankbranch BB order by BB.bank.name").list();
+    }
+
+    public List<Bankbranch> getAllBankBranchsByBank(Integer bankId) {
+        Set<Bankbranch> ss = new LinkedHashSet<Bankbranch>();
+        List<Bankbranch> bankBranchList = new ArrayList<Bankbranch>();
+
+        Query createQuery = getCurrentSession()
+                .createQuery(
+                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=:bankId and bb.isactive=true")
+                .setInteger("bankId", bankId);
+        if (bankId != null) {
+            List<Bankbranch> list = (List<Bankbranch>) createQuery.list();
+            if (list != null && !list.isEmpty())
+            {
+                ss.addAll(list);
+                bankBranchList.addAll(ss);
+            }
+        }
+        return bankBranchList;
     }
 }

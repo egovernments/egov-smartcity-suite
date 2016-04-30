@@ -70,7 +70,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -259,7 +259,7 @@ public class LineEstimateService {
                 .createAlias("lineEstimateDetails", "lineEstimateDetail");
         if (lineEstimateSearchRequest != null) {
             if (lineEstimateSearchRequest.getAdminSanctionNumber() != null)
-                criteria.add(Restrictions.eq("adminSanctionNumber", lineEstimateSearchRequest.getAdminSanctionNumber()));
+                criteria.add(Restrictions.eq("adminSanctionNumber", lineEstimateSearchRequest.getAdminSanctionNumber()).ignoreCase());
             if (lineEstimateSearchRequest.getBudgetHead() != null)
                 criteria.add(Restrictions.eq("budgetHead.id", lineEstimateSearchRequest.getBudgetHead()));
             if (lineEstimateSearchRequest.getExecutingDepartment() != null)
@@ -269,7 +269,7 @@ public class LineEstimateService {
             if (lineEstimateSearchRequest.getFund() != null)
                 criteria.add(Restrictions.eq("fund.id", lineEstimateSearchRequest.getFund().intValue()));
             if (lineEstimateSearchRequest.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("lineEstimateNumber", lineEstimateSearchRequest.getEstimateNumber()));
+                criteria.add(Restrictions.eq("lineEstimateNumber", lineEstimateSearchRequest.getEstimateNumber()).ignoreCase());
             if (lineEstimateSearchRequest.getAdminSanctionFromDate() != null)
                 criteria.add(Restrictions.ge("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
             if (lineEstimateSearchRequest.getAdminSanctionToDate() != null)
@@ -554,12 +554,14 @@ public class LineEstimateService {
             else
                 appropriationAmount = led.getEstimateAmount();
 
-            final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(new Date())
-                    .getId(),
-                    appropriationAmount.doubleValue(), budgetheadid);
+            if(appropriationAmount.compareTo(BigDecimal.ZERO) == 1) {
+                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(new Date())
+                        .getId(),
+                        appropriationAmount.doubleValue(), budgetheadid);
 
-            if (!flag)
-                throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
+                if (!flag)
+                    throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
+            }
         }
     }
 

@@ -45,11 +45,11 @@ ul {
 list-style-type: none;
 }
 </style>
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script>
 function createDeleteImageFormatter(baseURL){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/cancel.png";
+	    var imageURL="/resources/erp2/images/cancel.png";
 	    markup='<img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/>';
 	    el.innerHTML = markup;
 	}
@@ -295,7 +295,7 @@ var makeScheduleOfRateDataTable = function() {
 			<div id="scheduleOfRateTable"></div>
 
 <script>
-var imgURL="/egi/resources/erp2/images/cancel.png";	
+var imgURL="/resources/erp2/images/cancel.png";	
 function validateInput(){ 
 		var elems = document.getElementsByTagName("input");
 		for (var i=0; i<elems.length; i++) {

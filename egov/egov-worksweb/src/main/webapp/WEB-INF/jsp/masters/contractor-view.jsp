@@ -38,11 +38,9 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp"%>
-<script src="<egov:url path='resources/js/works.js'/>"></script> 
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script> 
 <html>
 <body onload="replaceExemptionFormChar();">
-<script src="<egov:url path='resources/js/works.js'/>"></script> 
-<%@ include file="/includes/taglibs.jsp"%>
 <div class="new-page-header"><s:text  name="contractor.viewConractor.view" /></div>
 
 <%@ include file='contractor-commonView.jsp'%>

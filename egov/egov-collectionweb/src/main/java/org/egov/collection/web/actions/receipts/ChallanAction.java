@@ -90,11 +90,12 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.NumberUtil;
+import org.egov.infra.utils.NumberUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.hibernate.StaleObjectStateException;
@@ -587,12 +588,12 @@ public class ChallanAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         Challan challan = receiptHeader.getChallan();
         if (challan == null)
             challan = new Challan();
-        final List<org.egov.infstr.workflow.Action> actions = challanWorkflowService.getValidActions(challan);
-        return actions;
+        final List<WorkflowAction> workflowActions = challanWorkflowService.getValidActions(challan);
+        return workflowActions;
     }
 
     /**

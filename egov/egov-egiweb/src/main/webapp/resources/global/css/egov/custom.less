@@ -65,11 +65,11 @@ body {
     }
     
     .spinner {
-	margin: 0px auto;
-	width: 50px;
-	height: 30px;
-	text-align: center;
-	font-size: 10px;
+		margin: 0px auto;
+		width: 50px;
+		height: 30px;
+		text-align: center;
+		font-size: 10px;
 	
 		div {
 			background-color: @whitecolor;
@@ -266,6 +266,99 @@ b, label, strong{
 .page-container.horizontal-menu {
     padding-left: 0;
     padding-top: 62px;
+    
+    .search{
+    	position:absolute;
+    	top:63px;
+    	left:0;
+    	z-index:10;
+    	width:250px;
+    	background:@basecolor;
+    	
+    	#searchtree{
+    		padding:14px;
+    		width:250px;
+    		color:@whitecolor;
+    		background:@basecolor;
+    	}
+    	
+    	#searchtree::-webkit-input-placeholder
+		{
+		  color:@whitecolor;
+		}
+		
+		#searchtree:-moz-placeholder
+		{
+		  color:@whitecolor;
+		}
+		
+		#searchtree::-moz-placeholder 
+		{
+		  color:@whitecolor;
+		}
+		
+    	.searchicon{
+		    position: absolute;
+		    left: 14px;
+		    top: 18px;
+		    color:@whitecolor;
+		    cursor:pointer;
+    	}
+		
+    }
+    
+    .search_list{
+    	position:absolute;
+    	top:112px;
+    	left:0;
+    	z-index:9;
+    	background:@basecolor;
+    	width:250px;
+    	
+    	.list{
+    		position:relative;
+    		
+    		ul{
+	    		margin:0;
+	    		padding:0;
+	    		
+	    		a{
+		    		position: relative; 
+		    		color:@whitecolor;
+			        padding: 11px 16px;
+		    		display: block;
+		    		border-bottom:1px solid @separation;
+		    	}
+		    	
+		    	a:focus, a:hover, li.focus{
+		    		background:@active;
+		    	}
+		    	
+	    	}
+    	}
+    	
+    }
+    
+    .search_list::-webkit-scrollbar{
+		width:5px;
+		background-color:@active;
+	} 
+	
+	.search_list::-webkit-scrollbar-thumb{
+		background-color:@active;
+		border-radius:10px;
+	}
+	.search_list::-webkit-scrollbar-thumb:hover{
+		background-color:@active;
+	}
+	.search_list::-webkit-scrollbar-thumb:active{
+		background-color:@active;
+	} 
+	.search_list::-webkit-scrollbar-track{
+		border:1px gray solid;
+		border-radius:10px;
+		-webkit-box-shadow:0 0 6px gray inset;
+	}
 }
 
 /*Homepage header - Left and right side */
@@ -439,6 +532,8 @@ b, label, strong{
         font-weight: normal;
         font-family: regular;
         .font-size(18px);
+        height: 18px;
+		overflow: hidden;
     }
     
     ul {

@@ -65,7 +65,7 @@
 }
 </style>
 
-	<script src="<egov:url path='resources/js/works.js'/>"></script>
+	<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 	
   	<script type="text/javascript">
   		var warnings=new Array();
@@ -221,7 +221,7 @@
 										<tr>
 											<td class="headingwk" align="left">
 												<div class="arrowiconwk">
-													<img src="/egi/resources/erp2/images/arrow.gif" />
+													<img src="/egworks/resources/erp2/images/arrow.gif" />
 												</div>
 												<div class="headerplacer">
 													<s:text name='title.search.criteria' />
@@ -280,7 +280,7 @@
 										<tr>
 											<td  class="headingwk" align="left">
 												<div class="arrowiconwk">
-													<img src="/egi/resources/erp2/images/arrow.gif" />
+													<img src="/egworks/resources/erp2/images/arrow.gif" />
 												</div>
 												<div class="headerplacer">
 													<s:text name='search.result' />
@@ -405,7 +405,7 @@
 									<td  colspan="3" class="whitebox2wk">
 										<s:date name="completionDate" var="completionDateFormat" format="dd/MM/yyyy"/><s:textfield name="completionDate" value="%{completionDateFormat}" id="completionDate" cssClass="selectwk" onBlur="dateChange();validateDate();" onChange="dateChange();validateDate();"  onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
 										<a href="javascript:show_calendar('forms[0].completionDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;">
-											<img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
+											<img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" />
 										</a>
 										<span id="errorcompletionDate" style="display:none;color:red;font-weight:bold">x</span>
 									</td>

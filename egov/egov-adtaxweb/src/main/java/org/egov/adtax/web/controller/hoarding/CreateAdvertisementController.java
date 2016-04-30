@@ -56,6 +56,8 @@ import org.egov.commons.Installment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -70,6 +72,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hoarding")
 public class CreateAdvertisementController extends HoardingControllerSupport {
+	
+	@Autowired
+    private ResourceBundleMessageSource messageSource;
 
     @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {
@@ -135,11 +140,11 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
         advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, approvalPosition,
                 approvalComment, "CREATEADVERTISEMENT", workFlowAction);
         redirAttrib.addFlashAttribute("advertisementPermitDetail", advertisementPermitDetail);
-        redirAttrib.addFlashAttribute("message", "msg.success.forward");
-        redirAttrib.addFlashAttribute("approverName", approverName);
-        redirAttrib.addFlashAttribute("nextDesign", nextDesignation);
+        String message = messageSource.getMessage("msg.success.forward",
+                new String[] { approverName.concat("~").concat(nextDesignation), advertisementPermitDetail.getApplicationNumber() }, null);
+        redirAttrib.addFlashAttribute("message", message);
         return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
-    }
+    } 
 
     private void validateApplicationDate(final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder) {

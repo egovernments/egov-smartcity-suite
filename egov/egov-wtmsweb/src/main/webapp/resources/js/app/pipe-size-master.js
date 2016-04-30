@@ -76,11 +76,20 @@ $(document).ready(function(){
 	
 	
  });
-$('#pipesizeid*:input').each(function(){
-	var patternNoInput = /[0].[0]$/;
-	if(patternNoInput.exec($(this).val())!=null){
-		$(this).attr('value',$(this).val().replace('0.0',""));
-	}
+$('#buttonid').click(function() {
+	  if ($( "#pipesizeform" ).valid())
+		  {
+		  var val = parseFloat($('#pipesizeid').val());
+		  if (isNaN(val) || (val === 0)  )
+		  {
+			  bootbox.alert("Please Enter sizeInMilimeter");
+		      return false;
+		    } 
+		  else{
+				 document.forms[0].submit();
+				 return true;
+			}
+		  }
 });
 	
 $('#listid').click(function() {

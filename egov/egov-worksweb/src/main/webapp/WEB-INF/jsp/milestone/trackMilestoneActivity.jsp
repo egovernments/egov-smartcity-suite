@@ -110,7 +110,7 @@ var dateFormatter = function(e2, oRecord, oColumn, oData) {
 	var fieldName = "trackMilestoneActivities[" + oRecord.getCount() + "]." +  oColumn.getKey();
 	var idt=oColumn.getKey()+oRecord.getId();
 	var id=idt.replace("-","");
-	var CALENDERURL="/egi/resources/erp2/images/calendar.png";
+	var CALENDERURL="/resources/erp2/images/calendar.png";
 	var HREF='javascript:show_calendar("forms[0].'+id+'")';
 	markup="<input type='text' id='"+id+"' name='"+fieldName+"' value='"+value+"' class='selectmultilinewk' size='15'  maxlength='10' style=\"width:75px\" onkeyup='DateFormat(this,this.value,event,false,3)' onblur='validateDateFormat(this);'/><a href='#' style='text-decoration:none' onclick='"+HREF+"'><img src='"+CALENDERURL+"' border='0' align='absmiddle' /></a>"
 				+ " <span id='error"+ id +"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
@@ -243,7 +243,7 @@ return true;
 		<table id="temptActvTable" width="100%" border="0" cellspacing="0" cellpadding="0">              	
               	<tr>
                 	<td colspan="8" class="headingwk" style="border-right-width: 0px" align="left">
-                		<div class="arrowiconwk"><image src="/egi/resources/erp2/images/arrow.gif" /></div>
+                		<div class="arrowiconwk"><image src="/egworks/resources/erp2/images/arrow.gif" /></div>
                 		<div class="headplacer" >Milestone Details</div>
                 	</td>
               	</tr>

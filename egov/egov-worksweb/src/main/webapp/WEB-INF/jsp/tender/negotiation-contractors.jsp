@@ -51,7 +51,7 @@
 }
 
 </style>
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script>
 
 function createContractorIDFormatter(el, oRecord, oColumn){
@@ -169,7 +169,7 @@ var makeContractorsDataTable = function() {
 
 function createSearchImageFormatter(baseURL){
 	var searchImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/magnifier.png";
+	    var imageURL="/resources/erp2/images/magnifier.png";
 	    markup='<a href="#"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Search" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}
@@ -216,7 +216,7 @@ function deleteContractorDetails(contractorId){
 <div class="errorstyle" id="contractor_error" style="display:none;"></div>
 <table id="contractorsHeaderTable" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td colspan="7" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div>
+		<td colspan="7" class="headingwk"><div class="arrowiconwk"><image src="<egov:url path='/resources/erp2/images/arrow.gif'/>" /></div>
 			<div class="headplacer"><s:text name="negotiation.contractor.details"/></div>
 		</td>
 	</tr>

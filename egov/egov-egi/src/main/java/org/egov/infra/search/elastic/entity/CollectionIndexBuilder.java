@@ -125,8 +125,8 @@ public class CollectionIndexBuilder {
         return this;
     }
 
-    public CollectionIndexBuilder payeeName(final String payeeName) {
-        collectionIndex.setPayeeName(payeeName);
+    public CollectionIndexBuilder consumerName(final String consumerName) {
+        collectionIndex.setConsumerName(consumerName);
         return this;
     }
 
@@ -134,9 +134,14 @@ public class CollectionIndexBuilder {
         validate();
         return collectionIndex;
     }
-    
+
     public CollectionIndexBuilder reductionAmount(final BigDecimal reductionAmount) {
         collectionIndex.setReductionAmount(reductionAmount);
+        return this;
+    }
+    
+    public CollectionIndexBuilder receiptCreator(final String receiptCreator) {
+        collectionIndex.setReceiptCreator(receiptCreator);
         return this;
     }
 

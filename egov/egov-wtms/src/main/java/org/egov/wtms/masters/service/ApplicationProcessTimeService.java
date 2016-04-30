@@ -64,12 +64,13 @@ public class ApplicationProcessTimeService {
         this.applicationProcessTimeRepository = applicationProcessTimeRepository;
     }
 
-    public ApplicationProcessTime findBy(final Long applicationProcessId) {
+    public ApplicationProcessTime findOne(final Long applicationProcessId) {
         return applicationProcessTimeRepository.findOne(applicationProcessId);
     }
 
     @Transactional
     public ApplicationProcessTime createApplicationProcessTime(final ApplicationProcessTime applicationProcessTime) {
+        applicationProcessTime.setActive(true);
         return applicationProcessTimeRepository.save(applicationProcessTime);
     }
 
@@ -79,7 +80,7 @@ public class ApplicationProcessTimeService {
     }
 
     public List<ApplicationProcessTime> findAll() {
-        return applicationProcessTimeRepository.findAll(new Sort(Sort.Direction.ASC, "applicationType", "category"));
+        return applicationProcessTimeRepository.findAll(new Sort(Sort.Direction.DESC, "applicationType", "category"));
     }
 
     public List<ApplicationProcessTime> findByApplicationType(final ApplicationType applicationType) {

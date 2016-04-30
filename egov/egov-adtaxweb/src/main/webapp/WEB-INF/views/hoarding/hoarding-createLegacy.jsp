@@ -44,7 +44,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+			<div class="alert alert-success" role="alert"><c:out value="${message}" /></div>
 		</c:if>
 		<form:form id="hoardingform" method="post" class="form-horizontal form-groups-bordered" 
 		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">

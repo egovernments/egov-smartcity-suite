@@ -57,27 +57,32 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.egov.api.adapter.ComplaintActionAdapter;
 import org.egov.api.adapter.ComplaintAdapter;
 import org.egov.api.adapter.ComplaintStatusAdapter;
 import org.egov.api.adapter.ComplaintTypeAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiUrl;
+import org.egov.api.model.ComplaintAction;
 import org.egov.api.model.ComplaintSearchRequest;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
@@ -97,6 +102,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
@@ -125,6 +133,15 @@ public class ComplaintController extends ApiController {
     @Autowired
     protected FileStoreUtils fileStoreUtils;
 
+    @Autowired
+    protected ComplaintStatusMappingService complaintStatusMappingService;
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
     // --------------------------------------------------------------------------------//
     /**
      * This will returns all complaint types
@@ -611,5 +628,62 @@ public class ComplaintController extends ApiController {
 			return getResponseHandler().error(getMessage("server.error"));
         }
     }
+    
+    /* EMPLOYEE RELATED COMPLAINT OPERATIONS START */
 
+    //get complaint available status and forward departments
+    @RequestMapping(value = ApiUrl.EMPLOYEE_COMPLAINT_ACTIONS, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getComplaintActions(@PathVariable final String complaintNo) {
+        try {
+        	
+        	final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
+        	
+        	ComplaintAction complaintActions=new ComplaintAction();
+        	complaintActions.setStatus(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
+                    complaint.getStatus()));
+        	complaintActions.setApprovalDepartments(departmentService.getAllDepartments());
+        	
+            return getResponseHandler().setDataAdapter(new ComplaintActionAdapter()).success(complaintActions);
+            
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
+        }
+    }
+    
+    @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> updateComplaintFromEmployee(@PathVariable final String complaintNo, @RequestParam(value = "jsonParams", required = false) String complaintJsonStr, @RequestParam("files") final MultipartFile[] files) {
+
+        String msg = null;
+        try {
+        	
+        	JsonObject complaintJson=new JsonParser().parse(complaintJsonStr).getAsJsonObject();
+        	
+            final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
+            final ComplaintStatus cmpStatus = complaintStatusService.getByName(complaintJson.get("action").getAsString());
+            complaint.setStatus(cmpStatus);
+            
+            Long approvalPosition;
+            
+            if(!complaintJson.has("approvalposition"))
+            {
+            	approvalPosition=securityUtils.getCurrentUser().getId();
+            }
+            else{
+            	approvalPosition= Long.valueOf(complaintJson.get("approvalposition").getAsString());
+            }
+            
+            if(files.length>0)
+            {
+            	complaint.getSupportDocs().addAll(addToFileStore(files));
+            }
+            complaintService.update(complaint, approvalPosition, complaintJson.get("comment").getAsString());
+            return getResponseHandler().success("", getMessage("msg.complaint.status.update.success"));
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
+        }
+
+    }
+  
 }

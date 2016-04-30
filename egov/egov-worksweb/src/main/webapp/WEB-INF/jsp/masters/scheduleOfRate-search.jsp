@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
-<script src="<egov:url path='/resources/js/works.js'/>"></script> 
+<script src="<egov:url path='/resources/js/works.js?${app_release_no}'/>"></script> 
 <html>
 <title><s:text name="sor.list" /></title>
 <style>

@@ -50,7 +50,7 @@
 				<tr>
 					<td colspan="9" class="headingwk" align="left">
 						<div class="arrowiconwk">
-							<img src="/egi/resources/erp2/images/arrow.gif" />
+							<img src="/egworks/resources/erp2/images/arrow.gif" />
 						</div>
 
 						<div class="headerplacer">

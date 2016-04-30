@@ -1534,7 +1534,9 @@ if(null != result && result.length !=0){
 		if(null != dom.get('receiptMisc.idFunctionary.id') ){
 				 dom.get('receiptMisc.idFunctionary.id').value = parseInt(miscArray[4]);
 		}
-		
+		if(null != dom.get('functionId') ) {	
+			 dom.get('functionId').value = parseInt(miscArray[5]);	
+		}
 }
 
 },

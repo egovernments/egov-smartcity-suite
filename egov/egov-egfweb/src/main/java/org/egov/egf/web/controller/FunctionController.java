@@ -92,8 +92,6 @@ public class FunctionController {
 		functionService.update(function);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.function.success", null, null));
-		egovMasterDataCaching.removeFromCache("egi-activeFunctions");
-		egovMasterDataCaching.removeFromCache("egi-function");
 		return "redirect:/function/result/" + function.getId();
 	}
 

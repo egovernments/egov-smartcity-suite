@@ -290,7 +290,7 @@ function validateDuplicate(records,oArgs){
 		 <div class="errorstyle" id="finSource_error" style="display:none;"></div>
               	<tr>
                 	<td colspan="4" class="headingwk">
-                		<div class="arrowiconwk"><image src="<egov:url path='/egi/resources/erp2/images/arrow.gif'/>" /></div>
+                		<div class="arrowiconwk"><image src="<egov:url path='/resources/erp2/images/arrow.gif'/>" /></div>
                 		<div class="headplacer"><s:text name='page.header.financial.source.detail'/></div>
                 	</td>
               	</tr>

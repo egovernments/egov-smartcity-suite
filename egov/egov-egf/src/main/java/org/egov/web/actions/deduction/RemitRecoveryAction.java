@@ -42,9 +42,6 @@
  */
 package org.egov.web.actions.deduction;
 
-
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -91,10 +88,10 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.deduction.RemittanceBean;
 import org.egov.model.instrument.InstrumentHeader;
@@ -112,15 +109,12 @@ import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.payment.BasePaymentAction;
 import org.egov.web.actions.voucher.CommonAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
-/**
- * @author manoranjan
- *
- */
 @ParentPackage("egov")
 @Validation
 @Results({
@@ -156,11 +150,12 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public boolean showApprove = false;
     private CommonBean commonBean;
     private String modeOfPayment;
-    
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired CreateVoucher createVoucher;
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    CreateVoucher createVoucher;
     private Integer departmentId;
     private String wfitemstate;
     private String comments;
@@ -183,7 +178,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private ChartOfAccounts chartOfAccounts;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     public BigDecimal getBalance() {
         return balance;
     }
@@ -508,13 +503,11 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @Action(value = "/deduction/remitRecovery-viewInboxItem")
     public String viewInboxItem() {
         paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
-       /* if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty()
-                && paymentheader.getState().getValue().contains("Reject"))
-        {
-            voucherHeader.setId(paymentheader.getVoucherheader().getId());
-            showCancel = true;
-            return beforeEdit();
-        }*/
+        /*
+         * if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty() &&
+         * paymentheader.getState().getValue().contains("Reject")) {
+         * voucherHeader.setId(paymentheader.getVoucherheader().getId()); showCancel = true; return beforeEdit(); }
+         */
         showApprove = true;
         voucherHeader.setId(paymentheader.getVoucherheader().getId());
         prepareForViewModifyReverse();
@@ -529,7 +522,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         showApprove = true;
         // voucherHeader.setId(paymentheader.getVoucherheader().getId());
         prepareForViewModifyReverse();
-        //loadApproverUser(voucherHeader.getType());
+        // loadApproverUser(voucherHeader.getType());
         return EDIT;
     }
 
@@ -555,7 +548,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             sendForApproval();
             addActionMessage(getText("remittancepayment.transaction.success") + voucherHeader.getVoucherNumber());
         } catch (final ValidationException e) {
-            //loadApproverUser(voucherHeader.getType());
+            // loadApproverUser(voucherHeader.getType());
             loadAjaxedDropDowns();
             throw e;
         }

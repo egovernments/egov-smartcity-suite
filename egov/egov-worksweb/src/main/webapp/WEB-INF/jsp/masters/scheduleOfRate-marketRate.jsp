@@ -41,7 +41,7 @@
 <script>
 function createDeleteImageFormatterMR(baseURL){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/cancel.png";
+	    var imageURL="/resources/erp2/images/cancel.png";
 	    markup='<img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/>';
 	    el.innerHTML = markup;
 	}
@@ -135,7 +135,7 @@ var makeScheduleOfRateDataTableForMR = function() {
 	   	   <div class="yui-skin-sam">
 				<div id="scheduleOfRateTableMR"></div>
 <script>
-	var imgURL="/egi/resources/erp2/images/cancel.png";	
+	var imgURL="/resources/erp2/images/cancel.png";	
 	makeScheduleOfRateDataTableForMR();
 			
 		<s:iterator id="marketRateIterator" value="model.marketRates" status="marketrate_row_status">

@@ -49,6 +49,8 @@ import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,6 +63,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/advertisement")
 public class AdvertisementRenewalController extends HoardingControllerSupport {
+	
+   @Autowired
+   private ResourceBundleMessageSource messageSource;
 
     @RequestMapping(value = "/renewal/{id}", method = GET)
     public String renewForm(@PathVariable final String id, final Model model,
@@ -164,9 +169,9 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             advertisementPermitDetailService.renewal(renewalPermitDetail, approvalPosition,
                     approvalComment, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE, workFlowAction);
             redirAttrib.addFlashAttribute("advertisementPermitDetail", renewalPermitDetail);
-            redirAttrib.addFlashAttribute("message", "msg.success.forward");
-            redirAttrib.addFlashAttribute("approverName", approverName);
-            redirAttrib.addFlashAttribute("nextDesign", nextDesignation);
+            String message = messageSource.getMessage("msg.success.forward",
+                    new String[] { approverName.concat("~").concat(nextDesignation), renewalPermitDetail.getApplicationNumber() }, null);
+            redirAttrib.addFlashAttribute("message", message);
             return "redirect:/hoarding/success/" + renewalPermitDetail.getId();
         } catch (final HoardingValidationError e) {
             resultBinder.rejectValue(e.fieldName(), e.errorCode());

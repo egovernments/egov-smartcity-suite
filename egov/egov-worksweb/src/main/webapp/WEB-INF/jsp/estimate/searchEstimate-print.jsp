@@ -46,7 +46,7 @@
 </head>
 
 <link href="<c:url value='/resources/css/works.css'/>" rel="stylesheet" type="text/css" />
-<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<%--<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" /> --%>
 
 <script type="text/javascript">
 
@@ -123,7 +123,7 @@ document.getElementById("BACK").style.visibility='visible';
 			<td>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
-	        	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+	        	<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 	            <div class="headplacer"><s:text name="page.subheader.search.estimate" /></div></td>
 	        </tr>
 	  	        <tr>

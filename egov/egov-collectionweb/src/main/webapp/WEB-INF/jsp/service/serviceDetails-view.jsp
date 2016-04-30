@@ -60,6 +60,8 @@ else{
 <s:token />
 <s:push value="model">
 	
+	<input type="hidden" id="isviewmode" value="true"/>
+	
 	<jsp:include page="serviceDetails-form.jsp"/>
 	<div class="buttonbottom">
 			

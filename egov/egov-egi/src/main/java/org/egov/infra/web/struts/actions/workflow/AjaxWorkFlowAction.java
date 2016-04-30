@@ -50,8 +50,8 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.EISServeable;
-import org.egov.infstr.workflow.CustomizedWorkFlowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
+import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 
 @ParentPackage("egov")

@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
@@ -124,14 +123,16 @@ public class BankEntriesNotInBankBookActionHelper {
             CChartOfAccounts coa = new CChartOfAccounts();
             for (BankEntriesNotInBankBook object : bankEntriesNotInBankBookList) {
 
-                if (object.getBeId() != null && object.getCreateVoucher() != null && object.getCreateVoucher()) {
-                    bankEntry = new BrsEntries();
-                    bankEntry = bankEntriesService.findById(object.getBeId(), false);
-                    object.setDate(bankEntry.getTxnDate());
-                    object.setType(bankEntry.getType());
-                    object.setAmount(bankEntry.getTxnAmount());
-                    bankEntry.setVoucherHeaderId(createVoucher(voucherHeader, object, bankAccount, bankEntry.getGlCodeId()));
-                    bankEntriesService.update(bankEntry);
+                if (object.getBeId() != null) {
+                    if (object.getCreateVoucher() != null && object.getCreateVoucher()) {
+                        bankEntry = new BrsEntries();
+                        bankEntry = bankEntriesService.findById(object.getBeId(), false);
+                        object.setDate(bankEntry.getTxnDate());
+                        object.setType(bankEntry.getType());
+                        object.setAmount(bankEntry.getTxnAmount());
+                        bankEntry.setVoucherHeaderId(createVoucher(voucherHeader, object, bankAccount, bankEntry.getGlCodeId()));
+                        bankEntriesService.update(bankEntry);
+                    }
                 } else {
                     bankEntry = new BrsEntries();
                     bankEntryMis = new BrsEntrieMis();

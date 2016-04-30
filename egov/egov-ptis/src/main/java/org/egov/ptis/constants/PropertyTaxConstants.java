@@ -102,6 +102,7 @@ public interface PropertyTaxConstants {
     // Others
     public static final String CURR_DMD_STR = "CURR_DMD";
     public static final String ARR_DMD_STR = "ARR_DMD";
+    public static final String CURR_BAL_STR = "CURR_BAL";
     public static final String CURR_COLL_STR = "CURR_COLL";
     public static final String ARR_COLL_STR = "ARR_COLL";
     public static final String CURR_PENALTY_DMD_STR = "CURR_PEANLTY_DMD";
@@ -1384,5 +1385,5 @@ public interface PropertyTaxConstants {
     public static final String ARREARS = "Arrears";
     
     public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
-    
+    public static final String REVISIONPETITION_STATUS_CODE = "RP";
 }

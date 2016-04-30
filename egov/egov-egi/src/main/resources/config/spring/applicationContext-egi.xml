@@ -78,7 +78,7 @@
 		<property name="type" value="org.egov.infra.admin.master.entity.User"/>
 	</bean>
 
-	<bean id="customizedWorkFlowService" class="org.egov.infstr.workflow.CustomizedWorkFlowService" scope="prototype">
+	<bean id="customizedWorkFlowService" class="org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="workflowService" ref="workflowService" />
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -113,14 +113,14 @@
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 
-	<bean id="workFlowMatrixService" class="org.egov.infstr.workflow.WorkFlowMatrixService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.workflow.WorkFlowMatrix"/>
+	<bean id="workFlowMatrixService" class="org.egov.infra.workflow.matrix.service.WorkFlowMatrixService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infra.workflow.matrix.entity.WorkFlowMatrix"/>
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-	<bean id="workFlowAdditionalDetailsService" class="org.egov.infstr.workflow.WorkFlowAdditionalDetailsService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.workflow.WorkFlowAdditionalRule"/>
+	<bean id="workFlowAdditionalDetailsService" class="org.egov.infra.workflow.matrix.service.WorkFlowAdditionalDetailsService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule"/>
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
@@ -144,7 +144,7 @@
 	</bean>
 	
 	<bean id="actionPersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infstr.workflow.Action" />
+		<property name="type" value="org.egov.infra.workflow.entity.WorkflowAction" />
 	</bean>
 	
 	<bean id="workflowTypePersistenceService" parent="persistenceService">

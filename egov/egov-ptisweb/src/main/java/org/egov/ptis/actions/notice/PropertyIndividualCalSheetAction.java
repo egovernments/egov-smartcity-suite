@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.ptis.actions.notice;
 
-import static org.egov.infstr.utils.MoneyUtils.roundOffTwo;
+import static org.egov.infra.utils.MoneyUtils.roundOffTwo;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNotNull;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNotZero;
 import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
@@ -70,7 +70,7 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.bean.PropertyCalSheetInfo;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;

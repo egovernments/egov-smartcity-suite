@@ -95,7 +95,7 @@ body
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.collectioMode" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:select id="mode" name="mode" path=""
+							<form:select id="collectionMode" name="collectionMode" path=""
 								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.option.select" />
@@ -106,12 +106,12 @@ body
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.collectionOperator" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="operator" id="operator" path=""
+							<form:select name="collectionOperator" id="collectionOperator" path=""
 								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.option.select" />
 								</form:option>
-								<form:options items="${operators}" id="operator" name="operator" itemValue="id" itemLabel="name" />
+								<form:options items="${operators}" id="operator" name="operator" itemValue="name" itemLabel="name" />
 							</form:select>
 						</div>
 
@@ -133,12 +133,12 @@ body
 						
 						<label for="field-1" class="col-sm-2 control-label"><spring:message code="lbl.ward" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="ward" id="ward" path=""
+							<form:select name="revenueWard" id="revenueward" path=""
 								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.default.all" />
 								</form:option>
-								<form:options items="${wards}" itemValue="id" itemLabel="name" />
+								<form:options items="${wards}" itemValue="name" itemLabel="name" />
 							</form:select>
 						</div>
 				</div>
@@ -165,7 +165,7 @@ body
 		   </form:form>
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="dailyCollReport-table" width="200%">
-			<tbody>
+			<!-- <tbody>
 		   
 			<tfoot id="report-footer">
 							<tr>
@@ -187,10 +187,9 @@ body
 								<td></td>
 								<td></td>
 								<td></td>
-								<td></td>
 							</tr>
 				</tfoot> 
-			</tbody>
+			</tbody> -->
 		</table>
 	</div>
 </div>

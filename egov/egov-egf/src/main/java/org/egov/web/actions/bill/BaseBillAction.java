@@ -62,7 +62,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.SequenceGenerator;
-import org.egov.infstr.workflow.Action;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.CommonBean;
 import org.egov.model.voucher.VoucherDetails;
@@ -116,7 +116,7 @@ public class BaseBillAction extends BaseVoucherAction {
     protected VoucherService voucherService;
     protected String mode;
     protected String nextLevel;
-    protected List<Action> validButtons;
+    protected List<WorkflowAction> validButtons;
     protected Integer departmentId;
     protected EisUtilService eisUtilService;
     protected VoucherHelper voucherHelper;
@@ -388,11 +388,11 @@ public class BaseBillAction extends BaseVoucherAction {
         this.nextLevel = nextLevel;
     }
 
-    public List<Action> getValidButtons() {
+    public List<WorkflowAction> getValidButtons() {
         return validButtons;
     }
 
-    public void setValidButtons(final List<Action> validButtons) {
+    public void setValidButtons(final List<WorkflowAction> validButtons) {
         this.validButtons = validButtons;
     }
 

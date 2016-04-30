@@ -40,8 +40,6 @@
 
 package org.egov.wtms.web.controller.masters;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 import java.util.List;
 
 import javax.validation.Valid;
@@ -75,7 +73,7 @@ public class DocumentNamesMasterController {
 
     }
 
-    @RequestMapping(value = "/documentNamesMaster", method = GET)
+    @RequestMapping(value = "/documentNamesMaster", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute DocumentNames documentNames, final Model model) {
         documentNames = new DocumentNames();
         model.addAttribute("documentNames", documentNames);
@@ -96,14 +94,14 @@ public class DocumentNamesMasterController {
 
     }
 
-    @RequestMapping(value = "/documentNamesMaster/list", method = GET)
+    @RequestMapping(value = "/documentNamesMaster/list", method = RequestMethod.GET)
     public String getDocumentNamesList(final Model model) {
         final List<DocumentNames> documentNamesList = documentNamesService.findAll();
         model.addAttribute("documentNamesList", documentNamesList);
         return "document-name-master-list";
     }
 
-    @RequestMapping(value = "/documentNamesMaster/{documentNameId}", method = GET)
+    @RequestMapping(value = "/documentNamesMaster/{documentNameId}", method = RequestMethod.GET)
     public String getDocumentNamesMasterDetails(final Model model, @PathVariable final String documentNameId) {
         final DocumentNames documentNames = documentNamesService.findOne(Long.parseLong(documentNameId));
         model.addAttribute("documentNames", documentNames);

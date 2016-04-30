@@ -89,6 +89,10 @@ var regexp_alphanumerichyphen = /[^a-zA-Z0-9-]/g ;
 //This will allow you to enter numbers with hyphen(-) and (/). (eg: data-pattern="numericslashhyphen")
 var regexp_numericslashhyphen = /[^0-9/-]/g ;
 
+//This will allow you to enter numbers with hyphen(-). (eg: data-pattern="numerichyphen")
+var regexp_numerichyphen = /[^0-9-]/g ;
+
+
 function patternvalidation(){
 	
 	jQuery('.patternvalidation').on("input", function(){
@@ -186,3 +190,8 @@ function alphanumericwithspaceanddot(obj){
 	}
 }
 
+function numerichyphen(obj){
+	if(jQuery(obj).val().match(regexp_numerichyphen)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_numerichyphen,'') );
+	}
+}

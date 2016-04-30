@@ -39,7 +39,7 @@
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="workProgressRegister" language="groovy" pageWidth="1250" pageHeight="842" orientation="Landscape" columnWidth="1210" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="org.egov.works.web.actions.package">
-	<import value="org.egov.infstr.utils.NumberUtil"/>
+	<import value="org.egov.infra.utils.NumberUtil"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/vikas/Workspaces/ERPTRUNK/worksjava/src/reports/templates/"]]></defaultValueExpression>
 	</parameter>

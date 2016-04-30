@@ -42,6 +42,7 @@ package org.egov.infra.workflow.entity;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -249,4 +250,24 @@ public abstract class StateAware extends AbstractAuditable {
         state.setOwnerUser(null);
         state.setOwnerPosition(null);
     }
+
+    public static Comparator<? super StateAware> byCreatedDateComparator() {
+        return (stateAware_1, stateAware_2) -> {
+            int returnVal = 1;
+            if (stateAware_1 == null)
+                returnVal = stateAware_2 == null ? 0 : -1;
+            else if (stateAware_2 == null)
+                returnVal = 1;
+            else {
+                final Date first_date = stateAware_1.getState().getCreatedDate();
+                final Date second_date = stateAware_2.getState().getCreatedDate();
+                if (first_date.after(second_date))
+                    returnVal = -1;
+                else if (first_date.equals(second_date))
+                    returnVal = 0;
+            }
+            return returnVal;
+        };
+    }
+
 }

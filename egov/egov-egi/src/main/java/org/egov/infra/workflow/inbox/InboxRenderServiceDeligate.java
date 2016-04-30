@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.workflow.inbox;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
@@ -56,10 +57,10 @@ import java.util.stream.Collectors;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.workflow.Action;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -214,12 +215,12 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     public String getNextAction(final State state) {
         String nextAction = EMPTY;
         if (state.getNextAction() != null) {
-            final Action action = (Action) this.entityQueryService.findByNamedQuery(Action.BY_NAME_AND_TYPE,
+            final WorkflowAction workflowAction = (WorkflowAction) this.entityQueryService.findByNamedQuery(WorkflowAction.BY_NAME_AND_TYPE,
                     state.getNextAction(), state.getType());
-            if (action == null)
+            if (workflowAction == null)
                 nextAction = state.getNextAction();
             else
-                nextAction = action.getDescription() == null ? state.getNextAction() : action.getDescription();
+                nextAction = workflowAction.getDescription() == null ? state.getNextAction() : workflowAction.getDescription();
         }
         return nextAction;
     }

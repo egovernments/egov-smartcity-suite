@@ -638,12 +638,11 @@ loadDropDownCodesForAccountDetailType(null);
 function onSubmit()
 {
 	if(validate()){
-			document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
-    		document.cbill.submit();
-			
-		}else{
-			return false;
-			}
+		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
+    	return true;
+	}else{
+		return false;
+	}
 }
 </script>
 </body>

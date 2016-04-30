@@ -13,6 +13,10 @@ public class SearchRequestLetterOfAcceptance {
     private String estimateNumber;
     private String egwStatus;
     private String workIdentificationNumber;
+    private Date adminSanctionFromDate;
+    private Date adminSanctionToDate;
+    private Long typeOfWork;
+    private Long subTypeOfWork;
 
     public SearchRequestLetterOfAcceptance() {
     }
@@ -87,6 +91,38 @@ public class SearchRequestLetterOfAcceptance {
 
     public void setWorkIdentificationNumber(final String workIdentificationNumber) {
         this.workIdentificationNumber = workIdentificationNumber;
+    }
+
+    public Date getAdminSanctionFromDate() {
+        return adminSanctionFromDate;
+    }
+
+    public void setAdminSanctionFromDate(Date adminSanctionFromDate) {
+        this.adminSanctionFromDate = adminSanctionFromDate;
+    }
+
+    public Date getAdminSanctionToDate() {
+        return adminSanctionToDate;
+    }
+
+    public void setAdminSanctionToDate(Date adminSanctionToDate) {
+        this.adminSanctionToDate = adminSanctionToDate;
+    }
+
+    public Long getTypeOfWork() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(Long typeOfWork) {
+        this.typeOfWork = typeOfWork;
+    }
+
+    public Long getSubTypeOfWork() {
+        return subTypeOfWork;
+    }
+
+    public void setSubTypeOfWork(Long subTypeOfWork) {
+        this.subTypeOfWork = subTypeOfWork;
     }
 
 }

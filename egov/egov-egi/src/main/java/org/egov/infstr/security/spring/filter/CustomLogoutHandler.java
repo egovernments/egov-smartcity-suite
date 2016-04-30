@@ -49,7 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.security.audit.entity.SystemAudit;
 import org.egov.infra.security.audit.service.SystemAuditService;
-import org.egov.infstr.security.utils.SecurityConstants;
+import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;

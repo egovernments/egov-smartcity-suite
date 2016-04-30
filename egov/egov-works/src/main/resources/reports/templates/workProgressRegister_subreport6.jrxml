@@ -39,7 +39,7 @@
     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="workProgressRegister_subreport6" language="groovy" pageWidth="400" pageHeight="842" columnWidth="400" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
-	<import value="org.egov.infstr.utils.NumberUtil"/>
+	<import value="org.egov.infra.utils.NumberUtil"/>
 	<parameter name="totalBillAmt" class="java.math.BigDecimal"/>
 	<parameter name="totalReleasedAmt" class="java.math.BigDecimal"/>
 	<parameter name="totalOutstandingAmt" class="java.math.BigDecimal"/>

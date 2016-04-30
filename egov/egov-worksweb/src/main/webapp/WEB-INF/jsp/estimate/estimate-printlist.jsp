@@ -37,7 +37,7 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script type="text/javascript">
 
 </script> 
@@ -49,7 +49,7 @@
 				<tr>
 					<td colspan="9" class="headingwk" align="left">
 						<div class="arrowiconwk">
-							<img src="/egi/resources/erp2/images/arrow.gif"/>
+							<img src="/egworks/resources/erp2/images/arrow.gif"/>
 						</div>
 						<s:if test="%{source=='financialdetail'}">
 							<div class="headerplacer">

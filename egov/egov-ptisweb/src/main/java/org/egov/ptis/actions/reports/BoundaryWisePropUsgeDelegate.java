@@ -40,7 +40,7 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.infstr.utils.MoneyUtils.roundOff;
+import static org.egov.infra.utils.MoneyUtils.roundOff;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
 import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;

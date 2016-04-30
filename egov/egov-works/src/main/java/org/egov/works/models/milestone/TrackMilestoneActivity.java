@@ -49,7 +49,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 public class TrackMilestoneActivity extends BaseModel {

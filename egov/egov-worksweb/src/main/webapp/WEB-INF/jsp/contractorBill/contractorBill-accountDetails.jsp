@@ -497,12 +497,12 @@ function workValue(){
 <table border="0" cellpadding="0" cellspacing="0" align="center" width="100%" >
 <tr>
 		<td colspan="3" class="headingwk">
-			<div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+			<div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 			<div class="headplacer"><s:text name="contractorBill.tab.accountDetails" /></div>
 		</td>
 		<td align="right" class="headingwk" style="border-left-width: 0px">
        		<a id="accountdetailsrow" href="#" onclick="workValue();defaultBudgetHead();return false;">
-       		<img border="0" id="addRowImgDiv" alt="Add Account Details Rate" src="/egi/resources/erp2/images/add.png" /></a>
+       		<img border="0" id="addRowImgDiv" alt="Add Account Details Rate" src="/egworks/resources/erp2/images/add.png" /></a>
        		</td>
      	</tr>
      	<tr>

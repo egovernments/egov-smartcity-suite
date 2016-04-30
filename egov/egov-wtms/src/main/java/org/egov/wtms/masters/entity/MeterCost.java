@@ -51,11 +51,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_metercost")
+@CompositeUnique(fields = { "pipeSize", "meterMake",
+        "amount" }, enableDfltMsg = true, message = "{metercost.validity.exist}")
 @SequenceGenerator(name = MeterCost.SEQ_METERCOST, sequenceName = MeterCost.SEQ_METERCOST, allocationSize = 1)
 public class MeterCost extends AbstractAuditable {
 
@@ -68,7 +71,7 @@ public class MeterCost extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "pipesize", nullable = false)
+    @JoinColumn(name = "pipesize")
     private PipeSize pipeSize;
 
     @NotNull

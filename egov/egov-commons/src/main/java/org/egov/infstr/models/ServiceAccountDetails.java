@@ -17,8 +17,6 @@ public class ServiceAccountDetails {
 	
 	private ServiceDetails serviceDetails;
 	
-	private CFunction function;
-	
 	private Set<ServiceSubledgerInfo> subledgerDetails = new LinkedHashSet<ServiceSubledgerInfo>(0);
 
 	
@@ -88,12 +86,4 @@ public class ServiceAccountDetails {
 	public void setSubledgerDetails(Set<ServiceSubledgerInfo> subledgerDetails) {
 		this.subledgerDetails = subledgerDetails;
 	}
-	public CFunction getFunction() {
-		return function;
-	}
-	public void setFunction(CFunction function) {
-		this.function = function;
-	}
-	
-
 }

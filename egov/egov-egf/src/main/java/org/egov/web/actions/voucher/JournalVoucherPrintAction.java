@@ -39,7 +39,7 @@
  ******************************************************************************/
 package org.egov.web.actions.voucher;
 
-import static org.egov.infstr.utils.DateUtils.getFormattedDate;
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,9 +73,9 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.utils.DateUtils;
+import org.egov.infra.workflow.entity.WorkflowAction;
+import org.egov.infra.utils.DateUtils;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.services.bills.BillsService;
 import org.egov.services.budget.BudgetAppropriationService;
@@ -331,10 +331,10 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         if (state.getNextAction() == null)
             return "";
         else {
-            final org.egov.infstr.workflow.Action action = (org.egov.infstr.workflow.Action) persistenceService
-                    .findByNamedQuery(org.egov.infstr.workflow.Action.BY_NAME_AND_TYPE, state.getNextAction(), null);
-            if (action != null)
-                return " - " + (action.getDescription() != null ? action.getDescription() : state.getNextAction());
+            final WorkflowAction workflowAction = (WorkflowAction) persistenceService
+                    .findByNamedQuery(WorkflowAction.BY_NAME_AND_TYPE, state.getNextAction(), null);
+            if (workflowAction != null)
+                return " - " + (workflowAction.getDescription() != null ? workflowAction.getDescription() : state.getNextAction());
             else
                 return " - " + state.getNextAction();
         }

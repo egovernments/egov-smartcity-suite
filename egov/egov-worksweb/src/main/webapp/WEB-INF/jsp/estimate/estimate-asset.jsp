@@ -203,7 +203,7 @@ function createNewImageFormatter(baseURL){
 
 function createDeleteImageFormatter(baseURL){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/cancel.png";
+	    var imageURL=baseURL+"/resources/erp2/images/cancel.png";
 	    markup='<a href="javascript:void(0);"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Delete" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}
@@ -212,7 +212,7 @@ function createDeleteImageFormatter(baseURL){
 
 function createAddImageFormatter(baseURL){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/add.png";
+	    var imageURL=baseURL+"/resources/erp2/images/add.png";
 	    markup='<a href="javascript:void(0);"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Add" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}
@@ -221,7 +221,7 @@ function createAddImageFormatter(baseURL){
 
 function createSearchImageFormatter(baseURL){
 	var searchImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/magnifier.png";
+	    var imageURL=baseURL+"/resources/erp2/images/magnifier.png";
 	    markup='<a href="javascript:void(0);"><img src="'+imageURL+'" height=16  width=16 border="0" alt="Search" align="absmiddle"></a>';
 	    el.innerHTML = markup;
 	}

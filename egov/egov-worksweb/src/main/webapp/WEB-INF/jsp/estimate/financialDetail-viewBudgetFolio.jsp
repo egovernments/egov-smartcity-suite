@@ -41,7 +41,7 @@
 
 <html>
 <title><s:text name="estimate.budgetfolio.header" /></title>
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 
 <body >
 		<s:if test="%{hasErrors()}">

@@ -132,16 +132,19 @@ window.document.onkeydown = function(event) {
 	 </div>
 	  
 	  <script>
-
+      var i=0;
 	    // jQuery plugin to prevent double submission of forms
 		jQuery.fn.preventDoubleSubmission = function() {
 		jQuery(this).on('submit',function(e){
+         console.log("inside onsubmitt "+(++i));
 		    var $form = jQuery(this);
 		    if ($form.data('submitted') === true) {
-		      // Previously submitted - don't submit again
+	         console.log("inside already submitted"+(++i));
+  	      // Previously submitted - don't submit again
 		      e.preventDefault();
 		    } else {
 		      // Mark it so that the next submit can be ignored
+              console.log("inside first time submitted"+(++i));
 		      $form.data('submitted', true);
 		    }
 		  });
@@ -153,6 +156,7 @@ window.document.onkeydown = function(event) {
 			jQuery('.loader-class').modal('show', {backdrop: 'static'});
 		});
 		
+        console.log("calling prevent default");
 		jQuery('form').preventDoubleSubmission();
 		
 		jQuery(".datepicker").datepicker({

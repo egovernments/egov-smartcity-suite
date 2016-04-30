@@ -38,6 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 jQuery('#btnsearch').click(function(e) {
+	$('#report-footer').hide();
 	$('#btndownloadpdf').hide();
 	$('#btndownloadexcel').hide();
 	$('#balanceAvailable').html("");
@@ -99,7 +100,6 @@ function getFormData($form){
 
     return indexed_array;
 }
-
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");		
 	jQuery('.report-section').removeClass('display-hide');
@@ -128,18 +128,17 @@ function callAjaxSearch() {
 						$('td:eq(9)',row).html(parseFloat(Math.round(data.cumulativeTotal * 100) / 100).toFixed(2));
 					if(data.balanceAvailable != "")
 						$('td:eq(10)',row).html(parseFloat(Math.round(data.balanceAvailable * 100) / 100).toFixed(2));
-
 					$('#btndownloadpdf').show();
 					$('#btndownloadexcel').show();
 					$('td:eq(0)',row).html(index+1);
-					if(index == reportdatatable.fnSettings().fnRecordsTotal() - 1) {
+					if(index == 0) {
 						var balanceAvailable = "Available Balance : " + parseFloat(Math.round(data.actualBalanceAvailable * 100) / 100).toFixed(2);
 						$('#balanceAvailable').html(balanceAvailable);
 					}
 					return row;
 				},
 				aaSorting: [],				
-				columns : [ { 
+				"columns" : [{
 					"data" : "", "sClass" : "text-center"} ,{ 
 					"data" : "appropriationNumber", "sClass" : "text-left"} ,{
 					"data" : "appropriationDate", "sClass" : "text-left" },{
@@ -150,7 +149,24 @@ function callAjaxSearch() {
 					"data" : "estimateDate", "sClass" : "text-left"} ,{
 					"data" : "estimateValue", "sClass" : "text-right"} ,{
 					"data" : "cumulativeTotal", "sClass" : "text-right"} ,{
-					"data" : "balanceAvailable", "sClass" : "text-right"
-					}]
-				});
-			}
+					"data" : "balanceAvailable", "sClass" : "text-right"}],
+					  "footerCallback" : function(row, data, start, end, display) {
+							var api = this.api(), data;
+							if (data.length == 0) {
+								jQuery('#report-footer').hide();
+							} else {
+								jQuery('#report-footer').show(); 
+							}
+							if (data.length > 0) {
+								$('td:eq(1)',row).html(parseFloat(Math.round(data[0].cumulativeExpensesIncurred * 100) / 100).toFixed(2));
+								$('td:eq(2)',row).html(parseFloat(Math.round(data[0].actualBalanceAvailable * 100) / 100).toFixed(2));
+							}
+						},
+						"aoColumnDefs" : [ {
+							"aTargets" : [9,10],
+							"mRender" : function(data, type, full) {
+								return data;    
+							}
+						} ]		
+					});
+	}

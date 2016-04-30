@@ -531,6 +531,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
                     + " from  egwtr_connection conn,egwtr_connectiondetails bp,egwtr_demand_connection demconn , eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                     + " where conn.id =bp.connection " + " and demconn.connectiondetails = bp.id " + " and demconn.demand = d.id " + " and d.id = dd.id_demand "
                     + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                    + " and d.is_history='N' "
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
                     + " and dd.amount > dd.amt_collected  ";
             // +

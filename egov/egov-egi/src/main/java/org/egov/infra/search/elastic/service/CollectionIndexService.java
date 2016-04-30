@@ -74,11 +74,15 @@ public class CollectionIndexService {
             collectionIndexRepository.save(collectionIndexReceipt);
         } else {
             final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-            collectionIndex.setUlbName(cityWebsite.getName());
+            collectionIndex.setCityName(cityWebsite.getName());
             if (cityWebsite.getDistrictName() != null)
                 collectionIndex.setDistrictName(cityWebsite.getDistrictName());
             if (cityWebsite.getRegionName() != null)
                 collectionIndex.setRegionName(cityWebsite.getRegionName());
+            if (cityWebsite.getGrade() != null)
+                collectionIndex.setCityGrade(cityWebsite.getGrade());
+            if (cityWebsite.getCode() != null)
+                collectionIndex.setCityCode(cityWebsite.getCode());
             collectionIndexRepository.save(collectionIndex);
         }
         return collectionIndex;
@@ -86,7 +90,7 @@ public class CollectionIndexService {
 
     public CollectionIndex findByReceiptNumber(final String receiptNumber) {
         final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        return collectionIndexRepository.findByReceiptNumberAndUlbName(receiptNumber, cityWebsite.getName());
+        return collectionIndexRepository.findByReceiptNumberAndCityName(receiptNumber, cityWebsite.getName());
     }
 
 }
