@@ -46,7 +46,7 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.service.ActionService;
-import org.egov.infstr.security.utils.SecurityConstants;
+import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;

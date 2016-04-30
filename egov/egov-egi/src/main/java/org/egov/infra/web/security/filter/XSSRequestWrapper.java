@@ -37,30 +37,43 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.security.filter;
+package org.egov.infra.web.security.filter;
 
-import java.io.IOException;
+import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * Filter which handles possible XSS attack
+ * Request wrapper where it sanitize user inputs
  **/
-public class XSSFilter implements Filter {
+public final class XSSRequestWrapper extends HttpServletRequestWrapper {
 
-	@Override
-	public void init(final javax.servlet.FilterConfig filterConfig) throws ServletException {
+	public XSSRequestWrapper(final HttpServletRequest request) {
+		super(request);
 	}
 
 	@Override
-	public void destroy() {
+	public String[] getParameterValues(final String paramName) {
+		final String[] values = super.getParameterValues(paramName);
+		if (values != null) {
+			final String[] cleanValues = new String[values.length];
+			int index = 0;
+			for (final String value : values) {
+				cleanValues[index++] = sanitize(value);
+			}
+			return cleanValues;
+		}
+		return null;
 	}
 
 	@Override
-	public void doFilter(final javax.servlet.ServletRequest request, final javax.servlet.ServletResponse response, final javax.servlet.FilterChain filterChain) throws IOException, ServletException {
-		final XSSRequestWrapper xssRequest = new XSSRequestWrapper((HttpServletRequest) request);
-		filterChain.doFilter(xssRequest, response);
+	public String getParameter(final String paramName) {
+		return sanitize(super.getParameter(paramName));
+	}
+
+	@Override
+	public String getHeader(final String headerName) {
+		return sanitize(super.getHeader(headerName));
 	}
 }

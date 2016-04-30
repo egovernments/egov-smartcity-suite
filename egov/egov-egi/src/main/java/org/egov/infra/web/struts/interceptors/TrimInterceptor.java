@@ -39,7 +39,7 @@
  */
 package org.egov.infra.web.struts.interceptors;
 
-import static org.egov.infstr.security.utils.VirtualSanitizer.sanitize;
+import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
 
 import java.util.Iterator;
 import java.util.Map;

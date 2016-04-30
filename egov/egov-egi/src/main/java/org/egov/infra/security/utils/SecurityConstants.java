@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.security.utils;
+
+package org.egov.infra.security.utils;
 
 public interface SecurityConstants {
 

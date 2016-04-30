@@ -37,56 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.security.utils;
+package org.egov.infra.web.security.filter;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+import java.io.IOException;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
-import org.owasp.validator.html.Policy;
-import org.owasp.validator.html.PolicyException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.Filter;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * VirtualSanitizer.java This class used to sanitise user input from possible XSS attacks.
+ * Filter which handles possible XSS attack
  **/
-public final class VirtualSanitizer {
+public class XSSFilter implements Filter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(VirtualSanitizer.class);
-	private static Policy policy;
-	private static AntiSamy antiSamy;
-
-	private static AntiSamy getAntiSamy() throws PolicyException {
-		if (antiSamy == null) {
-			policy = getPolicy("antisamy-myspace-1.4.3.xml");
-			antiSamy = new AntiSamy();
-		}
-		return antiSamy;
+	@Override
+	public void init(final javax.servlet.FilterConfig filterConfig) throws ServletException {
 	}
 
-	private static Policy getPolicy(final String name) throws PolicyException {
-		final Policy policy = Policy.getInstance(VirtualSanitizer.class.getResource(name));
-		return policy;
+	@Override
+	public void destroy() {
 	}
 
-	public static String sanitize(final String input) {
-		try {
-			if (isBlank(input)) {
-				return input;
-			}
-			final CleanResults cr = getAntiSamy().scan(input, policy);
-			if (cr.getErrorMessages().size() > 0) {
-				LOG.error(cr.getErrorMessages().toString());
-				throw new ApplicationRuntimeException("Found security threat in user input : " + cr.getErrorMessages());
-			}
-			return input;
-		} catch (final Exception e) {
-			LOG.error(e.getMessage());
-			throw new ApplicationRuntimeException("Error occurred while validating inputs", e);
-		}
-
+	@Override
+	public void doFilter(final javax.servlet.ServletRequest request, final javax.servlet.ServletResponse response, final javax.servlet.FilterChain filterChain) throws IOException, ServletException {
+		final XSSRequestWrapper xssRequest = new XSSRequestWrapper((HttpServletRequest) request);
+		filterChain.doFilter(xssRequest, response);
 	}
-
 }

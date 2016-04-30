@@ -37,43 +37,57 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.security.filter;
 
-import static org.egov.infstr.security.utils.VirtualSanitizer.sanitize;
+package org.egov.infra.security.utils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import static org.apache.commons.lang.StringUtils.isBlank;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
+import org.owasp.validator.html.PolicyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Request wrapper where it sanitize user inputs
+ * VirtualSanitizer.java This class used to sanitise user input from possible XSS attacks.
  **/
-public final class XSSRequestWrapper extends HttpServletRequestWrapper {
+public final class VirtualSanitizer {
 
-	public XSSRequestWrapper(final HttpServletRequest request) {
-		super(request);
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(VirtualSanitizer.class);
+	private static Policy policy;
+	private static AntiSamy antiSamy;
 
-	@Override
-	public String[] getParameterValues(final String paramName) {
-		final String[] values = super.getParameterValues(paramName);
-		if (values != null) {
-			final String[] cleanValues = new String[values.length];
-			int index = 0;
-			for (final String value : values) {
-				cleanValues[index++] = sanitize(value);
-			}
-			return cleanValues;
+	private static AntiSamy getAntiSamy() throws PolicyException {
+		if (antiSamy == null) {
+			policy = getPolicy("antisamy-myspace-1.4.3.xml");
+			antiSamy = new AntiSamy();
 		}
-		return null;
+		return antiSamy;
 	}
 
-	@Override
-	public String getParameter(final String paramName) {
-		return sanitize(super.getParameter(paramName));
+	private static Policy getPolicy(final String name) throws PolicyException {
+		final Policy policy = Policy.getInstance(VirtualSanitizer.class.getResource(name));
+		return policy;
 	}
 
-	@Override
-	public String getHeader(final String headerName) {
-		return sanitize(super.getHeader(headerName));
+	public static String sanitize(final String input) {
+		try {
+			if (isBlank(input)) {
+				return input;
+			}
+			final CleanResults cr = getAntiSamy().scan(input, policy);
+			if (cr.getErrorMessages().size() > 0) {
+				LOG.error(cr.getErrorMessages().toString());
+				throw new ApplicationRuntimeException("Found security threat in user input : " + cr.getErrorMessages());
+			}
+			return input;
+		} catch (final Exception e) {
+			LOG.error(e.getMessage());
+			throw new ApplicationRuntimeException("Error occurred while validating inputs", e);
+		}
+
 	}
+
 }
