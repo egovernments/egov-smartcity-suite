@@ -52,7 +52,7 @@
 		<property name="threadPriority" value="5"/>
 		<property name="threadsInheritContextClassLoaderOfInitializingThread" value="true"/>
 		<property name="threadsInheritGroupOfInitializingThread" value="true"/>
-		<property name="waitForJobsToCompleteOnShutdown" value="false"/>
+		<property name="waitForJobsToCompleteOnShutdown" value="true"/>
 	</bean>
 		
     <bean name="egovSchedular" id="egovSchedular" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" abstract="true" destroy-method="destroy">
