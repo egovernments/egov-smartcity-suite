@@ -101,7 +101,8 @@ public class PenaltyCalculationService {
 
 	private Logger LOGGER = LoggerFactory.getLogger(PenaltyCalculationService.class);
 
-	private PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
+	@Autowired
+	private PropertyTaxUtil propertyTaxUtil;
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	private static final BigDecimal VALUE_HUNDRED = new BigDecimal(100);
 	
