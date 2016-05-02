@@ -54,8 +54,7 @@
                 <spring:hasBindErrors name="meterCost">
         		<%-- <form:errors path="pipeSize" cssClass="add-margin error-msg" /> --%>
           		<form:errors path="meterMake" cssClass="add-margin error-msg" /> 
-          	<%-- 	<form:errors path="amount" cssClass="add-margin error-msg" /> --%>
-        	</spring:hasBindErrors>
+         </spring:hasBindErrors>
 				<div class="form-group">
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
@@ -75,8 +74,9 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.metercost" />:<span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin"  id="amount">
-						<form:input cssClass="form-control patternvalidation"  title="It will allow upto 8 digits and 2 decimal points" pattern="\d{0,8}(\.\d{0,3})?" data-pattern="decimalvalue" 
-							 maxlength="10" id="amountid" path="amount" required="required" />
+						<form:input cssClass="form-control patternvalidation"  title="It will allow upto 8 digits and 2 decimal points" pattern="\d{0,7}(\.\d{0,1})?" data-pattern="decimalvalue" 
+							 maxlength="11" id="amountid" path="amount" required="required" />
+							 <form:errors path="amount" cssClass="add-margin error-msg" />
 					</div>
 				</div>
 			<div class="form-group">
