@@ -1,7 +1,9 @@
 package org.egov.egf.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.commons.CFunction;
 import org.egov.commons.service.FunctionService;
 import org.egov.egf.web.adaptor.FunctionJsonAdaptor;
@@ -19,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/function")
@@ -75,7 +77,7 @@ public class FunctionController {
 	public String edit(@PathVariable("id") final Long id, Model model) {
 		CFunction function = functionService.findOne(id);
 		prepareNewForm(model);
-		model.addAttribute("function", function);
+		model.addAttribute("CFunction", function);
 		return FUNCTION_EDIT;
 	}
 
@@ -90,6 +92,8 @@ public class FunctionController {
 		functionService.update(function);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.function.success", null, null));
+		egovMasterDataCaching.removeFromCache("egi-activeFunctions");
+		 egovMasterDataCaching.removeFromCache("egi-function");
 		return "redirect:/function/result/" + function.getId();
 	}
 

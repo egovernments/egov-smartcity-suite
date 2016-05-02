@@ -105,7 +105,6 @@
 							<form:errors path="isNotLeaf" cssClass="error-msg" />
 						</div>
 					</div>
-					<input type="hidden" name="CFunction" value="${function.id}" />
 				</div>
 			</div>
 		</div>
