@@ -208,7 +208,7 @@ public class HomeController {
         final Menu menu = new Menu();
         menu.setId("menuID");
         menu.setTitle(" ");
-        menu.setIcon("fa fa-reorder");
+        menu.setIcon("fa fa-reply-all");
         menu.setItems(new LinkedList<Menu>());
         final List<MenuLink> favourites = moduleService.getUserFavouritesMenuLinks(user.getId());
         createApplicationMenu(menuLinks, favourites, user, menu);

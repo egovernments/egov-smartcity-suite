@@ -150,12 +150,14 @@ label.error {
 }
 .add-border {
   border-bottom: 1px solid #ebebeb;
+  padding: 5px 0;
 }
 .add-padding {
   padding: 0 5px;
 }
 .add-border:last-child {
   border-bottom: none;
+  padding-bottom: 0;
 }
 .view-content {
   font-family: semibold;
@@ -225,7 +227,7 @@ label.error {
   padding-top: 62px;
 }
 .page-container.horizontal-menu .search {
-  position: absolute;
+  position: fixed;
   top: 63px;
   left: 0;
   z-index: 10;
@@ -255,8 +257,8 @@ label.error {
   cursor: pointer;
 }
 .page-container.horizontal-menu .search_list {
-  position: absolute;
-  top: 112px;
+  position: fixed;
+  top: 114px;
   left: 0;
   z-index: 9;
   background: #6b4f2c;
@@ -444,7 +446,7 @@ label.error {
   font-weight: normal;
   font-family: regular;
   font-size: 18px;
-  height: 18px;
+  height: 20px;
   overflow: hidden;
 }
 .multilevelpushmenu_wrapper ul {
