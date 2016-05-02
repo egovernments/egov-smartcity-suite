@@ -39,6 +39,15 @@
  */
 package org.egov.wtms.web.controller.masters;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
@@ -55,14 +64,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -151,6 +152,7 @@ public class WaterRatesMasterController {
             final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "waterRates-master";
+
         final WaterRatesHeader waterRatesHeaderTemp = waterRatesHeaderService.findBy(waterRatesHeaderid);
 
         if (waterRatesHeaderTemp != null) {
@@ -159,9 +161,11 @@ public class WaterRatesMasterController {
             waterRatesHeaderTemp.setWaterSource(waterRatesHeader.getWaterSource());
             waterRatesHeaderTemp.setActive(waterRatesHeader.isActive());
             waterRatesHeader = updateWateRatesetails(waterRatesHeaderTemp, waterRatesHeader.getWaterRatesDetails());
-        }
-
-        else
+            redirectAttrs.addFlashAttribute("waterRatesHeader", waterRatesHeaderTemp);
+            model.addAttribute("message", "Monthly Rent for Non-Meter Master Data already exists.");
+            viewForm(model);
+            return "waterRates-master";
+        } else
             waterRatesHeader = buildWaterRateDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
         waterRatesHeaderService.updateWaterRatesHeader(waterRatesHeader);
         return getWaterRatesMasterList(model);

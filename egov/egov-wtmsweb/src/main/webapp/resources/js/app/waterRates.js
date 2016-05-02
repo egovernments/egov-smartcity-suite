@@ -90,7 +90,7 @@ $(document).ready(function(){
 	            data: {
 			categoryType:'NON_METERED',
 			waterSource:$('#waterSource').val(),
-	            	usageType: $('#usageType').val(),
+	        usageType: $('#usageType').val(),
 			pipeSize :$('#pipeSize').val(),
 	            	
 	            },
@@ -121,6 +121,7 @@ $(document).ready(function(){
 	  });
 	  $('#resetid').click(function() {
 		  document.forms[0].reset();
+		  window.open("/wtms/masters/waterRatesMaster/", "_self");
 			
 	  });
 	 
