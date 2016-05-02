@@ -38,6 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ include file="/includes/taglibs.jsp" %> 
+<script type="text/javascript" src="<c:url value='/resources/javascript/prototype.js'/>"></script>
 <html>
 	<head>  
 	    <s:if test="%{userMode=='new'}">

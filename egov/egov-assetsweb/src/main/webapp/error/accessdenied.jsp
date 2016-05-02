@@ -37,7 +37,7 @@
 						<tr>
 							<td width="59%">
 								<div class="logouttext">
-									<img src="/egi/resources/erp2/images/error.png" width="128" height="128" alt="Error" />									
+									<img src="/egassets/resources/erp2/images/error.png" width="128" height="128" alt="Error" />									
 									<span class="bold">
 									<br/>
 									You have insufficient permissions to perform this action.

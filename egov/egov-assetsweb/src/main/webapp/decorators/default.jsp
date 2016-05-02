@@ -43,34 +43,53 @@
  <%@ include file="/includes/meta.jsp" %> 
 <title>eGov Assets <decorator:title/></title>
 
-<link href="<c:url value='/resources/css/assetmanagement.css'/>" rel="stylesheet" type="text/css" />
-<link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>
+<link href="<c:url value='/resources/css/assetmanagement.css?${app_release_no}'/>" rel="stylesheet" type="text/css" />
+<%-- <link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" /> --%>
 
-<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/autocomplete/autocomplete-min.js" />
+<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
 
-<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script> 
-<script type="text/javascript" src="/egi/commonyui/yui2.8/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
-<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/fonts/fonts-min.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/datatable/assets/skins/sam/datatable.css'/>"/>
 
-<script type="text/javascript" src="/egi/commonyui/yui2.8/animation/animation-min.js"></script>
-<script type="text/javascript" src="<c:url value='/resources/javascript/helper.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/javascript/prototype.js'/>"></script>
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/autocomplete/autocomplete-min.js'/>" />
 
-<script type="text/javascript" src="<c:url value='/commonjs/calendar.js' context='/egi'/>" ></script>
-<script type="text/javascript" src="<c:url value='/javascript/calender.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/javascript/validations.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script> 
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/dragdrop/dragdrop-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/element/element-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/connection/connection-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/datasource/datasource-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/datatable/datatable-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/yui2.8/animation/animation-min.js'/>"></script>
 
-<script type="text/javascript" src="/egassets/resources/javascript/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="/egassets/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>  
-<link rel="stylesheet" type="text/css" href="/egassets/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" />
-<script type="text/javascript" src="/egassets/resources/javascript/ajax-script.js"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/helper.js?${app_release_no}'/>"></script>
+<%-- <script type="text/javascript" src="<c:url value='/resources/javascript/prototype.js'/>"></script> --%>
 
+<script type="text/javascript" src="<c:url value='/resources/erp2/js/calendar.js?${app_release_no}'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/erp2/js/calender.js?${app_release_no}'/>"></script> 
+<script type="text/javascript" src="<c:url value='/resources/erp2/js/ajaxCommonFunctions.js?${app_release_no}'/>"></script> 
+<script type="text/javascript" src="<c:url value='/resources/erp2/js/validations.js?${app_release_no}'/>"></script>
+
+<%-- <script type="text/javascript" src="<c:url value='/resources/javascript/jquery-1.7.2.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/javascript/jquery-ui-1.8.22.custom.min.js'/>"></script>  
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css'/>" /> --%>
+<%-- <script type="text/javascript" src="<c:url value='/resources/javascript/ajax-script.js?${app_release_no}'/>"></script> --%>
+
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" type="text/javascript"></script>
+<script	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+
+<style>
+body
+{
+  font-size: 14px;
+  font-family:regular;
+}
+</style>
 <script type="text/javascript" >
 window.document.onkeydown = function(event) { 
    	 switch (event.keyCode) { 
@@ -87,17 +106,45 @@ window.document.onkeydown = function(event) {
     }
 }
 </script>
-<decorator:head/>
+ <decorator:head/>
 </head>
 <body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
-	    <div id="loadingMask" style="display:none;overflow:none;scroll:none;" ><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message">Please wait....</span></div>
-	    <div id="BreadCrumb">
-	    	<egov:breadcrumb/>
-	    </div>
-	    <div class="topbar">
-			<div style="margin-top:10px"><decorator:title/> </div>
-		</div>
-	    <decorator:body/>
-	    <div class="urlwk"><div align>Asset Management System Designed and Implemented by <a href="http://www.egovernments.org/">eGovernments Foundation</a> All Rights Reserved </div></div>
-    </body>
+	  <div class="page-container">
+		    <!-- header -->
+		    <egov:breadcrumb/>
+		    
+		    <!-- pagecontent -->
+		    <div class="main-content">
+		       <decorator:body/>
+		    </div>
+		    
+		    <!-- footer -->
+		    <footer class="main">
+			    Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
+			</footer>
+	  </div>
+	 
+	 <!-- loading indicator --> 
+	 <div class="modal fade loader-class" data-backdrop="static">
+			<div class="modal-dialog">
+					<div class="modal-body">
+						<div class="row spinner-margin text-center">
+							<div class="col-md-12 ">
+								<div class="spinner">
+									<div class="rect1"></div>
+									<div class="rect2"></div>
+									<div class="rect3"></div>
+									<div class="rect4"></div>
+									<div class="rect5"></div>
+								</div>
+							</div>
+							
+							<div class="col-md-12 spinner-text">
+								Processing your request. Please wait..
+							</div>
+						</div>
+					</div>
+			</div>
+	 </div>
+</body>
 </html>

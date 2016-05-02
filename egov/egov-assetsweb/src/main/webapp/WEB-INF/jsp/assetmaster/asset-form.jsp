@@ -316,7 +316,7 @@ function openVehicleMaster() {
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
 							<img
-								src="/egi/resources/erp2/images/arrow.gif" />
+								src="/egassets/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.asset.details' />
@@ -389,7 +389,7 @@ function openVehicleMaster() {
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
 							<img
-								src="/egi/resources/erp2/images/arrow.gif" />
+								src="/egassets/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.location.details' />
@@ -461,7 +461,7 @@ function openVehicleMaster() {
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
 							<img
-								src="/egi/resources/erp2/images/arrow.gif" />
+								src="/egassets/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.asset.details' />
@@ -498,7 +498,7 @@ function openVehicleMaster() {
 						href="javascript:show_calendar('forms[0].dateOfCreation',null,null,'DD/MM/YYYY');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;"> <img
-							src="/egi/resources/erp2/images/calendar.png"
+							src="/egassets/resources/erp2/images/calendar.png"
 							alt="Calendar" width="16" height="16" border="0"
 							align="absmiddle" />
 					</a></td>
@@ -539,7 +539,7 @@ function openVehicleMaster() {
 					<td colspan="4" class="headingwk">
 						<div class="arrowiconwk">
 							<img
-								src="/egi/resources/erp2/images/arrow.gif" />
+								src="/egassets/resources/erp2/images/arrow.gif" />
 						</div>
 						<div class="headplacer">
 							<s:text name='title.value.summary' />

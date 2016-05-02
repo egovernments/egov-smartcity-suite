@@ -185,7 +185,7 @@ function validateFormAndSubmit(){
 												<td colspan="3" class="headingwk">
 													<div class="arrowiconwk">
 														<img
-															src="/egi/resources/erp2/images/arrow.gif" />
+															src="/egassets/resources/erp2/images/arrow.gif" />
 													</div>
 													<div class="headplacer">
 														<s:text name="search.criteria" />
@@ -365,7 +365,7 @@ function validateFormAndSubmit(){
 																<td colspan="7" class="headingwk">
 																	<div class="arrowiconwk">
 																		<img
-																			src="/egi/resources/erp2/images/arrow.gif" />
+																			src="/egassets/resources/erp2/images/arrow.gif" />
 																	</div>
 																	<div class="headplacer">
 																		<s:text name="search.result" />

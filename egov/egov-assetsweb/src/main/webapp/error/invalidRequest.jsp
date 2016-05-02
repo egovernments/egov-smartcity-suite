@@ -16,7 +16,7 @@
 					<table border="0" cellspacing="0" cellpadding="0" style="position:relative;top:50px;left:50px;">
 						 <tr>
 							<td width="10%">
-							    <img width="100px" alt="Error" src="/egi/resources/erp2/images/error.png">
+							    <img width="100px" alt="Error" src="/egassets/resources/erp2/images/error.png">
 							</td>
                             <td>
 							    <span class="bold">Duplicate request, your request already processed.</span><br/>
