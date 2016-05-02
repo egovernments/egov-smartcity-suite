@@ -74,7 +74,7 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
     List<String> findWorkIdentificationNumbersToSearchLineEstimatesForLoa(@Param("code") String code,
             @Param("status") String status);
 
-    @Query("select distinct(estimateNumber) from LineEstimateDetails as led where led.projectCode.code = :workIdentificationNumber")
+    @Query("select distinct(estimateNumber) from LineEstimateDetails as led where upper(led.projectCode.code) = upper(:workIdentificationNumber)")
     List<String> findEstimateNumbersForWorkIdentificationNumber(
             @Param("workIdentificationNumber") String workIdentificationNumber);
 

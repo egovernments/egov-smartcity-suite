@@ -39,6 +39,15 @@
  */
 package org.egov.works.letterofacceptance.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -68,14 +77,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -344,7 +345,7 @@ public class LetterOfAcceptanceService {
     
     public List<WorkOrder> getLoaForCreateMilestone(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final StringBuilder queryStr = new StringBuilder(500);
-        
+           
             buildWhereClause(searchRequestLetterOfAcceptance, queryStr);
             final Query query = setParameterForMilestone(searchRequestLetterOfAcceptance, queryStr);
             final List<WorkOrder> workOrderList = query.getResultList();
@@ -352,6 +353,7 @@ public class LetterOfAcceptanceService {
     }
     
     private void buildWhereClause(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
+        
         queryStr.append("select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status ");
         queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.executingDepartment.id = :departmentName)");
         
@@ -380,6 +382,7 @@ public class LetterOfAcceptanceService {
 
     private Query setParameterForMilestone(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
+
             qry.setParameter("status", WorksConstants.APPROVED);
             qry.setParameter("moduleType", WorksConstants.WORKORDER);
         if (searchRequestLetterOfAcceptance != null ) {

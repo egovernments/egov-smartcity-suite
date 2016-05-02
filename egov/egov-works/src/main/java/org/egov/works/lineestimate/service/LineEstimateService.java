@@ -302,7 +302,7 @@ public class LineEstimateService {
                             lineEstimateForLoaSearchRequest.getExecutingDepartment()));
                 if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null)
                     criteria.add(Restrictions.eq("estimateNumber",
-                            lineEstimateForLoaSearchRequest.getEstimateNumber()));
+                            lineEstimateForLoaSearchRequest.getEstimateNumber()).ignoreCase());
                 if (lineEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
                     criteria.add(Restrictions.ge("lineEstimate.adminSanctionDate",
                             lineEstimateForLoaSearchRequest.getAdminSanctionFromDate()));
@@ -314,7 +314,7 @@ public class LineEstimateService {
                             lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
                 if (lineEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
                     criteria.add(Restrictions.eq("projectCode.code",
-                            lineEstimateForLoaSearchRequest.getWorkIdentificationNumber()));
+                            lineEstimateForLoaSearchRequest.getWorkIdentificationNumber()).ignoreCase());
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
                 criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
 
