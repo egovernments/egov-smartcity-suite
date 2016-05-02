@@ -1782,7 +1782,6 @@ public class PropertyService {
                                         .getValue().get(demandReason), currerntInstallment);
                         ptDemand.addEgDemandDetails(currentDemandDetail);
                         newDemandDetailsByInstallment.get(currerntInstallment).add(currentDemandDetail);
-                        // HibernateUtil.getCurrentSession().flush();
                     } else {
                         currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected().add(
                                 excessAmountByDemandReasonForInstallment.getValue().get(demandReason)));

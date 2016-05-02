@@ -247,8 +247,6 @@ public class DeathRegistrationAction extends RegistrationAction {
             change.setModuleid(deathRegistration.getId().intValue());
             change.setModuletype(BndConstants.DEATHREGISTRATIONMODULE);
             // change.setCreatedby(EgovThreadLocals.getUserId());
-            // TODO egifix-hibernateutil
-            // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
             deathRegistrationService.save(deathRegistration, workFlowType, addictionList);
         } else if (getMode().equals(UNLOCK)) {
@@ -264,8 +262,6 @@ public class DeathRegistrationAction extends RegistrationAction {
             change.setModuleid(deathRegistration.getId().intValue());
             change.setModuletype(BndConstants.DEATHREGISTRATIONMODULE);
             // change.setCreatedby(EgovThreadLocals.getUserId());
-            // TODO egifix-hibernateutil
-            // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
             deathRegistrationService.save(deathRegistration, workFlowType, addictionList);
         } else {

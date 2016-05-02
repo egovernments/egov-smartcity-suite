@@ -41,8 +41,11 @@ package org.egov.demand.model;
 
 import org.egov.demand.interfaces.Billable;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
+import org.hibernate.Session;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * A skeleton implementation of Billable, that should be extended by all Billable implementations.
@@ -51,13 +54,15 @@ public abstract class AbstractBillable implements Billable {
 
     private static final String NEXT_BILL_NUM_FROM_SEQ = "SELECT SEQ_EG_BILL_BILLNO.NEXTVAL FROM DUAL";
 
+    @PersistenceContext
+    private EntityManager entityManager;
     /**
      * Generates a number to be used as the ID of a new bill.
      */
     @Override
     public String getReferenceNumber() {
         try {
-            Query q = HibernateUtil.getCurrentSession().createSQLQuery(NEXT_BILL_NUM_FROM_SEQ);
+            Query q = entityManager.unwrap(Session.class).createSQLQuery(NEXT_BILL_NUM_FROM_SEQ);
             return q.uniqueResult().toString();
         } catch (Exception e) {
             throw new ApplicationRuntimeException("Could not generate new bill no", e);

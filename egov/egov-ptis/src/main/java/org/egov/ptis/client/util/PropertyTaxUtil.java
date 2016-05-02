@@ -132,12 +132,15 @@ import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.StringReader;
@@ -212,6 +215,10 @@ public class PropertyTaxUtil {
     private ModuleService moduleDao;
     @Autowired
     private RebatePeriodService rebatePeriodService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public void setPersistenceService(final PersistenceService persistenceService) {
@@ -1022,8 +1029,7 @@ public class PropertyTaxUtil {
         LOGGER.debug("Entered into getLatestCollRcptDateForProp, consumerCode=" + consumerCode);
 
         final Map<String, Date> penaltyDates = new HashMap<String, Date>();
-        final List<Object> rcptHeaderList = HibernateUtil
-                .getCurrentSession()
+        final List<Object> rcptHeaderList = entityManager.unwrap(Session.class)
                 .createQuery(
                         "select substr(rd.description, length(rd.description)-6, length(rd.description)), max(rh.createdDate) "
                                 + "from org.egov.erpcollection.models.ReceiptHeader rh "
@@ -1282,7 +1288,7 @@ public class PropertyTaxUtil {
      * throws ParseException { String query = ""; List result = null; Integer
      * days = 21; Date noticeDate = null; String indexNumber =
      * property.getBasicProperty().getUpicNo(); if (isNoticeGenerated(property))
-     * { result = HibernateUtil .getCurrentSession() .createQuery(
+     * { result = session .createQuery(
      * "select to_char(n.noticeDate, 'dd/mm/yyyy') from PtNotice n " +
      * "where n.basicProperty = :basicProp " + "and n.noticeDate is not null " +
      * "and n.noticeDate >= :propCreatedDate") .setEntity("basicProp",
@@ -1379,8 +1385,7 @@ public class PropertyTaxUtil {
      * @return
      */
     public Date getEarliestModificationDate(final String propertyId) {
-        final List result = HibernateUtil
-                .getCurrentSession()
+        final List result = entityManager.unwrap(Session.class)
                 .createQuery(
                         "select to_char(min(pd.effective_date), 'dd/mm/yyyy') "
                                 + "from PropertyImpl p inner join p.propertyDetail pd "
@@ -1474,7 +1479,7 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
                 + "and ptd.egInstallmentMaster = :installment";
 
-        final Ptdemand ptDemand = (Ptdemand) HibernateUtil.getCurrentSession().createQuery(query)
+        final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
                 .setEntity("property", property).setEntity("installment", currentInstallment).list().get(0);
 
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
@@ -1537,7 +1542,7 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
-        final Ptdemand ptDemand = (Ptdemand) HibernateUtil.getCurrentSession().createQuery(query)
+        final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
                 .setEntity("property", property).setEntity("installment", currentInstallment).list().get(0);
 
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
@@ -1585,7 +1590,7 @@ public class PropertyTaxUtil {
                 + "where bp.upicNo = ? and bp.active = true " + "and (p.remarks = null or p.remarks <> ?) "
                 + "order by p.createdDate";
 
-        final List<Property> allProperties = HibernateUtil.getCurrentSession().createQuery(query)
+        final List<Property> allProperties = entityManager.unwrap(Session.class).createQuery(query)
                 .setString(0, basicProperty.getUpicNo()).setString(1, PropertyTaxConstants.STR_MIGRATED_REMARKS).list();
 
         new ArrayList<Property>();
@@ -2294,7 +2299,7 @@ public class PropertyTaxUtil {
                 + "where bp.active = true " + "and (p.status = 'W' or p.status = 'I' or p.status = 'A') "
                 + "and p = :property " + "and ptd.egInstallmentMaster = :installment";
 
-        final Ptdemand ptDemand = (Ptdemand) HibernateUtil.getCurrentSession().createQuery(query)
+        final Ptdemand ptDemand = (Ptdemand) entityManager.unwrap(Session.class).createQuery(query)
                 .setEntity("property", property).setEntity("installment", currentInstallment).list().get(0);
 
         for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {

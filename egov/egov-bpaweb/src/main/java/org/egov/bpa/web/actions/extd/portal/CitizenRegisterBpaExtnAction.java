@@ -1206,8 +1206,7 @@ public class CitizenRegisterBpaExtnAction extends RegisterBpaExtnAction{
 	//@SkipValidation
 	/*public String showInspectionSchedule()
 	{
-		HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
-		
+
 			postponedInspectionDetails=inspectionExtnService.getInspectionListforRegistrationObject(registration);
 		
 			for(InspectionExtn inspectiondetails:postponedInspectionDetails){

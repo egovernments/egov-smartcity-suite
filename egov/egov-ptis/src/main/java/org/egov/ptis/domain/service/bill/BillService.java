@@ -41,7 +41,6 @@ package org.egov.ptis.domain.service.bill;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -53,14 +52,12 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.calculator.DemandNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -68,9 +65,12 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -106,10 +106,8 @@ public class BillService {
     InputStream billPDF;
     @Autowired
     private ModuleService moduleDao;
-    @Autowired
-    private InstallmentDao installmentDao;
-    @Autowired
-    private PtDemandDao ptDemandDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private PropertyTaxBillable propertyTaxBillable;
     private PersistenceService persistenceService;
@@ -197,8 +195,7 @@ public class BillService {
     private int getNumberOfBills(final BasicProperty basicProperty) {
         final Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
 
-        final Long count = (Long) HibernateUtil
-                .getCurrentSession()
+        final Long count = (Long) entityManager.unwrap(Session.class)
                 .createQuery(
                         "SELECT COUNT (*) FROM EgBill WHERE module = ? "
                                 + "AND egBillType.code = ? AND consumerId = ? AND is_Cancelled = 'N' "

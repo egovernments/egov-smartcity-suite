@@ -58,7 +58,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.model.PropertyBillInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -70,8 +69,11 @@ import org.egov.ptis.domain.entity.recovery.Warrant;
 import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.FlushMode;
+import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -113,6 +115,9 @@ public class RecoveryAction extends BaseRecoveryAction {
 	private static String PRINT = "print";
 
 	private UserService userService;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	public RecoveryAction() {
 
@@ -253,7 +258,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 	@ValidationErrorPage(value = "warrantApplicationNew")
 	public String warrantApplication() {
 		LOGGER.debug("RecoveryAction | warrantApplication | Start");
-		HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
+		entityManager.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
 		setupWorkflowDetails();
 		List<WarrantFee> warrantFess = new LinkedList<WarrantFee>();
 		for (WarrantFee warrantFee : recovery.getWarrant().getWarrantFees()) {
@@ -270,7 +275,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 				PropertyTaxConstants.RECOVERY_WARRANTPREPARED));
 		updateWfstate("Warrant Application");
 		LOGGER.debug("RecoveryAction | warrantApplication | end" + recovery.getWarrant());
-		HibernateUtil.getCurrentSession().flush();
+		entityManager.unwrap(Session.class).flush();
 		addActionMessage(getText("warrantApp.success"));
 
 		return MESSAGE;

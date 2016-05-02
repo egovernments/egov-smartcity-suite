@@ -298,8 +298,6 @@ public class StillBirthRegistrationAction extends RegistrationAction {
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
             // change.setCreatedby(EgovThreadLocals.getUserId());
-            // TODO egifix-hibernateutil
-            // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
             birthRegistrationService.save(stillBirthRegistration, workFlowType);
         } else if (getMode().equals(UNLOCK)) {
@@ -316,8 +314,6 @@ public class StillBirthRegistrationAction extends RegistrationAction {
             change.setModuleid(stillBirthRegistration.getId().intValue());
             change.setModuletype(BndConstants.STILLBIRTHREGISTRATIONMODULE);
 //             change.setCreatedby(EgovThreadLocals.getUserId());
-            // TODO egifix-hibernateutil
-            // HibernateUtil.getCurrentSession().persist(change);
             entityManager.persist(change);
             birthRegistrationService.save(stillBirthRegistration, workFlowType);
         } else {

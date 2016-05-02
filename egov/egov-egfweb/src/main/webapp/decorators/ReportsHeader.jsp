@@ -104,11 +104,9 @@
 			actobj= rbacManager.getActionByURL(Url);
 			if(actobj!=null)
 			{
-				//HibernateUtil.getCurrentSession().lock(actobj,LockMode.NONE); 
-				helpUrl=actobj.getHelpURL(); 
+				helpUrl=actobj.getHelpURL();
 				displayName=actobj.getDisplayName();
 				name=actobj.getName();
-				//System.out.println("The Action ID"+Integer.parseInt(actionId));
 				LOGGER.info("The displayName"+displayName);
 				LOGGER.info("hMmmmmmmmmmmmmmmmmmmmmmmmAction id  is from Url");
 				How="Url";
@@ -124,8 +122,7 @@
 					if(parentPage.equalsIgnoreCase(URI))
 					{
 						actobj= rbacManager.getActionById(new Integer(Integer.parseInt(actionId)));
-						//HibernateUtil.getCurrentSession().lock(actobj,LockMode.NONE); 
-						helpUrl=actobj.getHelpURL(); 
+						helpUrl=actobj.getHelpURL();
 						displayName=actobj.getDisplayName();
 						name=actobj.getName();
 						LOGGER.info("The Action ID"+Integer.parseInt(actionId));
@@ -144,8 +141,7 @@
 			{
 				session.setAttribute("actionid",actionId);
 				session.setAttribute("parentPage",URI);
-			//	HibernateUtil.getCurrentSession().lock(actobj,LockMode.NONE); 
-				helpUrl=actobj.getHelpURL(); 
+				helpUrl=actobj.getHelpURL();
 				displayName=actobj.getDisplayName();
 				name=actobj.getName();
 				LOGGER.info("The displayName"+displayName);

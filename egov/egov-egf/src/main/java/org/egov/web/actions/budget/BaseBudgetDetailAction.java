@@ -359,7 +359,6 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
          * persistenceService.getSession().createSQLQuery("delete from egf_budgetdetail where id="
          * +beDetail.getId()).executeUpdate(); } } if(LOGGER.isInfoEnabled()) LOGGER.info("deleting "+reDetail.getId()
          * +"where budgetHeade is " +reDetail.getBudgetGroup().getName() +" and function  is "+reDetail.getFunction().getName());
-         * HibernateUtil
          * .getCurrentSession().createSQLQuery("delete from egf_budgetdetail where id="+reDetail.getId()).executeUpdate();
          * reDetail.setId(null); } else { reDetail.setId(null); } }
          */

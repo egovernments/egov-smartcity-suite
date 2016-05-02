@@ -46,7 +46,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.dao.GenericMasterDAO;
 import org.egov.pims.model.GenericMaster;
 import org.egov.pims.service.EmployeeServiceOld;
@@ -72,6 +71,9 @@ public class AfterGenericMasterAction extends DispatchAction {
 
 	@Autowired
 	private EgovMasterDataCaching masterDataCache;
+
+	@Autowired
+	private GenericMasterDAO genericMasterDAO;
 	
 	public AfterGenericMasterAction() {
 	}
@@ -83,7 +85,6 @@ public class AfterGenericMasterAction extends DispatchAction {
 
 		String alertMessage = null;
 		String className = req.getParameter("className").trim();
-		GenericMasterDAO genericMasterDAO = new GenericMasterDAO();
 		GenericMaster genericMaster = null;
 		try {
 			GenericForm genericForm = (GenericForm) form;
@@ -114,7 +115,6 @@ public class AfterGenericMasterAction extends DispatchAction {
 			}
 			genericMasterDAO.create(genericMaster);
 			removeFromCache(className);
-			HibernateUtil.getCurrentSession().flush();
 			target = "success";
 			alertMessage = "Executed successfully";
 		}
@@ -137,7 +137,6 @@ public class AfterGenericMasterAction extends DispatchAction {
 
 			target = ERROR;
 			   LOGGER.error(ex.getMessage());
-			   //HibernateUtil.rollbackTransaction();
 			   throw new ApplicationRuntimeException(EXCEPTION + ex.getMessage(),ex);
 		}
 		req.setAttribute("alertMessage", alertMessage);
@@ -152,7 +151,6 @@ public class AfterGenericMasterAction extends DispatchAction {
 		try {
 
 			GenericForm genericForm = (GenericForm) form;
-			GenericMasterDAO genericMasterDAO = new GenericMasterDAO();
 			String className = req.getParameter("className").trim();
 
 			GenericMaster genericMastr = genericMasterDAO.getGenericMaster(
@@ -174,13 +172,10 @@ public class AfterGenericMasterAction extends DispatchAction {
 			genericMasterDAO.update(genericMastr);
 			removeFromCache(className);
 			req.getSession().removeAttribute("Id");
-			HibernateUtil.getCurrentSession().flush();
 			target = "success";
 			alertMessage = "Executed successfully";
 		} catch (Exception ex) {
-				target = ERROR;
 			   LOGGER.error(ex.getMessage());
-			   //HibernateUtil.rollbackTransaction();
 			   throw new ApplicationRuntimeException(EXCEPTION + ex.getMessage(),ex);
 		}
 		req.setAttribute("alertMessage", alertMessage);
@@ -196,14 +191,12 @@ public class AfterGenericMasterAction extends DispatchAction {
 		try {
 
 			GenericForm genericForm = (GenericForm) form;
-			GenericMasterDAO genericMasterDAO = new GenericMasterDAO();
 			String className = req.getParameter("className").trim();
 			GenericMaster genericMaster = genericMasterDAO.getGenericMaster(
 					(Integer.valueOf(genericForm.getId())).intValue(), className);
 			genericMasterDAO.remove(genericMaster);
 			removeFromCache(className);
 			req.getSession().removeAttribute("Id");
-			HibernateUtil.getCurrentSession().flush();
 			target = "success";
 			alertMessage = "Executed deleting successfully";
 		} catch (ConstraintViolationException ex) {
@@ -211,12 +204,8 @@ public class AfterGenericMasterAction extends DispatchAction {
 			target = ERROR;
 			alertMessage = "This data can't be deleted as it is being used";
 			LOGGER.error(ex.getMessage());
-			//HibernateUtil.rollbackTransaction();
 		} catch (Exception ex) {
-			target = ERROR;
-			alertMessage = "This can't be deleted";
 			LOGGER.error(ex.getMessage());
-			//HibernateUtil.rollbackTransaction();
 			throw new ApplicationRuntimeException(EXCEPTION + ex.getMessage(),ex);
 		}
 		req.setAttribute("alertMessage", alertMessage);
@@ -231,7 +220,6 @@ public class AfterGenericMasterAction extends DispatchAction {
 					.toString();
 			masterDataCache.removeFromCache(tagName);
 		} catch (ApplicationRuntimeException e) {
-			// Exception Handled
 			LOGGER.error(e.getMessage());
 			throw new ApplicationRuntimeException(EXCEPTION + e.getMessage(),e);
 		}

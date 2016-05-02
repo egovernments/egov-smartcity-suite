@@ -282,7 +282,6 @@ public class MiscellaneousFileUploadAction extends BaseFormAction {
 
                 initialiseObjectsInAction(input);
 
-                // HibernateUtil.beginTransaction();
                 try {
                     receiptAction.save();
                 } catch (final Exception ex) {
@@ -290,11 +289,9 @@ public class MiscellaneousFileUploadAction extends BaseFormAction {
                     final String errMsg = "Error in Receipt Creation : " + ex.getMessage();
                     LOGGER.error(errMsg, ex);
                     errorRowMap.put(Integer.valueOf(input[11]), errMsg);
-                    // HibernateUtil.rollbackTransaction();
                     continue;
                 }
 
-                // HibernateUtil.commitTransaction();
                 successNo++;
 
                 LOGGER.info(" Persisted " + (i + 1) + " records ");

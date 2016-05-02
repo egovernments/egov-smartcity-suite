@@ -310,9 +310,7 @@ public class FileUploadAction extends BaseFormAction {
                         if (i >= inputList.size() - 1)
                             break;
                     }
-                if (!testMode) {
-                    // HibernateUtil.beginTransaction();
-                }
+
                 try {
                     // if any exception is present so far, do not create the challan.
                     if (errorRowMap.get(Integer.valueOf(input[21])) == null)
@@ -327,9 +325,7 @@ public class FileUploadAction extends BaseFormAction {
                         errorRowMap.put(Integer.valueOf(input[21]), "Duplicate Challan Number - [" + input[0] + "]");
                     else
                         errorRowMap.put(Integer.valueOf(input[21]), "Error in challan creation.");
-                    if (!testMode) {
-                        // HibernateUtil.rollbackTransaction();
-                    }
+
                     continue;
                 }
 
@@ -339,14 +335,10 @@ public class FileUploadAction extends BaseFormAction {
                 } catch (final Exception e) {
                     errorRowMap.put(Integer.valueOf(input[21]), "Error in Challan Receipt creation.");
                     LOGGER.debug(e.getMessage());
-                    if (!testMode) {
-                        // HibernateUtil.rollbackTransaction();
-                    }
+
                     continue;
                 }
-                if (!testMode) {
-                    // HibernateUtil.commitTransaction();
-                }
+
                 setSuccessNo(++successNo);
 
                 LOGGER.debug("Challan details in Row " + input[21] + "uploaded and persisted successfully!");

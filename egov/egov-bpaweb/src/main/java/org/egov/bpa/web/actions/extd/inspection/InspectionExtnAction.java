@@ -859,7 +859,6 @@ public class InspectionExtnAction extends BaseFormAction {
 			// details.
 			List<BpaFeeExtn> santionFeeList = new ArrayList();
 
-			// HibernateUtil.getCurrentSession().flush();
 			if (inspection.getRegistration() != null) {
 				santionFeeList = feeExtnService
 						.getAllSanctionedFeesbyServiceType(inspection

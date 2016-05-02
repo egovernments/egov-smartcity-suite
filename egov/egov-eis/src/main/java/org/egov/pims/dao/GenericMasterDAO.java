@@ -40,10 +40,11 @@
 package org.egov.pims.dao;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.pims.model.GenericMaster;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -52,13 +53,15 @@ import java.io.Serializable;
  * @author deepak
  *
  */
+@Service
+@Transactional
 public class GenericMasterDAO implements Serializable
 {
 	@PersistenceContext
 	private EntityManager entityManager;
     
 	public Session  getCurrentSession() {
-		return HibernateUtil.getCurrentSession();
+		return entityManager.unwrap(Session.class);
 	}
 
 	public void create(GenericMaster genericMaster) 

@@ -47,7 +47,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.bean.PropertyCalSheetInfo;
 import org.egov.ptis.client.model.AreaTaxCalculationInfo;
 import org.egov.ptis.client.model.ConsolidatedUnitTaxCalReport;
@@ -63,9 +62,12 @@ import org.egov.ptis.domain.entity.property.UnitAreaCalculationDetail;
 import org.egov.ptis.domain.entity.property.UnitCalculationDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,6 +105,9 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 	private BasicProperty basicProperty;
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Override
 	public Object getModel() {
@@ -209,7 +214,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 				+ "where ucd.property = ? " + "order by ucd.unitNumber, ucd.installmentFromDate, ucd.fromDate";
 
 		@SuppressWarnings("unchecked")
-		List<UnitCalculationDetail> unitCalculationDetails = HibernateUtil.getCurrentSession().createQuery(query)
+		List<UnitCalculationDetail> unitCalculationDetails = entityManager.unwrap(Session.class).createQuery(query)
 				.setEntity(0, property).list();
 
 		List<UnitCalculationDetail> uniqueALVUnitCalcDetails = new ArrayList<UnitCalculationDetail>();

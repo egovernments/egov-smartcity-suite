@@ -46,7 +46,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PenaltyBill;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -56,6 +55,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.egov.ptis.notice.PtNotice;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +64,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -110,11 +112,11 @@ public class PenaltyCalculationService {
 	private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
 	
 	@Autowired
-	private ApplicationContext beanProvider;
-	@Autowired
 	private RebatePeriodService rebatePeriodService;
 
-	
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	public PenaltyCalculationService() {}
 	
 	public PenaltyCalculationService(BasicProperty basicProperty, 
@@ -371,7 +373,7 @@ public class PenaltyCalculationService {
 				+ "where bill.is_Cancelled = 'N' and bill.egBillType.code = :billTypeCode and bill.billNo = notice.noticeNo "
 				+ "and notice.noticeType = :noticeType and bp.upicNo = :upicNo order by notice.noticeDate";
 
-		List<PtNotice> demandBills = HibernateUtil.getCurrentSession().createQuery(query)
+		List<PtNotice> demandBills = entityManager.unwrap(Session.class).createQuery(query)
 				.setString("billTypeCode", BILLTYPE_MANUAL).setString("noticeType", NOTICE_TYPE_BILL)
 				.setString("upicNo", upicNo).list();
 		
@@ -609,7 +611,7 @@ public class PenaltyCalculationService {
 				+ " and n.noticeDate is not null "
 				+ "and pvr.noticeDate is not null ";
 
-		List result = HibernateUtil.getCurrentSession().createQuery(stringQuery).setString("upicNo", propertyId)
+		List result = entityManager.unwrap(Session.class).createQuery(stringQuery).setString("upicNo", propertyId)
 				.setString("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
 				.setString("noticePVR", NOTICE_PRATIVRUTTA).list();
 		
@@ -747,7 +749,7 @@ public class PenaltyCalculationService {
 	                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
 	                + "and ptd.egInstallmentMaster = :installment " + "and drm.code = :penaltyReasonCode";
 
-	        final List list = HibernateUtil.getCurrentSession().createQuery(query).setEntity("property", property)
+	        final List list = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
 	                .setEntity("installment", currentInstall)
 	                .setString("penaltyReasonCode", DEMANDRSN_CODE_PENALTY_FINES).list();
 

@@ -1609,7 +1609,6 @@ public class BpaCommonExtnService extends ActionSupport  {
 		   //registration.changeState("Closed",eisCommonsManager.getPositionByUserId(registration.getCreatedBy().getId()),comments);
 
 		   //registrationWorkflowService.transition("Closed", registration, comments);
-		   //  HibernateUtil.getCurrentSession().flush();       
 
 		   registration.changeState("Closed",registration.getCurrentState().getOwner(),comments);
 		   //System.out.print("aaaaaaaaaaaaaaa");
@@ -1640,7 +1639,6 @@ public class BpaCommonExtnService extends ActionSupport  {
 				  
 			   }
 			 
-			   HibernateUtil.getCurrentSession().flush();
 		}
    */
    
@@ -1692,8 +1690,7 @@ public class BpaCommonExtnService extends ActionSupport  {
 		    
 	
 	   }
-	   HibernateUtil.getCurrentSession().flush(); 
-	  
+
 }*/
 
    public List getAllBanks() {

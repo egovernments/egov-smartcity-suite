@@ -67,10 +67,12 @@ import org.egov.infra.reporting.engine.AbstractReportService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infstr.utils.HibernateUtil;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,6 +89,9 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JasperReportService.class);
 	public static final String TEMPLATE_EXTENSION = ".jasper";
 	private static final String JASPER_PROPERTIES_FILE = "config/jasperreports.properties";
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	static {
 		// Set the system property for jasperreports properties file
@@ -269,7 +274,7 @@ public class JasperReportService extends AbstractReportService<JasperReport> {
 			if (reportParams == null) {
 				reportParams = new HashMap<String, Object>();
 			}
-			reportParams.put(JRHibernateQueryExecuterFactory.PARAMETER_HIBERNATE_SESSION, HibernateUtil.getCurrentSession());
+			reportParams.put(JRHibernateQueryExecuterFactory.PARAMETER_HIBERNATE_SESSION, entityManager.unwrap(Session.class));
 			JasperReportsContext jrc = DefaultJasperReportsContext.getInstance();
 			jrc.setValue(JRHibernateQueryExecuterFactory.PROPERTY_HIBERNATE_FIELD_MAPPING_DESCRIPTIONS, false);
 			final JasperPrint jasperPrint = JasperFillManager.getInstance(jrc).fill(getTemplate(reportInput.getReportTemplate()), reportParams);
