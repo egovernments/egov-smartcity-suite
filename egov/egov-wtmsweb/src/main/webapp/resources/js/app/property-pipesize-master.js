@@ -2,12 +2,12 @@ $(document).ready(function(){
 	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
-	if (activeDiv =='false' && 'true'){
+	if (activeDiv =='false'){
 		$('#statusdiv').hide();
 	     $('#addnewid').hide();
 		}
 	
-	else if(activeDiv=='true'){
+	else {
 		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();

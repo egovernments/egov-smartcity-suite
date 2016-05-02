@@ -46,7 +46,7 @@ $(document).ready(function(){
 	     $('#addnewid').hide();
 		}
 	
-	else if(activeDiv =='true'){
+	else {
 		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();

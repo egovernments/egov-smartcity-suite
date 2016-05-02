@@ -44,7 +44,7 @@ $(document).ready(function(){
 			$('#addnewid').hide();
 		}
 	
-	else if(mandatoryDiv=='true'){
+	else {
 			$('#resetid').hide();
 			$('#reqdiv').show();
 			$('#addnewid').show();
