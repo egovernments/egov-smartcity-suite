@@ -39,7 +39,9 @@
  ******************************************************************************/
 package org.egov.ptis.domain.dao.demand;
 
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgBill;
@@ -62,6 +64,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,6 +98,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -435,14 +441,15 @@ public class PtDemandHibernateDao implements PtDemandDao {
         Ptdemand egptPtdemand = null;
 
         if (property != null) {
+            CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
             qry = getCurrentSession()
                     .createQuery(
                             "from  Ptdemand egptDem left join fetch egptDem.egDemandDetails dd left join fetch dd.egDemandReason dr "
                                     + "where egptDem.egptProperty =:property "
                                     + "and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) ");
             qry.setEntity(PROPERTY, property);
-            qry.setDate("fromYear", new Date());
-            qry.setDate("toYear", new Date());
+            qry.setDate("fromYear", currentFinancialYear.getStartingDate());
+            qry.setDate("toYear", currentFinancialYear.getStartingDate());
             /*
              * if (qry.list().size() == 1) { egptPtdemand = (Ptdemand)
              * qry.uniqueResult(); } else { egptPtdemand = (Ptdemand)
