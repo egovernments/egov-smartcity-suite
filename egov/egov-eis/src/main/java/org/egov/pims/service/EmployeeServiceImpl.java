@@ -427,8 +427,8 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
                     emp = getEmloyeeById(ev.getId().intValue());
                     break;
                 }
-                if (emp != null)
-                    ass = emp.getAssignment(date); // Returns current/latest
+                /*if (emp != null)
+                    ass = emp.getAssignment(date,persistenceService);*/ // Returns current/latest
                                                    // primary/temp assignment as
                                                    // on current date
                 Iterator itr1 = list.iterator();

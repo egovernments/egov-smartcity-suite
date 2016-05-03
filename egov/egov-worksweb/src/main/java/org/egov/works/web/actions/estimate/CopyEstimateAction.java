@@ -112,7 +112,7 @@ public class CopyEstimateAction extends BaseFormAction {
         copyEstimate.setDocumentNumber(abstractEstimate.getDocumentNumber());
         copyEstimate.setIsCopiedEst("Y");
 
-        loggedInEmp.getAssignment(getFinancialYearStartDate()).getPosition();
+        //loggedInEmp.getAssignment(getFinancialYearStartDate()).getPosition();
 
         // TODO - workflowService.start hase been removed. Need to find
         // alternative.

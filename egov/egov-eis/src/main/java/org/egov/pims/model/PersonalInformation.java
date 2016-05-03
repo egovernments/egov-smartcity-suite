@@ -617,46 +617,7 @@ public void setEmployeeTypeMaster(EmployeeType employeeTypeMaster) {
 		
 		return getName();
 	}
-	/**
-	 * returns current/last primary/temporary assignment on given Date 
-	 * @param toDate
-	 * @return Assignment 
-	 */
-	@SuppressWarnings("unchecked")
-	public Assignment getAssignment(Date toDate)
-	{
-		Assignment assignment=null;
-		List<Assignment> assignmentList;
-		StringBuilder stringbuilder=new StringBuilder(100); 
-		stringbuilder.append("from Assignment ass where  ass.assignmentPrd.employeeId.idPersonalInformation = :empid and ass.isPrimary=:primary" +
-				"  and (ass.fromDate <=:fromDate and (ass.toDate>=:toDate or ass.toDate is null) " +
-				" or (:toDate >  "+
-				" (select max(prd.toDate) from Assignment prd where prd.id=ass.id and prd.employeeId.idPersonalInformation=:empid ) ) )" +
-				" ORDER BY ass.toDate DESC  " );
-		Query assignmentHql=HibernateUtil.getCurrentSession().
-		createQuery(stringbuilder.toString());
-		assignmentHql.setDate("fromDate", toDate).
-		setDate("toDate", toDate).
-		setLong("empid", Long.valueOf(this.getIdPersonalInformation())).
-		setCharacter("primary", 'Y');
-		assignmentList= assignmentHql.list();
-		
-		if(assignmentList.isEmpty())
-		{
-			assignmentList=assignmentHql.
-			setCharacter("primary", 'N').list();
-			if(!assignmentHql.list().isEmpty())
-			{
-				assignment=assignmentList.get(0);
-			}
-		}
-		else
-		{ 
-			assignment=(Assignment)assignmentHql.list().get(0);
-		}
-		
-		return assignment;
-	}
+	
 	@Override
 	public EgwStatus getEgwStatus() {
 		// TODO Auto-generated method stub
