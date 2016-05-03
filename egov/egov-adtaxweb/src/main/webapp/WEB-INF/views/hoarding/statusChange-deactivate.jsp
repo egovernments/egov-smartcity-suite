@@ -63,19 +63,20 @@
 				 		</div>
 						<form:hidden path="applicationNumber" id="applicationNumber" value="${advertisementPermitDetailStatus.applicationNumber}" />
 						<form:hidden path="id" id="id" value="${advertisementPermitDetailStatus.id}" />
+						<form:hidden path="applicationDate" id="applicationDate" value="${applicationDate}" />
 						<label class="col-sm-2 control-label"><spring:message code="lbl.demarcation.date"/><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control datepicker" id="deactivation_date" data-date-end-date="0d"  path="deactivation_date" required="required"/>
+							<form:input type="text" class="form-control datepicker" id="deactiveDate" data-date-end-date="0d"  path="deactivation_date" required="required"/>
 						</div> 
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="row add-border">
-	                	<div class="col-md-3 add-margin text-right"><spring:message code="lbl.pending.tax"/></div>
-	                	<div class="col-md-3 add-margin view-content" id="ptax">
+					<div class="form-group">
+	                	<div class="col-sm-3 add-margin text-right"><spring:message code="lbl.pending.tax"/></div>
+	                	<div class="col-sm-3 add-margin view-content" id="ptax">
 	                	  ${advertisementPermitDetailStatus.advertisement.pendingTax}  
 	                    </div>
-	               	</div>
+					</div>
 				</div>
 				<div class="row">
        				<div class="text-center">
@@ -97,5 +98,6 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/app/js/dateValidation.js'/>"></script>
 <script src="<c:url value='/resources/app/js/deactivateAdvertisement.js'/>"></script>
 

@@ -69,8 +69,8 @@
 								<label class="col-sm-2 control-label text-right">
 									<spring:message code="lbl.application.date"/>
 								</label>
-								<div class="col-sm-3 add-margin view-content">
-									${advertisementPermitDetailStatus.applicationDate}
+								<div class="col-sm-3 add-margin view-content" id="applicationDateValue">
+									${applicationDate}
 								</div>
 							</div>
 							<div class="form-group">

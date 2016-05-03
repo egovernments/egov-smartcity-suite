@@ -72,6 +72,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.text.SimpleDateFormat;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -177,6 +178,8 @@ public class DeactivateAdvertisementController extends GenericController {
         advertisementPermitDetail.getAdvertisement().setPendingTax(pendingTax);
 
         model.addAttribute("advertisementPermitDetailStatus", advertisementPermitDetail);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        model.addAttribute("applicationDate", sdf.format(advertisementPermitDetail.getApplicationDate()));
         return "statusChange-deactivate";
     }
 

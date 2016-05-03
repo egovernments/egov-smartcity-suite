@@ -73,6 +73,11 @@ $(document).ready(function(){
 	
 	
 	$("#deactivation").click(function(e){
+		if(!validateDate()){
+			document.getElementById("deactiveDate").value="";
+			document.getElementById("deactiveDate").focus(); 
+			return false;
+		}
 		var pendingTax= $('#ptax').html();
 		var id=document.getElementById("id").value;
 
@@ -100,6 +105,7 @@ $(document).ready(function(){
 			
 		}
 	});
+	
 });	
 
 var prevdatatable;
@@ -197,8 +203,16 @@ $('#searchrecord').click(function(e){
 		});
 	});
 	
-	
-	
-
-	
+	function validateDate(){
+		var application_date = document.getElementById("applicationDate").value;
+		var deactivation_date = document.getElementById("deactiveDate").value;
+		var a = compareDate(application_date, deactivation_date);
+		if(a==-1){
+			bootbox.alert(" The deactivation date should come after the application date : "+ document.getElementById("applicationDate").value);
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
 	
