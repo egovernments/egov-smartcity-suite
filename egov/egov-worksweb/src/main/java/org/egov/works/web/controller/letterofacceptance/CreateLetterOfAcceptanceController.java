@@ -140,9 +140,12 @@ public class CreateLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/loa-success", method = RequestMethod.GET)
-    public String showLetterOfAcceptanceSuccessPage(@RequestParam("loaNumber") final String loaNumber, final Model model) {
+    public String showLetterOfAcceptanceSuccessPage(@RequestParam("loaNumber") final String loaNumber, final Model model,
+            @RequestParam(value = "isModify", required = false) final boolean isModify) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(loaNumber);
         model.addAttribute("workOrder", workOrder);
+        if(isModify)
+            model.addAttribute("mode", "modify");
         return "letterofacceptance-success";
     }
 

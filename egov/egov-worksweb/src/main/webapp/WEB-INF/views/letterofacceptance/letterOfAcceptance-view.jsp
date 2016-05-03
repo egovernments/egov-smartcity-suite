@@ -45,16 +45,30 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <form:form name="loaViewForm" action="" role="form"
 	modelAttribute="workOrder" id="workOrder"
-	class="form-horizontal form-groups-bordered" method="GET">
+	class="form-horizontal form-groups-bordered" method="post">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0"
 				style="text-align: left">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="hdr.letterofacceptance" />
+						<c:choose>
+							<c:when test="${mode == 'modify' }">
+								<spring:message code="hdr.letterofacceptance.modify" />
+							</c:when>
+							<c:otherwise>
+								<spring:message code="hdr.letterofacceptance" />
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
+				<div>
+					<spring:hasBindErrors name="workOrder">
+		        		<div class="alert alert-danger col-md-10 col-md-offset-1">
+				      			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+				      	</div>
+		        	</spring:hasBindErrors>
+		        </div>
 				<div class="panel-body">
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
@@ -155,12 +169,37 @@
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.agreement.amount" />
 						</div>
-						<div class="col-xs-3 add-margin view-content">
+						<div class="col-xs-3 add-margin view-content" id="agreementAmount">
 							<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
 								minFractionDigits="2" value="${workOrder.workOrderAmount}" />
-							</p>
 						</div>
 					</div>
+					<c:if test="${mode == 'modify' }">
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.revised.value" /><span class="mandatory"></span>
+							</div>
+							<div class="col-sm-3">
+								<div class="input-group" style="margin-bottom: 0;">
+								    <div class="input-group-btn number-sign">
+						               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="sign-text">+</span> &nbsp;<span class="caret"></span></button>
+						               <ul class="dropdown-menu">
+						                  <li><a href="javascript:void(0);">+</a></li>
+						                  <li><a href="javascript:void(0);">-</a></li>                  
+						               </ul>
+						               <form:hidden path="percentageSign" name="percentageSign" id="percentageSign" />
+						            </div>
+						            <input name="revisedValue" id="revisedValue" type="text" class="form-control patternvalidation" maxlength="8" required="required" value="${revisedValue }" />
+						        </div> 
+							</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.revised.agreement.amount" /><span class="mandatory"></span>
+							</div>
+							<div class="col-sm-3 add-margin">
+								 <input name="revisedWorkOrderAmount" id="workOrderAmount"  type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" required="required" readonly="true"/>
+							</div>
+						</div>
+					</c:if>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.nameofagency" />
@@ -250,15 +289,18 @@
 	<c:if test="${!workOrder.documentDetails.isEmpty() }">
 		<jsp:include page="uploadDocuments.jsp" />
 	</c:if>
-</form:form>
-
-<div class="row">
+	<div class="row">
 	<div class="col-sm-12 text-center">
+		<c:if test="${mode == 'modify' }">
+			<form:button type="submit" name="submit" id="modify" class="btn btn-primary" ><spring:message code="lbl.modify"/></form:button>
+		</c:if>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a> <a
 			href="javascript:void(0)" class="btn btn-primary"
 			onclick="renderPDF()"><spring:message code="lbl.view.loapdf" /></a>
 	</div>
 </div>
+</form:form>
+
 <script
-	src="<c:url value='/resources/js/searchletterofacceptancehelper.js?rnd=${app_release_no}'/>"></script>
+	src="<c:url value='/resources/js/viewletterofacceptancehelper.js?rnd=${app_release_no}'/>"></script>

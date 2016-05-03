@@ -95,5 +95,8 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber)")
     List<String> findWorkIdentificationNumberToCreateMilestone(@Param("code") String code);
+    
+    @Query("select sum(br.billamount) from EgBillregister as br where br.workOrder.id = (select id from WorkOrder as wo where wo.workOrderNumber = :workOrderNumber and wo.egwStatus.code = :status) and br.billstatus != :billStatus")
+    Double getGrossBillAmountOfBillsCreated(@Param("workOrderNumber") String workOrderNumber, @Param("status") String status, @Param("billStatus") String billstatus);
 
 }

@@ -156,4 +156,14 @@
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchContractor-header.jsp"/>
     </definition>
     
+    <definition name="letterofacceptancetomodify-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfacceptanceToModify-header.jsp"/>
+	</definition>
+	
+	<definition name="letterOfAcceptance-modify" extends="base_layout">
+		<put-attribute name="page-title" value="hdr.letterofacceptance.modify" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-view.jsp"/>
+	</definition>
+    
 </tiles-definitions>

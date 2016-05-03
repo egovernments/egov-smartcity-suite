@@ -53,7 +53,7 @@
 				<form:input path="contractorCode" id="contractorCode" class="form-control" placeholder="Type first 3 letters of Contractor Code"/>
 				<form:errors path="contractorCode" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.nameofagency" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="nameOfAgency" id="nameOfAgency" class="form-control"/>
 				<form:errors path="nameOfAgency" cssClass="add-margin error-msg" />

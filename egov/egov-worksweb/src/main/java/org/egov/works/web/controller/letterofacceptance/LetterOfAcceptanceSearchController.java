@@ -126,5 +126,14 @@ public class LetterOfAcceptanceSearchController {
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "searchloatocreatecontractorbill-search";
     }
+    
+    @RequestMapping(value = "/searchmodifyform", method = RequestMethod.GET)
+    public String showSearchLOAModifyForm(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final Model model) throws ApplicationException {
+        setDropDownValues(model);
+        model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        return "letterofacceptancetomodify-search";
+    }
 
 }

@@ -507,7 +507,7 @@ public class LineEstimateService {
                     final AppConfigValues value = values.get(0);
                     if (value.getValue().equalsIgnoreCase("Y"))
                         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
-                            releaseBudgetOnReject(led);
+                            releaseBudgetOnReject(led, null, null);
                 }
 
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
@@ -700,7 +700,7 @@ public class LineEstimateService {
                 WorksConstants.CANCELLED_STATUS);
     }
 
-    public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails) throws ValidationException {
+    public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails, Double budgApprAmnt, String appropriationnumber) throws ValidationException {
 
         final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationRepository
                 .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
@@ -708,11 +708,17 @@ public class LineEstimateService {
         budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
         BudgetUsage budgetUsage = null;
         final boolean flag = false;
+        
+        if(budgApprAmnt == null)
+            budgApprAmnt = lineEstimateAppropriation.getBudgetUsage().getConsumedAmount();
+        
+        if(appropriationnumber == null)
+            appropriationnumber = lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber();
 
         budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
                 lineEstimateAppropriation.getBudgetUsage() == null ? null
                         : budgetAppropriationNumberGenerator.generateCancelledBudgetAppropriationNumber(
-                                lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber()),
+                                appropriationnumber),
                 lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
                 Integer.valueOf(11),
                 lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),
@@ -732,7 +738,7 @@ public class LineEstimateService {
                         : budgetheadid,
                 lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund() == null ? null
                         : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund().getId(),
-                lineEstimateAppropriation.getBudgetUsage().getConsumedAmount());
+                        budgApprAmnt);
 
         if (lineEstimateAppropriation.getLineEstimateDetails() != null)
             persistBudgetReleaseDetails(lineEstimateDetails, budgetUsage);

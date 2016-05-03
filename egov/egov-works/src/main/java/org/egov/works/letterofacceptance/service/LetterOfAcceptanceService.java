@@ -53,14 +53,22 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Designation;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.letterofacceptance.entity.WorkOrderHistory;
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
+import org.egov.works.letterofacceptance.repository.WorkOrderHistoryRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;
@@ -107,6 +115,18 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private LineEstimateService lineEstimateService;
+    
+    @Autowired
+    private LineEstimateDetailService lineEstimateDetailService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
+    
+    @Autowired
+    private WorkOrderHistoryRepository workOrderHistoryRepository;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -404,5 +424,47 @@ public class LetterOfAcceptanceService {
 
         }
         return qry;
+    }
+    
+    public Double getGrossBillAmountOfBillsCreated(String workOrderNumber, String status, String billstatus) {
+        return letterOfAcceptanceRepository.getGrossBillAmountOfBillsCreated(workOrderNumber, status, billstatus);
+    }
+
+    @Transactional
+    public WorkOrder update(WorkOrder workOrder, LineEstimateDetails lineEstimateDetails, Double appropriationAmount, Double revisedWorkOrderAmount)
+            throws ValidationException {
+        WorkOrderHistory history = new WorkOrderHistory();
+        history.setWorkOrder(workOrder);
+        history.setWorkOrderAmount(workOrder.getWorkOrderAmount());
+        history.setRevisedWorkOrderAmount(revisedWorkOrderAmount);
+        
+        workOrderHistoryRepository.save(history);
+        
+        workOrder.setWorkOrderAmount(revisedWorkOrderAmount);
+        if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
+            workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+        final AppConfigValues value = values.get(0);
+        if(workOrder.getPercentageSign().equals("+")) {
+            if(appropriationAmount > 0 && value.getValue().equalsIgnoreCase("Y")) {
+                final List<Long> budgetheadid = new ArrayList<Long>();
+                budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
+                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(lineEstimateDetails,
+                        lineEstimateService.getCurrentFinancialYear(new Date())
+                                .getId(),
+                        appropriationAmount, budgetheadid);
+
+                if (!flag)
+                    throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
+            }
+        } else if(workOrder.getPercentageSign().equals("-")) {
+            if(appropriationAmount > 0 && value.getValue().equalsIgnoreCase("Y")) {
+                String appropriationNumber = lineEstimateAppropriationService.generateBudgetAppropriationNumber(lineEstimateDetails);
+                lineEstimateService.releaseBudgetOnReject(lineEstimateDetails, appropriationAmount, appropriationNumber);
+            }
+        }
+        final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+        return savedworkOrder;
     }
 }

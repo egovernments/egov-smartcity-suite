@@ -123,10 +123,9 @@ function callAjaxSearch() {
 								window.close();
 							});
 				},
-				"sPaginationType" : "bootstrap",
+				"bPaginate": false,
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : [ ]
@@ -134,13 +133,16 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [ {
 					"data" : "",
-					"sClass" : "text-center"
+					"sClass" : "text-center",
+					"sWidth" : "10%"
 				}, {
 					"data" : "code",
-					"sClass" : "text-center"
+					"sClass" : "text-center",
+					"sWidth" : "45%"
 				}, {
 					"data" : "name",
-					"sClass" : "text-center"
+					"sClass" : "text-center",
+					"sWidth" : "45%"
 				} ]
 			});
 }

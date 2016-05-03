@@ -46,7 +46,14 @@
 	<input type="hidden" id="id" value="${workOrder.id }" />
 		<div class="alert text-center" style="color:green;">
 			<c:if test="${workOrder.getId() != null}">
-				<spring:message code="loa.create.success" arguments="${workOrder.getWorkOrderNumber()}"/>
+				<c:choose>
+					<c:when test="${mode == 'modify' }">
+						<spring:message code="loa.modify.success" arguments="${workOrder.getWorkOrderNumber()}"/>
+					</c:when>
+					<c:otherwise>
+						<spring:message code="loa.create.success" arguments="${workOrder.getWorkOrderNumber()}"/>
+					</c:otherwise>
+				</c:choose>
 			</c:if>
 		</div>
 		<div class="row">
