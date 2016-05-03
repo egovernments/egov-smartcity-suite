@@ -144,10 +144,10 @@
 		var tr = tfoot.insertRow(-1);
 		var th = tr.appendChild(document.createElement('th'));
 		<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>
-		th.colSpan = 4;
+		th.colSpan = 5;
 		</s:if>
 		<s:else>
-		th.colSpan = 3;
+		th.colSpan = 4;
 		</s:else>
 		
 		th.innerHTML = 'Total&nbsp;&nbsp;&nbsp;';
