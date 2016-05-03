@@ -51,7 +51,7 @@
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 
 <link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/fonts/fonts-min.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/datatable/assets/skins/sam/datatable.css'/>"/>

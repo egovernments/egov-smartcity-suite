@@ -42,7 +42,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/entypo/css/entypo.css">
-		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
 		<script type="text/javascript">
 			function onBodyLoad(){
 				var unreadMessageCount = "${unreadMessageCount}";

@@ -47,7 +47,7 @@
 <head>
 
 	<title><s:text name='NewProp.title' /></title>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <sx:head />
 <!-- <script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script> -->
 
