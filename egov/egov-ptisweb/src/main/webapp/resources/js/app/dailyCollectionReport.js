@@ -44,10 +44,14 @@ jQuery(document).ready(function() {
 	$('#report-footer').hide();
 	tableContainer=$('#dailyCollReport-table');
 $('#dailyCollectionReportSearch').click(function(e){
+	var fromDate = $("#fromDate").val();
+	var toDate = $("#toDate").val(); 
 	$.post("/ptis/report/dailyCollection", $('#dailyCollectionform').serialize())
 	.done(function (searchResult) {
 		//console.log(JSON.stringify(searchResult));
-		$('#dailyCollectionReport-header').hide();
+		$('#dailyCollectionReport-header').show();
+		$("#resultDateLabel").html(fromDate+" - "+toDate);	
+		$('#report-footer').show();
 		tableContainer.dataTable({
 			destroy:true,
 			"sPaginationType": "bootstrap",
@@ -60,13 +64,16 @@ $('#dailyCollectionReportSearch').click(function(e){
 				               {
 					             "sExtends": "pdf",
                                 "sTitle": "Daily Collection Report",
+                                "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
                                 "sPdfOrientation": "landscape"
 				                },
 				                {
 						             "sExtends": "xls",
+						             "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
 	                                 "sTitle": "Daily Collection Report"
 					             },{
 						             "sExtends": "print",
+						             "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
 	                                 "sTitle": "Daily Collection Report"
 					              }],
 				
@@ -96,10 +103,38 @@ $('#dailyCollectionReportSearch').click(function(e){
 			{title: 'Total Penalty', data: 'resource.searchable.latepaymentcharges'},
 			{title: 'Arrear Library Cess', data: 'resource.searchable.arrearcess'},
 			{title: 'Current Library Cess', data: 'resource.searchable.currentcess'},
+			/*{title: 'Total Library Cess', 
+				"render":function(data, type, full, meta) {
+			       return full.resource.searchable.arrearcess + full.resource.searchable.currentcess ;
+		    }
+			},*/
 			{title: 'Rebate Amount', data: 'resource.searchable.reductionamount'},
 			{title: 'Total Collection', data: 'resource.searchable.totalamount'},
 			],
-			"aaSorting": [[3, 'desc']]
+			"aaSorting": [[3, 'desc']],
+			"footerCallback" : function(row, data, start, end, display) {
+				var api = this.api(), data;
+				if (data.length == 0) {
+					jQuery('#report-footer').hide();
+				} else {
+					jQuery('#report-footer').show(); 
+				}
+				if (data.length > 0) {
+					updateTotalFooter(9, api);
+					updateTotalFooter(10, api);
+					updateTotalFooter(11, api);
+					updateTotalFooter(12, api);
+					updateTotalFooter(13, api);
+					updateTotalFooter(14, api);
+					updateTotalFooter(15, api);
+				}
+			},
+			"aoColumnDefs" : [ {
+				"aTargets" : [9,10,11,12,13,14,15],
+				"mRender" : function(data, type, full) {
+					return formatNumberInr(data);    
+				}
+			} ]		
 		});
 		
 	});

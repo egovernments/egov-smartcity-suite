@@ -155,7 +155,7 @@ body
 							code="lbl.close" /></a>
 				</div>
 			</div>
-		
+		<br>
 		<div id="dailyCollectionReport-header" class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
@@ -163,11 +163,12 @@ body
 			<label  id="resultDateLabel"></label>
 		   </div>
 		   </form:form>
-		<table class="table table-bordered datatable dt-responsive"  
+		   <div class="col-md-12" id="searchResultDiv">
+		<table class="table table-bordered datatable dt-responsive multiheadertbl"  
 			id="dailyCollReport-table" width="200%">
-			<!-- <tbody>
+			 <tbody>
 		   
-			<tfoot id="report-footer">
+		<tfoot id="report-footer">
 							<tr>
 								<td></td>
 								<td></td>
@@ -177,9 +178,7 @@ body
 								<td></td>
 								<td></td>
 								<td></td>
-								<td></td>  
-								<td></td>
-								<td>Total</td>
+								<td>Total</td>  
 								<td></td>
 								<td></td>
 								<td></td>
@@ -189,8 +188,8 @@ body
 								<td></td>
 							</tr>
 				</tfoot> 
-			</tbody> -->
-		</table>
+			</tbody> 
+		</table></div>
 	</div>
 </div>
 
