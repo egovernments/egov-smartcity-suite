@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.elasticSearch.entity;
 
 import org.egov.infra.admin.master.entity.City;
