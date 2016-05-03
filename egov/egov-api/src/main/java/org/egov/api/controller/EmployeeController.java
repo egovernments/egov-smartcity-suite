@@ -46,8 +46,11 @@ import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
+import org.egov.api.model.ComplaintSearchRequest;
 import org.egov.api.model.ForwardDetails;
 import org.egov.api.model.InboxItem;
+import org.egov.config.search.Index;
+import org.egov.config.search.IndexType;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
@@ -62,6 +65,11 @@ import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
+import org.egov.search.domain.Document;
+import org.egov.search.domain.SearchResult;
+import org.egov.search.domain.Sort;
+import org.egov.search.service.SearchService;
+import org.elasticsearch.search.sort.SortOrder;
 import org.hibernate.FetchMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
@@ -72,6 +80,8 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -80,19 +90,28 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.workflow.entity.StateAware.byCreatedDateComparator;
@@ -119,6 +138,9 @@ public class EmployeeController extends ApiController {
 
     @Autowired
     private EmployeeService employeeService;
+    
+    @Autowired
+    private SearchService searchService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -160,6 +182,63 @@ public class EmployeeController extends ApiController {
             LOGGER.error("EGOV-API ERROR ", ex);
             return res.error(getMessage("server.error"));
         }
+    }
+    
+    @RequestMapping(value = ApiUrl.EMPLOYEE_SEARCH_INBOX, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> searchEmployeeInbox(@PathVariable final Integer pageno, @PathVariable final Integer limit, @RequestBody final ComplaintSearchRequest searchRequest) {
+    	try {
+    		
+    		org.egov.search.domain.Page page=org.egov.search.domain.Page.at(pageno);
+    		page.ofSize(limit);
+    		
+        	final SearchResult searchResult = searchService.search(
+                    asList(Index.PGR.toString()),
+                    asList(IndexType.COMPLAINT.toString()),
+                    searchRequest.searchQuery(), searchRequest.searchFilters(),
+                    Sort.by().field("common.createdDate", SortOrder.DESC), page);
+        	
+        	String jsonString=searchResult.rawResponse();
+        	
+        	JSONObject respObj= (JSONObject)new JSONParser().parse(jsonString);
+        	
+        	JSONObject jObjHits=(JSONObject)respObj.get("hits");
+        	
+        	Long total=(Long)jObjHits.get("total");
+        	
+        	boolean hasNextPage = total > pageno * limit;
+        	
+        	ArrayList<Document> inboxItems=new ArrayList<Document>();
+        	
+        	for(Document document : searchResult.getDocuments())
+        	{
+        		JSONObject jResourceObj= document.getResource();
+        		
+        		LinkedHashMap<String, Object> jSearchableObj=(LinkedHashMap<String, Object>)jResourceObj.get("searchable");
+        		
+        		LinkedHashMap<String, Object> jOwnerObj= (LinkedHashMap<String, Object>)jSearchableObj.get("owner");
+        		
+        		if((int)jOwnerObj.get("id") ==  posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId())
+        		{
+        			inboxItems.add(document);
+        		}
+        	}
+
+        	JsonArray result = (JsonArray) new Gson().toJsonTree(inboxItems,
+                    new TypeToken<List<Document>>() {
+                    }.getType());
+        	
+        	
+        	JsonObject jsonResp=new JsonObject();
+        	jsonResp.add("searchItems", result);
+        	jsonResp.addProperty("hasNextPage", hasNextPage);
+        	
+            return getResponseHandler().success(jsonResp);
+            
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
+        }
+        
     }
 
     // --------------------------------------------------------------------------------//

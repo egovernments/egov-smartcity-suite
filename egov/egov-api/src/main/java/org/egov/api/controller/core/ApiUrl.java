@@ -110,6 +110,8 @@ public class ApiUrl {
 	
 	public final static String EMPLOYEE_UPDATE_COMPLAINT = "/employee/complaint/update/{complaintNo}";
 	
+	public final static String EMPLOYEE_SEARCH_INBOX = "/employee/inbox/search/{pageno}/{limit}";
+	
 	public final static String EMPLOYEE_LOGOUT = "/employee/logout";
 	
 }
