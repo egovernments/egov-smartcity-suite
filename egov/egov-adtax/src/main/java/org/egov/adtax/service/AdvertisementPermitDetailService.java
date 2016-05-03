@@ -246,6 +246,7 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setPermitStatus(result.getStatus().getCode());
             hoardingSearchResult.setPermissionNumber(result.getPermissionNumber());
             hoardingSearchResult.setId(result.getId());
+            hoardingSearchResult.setLegacy(result.getAdvertisement().getLegacy());
             hoardingSearchResult.setCategoryName(result.getAdvertisement().getCategory().getName());
             hoardingSearchResult.setSubCategoryName(result.getAdvertisement().getSubCategory().getDescription());
             hoardingSearchResult.setOwnerDetail(result.getOwnerDetail() != null ? result.getOwnerDetail() : "");

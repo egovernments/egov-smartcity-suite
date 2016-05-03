@@ -66,6 +66,7 @@
                         <div class="col-sm-3 add-margin">
                             <input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off">
 							<form:hidden path="agency" id="agencyId" value="${advertisementPermitDetail.agency}" />
+							<form:hidden path="advertisement.legacy" id="isLegacy" value="${advertisementPermitDetail.advertisement.legacy}" />
                         </div> 
                         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.hoarding.no"/></label>
                         <div class="col-sm-3 add-margin">

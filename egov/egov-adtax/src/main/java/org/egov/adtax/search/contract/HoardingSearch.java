@@ -70,6 +70,7 @@ public class HoardingSearch {
     private String subCategoryName;
     private String financialYear;
     private String ownerDetail;
+    private boolean isLegacy;
 
     public String getAdvertisementNumber() {
         return advertisementNumber;
@@ -261,6 +262,14 @@ public class HoardingSearch {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public boolean isLegacy() {
+        return isLegacy;
+    }
+
+    public void setLegacy(boolean isLegacy) {
+        this.isLegacy = isLegacy;
     }
 
 }

@@ -157,14 +157,33 @@ $(document).ready(function(){
 						  { "data" : "permissionNumber", "visible": false},
 						  { "data" : "permitStatus", "visible": false},
 						  { "data" : "id", "visible": false},
+						  { "data" : "isLegacy", "visible":false},
 						  {"title" : "Actions","sortable":false,
 				        	   render : function(data, type, row) {
-				        			   if (undefined != row.permissionNumber && (row.permitStatus=="ADTAXPERMITGENERATED" || row.permitStatus=="ADTAXAMTPAYMENTPAID")) {
-				        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option><option value="0">Generate Permit Order</option><option value="1">Generate Demand Notice</option></select>');   
-				        				   }else if(row.permitStatus=="APPROVED"){
-				        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option><option value="1">Generate Demand Notice</option></select>'); 
-				        				   }else
-				        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option></select>')
+				        		   
+				        		   	 if(row.permitStatus=="APPROVED"){
+				        		   		 if(row.totalAmount==0){
+				        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>');
+				        		   		 }
+				        		   		 else{
+			        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option><option value="1">Generate Demand Notice</option></select>');
+				        		   		 }
+				        		   	  } 
+				        		   	 else if(row.permitStatus=="ADTAXAMTPAYMENTPAID" || row.permitStatus=="ADTAXPERMITGENERATED"){
+				        		   		  if(row.isLegacy==true && row.totalAmount==0){
+				        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
+				        		   		  }
+				        		   		  else if(row.isLegacy==true && row.totalAmount!=0){
+				        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="1">Generate Demand Notice</option><option value="2">View</option></select>');
+				        		   		  }
+				        		   		  else
+				        		   			  {
+					        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
+				        		   			  }
+			        				  } 
+				        		   	 else
+			        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option></select>');
+				        		   		
 				        			   }}],
 						  "aaSorting": [[4, 'asc']] 
 				});
