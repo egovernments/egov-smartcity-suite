@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ page language="java"%>

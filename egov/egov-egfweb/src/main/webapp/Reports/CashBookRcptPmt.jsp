@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@page  import="com.exilant.eGov.src.reports.CashBook,com.exilant.eGov.src.reports.GeneralLedgerReportBean,org.egov.infstr.utils.EGovConfig"%>
 <%@ include file="/includes/taglibs.jsp" %>
