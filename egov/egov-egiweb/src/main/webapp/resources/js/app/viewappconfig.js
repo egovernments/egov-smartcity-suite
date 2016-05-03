@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 $(document).ready(function() {
 	
 					oTable=	$('#view-appConfig-type').dataTable(

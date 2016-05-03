@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.admin.master.service;
 
 import org.egov.infra.admin.master.entity.Department;

@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.config.persistence;
 
 import org.springframework.beans.factory.annotation.Autowired;
