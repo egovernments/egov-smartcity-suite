@@ -59,7 +59,7 @@ import java.util.Date;
 @Entity
 @Table(name = "Supplier")
 @SequenceGenerator(name = Relation.SEQ, sequenceName = Relation.SEQ)
-@Unique(id = "id", tableName = "Supplier", fields = { "code","name" }, columnName = { "code","name" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "Supplier", fields = { "code"}, columnName = { "code" }, enableDfltMsg = true)
 public class Relation extends AbstractPersistable<Integer> implements java.io.Serializable, EntityType {
     private static final long serialVersionUID = 1L;
     public static final String SEQ = "SEQ_Supplier";
