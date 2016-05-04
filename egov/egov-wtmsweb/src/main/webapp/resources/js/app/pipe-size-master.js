@@ -46,16 +46,13 @@ $(document).ready(function(){
 	     $('#addnewid').hide();
 		}
 	
-	else {
+	else if(activeDiv=='true'){
 		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
-	$("#resetid").click(function(){
-		$("#pipesizeform")[0].reset();
-		window.open("/wtms/masters/pipesizeMaster/", "_self");
-		})
+	
 	$( "#pipesizeid" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
 	    if(textValue ==0 || textValue =='' ){
@@ -74,21 +71,21 @@ $(document).ready(function(){
 	});
 	$("#pipesizeInInch").attr('disabled','disabled');
 	
+	$("#resetid").click(function(){
+		$("#pipesizeform")[0].reset();
+		window.open("/wtms/masters/pipesizeMaster/", "_self");
+		})
 	
  });
 $('#buttonid').click(function() {
-	  if ($( "#pipesizeform" ).valid())
-		  {
 		  var val = parseFloat($('#pipesizeid').val());
 		  if (isNaN(val) || (val === 0)  )
 		  {
+			  $('.loader-class').modal('hide');
 			  bootbox.alert("Please Enter sizeInMilimeter");
 		      return false;
-		    } 
-		  else{
-				 document.forms[0].submit();
-				 return true;
-			}
+		  }else{
+			  $('.loader-class').modal('hide');
 		  }
 });
 	

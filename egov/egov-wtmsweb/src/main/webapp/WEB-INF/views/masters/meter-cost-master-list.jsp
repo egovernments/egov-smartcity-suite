@@ -83,7 +83,7 @@
 						<tr>
 							<td colspan="1">
 								<div align="center">
-									<c:out value="${meterCost.pipeSize.sizeInInch}" />
+									<c:out value="${meterCost.pipeSize.code}" />
 								</div>
 							</td>
 							<td colspan="1">

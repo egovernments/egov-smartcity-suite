@@ -46,12 +46,11 @@ $(document).ready(function(){
 	     $('#addnewid').hide();
 		}
 	
-	else {
+	else if(activeDiv=='true'){
 		$('#resetid').hide();
 		$('#statusdiv').show();
 		$('#addnewid').show();
 		}
-	
 	
 	$( "#categoryName" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
@@ -61,12 +60,14 @@ $(document).ready(function(){
 	       return true;
 	    }
 	});
+	$("#resetid").click(function(){
+		$("#categoryMasterform")[0].reset();
+		window.open("/wtms/masters/categoryMaster/", "_self");
+		});
+	
  });
 
-$("#resetid").click(function(){
-	$("#categoryMasterform")[0].reset();
-	window.open("/wtms/masters/categoryMaster/", "_self");
-	});
+
 	
 $('#listid').click(function() {
 	window.open("/wtms/masters/categoryMaster/list", "_self");

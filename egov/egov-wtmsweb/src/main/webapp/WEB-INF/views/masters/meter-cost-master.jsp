@@ -63,7 +63,7 @@
 						<form:option value=""><spring:message code="lbl.select" /></form:option>
 						<%-- <form:options items="${pipeSize}" itemValue="id" itemLabel="name" /> --%>
 						<c:forEach var="pipeSize" items="${pipeSize}">
-						<form:option value="${pipeSize}"><c:out value="${pipeSize.sizeInInch}"/></form:option>  
+						<form:option value="${pipeSize}"><c:out value="${pipeSize.code}"/></form:option>  
 						</c:forEach>
 					</form:select>
 				</div>
@@ -75,8 +75,8 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.metercost" />:<span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin"  id="amount">
-						<form:input cssClass="form-control patternvalidation"  title="It will allow upto 8 digits and 2 decimal points" pattern="\d{0,7}(\.\d{0,1})?" data-pattern="decimalvalue" 
-							 maxlength="11" id="amountid" path="amount" required="required" />
+						<form:input cssClass="form-control patternvalidation" data-pattern="decimalvalue"  pattern="\d{0,5}(\.\d{1,2})?" title="It will allow upto 5 digits and 2 decimal points"   data-first-option="false&true"
+							maxlength="8"  id="amountid" path="amount" required="required" />
 							 <form:errors path="amount" cssClass="add-margin error-msg" />
 					</div>
 				</div>
@@ -93,7 +93,7 @@
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
 
 			<div class="form-group text-center">
-				<button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
+				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
 				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
 				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
 				<button type="button" class="btn btn-default" value="Reset" id="resetid" ><spring:message code="lbl.reset"/></button>

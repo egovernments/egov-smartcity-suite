@@ -42,9 +42,10 @@ $(document).ready(function(){
 	var mandatoryDiv = $('#reqAttr').val();
 	if (mandatoryDiv =='false'){
 			$('#addnewid').hide();
+			$('#resetid').show();
 		}
 	
-	else {
+	else if(mandatoryDiv=='true'){
 			$('#resetid').hide();
 			$('#reqdiv').show();
 			$('#addnewid').show();

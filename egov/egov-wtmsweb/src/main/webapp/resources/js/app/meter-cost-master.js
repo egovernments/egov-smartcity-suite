@@ -47,18 +47,14 @@ $(document).ready(function(){
 	     $('#addnewid').hide();
 		}
 	
-	else 
+	else if(activeDiv=='true')
 		{
 		$('#resetid').hide();
 		$('#statusdiv').show();
 		 $('#addnewid').show();
 		}
 	
-	$("#resetid").click(function(){
-		$("#meterCostform")[0].reset();
-		window.open("/wtms/masters/meterCostMaster/", "_self");
-		});
-
+	
 	$( "#meterMark" ).focusout(function() {
 	    textValue =  $.trim($(this).val());
 	    if(textValue =='' ){
@@ -68,21 +64,31 @@ $(document).ready(function(){
 	       return true;
 	    }
 	});
+	$("#resetid").click(function(){
+		$("#meterCostform")[0].reset();
+		window.open("/wtms/masters/meterCostMaster/", "_self");
+		});
+
+})
+$( "#amountid" ).focusout(function() {
+    textValue =  $.trim($(this).val());
+    if(textValue ==0 || textValue =='' ){
+       $.trim($(this).val('')); //to set it blank
+    } else {
+       return true;
+    }
+});
 	
- });
+
 $('#buttonid').click(function() {
-	  if ($( "#meterCostform" ).valid())
-		  {
 		  var val = parseFloat($('#amountid').val());
 		  if (isNaN(val) || (val === 0)  )
 		  {
+			  $('.loader-class').modal('hide');
 			  bootbox.alert("Please Enter Meter Cost");
 		      return false;
-		    } 
-		  else{
-				 document.forms[0].submit();
-				 return true;
-			}
+		  }else{
+			  $('.loader-class').modal('hide');
 		  }
 });
 $('#listid').click(function() {
@@ -105,3 +111,4 @@ function edit(meterCost)
 	window.open("/wtms/masters/meterCostMaster/"+meterCost, "_self");
 	
 }
+
