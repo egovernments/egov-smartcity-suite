@@ -73,7 +73,7 @@ import java.util.TreeSet;
 @Transactional(readOnly = true)
 public class ConnectionBillService extends BillServiceInterface {
 
-    private static final String STRING_WCMS_FUCNTION_CODE = "50515100";
+    private static final String STRING_WCMS_FUCNTION_CODE = "5100";
     @PersistenceContext
     private EntityManager entityManager;
 
