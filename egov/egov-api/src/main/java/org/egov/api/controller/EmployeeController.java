@@ -372,10 +372,9 @@ public class EmployeeController extends ApiController {
 
         final List<HashMap<String, Object>> workFlowTypesWithItemsCount = new ArrayList<HashMap<String, Object>>();
         final Query query = workflowTypePersistenceService.getSession().createQuery(
-                "select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status != :statusEnded and status != :statusStarted and createdBy.id != :userId group by type");
+                "select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status != :statusEnded and createdBy.id != :userId group by type");
         query.setParameterList("ownerPositions", ownerPostitions);
         query.setParameter("statusEnded", StateStatus.ENDED);
-        query.setParameter("statusStarted", StateStatus.STARTED);
         query.setParameter("userId", userId);
 
         final List<Object[]> result = query.list();
@@ -383,9 +382,11 @@ public class EmployeeController extends ApiController {
             final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, String.valueOf(rowObj[0]));
             if (wftitemscount > 0) {
                 final HashMap<String, Object> workFlowType = new HashMap<String, Object>();
+                WorkflowTypes workFlowTypeObj=getWorkflowType(String.valueOf(rowObj[0]));
                 workFlowType.put("workflowtype", rowObj[0]);
                 workFlowType.put("inboxlistcount", wftitemscount);
-                workFlowType.put("workflowtypename", getWorkflowType(String.valueOf(rowObj[0])).getDisplayName());
+                workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());
+                workFlowType.put("workflowgroupYN", workFlowTypeObj.getGroupYN());
                 workFlowTypesWithItemsCount.add(workFlowType);
             }
         }
