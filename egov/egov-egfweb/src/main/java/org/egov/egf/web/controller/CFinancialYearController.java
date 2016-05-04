@@ -44,6 +44,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFiscalPeriod;
+import org.egov.commons.repository.CFinancialYearRepository;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.web.adaptor.CFinancialYearJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,9 @@ public class CFinancialYearController {
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
+    
+    @Autowired
+    private CFinancialYearRepository cFinancialYearRepository;
 
     @Autowired
     private MessageSource messageSource;
@@ -137,7 +141,7 @@ public class CFinancialYearController {
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final CFinancialYear cFinancialYear = cFinancialYearService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", cFinancialYear);
         model.addAttribute("mode", "edit");
         return CFINANCIALYEAR_EDIT;
     }
@@ -159,22 +163,23 @@ public class CFinancialYearController {
     public String view(@PathVariable("id") final Long id, final Model model) {
         final CFinancialYear cFinancialYear = cFinancialYearService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", cFinancialYear);
         return CFINANCIALYEAR_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, final Model model) {
         final CFinancialYear cFinancialYear = cFinancialYearService.findOne(id);
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", cFinancialYear);
         return CFINANCIALYEAR_RESULT;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final CFinancialYear cFinancialYear = new CFinancialYear();
+        model.addAttribute("financialYears", cFinancialYearRepository.findAll());
         prepareNewForm(model);
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", cFinancialYear);
         return CFINANCIALYEAR_SEARCH;
 
     }

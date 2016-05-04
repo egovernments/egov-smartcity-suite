@@ -57,30 +57,50 @@ function getFormData($form){
 }
 
 function validateFields(){
-	var tbl=document.getElementById("fiscalPeriodTable");
-	var lastRow = (tbl.rows.length)-1;
-	var startingDate=getControlInBranch(tbl.rows[1],'startDate').value;
-	var name=getControlInBranch(tbl.rows[lastRow],'name').value;
-	var lastRowStartDate=getControlInBranch(tbl.rows[lastRow],'startDate').value;
-	var lastRowEndDate=getControlInBranch(tbl.rows[lastRow],'endDate').value;
-	var finYearRange=document.getElementById("name").value;
-	var finYearStartDate=document.getElementById("startingDate").value;
-	var finYearEndDate=document.getElementById("endingDate").value;
-
-	if(startingDate!=finYearStartDate){
-		bootbox.alert('Enter valid Start date');
-		getControlInBranch(tbl.rows[1],'startDate').value='';
-		getControlInBranch(tbl.rows[1],'startDate').focus();
-		return false;
-	}
-	if(lastRowEndDate!=finYearEndDate)
-	{
-		bootbox.alert('Enter valid End date');
-		getControlInBranch(tbl.rows[lastRow],'endDate').value='';
-		getControlInBranch(tbl.rows[lastRow],'endDate').focus();
-		return false;
-	}
-	return true;
+		var tbl=document.getElementById("fiscalPeriodTable");
+		var lastRow = (tbl.rows.length)-1;
+		var startingDate=getControlInBranch(tbl.rows[1],'startDate').value;
+		var finYearStartDate=document.getElementById("startingDate").value;
+		var lastRowEndDate=getControlInBranch(tbl.rows[lastRow],'endDate').value;
+		var finYearEndDate=document.getElementById("endingDate").value;
+		
+		if(startingDate!=finYearStartDate){
+			bootbox.alert('Enter valid Start date');
+			getControlInBranch(tbl.rows[1],'startDate').value='';
+			getControlInBranch(tbl.rows[1],'startDate').focus();
+			return false;
+		}
+		if(lastRowEndDate!=finYearEndDate)
+		{
+			bootbox.alert('Enter valid End date');
+			getControlInBranch(tbl.rows[lastRow],'endDate').value='';
+			getControlInBranch(tbl.rows[lastRow],'endDate').focus();
+			return false;
+		}
+		
+	    var previousRow = lastRow - 1;
+		var name=getControlInBranch(tbl.rows[lastRow],'name').value;
+		var lastRowFiscalName = getControlInBranch(tbl.rows[lastRow],'name').value;
+		var lastRowStartDate=getControlInBranch(tbl.rows[lastRow],'startDate').value;
+	    var previousEndDate=getControlInBranch(tbl.rows[previousRow],'endDate').value;
+		var finYearRange=document.getElementById("name").value;
+		
+	    if( compareDate(formatDate6(previousEndDate),formatDate6(lastRowStartDate)) == -1 )
+		{
+		     bootbox.alert('Enter valid Start Date');
+			 getControlInBranch(tbl.rows[lastRow],'startDate').value='';
+			 getControlInBranch(tbl.rows[lastRow],'startDate').focus();
+			 return false;
+		}
+	
+		if(lastRowFiscalName==""){
+			bootbox.alert('Enter Fiscal Period Name');
+			getControlInBranch(tbl.rows[1],'name').value='';
+			getControlInBranch(tbl.rows[1],'name').focus();
+			return false;
+		}
+	
+	 return true;
 
 }
 
@@ -88,7 +108,6 @@ function validateFields(){
 
 function addRow1() 
 {
-
 	var table = document.getElementById('fiscalPeriodTable');
 
 	if(!checkforNonEmptyPrevRow())
@@ -196,6 +215,7 @@ function validateStartDate() {
 			return false;
 		}
 	}
+	return true;
 }
 
 function validateEndDate() {

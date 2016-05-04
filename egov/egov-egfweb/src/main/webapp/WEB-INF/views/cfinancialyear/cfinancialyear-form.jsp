@@ -44,7 +44,7 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">FinancialYear Master</div>
+					<div class="panel-title">Financial Year Master</div>
 				</div>
 				<input type="hidden" value="${mode}" id="mode" /> <input
 					type="hidden" value="${startingDate}" id="finYearStartDate" />
@@ -82,7 +82,7 @@
 								<form:input path="startingDate"
 									class="form-control class= datepicker" id="startingDate"
 									required="required" value="${startingDate}"
-									onchange="validateStartDate();" />
+									onblur="validateStartDate();" />
 								<form:errors path="startingDate" cssClass="error-msg" />
 							</c:if>
 							<c:if test="${mode == 'edit'}">
@@ -108,7 +108,7 @@
 						</div>
 					</div>
 					<input type="hidden" name="CFinancialYear"
-						value="${cFinancialYear.id}" />
+						value="${CFinancialYear.id}" />
 					<div id="labelAD" align="center">
 						<table id="fiscalPeriodTable" width="60%" border=0 id="labelid"
 							class="table table-bordered">
@@ -130,14 +130,14 @@
 														class="form-control text-right patternvalidation" />
 													<input type="hidden" id="cmdaddListId"
 														value="cFiscalPeriod[${counter.index}].id" />
-												</c:if> <c:if test="${mode == 'edit'}">
+												</c:if><c:if test="${mode == 'edit'}"> 
 													<input type="text"
 														name="cFiscalPeriod[${counter.index}].name"
 														value="${var1.name}"
 														id="cFiscalPeriod[${counter.index}].name" size="10"
 														readonly="readonly"
 														class="form-control text-right patternvalidation" />
-												</c:if></td>
+												</c:if> </td>
 											<td><fmt:formatDate value="${var1.startingDate}"
 													var="startDate" pattern="dd/MM/yyyy" /> <c:if
 													test="${mode == 'create'}">
