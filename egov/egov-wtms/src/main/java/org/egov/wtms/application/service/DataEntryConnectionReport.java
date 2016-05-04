@@ -63,6 +63,8 @@ public class DataEntryConnectionReport {
     private double monthlyFee;
     private double waterTaxDue;
     private double propertyTaxDue;
+    private String email;
+    private String waterSource;
 
     public String getZone() {
         return zone;
@@ -238,6 +240,22 @@ public class DataEntryConnectionReport {
 
     public void setWaterTaxDue(final double waterTaxDue) {
         this.waterTaxDue = waterTaxDue;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getWaterSource() {
+        return waterSource;
+    }
+
+    public void setWaterSource(String waterSource) {
+        this.waterSource = waterSource;
     }
 
 }

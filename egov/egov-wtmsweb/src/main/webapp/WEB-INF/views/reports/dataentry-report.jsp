@@ -69,7 +69,7 @@ body
 				<div class="panel-body custom-form">
 				<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.ward" /></label>
+								code="lbl.revenue.ward" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:select id="ward" name="ward" path=""
 								cssClass="form-control" cssErrorClass="form-control error">
@@ -90,6 +90,7 @@ body
 						id="dataEntryReportSearch">
 						<spring:message code="lbl.submit" />
 					</button>
+					<form:button type="reset" class="btn btn-primary"  ><spring:message code="lbl.reset"/></form:button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						data-dismiss="modal" onclick="self.close()"><spring:message
 							code="lbl.close" /></a>

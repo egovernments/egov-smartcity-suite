@@ -43,11 +43,7 @@ jQuery(document).ready(function() {
 	$('#report-footer').hide();
 	
 	jQuery('#dataEntryReportSearch').click(function(e) {
-		var ward = $("#ward").val();
-		if (ward == '') {
-			bootbox.alert('Please select any ward');
-			return false;
-		}
+		
 		loadingReport();
 	});
 	
@@ -113,8 +109,8 @@ function loadingReport()
 									  return (!data || parseInt(data)==0? "NA" : data);
 								  }
 							  },
-							  
-							  { "data" : "houseNo", "title": "Door No"},
+							  { "data" : "email", "title": "Email"},
+							  { "data" : "waterSource", "title": "WaterSource Type"},
 							  { "data" : "propertyType", "title": "Property Type"},
 							  { "data" : "applicationType", "title": "Application Type"},
 							  { "data" : "connectionType", "title": "Connection Type"},

@@ -64,7 +64,7 @@ public class DataEntryConnectionReportService {
     public SQLQuery getDataEntryConnectionReportDetails(final String ward) throws ParseException {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select dcbinfo.hscno as \"hscNo\", dcbinfo.propertyid as \"assessmentNo\", dcbinfo.username as \"ownerName\",wardboundary.name as \"revenueWard\",  zoneboundary.name as \"zone\", "
-                + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.mobileno as \"mobileNumber\", "
+                + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.mobileno as \"mobileNumber\", dcbinfo.watersource as \"waterSource\" ,  "
                 + "dcbinfo.propertytype as \"propertyType\" , dcbinfo.applicationtype as \"applicationType\", dcbinfo.connectiontype as \"connectionType\",  "
                 + "dcbinfo.usagetype as \"usageType\" , dcbinfo.categorytype as \"category\", dcbinfo.pipesize as \"pipeSizeInInch\",  "
                 + "dcbinfo.aadharno as \"aadharNumber\" ,  dcbinfo.numberofperson as \"noOfPersons\" , dcbinfo.numberofrooms as \"noOfRooms\" , "
