@@ -90,7 +90,8 @@ public class AdvertisementTaxConstants {
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String FEECOLLECTION = "Fee Collection";
-    public static final String ADVERTISEMENT_FUCNTION_CODE = "90939300";
+    public static final String ADVERTISEMENT_FUCNTION_CODE = "9300";
+    public static final String APPCONFIG_FUCNTION_CODE="Function Code";
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String WARD = "Ward";
     public static final String ADDRESSTYPEASOWNER = "OWNER";
