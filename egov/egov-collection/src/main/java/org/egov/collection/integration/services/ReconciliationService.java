@@ -51,6 +51,7 @@ import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +68,7 @@ public class ReconciliationService {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private CollectionCommon collectionCommon;
+    private PersistenceService persistenceService;
 
     /**
      * This method processes the success message arriving from the payment gateway. The receipt status is changed from PENDING to
@@ -86,7 +88,7 @@ public class ReconciliationService {
 
         for (final ReceiptDetail receiptDetail : onlinePaymentReceiptHeader.getReceiptDetails())
             if (!FinancialsUtil.isRevenueAccountHead(receiptDetail.getAccounthead(),
-                    chartOfAccountsHibernateDAO.getBankChartofAccountCodeList())) {
+                    chartOfAccountsHibernateDAO.getBankChartofAccountCodeList(), persistenceService)) {
                 final ReceiptDetail newReceiptDetail = new ReceiptDetail();
                 if (receiptDetail.getOrdernumber() != null)
                     newReceiptDetail.setOrdernumber(receiptDetail.getOrdernumber());
@@ -160,6 +162,10 @@ public class ReconciliationService {
 
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
+    }
+
+    public void setPersistenceService(final PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
     }
 
 }

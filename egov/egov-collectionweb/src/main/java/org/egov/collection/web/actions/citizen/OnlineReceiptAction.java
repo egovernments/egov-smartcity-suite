@@ -358,7 +358,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
                 for (final ReceiptDetail receiptDetail : receipts[i].getReceiptDetails())
                     if (!FinancialsUtil.isRevenueAccountHead(receiptDetail.getAccounthead(),
-                            chartOfAccountsHibernateDAO.getBankChartofAccountCodeList())) {
+                            chartOfAccountsHibernateDAO.getBankChartofAccountCodeList(), persistenceService)) {
                         final ReceiptDetail newReceiptDetail = new ReceiptDetail();
                         if (receiptDetail.getOrdernumber() != null)
                             newReceiptDetail.setOrdernumber(receiptDetail.getOrdernumber());

@@ -42,6 +42,7 @@ package org.egov.collection.integration.models;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.infstr.services.PersistenceService;
 
 import java.math.BigDecimal;
 
@@ -66,10 +67,10 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
      * @param receiptDetail
      *            The receipt detail object
      */
-    public ReceiptAccountInfoImpl(final ReceiptDetail receiptDetail,ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
+    public ReceiptAccountInfoImpl(final ReceiptDetail receiptDetail,ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO, PersistenceService persistenceService) {
         this.receiptDetail = receiptDetail;
         this.isRevenueAccount = FinancialsUtil.isRevenueAccountHead(this.receiptDetail.getAccounthead(),
-                chartOfAccountsHibernateDAO.getBankChartofAccountCodeList());
+                chartOfAccountsHibernateDAO.getBankChartofAccountCodeList(), persistenceService);
        
     }
    

@@ -160,6 +160,7 @@
 		<property name="receiptHeaderService" ref="receiptHeaderService"/>
 		<property name="collectionCommon" ref="collectionCommon"/>
 		<property name="collectionsUtil" ref="collectionsUtil"/>
+		<property name="persistenceService" ref="persistenceService"/>
 	</bean>
 	
 	<bean class="org.egov.collection.integration.services.SchedularService" id="schedularService" scope="prototype">
