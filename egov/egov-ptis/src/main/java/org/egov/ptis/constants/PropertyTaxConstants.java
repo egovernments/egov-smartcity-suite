@@ -685,7 +685,7 @@ public interface PropertyTaxConstants {
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DEPT_CODE_TAX = "T";
-    public static final String FUNCTION_CODE = "90919100";
+    public static final String FUNCTION_CODE = "9100";
 
     // Roles
     public static final String CSC_OPERATOR_ROLE = "CSC Operator";
