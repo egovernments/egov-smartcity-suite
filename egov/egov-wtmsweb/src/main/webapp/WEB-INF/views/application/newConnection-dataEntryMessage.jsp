@@ -54,9 +54,12 @@
 	<tr>
 		<td width="100%" style="text-align:center"><input type="button" id="view"
 			class="btn btn-primary" value="view"
-			onclick="showView('${consumerCode}');"> <input type="button"
+			onclick="showView('${consumerCode}');"/> 
+			<c:if test="${mode == ''}">
+			<input type="button"
 			name="create-new" id="btn btn-primary" value="Create Another"
 			class="btn btn-primary" onclick="showNewform()" />
+			</c:if>
 			<c:if test="${connectionType == 'Non-metered'}">
 			<input type="button" value="Add/Edit DCB" name="Add/Edit DCB" id="editDCB"
 											id="btn btn-primary" class="btn btn-primary" 

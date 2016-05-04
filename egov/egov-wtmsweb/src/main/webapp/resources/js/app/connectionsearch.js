@@ -123,6 +123,12 @@ jQuery(document).ready(function($) {
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;
 										} 
+										if (this.value == 14) {
+											var url = '/wtms/application/newConnection-editExisting/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+										} 
 
 									});
 
@@ -232,6 +238,7 @@ function submitButton()
 		            return '<div style="font-style: italic;text-decoration: underline;" class="view-content">'+data+'</div>';} },
 	           {title : 'Address',data : 'resource.searchable.locality'},
 	           {title : 'apptype',data : 'resource.clauses.applicationcode',"bVisible" : false},
+	           {title : 'legacy',data : 'resource.clauses.islegacy',"bVisible" : false},
 	           {title : 'Usage Type',data : 'resource.clauses.usage'},
 	           {title : 'Property Tax Due',
 	        	   render: function (data, type, full) {
@@ -305,7 +312,7 @@ function submitButton()
 	        				   }
 	        				   
 	        				   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
-		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
+		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option><option value="14">Modify Connection Details</option</select>');
 		        			   }
 		        			   else if(superUserRole!=null && superUserRole!="" ){
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
@@ -374,7 +381,7 @@ function submitButton()
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 	        				   }
 	        				  else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
-		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
+		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option><option value="14">Modify Connection Details</option</select>');
 		        			   }
 	        				   else if(superUserRole!=null && superUserRole!="" ){
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');

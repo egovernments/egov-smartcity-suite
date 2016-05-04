@@ -47,6 +47,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
+import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
@@ -79,6 +80,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -173,6 +175,10 @@ public class NewConnectionController extends GenericConnectionController {
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         waterConnectionDetails.getConnectionType().name()));
+        if(waterConnectionDetails.getId() !=null)
+            model.addAttribute("mode","edit");
+            else
+            	 model.addAttribute("mode","");
         return "newconnection-dataEntryMessage";
     }
 
@@ -306,7 +312,14 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model) {
 
-        validatePropertyIDForDataEntry(waterConnectionDetails, resultBinder);
+    	return createAndUpdateDataEntryRecord(waterConnectionDetails,
+				resultBinder, model);
+    }
+
+	private String createAndUpdateDataEntryRecord(
+			final WaterConnectionDetails waterConnectionDetails,
+			final BindingResult resultBinder, final Model model) {
+		validatePropertyIDForDataEntry(waterConnectionDetails, resultBinder);
         validateExisting(waterConnectionDetails, resultBinder);
         if (resultBinder.hasErrors()) {
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
@@ -328,7 +341,7 @@ public class NewConnectionController extends GenericConnectionController {
         }
         waterConnectionDetailsService.createExisting(waterConnectionDetails);
         return "redirect:newConnection-existingMessage/" + waterConnectionDetails.getConnection().getConsumerCode();
-    }
+	}
 
     private void validateDocuments(final List<ApplicationDocuments> applicationDocs,
             final ApplicationDocuments applicationDocument, final int i, final BindingResult resultBinder,
@@ -477,24 +490,23 @@ public class NewConnectionController extends GenericConnectionController {
 
     private void validateExisting(final WaterConnectionDetails waterConnectionDetails, final BindingResult errors) {
 
-        /*if (waterConnectionDetails.getExistingConnection().getArrears() == null)
-            errors.rejectValue("existingConnection.arrears", "err.required");*/
         if (waterConnectionDetails.getExistingConnection().getDonationCharges() == null)
             errors.rejectValue("existingConnection.donationCharges", "err.required");
-       if (waterConnectionService.findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode())!=null)
-           errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
-        if (waterConnectionDetails.getConnectionType() != null
-                && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
-            if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)
-                errors.rejectValue("existingConnection.meterCost", "err.required");
-            if (waterConnectionDetails.getConnection().getConsumerCode() == null)
-                errors.rejectValue("connection.consumerCode", "err.required");
-            if (waterConnectionDetails.getConnection().getConsumerCode() != null) {
-                final WaterConnectionDetails validateExistWaterConnectionDet = waterConnectionDetailsService
-                        .findByApplicationNumberOrConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
-                if (validateExistWaterConnectionDet != null)
-                    errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
-            }
+        WaterConnection validateWaterConnDet=waterConnectionService.findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
+        if (validateWaterConnDet !=null &&  !waterConnectionDetails.getConnection().getId().equals(validateWaterConnDet.getId()))
+            errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
+         if (waterConnectionDetails.getConnectionType() != null
+                 && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
+             if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)
+                 errors.rejectValue("existingConnection.meterCost", "err.required");
+             if (waterConnectionDetails.getConnection().getConsumerCode() == null)
+                 errors.rejectValue("connection.consumerCode", "err.required");
+             if (waterConnectionDetails.getConnection().getConsumerCode() != null) {
+                 final WaterConnectionDetails validateExistWaterConnectionDet = waterConnectionDetailsService
+                         .findByApplicationNumberOrConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
+                 if (!validateExistWaterConnectionDet.getId().equals(waterConnectionDetails.getId()) && validateExistWaterConnectionDet != null)
+                     errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
+             }
             if (waterConnectionDetails.getExecutionDate() == null)
                 errors.rejectValue("executionDate", "err.required");
             if (waterConnectionDetails.getExistingConnection().getMeterName() == null)
@@ -533,5 +545,12 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
         return "newconnection-dataEntryEditForm";
+    }
+    @RequestMapping(value = "/newConnection-editExisting/{consumerCode}", method = POST)
+    public String modifyExisting(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails, @PathVariable final String consumerCode,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+            final HttpServletRequest request, final Model model) {
+    	 return createAndUpdateDataEntryRecord(waterConnectionDetails,
+ 				resultBinder, model);
     }
 }

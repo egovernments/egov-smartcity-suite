@@ -49,6 +49,7 @@ public class WaterTaxConstants {
     public static final String FILESTORE_MODULECODE = "WTMS";
     public static final String MODULE_NAME = "Water Tax Management";
     public static final String PROPERTY_MODULE_NAME = "Property Tax";
+    public static final String  DATAENTRYEDIT ="DATAENTRYEDIT";
     public static final String MODULETYPE = "WATERTAXAPPLICATION";
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
