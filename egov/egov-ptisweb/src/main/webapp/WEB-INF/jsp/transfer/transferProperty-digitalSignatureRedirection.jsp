@@ -42,7 +42,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
 	<head>
-		<title><s:text name="property.tax.collection" /></title>
+		<title><s:text name="transferProperty" /></title>
 		<script type="text/javascript">
 
 	 	jQuery(document).ready( function() {

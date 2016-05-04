@@ -2107,7 +2107,7 @@ public class PropertyService {
             user = stateAwareObject.getState().getCreatedBy();
         else
             user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
-        Map<String, String> ownerMap = new HashMap<String, String>();
+        User owner = null;
         if (applictionType != null
                 && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
@@ -2117,23 +2117,23 @@ public class PropertyService {
                     .getApplicationNo());
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
                     + "&applicationType=" + applictionType;
-            ownerMap = property.getBasicProperty().getOwnerMap();
+            owner = property.getBasicProperty().getPrimaryOwner();
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
-                        property.getApplicationNo(), new Date(), applictionType, ownerMap.get("OWNERNAME"), property
+                        property.getApplicationNo(), new Date(), applictionType, owner.getName(), property
                                 .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
                         user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
-                applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
-                applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
+                applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
+                applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
                     applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
-                    applicationIndex.setApplicantName(ownerMap.get("OWNERNAME"));
-                    applicationIndex.setMobileNumber(ownerMap.get("MOBILENO"));
-                    applicationIndex.setAadharNumber(ownerMap.get("AADHARNO"));
+                    applicationIndex.setApplicantName(owner.getName());
+                    applicationIndex.setMobileNumber(owner.getMobileNumber());
+                    applicationIndex.setAadharNumber(owner.getAadhaarNumber());
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
@@ -2145,15 +2145,15 @@ public class PropertyService {
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber()
                     + "&applicationType=" + applictionType;
             if (null == applicationIndex) {
-                ownerMap = property.getBasicProperty().getOwnerMap();
+                owner = property.getBasicProperty().getPrimaryOwner();
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
-                                : new Date(), applictionType, ownerMap.get("OWNERNAME"),
+                                : new Date(), applictionType, owner.getName(),
                         property.getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
                         user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
-                applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
-                applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
+                applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
+                applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
@@ -2166,22 +2166,22 @@ public class PropertyService {
                     .getApplicationNo());
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
                     + "&applicationType=" + applictionType;
-            ownerMap = property.getBasicProperty().getOwnerMap();
+            owner = property.getBasicProperty().getPrimaryOwner();
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
-                                : new Date(), applictionType, ownerMap.get("OWNERNAME"),
+                                : new Date(), applictionType, owner.getName(),
                         property.getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
                         user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
-                applicationIndexBuilder.mobileNumber(ownerMap.get("MOBILENO"));
-                applicationIndexBuilder.aadharNumber(ownerMap.get("AADHARNO"));
+                applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
+                applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
-                applicationIndex.setApplicantName(ownerMap.get("OWNERNAME"));
-                applicationIndex.setMobileNumber(ownerMap.get("MOBILENO"));
-                applicationIndex.setAadharNumber(ownerMap.get("AADHARNO"));
+                applicationIndex.setApplicantName(owner.getName());
+                applicationIndex.setMobileNumber(owner.getMobileNumber());
+                applicationIndex.setAadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
