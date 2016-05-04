@@ -268,6 +268,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 billdetail.setOrderNo(i++);
                 billdetail.setDescription(reason.getEgDemandReasonMaster().getReasonMaster() + " - "
                         + installment.getDescription());
+                billdetail.setFunctionCode(TL_FUNCTION_CODE);
                 billDetails.add(billdetail);
             }
 
