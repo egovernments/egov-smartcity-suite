@@ -44,6 +44,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State.StateStatus;
+import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
 import org.hibernate.envers.Audited;
@@ -251,7 +252,7 @@ public abstract class StateAware extends AbstractAuditable {
         state.setOwnerPosition(null);
     }
 
-    public static Comparator<? super StateAware> byCreatedDateComparator() {
+    public static Comparator<? super StateAware> byCreatedDate() {
         return (stateAware_1, stateAware_2) -> {
             int returnVal = 1;
             if (stateAware_1 == null)
@@ -270,4 +271,14 @@ public abstract class StateAware extends AbstractAuditable {
         };
     }
 
+    protected StateInfoBuilder buildStateInfo() {
+        return new StateInfoBuilder().type(this.getState().getNatureOfTask()).
+                itemDetails(this.getStateDetails()).status(getCurrentState().getStatus().name()).
+                refDate(this.getCreatedDate()).senderName(this.getState().getSenderName()).
+                senderPhoneNo(this.getState().getExtraInfo());
+    }
+
+    public String getStateInfoJson() {
+        return this.buildStateInfo().toJson();
+    }
 }

@@ -114,7 +114,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.infra.workflow.entity.StateAware.byCreatedDateComparator;
+import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
 import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 @org.springframework.web.bind.annotation.RestController
@@ -298,7 +298,7 @@ public class EmployeeController extends ApiController {
 
     private List<InboxItem> createInboxData(final List<StateAware> inboxStates) {
         final List<InboxItem> inboxItems = new LinkedList<>();
-        inboxStates.sort(byCreatedDateComparator());
+        inboxStates.sort(byCreatedDate());
         for (final StateAware stateAware : inboxStates) {
             final State state = stateAware.getCurrentState();
             final WorkflowTypes workflowTypes = getWorkflowType(stateAware.getStateType());
