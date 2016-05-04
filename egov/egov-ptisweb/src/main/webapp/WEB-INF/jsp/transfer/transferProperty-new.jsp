@@ -44,7 +44,8 @@
 <html>
 <head>
 <title><s:text name='transferProperty' /></title>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 
 <link
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
@@ -59,7 +60,7 @@
 		try {
 			jQuery(".datepicker").datepicker({
 				format : "dd/mm/yyyy",
-				autoclose:true
+				autoclose : true
 			});
 		} catch (e) {
 			console.warn("No Date Picker " + e);
@@ -101,9 +102,9 @@
 						<td class="bluebox"><span class="bold"><s:property
 									value="basicproperty.upicNo" default="N/A" /></span> <s:hidden
 								name="assessmentNo" id="assessmentNo"
-								value="%{basicproperty.upicNo}" />
-								<s:hidden name="meesevaApplicationNumber" id="meesevaApplicationNumber" value="%{meesevaApplicationNumber}" />
-			</td>
+								value="%{basicproperty.upicNo}" /> <s:hidden
+								name="meesevaApplicationNumber" id="meesevaApplicationNumber"
+								value="%{meesevaApplicationNumber}" /></td>
 						<td class="bluebox">&nbsp;</td>
 						<td style="width: 25%;">&nbsp;</td>
 					</tr>
@@ -112,27 +113,35 @@
 						<td class="bluebox"><s:text name="PropertyAddress"></s:text>
 							:</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.address" default="N/A"/></span></td>
+									value="basicproperty.address" default="N/A" /></span></td>
 						<td class="bluebox"><s:text name="Zone"></s:text> :</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.propertyID.zone.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.zone.name" default="N/A" /></span></td>
 					</tr>
 
 					<tr>
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="Ward" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.ward.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.ward.name" default="N/A" /></span></td>
 						<td class="greybox"><s:text name="block" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.area.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.area.name" default="N/A" /></span></td>
 					</tr>
 
 					<tr>
 						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="currentpropertytax" /> :</td>
+						<td class="greybox"><s:text name="CurrentTax" /> :</td>
 						<td class="greybox"><span class="bold">Rs. <s:property
-									value="currentPropertyTax" /> /-
+									value="currentPropertyTaxFirstHalf" /> /-
+						</span></td>
+					</tr>
+
+					<tr>
+						<td class="greybox2">&nbsp;</td>
+						<td class="greybox"><s:text name="CurrentSecondHalfTax" /> :</td>
+						<td class="greybox"><span class="bold">Rs. <s:property
+									value="currentPropertyTaxSecondHalf" /> /-
 						</span></td>
 					</tr>
 					<tr>
@@ -159,37 +168,32 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center">
-												<s:if test='%{owner.aadhaarNumber == ""}'>
-							        				<span
-												class="bold">N/A</span>
-							        			</s:if>
-							        			<s:else>
-													<span
-												class="bold"><s:property value="%{owner.aadhaarNumber}" default="N/A" />  </span>      			
-							        			</s:else>
-											</td>
+											<td class="blueborderfortd" align="center"><s:if
+													test='%{owner.aadhaarNumber == ""}'>
+													<span class="bold">N/A</span>
+												</s:if> <s:else>
+													<span class="bold"><s:property
+															value="%{owner.aadhaarNumber}" default="N/A" /> </span>
+												</s:else></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.mobileNumber" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.name" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.gender" /></span></td>
+											<td class="blueborderfortd" align="center"><s:if
+													test='%{owner.emailId == ""}'>
+													<span class="bold">N/A</span>
+												</s:if> <s:else>
+													<span class="bold"><s:property
+															value="%{owner.emailId}" /></span>
+												</s:else></td>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property
-													value="owner.mobileNumber" /></span></td>
+														value="owner.guardianRelation" default="N/A" /></span></td>
 											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-													value="owner.name" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-													value="owner.gender" /></span></td>
-											<td class="blueborderfortd" align="center">
-												<s:if test='%{owner.emailId == ""}'><span
-												class="bold">N/A</span></s:if>
-	        		   							<s:else><span
-												class="bold"><s:property value="%{owner.emailId}" /></span></s:else>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-													value="owner.guardianRelation" default="N/A" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-													value="owner.guardian" default="N/A" /></span></td>
+												class="bold"><s:property value="owner.guardian"
+														default="N/A" /></span></td>
 										</tr>
 									</s:iterator>
 								</tbody>
@@ -205,8 +209,7 @@
 								id="transRsnId" list="dropdownData.MutationReason" listKey="id"
 								listValue="mutationName" headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								value="%{mutationReason.id}" onchange="enableBlock();" />
-						</td>
+								value="%{mutationReason.id}" onchange="enableBlock();" /></td>
 						<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
@@ -220,7 +223,8 @@
 						<td class="greybox"><s:text name="docNum" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64" onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
+								maxlength="64"
+								onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
 						<td class="greybox"><s:text name="docDate" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:date name="deedDate" var="docDate"
@@ -293,8 +297,8 @@
 				}
 			}
 		}
-		jQuery("#saleDetail").keypress(function(event){ if (event.keyCode == 10 || event.keyCode == 13) event.preventDefault(); });
 	</script>
-	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script
+		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </body>
 </html>

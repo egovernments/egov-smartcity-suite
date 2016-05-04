@@ -39,7 +39,45 @@
  */
 package org.egov.ptis.actions.transfer;
 
-import com.opensymphony.xwork2.ActionContext;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -84,20 +122,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
+import com.opensymphony.xwork2.ActionContext;
 
 @Results({
         @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
@@ -169,6 +194,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String assessmentNo;
     private String wfErrorMsg;
     private BigDecimal currentPropertyTax;
+    private BigDecimal currentPropertyTaxFirstHalf;
+    private BigDecimal currentPropertyTaxSecondHalf;
     private BigDecimal currentPropertyTaxDue;
     private BigDecimal currentWaterTaxDue;
     private BigDecimal arrearPropertyTaxDue;
@@ -227,7 +254,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             }
             final Map<String, BigDecimal> propertyTaxDetails = propertyService
                     .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
-            Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails, new Date());
+            Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
+                    new Date());
             currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
             currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
@@ -390,7 +418,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/approve")
     public String approve() {
         transitionWorkFlow(propertyMutation);
-        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation); 
+        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         approverName = "";
         Assignment assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
@@ -428,7 +456,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        
+
         final String cityGrade = (request.getSession().getAttribute("cityGrade") != null ? request.getSession()
                 .getAttribute("cityGrade").toString() : null);
         Boolean isCorporation;
@@ -437,9 +465,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             isCorporation = true;
         } else
             isCorporation = false;
-        
+
         ReportOutput reportOutput = transferOwnerService.generateTransferNotice(basicproperty, propertyMutation,
-                cityName, cityLogo, actionType,isCorporation);
+                cityName, cityLogo, actionType, isCorporation);
         if (!WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
             getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
             reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
@@ -500,7 +528,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 basicproperty = propertyMutation.getBasicProperty();
                 historyMap = propertyService.populateHistory(propertyMutation);
             }
+            final Map<String, BigDecimal> propertyTaxDetails = propertyService
+                    .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
 
+            Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
+                    new Date());
+            currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
+            currentPropertyTaxFirstHalf = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
+            currentPropertyTaxSecondHalf = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
             setGuardianRelationMap(GUARDIAN_RELATION);
@@ -534,38 +569,40 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     if (document.isEnclosed() && document.getFiles().isEmpty())
                         addActionError(document.getType()
                                 + " document marked as enclosed, please add the relavent documents.");
-        // To set proxy list at approval stage 
-        if(propertyMutation.getState()!=null && propertyMutation.getState().getValue()!=null && 
-                propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED))
+        // To set proxy list at approval stage
+        if (propertyMutation.getState() != null && propertyMutation.getState().getValue() != null
+                && propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED))
             propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
 
         if (propertyMutation.getTransfereeInfosProxy().isEmpty())
             addActionError("Transfree info is mandatory, add atleast one transferee info.");
-        else{
+        else {
             for (final PropertyMutationTransferee propOwnerInfo : propertyMutation.getTransfereeInfosProxy()) {
                 if (StringUtils.isBlank(propOwnerInfo.getTransferee().getName()))
                     addActionError(getText("mandatory.ownerName"));
                 if (StringUtils.isBlank(propOwnerInfo.getTransferee().getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
-                if(propOwnerInfo.getTransferee().getGender()==null)
-                	addActionError(getText("mandatory.gender"));
+                if (propOwnerInfo.getTransferee().getGender() == null)
+                    addActionError(getText("mandatory.gender"));
                 if (StringUtils.isBlank(propOwnerInfo.getTransferee().getGuardianRelation()))
                     addActionError(getText("mandatory.guardianrelation"));
                 if (StringUtils.isBlank(propOwnerInfo.getTransferee().getGuardian()))
                     addActionError(getText("mandatory.guardian"));
             }
-              
-            int count=propertyMutation.getTransfereeInfosProxy().size();
-            for (int i=0;i<count;i++){
-                PropertyMutationTransferee owner = propertyMutation.getTransfereeInfosProxy().get(i);  
-                for(int j=i+1; j<=count-1; j++){
+
+            int count = propertyMutation.getTransfereeInfosProxy().size();
+            for (int i = 0; i < count; i++) {
+                PropertyMutationTransferee owner = propertyMutation.getTransfereeInfosProxy().get(i);
+                for (int j = i + 1; j <= count - 1; j++) {
                     PropertyMutationTransferee owner1 = propertyMutation.getTransfereeInfosProxy().get(j);
-                    if(owner.getTransferee().getMobileNumber().equalsIgnoreCase(owner1.getTransferee().getMobileNumber()) && 
-                            owner.getTransferee().getName().equalsIgnoreCase(owner1.getTransferee().getName())){
-                        addActionError(getText("error.transferee.duplicateMobileNo", "",owner.getTransferee().getMobileNumber().concat(",").concat(owner.getTransferee().getName())));
+                    if (owner.getTransferee().getMobileNumber()
+                            .equalsIgnoreCase(owner1.getTransferee().getMobileNumber())
+                            && owner.getTransferee().getName().equalsIgnoreCase(owner1.getTransferee().getName())) {
+                        addActionError(getText("error.transferee.duplicateMobileNo", "", owner.getTransferee()
+                                .getMobileNumber().concat(",").concat(owner.getTransferee().getName())));
                     }
                 }
-            } 
+            }
         }
 
         if (getMutationId() != null && null != propertyMutation
@@ -579,7 +616,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             else if (propertyMutation.getMarketValue().compareTo(BigDecimal.ZERO) < 1)
                 addActionError("Please enter a valid Market Value");
         }
-       
+
         if (loggedUserIsMeesevaUser || !propertyByEmployee) {
             if (null != basicproperty && null == propertyService.getUserPositionByZone(basicproperty)) {
                 addActionError(getText("notexists.position"));
@@ -783,6 +820,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public BigDecimal getCurrentPropertyTax() {
         return currentPropertyTax;
+    }
+
+    public BigDecimal getCurrentPropertyTaxFirstHalf() {
+        return currentPropertyTaxFirstHalf;
+    }
+
+    public BigDecimal getCurrentPropertyTaxSecondHalf() {
+        return currentPropertyTaxSecondHalf;
     }
 
     public BigDecimal getCurrentPropertyTaxDue() {
