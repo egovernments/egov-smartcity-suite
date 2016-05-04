@@ -99,6 +99,10 @@
 		scope="prototype">
 		<property name="type" value="org.egov.model.contra.ContraJournalVoucher" />
 	</bean>
+	
+	<bean id="bankAccountService" class="org.egov.commons.service.BankAccountService">
+		<constructor-arg index="0" value="org.egov.commons.Bankaccount" />
+	</bean>
 
 	<bean id="bankReconService" class="org.egov.infstr.services.PersistenceService"
 		scope="prototype">

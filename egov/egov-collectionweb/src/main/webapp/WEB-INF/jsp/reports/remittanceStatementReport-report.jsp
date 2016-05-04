@@ -60,8 +60,6 @@
 	<div class="buttonbottom">
 	<input name="collectionReport.close" type="button" class="button"
 		id="buttonClose" value="Close" onclick="window.close()" /> &nbsp;
-	<input name="collectionReport.back" type="button" class="button"
-		id="buttonBack" value="Back" onclick="window.location='${pageContext.request.contextPath}/reports/remittanceStatementReport-criteria.action';" /> &nbsp;
 	</div>
 </s:form>
 </body>

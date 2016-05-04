@@ -39,6 +39,22 @@
  */
 package org.egov.collection.service;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.collection.constants.CollectionConstants;
@@ -83,22 +99,6 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Provides services related to receipt header
  */
@@ -126,12 +126,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     /**
-     * @param statusCode Status code of receipts to be fetched. If null or ALL, then receipts with all statuses are fetched
-     * @param userName User name of the user who has created the receipts. If null or ALL, then receipts of all users are fetched
-     * @param counterId Counter id on which the receipts were created. If negative, then receipts from all counters are fetched
-     * @param serviceCode Service code for which the receipts were created. If null or ALL, then receipts of all billing services
-     * are fetched
-     * @return List of all receipts created by given user from given counter id and having given status
+     * @param statusCode
+     *            Status code of receipts to be fetched. If null or ALL, then
+     *            receipts with all statuses are fetched
+     * @param userName
+     *            User name of the user who has created the receipts. If null or
+     *            ALL, then receipts of all users are fetched
+     * @param counterId
+     *            Counter id on which the receipts were created. If negative,
+     *            then receipts from all counters are fetched
+     * @param serviceCode
+     *            Service code for which the receipts were created. If null or
+     *            ALL, then receipts of all billing services are fetched
+     * @return List of all receipts created by given user from given counter id
+     *         and having given status
      */
     public List<ReceiptHeader> findAllByPositionAndInboxItemDetails(final Long positionId, final String groupingCriteria) {
         final StringBuilder query = new StringBuilder("from org.egov.collection.entity.ReceiptHeader where 1=1");
@@ -197,11 +205,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method returns the internal reference numbers corresponding to the instrument type.
+     * This method returns the internal reference numbers corresponding to the
+     * instrument type.
      *
-     * @param entity an instance of <code>ReceiptHeader</code>
-     * @return a <code>List</code> of strings , each representing the internal reference numbers for each instrument type for the
-     * given receipt
+     * @param entity
+     *            an instance of <code>ReceiptHeader</code>
+     * @return a <code>List</code> of strings , each representing the internal
+     *         reference numbers for each instrument type for the given receipt
      */
     public List<String> generateInternalReferenceNo(final ReceiptHeader entity) {
         final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(entity.getCreatedDate());
@@ -211,10 +221,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method is called for voucher creation into the financial system. For each receipt created in the collections module, a
-     * voucher is created.
+     * This method is called for voucher creation into the financial system. For
+     * each receipt created in the collections module, a voucher is created.
      *
-     * @param receiptHeader Receipt header for which the pre-approval voucher is to be created
+     * @param receiptHeader
+     *            Receipt header for which the pre-approval voucher is to be
+     *            created
      * @param receiptBulkUpload
      * @return The created voucher
      */
@@ -248,7 +260,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     || instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
                 if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                         CollectionConstants.APPCONFIG_VALUE_RECEIPTVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                                CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
+                        CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
                     headerdetails.put(VoucherConstant.VOUCHERNAME,
                             CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERNAME);
                     headerdetails.put(VoucherConstant.VOUCHERTYPE,
@@ -287,7 +299,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         Set<ReceiptDetail> receiptDetailSet = new LinkedHashSet<ReceiptDetail>(0);
 
         /**
-         * Aggregate Amount in case of bill based receipt for account codes appearing more than once in receipt details
+         * Aggregate Amount in case of bill based receipt for account codes
+         * appearing more than once in receipt details
          */
         if (receiptHeader.getReceipttype() == 'B')
             receiptDetailSet = aggregateDuplicateReceiptDetailObject(new ArrayList<ReceiptDetail>(
@@ -297,7 +310,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         for (final ReceiptDetail receiptDetail : receiptDetailSet)
             if (receiptDetail.getCramount().compareTo(BigDecimal.ZERO) != 0
-            || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
+                    || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
 
                 final HashMap<String, Object> accountcodedetailsHashMap = new HashMap<String, Object>(0);
                 accountcodedetailsHashMap.put(VoucherConstant.GLCODE, receiptDetail.getAccounthead().getGlcode());
@@ -336,10 +349,11 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * Creates voucher for given receipt header and maps it with the same. Also updates the instrument voucher mapping in
-     * financials.
+     * Creates voucher for given receipt header and maps it with the same. Also
+     * updates the instrument voucher mapping in financials.
      *
-     * @param receiptHeader Receipt header for which voucher is to be created
+     * @param receiptHeader
+     *            Receipt header for which voucher is to be created
      * @return The created voucher header
      */
 
@@ -385,11 +399,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * Starts workflow for given set of receipt headers. Internally performs the following: 1. Start workflow 2. Transition
-     * workflow state with action "Create Receipt" 3. Create vouchers (if required) 4. If vouchers created, transition workflow
-     * state with action "Create Voucher"
+     * Starts workflow for given set of receipt headers. Internally performs the
+     * following: 1. Start workflow 2. Transition workflow state with action
+     * "Create Receipt" 3. Create vouchers (if required) 4. If vouchers created,
+     * transition workflow state with action "Create Voucher"
      *
-     * @param receiptHeaders set of receipt headers on which workflow is to be started
+     * @param receiptHeaders
+     *            set of receipt headers on which workflow is to be started
      * @param receiptBulkUpload
      */
     public void startWorkflow(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException {
@@ -402,20 +418,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
         if (receiptHeader.getState() == null && !createVoucherForBillingService)
             receiptHeader
-            .transition()
-            .start()
-            .withSenderName(
-                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                    .transition()
+                    .start()
+                    .withSenderName(
+                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
                     .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
         else if (createVoucherForBillingService) {
             createVoucherForReceipt(receiptHeader);
             receiptHeader
-            .transition()
-            .start()
-            .withSenderName(
-                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                    .transition()
+                    .start()
+                    .withSenderName(
+                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipt voucher created")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -423,9 +439,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (receiptHeader.getReceiptMisc().getDepositedInBank() != null)
             receiptHeader
-            .transition(true)
-            .withSenderName(
-                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                    .transition(true)
+                    .withSenderName(
+                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipts Submitted for Approval")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -434,8 +450,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * Method to find all the Cash,Cheque and DD type instruments with status as :new and
-     *
+     * Method to find all the Cash,Cheque and DD type instruments with status as
+     * :new and
+     * 
      * @return List of HashMap
      */
     public List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(final String boundaryIdList,
@@ -467,7 +484,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final String orderBy = " order by RECEIPTDATE";
 
         /**
-         * Query to get the collection of the instrument types Cash,Cheque,DD & Card for bank remittance
+         * Query to get the collection of the instrument types Cash,Cheque,DD &
+         * Card for bank remittance
          */
         final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",egeis_jurisdiction ujl"
                 + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('"
@@ -477,8 +495,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + groupByClause);
 
         /**
-         * If the department of login user is AccountCell .i.e., Department Code-'A',then this user will be able to remit online
-         * transaction as well. All the online receipts created by 'citizen' user will be remitted by Account Cell user.
+         * If the department of login user is AccountCell .i.e., Department
+         * Code-'A',then this user will be able to remit online transaction as
+         * well. All the online receipts created by 'citizen' user will be
+         * remitted by Account Cell user.
          */
         final User citizenUser = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 
@@ -607,7 +627,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * Method to check if the given HashMap already exists in the List of HashMap
+     * Method to check if the given HashMap already exists in the List of
+     * HashMap
      *
      * @param queryResults
      * @param objHashMap
@@ -625,10 +646,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         .get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE))
                         && arrayObjectInitialIndexTemp[2].equals(objHashMapTemp
                                 .get(CollectionConstants.BANKREMITTANCE_SERVICENAME))
-                                && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
-                                        .get(CollectionConstants.BANKREMITTANCE_FUNDCODE))
-                                        && arrayObjectInitialIndexTemp[7].equals(objHashMapTemp
-                                                .get(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE))) {
+                        && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
+                                .get(CollectionConstants.BANKREMITTANCE_FUNDCODE))
+                        && arrayObjectInitialIndexTemp[7].equals(objHashMapTemp
+                                .get(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE))) {
                     check = m;
                     break;
                 } else
@@ -639,8 +660,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * Create Contra Vouchers for String array passed of serviceName, totalCashAmount, totalChequeAmount, totalCardAmount and
-     * totalOnlineAcount
+     * Create Contra Vouchers for String array passed of serviceName,
+     * totalCashAmount, totalChequeAmount, totalCardAmount and totalOnlineAcount
      *
      * @param serviceName
      * @param totalCashAmount
@@ -648,11 +669,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @return List of Contra Vouchers Created
      */
     @Transactional
-    public List createBankRemittance(final String[] serviceNameArr, final String[] totalCashAmount,
+    public List<ReceiptHeader> createBankRemittance(final String[] serviceNameArr, final String[] totalCashAmount,
             final String[] totalChequeAmount, final String[] totalCardAmount, final String[] totalOnlineAmount,
             final String[] receiptDateArray, final String[] fundCodeArray, final String[] departmentCodeArray,
             final Integer accountNumberId, final Integer positionUser, final String[] receiptNumberArray) {
-        final List<CVoucherHeader> newContraVoucherList = new ArrayList<CVoucherHeader>(0);
         final List<ReceiptHeader> bankRemittanceList = new ArrayList<ReceiptHeader>(0);
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         final Map<String, Object> instrumentDepositeMap = financialsUtil.prepareForUpdateInstrumentDepositSQL();
@@ -705,14 +725,15 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_NEW_STATUS);
 
         /**
-         * Get the AppConfig parameter defined for the Remittance voucher type in case of instrument type Cheque,DD & Card
+         * Get the AppConfig parameter defined for the Remittance voucher type
+         * in case of instrument type Cheque,DD & Card
          */
 
         Boolean voucherTypeForChequeDDCard = false;
 
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
 
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
@@ -743,6 +764,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     cashQueryBuilder.append(receiptDepartmentCondition);
 
                     final Object arguments[] = new Object[6];
+                    CVoucherHeader voucherHeaderCash = null;
 
                     arguments[0] = serviceName;
                     try {
@@ -767,7 +789,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                         headerdetails
-                        .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                                .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
                         headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
@@ -797,20 +819,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalCashAmount[i]);
                         accountCodeCashList.add(accountcodedetailsDebitHashMap);
 
-                        final CVoucherHeader voucherHeaderCash = financialsUtil.createRemittanceVoucher(headerdetails,
-                                accountCodeCashList, subledgerList);
+                        voucherHeaderCash = financialsUtil.createRemittanceVoucher(headerdetails, accountCodeCashList,
+                                subledgerList);
 
-                        newContraVoucherList.add(voucherHeaderCash);
-                        createVoucherForCashRemittance(instrumentDepositeMap, voucherWorkflowMsg, voucherDate,
+                        updateCashRemittance(instrumentDepositeMap, voucherWorkflowMsg, voucherDate,
                                 depositedBankAccount, serviceGlCode, instrumentHeaderListCash, voucherHeaderCash);
                     } else
                         financialsUtil.updateInstrumentHeader(instrumentHeaderListCash, instrumentStatusDeposited,
                                 depositedBankAccount);
 
                     for (final InstrumentHeader instHead : instrumentHeaderListCash) {
-                        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                        List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                                 CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
                                 instHead.getId(), serviceDetails.getCode());
+                        receiptHeaders = setVoucherNumber(receiptHeaders, voucherHeaderCash);
                         bankRemittanceList.addAll(receiptHeaders);
                     }
 
@@ -824,7 +846,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     chequeQueryBuilder.append(instrumentStatusCondition);
                     chequeQueryBuilder.append("and instruments.instrumentType.type in ( ?, ?)");
                     chequeQueryBuilder
-                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     chequeQueryBuilder.append(receiptFundCondition);
                     chequeQueryBuilder.append(receiptDepartmentCondition);
 
@@ -844,7 +866,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     arguments[6] = CollectionConstants.RECEIPT_STATUS_CODE_APPROVED;
                     arguments[7] = fundCodeArray[i];
                     arguments[8] = departmentCodeArray[i];
-
+                    CVoucherHeader voucherHeaderCheque = null;
                     final List<InstrumentHeader> instrumentHeaderListCheque = persistenceService.findAllBy(
                             chequeQueryBuilder.toString(), arguments);
                     if (CollectionConstants.YES.equalsIgnoreCase(createVoucher) && serviceDetails.getVoucherCreation()) {
@@ -871,7 +893,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                         headerdetails
-                        .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                                .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
                         headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
@@ -896,11 +918,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalChequeAmount[i]);
                         accountCodeChequeList.add(accountcodedetailsDebitHashMap);
 
-                        final CVoucherHeader voucherHeaderCheque = financialsUtil.createRemittanceVoucher(
-                                headerdetails, accountCodeChequeList, subledgerList);
-
-                        newContraVoucherList.add(voucherHeaderCheque);
-                        createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
+                        voucherHeaderCheque = financialsUtil.createRemittanceVoucher(headerdetails,
+                                accountCodeChequeList, subledgerList);
+                        updateChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
                                 voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
                                 instrumentHeaderListCheque, voucherHeaderCheque);
                     } else
@@ -908,9 +928,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 depositedBankAccount);
 
                     for (final InstrumentHeader instHead : instrumentHeaderListCheque) {
-                        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                        List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                                 CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
                                 instHead.getId(), serviceDetails.getCode());
+                        receiptHeaders = setVoucherNumber(receiptHeaders, voucherHeaderCheque);
                         bankRemittanceList.addAll(receiptHeaders);
                     }
                 }
@@ -938,7 +959,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     arguments[3] = CollectionConstants.INSTRUMENTTYPE_CARD;
                     arguments[4] = fundCodeArray[i];
                     arguments[5] = departmentCodeArray[i];
-
+                    CVoucherHeader voucherHeaderCard = null;
                     final List<InstrumentHeader> instrumentHeaderListOnline = persistenceService.findAllBy(
                             onlineQueryBuilder.toString(), arguments);
 
@@ -962,7 +983,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                         headerdetails
-                        .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                                .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
                         headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
@@ -989,11 +1010,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalCardAmount[i]);
                         accountCodeOnlineList.add(accountcodedetailsDebitHashMap);
 
-                        final CVoucherHeader voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
+                        voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
                                 accountCodeOnlineList, subledgerList);
-
-                        newContraVoucherList.add(voucherHeaderCard);
-                        createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
+                        updateChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
                                 voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
                                 instrumentHeaderListOnline, voucherHeaderCard);
                     } else
@@ -1001,9 +1020,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 depositedBankAccount);
 
                     for (final InstrumentHeader instHead : instrumentHeaderListOnline) {
-                        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                        List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                                 CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
                                 instHead.getId(), serviceDetails.getCode());
+                        receiptHeaders = setVoucherNumber(receiptHeaders, voucherHeaderCard);
                         bankRemittanceList.addAll(receiptHeaders);
                     }
 
@@ -1035,6 +1055,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
                     final List<InstrumentHeader> instrumentHeaderListOnline = persistenceService.findAllBy(
                             onlineQueryBuilder.toString(), arguments);
+                    CVoucherHeader voucherHeaderCard = null;
 
                     if (CollectionConstants.YES.equalsIgnoreCase(createVoucher) && serviceDetails.getVoucherCreation()) {
                         final HashMap<String, Object> headerdetails = new HashMap<String, Object>(0);
@@ -1056,7 +1077,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                         headerdetails
-                        .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                                .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
                         headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
@@ -1085,11 +1106,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         accountcodedetailsDebitHashMap.put(VoucherConstant.DEBITAMOUNT, totalOnlineAmount[i]);
                         accountCodeOnlineList.add(accountcodedetailsDebitHashMap);
 
-                        final CVoucherHeader voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
+                        voucherHeaderCard = financialsUtil.createRemittanceVoucher(headerdetails,
                                 accountCodeOnlineList, subledgerList);
-                        newContraVoucherList.add(voucherHeaderCard);
-
-                        createVoucherForChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
+                        updateChequeCardRemittance(instrumentDepositeMap, voucherWorkflowMsg,
                                 voucherTypeForChequeDDCard, voucherDate, depositedBankAccount, serviceGlCode,
                                 instrumentHeaderListOnline, voucherHeaderCard);
                     } else
@@ -1097,9 +1116,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 depositedBankAccount);
 
                     for (final InstrumentHeader instHead : instrumentHeaderListOnline) {
-                        final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
+                        List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                                 CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE,
                                 instHead.getId(), serviceDetails.getCode());
+                        receiptHeaders = setVoucherNumber(receiptHeaders, voucherHeaderCard);
                         bankRemittanceList.addAll(receiptHeaders);
                     }
 
@@ -1117,8 +1137,18 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         return bankRemittanceList;
     }
 
+    private List<ReceiptHeader> setVoucherNumber(final List<ReceiptHeader> receiptHeaders,
+            final CVoucherHeader voucherHeader) {
+        final List receiptHeaderList = new ArrayList();
+        for (final ReceiptHeader receiptHeader : receiptHeaders) {
+            receiptHeader.setRemittanceVoucher(voucherHeader.getVoucherNumber());
+            receiptHeaderList.add(receiptHeader);
+        }
+        return receiptHeaderList;
+    }
+
     @Transactional
-    public void createVoucherForChequeCardRemittance(final Map<String, Object> instrumentDepositeMap,
+    public void updateChequeCardRemittance(final Map<String, Object> instrumentDepositeMap,
             final String voucherWorkflowMsg, final Boolean voucherTypeForChequeDDCard, final Date voucherDate,
             final Bankaccount depositedBankAccount, final String serviceGlCode,
             final List<InstrumentHeader> instrumentHeaderListCheque, final CVoucherHeader voucherHeaderCheque) {
@@ -1141,10 +1171,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     @Transactional
-    public void createVoucherForCashRemittance(final Map<String, Object> instrumentDepositeMap,
-            final String voucherWorkflowMsg, final Date voucherDate, final Bankaccount depositedBankAccount,
-            final String serviceGlCode, final List<InstrumentHeader> instrumentHeaderListCash,
-            final CVoucherHeader voucherHeaderCash) {
+    public void updateCashRemittance(final Map<String, Object> instrumentDepositeMap, final String voucherWorkflowMsg,
+            final Date voucherDate, final Bankaccount depositedBankAccount, final String serviceGlCode,
+            final List<InstrumentHeader> instrumentHeaderListCash, final CVoucherHeader voucherHeaderCash) {
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
         for (final InstrumentHeader instrumentHeader : instrumentHeaderListCash)
@@ -1154,7 +1183,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 final InstrumentHeader instrumentHeaderObj = financialsUtil.updateInstrumentHeaderStatus(
                         instrumentHeader, instrumentStatusDeposited, depositedBankAccount);
                 financialsUtil
-                .updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode, instrumentHeaderObj, cashMap);
+                        .updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode, instrumentHeaderObj, cashMap);
             }
     }
 
@@ -1201,7 +1230,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * API to check if the given receipt detail object already exists in the list passed passed as parameter
+     * API to check if the given receipt detail object already exists in the
+     * list passed passed as parameter
      *
      * @param newReceiptDetailSet
      * @param receiptDetailObj
@@ -1227,9 +1257,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     /**
      * End Work-flow of the given cancelled receipt
      *
-     * @param receiptHeaders Set of receipt headers to be transitioned
-     * @param actionName Action name for the transition
-     * @param comment Comment for the transition
+     * @param receiptHeaders
+     *            Set of receipt headers to be transitioned
+     * @param actionName
+     *            Action name for the transition
+     * @param comment
+     *            Comment for the transition
      */
     public void endReceiptWorkFlowOnCancellation(final ReceiptHeader receiptHeaderToBeCancelled) {
         // End work-flow for the cancelled receipt
@@ -1242,19 +1275,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (position != null)
             receiptHeaderToBeCancelled
-            .transition(true)
-            .end()
-            .withSenderName(
-                    receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
-                            + receiptHeaderToBeCancelled.getCreatedBy().getName())
-                            .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
-                            .withOwner(position).withDateInfo(new Date());
+                    .transition(true)
+                    .end()
+                    .withSenderName(
+                            receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
+                                    + receiptHeaderToBeCancelled.getCreatedBy().getName())
+                    .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
+                    .withOwner(position).withDateInfo(new Date());
     }
 
     /**
-     * This method persists the given <code>ReceiptPayeeDetails</code> entity. The receipt number for all of the receipts is
-     * generated, if not already present. If the receipt is associated with a challan, and the challan number is not present, the
-     * challan number is generated and set into it.
+     * This method persists the given <code>ReceiptPayeeDetails</code> entity.
+     * The receipt number for all of the receipts is generated, if not already
+     * present. If the receipt is associated with a challan, and the challan
+     * number is not present, the challan number is generated and set into it.
      */
     @Override
     @Transactional
@@ -1292,8 +1326,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method persists the given <code>ReceiptPayeeDetails</code> entity. If the receipt number for all of the receipts is
-     * generated, if not already present.
+     * This method persists the given <code>ReceiptPayeeDetails</code> entity.
+     * If the receipt number for all of the receipts is generated, if not
+     * already present.
      */
 
     @Transactional
@@ -1305,7 +1340,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         final Challan challan = receiptHeader.getChallan();
         /*
-         * challan.setValidUpto(eisService.getPriorOrAfterWorkingDate(challan. getChallanDate(), validUpto, DATE_ORDER.AFTER));
+         * challan.setValidUpto(eisService.getPriorOrAfterWorkingDate(challan.
+         * getChallanDate(), validUpto, DATE_ORDER.AFTER));
          */
         final Calendar c = new GregorianCalendar();
         c.add(Calendar.DATE, validUpto);
@@ -1326,9 +1362,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method persists the given set of <code>ReceiptPayeeDetails</code> instances with receipt number as Pending
+     * This method persists the given set of <code>ReceiptPayeeDetails</code>
+     * instances with receipt number as Pending
      *
-     * @param entity a set of <code>ReceiptPayeeDetails</code> instances to be persisted
+     * @param entity
+     *            a set of <code>ReceiptPayeeDetails</code> instances to be
+     *            persisted
      * @return the list of persisted <code>ReceiptPayeeDetails</code> instances
      */
     @Transactional
@@ -1355,7 +1394,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method looks up the bean to communicate with the billing system and updates the billing system.
+     * This method looks up the bean to communicate with the billing system and
+     * updates the billing system.
      */
 
     @Transactional
@@ -1396,7 +1436,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method is called for voucher reversal in case of intra-day receipt cancellation.
+     * This method is called for voucher reversal in case of intra-day receipt
+     * cancellation.
      */
 
     public void createReversalVoucher(final ReceiptVoucher receiptVoucher, final String instrumentType) {
@@ -1436,7 +1477,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * @ Create instrument voucher list from receiptpayeelist and pass it to financialsutil
+     * @ Create instrument voucher list from receiptpayeelist and pass it to
+     * financialsutil
      *
      * @param receiptPayeeDetails
      * @return void
@@ -1563,23 +1605,23 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     @Transactional
     public void perform(final ReceiptHeader receiptHeader, final String wfState, final String newStatusCode,
             final String nextAction, final Position ownerPosition, final String remarks)
-                    throws ApplicationRuntimeException {
+            throws ApplicationRuntimeException {
         receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));
 
         if (receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED))
             // Receipt approved. end workflow for this receipt.
             receiptHeader
-            .transition()
-            .end()
-            .withSenderName(
-                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                    .transition()
+                    .end()
+                    .withSenderName(
+                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipt Approved - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
                     .withOwner(ownerPosition).withDateInfo(new Date());
         else
             receiptHeader
-            .transition()
-            .withSenderName(
-                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                    .transition()
+                    .withSenderName(
+                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments(remarks).withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date())
                     .withNextAction(nextAction);
         getSession().flush();
@@ -1632,15 +1674,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     /**
      * This method performs the following for receipts to be newly created:
      * <ol>
-     * <li>The user instrument header details, and actual amount paid by user is captured.</li>
-     * <li>A debit receipt detail account head is created for the total credit collected.</li>
+     * <li>The user instrument header details, and actual amount paid by user is
+     * captured.</li>
+     * <li>A debit receipt detail account head is created for the total credit
+     * collected.</li>
      * <li>Vouchers are created</li>
      * </ol>
      * <p>
-     * The receipts are persisted and work flow is started for these persisted receipts where in the receipt state is set to NEW
-     * The billing system is updated about the persisted receipts. These include details of both newly created as well as
-     * cancelled receipts. If the instrument list and voucher list are not empty, the .... is updated The receipt ids of the newly
-     * created receipts are collectively populated to be shown on the print screen
+     * The receipts are persisted and work flow is started for these persisted
+     * receipts where in the receipt state is set to NEW The billing system is
+     * updated about the persisted receipts. These include details of both newly
+     * created as well as cancelled receipts. If the instrument list and voucher
+     * list are not empty, the .... is updated The receipt ids of the newly
+     * created receipts are collectively populated to be shown on the print
+     * screen
      */
     @Transactional
     public void populateAndPersistReceipts(final ReceiptHeader receiptHeader,
@@ -1668,8 +1715,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }// end of method
 
     /**
-     * This method sets the status of the receipt to be cancelled as CANCELLED and persists it A new receipt header object is
-     * populated with the data contained in the cancelled receipt. This instance is added to the model.
+     * This method sets the status of the receipt to be cancelled as CANCELLED
+     * and persists it A new receipt header object is populated with the data
+     * contained in the cancelled receipt. This instance is added to the model.
      *
      * @param receiptHeaderToBeCancelled
      */
@@ -1729,8 +1777,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * @param receipts - list of receipts which have to be processed as successful payments. For payments created as a response
-     * from bill desk, size of the array will be 1.
+     * @param receipts
+     *            - list of receipts which have to be processed as successful
+     *            payments. For payments created as a response from bill desk,
+     *            size of the array will be 1.
      */
     public ReceiptHeader createOnlineSuccessPayment(final ReceiptHeader receiptHeader, final Date transactionDate,
             final String transactionId, final BigDecimal transactionAmt, final String authStatusCode,
@@ -1797,11 +1847,18 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method updates the status and reconciliation flag for the given receipt
+     * This method updates the status and reconciliation flag for the given
+     * receipt
      *
-     * @param receiptHeader <code>ReceiptHeader</code> objects whose status and reconciliation flag have to be modified
-     * @param status a <code>EgwStatus</code> instance representing the state to which the receipt has to be updated with
-     * @param isReconciled a <code>Boolean</code> flag indicating the value for the reconciliation status
+     * @param receiptHeader
+     *            <code>ReceiptHeader</code> objects whose status and
+     *            reconciliation flag have to be modified
+     * @param status
+     *            a <code>EgwStatus</code> instance representing the state to
+     *            which the receipt has to be updated with
+     * @param isReconciled
+     *            a <code>Boolean</code> flag indicating the value for the
+     *            reconciliation status
      */
     @Transactional
     public void updateReceiptHeaderStatus(final ReceiptHeader receiptHeader, final EgwStatus status,

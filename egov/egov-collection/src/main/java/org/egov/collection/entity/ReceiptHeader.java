@@ -115,6 +115,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
     private String source;
+    private String remittanceVoucher;
     
 
     public ReceiptHeader() {
@@ -732,5 +733,13 @@ public class ReceiptHeader extends StateAware implements Auditable {
 
     public void setSource(final String source) {
         this.source = source;
+    }
+
+    public String getRemittanceVoucher() {
+        return remittanceVoucher;
+    }
+
+    public void setRemittanceVoucher(String remittanceVoucher) {
+        this.remittanceVoucher = remittanceVoucher;
     }
 }

@@ -61,18 +61,31 @@
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptnumber"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptdate"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.servicename"/></th>
+			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.remittance.vouchernum"/></th>
 		</tr>
 		<s:iterator value="%{voucherHeaderValues}"> 
 		<tr>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{receiptnumber}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:date name="receiptDate" var="cdFormat" format="dd/MM/yyyy"/><s:property value="%{cdFormat}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{service.name}" /></div></td>
+			<td class="blueborderfortd"><div align="center"><s:property value="%{remittanceVoucher}" /></div></td>
+			
 		</s:iterator>
+		<s:hidden name="totalCashAmount" value="%{totalCashAmount}"/>
+		<s:hidden name="totalChequeAmount" value="%{totalChequeAmount}"/>
+		<s:hidden name="totalOnlineAmount" value="%{totalOnlineAmount}"/>
+		<s:hidden name="bank" value="%{bank}"/>
+		<s:hidden name="bankAccount" value="%{bankAccount}"/>
+		
 	</table></td>
 </table>
 <br/>
 <div class="buttonbottom">
 <input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
+<input type="button" class="buttonsubmit" id="buttonCashReport"
+			value="<s:text name='bankremittance.print.bankchallan'/>"
+			onclick="window.open('${pageContext.request.contextPath}/receipts/bankRemittance-printBankChallan.action?totalCashAmount=<s:property value="%{totalCashAmount}"/>&totalChequeAmount=<s:property value="%{totalChequeAmount}"/>&totalOnlineAmount=<s:property value="%{totalOnlineAmount}"/>&bank=<s:property value="%{bank}"/>&bankAccount=<s:property value="%{bankAccount}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
+	
 </div>
 </s:form>
 </body>

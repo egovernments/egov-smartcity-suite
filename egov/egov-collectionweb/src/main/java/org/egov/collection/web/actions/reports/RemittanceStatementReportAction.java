@@ -43,24 +43,6 @@
  */
 package org.egov.collection.web.actions.reports;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.service.CollectionReportService;
-import org.egov.collection.utils.CollectionsUtil;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.Jurisdiction;
-import org.egov.eis.service.EmployeeService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
-import org.egov.infra.web.struts.actions.ReportFormAction;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -68,13 +50,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.CollectionBankRemittanceReport;
+import org.egov.collection.entity.CollectionRemittanceReportResult;
+import org.egov.collection.service.CollectionReportService;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.Jurisdiction;
+import org.egov.eis.service.EmployeeService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
+
 @Results({ @Result(name = RemittanceStatementReportAction.INDEX, location = "remittanceStatementReport-index.jsp"),
         @Result(name = RemittanceStatementReportAction.REPORT, location = "remittanceStatementReport-report.jsp") })
 @ParentPackage("egov")
 public class RemittanceStatementReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
-
     private CollectionsUtil collectionsUtil;
     private static final String EGOV_FROM_DATE = "EGOV_FROM_DATE";
     private static final String EGOV_TO_DATE = "EGOV_TO_DATE";
@@ -85,12 +91,29 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private static final String EGOV_PAYMENT_MODE = "EGOV_PAYMENT_MODE";
     private static final String SELECTED_DEPT_ID = "SELECTED_DEPT_ID";
     private static final String EGOV_DEPT_ID = "EGOV_DEPT_ID";
+    private static final String EGOV_CASH_AMOUNT = "EGOV_CASH_AMOUNT";
+    private static final String EGOV_CHEQUE_AMOUNT = "EGOV_CHEQUE_AMOUNT";
+    private static final String EGOV_ONLINE_AMOUNT = "EGOV_ONLINE_AMOUNT";
+    private static final String EGOV_BANK = "EGOV_BANK";
+    private static final String EGOV_BANK_ACCOUNT = "EGOV_BANK_ACCOUNT";
+
+    private static final String PRINT_BANK_CHALLAN_TEMPLATE = "collection_remittance_bankchallan_report";
+    private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     @Autowired
     private EmployeeService employeeService;
     @Autowired
-    private CollectionReportService reportService;
+    private CollectionReportService collectionReportService;
+    @Autowired
+    private ReportService reportService;
+    private Integer reportId = -1;
 
     private final Map<String, String> paymentModes = createPaymentModeList();
+    private List<CollectionBankRemittanceReport> bankRemittanceList;
+    private Double totalCashAmount;
+    private Double totalChequeAmount;
+    private Double totalOnlineAmount;
+    private String bank;
+    private String bankAccount;
 
     @Override
     public void prepare() {
@@ -106,8 +129,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
                 persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_COLLECTION_SERVICS));
         addDropdownData("collectionFundList",
                 persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUND));
-        setReportParam(EGOV_FROM_DATE, new Date());
-        setReportParam(EGOV_TO_DATE, new Date());
+        critParams.put(EGOV_FROM_DATE, new Date());
+        critParams.put(EGOV_TO_DATE, new Date());
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("bankAccountList", Collections.EMPTY_LIST);
         final User user = collectionsUtil.getLoggedInUser();
@@ -124,7 +147,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     public String report() {
         final User user = collectionsUtil.getLoggedInUser();
 
-        setReportParam(SELECTED_DEPT_ID, getDeptId());
+        critParams.put(SELECTED_DEPT_ID, getDeptId());
 
         final Integer bounaryId = getDeptId();
 
@@ -146,16 +169,37 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         }
         if (null == jurValuesId.toString() || StringUtils.isEmpty(jurValuesId.toString())
                 || "-1".equals(jurValuesId.toString()))
-            setReportParam(EGOV_DEPT_ID, null);
+            critParams.put(EGOV_DEPT_ID, null);
         else
-            setReportParam(EGOV_DEPT_ID, jurValuesId.toString());
+            critParams.put(EGOV_DEPT_ID, jurValuesId.toString());
 
-        return super.report();
+        final ReportRequest reportInput = new ReportRequest(getReportTemplateName(), critParams,
+                ReportDataSourceType.SQL);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
+        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        return REPORT;
+    }
+
+    @Action(value = "/reports/remittanceStatementReport-printBankChallan")
+    public String printBankChallan() {
+        critParams.put(EGOV_CASH_AMOUNT, totalCashAmount);
+        critParams.put(EGOV_CHEQUE_AMOUNT, totalChequeAmount);
+        critParams.put(EGOV_ONLINE_AMOUNT, totalOnlineAmount);
+        critParams.put(EGOV_BANK, bank);
+        critParams.put(EGOV_BANK_ACCOUNT, bankAccount);
+        final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
+        bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
+        collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
+        final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
+        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        return REPORT;
     }
 
     @Override
     protected String getReportTemplateName() {
-
         return CollectionConstants.REPORT_TEMPLATE_REMITTANCE_STATEMENT;
     }
 
@@ -164,7 +208,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     }
 
     public void setFromDate(final Date fromDate) {
-        setReportParam(EGOV_FROM_DATE, fromDate);
+        critParams.put(EGOV_FROM_DATE, fromDate);
     }
 
     public Date getToDate() {
@@ -172,7 +216,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     }
 
     public void setToDate(final Date toDate) {
-        setReportParam(EGOV_TO_DATE, toDate);
+        critParams.put(EGOV_TO_DATE, toDate);
     }
 
     public Long getServiceId() {
@@ -180,7 +224,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     }
 
     public void setServiceId(final Long serviceId) {
-        setReportParam(EGOV_SERVICE_ID, serviceId);
+        critParams.put(EGOV_SERVICE_ID, serviceId);
     }
 
     public Integer getFundId() {
@@ -188,7 +232,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     }
 
     public void setFundId(final Integer fundId) {
-        setReportParam(EGOV_FUND_ID, fundId);
+        critParams.put(EGOV_FUND_ID, fundId);
     }
 
     public Integer getBranchId() {
@@ -196,7 +240,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     }
 
     public void setBranchId(final Integer branchId) {
-        setReportParam(EGOV_BANKBRANCH_ID, branchId);
+        critParams.put(EGOV_BANKBRANCH_ID, branchId);
     }
 
     public Integer getBankaccountId() {
@@ -204,7 +248,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     }
 
     public void setBankaccountId(final Integer bankAccountId) {
-        setReportParam(EGOV_BANKACCOUNT_ID, bankAccountId);
+        critParams.put(EGOV_BANKACCOUNT_ID, bankAccountId);
     }
 
     public String getPaymentMode() {
@@ -218,9 +262,9 @@ public class RemittanceStatementReportAction extends ReportFormAction {
      */
     public void setPaymentMode(final String paymentMode) {
         if (null != paymentMode && !"-1".equals(paymentMode))
-            setReportParam(EGOV_PAYMENT_MODE, paymentMode);
+            critParams.put(EGOV_PAYMENT_MODE, paymentMode);
         else
-            setReportParam(EGOV_PAYMENT_MODE, null);
+            critParams.put(EGOV_PAYMENT_MODE, null);
 
     }
 
@@ -229,7 +273,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     }
 
     public void setDeptId(final Integer deptId) {
-        setReportParam(EGOV_DEPT_ID, deptId);
+        critParams.put(EGOV_DEPT_ID, deptId);
     }
 
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
@@ -248,11 +292,66 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD,
                 CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
-        //paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK);
+        // paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK,
+        // CollectionConstants.INSTRUMENTTYPE_BANK);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD);
-        //paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ATM, CollectionConstants.INSTRUMENTTYPE_ATM);
+        // paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ATM,
+        // CollectionConstants.INSTRUMENTTYPE_ATM);
         return paymentModesMap;
+    }
+
+    @Override
+    public Integer getReportId() {
+        return reportId;
+    }
+
+    public Double getTotalCashAmount() {
+        return totalCashAmount;
+    }
+
+    public void setTotalCashAmount(final Double totalCashAmount) {
+        this.totalCashAmount = totalCashAmount;
+    }
+
+    public Double getTotalChequeAmount() {
+        return totalChequeAmount;
+    }
+
+    public void setTotalChequeAmount(final Double totalChequeAmount) {
+        this.totalChequeAmount = totalChequeAmount;
+    }
+
+    public Double getTotalOnlineAmount() {
+        return totalOnlineAmount;
+    }
+
+    public void setTotalOnlineAmount(final Double totalOnlineAmount) {
+        this.totalOnlineAmount = totalOnlineAmount;
+    }
+
+    public List<CollectionBankRemittanceReport> getBankRemittanceList() {
+        return bankRemittanceList;
+    }
+
+    public void setBankRemittanceList(final List<CollectionBankRemittanceReport> bankRemittanceList) {
+        this.bankRemittanceList = bankRemittanceList;
+    }
+
+    public String getBank() {
+        return bank;
+    }
+
+    public void setBank(final String bank) {
+        this.bank = bank;
+    }
+
+    public String getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(final String bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
 }

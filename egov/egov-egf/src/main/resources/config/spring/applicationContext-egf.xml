@@ -215,9 +215,6 @@
 	<bean id="bankBranchService" class="org.egov.commons.service.BankBranchService">
 		<constructor-arg index="0" value="org.egov.commons.Bankbranch" />
 	</bean>
-	<bean id="bankAccountService" class="org.egov.commons.service.BankAccountService">
-		<constructor-arg index="0" value="org.egov.commons.Bankaccount" />
-	</bean>
 	<bean id="egPartyTypeService" class="org.egov.services.masters.EgPartyTypeService">
 		<constructor-arg index="0" value="org.egov.commons.EgPartytype" />
 	</bean>
