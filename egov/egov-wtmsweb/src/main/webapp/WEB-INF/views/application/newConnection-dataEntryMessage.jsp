@@ -45,8 +45,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="text-align:center">
 	<tr>
-		<td width="100%" style="text-align:center"><strong><spring:message
-					code="msg.dataentry.save.success" /></strong></td>
+	<c:if test="${mode == ''}">
+		<td width="100%" style="text-align:center"><strong>
+		<spring:message
+					code="msg.dataentry.save.success" />
+					
+					</strong></td>
+					</c:if>
+					<c:if test="${mode == 'edit'}">
+					<td width="100%" style="text-align:center"><strong>
+		<spring:message
+					code="msg.editdataentry.save.success" />
+					
+					</strong></td></c:if>
 	</tr>
 <tr>
 <td>&nbsp;</td>

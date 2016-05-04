@@ -43,7 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<script src="<c:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${waterConnectionDetails.applicationDate}" /></div>
@@ -69,7 +68,7 @@
 								code="lbl.appType" /></label>
 						<div class="col-sm-6 add-margin dynamic-span capitalize">
 							<form:radiobuttons path="applicationType"
-								items="${radioButtonMap}" element="span" disabled="true" onchange="resetPropertyDetailsafterCheckBox();"/>
+								items="${radioButtonMap}" element="span" onchange="resetPropertyDetailsafterCheckBox();"/>
 						</div>
 					</div>
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -97,7 +96,7 @@
 						<table>
 							<tr>
 								<td><form:button type="submit" id="Create"
-										class="btn btn-primary" value="Create" onclick="validate();">Update </form:button>
+										class="btn btn-primary" value="Create" onclick="validate();">Save </form:button>
 									<input type="button" name="button2" id="button2" value="Close"
 									class="btn btn-primary" onclick="window.close();" /></td>
 							</tr>
@@ -137,6 +136,7 @@
 				return true;
 		    }
 			function resetPropertyDetailsafterCheckBox() {
+				 $('#propertyIdentifier').attr("disabled",false);
 				$('#propertyIdentifier').val('');
 				$('#applicantname').val('');
 				$('#mobileNumber').val('');
@@ -167,4 +167,5 @@
 </div>
 
 <script src="<c:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>	
 <script src="<c:url value='/resources/js/app/newconnection-dataentry.js?rnd=${app_release_no}'/>"></script>

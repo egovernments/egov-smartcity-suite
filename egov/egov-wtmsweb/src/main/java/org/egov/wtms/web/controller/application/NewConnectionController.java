@@ -504,7 +504,7 @@ public class NewConnectionController extends GenericConnectionController {
              if (waterConnectionDetails.getConnection().getConsumerCode() != null) {
                  final WaterConnectionDetails validateExistWaterConnectionDet = waterConnectionDetailsService
                          .findByApplicationNumberOrConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
-                 if (!validateExistWaterConnectionDet.getId().equals(waterConnectionDetails.getId()) && validateExistWaterConnectionDet != null)
+                 if (validateExistWaterConnectionDet != null && !validateExistWaterConnectionDet.getId().equals(waterConnectionDetails.getId()) )
                      errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
              }
             if (waterConnectionDetails.getExecutionDate() == null)

@@ -163,7 +163,7 @@
     </definition>
     
      <definition name="newconnection-dataEntryEditForm" extends="base_layout">
-        <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
+        <put-attribute name="page-title" value="title.editdataentry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryEditForm.jsp"/>
     </definition>
     <definition name="chairperson-details" extends="base_layout">
