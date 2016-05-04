@@ -45,10 +45,12 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
+import org.egov.search.domain.Searchable.Group;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
@@ -62,9 +64,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
+import static org.egov.pgr.entity.Complaint.SEQ_COMPLAINT;
 @Entity
 @Table(name = "egpgr_complaint")
-@SequenceGenerator(name = Complaint.SEQ_COMPLAINT, sequenceName = Complaint.SEQ_COMPLAINT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_COMPLAINT, sequenceName = SEQ_COMPLAINT, allocationSize = 1)
 @Unique(id = "id", tableName = "egpgr_complaint", columnName = "crn", fields = "crn", enableDfltMsg = true)
 public class Complaint extends StateAware {
 
@@ -76,7 +79,7 @@ public class Complaint extends StateAware {
     private Long id;
 
     @Column(name = "crn", unique = true)
-    @Searchable(name = "crn", group = Searchable.Group.CLAUSES)
+    @Searchable(name = "crn", group = Group.CLAUSES)
     @Length(max = 32)
     @SafeHtml
     private String crn = "";
@@ -91,7 +94,7 @@ public class Complaint extends StateAware {
     @Valid
     @NotNull
     @JoinColumn(name = "complainant", nullable = false)
-    @Searchable(name = "citizen", group = Searchable.Group.COMMON)
+    @Searchable(name = "citizen", group = Group.COMMON)
     private Complainant complainant = new Complainant();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -101,13 +104,13 @@ public class Complaint extends StateAware {
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "location", nullable = true)
-    @Searchable(name = "boundary", group = Searchable.Group.COMMON)
+    @Searchable(name = "boundary", group = Group.COMMON)
     private Boundary location;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "status")
-    @Searchable(group = Searchable.Group.CLAUSES)
+    @Searchable(group = Group.CLAUSES)
     private ComplaintStatus status = new ComplaintStatus();
 
     @Length(min = 10, max = 500)
@@ -122,7 +125,7 @@ public class Complaint extends StateAware {
 
     @Enumerated(EnumType.ORDINAL)
     @NotNull
-    @Searchable(group = Searchable.Group.CLAUSES)
+    @Searchable(group = Group.CLAUSES)
     private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
 
     @ManyToOne
@@ -142,7 +145,7 @@ public class Complaint extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "department", nullable = false)
-    @Searchable(name = "department", group = Searchable.Group.CLAUSES)
+    @Searchable(name = "department", group = Group.CLAUSES)
     private Department department;
 
     @Enumerated(EnumType.ORDINAL)
@@ -150,7 +153,7 @@ public class Complaint extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "childLocation", nullable = true)
-    @Searchable(name = "locationBoundary", group = Searchable.Group.COMMON)
+    @Searchable(name = "locationBoundary", group = Group.COMMON)
     private Boundary childLocation;
 
     @Transient
@@ -164,178 +167,182 @@ public class Complaint extends StateAware {
 
     @Override
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     public String getCrn() {
-        return crn;
+        return this.crn;
     }
 
-    public void setCrn(final String crn) {
+    public void setCrn(String crn) {
         this.crn = crn;
     }
 
-    @Override
-    public String myLinkId() {
-        return crn;
-
-    }
-
     public ComplaintType getComplaintType() {
-        return complaintType;
+        return this.complaintType;
     }
 
-    public void setComplaintType(final ComplaintType complaintType) {
+    public void setComplaintType(ComplaintType complaintType) {
         this.complaintType = complaintType;
     }
 
     public Complainant getComplainant() {
-        return complainant;
+        return this.complainant;
     }
 
-    public void setComplainant(final Complainant complainant) {
+    public void setComplainant(Complainant complainant) {
         this.complainant = complainant;
     }
 
     public Position getAssignee() {
-        return assignee;
+        return this.assignee;
     }
 
-    public void setAssignee(final Position assignee) {
+    public void setAssignee(Position assignee) {
         this.assignee = assignee;
     }
 
     public ComplaintStatus getStatus() {
-        return status;
+        return this.status;
     }
 
-    public void setStatus(final ComplaintStatus status) {
+    public void setStatus(ComplaintStatus status) {
         this.status = status;
     }
 
     public String getDetails() {
-        return details;
+        return this.details;
     }
 
-    public void setDetails(final String details) {
+    public void setDetails(String details) {
         this.details = details;
     }
 
     public ReceivingMode getReceivingMode() {
-        return receivingMode;
+        return this.receivingMode;
     }
 
-    public void setReceivingMode(final ReceivingMode receivingMode) {
+    public void setReceivingMode(ReceivingMode receivingMode) {
         this.receivingMode = receivingMode;
     }
 
     public ReceivingCenter getReceivingCenter() {
-        return receivingCenter;
+        return this.receivingCenter;
     }
 
-    public void setReceivingCenter(final ReceivingCenter receivingCenter) {
+    public void setReceivingCenter(ReceivingCenter receivingCenter) {
         this.receivingCenter = receivingCenter;
     }
 
     public Set<FileStoreMapper> getSupportDocs() {
-        return supportDocs;
+        return this.supportDocs;
     }
 
-    public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
+    public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
         this.supportDocs = supportDocs;
     }
 
     public Boundary getLocation() {
-        return location;
+        return this.location;
     }
 
-    public void setLocation(final Boundary location) {
+    public void setLocation(Boundary location) {
         this.location = location;
     }
 
     public String getLandmarkDetails() {
-        return landmarkDetails;
+        return this.landmarkDetails;
     }
 
-    public void setLandmarkDetails(final String landmarkDetails) {
+    public void setLandmarkDetails(String landmarkDetails) {
         this.landmarkDetails = landmarkDetails;
     }
 
     public double getLat() {
-        return lat;
+        return this.lat;
     }
 
-    public void setLat(final double lat) {
+    public void setLat(double lat) {
         this.lat = lat;
     }
 
     public double getLng() {
-        return lng;
+        return this.lng;
     }
 
-    public void setLng(final double lng) {
+    public void setLng(double lng) {
         this.lng = lng;
     }
 
     public DateTime getEscalationDate() {
-        return null == escalationDate ? null : new DateTime(escalationDate);
+        return null == this.escalationDate ? null : new DateTime(this.escalationDate);
     }
 
-    public void setEscalationDate(final DateTime escalationDate) {
+    public void setEscalationDate(DateTime escalationDate) {
         this.escalationDate = null == escalationDate ? null : escalationDate.toDate();
     }
 
     public Department getDepartment() {
-        return department;
+        return this.department;
     }
 
-    public void setDepartment(final Department department) {
+    public void setDepartment(Department department) {
         this.department = department;
     }
 
-    @Override
-    public String getStateDetails() {
-        final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
-        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", getCrn(),
-                getComplaintType().getName(), formatter.print(new DateTime(getCreatedDate())),
-                formatter.print(getEscalationDate()));
-    }
-
     public CitizenFeedback getCitizenFeedback() {
-        return citizenFeedback;
+        return this.citizenFeedback;
     }
 
-    public void setCitizenFeedback(final CitizenFeedback citizenFeedback) {
+    public void setCitizenFeedback(CitizenFeedback citizenFeedback) {
         this.citizenFeedback = citizenFeedback;
     }
 
     public Boundary getChildLocation() {
-        return childLocation;
+        return this.childLocation;
     }
 
-    public void setChildLocation(final Boundary childLocation) {
+    public void setChildLocation(Boundary childLocation) {
         this.childLocation = childLocation;
     }
 
     public Long getCrossHierarchyId() {
-        return crossHierarchyId;
+        return this.crossHierarchyId;
     }
 
-    public void setCrossHierarchyId(final Long crossHierarchyId) {
+    public void setCrossHierarchyId(Long crossHierarchyId) {
         this.crossHierarchyId = crossHierarchyId;
     }
 
     public String getLatlngAddress() {
-        return latlngAddress;
+        return this.latlngAddress;
     }
 
-    public void setLatlngAddress(final String latlngAddress) {
+    public void setLatlngAddress(String latlngAddress) {
         this.latlngAddress = latlngAddress;
     }
 
+    @Override
+    public String myLinkId() {
+        return this.crn;
+    }
+
+    @Override
+    public String getStateDetails() {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
+        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", this.getCrn(),
+                this.getComplaintType().getName(), formatter.print(new DateTime(this.getCreatedDate())),
+                formatter.print(this.getEscalationDate()));
+    }
+
+    @Override
+    protected StateInfoBuilder buildStateInfo() {
+        return super.buildStateInfo().citizenName(this.getComplainant().getName()).citizenAddress(this.getComplainant().getMobile())
+                .citizenAddress(this.getComplainant().getAddress()).refNo(this.getCrn()).locationWard(this.getLocation().getName());
+    }
 }
