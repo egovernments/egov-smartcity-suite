@@ -197,16 +197,18 @@ public class DonationMasterController {
             for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
                 final DonationDetails donationDetailsTemp = donationDetailsService
                         .findByDonationHeader(donationHeaderTemp);
+                if (donationDetailsTemp!=null){
                 cal.setTime(donationDetails.getFromDate());
                 cal.add(Calendar.DAY_OF_YEAR, -1);
                 donationDetailsTemp.setToDate(cal.getTime());
                 donationDetailsTemp.getDonationHeader().setActive(false);
                 donationHeaderService.updateDonationHeader(donationDetailsTemp.getDonationHeader());
+                }
             }
         donationHeader.setActive(donationheader.isActive());
         donationHeader.setCategory(donationheader.getCategory());
         donationHeader.setMaxPipeSize(donationheader.getMaxPipeSize());
-        donationHeader.setMinPipeSize(donationheader.getMaxPipeSize());
+        donationHeader.setMinPipeSize(donationheader.getMinPipeSize());
         donationHeader.setPropertyType(donationheader.getPropertyType());
         donationHeader.setUsageType(donationheader.getUsageType());
         donationdetails.setAmount(donationDetails.getAmount());
