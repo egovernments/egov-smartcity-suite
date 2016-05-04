@@ -1822,10 +1822,7 @@ public class PropertyTaxUtil {
     }
 
     public String logoBasePath() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String imagePath = url.concat(PropertyTaxConstants.IMAGES_BASE_PATH).concat(ReportUtil.fetchLogo());
-        return imagePath;
+        return ReportUtil.logoBasePath();
     }
 
     public DepreciationMaster getDepreciationByDate(final Date depreciationDate) {
