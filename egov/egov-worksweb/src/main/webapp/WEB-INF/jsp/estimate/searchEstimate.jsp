@@ -294,7 +294,7 @@ function validateSearch()
 		}
 	 }
 	 else{
-		if(dom.get('type').value==-1 && dom.get('status').value==-1 && 
+		if(dom.get('natureOfWork').value==-1 && dom.get('status').value==-1 && 
 		dom.get('location').value=="" && dom.get('executingDepartment').value==-1 && 
 		dom.get('fromDate').value=="" && dom.get('toDate').value==""  &&  dom.get('estimateCreatedBy').value==-1 &&
 		dom.get('parentCategory').value==-1 && dom.get('category').value==-1 && dom.get('description').value=="")
@@ -324,7 +324,7 @@ function setupPreparedByList(elem){
 
 function checkPrint(){
 
-	if(dom.get('type').value==-1 && dom.get('status').value==-1 && 
+	if(dom.get('natureOfWork').value==-1 && dom.get('status').value==-1 && 
 	dom.get('location').value=="" && dom.get('executingDepartment').value==-1 && 
 	dom.get('fromDate').value=="" && dom.get('toDate').value==""  &&  dom.get('estimateCreatedBy').value==-1 &&
 	dom.get('parentCategory').value==-1 && dom.get('category').value==-1 && dom.get('description').value=="")

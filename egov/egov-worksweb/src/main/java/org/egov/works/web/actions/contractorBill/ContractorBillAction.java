@@ -348,8 +348,8 @@ public class ContractorBillAction extends BaseFormAction {
                 addDropdownData(ASSET_LIST, workOrderEstimate.getAssetValues());
                 final String accountCodeFromBudgetHead = worksService
                         .getWorksConfigValue("BILL_DEFAULT_BUDGETHEAD_ACCOUNTCODE");
-                if (workOrderEstimate.getEstimate().getType().getCode().equals(CAPITAL_WORKS)
-                        || workOrderEstimate.getEstimate().getType().getCode().equals(IMPROVEMENT_WORKS)) {
+                if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(CAPITAL_WORKS)
+                        || workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(IMPROVEMENT_WORKS)) {
                     if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                             && StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_CWIP)))
                         addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
@@ -365,7 +365,7 @@ public class ContractorBillAction extends BaseFormAction {
                         addDropdownData(COA_LIST, coaList);
                     } else
                         addDropdownData(COA_LIST, Collections.EMPTY_LIST);
-                } else if (workOrderEstimate.getEstimate().getType().getCode().equals(REPAIR_AND_MAINTENANCE)) {
+                } else if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(REPAIR_AND_MAINTENANCE)) {
                     if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                             && StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_REPAIRS)))
                         addDropdownData(COA_LIST, chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer.valueOf(worksService
@@ -382,7 +382,7 @@ public class ContractorBillAction extends BaseFormAction {
                     } else
                         addDropdownData(COA_LIST, Collections.EMPTY_LIST);
                 } else if (getAppConfigValuesToSkipBudget().contains(
-                        workOrderEstimate.getEstimate().getType().getName()))
+                        workOrderEstimate.getEstimate().getNatureOfWork().getName()))
                     if (StringUtils.isNotBlank(worksService.getWorksConfigValue(KEY_DEPOSIT)) && !skipBudget)
                         // Story# 806 - Show all the CWIP codes in the
                         // contractor bill screen where we show the deposit COA
@@ -836,7 +836,7 @@ public class ContractorBillAction extends BaseFormAction {
         logger.info("lenght of appconfig values>>>>>> " + appConfigValuesList.size());
         if (workOrderEstimate != null && workOrderEstimate.getId() != null) {
             for (final AppConfigValues appValues : appConfigValuesList)
-                if (appValues.getValue().equals(workOrderEstimate.getEstimate().getType().getName())) {
+                if (appValues.getValue().equals(workOrderEstimate.getEstimate().getNatureOfWork().getName())) {
                     skipBudget = true;
                     return CHECK_BUDGET;
                 }

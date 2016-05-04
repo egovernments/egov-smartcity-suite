@@ -315,7 +315,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
                 workOrderEstimateId);
         logger.info("length of appconfig values>>>>>> " + appConfigValuesList.size());
         for (final AppConfigValues appValues : appConfigValuesList)
-            if (appValues.getValue().equals(workOrderEstimate.getEstimate().getType().getName())) {
+            if (appValues.getValue().equals(workOrderEstimate.getEstimate().getNatureOfWork().getName())) {
                 checkBudget = false;
                 return;
             }
@@ -354,15 +354,15 @@ public class AjaxContractorBillAction extends BaseFormAction {
         checklistValues.add("No");
 
         try {
-            if ((workOrderEstimate.getEstimate().getType().getCode().equals("Improvement Works")
-                    || workOrderEstimate.getEstimate().getType().getCode().equals("Capital Works"))
+            if ((workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Improvement Works")
+                    || workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Capital Works"))
                     && billType.contains("Final"))
                 finalBillChecklist = worksService.getAppConfigValue(WORKS, "CONTRACTOR_Bill_FinalChecklist");
-            else if ((workOrderEstimate.getEstimate().getType().getCode().equals("Improvement Works")
-                    || workOrderEstimate.getEstimate().getType().getCode().equals("Capital Works"))
+            else if ((workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Improvement Works")
+                    || workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Capital Works"))
                     && billType.contains("Part"))
                 finalBillChecklist = worksService.getAppConfigValue(WORKS, "CONTRACTOR_Bill_RunChecklist");
-            else if (workOrderEstimate.getEstimate().getType().getCode().equals("Repairs and maintenance")
+            else if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Repairs and maintenance")
                     && (billType.contains("Final") || billType.contains("Part")))
                 finalBillChecklist = worksService.getAppConfigValue(WORKS, "CONTRACTOR_Bill_MaintananceChecklist");
 
@@ -480,8 +480,8 @@ public class AjaxContractorBillAction extends BaseFormAction {
             assetList = workOrderEstimate.getAssetValues();
             final String accountCodeFromBudgetHead = worksService.getWorksConfigValue("BILL_DEFAULT_BUDGETHEAD_ACCOUNTCODE");
             showValidationMsg = WorksConstants.NO;
-            if (workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.CAPITAL_WORKS)
-                    || workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.IMPROVEMENT_WORKS)) {
+            if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(WorksConstants.CAPITAL_WORKS)
+                    || workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(WorksConstants.IMPROVEMENT_WORKS)) {
                 if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                         && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP))) {
                     coaList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(
@@ -495,7 +495,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else
                     coaList = Collections.EMPTY_LIST;
-            } else if (workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
+            } else if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
                 if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                         && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_REPAIRS))) {
                     coaList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(
@@ -509,7 +509,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else
                     coaList = Collections.EMPTY_LIST;
-            } else if (getAppConfigValuesToSkipBudget().contains(workOrderEstimate.getEstimate().getType().getName()))
+            } else if (getAppConfigValuesToSkipBudget().contains(workOrderEstimate.getEstimate().getNatureOfWork().getName()))
                 if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)) && checkBudget) {
                     // Story# 806 - Show all the CWIP codes in the contractor bill screen where we show the deposit COA code
                     // now

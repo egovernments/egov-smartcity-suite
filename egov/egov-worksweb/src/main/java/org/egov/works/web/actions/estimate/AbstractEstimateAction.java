@@ -215,7 +215,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         addRelatedEntity("userDepartment", Department.class);
         addRelatedEntity("executingDepartment", Department.class);
         addRelatedEntity("ward", Boundary.class);
-        addRelatedEntity("type", NatureOfWork.class);
+        addRelatedEntity("natureOfWork", NatureOfWork.class);
         addRelatedEntity("category", EgwTypeOfWork.class);
         addRelatedEntity("parentCategory", EgwTypeOfWork.class);
         addRelatedEntity("depositCode", DepositCode.class);
@@ -496,10 +496,10 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     }
 
     private void validateForAssetSelection() {
-        if (abstractEstimate.getType() != null
-                && !(abstractEstimate.getType().getName().equals(WorksConstants.DEPOSIT_WORKS_THIRDPARTY_ASSET)
+        if (abstractEstimate.getNatureOfWork() != null
+                && !(abstractEstimate.getNatureOfWork().getName().equals(WorksConstants.DEPOSIT_WORKS_THIRDPARTY_ASSET)
                         || abstractEstimate
-                                .getType().getName().equals(WorksConstants.DEPOSIT_WORKS_NO_ASSET_CREATED))) {
+                                .getNatureOfWork().getName().equals(WorksConstants.DEPOSIT_WORKS_NO_ASSET_CREATED))) {
             final String isAssetRequired = worksService.getWorksConfigValue("ASSET_MANDATORY");
             if (isAssetRequired.equals("yes") && actionAssetValues != null) {
                 boolean isAssetPresent = false;
@@ -744,10 +744,10 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                 totalPerc = totalPerc + multiYearEstimate.getPercentage();
                 // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting triggered
                 // on update of estimate for child objects
-                multiYearEstimate.setCreatedBy(worksService.getCurrentLoggedInUser());
+               /* multiYearEstimate.setCreatedBy(worksService.getCurrentLoggedInUser());
                 multiYearEstimate.setCreatedDate(new Date());
                 multiYearEstimate.setModifiedBy(worksService.getCurrentLoggedInUser());
-                multiYearEstimate.setModifiedDate(new Date());
+                multiYearEstimate.setModifiedDate(new Date());*/
                 abstractEstimate.addMultiYearEstimate(multiYearEstimate);
             }
             if (multiYearEstimate != null && actionMultiYearEstimateValues.size() == count && totalPerc != 0.0
@@ -866,7 +866,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         boolean isDepositWorks = false;
         final List<String> depositTypeList = getAppConfigValuesToSkipBudget();
         for (final String type : depositTypeList)
-            if (type.equals(abstractEstimate.getType().getName()))
+            if (type.equals(abstractEstimate.getNatureOfWork().getName()))
                 isDepositWorks = true;
         return isDepositWorks;
     }

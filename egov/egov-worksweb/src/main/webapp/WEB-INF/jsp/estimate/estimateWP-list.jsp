@@ -121,7 +121,7 @@ function setEstimateId(elem){
 
 	<display:column headerClass="pagetableth" class="pagetabletd"
 		title="Type" titleKey="estimate.search.type"
-		style="width:10%;text-align:left" property="type.name" />
+		style="width:10%;text-align:left" property="natureOfWork.name" />
 
 	<display:column headerClass="pagetableth" class="pagetabletd"
 		title="Estimate Date" titleKey="estimate.search.estimateDate" 

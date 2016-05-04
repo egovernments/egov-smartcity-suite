@@ -159,7 +159,7 @@ function showAssetTab(){
     hideHeaderTab();
     hideOverheadsTab();
     clearMessage('asset_error');
-    var elem = document.getElementById('type');
+    var elem = document.getElementById('natureOfWork');
   	if(elem.options[elem.selectedIndex].value=='-1'){
   	 	showMessage('asset_error','Select the nature of work before adding asset details');
   }

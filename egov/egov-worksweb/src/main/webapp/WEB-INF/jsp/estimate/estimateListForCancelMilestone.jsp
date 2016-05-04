@@ -146,7 +146,7 @@ function viewWorkPackage(obj) {
 			<display:column headerClass="pagetableth" class="pagetabletd" title="Milestone Status" titleKey='estimate.search.status' style="width:5%;text-align:left">
 					<s:property value="%{status}"/>
 			</display:column>
-			<display:column headerClass="pagetableth" class="pagetabletd" title="Type" titleKey='estimate.search.type' style="width:10%;text-align:left" property='estimate.type.name' />
+			<display:column headerClass="pagetableth" class="pagetabletd" title="Type" titleKey='estimate.search.type' style="width:10%;text-align:left" property='estimate.natureOfWork.name' />
 			<display:column headerClass="pagetableth" class="pagetabletd" title="Estimate Date" titleKey='estimate.search.estimateDate' style="width:8%;text-align:center" >
 				<s:date name="#attr.currentRow.estimate.estimateDate" format="dd/MM/yyyy" />
 			</display:column>	

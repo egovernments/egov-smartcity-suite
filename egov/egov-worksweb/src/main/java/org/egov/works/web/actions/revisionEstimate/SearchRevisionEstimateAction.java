@@ -134,7 +134,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         addRelatedEntity("category", EgwTypeOfWork.class);
         addRelatedEntity("parentCategory", EgwTypeOfWork.class);
         addRelatedEntity("executingDepartment", Department.class);
-        addRelatedEntity("type", NatureOfWork.class);
+        addRelatedEntity("natureOfWork", NatureOfWork.class);
         addRelatedEntity("egwStatus", EgwStatus.class);
     }
 
@@ -156,7 +156,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
                                 "from EgwStatus s where moduletype=? and code in ('CREATED','REJECTED','RESUBMITTED','CANCELLED','BUDGETARY_APPR_CHECKED','BUDGETARY_APPROPRIATION_DONE','BUDGETARY_APPR_VALIDATED','APPROVED') order by orderId",
                                 AbstractEstimate.class.getSimpleName()));
         addDropdownData("executingDepartmentList", persistenceService.findAllBy("from Department dt"));
-        addDropdownData("typeList", persistenceService.findAllBy("from WorkType dt"));
+        addDropdownData("typeList", persistenceService.findAllBy("from NatureOfWork"));
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
         addDropdownData("categoryList", Collections.emptyList());
@@ -197,9 +197,9 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
             query.append(" and woeC.estimate.estimateNumber like '%'||?||'%'");
             paramList.add(estimates.getEstimateNumber());
         }
-        if (estimates.getType() != null) {
-            query.append(" and woeP.estimate.type.id = ?");
-            paramList.add(estimates.getType().getId());
+        if (estimates.getNatureOfWork() != null) {
+            query.append(" and woeP.estimate.natureOfWork.id = ?");
+            paramList.add(estimates.getNatureOfWork().getId());
         }
         if (null != fromDate && getFieldErrors().isEmpty()) {
             query.append(" and woeC.estimate.estimateDate >= ?");

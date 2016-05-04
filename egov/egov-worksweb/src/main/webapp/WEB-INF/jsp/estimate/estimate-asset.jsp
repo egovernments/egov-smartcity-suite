@@ -127,7 +127,7 @@ var makeAssetsTable = function() {
 		}
 		var status='';
 		<s:iterator id="typeListiterator" value="dropdownData.typeList" status="row_status">
-		if(document.getElementById('type').options[document.getElementById('type').selectedIndex].text=='<s:property value="name"/>') {
+		if(document.getElementById('natureOfWork').options[document.getElementById('natureOfWork').selectedIndex].text=='<s:property value="name"/>') {
 			status = getStatusForNatureOfWork('<s:property value="name"/>');
 		}
 		</s:iterator>
@@ -160,7 +160,7 @@ function getStatusListForNatureOfWork(name){
 function setAssetStatusHiddenField(){
 		var status='';
 		<s:iterator id="typeListiterator" value="dropdownData.typeList" status="row_status">
-		if(document.getElementById('type').options[document.getElementById('type').selectedIndex].text=='<s:property value="name"/>')
+		if(document.getElementById('natureOfWork').options[document.getElementById('natureOfWork').selectedIndex].text=='<s:property value="name"/>')
 		{
 			status = getStatusListForNatureOfWork('<s:property value="name"/>');
 		}

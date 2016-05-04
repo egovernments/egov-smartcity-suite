@@ -335,7 +335,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         boolean isDepositWorks = false;
         final List<String> depositTypeList = getAppConfigValuesToSkipBudget();
         for (final String type : depositTypeList)
-            if (type.equals(estimate.getType().getName()))
+            if (type.equals(estimate.getNatureOfWork().getName()))
                 isDepositWorks = true;
         return isDepositWorks;
     }

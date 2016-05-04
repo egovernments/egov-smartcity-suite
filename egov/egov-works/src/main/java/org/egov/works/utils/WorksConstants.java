@@ -259,6 +259,7 @@ public class WorksConstants {
 
     public static final String FILESTORE_MODULECODE = "WMS";
 
+    public static final String ABSTRACTESTIMATE = "AbstractEstimate";
     public static final String WORKORDER = "WorkOrder";
     public static final String CONTRACTORBILL = "CONTRACTORBILL";
     public static final String MBHEADER = "MBHeader";

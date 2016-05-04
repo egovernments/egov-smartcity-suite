@@ -95,7 +95,7 @@ public class CopyEstimateAction extends BaseFormAction {
         copyEstimate.setEstimateDate(abstractEstimate.getEstimateDate());
         copyEstimate.setDescription(abstractEstimate.getDescription());
         copyEstimate.setLocation(abstractEstimate.getLocation());
-        copyEstimate.setType(abstractEstimate.getType());
+        copyEstimate.setNatureOfWork(abstractEstimate.getNatureOfWork());
         copyEstimate.setCategory(abstractEstimate.getCategory());
         copyEstimate.setParentCategory(abstractEstimate.getParentCategory());
         copyEstimate.setUserDepartment(abstractEstimate.getUserDepartment());
@@ -109,7 +109,6 @@ public class CopyEstimateAction extends BaseFormAction {
         copyEstimate.setMultiYearEstimates(cloneMultiYearEstimate(abstractEstimate.getMultiYearEstimates()));
 
         copyEstimate.setWorkValue(abstractEstimate.getWorkValue());
-        copyEstimate.setDocumentNumber(abstractEstimate.getDocumentNumber());
         copyEstimate.setIsCopiedEst("Y");
 
         //loggedInEmp.getAssignment(getFinancialYearStartDate()).getPosition();

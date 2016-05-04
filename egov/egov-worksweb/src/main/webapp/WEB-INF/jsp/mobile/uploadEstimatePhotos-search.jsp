@@ -139,7 +139,7 @@ function validateSearch()
 	var todate = document.getElementById("toDate").value;
 	var fromdate = document.getElementById("fromDate").value;
 	var estimateNumber = document.getElementById("estimateNumber").value;
-	var natureOfWork = document.getElementById("type").value;
+	var natureOfWork = document.getElementById("natureOfWork").value;
 	var execDept = document.getElementById("execDeptId").value;
 	if(estimateNumber == '' && natureOfWork == -1 && todate=='' && fromdate=='' && execDept == -1)
 	{
@@ -198,9 +198,9 @@ function validateSearch()
 					<div data-mini="true" data-role="fieldcontain" id="natureOfWorkDiv">
 						<fieldset data-mini="true" data-role="controlgroup">
 							<legend >Nature Of Work:</legend>
-							<s:select data-mini="true" id="type"
-								name="type.id"  headerKey="-1" headerValue="%{getText('estimate.default.select')}"
-								list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" >
+							<s:select data-mini="true" id="natureOfWork"
+								name="natureOfWork.id"  headerKey="-1" headerValue="%{getText('estimate.default.select')}"
+								list="dropdownData.typeList" listKey="id" listValue="name" value="%{natureOfWork.id}" >
 							</s:select>
 						</fieldset>
 					</div>

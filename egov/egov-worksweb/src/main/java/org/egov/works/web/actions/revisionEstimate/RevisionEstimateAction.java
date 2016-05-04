@@ -407,7 +407,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                     + "/RE".concat(Integer.toString(reCount)));
             revisionEstimate.setName("Revision Estimate for: " + abstractEstimate.getName());
             revisionEstimate.setDescription("Revision Estimate for: " + abstractEstimate.getDescription());
-            revisionEstimate.setType(abstractEstimate.getType());
+            revisionEstimate.setNatureOfWork(abstractEstimate.getNatureOfWork());
             revisionEstimate.setExecutingDepartment(abstractEstimate.getExecutingDepartment());
             revisionEstimate.setUserDepartment(abstractEstimate.getUserDepartment());
             revisionEstimate.setWard(abstractEstimate.getWard());

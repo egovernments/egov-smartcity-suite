@@ -333,7 +333,7 @@ function toggleCancelRemarks(obj) {
 		<s:property value="#attr.currentRow.egwStatus.description" />
 	</display:column>
 	
-	<display:column headerClass="pagetableth" class="pagetabletd" title="Type" titleKey='estimate.search.type' style="width:10%;text-align:left" property='type.name' />
+	<display:column headerClass="pagetableth" class="pagetabletd" title="Type" titleKey='estimate.search.type' style="width:10%;text-align:left" property='natureOfWork.name' />
 
 	<display:column headerClass="pagetableth" class="pagetabletd" title="Estimate Date" titleKey='estimate.search.estimateDate' style="width:10%;text-align:center" >
 		<s:date name="#attr.currentRow.estimateDate" format="dd/MM/yyyy" />

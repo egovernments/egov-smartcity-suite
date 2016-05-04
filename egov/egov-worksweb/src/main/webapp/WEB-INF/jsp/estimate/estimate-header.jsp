@@ -52,7 +52,7 @@ warnings['natureOfWorkChanged']='<s:text name="estimate.header.warning.natureOfW
 warnings['dateChanged']='<s:text name="estimate.header.warning.dateChanged"/>'
 warnings['improperWardSelection']='<s:text name="estimate.header.warning.improperWardSelection"/>'
 
-function warn(type){
+function warn(type){ 
     dom.get(type+"Warning").innerHTML=warnings[type]
     dom.get(type+"Warning").style.display='';
     YAHOO.lang.later(3000,null,function(){dom.get(type+"Warning").style.display='none';});
@@ -131,7 +131,7 @@ function validateHeaderBeforeSubmit(abstractEstimateForm) {
               dom.get("worktypeerror").innerHTML='';    
           }    
       }
-      if(dom.get('type').value==-1)
+      if(dom.get('natureOfWork').value==-1)
       {
     	  dom.get("worktypeerror").style.display='';
           dom.get("worktypeerror").innerHTML='<s:text name="estimate.natureofwork.null" />';
@@ -386,10 +386,10 @@ function jurisdictionSearchParameters(){
 			</label>
 			<div class="col-sm-3 add-margin">
 				 <s:if test="%{(dropdownData.typeList.size==1)}" >
-	                <s:select name="type" id="type" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" />
+	                <s:select name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{natureOfWork.id}" />
                 </s:if>
                 <s:else>
-	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="type" id="type" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" 
+	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{natureOfWork.id}" 
 	                	onChange="javascript:warn('natureOfWorkChanged');resetAssets(this.options[this.selectedIndex].value);"/>	                
                 </s:else>
                 <span class='warning' id="natureOfWorkChangedWarning"></span>

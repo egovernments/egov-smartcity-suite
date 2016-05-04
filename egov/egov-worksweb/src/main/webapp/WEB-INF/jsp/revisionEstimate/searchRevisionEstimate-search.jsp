@@ -48,7 +48,7 @@
 
 function validateSearch() {	
 	var bool=false;
-	if($F('type') == -1  && $F('reStatus') == -1  &&
+	if($F('natureOfWork') == -1  && $F('reStatus') == -1  &&
 	$F('estimateNumberSearch').blank() && $F('execDept')==-1 && 
 	$F('fromDate').blank() && $F('toDate').blank() &&
 	$F('parentCategory')==-1 && $F('category')==-1  && $F('workOrderNumberSearch').blank()) {
@@ -184,8 +184,8 @@ var workOrderNumberSearchSelectionHandler = function(sType, arguments){
 						</td>
 						<td class="greyboxwk"><s:text name="estimate.work.nature" />:</td>
 						<td class="greybox2wk">
-							<s:select headerKey="-1" headerValue="ALL" name="type" id="type" cssClass="selectwk" list="dropdownData.typeList" listKey="id" listValue="name"
-											value="%{type.id}" />
+							<s:select headerKey="-1" headerValue="ALL" name="natureOfWork" id="natureOfWork" cssClass="selectwk" list="dropdownData.typeList" listKey="id" listValue="name"
+											value="%{natureOfWork.id}" />
 						</td> 
 					</tr>				
 													

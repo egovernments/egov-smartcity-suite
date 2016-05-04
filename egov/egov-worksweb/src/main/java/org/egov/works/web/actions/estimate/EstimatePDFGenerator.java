@@ -897,7 +897,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         final List<String> depositTypeList = getAppConfigValuesToSkipBudget();
         if (estimate != null && estimate.getId() != null)
             for (final String type : depositTypeList)
-                if (type.equals(estimate.getType().getName()))
+                if (type.equals(estimate.getNatureOfWork().getName()))
                     skipBudget = true;
         return skipBudget;
     }

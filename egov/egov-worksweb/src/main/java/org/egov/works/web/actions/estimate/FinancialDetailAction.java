@@ -1204,7 +1204,7 @@ public class FinancialDetailAction extends BaseFormAction {
         logger.info("lenght of appconfig values>>>>>> " + depositTypeList.size());
         if (abstractEstimate != null && abstractEstimate.getId() != null)
             for (final String type : depositTypeList)
-                if (type.equals(abstractEstimate.getType().getName()))
+                if (type.equals(abstractEstimate.getNatureOfWork().getName()))
                     skipBudget = true;
         return skipBudget;
     }

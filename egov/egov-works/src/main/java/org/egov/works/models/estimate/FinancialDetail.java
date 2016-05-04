@@ -39,26 +39,28 @@
  */
 package org.egov.works.models.estimate;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
 import org.egov.model.budget.BudgetGroup;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-public class FinancialDetail extends BaseModel {
+public class FinancialDetail extends AbstractAuditable {
 
     private static final long serialVersionUID = 9007144591203838584L;
 
+    private Long id;
     private AbstractEstimate abstractEstimate;
     private Fund fund;
     private CFunction function;
@@ -86,6 +88,16 @@ public class FinancialDetail extends BaseModel {
         this.function = function;
         this.fund = fund;
         this.functionary = functionary;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public AbstractEstimate getAbstractEstimate() {
@@ -157,7 +169,6 @@ public class FinancialDetail extends BaseModel {
         financingSources.add(financingSource);
     }
 
-    @Override
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
 

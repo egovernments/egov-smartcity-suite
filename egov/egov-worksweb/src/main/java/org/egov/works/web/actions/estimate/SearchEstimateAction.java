@@ -431,7 +431,7 @@ public class SearchEstimateAction extends SearchFormAction {
             paramList.add(getExecDept());
         }
         if (getExpenditureType() != -1) {
-            query.append(" and woe.estimate.type.id=? ");
+            query.append(" and woe.estimate.natureOfWork.id=? ");
             paramList.add(Long.valueOf(getExpenditureType()));
         }
         if (StringUtils.isNotBlank(getEstimatenumber())) {
@@ -661,7 +661,7 @@ public class SearchEstimateAction extends SearchFormAction {
                 paramList.add(getExecDept());
             }
             if (getExpenditureType() != -1) {
-                sb.append(" and ae.type.id= ? ");
+                sb.append(" and ae.natureOfWork.id= ? ");
                 paramList.add(Long.valueOf(getExpenditureType()));
             }
             if (StringUtils.isNotBlank(getEstimatenumber())) {

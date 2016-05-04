@@ -73,7 +73,7 @@ function  openBackWindow()
 	var estNo = document.getElementById("estimateNumber").value;
 	var fromDate = document.getElementById("fromDate").value;
 	var toDate = document.getElementById("toDate").value;
-	var typeId = document.getElementById("type.id").value;
+	var typeId = document.getElementById("natureOfWork.id").value;
 	var executingDepartmentId = document.getElementById("execDeptId").value;
 	if(estNo!='')
 	{
@@ -99,9 +99,9 @@ function  openBackWindow()
 	if(typeId!='' && typeId!='-1')
 	{
 		if(count>0)
-			queryString = queryString+"&type.id="+typeId;
+			queryString = queryString+"&natureOfWork.id="+typeId;
 		else
-			queryString = "?type.id="+typeId;
+			queryString = "?natureOfWork.id="+typeId;
 		count++;
 	}
 	if(executingDepartmentId!='' && executingDepartmentId!='-1')
@@ -126,7 +126,7 @@ function  openBackWindow()
 	<s:hidden id="estimateNumber" name="estimateNumber" />
 	<s:hidden id="fromDate" name="fromDate" />
 	<s:hidden id="toDate" name="toDate" />
-	<s:hidden id="type.id" name="type.id" />
+	<s:hidden id="natureOfWork.id" name="natureOfWork.id" />
 	<s:hidden id="execDeptId" name="execDeptId" />
 	<div data-role="page" id="searchResultDiv" data-add-back-btn="true" class="pageclass">
 	<div data-theme="b" data-role="header" data-position="fixed">
@@ -162,7 +162,7 @@ function  openBackWindow()
 							<td data-mini="true"><s:property value="%{totalAmount.formattedString}" /></td>
 							<td data-mini="true"><s:property value="%{name}" /></td>
 							<td data-mini="true"><s:date name="estimateDate" format="dd/MM/yyyy" /></td>
-							<td data-mini="true"><s:property value="%{type.name}" /></td>
+							<td data-mini="true"><s:property value="%{natureOfWork.name}" /></td>
 							<td data-mini="true"><a data-mini="true" href="${pageContext.request.contextPath}/mobile/uploadEstimatePhotos!upload.action?estId=<s:property value="%{id}"/>"
 									data-rel="external" data-ajax="false"><img src="../css/jquerymobile/images/camera-icon-small.png" border="0" /></a></td>
 						</tr>

@@ -66,7 +66,7 @@
 		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary">
 			<column name="JURISDICTION" not-null="true"/>
 		</many-to-one>
-		<many-to-one name="type"
+		<many-to-one name="natureOfWork"
 			class="org.egov.works.models.masters.NatureOfWork" fetch="select">
 			<column name="NATUREOFWORK" not-null="true"/>
 		</many-to-one>
@@ -89,7 +89,7 @@
 		</many-to-one>
 		<many-to-one name="userDepartment"
 			class="org.egov.infra.admin.master.entity.Department" fetch="select">
-			<column name="USER_DEPARTMENT" not-null="true"/>
+			<column name="USER_DEPARTMENT"/>
 		</many-to-one>
 		<many-to-one name="executingDepartment"
 			class="org.egov.infra.admin.master.entity.Department" fetch="select">
@@ -104,11 +104,8 @@
 				scale="20" column="ESTIMATE_VALUE"  />
 		</component>
 		<many-to-one name="fundSource" class="org.egov.commons.Fundsource" fetch="select">
-			<column name="FUNDSOURCE_ID" not-null="true"/>
+			<column name="FUNDSOURCE_ID"/>
 		</many-to-one>
-		<property name="documentNumber" type="long">
-            <column name="DOCUMENT_NUMBER"/>
-        </property>		
 		<many-to-one name="egwStatus" column="STATUS_ID" /> 		
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
 			cascade="all">
@@ -140,6 +137,8 @@
 		<property name="isCopiedEst" type="string">
 			<column name="IS_COPIED_EST" length="1" />
 		</property>	
+		
+		<many-to-one name="lineEstimateDetails" column="LINEESTIMATEDETAILS" />
 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>

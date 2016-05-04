@@ -139,7 +139,7 @@ function setupBudgetGroups(){
 	var	id = document.financialDetailForm.function.options[document.financialDetailForm.function.selectedIndex].value;
     //changes for year end process
     //var date=document.financialDetailForm.estimateDate.value;
-    <s:if test="%{!appConfigValuesToSkipBudget.contains(abstractEstimate.type.name)}">
+    <s:if test="%{!appConfigValuesToSkipBudget.contains(abstractEstimate.natureOfWork.name)}">
     	//var date=document.financialDetailForm.financialYearStartDate.value;
     	makeJSONCall(["Text","Value","Glcode"],'${pageContext.request.contextPath}/estimate/ajaxFinancialDetail!loadBudgetGroups.action',
     	{functionId:id},budgetLoadSuccessHandler,budgetLoadFailureHandler) ;
@@ -227,14 +227,14 @@ function validateDataBeforeSave(financialDetailForm) {
     	showMessage('financialDetails_error','Please select the Function');
     	return false;
     }
-    <s:if test="%{!appConfigValuesToSkipBudget.contains(abstractEstimate.type.name)}">
+    <s:if test="%{!appConfigValuesToSkipBudget.contains(abstractEstimate.natureOfWork.name)}">
     	if(dom.get('budgetGroup').value =='-1'){
 	    	showMessage('financialDetails_error','Please select the Budget Head');
 	    	return false;
    		}
     </s:if>
 	if (document.financialDetailForm.actionName.value=='budget_details_save') {
-		<s:if test="%{!appConfigValuesToSkipBudget.contains(abstractEstimate.type.name)}">
+		<s:if test="%{!appConfigValuesToSkipBudget.contains(abstractEstimate.natureOfWork.name)}">
 	    	var selectedBudgetHead = dom.get("budgetGroup").options[dom.get("budgetGroup").selectedIndex].Glcode;
 	    	if (selectedBudgetHead != null && selectedBudgetHead != '-1' 
 	    		&& selectedBudgetHead.startsWith('<s:property value="%{budgetHeadGlcode}"/>')) {
@@ -473,7 +473,7 @@ function validateDataBeforeSave(financialDetailForm) {
 			document.financialDetailForm.closebutton.readonly=false;
 			document.financialDetailForm.closebutton.disabled=false;
 		</s:if>
-		<s:if test="%{appConfigValuesToSkipBudget.contains(abstractEstimate.type.name)}">
+		<s:if test="%{appConfigValuesToSkipBudget.contains(abstractEstimate.natureOfWork.name)}">
 				if(document.financialDetailForm.budgetGroup!=null)
 					document.financialDetailForm.budgetGroup.disabled=true;
 		</s:if>

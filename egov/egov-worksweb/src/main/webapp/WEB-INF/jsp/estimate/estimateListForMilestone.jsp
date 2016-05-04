@@ -149,7 +149,7 @@ var myMilestoneFailureHandler = function() {
 				<s:property value="#attr.currentRow.estimate.egwStatus.description" />
 			</display:column>
 			<display:column headerClass="pagetableth" class="pagetabletd" title="Nature of Work" titleKey='estimate.search.type' style="width:10%;text-align:left"  >
-				<s:property value="#attr.currentRow.estimate.type.name" />
+				<s:property value="#attr.currentRow.estimate.natureOfWork.name" />
 			</display:column>
 			<display:column headerClass="pagetableth" class="pagetabletd" title="Estimate Date" titleKey='estimate.search.estimateDate' style="width:8%;text-align:center" >
 				<s:date name="#attr.currentRow.estimate.estimateDate" format="dd/MM/yyyy" />
@@ -229,7 +229,7 @@ var myMilestoneFailureHandler = function() {
 				<s:property value="#attr.currentRow[0].estimate.egwStatus.description" />
 			</display:column>
 			<display:column headerClass="pagetableth" class="pagetabletd" title="Nature of Work" titleKey='estimate.search.type' style="width:10%;text-align:left"  >
-				<s:property value="#attr.currentRow[0].estimate.type.name" />
+				<s:property value="#attr.currentRow[0].estimate.natureOfWork.name" />
 			</display:column>
 			<display:column headerClass="pagetableth" class="pagetabletd" title="Estimate Date" titleKey='estimate.search.estimateDate' style="width:8%;text-align:center" >
 				<s:date name="#attr.currentRow[0].estimate.estimateDate" format="dd/MM/yyyy" />

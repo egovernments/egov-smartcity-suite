@@ -102,7 +102,7 @@ public class SearchEstimateForREAction extends SearchFormAction {
         addRelatedEntity("category", EgwTypeOfWork.class);
         addRelatedEntity("parentCategory", EgwTypeOfWork.class);
         addRelatedEntity("executingDepartment", Department.class);
-        addRelatedEntity("type", NatureOfWork.class);
+        addRelatedEntity("natureOfWork", NatureOfWork.class);
 
     }
 
@@ -148,7 +148,7 @@ public class SearchEstimateForREAction extends SearchFormAction {
             paramList.add(getDeptId());
         }
         if (getTypeId() != -1) {
-            query.append(" and woe.estimate.type.id=? ");
+            query.append(" and woe.estimate.natureOfWork.id=? ");
             paramList.add(Long.valueOf(getTypeId()));
         }
         if (StringUtils.isNotBlank(getEstimateNumber())) {

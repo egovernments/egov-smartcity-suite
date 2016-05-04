@@ -103,9 +103,9 @@ public class UploadEstimatePhotosAction extends BaseFormAction {
             query.append(" and estimateDate <=  TO_DATE('" + toDate + "','dd/mm/yyyy')");
         if (execDeptId != null && execDeptId != -1)
             query.append(" and executingDepartment.id= " + execDeptId);
-        if (abstractEstimate.getType() != null && abstractEstimate.getType().getId() != null
-                && abstractEstimate.getType().getId() != -1)
-            query.append(" and type.id= " + abstractEstimate.getType().getId());
+        if (abstractEstimate.getNatureOfWork() != null && abstractEstimate.getNatureOfWork().getId() != null
+                && abstractEstimate.getNatureOfWork().getId() != -1)
+            query.append(" and natureOfWork.id= " + abstractEstimate.getNatureOfWork().getId());
         query.append(" order by id desc ");
         estimateList = persistenceService.getSession().createQuery(query.toString()).setMaxResults(100).list();
         return SEARCH_LIST;

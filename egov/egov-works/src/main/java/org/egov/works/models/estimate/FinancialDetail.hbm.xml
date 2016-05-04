@@ -58,9 +58,9 @@
 		<many-to-one name="budgetGroup" column="BUDGETGROUP_ID" />
 		<many-to-one name="coa" column="COA_ID" />
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<property name="lastModifiedDate" column="MODIFIED_DATE" type="timestamp" />
 		
 		<list name="financingSources" cascade="all,delete-orphan">
         	<key column="FINANCIALDETAIL_ID" not-null="false"/>

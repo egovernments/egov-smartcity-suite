@@ -39,18 +39,20 @@
  */
 package org.egov.works.models.estimate;
 
-import org.egov.commons.CFinancialYear;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
-
-import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MultiYearEstimate extends BaseModel {
+import javax.validation.constraints.Min;
+
+import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.exception.ValidationError;
+
+public class MultiYearEstimate extends AbstractAuditable {
 
     private static final long serialVersionUID = -7118385910723277266L;
+    private Long id;
     private AbstractEstimate abstractEstimate;
     private CFinancialYear financialYear;
     @Min(value = 0, message = "multiYeareEstimate.percentage.not.negative")
@@ -64,6 +66,16 @@ public class MultiYearEstimate extends BaseModel {
         this.abstractEstimate = abstractEstimate;
         this.financialYear = financialYear;
         this.percentage = percentage;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public AbstractEstimate getAbstractEstimate() {
@@ -90,7 +102,6 @@ public class MultiYearEstimate extends BaseModel {
         this.percentage = percentage;
     }
 
-    @Override
     public List<ValidationError> validate() {
         if (percentage < 0.0)
             return Arrays.asList(new ValidationError("percentage",
