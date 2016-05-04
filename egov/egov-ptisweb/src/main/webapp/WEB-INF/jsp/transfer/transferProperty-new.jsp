@@ -293,7 +293,7 @@
 				}
 			}
 		}
-		
+		jQuery("#saleDetail").keypress(function(event){ if (event.keyCode == 10 || event.keyCode == 13) event.preventDefault(); });
 	</script>
 	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </body>
