@@ -49,7 +49,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +62,6 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +107,7 @@ public final class ReportUtil {
      * Returns User Signature InputStream
      *
      * @param user id
-     * 
+     *
      * @return user signature for the given user id
      */
     public static InputStream getUserSignature(final Long userId) {
@@ -168,28 +166,6 @@ public final class ReportUtil {
                     "Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE + "]",
                     e);
             return null;
-        }
-    }
-
-    /**
-     * Executes given HQL query (which is expected to return a single object) and returns the output. Returns null if query
-     * doesn't fetch any data.
-     *
-     * @param connection Connection to be used for executing the query. Can be passed as $P{REPORT_CONNECTION} in case of a jasper
-     * report
-     * @param query Query to be executed to get the data
-     * @return Output of the query
-     */
-    @SuppressWarnings("unchecked")
-    public static Object fetchFromDBHql(final String hqlQuery) {
-        final Query query = HibernateUtil.getCurrentSession().createQuery(hqlQuery);
-        final List<Object> result = query.list();
-        if (result.size() == 1)
-            return result.get(0);
-        else {
-            final String errMsg = "Query [" + hqlQuery + "] returned multiple rows!";
-            LOGGER.error(errMsg);
-            throw new ApplicationRuntimeException(errMsg);
         }
     }
 
