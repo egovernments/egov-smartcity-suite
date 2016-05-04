@@ -240,7 +240,7 @@ function submitButton()
 	           {title : 'apptype',data : 'resource.clauses.applicationcode',"bVisible" : false},
 	           {title : 'legacy',data : 'resource.clauses.islegacy',"bVisible" : false},
 	           {title : 'Usage Type',data : 'resource.clauses.usage'},
-	           {title : 'Property Tax Due',
+	           {title : 'Property Tax Due',class : 'text-right',
 	        	   render: function (data, type, full) {
 	        		   if(citizenRole != 'true') {
 							return full.resource.clauses.totaldue;
@@ -251,7 +251,7 @@ function submitButton()
 			   {title : 'Status',data : 'resource.clauses.status'},
 	           {title : 'conntype',data : 'resource.clauses.connectiontype',"bVisible" : false},
 	           {title : 'conndate',data : 'resource.common.createdDate',"bVisible" : false},
-	           {title : 'Water Charge Due',data : 'resource.clauses.waterTaxDue'},
+	           {title : 'Water Charge Due',class : 'text-right',data : 'resource.clauses.waterTaxDue'},
 		       {title : 'Actions',
 	        	   render : function(data,type,full) {
 	        		     
