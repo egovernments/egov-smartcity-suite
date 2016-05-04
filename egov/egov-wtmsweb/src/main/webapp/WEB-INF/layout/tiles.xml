@@ -322,5 +322,8 @@
         <put-attribute name="page-title" value="title.meterCost.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/meter-cost-master-list.jsp"/>
     </definition>
-   
+     <definition name="dataEntryReport-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.dataentry.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dataentry-report.jsp"/>
+    </definition>
 </tiles-definitions>
