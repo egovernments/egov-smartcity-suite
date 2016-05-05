@@ -39,19 +39,11 @@
  */
 package org.egov.works.abstractestimate.repository;
 
-import java.util.List;
-
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AbstractEstimateRepository extends JpaRepository<AbstractEstimate, Long> {
-
-    List<AbstractEstimate> findByEstimateNumberContainingIgnoreCase(final String estimateNumber);
-
-    List<AbstractEstimate> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
-
-    AbstractEstimate findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
+public interface EstimateTechnicalSanctionRepository extends JpaRepository<EstimateTechnicalSanction, Long> {
 
 }

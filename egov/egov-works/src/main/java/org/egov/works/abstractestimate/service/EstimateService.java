@@ -39,15 +39,13 @@
  */
 package org.egov.works.abstractestimate.service;
 
-import java.io.IOException;
-import java.util.Date;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.persistence.entity.component.Money;
+import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.models.estimate.AbstractEstimate;
@@ -74,6 +72,9 @@ public class EstimateService {
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
+    @Autowired
+    private EstimateTechnicalSanctionService estimateTechnicalSanctionService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -84,15 +85,15 @@ public class EstimateService {
     }
 
     public AbstractEstimate getAbstractEstimateById(final Long id) {
-        return abstractEstimateRepository.findById(id);
+        return abstractEstimateRepository.findOne(id);
     }
 
     @Transactional
-    public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(final LineEstimateDetails lineEstimateDetails)
-            throws IOException {
+    public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(final LineEstimateDetails lineEstimateDetails) {
 
         final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository
                 .save(populateAbstractEstimate(lineEstimateDetails));
+        saveTechnicalSanction(savedAbstractEstimate);
         return savedAbstractEstimate;
     }
 
@@ -137,6 +138,20 @@ public class EstimateService {
         multiYearEstimate.setFinancialYear(financialYearHibernateDAO.getFinYearByDate(abstractEstimate.getEstimateDate()));
         multiYearEstimate.setPercentage(100);
         return multiYearEstimate;
+    }
+
+    private EstimateTechnicalSanction saveTechnicalSanction(final AbstractEstimate abstractEstimate) {
+        final EstimateTechnicalSanction estimateTechnicalSanction = new EstimateTechnicalSanction();
+        estimateTechnicalSanction.setAbstractEstimate(abstractEstimate);
+        estimateTechnicalSanction.setTechnicalSanctionNumber(
+                abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionNumber());
+        estimateTechnicalSanction
+                .setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
+        estimateTechnicalSanction
+                .setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionBy());
+
+        // TODO: move to cascade save with AbstractEstimate object once AbstractEstimate entity converted to JPA
+        return estimateTechnicalSanctionService.save(estimateTechnicalSanction);
     }
 
     public AbstractEstimate getAbstractEstimateByEstimateNumber(final String estimateNumber) {

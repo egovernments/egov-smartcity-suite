@@ -37,21 +37,45 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.abstractestimate.repository;
+package org.egov.works.abstractestimate.service;
 
-import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
+import org.egov.works.abstractestimate.repository.EstimateTechnicalSanctionRepository;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface AbstractEstimateRepository extends JpaRepository<AbstractEstimate, Long> {
+@Service
+@Transactional(readOnly = true)
+public class EstimateTechnicalSanctionService {
 
-    List<AbstractEstimate> findByEstimateNumberContainingIgnoreCase(final String estimateNumber);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    List<AbstractEstimate> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
+    private final EstimateTechnicalSanctionRepository estimateTechnicalSanctionRepository;
 
-    AbstractEstimate findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    @Autowired
+    public EstimateTechnicalSanctionService(final EstimateTechnicalSanctionRepository estimateTechnicalSanctionRepository) {
+        this.estimateTechnicalSanctionRepository = estimateTechnicalSanctionRepository;
+    }
+
+    public EstimateTechnicalSanction getEstimateTechnicalSanctionById(final Long id) {
+        return estimateTechnicalSanctionRepository.findOne(id);
+    }
+
+    @Transactional
+    public EstimateTechnicalSanction save(final EstimateTechnicalSanction estimateTechnicalSanction) {
+        final EstimateTechnicalSanction savedEstimateTechnicalSanction = estimateTechnicalSanctionRepository
+                .save(estimateTechnicalSanction);
+        return savedEstimateTechnicalSanction;
+    }
 
 }

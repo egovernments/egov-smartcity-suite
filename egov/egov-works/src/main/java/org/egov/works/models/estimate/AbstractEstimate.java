@@ -154,6 +154,13 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private List<FinancialDetail> financialDetails = new LinkedList<FinancialDetail>();
     private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
 
+    /*
+     * @OrderBy("id")
+     * @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true,
+     * targetEntity = EstimateTechnicalSanction.class) private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new
+     * ArrayList<EstimateTechnicalSanction>(0);
+     */
+
     public EgwStatus getEgwStatus() {
         return egwStatus;
     }
@@ -779,4 +786,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.lineEstimateDetails = lineEstimateDetails;
     }
 
+    /*
+     * public List<EstimateTechnicalSanction> getEstimateTechnicalSanctions() { return estimateTechnicalSanctions; } public void
+     * setEstimateTechnicalSanctions(List<EstimateTechnicalSanction> estimateTechnicalSanctions) { this.estimateTechnicalSanctions
+     * = estimateTechnicalSanctions; } public void addEstimateTechnicalSanction(final EstimateTechnicalSanction
+     * estimateTechnicalSanction) { estimateTechnicalSanctions.add(estimateTechnicalSanction); }
+     */
 }

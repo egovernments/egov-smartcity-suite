@@ -184,7 +184,13 @@
 			<list-index column="est_photo_index" />
 			<one-to-many
 				class="org.egov.works.models.estimate.EstimatePhotographs" />
-		</list>		
+		</list>			
+		<!-- <list name="estimateTechnicalSanctions" cascade="all,delete-orphan">
+			<key column="abstractestimate" not-null="true" />
+			<list-index column="idx" />
+			<one-to-many
+				class="org.egov.works.abstractestimate.entity.EstimateTechnicalSanction" />
+		</list>		 -->	
 	</class>
 	
 	<query name="MY_NEW_ESTIMATES">
