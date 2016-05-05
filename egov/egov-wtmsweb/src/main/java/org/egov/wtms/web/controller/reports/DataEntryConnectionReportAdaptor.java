@@ -40,6 +40,7 @@
 package org.egov.wtms.web.controller.reports;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 import org.egov.wtms.application.service.DataEntryConnectionReport;
 
@@ -50,6 +51,8 @@ import com.google.gson.JsonSerializer;
 
 public class DataEntryConnectionReportAdaptor implements JsonSerializer<DataEntryConnectionReport> {
 
+    SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+
     @Override
     public JsonElement serialize(final DataEntryConnectionReport dataEntryConnectionReport, final Type typeOfSrc,
             final JsonSerializationContext context) {
@@ -58,9 +61,9 @@ public class DataEntryConnectionReportAdaptor implements JsonSerializer<DataEntr
         jsonObject.addProperty("assessmentNo", dataEntryConnectionReport.getAssessmentNo());
         jsonObject.addProperty("ownerName", dataEntryConnectionReport.getOwnerName());
         jsonObject.addProperty("wardName", dataEntryConnectionReport.getRevenueWard());
-        jsonObject.addProperty("zone", dataEntryConnectionReport.getZone());
         jsonObject.addProperty("houseNo", dataEntryConnectionReport.getHouseNumber());
         jsonObject.addProperty("locality", dataEntryConnectionReport.getLocality());
+        jsonObject.addProperty("address", dataEntryConnectionReport.getAddress());
         jsonObject.addProperty("mobileNumber", dataEntryConnectionReport.getMobileNumber());
         jsonObject.addProperty("email", dataEntryConnectionReport.getEmail());
         jsonObject.addProperty("waterSource", dataEntryConnectionReport.getWaterSource());
@@ -73,7 +76,10 @@ public class DataEntryConnectionReportAdaptor implements JsonSerializer<DataEntr
         jsonObject.addProperty("aadharNumber", dataEntryConnectionReport.getAadharNumber());
         jsonObject.addProperty("noOfPersons", dataEntryConnectionReport.getNoOfPersons());
         jsonObject.addProperty("noOfRooms", dataEntryConnectionReport.getNoOfRooms());
+        jsonObject.addProperty("sumpCapacity", dataEntryConnectionReport.getSumpCapacity());
         jsonObject.addProperty("donationCharges", dataEntryConnectionReport.getDonationCharges());
+        jsonObject.addProperty("connectionDate", dateformat.format(dataEntryConnectionReport.getConnectionDate())
+                .toString());
         jsonObject.addProperty("monthlyFee", dataEntryConnectionReport.getMonthlyFee());
         jsonObject.addProperty("waterTaxDue", dataEntryConnectionReport.getWaterTaxDue());
         jsonObject.addProperty("propertyTaxDue", dataEntryConnectionReport.getPropertyTaxDue());

@@ -39,6 +39,9 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 public class DataEntryConnectionReport {
 
     private String zone;
@@ -56,6 +59,7 @@ public class DataEntryConnectionReport {
     private String houseNumber;
     private String locality;
     private String mobileNumber;
+    private String address;
     private String aadharNumber;
     private Integer noOfPersons;
     private Integer noOfRooms;
@@ -63,8 +67,10 @@ public class DataEntryConnectionReport {
     private double monthlyFee;
     private double waterTaxDue;
     private double propertyTaxDue;
+    private BigDecimal sumpCapacity;
     private String email;
     private String waterSource;
+    private Date connectionDate;
 
     public String getZone() {
         return zone;
@@ -241,12 +247,12 @@ public class DataEntryConnectionReport {
     public void setWaterTaxDue(final double waterTaxDue) {
         this.waterTaxDue = waterTaxDue;
     }
-    
+
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -254,8 +260,32 @@ public class DataEntryConnectionReport {
         return waterSource;
     }
 
-    public void setWaterSource(String waterSource) {
+    public void setWaterSource(final String waterSource) {
         this.waterSource = waterSource;
+    }
+
+    public Date getConnectionDate() {
+        return connectionDate;
+    }
+
+    public BigDecimal getSumpCapacity() {
+        return sumpCapacity;
+    }
+
+    public void setSumpCapacity(final BigDecimal sumpCapacity) {
+        this.sumpCapacity = sumpCapacity;
+    }
+
+    public void setConnectionDate(final Date connectionDate) {
+        this.connectionDate = connectionDate;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(final String address) {
+        this.address = address;
     }
 
 }

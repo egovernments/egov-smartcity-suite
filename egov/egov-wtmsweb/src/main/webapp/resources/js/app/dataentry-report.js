@@ -97,12 +97,12 @@ function loadingReport()
 			             
 		       
 							  { "data" : "hscNo" , "title": "H.S.C NO"},  
-							  { "data" : "assessmentNo", "title": "Assessment Number"},
-							  { "data" : "ownerName", "title": "Owner Name"},
-							  { "data" : "wardName", "title": "Revenue Ward"},
-							  { "data" : "zone", "title": "zone"},
+							  { "data" : "assessmentNo", "title": "PT Assessment Number"},
+							  { "data" : "ownerName", "title": "Name of the Applicant"},
+							  { "data" : "wardName", "title": "Zone / Ward / Block"},
 							  { "data" : "houseNo", "title": "Door No"},
 							  { "data" : "locality", "title": "Locality"},
+							  { "data" : "address", "title": "address"},
 							  { 
 								  "data" : "mobileNumber", "title": "Mobile Number",
 								  "render" : function(data, type, row) {
@@ -116,11 +116,13 @@ function loadingReport()
 							  { "data" : "connectionType", "title": "Connection Type"},
 							  { "data" : "usageType", "title": "Usage Type"},
 							  { "data" : "category", "title": "Category"},
-							  { "data" : "pipeSizeInInch", "title": "Pipe Size"},
+							  { "data" : "pipeSizeInInch", "title": "H.S.C Pipe Size(Inches)"},
 							  { "data" : "aadharNumber", "title": "Aaadhar No"},
 							  { "data" : "noOfPersons", "title": "No.Of Persons"},
-							  { "data" : "noOfRooms", "title": "No.of Rooms"},
+							  { "data" : "noOfFloors", "title": "No of floors"},
+							  { "data" : "sumpCapacity", "title": "Sump Capacity (Litres)"},
 							  { "data" : "donationCharges", "title": "Donation Charges"},
+							  { "data" : "connectionDate", "title": "Connection Date"},
 							  { "data" : "monthlyFee", "title": "Monthly Fee"},
 							  { "data" : "waterTaxDue", "title": "Water Tax Due"},
 							  { "data" : "propertyTaxDue", "title": "Property Tax Due"}

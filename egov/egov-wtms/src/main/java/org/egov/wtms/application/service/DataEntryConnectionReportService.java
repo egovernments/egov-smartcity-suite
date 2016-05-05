@@ -63,16 +63,15 @@ public class DataEntryConnectionReportService {
 
     public SQLQuery getDataEntryConnectionReportDetails(final String ward) throws ParseException {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select dcbinfo.hscno as \"hscNo\", dcbinfo.propertyid as \"assessmentNo\", dcbinfo.username as \"ownerName\",wardboundary.name as \"revenueWard\",  zoneboundary.name as \"zone\", "
-                + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.mobileno as \"mobileNumber\", dcbinfo.watersource as \"waterSource\" ,  "
+        queryStr.append("select dcbinfo.hscno as \"hscNo\", dcbinfo.propertyid as \"assessmentNo\", dcbinfo.username as \"ownerName\",wardboundary.name as \"revenueWard\",  "
+                + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\",dcbinfo.address as \"address\" , dcbinfo.mobileno as \"mobileNumber\", dcbinfo.watersource as \"waterSource\" ,  "
                 + "dcbinfo.propertytype as \"propertyType\" , dcbinfo.applicationtype as \"applicationType\", dcbinfo.connectiontype as \"connectionType\",  "
                 + "dcbinfo.usagetype as \"usageType\" , dcbinfo.categorytype as \"category\", dcbinfo.pipesize as \"pipeSizeInInch\",  "
-                + "dcbinfo.aadharno as \"aadharNumber\" ,  dcbinfo.numberofperson as \"noOfPersons\" , dcbinfo.numberofrooms as \"noOfRooms\" , "
-                + " dcbinfo.donationcharges as \"donationCharges\" , dcbinfo.arr_balance+dcbinfo.curr_balance as \"waterTaxDue\" , "
+                + "dcbinfo.aadharno as \"aadharNumber\" ,  dcbinfo.numberofperson as \"noOfPersons\" , dcbinfo.numberofrooms as \"noOfRooms\" , dcbinfo.sumpcapacity as \"sumpCapacity\" , "
+                + " dcbinfo.donationcharges as \"donationCharges\" ,  dcbinfo.executiondate as \"connectionDate\"  ,dcbinfo.arr_balance+dcbinfo.curr_balance as \"waterTaxDue\" , "
                 + "dcbinfo.pt_firsthalf_demand + dcbinfo.pt_secondhalf_demand - dcbinfo.pt_firsthalf_collection - dcbinfo.pt_secondhalf_collection as \"propertyTaxDue\" "
                 + "from egwtr_mv_dcb_view dcbinfo"
-                + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id"
-                + " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
+                + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
         queryStr.append(" where dcbinfo.connectionstatus = 'ACTIVE' and dcbinfo.legacy = true ");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
