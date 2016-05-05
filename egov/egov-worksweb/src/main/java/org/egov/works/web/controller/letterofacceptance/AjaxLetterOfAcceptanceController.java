@@ -213,4 +213,13 @@ public class AjaxLetterOfAcceptanceController {
         final String json = gson.toJson(object);
         return json;
     }
+    
+    @RequestMapping(value = "/ajaxsearch-loatomodify", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchLoaToModify(final Model model,
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final List<WorkOrder> searchLoaList = letterOfAcceptanceService.searchLetterOfAcceptanceToModify(searchRequestLetterOfAcceptance);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJson(searchLoaList))
+                .append("}").toString();
+        return result;
+    }
 }

@@ -467,4 +467,43 @@ public class LetterOfAcceptanceService {
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
         return savedworkOrder;
     }
+    
+    public List<WorkOrder> searchLetterOfAcceptanceToModify(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        // TODO Need TO handle in single query
+        final List<String> estimateNumbers = lineEstimateDetailsRepository
+                .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+        final List<String> workOrderNumbers = letterOfAcceptanceRepository.findWorkOrderNumbersToModifyLoa(
+                WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(),
+                BillTypes.Final_Bill.toString());
+        if (estimateNumbers.isEmpty())
+            estimateNumbers.add("");
+        if(workOrderNumbers.isEmpty())
+            workOrderNumbers.add("");
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
+                .addOrder(Order.asc("workOrderDate"))
+                .createAlias("wo.contractor", "woc")
+                .createAlias("egwStatus", "status");
+        if (searchRequestLetterOfAcceptance != null) {
+            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
+                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()).ignoreCase());
+            if (searchRequestLetterOfAcceptance.getFromDate() != null)
+                criteria.add(Restrictions.ge("workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
+            if (searchRequestLetterOfAcceptance.getToDate() != null)
+                criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
+            if (searchRequestLetterOfAcceptance.getName() != null)
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()).ignoreCase());
+            if (searchRequestLetterOfAcceptance.getFileNumber() != null)
+                criteria.add(
+                        Restrictions.ilike("fileNumber", searchRequestLetterOfAcceptance.getFileNumber(), MatchMode.ANYWHERE));
+            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
+                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()).ignoreCase());
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
+                criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
+                criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
+        }
+        criteria.add(Restrictions.in("workOrderNumber", workOrderNumbers));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
 }
