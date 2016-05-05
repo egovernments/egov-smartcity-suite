@@ -538,5 +538,6 @@ public final class CollectionConstants {
 	public static final String QUERY_ALL_REMITTANCE_BANKACCOUNT_LIST = "getAllRemittanceBankAccount";
 	public static final String REPORT_TEMPLATE_REMITTANCE_VOUCHER = "collection_remittancevoucher_report";
 	public static final String QUERY_REMITTANCEVOUCHER_CREATOR_LIST = "getAllRemittanceVoucherCreator";
+	public static final String SERVICETYPETOBANK_ID = "id";
 
 }
