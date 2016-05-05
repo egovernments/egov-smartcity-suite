@@ -490,7 +490,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                             penaltyEffectiveDate = getPenaltyEffectiveDate(installment, assessmentEffecInstallment,
                                     basicProperty.getAssessmentdate(), currentInstall);
                         }
-                        if (penaltyEffectiveDate.before(new Date())) {
+                        if (penaltyEffectiveDate!=null && penaltyEffectiveDate.before(new Date())) {
                             penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
                         }
                     } else
@@ -546,12 +546,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
              * months there is no peanlty from 4th month onwards penalty
              * effective from 4th month of the installment
              */
-            if (installment.equals(curInstallment)) {
+            if (installment.equals(curInstallment) || installment.getFromDate().after(curInstallment.getToDate())) {
                 final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(installment.getFromDate(), new Date());
                 if (noOfMonths > 3) {
                     penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
-                } else
-                    penaltyEffDate = new Date();
+                }
             } else {
                 penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
             }
