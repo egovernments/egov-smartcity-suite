@@ -114,7 +114,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
 
     protected License license;
-    public static final String TL_FUNCTION_CODE = "10151500";
+    public static final String TL_FUNCTION_CODE = "1500";
 
     @Autowired
     private EgBillDetailsDao egBillDetailsDao;
