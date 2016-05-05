@@ -226,7 +226,7 @@ public class HomeController {
         Menu applicationMenu = createSubmenu("apps", "Applications", "Applications", "javascript:void(0);",
                 "fa fa-th floatLeft", menu);
         menuLinks.stream().filter(menuLink -> !menuLink.getName().equals("EmployeeSelfService")).forEach(menuLink -> {
-            createSubmenuRoot(menuLink, favourites, user, applicationMenu);
+            createSubmenuRoot(menuLink.getId(), menuLink.getDisplayName(), favourites, user, applicationMenu);
         });
     }
 
@@ -255,7 +255,7 @@ public class HomeController {
         });
     }
 
-    private void createApplicationLink(MenuLink childMenuLink, List<MenuLink> favourites, User user, Menu parent) {
+    private void createApplicationLink(MenuLink childMenuLink, List<MenuLink> favourites, User user, Menu parentMenu) {
         if (childMenuLink.isEnabled()) {
             Menu appLink = new Menu();
             appLink.setId(childMenuLink.getId().toString());
@@ -263,17 +263,17 @@ public class HomeController {
                     "fa fa-star floatLeft " + (favourites.contains(childMenuLink) ? "added-as-fav" : "add-to-favourites"));
             appLink.setName(childMenuLink.getName());
             appLink.setLink("/" + childMenuLink.getContextRoot() + childMenuLink.getUrl());
-            parent.getItems().add(appLink);
+            parentMenu.getItems().add(appLink);
         } else {
-            createSubmenuRoot(childMenuLink, favourites, user, parent);
+            createSubmenuRoot(childMenuLink.getId(), childMenuLink.getName(), favourites, user, parentMenu);
         }
     }
 
-    private void createSubmenuRoot(MenuLink childMenuLink, List<MenuLink> favourites, User user, Menu parent) {
-        List<MenuLink> submodules = moduleService.getMenuLinksByParentModuleId(childMenuLink.getId(), user.getId());
+    private void createSubmenuRoot(Long menuId, String menuName, List<MenuLink> favourites, User user, Menu parentMenu) {
+        List<MenuLink> submodules = moduleService.getMenuLinksByParentModuleId(menuId, user.getId());
         if (!submodules.isEmpty()) {
-            Menu submenu = createSubmenu(String.valueOf(childMenuLink.getId()), childMenuLink.getName(),
-                    childMenuLink.getName(), "javascript:void(0);", "", parent);
+            Menu submenu = createSubmenu(String.valueOf(menuId), menuName,
+                    menuName, "javascript:void(0);", "", parentMenu);
             submodules.stream().forEach(submodule -> createApplicationLink(submodule, favourites, user, submenu));
         }
     }
