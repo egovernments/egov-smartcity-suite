@@ -126,7 +126,7 @@ var makeAssetsTable = function() {
 			}
 		}
 		var status='';
-		<s:iterator id="typeListiterator" value="dropdownData.typeList" status="row_status">
+		<s:iterator id="natureOfWorkListiterator" value="dropdownData.natureOfWorkList" status="row_status">
 		if(document.getElementById('natureOfWork').options[document.getElementById('natureOfWork').selectedIndex].text=='<s:property value="name"/>') {
 			status = getStatusForNatureOfWork('<s:property value="name"/>');
 		}
@@ -144,14 +144,14 @@ var makeAssetsTable = function() {
 	assetsTable.addRow({SlNo:assetsTable.getRecordSet().getLength()+1});
 }
 function getStatusForNatureOfWork(name){
-	if(name=='Deposit Works - Third Party Asset' || name=='Deposit Works - No Asset Created')
+	if(name=='Deposit Works' || name=='Deposit Works')
 		return '';
 	else
 		return 'Created&assetStatus=CWIP&assetStatus=Capitalized&assetStatus=Revaluated';
 }
 
 function getStatusListForNatureOfWork(name){
-	if(name=='Deposit Works - Third Party Asset' || name=='Deposit Works - No Asset Created')
+	if(name=='Deposit Works' || name=='Deposit Works')
 		return '-1';
 	else
 		return 'Created,CWIP,Capitalized,Revaluated';
@@ -159,7 +159,7 @@ function getStatusListForNatureOfWork(name){
 
 function setAssetStatusHiddenField(){
 		var status='';
-		<s:iterator id="typeListiterator" value="dropdownData.typeList" status="row_status">
+		<s:iterator id="natureOfWorkListiterator" value="dropdownData.natureOfWorkList" status="row_status">
 		if(document.getElementById('natureOfWork').options[document.getElementById('natureOfWork').selectedIndex].text=='<s:property value="name"/>')
 		{
 			status = getStatusListForNatureOfWork('<s:property value="name"/>');

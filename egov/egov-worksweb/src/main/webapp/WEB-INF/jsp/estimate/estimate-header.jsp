@@ -101,21 +101,6 @@ function validateHeaderBeforeSubmit(abstractEstimateForm) {
       if (wardName.length == 0) {
         abstractEstimateForm.wardID.value = -1;
        }
-      if(dom.get('userDepartment').value==-1)
-      {
-    	  dom.get("worktypeerror").style.display='';
-          dom.get("worktypeerror").innerHTML='<s:text name="estimate.userDept.null" />';
-          window.scroll(0,0);
-          return false;   
-      }
-      else
-      {
-          if(dom.get("worktypeerror").innerHTML=='<s:text name="estimate.userDept.null" />')
-          {
-        	  dom.get("worktypeerror").style.display='none';
-              dom.get("worktypeerror").innerHTML='';    
-          }    
-      }
       if(document.getElementById('wardSearch').value=='')
       {
     	  dom.get("worktypeerror").style.display='';
@@ -336,7 +321,7 @@ function jurisdictionSearchParameters(){
 	   
 	  <div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <s:text name="estimate.user.department" /><span class="mandatory"></span>
+			    <s:text name="estimate.user.department" /></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="userDepartment" id="userDepartment" cssClass="form-control" list="dropdownData.userDepartmentList" onchange="clearMsg(this);" listKey="id" listValue="name" value="%{userDepartment.id}"/> 
@@ -386,10 +371,10 @@ function jurisdictionSearchParameters(){
 			</label>
 			<div class="col-sm-3 add-margin">
 				 <s:if test="%{(dropdownData.typeList.size==1)}" >
-	                <s:select name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{natureOfWork.id}" />
+	                <s:select name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.natureOfWorkList" listKey="id" listValue="name" value="%{natureOfWork.id}" />
                 </s:if>
                 <s:else>
-	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{natureOfWork.id}" 
+	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.natureOfWorkList" listKey="id" listValue="name" value="%{natureOfWork.id}" 
 	                	onChange="javascript:warn('natureOfWorkChanged');resetAssets(this.options[this.selectedIndex].value);"/>	                
                 </s:else>
                 <span class='warning' id="natureOfWorkChangedWarning"></span>
