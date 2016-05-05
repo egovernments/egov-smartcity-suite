@@ -48,11 +48,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import static org.egov.infra.utils.StringUtils.EMPTY;
 
 @Service
 @Transactional(readOnly = true)
@@ -61,50 +61,47 @@ public class ModuleService {
     @Autowired
     private ModuleRepository moduleRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public Module getModuleByName(final String moduleName) {
+    public Module getModuleByName(String moduleName) {
         return moduleRepository.findByName(moduleName);
     }
 
-    public List<MenuLink> getMenuLinksForRoles(final Set<Role> roles) {
-        final List<Object[]> elements = moduleRepository.fetchModulesForRoles(roles);
-        final List<MenuLink> menuLinks = new ArrayList<>();
+    public List<MenuLink> getMenuLinksForRoles(Set<Role> roles) {
+        List<Object[]> elements = moduleRepository.fetchModulesForRoles(roles);
+        List<MenuLink> menuLinks = new ArrayList<>();
         elements.forEach(element -> {
-            final MenuLink menuLink = new MenuLink();
-            menuLink.setName(element[0] != null ? element[0].toString() : "");
-            menuLink.setUrl(element[1] != null ? element[1].toString() : "");
-            menuLink.setDisplayName(element[2] != null ? element[2].toString() : "");
+            MenuLink menuLink = new MenuLink();
+            menuLink.setName(element[0] != null ? element[0].toString() : EMPTY);
+            menuLink.setUrl(element[1] != null ? element[1].toString() : EMPTY);
+            menuLink.setDisplayName(element[2] != null ? element[2].toString() : EMPTY);
             menuLink.setId(Long.valueOf(element[3] != null ? element[3].toString() : "0"));
             menuLinks.add(menuLink);
         });
         return menuLinks;
     }
 
-    public List<MenuLink> getMenuLinksByParentModuleId(final Long parentId, final Long userId) {
-        final List<Object[]> elements = moduleRepository.fetchModulesByParentModuleId(parentId, userId);
-        final List<MenuLink> menuLinks = new ArrayList<>();
+    public List<MenuLink> getMenuLinksByParentModuleId(Long parentId, Long userId) {
+        List<Object[]> elements = moduleRepository.fetchModulesByParentModuleId(parentId, userId);
+        List<MenuLink> menuLinks = new ArrayList<>();
         elements.forEach(element -> {
-            final MenuLink menuLink = new MenuLink();
+            MenuLink menuLink = new MenuLink();
             menuLink.setId(Long.valueOf(element[0] != null ? element[0].toString() : "0"));
-            menuLink.setName(element[1] != null ? element[1].toString() : "");
-            menuLink.setUrl(element[2] != null ? element[2].toString() : "");
-            menuLink.setEnabled(element[3] != null ? element[3].toString().equals("A") ? true : false : false);
-            menuLink.setContextRoot(element[4] != null ? element[4].toString() : "");
+            menuLink.setName(element[1] != null ? element[1].toString() : EMPTY);
+            menuLink.setUrl(element[2] != null ? element[2].toString() : EMPTY);
+            menuLink.setEnabled(element[3] != null && element[3].toString().equals("A"));
+            menuLink.setContextRoot(element[4] != null ? element[4].toString() : EMPTY);
             menuLinks.add(menuLink);
         });
         return menuLinks;
     }
 
-    public List<MenuLink> getUserFavouritesMenuLinks(final Long userId) {
-        final List<Object[]> elements = moduleRepository.fetchUserFavourateModules(userId);
-        final List<MenuLink> menuLinks = new ArrayList<>();
+    public List<MenuLink> getUserFavouritesMenuLinks(Long userId) {
+        List<Object[]> elements = moduleRepository.fetchUserFavourateModules(userId);
+        List<MenuLink> menuLinks = new ArrayList<>();
         elements.forEach(element -> {
-            final MenuLink menuLink = new MenuLink();
+            MenuLink menuLink = new MenuLink();
             menuLink.setId(Long.valueOf(element[0] != null ? element[0].toString() : "0"));
-            menuLink.setName(element[1] != null ? element[1].toString() : "");
-            menuLink.setUrl(element[2] != null && element[3] != null ? element[2].toString() + element[3].toString() : "");
+            menuLink.setName(element[1] != null ? element[1].toString() : EMPTY);
+            menuLink.setUrl(element[2] != null && element[3] != null ? element[2].toString() + element[3] : EMPTY);
             menuLinks.add(menuLink);
         });
         return menuLinks;
