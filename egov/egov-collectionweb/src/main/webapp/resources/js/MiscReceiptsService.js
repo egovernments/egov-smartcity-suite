@@ -55,7 +55,7 @@
         	
     		
         	var url2 = path+"/receipts/ajaxReceiptCreate-ajaxFinAccDtlsByService.action";
-        	makeJSONCall(["functionIdDetail","glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
+        	makeJSONCall(["glcodeIdDetail","glcodeDetail","accounthead","creditAmountDetail"]
         	,url2,{serviceId:service,deptId:dept},loadFinAccSuccessHandler,loadFinAccFailureHandler);
         
         	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
@@ -190,7 +190,6 @@ loadFinAccSuccessHandler=function(req,res){
 	  totalcramt = "0.00";          
 	  billDetailTableIndex = 1;
 	for(i=0;i<res.results.length-1;i++){
-		dom.get("functionId").value=res.results[i].functionIdDetail;
 	  	 billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
                     "glcodeid":res.results[i].glcodeIdDetail,
                     "glcode":res.results[i].glcodeDetail,
@@ -201,7 +200,6 @@ loadFinAccSuccessHandler=function(req,res){
        }
        
         for(i=0;i<res.results.length;i++){  
-        	    dom.get("functionId").value=res.results[i].functionIdDetail;
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeIdDetail',i,res.results[i].glcodeIdDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeDetail',i,res.results[i].glcodeDetail);
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'accounthead',i,res.results[i].accounthead);

@@ -74,7 +74,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 
 		<set name="bankAccountServiceMap" inverse="true" cascade="all,delete-orphan" >
 			<key>
-				<column name="SERVICEID" precision="22" scale="0" />
+				<column name="SERVICEDETAILS" precision="22" scale="0" />
 			</key>
 			<one-to-many class="org.egov.infstr.models.BankAccountServiceMap" />
 		</set>

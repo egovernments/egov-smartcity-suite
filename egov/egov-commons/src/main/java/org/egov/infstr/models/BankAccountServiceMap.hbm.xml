@@ -56,8 +56,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			fetch="select">
 			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
-		<property name="createdDate" column="CREATEDDATELASTMODIFIEDDATE" type="timestamp" />
-		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 		<property name="fromDate" column="fromdate" type="date" />
 		<property name="toDate" column="todate" type="date" />
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User"
