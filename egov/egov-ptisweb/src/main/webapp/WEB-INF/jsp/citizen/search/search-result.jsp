@@ -43,15 +43,6 @@
 <html>
 	<head>
 		<script type="text/javascript">
-		function getPropdetails(obj,assessmentNum)
-		{
-		   var selectedValue = obj.options[obj.selectedIndex].value;	       
-	       if(selectedValue=="ViewProperty")
-			{
-				window.location="../../view/viewDCBProperty-displayPropInfo.action?propertyId="+assessmentNum;
-			}
-	    }
-
 		function gotoSearchForm(){
 			document.viewform.action='${pageContext.request.contextPath}/citizen/search/search-searchForm.action';
 			document.viewform.submit(); 
@@ -83,10 +74,9 @@
 							<display:table name="searchResultList" id="linksTables"
 								pagesize="10" export="true" requestURI="" class="tablebottom"
 								style="width:100%" uid="currentRowObject">
-								<display:column property="assessmentNum"
-									title="Assessment Number"
-									headerClass="bluebgheadtd" class="blueborderfortd"
-									style="text-align:center">
+								<display:column title="Assessment Number" headerClass="bluebgheadtd" media="html" class="blueborderfortd" style="text-align:center">
+									<a href="../../view/viewProperty-viewForm.action?propertyId=${currentRowObject.assessmentNum}&isCitizen=true">
+										${currentRowObject.assessmentNum} </a>
 								</display:column>
 								<display:column property="parcelId"
 									title="Parcel Id"
@@ -100,32 +90,26 @@
 									title="Address"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:left" />
-								<display:column property="currDemand"
-									title="Current Tax"
+								<display:column property="currFirstHalfDemand"
+									title="Current First Half Tax"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center" />
-								<display:column property="currDemandDue"
-									title="Current Tax Due"
+									<display:column property="currFirstHalfDemandDue"
+									title="Current First Half Tax Due"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="text-align:center" />
+								<display:column property="currSecondHalfDemand"
+									title="Current Second Half Tax"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="width:10%;text-align:center" />
+									<display:column property="currSecondHalfDemandDue"
+									title="Current Second Half Tax Due"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="width:10%;text-align:center" />
 								<display:column property="arrDemandDue"
 									title="Arrear Tax Due"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center" />
-								<display:column title="Action" headerClass="bluebgheadtd"
-									media="html" class="blueborderfortd" style="text-align:center">
-									<select id="actionValue" name="actionValue"
-										style="align: center" 	
-										onchange="getPropdetails(this,'<s:property value="%{#attr.currentRowObject.assessmentNum}"/>')">									
-										<option value="">
-											<br>
-											----Choose----
-										</option>										
-										<option value="ViewProperty">
-							            	View Property
-						                </option>																			
-									</select>
-								</display:column>
 								<display:setProperty name="paging.banner.item" value="Record" />
 								<display:setProperty name="paging.banner.items_name"
 									value="Records" />

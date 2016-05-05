@@ -2474,6 +2474,31 @@ public class PropertyService {
         final List<PropertyMaterlizeView> propertyList = query.list();
         return propertyList;
     }
+    /**
+     * @param assessmentNum,ownerName,doorNo
+     * @return List of property matching the input params
+    */
+   public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum, final String ownerName,final String doorNo) {
+       final StringBuilder queryStr = new StringBuilder();
+       queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(
+               " where pmv.isActive = true ");
+       if (assessmentNum != null && !assessmentNum.trim().isEmpty())
+           queryStr.append(" and pmv.propertyId=:assessmentNum ");
+       if (ownerName != null && !ownerName.trim().isEmpty())
+           queryStr.append(" and upper(trim(pmv.ownerName)) like :OwnerName ");
+       if (doorNo != null && !doorNo.trim().isEmpty())
+           queryStr.append(" and pmv.houseNo like :HouseNo ");
+       final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+       if (assessmentNum != null && !assessmentNum.trim().isEmpty())
+           query.setString("assessmentNum", assessmentNum);
+       if (doorNo != null && !doorNo.trim().isEmpty())
+           query.setString("HouseNo", doorNo + "%");
+       if (ownerName != null && !ownerName.trim().isEmpty())
+           query.setString("OwnerName", "%" + ownerName.toUpperCase() + "%");
+
+       final List<PropertyMaterlizeView> propertyList = query.list();
+       return propertyList;
+   }
 
     /**
      * @param locationId

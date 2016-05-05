@@ -64,6 +64,7 @@
 				<security:filter-chain pattern="/image/**" filters="none" />
 				<security:filter-chain pattern="/rest/**" filters="none" />
 				<security:filter-chain pattern="/citizen/search/**" filters="none" /> 
+				<security:filter-chain pattern="/view/viewProperty-viewForm.action" filters="none" />
 				<security:filter-chain pattern="/view/viewDCBProperty-displayPropInfo.action" filters="none" /> 
 				<security:filter-chain pattern="/view/viewDCBProperty-displayHeadwiseDcb.action" filters="none" />
 				<security:filter-chain pattern="/view/viewDCBProperty-showMigData.action" filters="none" />

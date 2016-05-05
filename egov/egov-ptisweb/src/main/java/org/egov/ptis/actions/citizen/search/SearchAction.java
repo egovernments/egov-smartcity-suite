@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.citizen.search;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -49,21 +50,30 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -84,12 +94,15 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private final Logger LOGGER = Logger.getLogger(getClass());
 
     private String assessmentNum;
+    private String doorNo;
+    private String ownerName;
     private String mode;
     private List<Map<String, String>> searchResultList;
     private HttpServletRequest request;
     private String searchUri;
     private String searchCreteria;
     private String searchValue;
+    private boolean isDemandActive;
     List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
     public static final String TARGET = "result";
 
@@ -99,6 +112,10 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
+    @Autowired
+    private PropertyService propertyService;
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
 
     @Override
     public Object getModel() {
@@ -118,37 +135,42 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     /**
      * @return to citizen search property result screen
      */
-    @ValidationErrorPage(value = "new")
-    @Action(value = "/citizen/search/search-srchByAssessment")
-    public String srchByAssessment() {
+ 
+       @ValidationErrorPage(value = "new")
+        @Action(value = "/citizen/search/search-srchByAssessmentAndOwnerDetail")
+        public String srchByAssessmentAndOwnerDetail(){
+               try {
+                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByAssessmentAndOwnerDetails(assessmentNum,ownerName,doorNo);
+                for (final PropertyMaterlizeView propMatview : propertyList) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("srchByAssessmentAndOwner : Property : " + propMatview);
+                    setSearchResultList(getResultsFromMv(propMatview));
+                }
+                if (assessmentNum != null && !assessmentNum.equals(""))
+                    setSearchValue("Assessment Number : " + assessmentNum);
+                
+                setSearchCreteria("Search By Assessment and Owner detail");
+                if (ownerName != null && !ownerName.equals(""))
+                setSearchValue("Owner name :" + ownerName);
+                if (doorNo != null && !doorNo.equals(""))
+                setSearchValue("Door number :" + doorNo);
+                                  
+
+            } catch (final Exception e) {
+                LOGGER.error("Exception in Search Property By Door number ", e);
+                throw new ApplicationRuntimeException("Exception : ", e);
+            }
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into srchByAssessment  method. Assessment Number : " + assessmentNum);
-        try {
-            final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("srchByAssessment : BasicProperty : " + basicProperty);
-            if (basicProperty != null)
-                setSearchResultList(getSearchResults(basicProperty.getUpicNo()));
-            if (assessmentNum != null && !assessmentNum.equals(""))
-                setSearchValue("Assessment Number : " + assessmentNum);
-            else if (assessmentNum != null && !assessmentNum.equals(""))
-                setSearchValue("Assessment Number : " + assessmentNum);
-            setSearchCreteria("Search By Assessment number");
-        } catch (final Exception e) {
-            LOGGER.error("Exception in Search Property By Assessment ", e);
-            throw new ApplicationRuntimeException("Exception in Search Property By Assessment ", e);
-        }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exit from srchByAssessment method ");
+            LOGGER.debug("Exit from srchByAssessmentAndOwenrDetails method ");
         return TARGET;
     }
-
+      
     /*
      * (non-Javadoc)
      * @see com.opensymphony.xwork2.ActionSupport#validate()
      * @description : validates assessment no. Throw error in case its empty.
      */
-    @Override
+/*    @Override
     public void validate() {
         if (org.apache.commons.lang.StringUtils.equals(mode, "assessment"))
             if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum)
@@ -156,45 +178,73 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                 addActionError(getText("mandatory.assessmentNo"));
     }
 
-    /**
+    *//**
      * @param assessmentNumber
      * @return search result based on assessment number.
      */
-    private List<Map<String, String>> getSearchResults(final String assessmentNumber) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into getSearchResults method. Asssessment Number : " + assessmentNumber);
-        if (assessmentNumber != null || org.apache.commons.lang.StringUtils.isNotEmpty(assessmentNumber)) {
-
-            final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("BasicProperty : " + basicProperty);
-            if (basicProperty != null) {
-                final Property property = basicProperty.getProperty();
+    private List<Map<String, String>> getResultsFromMv(final PropertyMaterlizeView pmv) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entered into getSearchResults method");
+            LOGGER.debug("Assessment Number : " + pmv.getPropertyId());
+        }
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(pmv.getPropertyId());
+        Property property = basicProperty.getProperty();
+        if (basicProperty != null) {
+            checkIsDemandActive(basicProperty.getProperty());
+        }
+        if (pmv.getPropertyId() != null || org.apache.commons.lang.StringUtils.isNotEmpty(pmv.getPropertyId()))
+            if (pmv != null) {
                 final Map<String, String> searchResultMap = new HashMap<String, String>();
-                searchResultMap.put("assessmentNum", assessmentNumber);
-                searchResultMap.put("ownerName", basicProperty.getFullOwnerName());
-                searchResultMap.put("parcelId", basicProperty.getGisReferenceNo());
-                searchResultMap.put("address", basicProperty.getAddress().toString());
-                final Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-                if (!property.getIsExemptedFromTax()) {
-                    searchResultMap.put("currDemand", demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
-                    searchResultMap.put("arrDemandDue",
-                            demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-                    searchResultMap.put("currDemandDue",
-                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR).subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
-                } else {
-                    searchResultMap.put("currDemand", "0");
+                searchResultMap.put("assessmentNum", pmv.getPropertyId());
+                searchResultMap.put("ownerName", pmv.getOwnerName());
+                searchResultMap.put("parcelId", pmv.getGisRefNo());
+                searchResultMap.put("address", pmv.getPropertyAddress());
+                searchResultMap.put("source", pmv.getSource().toString());
+                searchResultMap.put("isDemandActive", String.valueOf(isDemandActive));
+                searchResultMap.put("propType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
+                searchResultMap.put("isTaxExempted", String.valueOf(property.getIsExemptedFromTax()));
+                searchResultMap.put("isUnderWorkflow", String.valueOf(basicProperty.isUnderWorkflow()));
+                searchResultMap.put("enableVacancyRemission",
+                        String.valueOf(propertyTaxUtil.enableVacancyRemission(basicProperty.getUpicNo())));
+                searchResultMap.put("enableMonthlyUpdate",
+                        String.valueOf(propertyTaxUtil.enableMonthlyUpdate(basicProperty.getUpicNo())));
+                searchResultMap.put("enableVRApproval",
+                        String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
+                if (pmv.getIsExempted()) {
+                    searchResultMap.put("currFirstHalfDemand", "0");
+                    searchResultMap.put("currFirstHalfDemandDue", "0");
+                    searchResultMap.put("currSecondHalfDemand", "0");
+                    searchResultMap.put("currSecondHalfDemandDue", "0");
                     searchResultMap.put("arrDemandDue", "0");
-                    searchResultMap.put("currDemandDue", "0");
+                } else {
+                    searchResultMap.put("currFirstHalfDemand", pmv.getAggrCurrFirstHalfDmd().toString());
+                    searchResultMap.put("currFirstHalfDemandDue",
+                            pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl()).toString());
+                    searchResultMap.put("currSecondHalfDemand", pmv.getAggrCurrSecondHalfDmd().toString());
+                    searchResultMap.put("currSecondHalfDemandDue",
+                            pmv.getAggrCurrSecondHalfDmd().subtract(pmv.getAggrCurrSecondHalfColl()).toString());
+                    searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
                 }
                 searchList.add(searchResultMap);
             }
-        }
-        if (LOGGER.isDebugEnabled())
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Search list : " + (searchList != null ? searchList : ZERO));
             LOGGER.debug("Exit from getSearchResults method");
+        }
         return searchList;
     }
-
+    private void checkIsDemandActive(final Property property) {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Entered into checkIsDemandActive");
+        if (property.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE))
+            isDemandActive = false;
+        else
+            isDemandActive = true;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("checkIsDemandActive - Is demand active? : " + isDemandActive);
+            LOGGER.debug("Exiting from checkIsDemandActive");
+        }
+    }
     public List<Map<String, String>> getSearchResultList() {
         return searchResultList;
     }
@@ -248,5 +298,20 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public void setAssessmentNum(final String assessmentNum) {
         this.assessmentNum = assessmentNum;
     }
+    public String getOwnerName() {
+        return ownerName;
+    }
 
+    public void setOwnerName(final String ownerName) {
+        this.ownerName = ownerName;
+    }
+    public String getDoorNo() {
+        return doorNo;
+    }
+
+    public void setDoorNo(final String doorNo) {
+        this.doorNo = doorNo;
+    }
+
+    
 }

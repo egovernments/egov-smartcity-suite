@@ -50,15 +50,17 @@
 		});
 	}
 
-	function gotoSearch() {
-		var assessmentNum = jQuery("#assessmentNum").val();
-		if (!jQuery("#assessmentNum").val()) {
-			bootbox.alert('Assessment number is mandatory');
+	function onSubmit() {
+
+		if (jQuery("#assessmentNum").val() == ''
+				&& jQuery("#ownerName").val() == ''
+				&& jQuery("#doorNo").val() == '') {
+			bootbox.alert("Any one value is mandatory");
 			return false;
 		} else {
-			document.assessmentform.action = '../../view/viewDCBProperty-displayPropInfo.action?propertyId='
-					+ assessmentNum;
+			document.assessmentform.action = '${pageContext.request.contextPath}/citizen/search/search-srchByAssessmentAndOwnerDetail.action';
 			document.assessmentform.submit();
+			return true;
 		}
 	}
 </script>
@@ -72,7 +74,7 @@
 			</div>
 		</s:if>
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
-			<s:form name="assessmentform" theme="simple">
+			<s:form name="assessmentform" id="assessmentform" theme="simple">
 				<tr>
 					<td width="100%" colspan="4" class="headingbg">
 						<div class="headingbg" style="text-align: left">
@@ -83,8 +85,7 @@
 
 				<tr>
 					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="citizen.prop.id" /> <span
-						class="mandatory"></span> :</td>
+					<td class="bluebox"><s:text name="citizen.prop.id" /> :</td>
 
 					<td class="bluebox"><s:textfield name="assessmentNum"
 							id="assessmentNum" value="%{assessmentNum}"
@@ -92,28 +93,40 @@
 							maxlength="10" /></td>
 					<td class="bluebox">&nbsp;</td>
 				</tr>
-
-
 				<tr>
-					<td class="bluebox" colspan="4">&nbsp; &nbsp; &nbsp;</td>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text name="citizen.prop.owner" /> :</td>
+					<td class="bluebox"><s:textfield name="ownerName"
+							id="ownerName" value="%{ownerName}" maxlength="30" /></td>
+					<td class="bluebox">&nbsp;</td>
 				</tr>
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text name="citizen.prop.doorno" /> :</td>
+					<td class="bluebox"><s:textfield name="doorNo" id="doorNo"
+							value="%{doorNo}" maxlength="10" /></td>
+					<td class="bluebox">&nbsp;</td>
+				</tr>
+
 				<tr>
 					<td class="greybox">&nbsp;</td>
 					<td class="greybox" colspan="2">
 						<div class="greybox" style="text-align: center">
-							<s:hidden id="mode" name="mode" value="assessment"></s:hidden>
-							<input type="button" value="Submit" class="button"
-								onClick="gotoSearch();" />
+
+							<s:submit name="search" value="Search" cssClass="buttonsubmit"
+								onclick="return onSubmit();"></s:submit>
+
 						</div>
 					</td>
-					<td class="greybox">&nbsp;</td>
+					
 				</tr>
+
 			</s:form>
 		</table>
 
 
-		<div align="left" class="mandatory" style="font-size: 11px">
-			<s:text name="mandtryFlds"></s:text>
+		<div align="left"><span style="font-size: 16px; color: red"> 
+			<s:text name="citizen.note" /></span>
 		</div>
 
 		</center>

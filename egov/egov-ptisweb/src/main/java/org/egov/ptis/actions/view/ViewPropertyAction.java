@@ -96,6 +96,9 @@ public class ViewPropertyAction extends BaseFormAction {
     private String applicationType;
     private String[] floorNoStr = new String[100];
     private String errorMessage;
+    private String isCitizen;
+    
+    
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -422,4 +425,13 @@ public class ViewPropertyAction extends BaseFormAction {
     public void setDemandCollMap(Map<String, Map<String, BigDecimal>> demandCollMap) {
         this.demandCollMap = demandCollMap;
     }
+
+    public String getIsCitizen() {
+        return isCitizen;
+    }
+
+    public void setIsCitizen(String isCitizen) {
+        this.isCitizen = isCitizen;
+    }
+    
 }
