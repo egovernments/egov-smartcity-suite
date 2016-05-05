@@ -97,26 +97,6 @@
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
 			}
 		}
-
-		var serviceNameArray = document.getElementsByName('serviceNameArray');
-		for (j = 0; j < serviceNameArray.length; j++) {
-			if (document.getElementsByName('serviceNameArray')[j].value != "") {
-				for (k = 0; k < isSelected.length; k++) {
-					if (isSelected[k].checked == true) {
-						if ((document.getElementsByName('serviceNameArray')[j].value == document
-								.getElementsByName('serviceNameTempArray')[k].value)
-								&& (document.getElementsByName('fundCodeArray')[j].value == document
-										.getElementsByName('fundCodeTempArray')[k].value)) {
-						} else {
-							dom.get("multipleserviceselectionerror").style.display = "block";
-							dom.get("button32").disabled = true;
-							dom.get("button32").className = "button";
-							return false;
-						}
-					}
-				}
-			}
-		}
 	}
 
 	// Check if at least one receipt is selected
@@ -159,12 +139,6 @@
 			dom.get("selectremittanceerror").style.display = "block";
 			return false;
 		} else {
-			/* if (document.getElementById('positionUser') != null
-					&& document.getElementById('positionUser').value == -1) {
-				dom.get("approvalSelectionError").style.display = "block";
-				return false;
-			} */
-
 			doLoadingMask('#loadingMask');
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			document.bankRemittanceForm.submit();
