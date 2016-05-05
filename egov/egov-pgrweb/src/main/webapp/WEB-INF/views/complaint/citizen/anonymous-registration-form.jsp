@@ -45,7 +45,7 @@
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <div class="row">
 	<div class="col-md-12" style="position:relative;">
-	<div class="tour-section" data-toggle="tooltip" title="Click for demo!"><i class="entypo-help"></i></div>
+	<div class="tour-section" data-toggle="tooltip" title="Click for demo!"><i class="fa fa-question" aria-hidden="true"></i></div>
 		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -148,17 +148,17 @@
 						<div class="col-sm-6 col-xs-12">
 							<div id="file1block" class="add-margin col-sm-4 col-xs-4">
 								<img id="preview1" src="#" alt="" class="display-hide "/>
-								<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="remove-img preview-cross1 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 								<div class="add-padding" id="filename1"></div>
 							</div>
 							<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
 								<img id="preview2" src="#" alt="" class="display-hide"/>
-								<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="remove-img preview-cross2 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 								<div class="add-padding" id="filename2"></div>
 							</div>
 							<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
 								<img id="preview3" src="#" alt="" class="display-hide"/>
-								<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="remove-img preview-cross3 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 								<div class="add-padding" id="filename3"></div>
 							</div>
 						</div>
@@ -169,7 +169,7 @@
 						<div class="col-sm-6">
 							<div class="input-group"  id="location-tour">
 								<input id="location" type="text" value="${crossHierarchyLocation}" class="form-control low-width" placeholder='<spring:message code="lbl.placeholder.grievance.loc"/>' autocomplete="off" required="required"/>
-								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe specific"></i></span>
+								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
 								<form:hidden path="crossHierarchyId" id="crosshierarchyId"/>
 				   				<form:hidden path="lat" id="lat"/>

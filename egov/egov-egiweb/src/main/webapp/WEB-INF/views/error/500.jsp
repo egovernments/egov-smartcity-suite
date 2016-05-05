@@ -43,7 +43,7 @@
 <c:choose>
 <c:when test="${not empty error}">
 	<div class="alert alert-danger" role="alert">
-		<i class="entypo-attention error-symbol"></i>
+		<i class="fa fa-exclamation-triangle error-symbol"></i>
 		<hr/>
 		<spring:message code="${error}" text="Application Error"/>
 		<hr/>
@@ -51,7 +51,7 @@
 </c:when>
 <c:otherwise>
 	<div class="alert alert-danger" role="alert">
-		<i class="entypo-attention error-symbol"></i>
+		<i class="fa fa-exclamation-triangle error-symbol"></i>
 		<hr/>
 		<p style="color:#000;font-size:17px"><spring:message code="error.500"/></p>
 		<hr/>

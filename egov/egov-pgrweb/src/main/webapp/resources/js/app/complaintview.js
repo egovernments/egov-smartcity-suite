@@ -58,12 +58,12 @@ $(document).ready(function()
 	
 	$('.slide-history-menu').click(function(){
 		$('.history-slide').slideToggle();
-		if($('#toggle-his-icon').hasClass('entypo-down-open'))
+		if($('#toggle-his-icon').hasClass('fa fa-angle-down'))
 		{
-			$('#toggle-his-icon').removeClass('entypo-down-open').addClass('entypo-up-open');
+			$('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
 			//$('#see-more-link').hide();
 			}else{
-			$('#toggle-his-icon').removeClass('entypo-up-open').addClass('entypo-down-open');
+			$('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
 			//$('#see-more-link').show();
 		}
 	});

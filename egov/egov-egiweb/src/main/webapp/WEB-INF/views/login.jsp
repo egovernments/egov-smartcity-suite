@@ -64,7 +64,6 @@
 		<title>eGov Urban Portal Login</title>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
@@ -166,7 +165,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-user theme-color style-color"></i>
+											<i class="fa fa-user theme-color style-color"></i>
 										</div>
 										<input type="text" class="form-control style-form"
 											name="j_username" id="j_username"
@@ -177,7 +176,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-key theme-color style-color"></i>
+											<i class="fa fa-key theme-color style-color"></i>
 										</div>
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
@@ -188,7 +187,7 @@
 								<div class="form-group display-hide" id="counter-section">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-location theme-color style-color"></i>
+											<i class="fa fa-map-marker theme-color style-color"></i>
 										</div>
 										<select class="form-control style-form" name="locationId" id="locationId"></select>
 									</div>
@@ -248,7 +247,7 @@
 								<div class="form-group signin-leftpadding">
 									<button type="submit"
 										class="btn btn-custom btn-block btn-login signin-submit" id="signin-action">
-										<i class="entypo-login"></i><spring:message code="lbl.login"/>
+										<i class="fa fa-sign-in"></i> <spring:message code="lbl.login"/>
 									</button>
 								</div>
 								<div class="row">
@@ -313,7 +312,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-user style-color"></i>
+										<i class="fa fa-user style-color"></i>
 									</div>
 									<input type="text" class="form-control style-form"
 										name="identity" id="emailOrMobileNum"

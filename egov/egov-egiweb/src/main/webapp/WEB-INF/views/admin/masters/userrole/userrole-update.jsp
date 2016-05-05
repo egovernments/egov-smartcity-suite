@@ -70,8 +70,7 @@
 						   <div class="form-group">
                    
                       <label class="col-sm-3 control-label">
-                            <spring:message code="lbl.userRole"/>
-                            <small><i class="entypo-star error-msg"></i></small>
+                            <spring:message code="lbl.userRole"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-6 add-margin">
                             <form:select path="roles" multiple="true" size="10"

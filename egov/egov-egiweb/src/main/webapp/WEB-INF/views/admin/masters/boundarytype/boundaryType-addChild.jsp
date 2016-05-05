@@ -72,7 +72,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryType"/><small><i class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryType"/><span class="mandatory"></span></label>
 								<div class="col-sm-6">
 									<form:input path="name" id="name" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
 		                            <form:errors path="name" cssClass="add-margin error-msg"/>

@@ -54,7 +54,7 @@
 		<title>Citizen Portal Registration</title>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		<script src='https://www.google.com/recaptcha/api.js'></script>
@@ -104,7 +104,7 @@
                              <div class="form-group" id="wrap">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-user theme-color style-color"></i>
+										<i class="fa fa-user theme-color style-color"></i>
 									</div>
 									<form:input path="username" cssClass="form-control style-form patternvalidation" data-pattern="username" id="username" placeholder="Username" minlength="2" maxlength="64" autocomplete="off" required="required" data-container="#wrap" data-toggle="popover" data-content="Should contain only upper case, lower case alphabet, number, underscore and dot"/>
 									<span class="mandatory set-mandatory"></span>
@@ -116,7 +116,7 @@
 								<div class="col-md-6" style="margin:0">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-key theme-color style-color"></i>
+											<i class="fa fa-key theme-color style-color"></i>
 										</div>
 										<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" maxlength="32" autocomplete="new-password" required="required" data-container="#wrap" data-toggle="popover" data-content='${pwdmsg}' />
 										<span class="mandatory set-mandatory"></span>
@@ -125,7 +125,7 @@
 								<div class="col-md-6" style="margin:0">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-key theme-color style-color"></i>
+											<i class="fa fa-key theme-color style-color"></i>
 										</div>
 										<input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password" 
 										autocomplete="new-password" required="required" maxlength="32"/><span class="mandatory set-mandatory"></span>
@@ -139,7 +139,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-user theme-color style-color"></i>
+										<i class="fa fa-user theme-color style-color"></i>
 									</div>
 									<form:input path="name" cssClass="form-control style-form patternvalidation" data-pattern="alphabetwithspace" id="name" placeholder="Full name" minlength="2" maxlength="100" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
@@ -149,7 +149,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-mobile theme-color style-color"></i>
+										<i class="fa fa-phone theme-color style-color"></i>
 									</div>
 									<form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="is_valid_number" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
@@ -159,7 +159,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-mail theme-color style-color"></i>
+										<i class="fa fa-envelope theme-color style-color"></i>
 									</div>
 									<form:input path="emailId" cssClass="form-control style-form" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Enter vaild Email ID!" id="emailId" placeholder="Email" minlength="5" maxlength="128" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
@@ -220,7 +220,7 @@
 		                                <div class="form-group">
 		                                    <div class="input-group">
 		                                        <div class="input-group-addon style-label">
-		                                            <i class="entypo-key theme-color style-color"></i>
+		                                            <i class="fa fa-key theme-color style-color"></i>
 		                                        </div>
 		                                        <input style="display:none" type="password">
 		                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" />

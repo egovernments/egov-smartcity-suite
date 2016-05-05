@@ -161,7 +161,7 @@
 						<span class="map-tool-class btn-secondary" data-toggle="tooltip"
 							data-placement="top" title="" data-original-title="Locate on map"
 							onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});">
-							<i class="entypo-globe"></i></span> <span id="address_locate">
+							<i class="fa fa-map-marker"></i></span> <span id="address_locate">
 							<c:out value="${complaint.childLocation.name} - ${complaint.location.name}"></c:out></span>
 					</div>
 				</div>
@@ -191,7 +191,7 @@
 						<strong><spring:message code="lbl.hdr.complaintHistory" /></strong>
 					</div>
 					<div class="history-icon">
-						<i class="entypo-down-open" id="toggle-his-icon"></i>
+						<i class="fa fa-angle-down" id="toggle-his-icon"></i>
 					</div>
 				</div>
 				<div class="panel-body history-slide">
