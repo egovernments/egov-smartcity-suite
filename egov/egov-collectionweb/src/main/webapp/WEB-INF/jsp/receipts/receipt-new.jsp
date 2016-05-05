@@ -1297,15 +1297,6 @@ function displayPaytModes(){
        }
 }
 
-function refreshInbox() {
-        var x=opener.top.opener;
-        if(x==null){
-            x=opener.top;
-        }
-        x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-}
-
 function onBodyLoad()
 {
 	var headertable=document.getElementById('billsheaderinfotable');
@@ -1824,7 +1815,7 @@ function showHideMandataryMark(obj){
 	<title><s:text name="billreceipt.pagetitle"/></title>
 </head>
 <!-- Area for error display -->
-<body onLoad="refreshInbox();"><br>
+<body><br>
 
 
 <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>

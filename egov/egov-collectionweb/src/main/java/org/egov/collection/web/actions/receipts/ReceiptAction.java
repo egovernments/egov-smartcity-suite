@@ -247,7 +247,7 @@ public class ReceiptAction extends BaseFormAction {
 
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
-    private ServiceDetails service;
+    private Long serviceId;
 
     @Autowired
     private FundHibernateDAO fundDAO;
@@ -339,11 +339,7 @@ public class ReceiptAction extends BaseFormAction {
             }
         }
         addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
-        if (null != service && null != service.getServiceCategory() && service.getServiceCategory().getId() != -1)
-            addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
-                    service.getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
-        else
-            addDropdownData("serviceList", Collections.EMPTY_LIST);
+        addDropdownData("serviceList", Collections.EMPTY_LIST);
         if (instrumentProxyList == null)
             instrumentCount = 0;
         else
@@ -437,9 +433,8 @@ public class ReceiptAction extends BaseFormAction {
 
         ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS);
-        if (null != this.service && null != this.service.getId() && this.service.getId() != -1)
-            service = serviceDetailsService.findById(this.service.getId(), false);
-        // final ReceiptHeader receiptHeader = new ReceiptHeader();
+        if (null != serviceId && serviceId != -1)
+            service = serviceDetailsService.findById(serviceId, false);
         receiptHeader.setPartPaymentAllowed(false);
         receiptHeader.setService(service);
         final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(),false);
@@ -533,10 +528,6 @@ public class ReceiptAction extends BaseFormAction {
         } else
             return false;
         setTotalDebitAmount(debitamount);
-        /*
-         * receiptHeader.setReceiptPayeeDetails(receiptPayee); receiptPayee.addReceiptHeader(receiptHeader);
-         * modelPayeeList.add(receiptPayee);
-         */
         return true;
     }
 
@@ -835,14 +826,14 @@ public class ReceiptAction extends BaseFormAction {
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
         // this.paidBy = payeename;
-        if (null != service && null != service.getId() && service.getId() != -1)
+        /*if (null != service && null != service.getId() && service.getId() != -1)
             setServiceName(serviceDetailsService.findById(service.getId(), false).getName());
         else {
             final ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS);
             setServiceName(service.getName());
         }
-
+*/
         final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
         if (getDeptId() == null)
             setDeptId(dept.getId().toString());
@@ -1771,14 +1762,6 @@ public class ReceiptAction extends BaseFormAction {
         this.serviceDetailsService = serviceDetailsService;
     }
 
-    public ServiceDetails getService() {
-        return service;
-    }
-
-    public void setService(final ServiceDetails service) {
-        this.service = service;
-    }
-
     public List<InstrumentHeader> getInstrumentProxyList() {
         return instrumentProxyList;
     }
@@ -1841,5 +1824,13 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setFunctionId(final Long functionId) {
         this.functionId = functionId;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 }
