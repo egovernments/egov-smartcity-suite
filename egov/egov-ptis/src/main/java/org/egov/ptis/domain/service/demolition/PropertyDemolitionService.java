@@ -41,7 +41,6 @@
 package org.egov.ptis.domain.service.demolition;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
@@ -50,8 +49,10 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -159,23 +160,52 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         basicProperty.addProperty(propertyModel);
         getSession().setFlushMode(FlushMode.MANUAL);
         transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
+        Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
+        Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
         Installment currInstall = PropertyTaxUtil.getCurrentInstallment();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currInstall.getToDate());
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        Property modProperty = propService.createDemand(propertyModel, calendar.getTime());
-        // Property modProperty = propService.modifyDemand(propertyModel,
-        // (PropertyImpl) oldProperty);
+        Date effectiveDate = null;
+        boolean calculateForNextFinYear = false;
+        
+        /* If demolition is done in the 1st half of current financial year, then vacant land tax will be calculated only for 2nd half.
+         * If its done in 2nd half, then vacant land tax will be calculated for the next financial year, 
+         * i.e., for 1st and 2nd half of next financial year 
+         */
+        if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
+        	effectiveDate = installmentSecondHalf.getFromDate();
+        else{
+        	effectiveDate = DateUtils.addYears(installmentFirstHalf.getFromDate(), 1);
+        	calculateForNextFinYear = true;
+        }
+        
+        Property modProperty = propService.createDemand(propertyModel, effectiveDate);
         Ptdemand currPtDmd = null;
-        for (final Ptdemand demand : oldProperty.getPtDemandSet())
+        for (final Ptdemand demand : modProperty.getPtDemandSet())
             if (demand.getIsHistory().equalsIgnoreCase("N"))
                 if (demand.getEgInstallmentMaster().equals(currInstall)) {
                     currPtDmd = demand;
                     break;
                 }
-        Ptdemand clonedDemand = (Ptdemand) currPtDmd.clone();
-        clonedDemand.setEgptProperty((PropertyImpl) modProperty);
-        modProperty.addPtDemand(clonedDemand);
+        Ptdemand oldCurrPtDmd = null;
+        for (final Ptdemand ptDmd : oldProperty.getPtDemandSet())
+            if (ptDmd.getIsHistory().equalsIgnoreCase("N")) {
+                if (ptDmd.getEgInstallmentMaster().equals(currInstall))
+                    oldCurrPtDmd = ptDmd;
+                	break;
+            }
+
+        Installment effectiveInstall = null;
+        /* If demolition is done in 1st half of the financial year, then arrear demand details will be copied till 1st half of the financial year.
+         * Else, demand details will be calculated till 2nd half of the financial year.
+         */
+        if(calculateForNextFinYear){
+        	Module module = moduleDao.getModuleByName(PTMODULENAME);
+        	effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
+        	propService.addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, effectiveInstall, true);
+        } else {
+        	propService.addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, installmentSecondHalf, true);
+        }
+        
         basicProperty.addProperty(modProperty);
         for (Ptdemand ptDemand : modProperty.getPtDemandSet()) {
             propertyPerService.applyAuditing(ptDemand.getDmdCalculations());
@@ -296,31 +326,22 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         else
             model.addAttribute("ARV", BigDecimal.ZERO);
         if (!basicProperty.getActiveProperty().getIsExemptedFromTax()) {
-            final Map<String, BigDecimal> demandCollMap = null;
-            model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
-            model.addAttribute("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
-            model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-            model.addAttribute("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
-            model.addAttribute("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
-            BigDecimal propertyTax = BigDecimal.ZERO;
-            if (null != demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
-                propertyTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX);
-            else
-                propertyTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX);
-            BigDecimal totalTax = propertyTax.add(
-                    demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
-                            .get(DEMANDRSN_STR_LIBRARY_CESS)).add(
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
-                            .get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            model.addAttribute("propertyTax", propertyTax);
-            if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null) {
-                model.addAttribute("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-                model.addAttribute("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-                model.addAttribute("showUnauthorisedPenalty", "yes");
-            } else {
-                model.addAttribute("totalTax", totalTax);
-                model.addAttribute("showUnauthorisedPenalty", "no");
-            }
+        	try {
+        		//Based on the current installment, fetch tax details for the respective installment
+				Map<String, Map<String,BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+				        PropertyTaxUtil.getCurrentInstallment());
+				Map<String, BigDecimal> currentTaxDetails = propService.getCurrentTaxDetails(demandCollMap, new Date());
+				model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
+	            model.addAttribute("eduCess", (currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
+	            model.addAttribute("libraryCess", (currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS)));
+	            model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));
+				model.addAttribute("currTaxDue", currentTaxDetails.get(CURR_BAL_STR));
+	            model.addAttribute("totalTax", currentTaxDetails.get(CURR_DMD_STR));
+	            model.addAttribute("totalArrDue", currentTaxDetails.get(ARR_BAL_STR));
+			} catch (Exception e) {
+	            LOGGER.error("Exception in addModelAttributes : ", e);
+	            throw new ApplicationRuntimeException("Exception in addModelAttributes : " + e);
+			}
         }
     }
     
@@ -338,16 +359,31 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             smsMsg = messageSource.getMessage("demolition.rejection.sms", new String[] { applicantName, assessmentNo,
                     EgovThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
-        	Installment installment = propertyTaxUtil.getInstallmentListByStartDate(new Date()).get(0);
-            Date effectiveDate = DateUtils.addDays(installment.getToDate(), 1);
-            Module module = moduleDao.getModuleByName(PTMODULENAME);
-            Installment nextInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
-            final Map<String, BigDecimal> demandCollMap = null;
-            BigDecimal totalTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
-                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
-                            : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
+        	Installment effectiveInstallment = null;
+        	Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+            Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
+            Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
+            Date effectiveDate = null;
+            Map<String,BigDecimal> demandMap = null;
+            BigDecimal totalTax = BigDecimal.ZERO;
+
+            /*If demolition is done in 1st half, then fetch the total tax amount for the 2nd half, 
+             * else fetch the total tax for next installment 1st half and display in the SMS.
+             */
+            if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
+            	effectiveInstallment = installmentSecondHalf;
+            }
+            else{
+            	Module module = moduleDao.getModuleByName(PTMODULENAME);
+            	effectiveDate = DateUtils.addDays(installmentSecondHalf.getToDate(), 1);
+            	effectiveInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
+            }
+            demandMap = propertyTaxUtil.getTaxDetailsForInstallment(property, effectiveInstallment,installmentFirstHalf);	
+            totalTax = demandMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandMap.get(DEMANDRSN_STR_VACANT_TAX)
+                    .add(demandMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
+                            : demandMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             smsMsg = messageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,
-            		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveDate),EgovThreadLocals.getMunicipalityName() },
+            		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveInstallment.getFromDate()),EgovThreadLocals.getMunicipalityName() },
                     null);
         }
 

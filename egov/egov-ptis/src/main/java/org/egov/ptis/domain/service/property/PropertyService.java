@@ -69,6 +69,7 @@ import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
@@ -484,17 +485,28 @@ public class PropertyService {
         Installment installmentFirstHalf = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
         Installment installmentSecondHalf = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
         
+        APTaxCalculationInfo taxCalcInfo = null;
+
         /**
          * Only 1 Ptdemand will be created, i.e., for 1st half of current year. 
          * Demand Details will be created from the effective date till 2nd installment of current year 
+         * 
+         * In case of demolition done in 2nd half, APTaxCalculationInfo is generated for current year 2nd installment.
+         * In this case, demand needs to be calculated for both installments of next financial year only.
+         * Currently, entering future date is not allowed during create/modify etc
+         * Demolition in 2nd is the only use case where demand will be calculated for future date
+         * The below conditions are added to handle all above use cases
          */
-        APTaxCalculationInfo taxCalcInfo = null;
-        
         if(instList.size()==1 && instList.get(0).equals(installmentSecondHalf)){
         	taxCalcInfo = (APTaxCalculationInfo) instTaxMap.get(installmentSecondHalf);
-        }else{
+        } else if(dateOfCompletion.after(installmentSecondHalf.getToDate())){
+        	//Executed only in case of demolition done in 2nd half
+        	taxCalcInfo = (APTaxCalculationInfo) instTaxMap.get(installmentSecondHalf);
+        	instList.remove(installmentSecondHalf);
+        } else{
         	taxCalcInfo = (APTaxCalculationInfo) instTaxMap.get(installmentFirstHalf);
         }
+
         dmdDetailSet = createAllDmdDetails(instList, instTaxMap);
         final PTDemandCalculations ptDmdCalc = new PTDemandCalculations();
         ptDemand = new Ptdemand();
@@ -1475,7 +1487,7 @@ public class PropertyService {
                     oldCurrPtDmd = ptDmd;
             }
         
-        addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, effectiveInstall);
+        addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, effectiveInstall,false);
 
         LOGGER.debug("Exiting from createArrearsDemand");
         return property;
@@ -1487,15 +1499,24 @@ public class PropertyService {
      * @param ptDmd
      * @param currPtDmd
      * @param effectiveInstall
+     * @param isDemolition
      */
-    private void addArrDmdDetToCurrentDmd(final Ptdemand ptDmd, final Ptdemand currPtDmd,
-            final Installment effectiveInstall) {
+    public void addArrDmdDetToCurrentDmd(final Ptdemand ptDmd, final Ptdemand currPtDmd,
+            final Installment effectiveInstall,boolean isDemolition) {
         LOGGER.debug("Entered into addArrDmdDetToCurrentDmd. ptDmd: " + ptDmd + ", currPtDmd: " + currPtDmd);
-        //Other than Penalty, rest other demand details will be added, as penalty is already added before
+        /*
+         * For create/modify/GRP/Bifurcation arrear penalty demand details will be added before, other demand details will be added below
+         * In case of demolition, arrear penalty also needs to be added along with other demand details
+         * This check is done using isDemolition flag
+         */
         for (final EgDemandDetails dmdDet : ptDmd.getEgDemandDetails())
             if (dmdDet.getInstallmentStartDate().before(effectiveInstall.getFromDate()))
-            	if(!dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+            	if(!isDemolition){
+	            	if(!dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES))
+	            		currPtDmd.addEgDemandDetails((EgDemandDetails) dmdDet.clone());
+            	} else {
             		currPtDmd.addEgDemandDetails((EgDemandDetails) dmdDet.clone());
+            	}
         LOGGER.debug("Exiting from addArrDmdDetToCurrentDmd");
     }
 
@@ -2725,7 +2746,7 @@ public class PropertyService {
     	Map<String, BigDecimal> taxValues = new HashMap<String, BigDecimal>();
     	Map<String,Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
     	Installment currInstFirstHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
-        if(between(new Date(),currInstFirstHalf.getFromDate(),currInstFirstHalf.getToDate())){
+        if(DateUtils.between(new Date(),currInstFirstHalf.getFromDate(),currInstFirstHalf.getToDate())){
         	taxValues.put(PropertyTaxConstants.CURR_DMD_STR, propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
         	taxValues.put(PropertyTaxConstants.CURR_BAL_STR, propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR)
                     .subtract(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)));
@@ -2736,6 +2757,54 @@ public class PropertyService {
         }
     	return taxValues;
     }
+    
+    /**
+     * Returns a map of current tax and balance, based on passed date being in first half or second half of the installments for current year
+     * @param propertyTaxDetails
+     * @param currDate
+     * @return
+     */
+    public Map<String, BigDecimal> getCurrentTaxDetails(Map<String, Map<String,BigDecimal>> propertyTaxDetails, Date currDate){
+    	Map<String, BigDecimal> taxValues = new HashMap<String, BigDecimal>();
+    	Map<String,Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
+    	Installment currInstFirstHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+        if(DateUtils.between(new Date(),currInstFirstHalf.getFromDate(),currInstFirstHalf.getToDate())){
+        	getTaxDetails(propertyTaxDetails, taxValues,PropertyTaxConstants.CURRENTYEAR_FIRST_HALF,currInstFirstHalf);
+        }else{
+        	getTaxDetails(propertyTaxDetails, taxValues,PropertyTaxConstants.CURRENTYEAR_SECOND_HALF,null);
+        }
+    	return taxValues;
+    }
+
+    /**
+     * Gives the tax details for the installment
+     * @param propertyTaxDetails
+     * @param taxValues
+     * @param installmentHalf
+     * @param currInstFirstHalf
+     */
+	private void getTaxDetails(Map<String, Map<String, BigDecimal>> propertyTaxDetails, Map<String, BigDecimal> taxValues, 
+			String installmentHalf, Installment currInstFirstHalf) {
+		if(currInstFirstHalf != null){
+			taxValues.put(PropertyTaxConstants.CURR_DMD_STR, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
+			taxValues.put(PropertyTaxConstants.CURR_COLL_STR, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR));
+			taxValues.put(PropertyTaxConstants.CURR_BAL_STR, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR)
+					.subtract((propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)));
+		}else{
+			taxValues.put(PropertyTaxConstants.CURR_DMD_STR, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
+			taxValues.put(PropertyTaxConstants.CURR_COLL_STR, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR));
+			taxValues.put(PropertyTaxConstants.CURR_BAL_STR, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)
+					.subtract((propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
+		}
+		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX));
+		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS));
+		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS));
+		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+		taxValues.put(PropertyTaxConstants.ARR_DMD_STR,(propertyTaxDetails.get(PropertyTaxConstants.ARREARS)).get(PropertyTaxConstants.ARR_DMD_STR));
+		taxValues.put(PropertyTaxConstants.ARR_COLL_STR,(propertyTaxDetails.get(PropertyTaxConstants.ARREARS)).get(PropertyTaxConstants.ARR_COLL_STR));
+		taxValues.put(PropertyTaxConstants.ARR_BAL_STR,((propertyTaxDetails.get(PropertyTaxConstants.ARREARS)).get(PropertyTaxConstants.ARR_DMD_STR))
+				.subtract((propertyTaxDetails.get(PropertyTaxConstants.ARREARS)).get(PropertyTaxConstants.ARR_COLL_STR)));
+	}
     
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
@@ -2761,7 +2830,4 @@ public class PropertyService {
         this.totalAlv = totalAlv;
     }
     
-    public Boolean between(final Date date, final Date fromDate, final Date toDate) {
-        return (date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate);
-    }
 }

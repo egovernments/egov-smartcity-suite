@@ -130,7 +130,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             isPrimaryServiceChrApplicable = propertyTaxUtil.isPrimaryServiceApplicable();
 
         final List<String> applicableTaxes = prepareApplicableTaxes(property);
-        final List<Installment> taxInstallments = getInstallmentListByStartDate(occupationDate);
+        List<Installment> taxInstallments = propertyTaxUtil.getInstallmentsListByEffectiveDate(occupationDate);
         propertyZone = property.getBasicProperty().getPropertyID().getZone();
 
         for (final Installment installment : taxInstallments) {
@@ -326,15 +326,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         LOGGER.debug("prepareApplTaxes: applicableTaxes: " + applicableTaxes);
         LOGGER.debug("Exiting from prepareApplTaxes");
         return applicableTaxes;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Installment> getInstallmentListByStartDate(final Date startDate) {
-        if (startDate.after(new Date())) {
-            return installmentDAO.getInsatllmentByModule(moduleService.getModuleByName(PTMODULENAME), startDate);
-        } else {
-            return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR, PTMODULENAME,PTMODULENAME,startDate);
-        }
     }
 
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,

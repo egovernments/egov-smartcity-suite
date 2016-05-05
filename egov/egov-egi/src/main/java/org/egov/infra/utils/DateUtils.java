@@ -435,4 +435,15 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static SimpleDateFormat getDateFormatter(final String pattern) {
         return new SimpleDateFormat(pattern, Locale.getDefault());
     }
+    
+    /**
+     * Checks if the given date is between the 2 dates
+     * @param date
+     * @param fromDate
+     * @param toDate
+     * @return boolean
+     */
+    public static boolean between(final Date date, final Date fromDate, final Date toDate) {
+        return (date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate);
+    }
 }

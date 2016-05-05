@@ -40,6 +40,7 @@
 package org.egov.ptis.web.controller.vacancyremission;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.commons.Installment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -69,6 +70,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -82,6 +84,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 
 @Controller
 @RequestMapping(value = "/vacancyremission")
@@ -166,10 +172,21 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                         if (remissionList.isEmpty() || enableVacancyRemission) {
                             final Map<String, BigDecimal> propertyTaxDetails = propertyService
                                     .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
-                            final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
-                            final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
-                                    propertyTaxDetails.get(CURR_COLL_STR));
-                            final BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                            BigDecimal currentPropertyTax = BigDecimal.ZERO;
+                            BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
+                            BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
+                            Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+                            Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+                            if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
+                            currentPropertyTax = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
+                            currentPropertyTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
+                                    propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
+                            } else {
+                            	currentPropertyTax = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
+                                currentPropertyTaxDue = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR).subtract(
+                                        propertyTaxDetails.get(CURR_SECONDHALF_COLL_STR));
+                            }
+                            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                                     propertyTaxDetails.get(ARR_COLL_STR));
                             final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(
                                     basicProperty.getUpicNo(), request);
@@ -204,10 +221,21 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     }
                     final Map<String, BigDecimal> propertyTaxDetails = propertyService
                             .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
-                    final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
-                    final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
-                            propertyTaxDetails.get(CURR_COLL_STR));
-                    final BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                    BigDecimal currentPropertyTax = BigDecimal.ZERO;
+                    BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
+                    BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
+                    Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+                    Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+                    if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
+                    currentPropertyTax = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
+                    currentPropertyTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
+                            propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
+                    } else {
+                    	currentPropertyTax = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
+                        currentPropertyTaxDue = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR).subtract(
+                                propertyTaxDetails.get(CURR_SECONDHALF_COLL_STR));
+                    }
+                    arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                             propertyTaxDetails.get(ARR_COLL_STR));
                     final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo(),
                             request);

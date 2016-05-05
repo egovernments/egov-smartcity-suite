@@ -105,6 +105,7 @@ public interface PropertyTaxConstants {
     public static final String CURR_BAL_STR = "CURR_BAL";
     public static final String CURR_COLL_STR = "CURR_COLL";
     public static final String ARR_COLL_STR = "ARR_COLL";
+    public static final String ARR_BAL_STR = "ARR_BAL";
     public static final String CURR_PENALTY_DMD_STR = "CURR_PEANLTY_DMD";
     public static final String ARR_PENALTY_DMD_STR = "ARR_PENALTY_DMD";
     public static final String CURR_PENALTY_COLL_STR = "CURR_PENALTY_COLL";

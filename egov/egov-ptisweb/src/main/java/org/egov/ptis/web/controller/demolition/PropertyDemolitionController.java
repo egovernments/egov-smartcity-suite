@@ -39,9 +39,12 @@
  */
 package org.egov.ptis.web.controller.demolition;
 
+import org.egov.commons.Installment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -63,6 +66,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
@@ -75,6 +79,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 
 @Controller
 @RequestMapping(value = "/property/demolition/{assessmentNo}")
@@ -123,11 +129,24 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         }
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(basicProperty
                 .getActiveProperty());
-        final BigDecimal currentPropertyTax = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
-        final BigDecimal currentPropertyTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
-                propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
-        final BigDecimal arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
-                propertyTaxDetails.get(ARR_COLL_STR));
+        Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+        BigDecimal currentPropertyTax = BigDecimal.ZERO;
+        BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
+        BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
+        if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
+        	currentPropertyTax = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
+            currentPropertyTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
+                    propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
+            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                    propertyTaxDetails.get(ARR_COLL_STR));
+        } else {
+        	currentPropertyTax = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
+        	currentPropertyTaxDue = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR).subtract(
+        			propertyTaxDetails.get(CURR_SECONDHALF_COLL_STR));
+        	arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+        			propertyTaxDetails.get(ARR_COLL_STR));
+        }
         model.addAttribute("currentPropertyTax", currentPropertyTax);
         model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
         model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);

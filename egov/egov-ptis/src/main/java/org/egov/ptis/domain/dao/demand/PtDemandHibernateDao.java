@@ -489,8 +489,8 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
     @Override
     public Ptdemand update(final Ptdemand ptdemand) {
-        // TODO Auto-generated method stub
-        return null;
+    	getCurrentSession().update(ptdemand);
+        return ptdemand;
     }
 
     @Override

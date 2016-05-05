@@ -40,20 +40,25 @@
 package org.egov.ptis.domain.service.property;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -81,6 +86,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
@@ -232,16 +238,49 @@ public class VacancyRemissionService {
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
-	                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+	                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
+	                	Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+	                    Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+	                    Installment installmentSecondHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+	                    /*
+	                     * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
+	                     */
+	                    if(DateUtils.between(vacancyRemission.getVacancyToDate(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
+	                    	updateDemandDetailsWithRebate(vacancyRemission, installmentFirstHalf, installmentSecondHalf);
 	            		buildSMS(vacancyRemission, workFlowAction);
+	                }
             }
-
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
         return vacancyRemissionRepository.save(vacancyRemission);
     }
 
+    /**
+     * Provides 50% rebate on the next installment taxes
+     * @param vacancyRemission
+     * @param demandInstallment
+     * @param effectiveInstallment
+     */
+    private void updateDemandDetailsWithRebate(VacancyRemission vacancyRemission, Installment demandInstallment, Installment effectiveInstallment){
+    	Set<Ptdemand> activePropPtDemandSet = vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet();
+    	Ptdemand currPtDemand = null;
+    	for(Ptdemand ptDemand : activePropPtDemandSet){
+    		if (ptDemand.getIsHistory().equalsIgnoreCase("N"))
+                if (ptDemand.getEgInstallmentMaster().equals(demandInstallment)) {
+                	currPtDemand = ptDemand;
+                    break;
+                }
+    	}
+    	for(EgDemandDetails dmdDet : currPtDemand.getEgDemandDetails()){
+    		if(dmdDet.getInstallmentStartDate().equals(effectiveInstallment.getFromDate())){
+    			dmdDet.setAmount((dmdDet.getAmount().divide(new BigDecimal("2"))).setScale(0,
+                        BigDecimal.ROUND_HALF_UP));
+    		}
+    	}
+    	ptDemandDAO.update(currPtDemand);
+    }
+    
     public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
         final Property property = basicProperty.getActiveProperty();
         model.addAttribute("property", property);
@@ -251,26 +290,22 @@ public class VacancyRemissionService {
         else
             model.addAttribute("ARV", BigDecimal.ZERO);
         if (!basicProperty.getActiveProperty().getIsExemptedFromTax()) {
-            /*final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                    PropertyTaxUtil.getCurrentInstallment());*/
-            final Map<String, BigDecimal> demandCollMap = null;
-            model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
-            model.addAttribute("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
-            model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-            model.addAttribute("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
-            model.addAttribute("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
-            model.addAttribute("propertyTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            final BigDecimal totalTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)
-                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                    .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null) {
-                model.addAttribute("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-                model.addAttribute("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-                model.addAttribute("showUnauthorisedPenalty", "yes");
-            } else {
-                model.addAttribute("totalTax", totalTax);
-                model.addAttribute("showUnauthorisedPenalty", "no");
-            }
+        	try {
+        		//Based on the current installment, fetch tax details for the respective installment
+				Map<String, Map<String,BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+				        PropertyTaxUtil.getCurrentInstallment());
+				Map<String, BigDecimal> currentTaxDetails = propertyService.getCurrentTaxDetails(demandCollMap, new Date());
+				model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
+	            model.addAttribute("eduCess", (currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
+	            model.addAttribute("libraryCess", (currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS)));
+	            model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));
+				model.addAttribute("currTaxDue", currentTaxDetails.get(CURR_BAL_STR));
+	            model.addAttribute("totalTax", currentTaxDetails.get(CURR_DMD_STR));
+	            model.addAttribute("totalArrDue", currentTaxDetails.get(ARR_BAL_STR));
+			} catch (Exception e) {
+				LOG.error("Exception in addModelAttributes : ", e);
+	            throw new ApplicationRuntimeException("Exception in addModelAttributes : " + e);
+			}
             Boolean propertyByEmployee = Boolean.TRUE;
             propertyByEmployee = checkIfEmployee(getLoggedInUser());
             model.addAttribute("propertyByEmployee", propertyByEmployee);
