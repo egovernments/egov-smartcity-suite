@@ -39,6 +39,10 @@
  */
 package org.egov.collection.integration.services;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptDetail;
@@ -54,10 +58,6 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReconciliationService {
     private static final Logger LOGGER = Logger.getLogger(ReconciliationService.class);
@@ -133,10 +133,8 @@ public class ReconciliationService {
      */
     @Transactional
     public void processFailureMsg(final ReceiptHeader receiptHeader, final PaymentResponse paymentResponse) {
-
-        final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
-        receiptHeader.setStatus(receiptStatus);
+        receiptHeader.setStatus(collectionsUtil
+                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
         EgwStatus paymentStatus;
         if (CollectionConstants.AXIS_ABORTED_STATUS_CODE.equals(paymentResponse.getAuthStatus()))
             paymentStatus = egwStatusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,

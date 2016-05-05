@@ -107,7 +107,6 @@ import java.util.Map;
 
 public class CollectionsUtil {
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
-    private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>(0);
     public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     private PersistenceService persistenceService;
     @Autowired
@@ -152,19 +151,7 @@ public class CollectionsUtil {
      * @return the Status object for given status code for a receipt
      */
     public EgwStatus getReceiptStatusForCode(final String statusCode) {
-        EgwStatus status = statusMap.get(statusCode);
-
-        synchronized (this) {
-            if (status == null) {
-                // Status not yet cached. Get it from DB and cache it
-                status = getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
-
-                if (status != null)
-                    statusMap.put(statusCode, status);
-            }
-        }
-
-        return status;
+        return getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
     }
 
     /**

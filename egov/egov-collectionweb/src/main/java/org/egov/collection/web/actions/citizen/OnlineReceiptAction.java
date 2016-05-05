@@ -39,6 +39,22 @@
  */
 package org.egov.collection.web.actions.citizen;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -77,27 +93,12 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
-    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
-    @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
-    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+        @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+        @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+        @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
+        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -274,10 +275,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * displayed back to the user
      */
     private void processFailureMsg() {
-
-        final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
-        onlinePaymentReceiptHeader.setStatus(receiptStatus);
+        onlinePaymentReceiptHeader.setStatus(collectionsUtil
+                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
 
         final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
                 CollectionConstants.MODULE_NAME_ONLINEPAYMENT, CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
@@ -393,9 +392,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             if (CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED.equals(getStatusCode()[i])
                     || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED.equals(getStatusCode()[i])) {
-                final EgwStatus receiptStatus = collectionsUtil
-                        .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
-                receipts[i].setStatus(receiptStatus);
+                receipts[i].setStatus(collectionsUtil
+                        .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
 
                 receipts[i].getOnlinePayment().setTransactionNumber(getTransactionId()[i]);
                 receipts[i].getOnlinePayment().setTransactionAmount(receipts[i].getTotalAmount());
