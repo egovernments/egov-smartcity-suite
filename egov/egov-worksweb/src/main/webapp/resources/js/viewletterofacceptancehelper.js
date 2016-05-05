@@ -110,7 +110,7 @@ $(document).ready(function() {
 			}
 		});
 		if($('#workOrderAmount').val() <= 0) {
-			bootbox.alert("Revised agreement amount should be greated than 0. Please enter valid amount");
+			bootbox.alert("Revised agreement amount should be greater than 0. Please enter valid amount");
 			flag = false;
 		}
 		return flag;
