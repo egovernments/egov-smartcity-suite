@@ -62,6 +62,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.rest.CollectionApportioner;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -77,6 +78,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -256,12 +258,14 @@ public class WaterTaxCollection extends TaxCollection {
                     final String[] installsplit = desc[1].split("#");
                     final String reason = desc[0].trim();
                     final String instDesc = installsplit[0].trim();
+                    if(!installmentWiseDemandDetailsByReason.isEmpty() && installmentWiseDemandDetailsByReason.get(instDesc) !=null){
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
                     demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                     if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                         demand.addCollected(rcptAccInfo.getCrAmount());
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
                             billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+                    }
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
                                 + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
@@ -277,7 +281,20 @@ public class WaterTaxCollection extends TaxCollection {
 
     public EgDemand getCurrentDemand(final Long billId) {
         final EgBill egBill = egBillDAO.findById(billId, false);
-        return egBill.getEgDemand();
+        WaterConnectionDetails waterconndet=null;
+        EgDemand demand=null;
+        if(  egBill.getEgDemand()!=null &&  egBill.getEgDemand().getIsHistory()!=null &&
+        		 egBill.getEgDemand().getIsHistory().equals(WaterTaxConstants.DEMANDISHISTORY))
+        	demand= egBill.getEgDemand();
+        else{
+        waterconndet=waterConnectionDetailsService.getWaterConnectionDetailsByDemand(egBill.getEgDemand());
+       for(WaterDemandConnection waterDemand:waterconndet.getWaterDemandConnection())
+       {
+    	   if(waterDemand!=null && waterDemand.getDemand()!=null && waterDemand.getDemand().getIsHistory().equals(WaterTaxConstants.DEMANDISHISTORY))
+    		   demand=  waterDemand.getDemand();
+       }
+        }
+       return  demand;
     }
 
     // Receipt cancellation ,updating bill,demanddetails,demand
