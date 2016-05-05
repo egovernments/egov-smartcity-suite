@@ -44,8 +44,6 @@
 <html>
 <head>
 <title><s:text name="bill.salarybill.register" /></title>
-<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet"
-	type="text/css" />
 <link href="/EGF/css/commonegov.css?rnd=${app_release_no}" rel="stylesheet" type="text/css" />
 <style type="text/css">
 #codescontainer {

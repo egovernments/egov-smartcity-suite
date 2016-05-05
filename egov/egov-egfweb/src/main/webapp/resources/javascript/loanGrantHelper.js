@@ -733,7 +733,7 @@ function validateAmountsBeforeSubmit()
 	var revisedCost=document.getElementById('revisedCost').value;
 	if(projectCost==undefined || projectCost==''|| sanctionedCost==undefined|| sanctionedCost=='')
 	{
-		bootbox.alert( bootbox.alert("Project Cost or Sanctioned Cost cannot be empty");
+		bootbox.alert( bootbox.alert("Project Cost or Sanctioned Cost cannot be empty"));
 		return false;
 	}
 	projectCost=parseFloat(projectCost);

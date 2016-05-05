@@ -470,3 +470,17 @@ function toggleCheckboxes() {
 	}
 }
 
+function initiateRequest() {
+	if (window.XMLHttpRequest) {
+		var req = new XMLHttpRequest();
+		if (req.overrideMimeType) {
+			req.overrideMimeType("text/html;charset=utf-8");
+		}
+		return req;
+	} else {
+		if (window.ActiveXObject) {
+			isIE = true;
+			return new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	}
+}

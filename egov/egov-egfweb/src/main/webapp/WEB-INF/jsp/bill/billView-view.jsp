@@ -45,8 +45,6 @@
 <head>
 <title><s:text name="bill.view" /></title>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/payment.js?rnd=${app_release_no}"></script>
-<script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript">
 		var path="${pageContext.request.contextPath}";

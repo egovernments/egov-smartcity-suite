@@ -108,6 +108,10 @@ function initiateRequest() {
 		}
 	}
 }
+
+
+
+
 /* This function checks whether entered field is unique */
 function uniqueChecking(url, tablename, columnname, fieldobj, uppercase, lowercase) {
 	var fieldvalue = document.getElementById(fieldobj).value;

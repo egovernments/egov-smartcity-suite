@@ -1029,12 +1029,14 @@ function fillNeibrAfterSplitFunction(obj)
 	if(temp.length>1)
 	{ 
 		obj.value=temp[0];
-		document.getElementById('functionValue').value =temp[0]; 
-		document.getElementById('functionId').value =temp[1];
+		if(document.getElementById('functionValue'))
+			document.getElementById('functionValue').value =temp[0]; 
+		if(document.getElementById('functionId'))
+			document.getElementById('functionId').value =temp[1];
 		document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value=temp[1];
 	}else if(temp!=""){
-		var functionValue = document.getElementById('functionValue').value;
-		var functionId1 = document.getElementById('functionId').value;
+		/*//var functionValue = document.getElementById('functionValue').value;
+		//var functionId1 = document.getElementById('functionId').value;
 		var functionId2 = document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value;
 		if(functionValue=="" && functionId1==""){
 			//bootbox.alert("Invalid function selected .Please select code from auto complete.");
@@ -1044,7 +1046,9 @@ function fillNeibrAfterSplitFunction(obj)
 			bootbox.alert("Invalid function selected .Please select code from auto complete.");
 			obj.value="";
 			document.getElementById("billDetailslist['+currRow+'].functionIdDetail").value="";
-		}
+		}*/
+		
+		bootbox.alert("Invalid function selected .Please select code from auto complete.");
 		
 	}
 		

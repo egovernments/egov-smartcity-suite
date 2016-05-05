@@ -39,7 +39,7 @@
  */
 package org.egov.web.actions.payment;
 
-import com.exilant.eGov.src.domain.BankEntries;
+//import com.exilant.eGov.src.domain.BankEntries;
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -146,7 +146,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     private String mode = null;
     private List desgnationList;
     
-    private @Autowired BankEntries bankEntries;
+   // private @Autowired BankEntries bankEntries;
 
     public DishonorChequeWorkflowAction() {
         this.addRelatedEntity("instrumentHeader", InstrumentHeader.class);
@@ -240,7 +240,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         return Constants.DDMMYYYYFORMAT2.format(date);
     }
 
-    BankEntries createBankEntry() {
+  /*  BankEntries createBankEntry() {
         bankEntries.setBankAccountId(dishonorChequeView.getInstrumentHeader().getBankAccountId().getId().intValue());
         bankEntries.setRefNo(dishonorChequeView.getBankReferenceNumber());
         bankEntries.setTxnAmount(dishonorChequeView.getBankChargesAmt().toString());
@@ -250,7 +250,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         bankEntries.setGlcodeId(dishonorChequeView.getBankchargeGlCodeId().getId().toString());
         return bankEntries;
     }
-
+*/
     private CVoucherHeader createVoucherHeader(final String type, final String reason) throws ParseException {
         final CVoucherHeader voucherHeader = new CVoucherHeader();
         voucherHeader.setType(type);
@@ -262,7 +262,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     public CVoucherHeader createBankReversalVoucher() throws ParseException, HibernateException, TaskFailedException,
             SQLException {
         CVoucherHeader BankVoucher = null;
-        bankEntries = createBankEntry();
+       // bankEntries = createBankEntry();
         final String narration = "Reversal Bank Charges Entry for receipt number "
                 + dishonorChequeView.getOriginalVoucherHeader().getVoucherNumber() +
                 ", Cheque Number " + dishonorChequeView.getInstrumentHeader().getInstrumentNumber() + " Cheque Dated :"
@@ -286,9 +286,9 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         BankVoucher = createVoucher(BankVoucher, headerDetails, "Bank Entry");
 
         updateInstrumentVoucherReference(Arrays.asList(instrument), BankVoucher);
-        bankEntries.setVoucherheaderId(BankVoucher.getId().toString());
-        bankEntries.setInstrumentHeaderId(instrument.getId());
-        bankEntries.insert();
+        //bankEntries.setVoucherheaderId(BankVoucher.getId().toString());
+       // bankEntries.setInstrumentHeaderId(instrument.getId());
+       /// bankEntries.insert();
 
         return BankVoucher;
 

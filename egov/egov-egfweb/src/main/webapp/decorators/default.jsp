@@ -48,16 +48,16 @@
 		<link href="<c:url value='/resources/css/budget.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/css/commonegovnew.css?rnd=${app_release_no}'/>" rel="stylesheet" type="text/css" />
 		<link href="${pageContext.request.contextPath}/resources/css/error.css?rnd=${app_release_no}" rel="stylesheet" type="text/css"></link>
-		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
-		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
-		<!-- <script type="text/javascript" src="/egi/commonyui/yui2.8/animation/animation-min.js"></script> -->
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/fonts/fonts-min.css"/>
+		<link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
+		<link rel="stylesheet" type="text/css" href="/EGF/resources/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />	
+		<!-- <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/animation/animation-min.js"></script> -->
+		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
+		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
+		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/element/element-min.js"></script>
+		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/connection/connection-min.js"></script>
+		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/datasource/datasource-min.js"></script>
+		<script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/datatable/datatable-min.js"></script>
 		<script type="text/javascript" src="/EGF/resources/javascript/autocomplete.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js?rnd=${app_release_no}"></script>

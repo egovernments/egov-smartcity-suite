@@ -52,10 +52,10 @@
 <!--<link rel="stylesheet" type="text/css" href="../build/assets/skins/sam/treeview.css">-->
 <!-- Dependency source files --> 
 <script src = "/EGF/resources/commonyui/build/yahoo/yahoo-min.js" ></script>  
-<script src = "../build/event/event-min.js" ></script> 
+<script src = "/EGF/resources/commonyui/build/event/event-min.js" ></script> 
 <!-- Source file -->
 <script src="/EGF/resources/commonyui/build/connection/connection-min.js"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
+<%-- <script type="text/javascript" src="/EGF/resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script> --%>
 <!-- TreeView source file -->   
 <script src = "/EGF/resources/commonyui/build/treeview/treeview-min.js" ></script>
 </head>

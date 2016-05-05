@@ -1526,6 +1526,7 @@ function newWindow(url)
 
 //XMLHttpRequest is a request object used in Ajax. We create a Request Object here.
 
+//used in menu tree
 function initiateRequest() {
        if (window.XMLHttpRequest) {
            return new XMLHttpRequest();

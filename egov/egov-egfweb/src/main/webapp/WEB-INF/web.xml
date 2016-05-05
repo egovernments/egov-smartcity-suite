@@ -281,4 +281,14 @@
 			<page-encoding>UTF-8</page-encoding>
 		</jsp-property-group>
 	</jsp-config>
+	<error-page>
+ 		<location>/error/500</location>
+ 	</error-page>
+ 	
+ 	<error-page>
+ 		<error-code>404</error-code>
+ 		<location>/error/404</location>
+ 	</error-page>
+	
+	 
 </web-app>
