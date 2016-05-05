@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.filestore.service;
+
+import org.egov.infra.filestore.entity.FileStoreMapper;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.Set;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
 
 public interface FileStoreService {
 

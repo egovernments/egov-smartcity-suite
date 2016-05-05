@@ -1,17 +1,5 @@
 package org.egov.collection.entity;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.easymock.EasyMock;
-import org.egov.commons.Accountdetailtype;
-import org.egov.egf.commons.EgovCommon;
-import org.egov.infra.exception.ApplicationException;
-import org.junit.Before;
-import org.junit.Test;
-
 public class ChallanInfoTest  { /*extends AbstractPersistenceServiceTest {
 	private CollectionObjectFactory objectFactory;
 	private EgovCommon egovCommon;

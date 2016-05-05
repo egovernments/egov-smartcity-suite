@@ -37,11 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.taglib;
 
 /**
  * @author Manas
  */
+
+import org.egov.infra.admin.master.entity.Department;
+
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,11 +55,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import org.egov.infra.admin.master.entity.Department;
 
 public class DeptRoleTag extends BodyTagSupport {
 	/**

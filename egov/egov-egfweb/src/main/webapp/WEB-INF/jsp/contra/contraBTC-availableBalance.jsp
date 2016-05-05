@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <input type="hidden" id="balanceResult"
 	value='<s:text name="format.number"><s:param name="value" value="availableBalance"/></s:text>' />

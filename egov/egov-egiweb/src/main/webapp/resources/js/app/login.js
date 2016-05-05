@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 $(document).ready(function()
 {
 	
@@ -64,33 +65,38 @@ $(document).ready(function()
 	
 	$('#j_username').blur(function(){
 		$('#locationId').empty();
+		if(!$.trim($(this).val())){
+			//console.log('Trimmed - value is not there');
+		}else{
+			$.ajax({
+			      url: "requiredlocations?username="+this.value,
+			      dataType: "json",
+			      success: function(data) { 
+			    	  checklocation = true;
+			    	  //console.log(JSON.stringify(data));
+			    	  if(data.length > 0){
+			    		  $('#locationId').append('<option value="">select location</option>');
+			    		  $.each(data, function (key,value) {
+							  console.log(value.id+"<-->"+value.name);
+							  var opt = "<option value=" + value.id + ">" + value.name + "</option>";
+							  $('#locationId').append(opt);
+							  $("#locationId").attr('required', true);
+						  });	
+			    		  $('#counter-section').removeClass('display-hide');
+			    		  loaddpdown_value();
+			    	  }else{
+			    		  $('#locationId').empty();
+			    		  $('#locationId').attr('required', false);
+			    		  $('#counter-section').addClass('display-hide');
+			    	  }
+		    	  },
+		    	  error: function() {
+	    	         console.log('Error method');
+		          }
+			});
+		}
 		//ajax call to load counter
-		$.ajax({
-		      url: "requiredlocations?username="+this.value,
-		      dataType: "json",
-		      success: function(data) { 
-		    	  checklocation = true;
-		    	  //console.log(JSON.stringify(data));
-		    	  if(data.length > 0){
-		    		  $('#locationId').append('<option value="">select location</option>');
-		    		  $.each(data, function (key,value) {
-						  console.log(value.id+"<-->"+value.name);
-						  var opt = "<option value=" + value.id + ">" + value.name + "</option>";
-						  $('#locationId').append(opt);
-						  $("#locationId").attr('required', true);
-					  });	
-		    		  $('#counter-section').removeClass('display-hide');
-		    		  loaddpdown_value();
-		    	  }else{
-		    		  $('#locationId').empty();
-		    		  $('#locationId').attr('required', false);
-		    		  $('#counter-section').addClass('display-hide');
-		    	  }
-	    	  },
-	    	  error: function() {
-    	         console.log('Error method');
-	          }
-		});
+		
 	});
 	
 	function loaddpdown_value(){

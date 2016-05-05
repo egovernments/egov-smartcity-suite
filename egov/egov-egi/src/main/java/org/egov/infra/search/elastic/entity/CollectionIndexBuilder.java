@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.search.elastic.entity;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.infra.exception.ApplicationRuntimeException;
 
 /**
  * Builder class for Application Index
@@ -125,14 +126,24 @@ public class CollectionIndexBuilder {
         return this;
     }
 
-    public CollectionIndexBuilder payeeName(final String payeeName) {
-        collectionIndex.setPayeeName(payeeName);
+    public CollectionIndexBuilder consumerName(final String consumerName) {
+        collectionIndex.setConsumerName(consumerName);
         return this;
     }
 
     public CollectionIndex build() throws ApplicationRuntimeException {
         validate();
         return collectionIndex;
+    }
+
+    public CollectionIndexBuilder reductionAmount(final BigDecimal reductionAmount) {
+        collectionIndex.setReductionAmount(reductionAmount);
+        return this;
+    }
+    
+    public CollectionIndexBuilder receiptCreator(final String receiptCreator) {
+        collectionIndex.setReceiptCreator(receiptCreator);
+        return this;
     }
 
     private void validate() throws ApplicationRuntimeException {

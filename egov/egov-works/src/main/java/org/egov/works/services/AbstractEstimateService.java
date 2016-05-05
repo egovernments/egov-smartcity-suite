@@ -1,55 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.services;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -68,8 +56,8 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.models.Money;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
@@ -86,6 +74,18 @@ import org.egov.works.models.estimate.ProjectCodeGenerator;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 public class AbstractEstimateService extends PersistenceService<AbstractEstimate, Long> {
     private static final Logger logger = Logger.getLogger(AbstractEstimateService.class);
     private EstimateNumberGenerator estimateNumberGenerator;
@@ -93,9 +93,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     @Autowired
     private ProjectCodeGenerator projectcodeGenerator;
     @Autowired
-    private FinancialYearHibernateDAO finHibernateDao;
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
     @Autowired
-    private PersistenceService<ProjectCode, Long> projectCodeService;
+    private ProjectCodeService projectCodeService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private DepositWorksUsageService depositWorksUsageService;
 
@@ -239,8 +239,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         else
             budgetAppDate = new Date();
         // CFinancialYear
-        // estimateDate_finYear=finHibernateDao.getFinancialYearByDate(financialDetail.getAbstractEstimate().getEstimateDate());
-        final CFinancialYear budgetApprDate_finYear = finHibernateDao.getFinYearByDate(budgetAppDate);
+        // estimateDate_finYear=financialYearHibernateDAO.getFinancialYearByDate(financialDetail.getAbstractEstimate().getEstimateDate());
+        final CFinancialYear budgetApprDate_finYear = financialYearHibernateDAO.getFinYearByDate(budgetAppDate);
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(financialDetail.getBudgetGroup().getId());
         boolean flag = false;
@@ -725,13 +725,10 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         this.estimateNumberGenerator = estimateNumberGenerator;
     }
 
-    /*public void setProjectCodeService(final PersistenceService<ProjectCode, Long> projectCodeService) {
-        this.projectCodeService = projectCodeService;
-    }
-
-    public PersistenceService<ProjectCode, Long> getProjectCodeService() {
-        return projectCodeService;
-    }*/
+    /*
+     * public void setProjectCodeService(final PersistenceService<ProjectCode, Long> projectCodeService) { this.projectCodeService
+     * = projectCodeService; } public PersistenceService<ProjectCode, Long> getProjectCodeService() { return projectCodeService; }
+     */
 
     public BudgetGroupDAO getBudgetGroupDAO() {
         return budgetGroupDAO;
@@ -758,18 +755,18 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     }
 
     public CFinancialYear getCurrentFinancialYear(final Date estimateDate) {
-        return finHibernateDao.getFinYearByDate(estimateDate);
+        return financialYearHibernateDAO.getFinYearByDate(estimateDate);
     }
 
     public CFinancialYear getPreviousFinancialYear() {
-        return finHibernateDao.getFinancialYearById(Long.parseLong(finHibernateDao.getPrevYearFiscalId()));
+        return financialYearHibernateDAO.getFinancialYearById(Long.parseLong(financialYearHibernateDAO.getPrevYearFiscalId()));
     }
 
     public Date getLatestApprYearEndDate(final FinancialDetail financialDetail) {
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
                 "getLatestBudgetUsageForEstimate", financialDetail.getAbstractEstimate().getId());
         if (estimateAppropriation != null)
-            return finHibernateDao.getFinancialYearById(
+            return financialYearHibernateDAO.getFinancialYearById(
                     estimateAppropriation.getBudgetUsage().getFinancialYearId().longValue()).getEndingDate();
         else
             return new Date();
@@ -781,9 +778,9 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         Long finYearId = null;
         final List<Long> budgetheadid = new ArrayList<Long>();
         if (date == null)
-            finYearId = finHibernateDao.getFinYearByDate(new Date()).getId();
+            finYearId = financialYearHibernateDAO.getFinYearByDate(new Date()).getId();
         else
-            finYearId = finHibernateDao.getFinYearByDate(date).getId();
+            finYearId = financialYearHibernateDAO.getFinYearByDate(date).getId();
         if (estimate.getFinancialDetails() != null && estimate.getFinancialDetails().size() > 0) {
             final FinancialDetail financialDetail = estimate.getFinancialDetails().get(0);
             budgetheadid.add(financialDetail.getBudgetGroup().getId());
@@ -879,7 +876,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
         if (balance.doubleValue() >= depApprAmnt) {
             DepositWorksUsage depositWorksUsage = new DepositWorksUsage();
-            final CFinancialYear budgetApprDate_finYear = finHibernateDao.getFinYearByDate(appDate);
+            final CFinancialYear budgetApprDate_finYear = financialYearHibernateDAO.getFinYearByDate(appDate);
             depositWorksUsage.setTotalDepositAmount(creditBalance);
             depositWorksUsage.setConsumedAmount(new BigDecimal(depApprAmnt));
             depositWorksUsage.setReleasedAmount(BigDecimal.ZERO);
@@ -933,7 +930,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             final BudgetUsage budgetUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
         final Integer finYearId = budgetUsage.getFinancialYearId();
-        final Date endingDate = finHibernateDao.getFinancialYearById(finYearId.longValue()).getEndingDate();
+        final Date endingDate = financialYearHibernateDAO.getFinancialYearById(finYearId.longValue()).getEndingDate();
         estimateAppropriation = estimateAppropriationService.findByNamedQuery("getBudgetUsageForEstimateByFinYear",
                 abstractEstimate.getId(), finYearId.intValue());
 
@@ -951,7 +948,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     private void persistDepositCodeAppDetails(final DepositWorksUsage depositWorksUsage) {
         AbstractEstimateAppropriation estimateAppropriation = null;
-        final int finYearId = finHibernateDao.getFinYearByDate(new Date()).getId().intValue();
+        final int finYearId = financialYearHibernateDAO.getFinYearByDate(new Date()).getId().intValue();
         final BigDecimal creditBalance = depositWorksUsage.getTotalDepositAmount();
         final AbstractEstimate abstractEstimate = depositWorksUsage.getAbstractEstimate();
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(abstractEstimate
@@ -982,7 +979,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         estimateAppropriation = estimateAppropriationService.findByNamedQuery("getLatestBudgetUsageForEstimate",
                 abstractEstimate.getId());
         final Integer finYearId = estimateAppropriation.getBudgetUsage().getFinancialYearId();
-        final Date endingDate = finHibernateDao.getFinancialYearById(finYearId.longValue()).getEndingDate();
+        final Date endingDate = financialYearHibernateDAO.getFinancialYearById(finYearId.longValue()).getEndingDate();
         estimateAppropriation.setBalanceAvailable(getBudgetAvailable(abstractEstimate, endingDate));
         estimateAppropriation.setBudgetUsage(budgetUsage);
         estimateAppropriationService.persist(estimateAppropriation);

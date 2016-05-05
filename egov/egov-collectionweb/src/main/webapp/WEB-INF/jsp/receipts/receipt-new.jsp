@@ -1,42 +1,43 @@
 
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-     Copyright (C) <2015>  eGovernments Foundation
- 
-     The updated version of eGov suite of products as by eGovernments Foundation 
-     is available at http://www.egovernments.org
- 
-     This program is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     any later version.
- 
-     This program is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with this program. If not, see http://www.gnu.org/licenses/ or 
-     http://www.gnu.org/licenses/gpl.html .
- 
-     In addition to the terms of the GPL license to be adhered to in using this
-     program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
 <head>
@@ -941,19 +942,18 @@ function validate()
 			validation=false;
 		}
 	    // display error if actual payt amt < original billed amt and system has not done apportioning(part payt is false)
-		if(collectiontotal < billingtotal && checkpartpaymentvalue=="false"){
+		if(collectiontotal < billingtotal && checkpartpaymentvalue==false){
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.total.errormessage" />' + '<br>';
 			validation=false;
 		}
 		// display error if actual payt amt < original billed amt after system has done apportioning 
 		// (citizen might have manually changed credit amounts after system apportioning of account head amounts
-		else if(collectiontotal < billingtotal && checkpartpaymentvalue=="true"){
+		else if(collectiontotal < billingtotal && checkpartpaymentvalue==true){
 		        if(collectiontotal < minimumAmt){
 		        	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />' + '<br>';
 		        	validation=false;
 		        }
 		}
-		
 		else
 		{
 			if(!checkaccountheaderwiseamount()){
@@ -1699,7 +1699,7 @@ var bankfuncObj;
 var bankArray;
 function loadDropDownCodesBank()
 {
-	var url = "<c:url value='/commons/Process.jsp?type=getAllBankName' context='/EGF'/>";
+	var url = "<c:url value='/voucher/common-ajaxGetAllBankName.action' context='/EGF'/>";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -1852,13 +1852,18 @@ function showHideMandataryMark(obj){
 	</b></font>
   </li>
 </span>
-<div class="formmainbox" style="width:100%;max-width:960px;">
-	<s:if test="%{hasErrors()}">
-	    <div id="actionErrorMessages" class="errorstyle">
+<s:if test="%{hasErrors()}">
+	<div align="center">
+	    <div id="actionErrorMessages" class="alert alert-danger">
 	      <s:actionerror/>
-	      <s:fielderror/>
+	      <s:fielderror/>	      
 	    </div>
+	    <input name="button" type="button" class="button" id="buttonclose" value="Close" onclick="window.close();" />
+	</div>
 	</s:if>
+	<s:else>
+<div class="formmainbox" style="width:100%;max-width:960px;">
+	
 	<s:if test="%{hasActionMessages()}">
 	    <div id="actionMessages" class="messagestyle">
 	    	<s:actionmessage theme="simple"/>
@@ -1960,7 +1965,7 @@ function showHideMandataryMark(obj){
 	   <tr id="cashdetails" >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);"/></td>
+		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);"/></td>
 	   </tr>
 	   
 	   
@@ -2009,7 +2014,7 @@ function showHideMandataryMark(obj){
 		       		<tr id="chequeamountrow">
 		       		    <td class="bluebox" width="3%"></td>
 						<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
+						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox">&nbsp;</td>
 					</tr>
@@ -2059,7 +2064,7 @@ function showHideMandataryMark(obj){
 		       		<!-- This row captures the cheque/DD Amount -->
 		       		<tr id="chequeamountrow">
 						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
+						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
 						<td class="bluebox2">&nbsp;</td>
 						<td class="bluebox2">&nbsp;</td>
 					</tr>
@@ -2099,7 +2104,7 @@ function showHideMandataryMark(obj){
 					        <tr id="carddetailsrow">
 					  		    <td class="bluebox" width="3%"></td>
 								<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-					            <td class="bluebox"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"  cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCardInstrumentDetails(this);" onkeyup="setCardInstrumentDetails(this);"/></td>
+					            <td class="bluebox"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"  cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCardInstrumentDetails(this);" onkeyup="setCardInstrumentDetails(this);"/></td>
 					        </tr>
 					        
 			            </table> 
@@ -2139,7 +2144,7 @@ function showHideMandataryMark(obj){
 									<egov:ajaxdropdown id="accountNumberMasterDropdown" fields="['Text','Value']" dropdownId='accountNumberMaster'
 				         				url='receipts/ajaxBankRemittance-accountList.action' selectedValue="%{bankaccount.id}"/>
 				       			</td>
-				       			<td class="bluebox"><s:text name="billreceipt.payment.bankaccountname"/></td>
+				       			<td class="bluebox"><s:text name="billreceipt.payment.bankaccountname"/><span class="mandatory"></td>
 				       			<td class="bluebox"><s:select headerValue="--Select--"  headerKey="0"
 		                			list="dropdownData.accountNumberList" listKey="id" id="accountNumberMaster" listValue="accountnumber"
 		                			label="accountNumberMaster" name="bankAccountId" value="%{bankAccountId}"/>
@@ -2148,7 +2153,7 @@ function showHideMandataryMark(obj){
 				       		<tr id="bankamountrow">
 				       		<td class="bluebox" width="3%">&nbsp;</td>
 				       		<td class="bluebox" width="22%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="amount" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);"/></td>
+				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);"/></td>
 				       		</tr>
 						</table> 
 				<!-- End of bank grid table -->
@@ -2240,8 +2245,11 @@ function showHideMandataryMark(obj){
 
 
 </s:push>
+
 </s:form>
+
 </div>
+</s:else>
 <script type="text/javascript">
 // MAIN FUNCTION: new switchcontent("class name", "[optional_element_type_to_scan_for]") REQUIRED
 // Call Instance.init() at the very end. REQUIRED

@@ -1,52 +1,43 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
- * 
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.client.service;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
@@ -57,6 +48,15 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
+
 public class CollectionApportioner {
 
     private static final String REBATE_STR = "REBATE";
@@ -65,7 +65,6 @@ public class CollectionApportioner {
     private static final Logger LOGGER = Logger.getLogger(CollectionApportioner.class);
     private boolean isEligibleForCurrentRebate;
     private boolean isEligibleForAdvanceRebate;
-    private BigDecimal rebate;
 
     public CollectionApportioner(boolean isEligibleForCurrentRebate, boolean isEligibleForAdvanceRebate,
             BigDecimal rebate) {
@@ -82,7 +81,7 @@ public class CollectionApportioner {
             for (final ReceiptDetail receiptDetail : receiptDetails) {
                 totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
             }
-            if (amtPaid.compareTo(totalCrAmountToBePaid) == 0) {
+            if (amtPaid.compareTo(totalCrAmountToBePaid) >= 0) {
                 isFullPayment = Boolean.TRUE;
             }
         }
@@ -98,7 +97,13 @@ public class CollectionApportioner {
 
             crAmountToBePaid = rd.getCramountToBePaid();
 
-            if ((rd.getDescription().contains(REBATE_STR) && isFullPayment) || !rd.getDescription().contains(REBATE_STR)) {
+            if (rd.getDescription().contains(REBATE_STR)) {
+                if (isFullPayment) {
+                    balance = balance.minus(crAmountToBePaid);
+                } else {
+                    rd.setDramount(BigDecimal.ZERO);
+                }
+            } else {
                 if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
                     // partial or exact payment
                     rd.setCramount(balance.amount);
@@ -119,13 +124,24 @@ public class CollectionApportioner {
         LOGGER.info("receiptDetails after apportioning: " + receiptDetails);
     }
 
-    public List<ReceiptDetail> reConstruct(final BigDecimal amountPaid, final List<EgBillDetails> billDetails, FunctionHibernateDAO functionDAO, ChartOfAccountsHibernateDAO chartOfAccountsDAO) {
+    public List<ReceiptDetail> reConstruct(final BigDecimal amountPaid, final List<EgBillDetails> billDetails,
+            FunctionHibernateDAO functionDAO, ChartOfAccountsHibernateDAO chartOfAccountsDAO) {
         final List<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
         LOGGER.info("receiptDetails before reApportion amount " + amountPaid + ": " + receiptDetails);
         LOGGER.info("billDetails before reApportion " + billDetails);
         Amount balance = new Amount(amountPaid);
-
+        Boolean isFullPayment = Boolean.FALSE;
         BigDecimal crAmountToBePaid = BigDecimal.ZERO;
+
+        if (isEligibleForCurrentRebate) {
+            BigDecimal totalCrAmountToBePaid = BigDecimal.ZERO;
+            for (final ReceiptDetail receiptDetail : receiptDetails) {
+                totalCrAmountToBePaid = totalCrAmountToBePaid.add(receiptDetail.getCramountToBePaid());
+            }
+            if (amountPaid.compareTo(totalCrAmountToBePaid) >= 0) {
+                isFullPayment = Boolean.TRUE;
+            }
+        }
 
         for (final EgBillDetails billDetail : billDetails) {
             final String glCode = billDetail.getGlcode();
@@ -133,10 +149,16 @@ public class CollectionApportioner {
             receiptDetail.setOrdernumber(Long.valueOf(billDetail.getOrderNo()));
             receiptDetail.setDescription(billDetail.getDescription());
             receiptDetail.setIsActualDemand(true);
+            if(billDetail.getFunctionCode() !=null){
             receiptDetail.setFunction(functionDAO.getFunctionByCode(billDetail.getFunctionCode()));
+            }
             receiptDetail.setAccounthead(chartOfAccountsDAO.getCChartOfAccountsByGlCode(glCode));
             receiptDetail.setCramountToBePaid(balance.amount);
-            receiptDetail.setDramount(BigDecimal.ZERO);
+            if (billDetail.getDescription().contains(REBATE_STR)) {
+                receiptDetail.setDramount(billDetail.getDrAmount());
+            } else {
+                receiptDetail.setDramount(BigDecimal.ZERO);
+            }
 
             if (balance.isZero()) {
                 // nothing left to apportion
@@ -146,17 +168,24 @@ public class CollectionApportioner {
             }
             crAmountToBePaid = billDetail.getCrAmount();
 
-            if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
-                // partial or exact payment
-                receiptDetail.setCramount(balance.amount);
-                receiptDetail.setCramountToBePaid(balance.amount);
-                balance = Amount.ZERO;
-            } else { // excess payment
-                receiptDetail.setCramount(crAmountToBePaid);
-                receiptDetail.setCramountToBePaid(crAmountToBePaid);
-                balance = balance.minus(crAmountToBePaid);
+            if (receiptDetail.getDescription().contains(REBATE_STR)) {
+                if (isFullPayment) {
+                    balance = balance.minus(crAmountToBePaid);
+                } else {
+                    receiptDetail.setDramount(BigDecimal.ZERO);
+                }
+            } else {
+                if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
+                    // partial or exact payment
+                    receiptDetail.setCramount(balance.amount);
+                    receiptDetail.setCramountToBePaid(balance.amount);
+                    balance = Amount.ZERO;
+                } else { // excess payment
+                    receiptDetail.setCramount(crAmountToBePaid);
+                    receiptDetail.setCramountToBePaid(crAmountToBePaid);
+                    balance = balance.minus(crAmountToBePaid);
+                }
             }
-
             receiptDetails.add(receiptDetail);
         }
 

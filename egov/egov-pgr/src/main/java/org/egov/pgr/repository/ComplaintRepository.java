@@ -37,9 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.repository;
 
-import java.util.List;
+package org.egov.pgr.repository;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pgr.entity.Complaint;
@@ -50,6 +49,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     
@@ -57,6 +58,9 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     
     @Query("select complaint from Complaint complaint where createdBy =:createdBy order by createddate DESC")
     Page<Complaint> findByMyComplaint(@Param("createdBy") User createdBy, Pageable pageable);
+    
+    @Query("select complaint from Complaint complaint where createdBy =:createdBy and status.name in (:statuses) order by createddate DESC")
+    Page<Complaint> findMyComplaintyByStatus(@Param("createdBy") User createdBy, @Param("statuses") String[] statuses, Pageable pageable);
     
     @Query("select complaint from Complaint complaint where createdBy <>:createdBy order by createddate DESC")
     Page<Complaint> findByLatestComplaint(@Param("createdBy") User createdBy, Pageable pageable);

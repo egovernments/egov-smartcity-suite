@@ -37,16 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.entity.transfer;
 
-import java.util.Date;
-import java.util.List;
+package org.egov.tl.entity.transfer;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocument;
+
+import java.util.Date;
+import java.util.List;
 
 public class LicenseTransfer extends StateAware {
     private Long id;

@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
@@ -47,18 +48,18 @@
         
         <link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
         
-     	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
-		<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
+     	<link rel="stylesheet" type="text/css" href="<c:url value='/resources/legacy/commonyui/yui2.8/fonts/fonts-min.css'/>"/>
+		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/legacy/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css'/>"/>	
 		
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script> 
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/container/container_core-min.js"></script>
-		<script type="text/javascript" src="/egi/commonyui/yui2.8/button/button-min.js"></script>
+		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script> 
+		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/element/element-min.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/connection/connection-min.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/datasource/datasource-min.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/datatable/datatable-min.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/container/container_core-min.js'/>"></script>
+		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/button/button-min.js'/>"></script>
 		  
-   	    <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+   	    <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
    	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">      
 		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />

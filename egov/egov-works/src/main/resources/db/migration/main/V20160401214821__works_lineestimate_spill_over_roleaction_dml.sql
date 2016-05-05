@@ -1,0 +1,22 @@
+----------------Role Action Mappings for Spill Over Line Estimate-------------------
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksSpillOverLineEstimateForm','/lineestimate/newspilloverform',null,(select id from EG_MODULE where name = 'WorksLineEstimate'),3,'Create Spillover Line Estimate','true','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='WorksSpillOverLineEstimateForm' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='WorksSpillOverLineEstimateForm' and contextroot = 'egworks'));
+
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksCreateSpillOverLineEstimate','/lineestimate/createspillover',null,(select id from EG_MODULE where name = 'WorksLineEstimate'),4,'Create Spillover Line Estimate','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='WorksCreateSpillOverLineEstimate' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='WorksCreateSpillOverLineEstimate' and contextroot = 'egworks'));
+
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'WorksCreateSpillOverLineEstimateSuccess','/lineestimate/spillover-lineestimate-success',null,(select id from EG_MODULE where name = 'WorksLineEstimate'),1,'Create Spill Over Line Estimate Success','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='WorksCreateSpillOverLineEstimateSuccess' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='WorksCreateSpillOverLineEstimateSuccess' and contextroot = 'egworks'));
+
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='WorksSpillOverLineEstimateForm' and contextroot = 'egworks');
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='WorksSpillOverLineEstimateForm' and contextroot = 'egworks');
+--rollback delete FROM EG_ACTION WHERE name = 'WorksCreateSpillOverNewLineEstimate' and contextroot = 'egworks';
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='WorksCreateSpillOverLineEstimate' and contextroot = 'egworks');
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='WorksCreateSpillOverLineEstimate' and contextroot = 'egworks');
+--rollback delete FROM EG_ACTION WHERE name = 'WorksSpillOverLineEstimateNewForm' and contextroot = 'egworks';
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='WorksCreateSpillOverLineEstimateSuccess' and contextroot = 'egworks');
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='WorksCreateSpillOverLineEstimateSuccess' and contextroot = 'egworks');
+--rollback delete FROM EG_ACTION WHERE name = 'WorksCreateSpillOverLineEstimateSuccess' and contextroot = 'egworks';

@@ -37,11 +37,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
 <title><s:text name="page.title.transfer" /></title>
-<sx:head />
 <script>
 		  	function validateForm(obj) {
 		    	if (validateApprover(obj) == false) {
@@ -101,7 +101,7 @@
 										</td>
 									</tr>
 								</table>
-								<s:form action="transferTradeLicense" theme="css_xhtml"
+								<s:form action="transferTradeLicense" theme="simple"
 									name="registrationForm" validate="true">
 									<s:token />
 									<s:push value="model">

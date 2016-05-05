@@ -1,54 +1,46 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.wtms.integration;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.wtms.ConsumerConsumption;
@@ -68,6 +60,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrationService {
@@ -101,18 +100,19 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                 if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
                     final ConsumerConsumption consumerConsumption = new ConsumerConsumption();
                     consumerConsumption.setHscno(waterConnectionDetails.getConnection().getConsumerCode());
-                    final Map<String, BigDecimal> resultmap = connectionDemandService.getDemandCollMapForPtisIntegration(
-                            waterConnectionDetails, WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
+                    final Map<String, BigDecimal> resultmap = connectionDemandService
+                            .getDemandCollMapForPtisIntegration(waterConnectionDetails,
+                                    WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
                     if (null != resultmap && !resultmap.isEmpty()) {
                         final BigDecimal arrInstallment = resultmap.get(WaterTaxConstants.ARR_INSTALFROM_STR);
                         if (null != arrInstallment && arrInstallment != BigDecimal.ZERO)
-                            arrInstal = (Installment) installmentDao.findById(new Integer(arrInstallment.toString()), false);
+                            arrInstal = installmentDao.findById(new Integer(arrInstallment.toString()), false);
                         consumerConsumption.setCurrentDue(resultmap.get(WaterTaxConstants.CURR_DUE));
                         consumerConsumption.setArrearDue(resultmap.get(WaterTaxConstants.ARR_DUE));
                         if (null != arrInstal) {
                             consumerConsumption.setArrearFromDate(new DateTime(arrInstal.getFromDate()));
-                            consumerConsumption
-                            .setArrearToDate(new DateTime(currentInstallment.getFromDate()).minusDays(1));
+                            consumerConsumption.setArrearToDate(new DateTime(currentInstallment.getFromDate())
+                                    .minusDays(1));
                         }
                         consumerConsumption.setCurrentFromDate(new DateTime(currentInstallment.getFromDate()));
                         consumerConsumption.setCurentToDate(new DateTime(currentInstallment.getToDate()));
@@ -145,10 +145,10 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                 if (null != resultmap && !resultmap.isEmpty()) {
                     nonMeteredConnBillDetails = new HashSet<NonMeteredConnBillDetails>();
                     final BigDecimal install = resultmap.get("inst");
-                    installment = (Installment) installmentDao.findById(install.intValue(), false);
+                    installment = installmentDao.findById(install.intValue(), false);
                     nonMeteredConnBillDetail.setBillNo(billNumber);
-                    nonMeteredConnBillDetail
-                    .setWaterConnectionDetails(waterConnectionDetailsService.findBy(resultmap.get("wcdid").longValue()));
+                    nonMeteredConnBillDetail.setWaterConnectionDetails(waterConnectionDetailsService.findBy(resultmap
+                            .get("wcdid").longValue()));
                     nonMeteredConnBillDetail.setInstallment(installment);
                     nonMeteredConnBillDetails.add(nonMeteredConnBillDetail);
                     waterConnectionDetails.setNonmeteredBillDetails(nonMeteredConnBillDetails);
@@ -161,13 +161,14 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
 
     @Override
     public void updateConsumerIndex(final AssessmentDetails assessmentDetails) {
-        final List<WaterConnection> waterConnections = waterConnectionService.findByPropertyIdentifier(assessmentDetails
-                .getPropertyID());
+        final List<WaterConnection> waterConnections = waterConnectionService
+                .findByPropertyIdentifier(assessmentDetails.getPropertyID());
         for (final WaterConnection waterConnection : waterConnections) {
             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                    .getActiveConnectionDetailsByConnection(waterConnection);
-            consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
-                    waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
+                    .findByConsumerCodeAndConnectionStatus(waterConnection.getConsumerCode(), ConnectionStatus.ACTIVE);
+            if (waterConnectionDetails != null)
+                consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
+                        waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
 
         }
 

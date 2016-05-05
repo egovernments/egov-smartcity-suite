@@ -38,6 +38,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
 	String ipAddress = request.getRemoteAddr();
@@ -63,17 +64,16 @@
 		<title>eGov Urban Portal Login</title>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
 	</head>
 	<body class="page-body index">
@@ -165,7 +165,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-user theme-color style-color"></i>
+											<i class="fa fa-user theme-color style-color"></i>
 										</div>
 										<input type="text" class="form-control style-form"
 											name="j_username" id="j_username"
@@ -176,7 +176,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-key theme-color style-color"></i>
+											<i class="fa fa-key theme-color style-color"></i>
 										</div>
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
@@ -187,7 +187,7 @@
 								<div class="form-group display-hide" id="counter-section">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-location theme-color style-color"></i>
+											<i class="fa fa-map-marker theme-color style-color"></i>
 										</div>
 										<select class="form-control style-form" name="locationId" id="locationId"></select>
 									</div>
@@ -247,7 +247,7 @@
 								<div class="form-group signin-leftpadding">
 									<button type="submit"
 										class="btn btn-custom btn-block btn-login signin-submit" id="signin-action">
-										<i class="entypo-login"></i><spring:message code="lbl.login"/>
+										<i class="fa fa-sign-in"></i> <spring:message code="lbl.login"/>
 									</button>
 								</div>
 								<div class="row">
@@ -312,7 +312,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-user style-color"></i>
+										<i class="fa fa-user style-color"></i>
 									</div>
 									<input type="text" class="form-control style-form"
 										name="identity" id="emailOrMobileNum"
@@ -351,4 +351,3 @@
 		<script src="/egi/resources/js/app/login.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
 	</body>
 </html>
-<%session.invalidate();%>

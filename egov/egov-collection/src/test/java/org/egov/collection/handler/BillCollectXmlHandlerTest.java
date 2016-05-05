@@ -39,25 +39,6 @@
  */
 package org.egov.collection.handler;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import org.egov.collection.integration.models.BillAccountDetails;
-import org.egov.collection.integration.models.BillDetails;
-import org.egov.collection.integration.models.BillInfo;
-import org.egov.collection.integration.models.BillInfoImpl;
-import org.egov.collection.integration.models.BillPayeeDetails;
-import org.junit.Test;
-
 public class BillCollectXmlHandlerTest {
 	private static final String SERVICECODE = "testServiceCode";
 	private static final String FUNDCODE = "testFundCode";

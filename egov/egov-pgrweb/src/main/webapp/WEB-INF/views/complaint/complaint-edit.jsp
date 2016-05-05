@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -159,17 +160,17 @@
 				<div class="col-sm-6 col-xs-12">
 					<div id="file1block" class="add-margin col-sm-4 col-xs-4">
 						<img id="preview1" src="#" alt="" class="display-hide "/>
-						<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+						<div class="remove-img preview-cross1 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 						<div class="add-padding" id="filename1"></div>
 					</div>
 					<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
 						<img id="preview2" src="#" alt="" class="display-hide"/>
-						<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+						<div class="remove-img preview-cross2 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 						<div class="add-padding" id="filename2"></div>
 					</div>
 					<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
 						<img id="preview3" src="#" alt="" class="display-hide"/>
-						<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+						<div class="remove-img preview-cross3 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 						<div class="add-padding" id="filename3"></div>
 					</div>
 				</div>

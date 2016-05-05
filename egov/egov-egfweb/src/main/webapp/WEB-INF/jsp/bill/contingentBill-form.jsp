@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,13 +36,16 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <jsp:include page="../voucher/vouchertrans-filter-new-contingent.jsp" />
 <tr>
 	<td class="greybox"></td>
-	<td class="greybox"><s:text name="function" /><span	class="mandatory1"> *</span></td>
+	<td class="greybox"><s:text name="function" /><span
+		class="mandatory1"> *</span></td>
 	<td class="greybox"><s:textfield name="commonBean.functionName"
 			id="commonBean.functionName"
 			onkeyup="autocompletecodeFunctionHeader(this,event)"
@@ -59,8 +62,8 @@
 	<td class="bluebox"></td>
 	<td class="bluebox"><s:text name="voucher.narration" /></td>
 	<td class="bluebox" colspan="3"><s:textarea name="description"
-			id="description" cols="120" /><br />
-	<span class="highlight2">Max. 1024 characters</span></td>
+			id="description" cols="120" /><br /> <span class="highlight2">Max.
+			1024 characters</span></td>
 </tr>
 <tr id="budgetReappRow">
 	<td class="greybox"></td>
@@ -137,13 +140,12 @@
 									<td class="bluebox"><s:text name="party.bill.date" /></td>
 									<s:date name='commonBean.partyBillDate'
 										id="commonBean.partyBillDateId" format='dd/MM/yyyy' />
-									<td class="bluebox"><s:textfield
-											name="commonBean.partyBillDate" id="partyBillDate"
+									<td class="bluebox"><s:textfield id="partyBillDate"
+											name="commonBean.partyBillDate"
+											value="%{commonBean.partyBillDateId}" data-date-end-date="0d"
 											onkeyup="DateFormat(this,this.value,event,false,'3')"
-											value="%{commonBean.partyBillDateId}" /> <a
-										href="javascript:show_calendar('cbill.partyBillDate');"
-										style="text-decoration: none">&nbsp;<img tabIndex="-1"
-											src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+											placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+											data-inputmask="'mask': 'd/m/y'" /></td>
 
 								</tr>
 								<tr>
@@ -165,17 +167,19 @@
 	</div>
 
 	<script>
-				    makeVoucherDetailTable();
-				    document.getElementById('billDetailTable').getElementsByTagName('table')[0].width="90%";
-					</script>
+		makeVoucherDetailTable();
+		document.getElementById('billDetailTable')
+				.getElementsByTagName('table')[0].width = "90%";
+	</script>
 	<div class="yui-skin-sam" align="center">
 		<div id="billDetailTableCredit"></div>
 	</div>
 
 	<script>
-			   	makeVoucherDetailTableCredit();
-			   	document.getElementById('billDetailTableCredit').getElementsByTagName('table')[0].width="90%";
-				</script>
+		makeVoucherDetailTableCredit();
+		document.getElementById('billDetailTableCredit').getElementsByTagName(
+				'table')[0].width = "90%";
+	</script>
 
 	<div class="yui-skin-sam" align="center">
 		<div id="billDetailTableNet"></div>
@@ -183,8 +187,9 @@
 
 	<script>
 		makeVoucherDetailTableNet();
-		document.getElementById('billDetailTableNet').getElementsByTagName('table')[0].width="90%";
-		</script>
+		document.getElementById('billDetailTableNet').getElementsByTagName(
+				'table')[0].width = "90%";
+	</script>
 	<div id="codescontainer"></div>
 
 	<div>
@@ -217,17 +222,19 @@
 		</div>
 
 		<script>
-				    makeVoucherDetailTableFinal();
-				    document.getElementById('billDetailTableFinal').getElementsByTagName('table')[0].width="90%";
-					</script>
+			makeVoucherDetailTableFinal();
+			document.getElementById('billDetailTableFinal')
+					.getElementsByTagName('table')[0].width = "90%";
+		</script>
 		<div class="yui-skin-sam" align="center">
 			<div id="billDetailTableCreditFinal"></div>
 		</div>
 
 		<script>
-			   	makeVoucherDetailTableCreditFinal();
-			   	document.getElementById('billDetailTableCreditFinal').getElementsByTagName('table')[0].width="90%";
-				</script>
+			makeVoucherDetailTableCreditFinal();
+			document.getElementById('billDetailTableCreditFinal')
+					.getElementsByTagName('table')[0].width = "90%";
+		</script>
 
 
 
@@ -236,8 +243,9 @@
 		</div>
 
 		<script>
-		makeVoucherDetailTableNetFinal();
-		document.getElementById('billDetailTableNetFinal').getElementsByTagName('table')[0].width="90%";
+			makeVoucherDetailTableNetFinal();
+			document.getElementById('billDetailTableNetFinal')
+					.getElementsByTagName('table')[0].width = "90%";
 		</script>
 
 		<div>
@@ -269,8 +277,9 @@
 			<div id="billDetailTableSubledger"></div>
 		</div>
 		<script>
-		makeVoucherDetailTableSubledger();
-		document.getElementById('billDetailTableSubledger').getElementsByTagName('table')[0].width="90%";
+			makeVoucherDetailTableSubledger();
+			document.getElementById('billDetailTableSubledger')
+					.getElementsByTagName('table')[0].width = "90%";
 		</script>
 
 	</div>

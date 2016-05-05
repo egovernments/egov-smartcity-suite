@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <div class="main-content">
@@ -52,13 +54,13 @@
 							<spring:message code="lbl.finyearrange" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${cFinancialYear.finYearRange}</div>
+							${CFinancialYear.finYearRange}</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.startingdate" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							<fmt:formatDate pattern="dd/MM/yyyy"
-								value="${cFinancialYear.startingDate}" />
+								value="${CFinancialYear.startingDate}" />
 						</div>
 					</div>
 					<div class="row add-border">
@@ -67,39 +69,84 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							<fmt:formatDate pattern="dd/MM/yyyy"
-								value="${cFinancialYear.endingDate}" />
+								value="${CFinancialYear.endingDate}" />
 						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.isactive" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${cFinancialYear.isActive}</div>
+							${CFinancialYear.isActive}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.isactiveforposting" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${cFinancialYear.isActiveForPosting}</div>
+							${CFinancialYear.isActiveForPosting}</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.isclosed" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${cFinancialYear.isClosed}</div>
+							${CFinancialYear.isClosed}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.transferclosingbalance" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${cFinancialYear.transferClosingBalance}</div>
+							${CFinancialYear.transferClosingBalance}</div>
 					</div>
+					<input type="hidden" name="CFinancialYear"
+						value="${CFinancialYear.id}" />
+					<div id="labelAD" align="center">
+						<table id="fiscalPeriodTable" width="60%" border=0 id="labelid"
+							class="table table-bordered">
+							<thead>
+								<th>Fiscal Period Name</th>
+								<th>Starting Date</th>
+								<th>Ending Date</th>
+								<th></th>
+							</thead>
+							<c:choose>
+								<c:when test="${!CFinancialYear.cFiscalPeriod.isEmpty()}">
+									<c:forEach items="${CFinancialYear.cFiscalPeriod}" var="var1"
+										varStatus="counter">
+										<tr id="fiscalPeroid">
+											<td><input type="text"
+														name="cFiscalPeriod[${counter.index}].name"
+														value="${var1.name}"
+														id="cFiscalPeriod[${counter.index}].name" size="10"
+														readonly="readonly"
+														class="form-control text-right patternvalidation" />
+												</td>
+											<td><fmt:formatDate value="${var1.startingDate}"
+													var="startDate" pattern="dd/MM/yyyy" /> 
+													<input type="text"
+														name="cFiscalPeriod[${counter.index}].startingDate"
+														 value="${startDate}"
+														id="cFiscalPeriod[${counter.index}].startingDate"
+														readonly="readonly" />
+												</td>
+											<td><fmt:formatDate value="${var1.endingDate}"
+													var="endDate" pattern="dd/MM/yyyy" />
+												  <input type="text"
+														name="cFiscalPeriod[${counter.index}].endingDate"
+														value="${endDate}"
+														id="cFiscalPeriod[${counter.index}].endingDate"
+														readonly="readonly" />
+												</td>
+											<td></td>
+										</tr>
+									</c:forEach>
+								</c:when>
+								</c:choose></table>
 				</div>
-			</div>
-		</div>
-		<div class="row text-center">
+				<div class="row text-center">
 			<div class="add-margin">
 				<a href="javascript:void(0)" class="btn btn-default"
 					onclick="self.close()">Close</a>
 			</div>
 		</div>
+			</div>
+		</div>
+		

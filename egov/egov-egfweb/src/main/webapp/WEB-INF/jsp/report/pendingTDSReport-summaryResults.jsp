@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <s:if test="%{message != ''}">
 	<label style="color: red"><s:property value="message" /></label>
@@ -45,16 +47,18 @@
 	<br />
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td colspan="7">
-				<div class="subheadsmallnew">
-					<strong>Deductions remittance summary for <s:property
-							value="%{type}" />  as on <s:property
-							value="%{getFormattedDate(asOnDate)}" /></strong>
-				</div>
-			</td>
+
+
+			<th class="bluebgheadtd" width="100%" colspan="7"><strong
+				style="font-size: 15px;"> Deductions remittance summary for
+					<s:property value="%{type}" /> as on <s:property
+						value="%{getFormattedDate(asOnDate)}" />
+			</strong></th>
 		</tr>
 		<tr>
-			<td style ="border-right-width:1px ;border-left-style : solid;padding-left:5px;border-left-color:#E9E9E9" class="blueborderfortd">
+			<td
+				style="border-right-width: 1px; border-left-style: solid; padding-left: 5px; border-left-color: #E9E9E9"
+				class="blueborderfortd">
 				<div>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0"
 						class="tablebottom">

@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <!DOCTYPE html>
@@ -54,8 +55,7 @@
 		
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css'/>"> 
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
@@ -64,12 +64,12 @@
 		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
 		<script src="<c:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
 		<style>
 		body{padding:0;}
@@ -108,6 +108,12 @@
 		    <div class="loading-indicator"><i class="fa fa-spinner fa-pulse fa-2x"></i></div>
 		</div>
 		<div class="page-container horizontal-menu">
+			<div class="search">
+				<input type="text" id="searchtree" ><span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
+			</div>
+			<div class="search_list">
+				<div class="list"><ul class="ullist"></ul></div>
+			</div>
 			<header class="navbar navbar-fixed-top border-header"><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
 				<div class="navbar-inner">
@@ -128,26 +134,26 @@
 						
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace active" data-toggle="tooltip" title="Worklist" data-work="worklist">
-								<i class="entypo-list"></i>
+								<i class="fa fa-list"></i>
 							</a>
 						</li>
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Drafts" data-work="drafts">
-								<i class="entypo-pencil"></i>
+								<i class="fa fa-pencil"></i>
 							</a>
 							
 						</li>
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Notifications" data-work="notifications">
 
-								<i class="entypo-bell"></i>
+								<i class="fa fa-bell"></i>
 							</a>
 							
 						</li>
 						
 						<li class="hidden-xs menu-responsive">
 							<a href="javascript:void(0);" class="profile-name">
-								<i class="entypo-user img-circle"></i>${userName}
+								<i class="fa fa-user img-circle"></i> ${userName}
 							</a>
 							<ul>
 								<li>
@@ -193,7 +199,7 @@
 						
 						<li class="dropdown visible-xs hidden-sm">
 							<a href="/egi/logout" class="tooltip-secondary signout" data-toggle="tooltip" title="Sign Out">
-								<i class="entypo-logout"></i>
+								<i class="fa fa-sign-out"></i>
 							</a>
 						</li>
 						
@@ -222,7 +228,7 @@
 								</div>
 								<div class="col-md-6 col-xs-6 add-margin text-right">
 									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="inboxsearch" class="form-control input-sm"></span>
+									<span class="inline-elem"><input type="text" id="inboxsearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
 								</div>
 							</div>
 							<div class="row">
@@ -251,7 +257,7 @@
 								</div>
 								<div class="col-md-6 col-xs-6 add-margin text-right">
 									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="draftsearch" class="form-control input-sm"></span>
+									<span class="inline-elem"><input type="text" id="draftsearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_drafts" style="width:100%;">
@@ -277,7 +283,7 @@
 								<div class="col-md-6 col-xs-6 add-margin text-right">
 									
 									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="notifysearch" class="form-control input-sm"></span>
+									<span class="inline-elem"><input type="text" id="notifysearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_notify" style="width:100%;">
@@ -492,7 +498,7 @@
 		        document.getElementById("loading").style.display = "none";
 				document.getElementById("loadingMask").style.display = "none";
 		    });
-			$('#new-pass').popover({ trigger: "focus",placement: "bottom"})
+			$('#new-pass').popover({ trigger: "focus",placement: "bottom"});
 		</script>
 	</body>
 </html>																						

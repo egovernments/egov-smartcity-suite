@@ -1,68 +1,43 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
- * 
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.ptis.actions.view;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -97,6 +72,28 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -137,10 +134,10 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
-    
+
     @Autowired
     private ApplicationContext beanProvider;
-    
+
     @Autowired
     private DCBService dcbService;
     @Autowired
@@ -188,11 +185,10 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
         try {
             if (getBasicProperty() == null) {
-                addActionError("Property not found with given Assessment Number " + propertyId); 
-                throw new PropertyNotFoundException();
+                return VIEW;
             } else {
                 LOGGER.debug("BasicProperty : " + basicProperty);
-                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId); 
+                basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
                 viewMap = new HashMap<String, Object>();
                 viewMap.put("propID", basicProperty.getPropertyID());
                 PropertyTypeMaster propertyTypeMaster = basicProperty.getProperty().getPropertyDetail()
@@ -204,10 +200,12 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                 viewMap.put("taxExempted", property.getIsExemptedFromTax());
                 if (!property.getIsExemptedFromTax()) {
                     Map<String, BigDecimal> demandCollMap = ptDemandDAO.getDemandCollMap(property);
-                    viewMap.put("currFirstHalfTaxAmount", demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
+                    viewMap.put("currFirstHalfTaxAmount",
+                            demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
                     viewMap.put("currFirstHalfTaxDue", demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR)
                             .subtract(demandCollMap.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)));
-                    viewMap.put("currSecondHalfTaxAmount", demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
+                    viewMap.put("currSecondHalfTaxAmount",
+                            demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
                     viewMap.put("currSecondHalfTaxDue", demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)
                             .subtract(demandCollMap.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
                     viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
@@ -229,19 +227,18 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
                     viewMap.put("currTaxAmount", BigDecimal.ZERO);
                     viewMap.put("currTaxDue", BigDecimal.ZERO);
                     viewMap.put("totalArrDue", BigDecimal.ZERO);
-                    dcbReport.setTotalDmdTax(BigDecimal.ZERO); 
-                    dcbReport.setTotalLpayPnlty(BigDecimal.ZERO);  
+                    dcbReport.setTotalDmdTax(BigDecimal.ZERO);
+                    dcbReport.setTotalLpayPnlty(BigDecimal.ZERO);
                     dcbReport.setTotalDmdPnlty(BigDecimal.ZERO);
                     dcbReport.setTotalColTax(BigDecimal.ZERO);
                     dcbReport.setTotalColPnlty(BigDecimal.ZERO);
-                    dcbReport.setTotalColLpayPnlty(BigDecimal.ZERO);  
-                    dcbReport.setTotalRebate(BigDecimal.ZERO); 
-                    dcbReport.setTotalBalance(BigDecimal.ZERO); 
-                } 
+                    dcbReport.setTotalColLpayPnlty(BigDecimal.ZERO);
+                    dcbReport.setTotalRebate(BigDecimal.ZERO);
+                    dcbReport.setTotalBalance(BigDecimal.ZERO);
+                }
 
             }
-        } catch (PropertyNotFoundException e) {
-            LOGGER.error("Property not found with given propertyId " + propertyId, e);
+
         } catch (DCBException e) {
             errorMessage = "Demand details does not exists !";
             LOGGER.warn(errorMessage);
@@ -305,13 +302,13 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private List<Receipt> receiptsInDescendingOrderOfReceiptDate(List<Receipt> receipts) {
         LOGGER.debug("Entered into receiptsInDescendingOrderOfReceiptDate");
 
-            Collections.sort(receipts, new Comparator<Receipt>() {
+        Collections.sort(receipts, new Comparator<Receipt>() {
 
-                @Override
-                public int compare(Receipt r1, Receipt r2) {
-                    return r2.getReceiptDate().compareTo(r1.getReceiptDate());
-                }
-            });
+            @Override
+            public int compare(Receipt r1, Receipt r2) {
+                return r2.getReceiptDate().compareTo(r1.getReceiptDate());
+            }
+        });
 
         LOGGER.debug("Exiting from receiptsInDescendingOrderOfReceiptDate");
         return receipts;
@@ -370,8 +367,8 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         LOGGER.debug("Entered into getMigratedData");
         LOGGER.debug("getMigratedData - propertyId: " + getPropertyId());
         // List of property receipts
-        propReceiptList = getPersistenceService().findAllBy("from PropertyReceipt where basicProperty.id=? order by receiptDate desc",
-                getBasicProperty().getId());
+        propReceiptList = getPersistenceService().findAllBy(
+                "from PropertyReceipt where basicProperty.id=? order by receiptDate desc", getBasicProperty().getId());
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
                 propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));

@@ -37,21 +37,20 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.taglib;
 
+import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
+import org.springframework.web.servlet.tags.RequestContextAwareTag;
+
+import javax.servlet.jsp.JspWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import javax.servlet.jsp.JspWriter;
-
-import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.springframework.web.servlet.tags.RequestContextAwareTag;
 
 /**
  * @author Manas TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates

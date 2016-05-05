@@ -37,8 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
-<sx:head/>
 
 <html>
 	<head>
@@ -314,7 +314,7 @@
 						</div>
 						</s:if>
                  	
-                 	<s:form name="newTradeLicense" action="newTradeLicense" theme="css_xhtml"  enctype="multipart/form-data" 
+                 	<s:form name="newTradeLicense" action="newTradeLicense" theme="simple"  enctype="multipart/form-data" 
 					cssClass="form-horizontal form-groups-bordered" validate="true" >    
 					<s:push value="model"> 
 							<s:token/>

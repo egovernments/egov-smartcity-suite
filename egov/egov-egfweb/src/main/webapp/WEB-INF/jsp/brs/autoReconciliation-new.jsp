@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <html>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
@@ -226,5 +228,11 @@
 		</center>
       </div>
 	</s:form>
+  <div class="mandatory1">
+  Note:
+  <ol>
+  <li><s:text name="autoreconciliation.process.footnote"/>
+  </ol>
+  </div>
 </body>
 </html>

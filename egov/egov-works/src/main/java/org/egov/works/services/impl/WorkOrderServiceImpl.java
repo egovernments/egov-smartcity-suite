@@ -1,58 +1,51 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.services.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -72,7 +65,15 @@ import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 
-public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implements WorkOrderService {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> implements WorkOrderService {
     private static final Logger logger = Logger.getLogger(WorkOrderServiceImpl.class);
 
     private PersistenceService<Contractor, Long> contractorService;
@@ -245,7 +246,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                     paramList.add(criteriaMap.get(STATUS));
                 } else if (criteriaMap.get(STATUS).equals("APPROVED")) {
                     commonQueryFilter = commonQueryFilter.append(" and wo.egwStatus.code = ? and "
-                            + " wo.id not in (select objectId from SetStatus where objectType=?)");
+                            + " wo.id not in (select objectId from OfflineStatus where objectType=?)");
                     paramList.add(criteriaMap.get(STATUS));
                     paramList.add("WorkOrder");
                 } else if (criteriaMap.get(STATUS).equals("CANCELLED")) {
@@ -256,8 +257,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                     && Arrays.asList(setStat.split(",")).contains(criteriaMap.get(STATUS))) {
                 commonQueryFilter = commonQueryFilter
                         .append(" and wo.egwStatus.code = 'APPROVED' and wo.id in(select stat.objectId from "
-                                + "SetStatus stat where stat.egwStatus.code=? and stat.id = (select"
-                                + " max(stat1.id) from SetStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)");
+                                + "OfflineStatus stat where stat.egwStatus.code=? and stat.id = (select"
+                                + " max(stat1.id) from OfflineStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)");
                 paramList.add(criteriaMap.get(STATUS));
                 paramList.add("WorkOrder");
                 paramList.add("WorkOrder");
@@ -411,7 +412,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                     paramList.add(criteriaMap.get(STATUS));
                 } else {
                     dynQuery = dynQuery + " and wo.egwStatus.code = ? and "
-                            + " wo.id not in (select objectId from SetStatus where objectType=?)";
+                            + " wo.id not in (select objectId from OfflineStatus where objectType=?)";
                     paramList.add(criteriaMap.get(STATUS));
                     paramList.add("WorkOrder");
                 }
@@ -419,8 +420,8 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                     && Arrays.asList(setStat.split(",")).contains(criteriaMap.get(STATUS))) {
                 dynQuery = dynQuery
                         + " and wo.id in(select stat.objectId from "
-                        + "SetStatus stat where stat.egwStatus.code=? and stat.id = (select"
-                        + " max(stat1.id) from SetStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)";
+                        + "OfflineStatus stat where stat.egwStatus.code=? and stat.id = (select"
+                        + " max(stat1.id) from OfflineStatus stat1 where wo.id=stat1.objectId and stat1.objectType=?) and stat.objectType=?)";
                 paramList.add(criteriaMap.get(STATUS));
                 paramList.add("WorkOrder");
                 paramList.add("WorkOrder");
@@ -1344,7 +1345,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
     @Override
     public Date getWorkCommencedDateByWOId(final Long id) {
         final Object wOCommencedDate = persistenceService
-                .find(" select stat.statusDate from SetStatus stat where stat.objectId = ? and stat.objectType = ? and stat.egwStatus.code = ? ",
+                .find(" select stat.statusDate from OfflineStatus stat where stat.objectId = ? and stat.objectType = ? and stat.egwStatus.code = ? ",
                         id, "WorkOrder", WorksConstants.WO_STATUS_WOCOMMENCED);
         return (Date) wOCommencedDate;
     }
@@ -1384,5 +1385,12 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long>implem
                 estimateId,
                 WorksConstants.NEW, WorksConstants.CANCELLED_STATUS);
         return woDetails;
+    }
+
+    @Override
+    public Collection<WorkOrderActivity> getActionWorkOrderActivitiesList(
+            final List<WorkOrderActivity> actionWorkOrderActivities) {
+        return CollectionUtils.select(actionWorkOrderActivities,
+                workOrderActivity -> (WorkOrderActivity) workOrderActivity != null);
     }
 }

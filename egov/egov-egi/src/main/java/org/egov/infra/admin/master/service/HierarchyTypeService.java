@@ -37,15 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.admin.master.service;
 
-import java.util.List;
+package org.egov.infra.admin.master.service;
 
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.HierarchyTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Service for the HierarchyType

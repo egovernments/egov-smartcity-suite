@@ -37,9 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.spring.handler;
 
-import javax.servlet.http.HttpServletRequest;
+package org.egov.infra.web.spring.handler;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.slf4j.Logger;
@@ -51,6 +50,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

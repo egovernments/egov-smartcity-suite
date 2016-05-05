@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -54,8 +55,7 @@
 		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap-tour/bootstrap-tour.css' context='/egi'/>">
 	
@@ -66,12 +66,12 @@
 		<script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>	
-	    <!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+	    
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
 	
 	</head>
@@ -83,6 +83,8 @@
                 </div>
 				<tiles:insertAttribute name="footer"/>
         </div>
+        <input type="hidden" value="${sessionScope.citylat}" id="getcitylat">
+        <input type="hidden" value="${sessionScope.citylng}" id="getcitylng">
         <div class="modal fade loader-class" data-backdrop="static">
 			<div class="modal-dialog">
 					<div class="modal-body">

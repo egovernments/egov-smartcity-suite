@@ -1,53 +1,51 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.works.services.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.asset.service.AssetService;
-import org.egov.asset.service.CommonAssetsService;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.dao.bills.EgBilldetailsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -59,9 +57,9 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
 import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.ContractorBillNumberGenerator;
-import org.egov.works.models.contractorBill.ContractorBillRegister;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
@@ -70,7 +68,7 @@ import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBDetails;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
 import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.tender.SetStatus;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderActivity;
@@ -87,6 +85,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -96,18 +95,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long>implements
+public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long> implements
         ContractorBillService {
     private static final Logger logger = Logger.getLogger(ContractorBillServiceImpl.class);
 
     private WorksService worksService;
+    @Autowired
     private PersistenceService<EgChecklists, Long> checklistService;
+    @Autowired
     private ContractorBillNumberGenerator contractorBillNumberGenerator;
+    @Autowired
     private EgovCommon egovCommon;
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO; 
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private static final String WORKS_NETPAYABLE_CODE = "WORKS_NETPAYABLE_CODE";
     private static final String RETENTION_MONEY_PURPOSE = "RETENTION_MONEY_PURPOSE";
     public static final String WORKORDER_NO = "WORKORDER_NO";
@@ -125,9 +125,9 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     public static final String EXEC_DEPT_ID = "EXEC_DEPT_ID";
     public static final String EST_NO = "EST_NO";
     private ContractorAdvanceService contractorAdvanceService;
-   
+
     @Autowired
-    private  EgBilldetailsHibernateDAO egBilldetailsHibernateDAO; 
+    private EgBilldetailsHibernateDAO egBilldetailsHibernateDAO;
 
     public ContractorBillServiceImpl(final PersistenceService<ContractorBillRegister, Long> persistenceService) {
         super(persistenceService);
@@ -185,14 +185,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * @return a boolean value indicating if the bill number change is required.
      */
     @Override
-    public String generateContractorBillNumber(final EgBillregister bill, final WorkOrder workOrder,
-            final WorkOrderEstimate workOrderEstimate) {
-        final CFinancialYear financialYear = getCurrentFinancialYear(bill.getBilldate());
-        return contractorBillNumberGenerator.getBillNumber(workOrder, financialYear, workOrderEstimate);
-    }
-
-    public void setContractorBillNumberGenerator(final ContractorBillNumberGenerator contractorBillNumberGenerator) {
-        this.contractorBillNumberGenerator = contractorBillNumberGenerator;
+    public String generateContractorBillNumber(final ContractorBillRegister ContractorBillRegister) {
+        return contractorBillNumberGenerator.generateContractorBillNumber(ContractorBillRegister);
     }
 
     /**
@@ -1070,7 +1064,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
             for (final CChartOfAccounts coa : coaPayableList)
                 if (coa.getId() != null)
                     glcodeIdList.add(new BigDecimal(coa.getId()));
-       
+
         final EgBilldetails egbillDetails = egBilldetailsHibernateDAO.getBillDetails(billId, glcodeIdList);
         netpaybleCode = egbillDetails.getGlcodeid();
         return netpaybleCode;
@@ -1117,7 +1111,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         if (accountDetailsForBill.isEmpty())
             for (final EgBilldetails egBilldetails : accountDetailsForassetandbill) {
                 final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid()
-                        .longValue(),false);
+                        .longValue(), false);
                 if (coa != null) {
                     coa.setId(egBilldetails.getGlcodeid().longValue());
                     final AssetForBill assetforBill = new AssetForBill();
@@ -1156,7 +1150,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 && appConfigValuesList.get(0).getValue() != null)
             workCommenced = appConfigValuesList.get(0).getValue();
         Date workCommencedDate = null;
-        final SetStatus woStatus = (SetStatus) genericService.findByNamedQuery(
+        final OfflineStatus woStatus = (OfflineStatus) genericService.findByNamedQuery(
                 WorksConstants.QUERY_GETSTATUSDATEBYOBJECTID_TYPE_DESC, workOrderEstimate.getWorkOrder().getId(),
                 WorkOrder.class.getSimpleName(), workCommenced);
         if (woStatus != null)
@@ -1381,14 +1375,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         this.checklistService = checklistService;
     }
 
-    public void setCommonAssetsService(final CommonAssetsService commonAssetsService) {
-    }
-
     public String getFinalBillTypeConfigValue() {
         return worksService.getWorksConfigValue("FinalBillType");
-    }
-
-    public void setAssetService(final AssetService assetService) {
     }
 
     public void setTenderResponseService(final TenderResponseService tenderResponseService) {
@@ -1635,7 +1623,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
             for (final EgBilldetails details : billDetails)
                 if (details.getDebitamount() != null && details.getDebitamount().compareTo(BigDecimal.ZERO) == 1) {
                     final CChartOfAccounts coaObj = chartOfAccountsHibernateDAO.findById(details
-                            .getGlcodeid(),false);
+                            .getGlcodeid(), false);
                     if (coaObj != null && StringUtils.isNotBlank(coaObj.getGlcode()))
                         if (!mappingBudgetHead.equalsIgnoreCase(coaObj.getGlcode())) {
                             allowForward = WorksConstants.NO;
@@ -1726,5 +1714,33 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
                 .setParameter(0, WorksConstants.APPROVED).setParameter(1, woId).setParameter(2, estId)
                 .setParameter(3, WorksConstants.ADMIN_SANCTIONED_STATUS).uniqueResult();
         return mbDateRefNo;
+    }
+
+    @Override
+    public Collection<StatutoryDeductionsForBill> getStatutoryDeductions(
+            final List<StatutoryDeductionsForBill> actionStatutorydetails) {
+        return CollectionUtils.select(actionStatutorydetails,
+                statutoryDeductionsForBill -> (StatutoryDeductionsForBill) statutoryDeductionsForBill != null);
+    }
+
+    @Override
+    public Collection<EgBilldetails> getCustomDeductionTypes(final List<EgBilldetails> customDeductions) {
+        return CollectionUtils.select(customDeductions, egBilldetails -> (EgBilldetails) egBilldetails != null);
+    }
+
+    @Override
+    public Collection<EgBilldetails> getRetentionMoneyTypes(final List<EgBilldetails> retentionMoneyDeductions) {
+        return CollectionUtils.select(retentionMoneyDeductions, egBilldetails -> (EgBilldetails) egBilldetails != null);
+    }
+
+    @Override
+    public Collection<AssetForBill> getAssetAndAccountDetails(final List<AssetForBill> accountDetailsForBill) {
+        return CollectionUtils.select(accountDetailsForBill, assetForBill -> (AssetForBill) assetForBill != null);
+    }
+
+    @Override
+    public Collection<DeductionTypeForBill> getStandardDeductionTypes(final List<DeductionTypeForBill> standardDeductions) {
+        return CollectionUtils.select(standardDeductions,
+                deductionTypeForBill -> (DeductionTypeForBill) deductionTypeForBill != null);
     }
 }

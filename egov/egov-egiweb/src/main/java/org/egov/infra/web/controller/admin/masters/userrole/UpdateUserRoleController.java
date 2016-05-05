@@ -37,9 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.controller.admin.masters.userrole;
 
-import java.util.List;
+package org.egov.infra.web.controller.admin.masters.userrole;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -53,6 +52,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/userrole/update/{userId}")

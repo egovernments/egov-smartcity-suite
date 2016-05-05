@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,12 +36,19 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="create" modelAttribute="cFinancialYear"
+<form:form role="form" action="create" modelAttribute="CFinancialYear"
 	id="cFinancialYearform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<c:if test="${not empty message}">
+		<div class="alert alert-success" role="alert">
+			<strong>${message}</strong>
+		</div>
+	</c:if>
 	<%@ include file="cfinancialyear-form.jsp"%>
 	</div>
 	</div>
@@ -60,10 +67,10 @@
 </form:form>
 <script>
 	$('#buttonSubmit').click(function(e) {
-		if (validateFields()) {
-			if ($('form').valid()) {
+	
+			if (validateFields() && $('form').valid()) {
 			}
-		} else {
+		 else {
 			e.preventDefault();
 		}
 	});

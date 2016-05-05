@@ -37,14 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.filestore.repository;
 
-import javax.persistence.QueryHint;
+package org.egov.infra.filestore.repository;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.QueryHint;
 
 @Repository
 public interface FileStoreMapperRepository extends JpaRepository<FileStoreMapper,Long>{

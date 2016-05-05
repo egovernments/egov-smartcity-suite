@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <span class="mandatory1"> <font
 	style='color: red; font-weight: bold'> <s:actionerror /> <s:fielderror />
@@ -45,27 +47,31 @@
 <table width="99%" border="0" cellspacing="0" cellpadding="0">
 
 	<tr>
-		<td colspan="7"><s:if test="%{fromDate!=null}">
-				<div class="subheadsmallnew">
-					<strong>Deduction detailed report for <s:property
-							value="type" /> from <s:property value="fromDate" /> to <s:property
-							value="asOnDate" /></strong>
-				</div></td>
+		<s:if test="%{fromDate!=null}">
+			<th class="bluebgheadtd" width="100%" colspan="7"><strong
+				style="font-size: 15px;">Deduction detailed report for <s:property
+						value="type" /> from <s:property value="fromDate" /> to <s:property
+						value="asOnDate" />
+			</strong></th>
 		</s:if>
 		<s:else>
-			<div class="subheadsmallnew">
-				<strong>Deduction detailed report for <s:property
-						value="type" /> as on <s:property value="asOnDate" /></strong>
-			</div>
+
+			<th class="bluebgheadtd" width="100%" colspan="7"><strong
+				style="font-size: 15px;">Deduction detailed report for <s:property
+						value="type" /> as on <s:property value="asOnDate" /></strong></th>
 			</td>
 		</s:else>
 	</tr>
 </table>
 <s:if test="%{pendingTDS.size()>0}">
 	<br />
-	<div class="subheadsmallnew">
-		<strong>Pending Deductions to be remitted</strong>
-	</div>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+		<tr>
+			<th class="bluebgheadtd" width="100%" colspan="5"><strong
+				style="font-size: 15px;"> Pending Deductions to be remitted</strong></th>
+		</tr>
+	</table>
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td
@@ -142,11 +148,12 @@
 	<br />
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td colspan="7">
-				<div class="subheadsmallnew">
-					<strong>Deduction remittance in workflow </strong>
-				</div>
-			</td>
+
+
+			<th class="bluebgheadtd" width="100%" colspan="7"><strong
+				style="font-size: 15px;"> Deduction remittance in workflow</strong></th>
+
+
 		</tr>
 		<tr>
 			<td class="blueborderfortd">
@@ -239,11 +246,10 @@
 	<br />
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td colspan="7">
-				<div class="subheadsmallnew">
-					<strong>Remitted Details</strong>
-				</div>
-			</td>
+
+			<th class="bluebgheadtd" width="100%" colspan="7"><strong
+				style="font-size: 15px;"> Remitted Details</strong></th>
+
 		</tr>
 		<tr>
 			<td class="blueborderfortd">

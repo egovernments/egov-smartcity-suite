@@ -1,7 +1,4 @@
 package org.egov.collection.entity;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 public class ReceiptDetailTest { /*extends AbstractPersistenceServiceTest<ReceiptDetail,Long> {
 	private CollectionObjectFactory factory;

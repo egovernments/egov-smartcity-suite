@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.utils;
 
@@ -43,6 +43,7 @@ public class WorksConstants {
 
     public static final String WORKS = "Works";
     public static final String WORKS_MODULE_NAME = "Works Management";
+    public static final String EGF_MODULE_NAME = "EGF";
     public static final String alphaNumericwithspecialchar = "[0-9a-zA-Z-& :,/.()@]+";
     public static final String TEMPLATENAME_COMPLETIONCERTIFICATE = "completionCertificate";
     public static final String PARAMETERNAME_WORKCOMPLETIONINFO = "workCompletionInfo";
@@ -52,6 +53,7 @@ public class WorksConstants {
     public static final String YES = "yes";
     public static final String NO = "no";
     public static final String PREVIOUS_APPROPRIATION_YEAR = "previous";
+    public static final String MODULETYPE = "LINEESTIMATE";
     // Pagination
     public static final int PAGE_SIZE = 30;
 
@@ -216,23 +218,73 @@ public class WorksConstants {
     public static final String ACTION_VIEW_DOCUMENT = "View Document";
     public static final String ACTION_COPY_ESTIMATE = "Copy Estimate";
     public static final String WORKS_VIEW_OFFLINE_STATUS_VALUE = "View offline status";
-    public static final String WORKS_SETSTATUS_VALUE = "Set Status";
+    public static final String WORKS_SETSTATUS_VALUE = "Set offline status";
 
     public static final String WP_OFFLINE_STATUS = "WP_OFFLINE_STATUS";
-    
+
     public static final String GRADE = "grade";
     public static final String MIN_AMOUNT = "minAmount";
     public static final String MAX_AMOUNT = "maxAmount";
-    
+
     public static final String CONTRACTOR_NAME = "contractorName";
     public static final String CONTRACTOR_CODE = "contractorCode";
     public static final String DEPARTMENT_ID = "departmentId";
     public static final String STATUS_ID = "statusId";
     public static final String GRADE_ID = "gradeId";
     public static final String SEARCH_DATE = "searchDate";
-    
+
     public static final String CANCEL_ACTION = "Cancel";
     public static final String SAVE_ACTION = "Save";
+    public static final String SUBMIT_ACTION = "Submit";
     public static final Object REJECT_ACTION = "Reject";
     public static final Object FORWARD_ACTION = "Forward";
+
+    // Module types
+    public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
+
+    // public static final String NEWLINEESTIMATE = "NEWLINEESTIMATE";
+
+    // public static final String NEWCONTRACTORBILLREGISTER = "NEWCONTRACTORBILLREGISTER";
+
+    // User roles
+    public static final String ROLE_SUPERUSER = "Super User";
+
+    public static final String LINEESTIMATE_CREATE = "create";
+    public static final String LINEESTIMATE_UPDATE = "update";
+
+    public static final String WF_STATE_CREATED = "Created";
+    public static final String WF_STATE_CHECKED = "Checked";
+    public static final String WF_STATE_REJECTED = "Rejected";
+    public static final String WF_STATE_CANCELLED = "Cancelled";
+
+    public static final String FILESTORE_MODULECODE = "WMS";
+
+    public static final String ABSTRACTESTIMATE = "AbstractEstimate";
+    public static final String WORKORDER = "WorkOrder";
+    public static final String CONTRACTORBILL = "CONTRACTORBILL";
+    public static final String MBHEADER = "MBHeader";
+
+    public static final String BOUNDARY_TYPE_WARD = "Ward";
+    public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";
+
+    public static final String APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION = "ENGINEERINCHARGE_DESIGNATION";
+
+    public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
+
+    public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill";
+
+    public static final String BILL_EXPENDITURE_TYPE = "Works";
+
+    public static final String APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY = "DESIGNATION_TECHSANCTION_AUTHORITY";
+
+    public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
+
+    public static final String DESIGNATION_COMMISSIONER = "Commissioner";
+
+    public static final String CONTRACTOR_NETPAYABLE_PURPOSE = "Creditors-Contractor Payable";
+    public static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
+
+    public static final String HEADING_WORK_PROGRESS_REGISTER_REPORT = "Work Progress Register Report";
+
+    public static final String HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT = "Estimate Appropriation Register Report";
 }

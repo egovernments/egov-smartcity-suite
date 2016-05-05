@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
@@ -50,10 +52,13 @@
 		cellpadding="0" cellspacing="0" export="true"
 		requestURI="journalBookReport-ajaxSearch.action">
 		<display:caption>
-			<div class="headingsmallbgnew" align="center"
-				style="text-align: center; width: 98%;">
-				<b><s:property value="%{heading}" /></b>
-			</div>
+			<table  width="100%" >
+				<tr>
+					<th class="bluebgheadtd"  width="100%" colspan="8"><strong
+						style="font-size: 15px;"><s:property value="%{heading}" />
+					</strong></th>
+				</tr>
+			</table>
 		</display:caption>
 		<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 			title="Voucher Date" style="width:4%;text-align:center"

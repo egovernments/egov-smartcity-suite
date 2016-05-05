@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,54 +24,20 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.service.collection;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
-import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH_ADJUSTMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_SUBMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CHEQUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
@@ -98,8 +64,8 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.utils.MoneyUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.MoneyUtils;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.service.CollectionApportioner;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -110,8 +76,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
+
 /**
- * This class is used to persist Collections .This is used for the integration of Collections and Bills and property tax.
+ * This class is used to persist Collections .This is used for the integration
+ * of Collections and Bills and property tax.
  */
 @Transactional
 public class PropertyTaxCollection extends TaxCollection {
@@ -141,15 +119,15 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     private MessagingService messagingService;
-    
+
     @Autowired
     private FunctionHibernateDAO functionDAO;
-    
+
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
-    
+
     private PTBillServiceImpl ptBillServiceImpl;
-    
+
     @Autowired
     PropertyTaxUtil propertyTaxUtil;
 
@@ -203,19 +181,17 @@ public class PropertyTaxCollection extends TaxCollection {
         }
         if (instrumentType.contains("cheque"))
             smsMsg.append(STR_INSTRUMENTTYPE_CHEQUE).append(instNumber).append(STR_WITH_AMOUNT)
-            .append(billRcptInfo.getTotalAmount()).append(STR_FOR_SUBMISSION)
-            .append(((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode())
-            .append(STR_REALIZATION);
+                    .append(billRcptInfo.getTotalAmount()).append(STR_FOR_SUBMISSION)
+                    .append(((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode())
+                    .append(STR_REALIZATION);
         else if (instrumentType.contains("dd"))
             smsMsg.append(STR_INSTRUMENTTYPE_DD).append(instNumber).append(STR_WITH_AMOUNT)
-            .append(billRcptInfo.getTotalAmount()).append(STR_FOR_SUBMISSION)
-            .append(((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode())
-            .append(STR_REALIZATION);
+                    .append(billRcptInfo.getTotalAmount()).append(STR_FOR_SUBMISSION)
+                    .append(((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode())
+                    .append(STR_REALIZATION);
         else if (instrumentType.contains("cash"))
-            smsMsg.append(STR_FOR_CASH)
-            .append(billRcptInfo.getTotalAmount())
-            .append(STR_FOR_CASH_ADJUSTMENT)
-            .append(((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode());
+            smsMsg.append(STR_FOR_CASH).append(billRcptInfo.getTotalAmount()).append(STR_FOR_CASH_ADJUSTMENT)
+                    .append(((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode());
 
         if (mobileNumber != null)
             messagingService.sendSMS(mobileNumber, smsMsg.toString());
@@ -223,7 +199,8 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * This method is invoked from Collections end when an event related to receipt in bill generation occurs.
+     * This method is invoked from Collections end when an event related to
+     * receipt in bill generation occurs.
      */
     @Override
     public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) {
@@ -270,7 +247,8 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Deducts the collected amounts as per the amount of the bounced cheque, and also imposes a cheque-bounce penalty.
+     * Deducts the collected amounts as per the amount of the bounced cheque,
+     * and also imposes a cheque-bounce penalty.
      */
     private void updateCollForChequeBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
@@ -280,9 +258,11 @@ public class PropertyTaxCollection extends TaxCollection {
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         EgDemandDetails dmdDet = null;
 
-        final EgDemandDetails penaltyDmdDet = ptBillServiceImpl.getDemandDetail(demand, currInstallment, DEMANDRSN_STR_CHQ_BOUNCE_PENALTY);
+        final EgDemandDetails penaltyDmdDet = ptBillServiceImpl.getDemandDetail(demand, currInstallment,
+                DEMANDRSN_STR_CHQ_BOUNCE_PENALTY);
         if (penaltyDmdDet == null)
-            dmdDet = ptBillServiceImpl.insertPenalty(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty, currInstallment);
+            dmdDet = ptBillServiceImpl.insertPenalty(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty,
+                    currInstallment);
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
             existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.equals(BigDecimal.ZERO) ? existDmdDetAmt = BigDecimal.ZERO
@@ -310,8 +290,8 @@ public class PropertyTaxCollection extends TaxCollection {
      * @param billRcptInfo
      */
     @SuppressWarnings("unchecked")
-    private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
-            final BillReceiptInfo billRcptInfo) {
+    private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails,
+            final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method saveCollectionDetails");
         BigDecimal rebateAmount = BigDecimal.ZERO;
         for (final ReceiptAccountInfo accInfo : accountDetails) {
@@ -365,10 +345,11 @@ public class PropertyTaxCollection extends TaxCollection {
                     final String instDesc = desc[1].trim();
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
                     if (rcptAccInfo.getGlCode().equalsIgnoreCase(
-                            /* GLCODEMAP_FOR_CURRENTTAX.get( */PropertyTaxConstants.GLCODE_FOR_PENALTY/* ) */)) {
+                    /* GLCODEMAP_FOR_CURRENTTAX.get( */PropertyTaxConstants.GLCODE_FOR_PENALTY/* ) */)) {
 
                         if (demandDetail == null)
-                            throw new ApplicationRuntimeException(" Penalty Demand Details is null ");
+                            throw new ApplicationRuntimeException("Demand Details for reason " + reason
+                                    + " and with installment " + instDesc + " is null ");
                         else
                             demandDetail.addCollected(rcptAccInfo.getCrAmount());
 
@@ -381,7 +362,7 @@ public class PropertyTaxCollection extends TaxCollection {
                             demandDetail.setAmtRebate(rebateAmount);
                         }
                     }
-                    
+
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
                             billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
                     LOGGER.info("Persisted demand and receipt details for tax : " + reason + " installment : "
@@ -392,7 +373,8 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Reconciles the collection for respective account heads thats been paid with given cancel receipt
+     * Reconciles the collection for respective account heads thats been paid
+     * with given cancel receipt
      *
      * @param demand
      * @param billRcptInfo
@@ -405,7 +387,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-            && !rcptAccInfo.getIsRevenueAccount()) {
+                    && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String installment = desc[1].trim();
@@ -461,13 +443,14 @@ public class PropertyTaxCollection extends TaxCollection {
             if (rcptAccInfo.getGlCode().equalsIgnoreCase(GLCODE_FOR_TAXREBATE)
                     || rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE_REBATE))
                 rebateReceiptAccInfoByInstallment
-                .put(rcptAccInfo.getDescription().split("-", 2)[1].trim(), rcptAccInfo);
+                        .put(rcptAccInfo.getDescription().split("-", 2)[1].trim(), rcptAccInfo);
 
         return rebateReceiptAccInfoByInstallment;
     }
 
     @Override
-    public void apportionCollection(final String billRefNo, final BigDecimal amtPaid, final List<ReceiptDetail> receiptDetails) {
+    public void apportionCollection(final String billRefNo, final BigDecimal amtPaid,
+            final List<ReceiptDetail> receiptDetails) {
         boolean isEligibleForCurrentRebate = false;
         final boolean isEligibleForAdvanceRebate = false;
 
@@ -492,7 +475,8 @@ public class PropertyTaxCollection extends TaxCollection {
     /**
      * Calculates Early Payment Rebate for given Tax Amount
      *
-     * @param rebateApplTaxAmt for which Rebate has to be calculated
+     * @param rebateApplTaxAmt
+     *            for which Rebate has to be calculated
      * @return rebate amount.
      */
     public BigDecimal calcEarlyPayRebate(final BigDecimal instTaxAmount, final BigDecimal rebateApplTaxAmt,
@@ -524,17 +508,17 @@ public class PropertyTaxCollection extends TaxCollection {
         if (today.before(firstRebateDate.getTime()) || today.equals(firstRebateDate.getTime())) {
             if (collection.compareTo(BigDecimal.ZERO) == 1) {
                 if (collection.compareTo(halfYearTax) <= 0)
-                    rebate = MoneyUtils.roundOff(rebateApplTaxAmt.multiply(SECOND_REBATETAX_PERC).divide(BigDecimal
-                            .valueOf(100)));
+                    rebate = MoneyUtils.roundOff(rebateApplTaxAmt.multiply(SECOND_REBATETAX_PERC).divide(
+                            BigDecimal.valueOf(100)));
                 else
                     rebate = BigDecimal.ZERO;
             } else
-                rebate = MoneyUtils.roundOff(rebateApplTaxAmt.multiply(FIRST_REBATETAX_PERC).divide(BigDecimal
-                        .valueOf(100)));
+                rebate = MoneyUtils.roundOff(rebateApplTaxAmt.multiply(FIRST_REBATETAX_PERC).divide(
+                        BigDecimal.valueOf(100)));
         } else if (today.before(secondRebateDate.getTime()) || today.equals(secondRebateDate.getTime()))
             if (collection.compareTo(halfYearTax) <= 0)
-                rebate = MoneyUtils.roundOff(rebateApplTaxAmt.multiply(SECOND_REBATETAX_PERC).divide(BigDecimal
-                        .valueOf(100)));
+                rebate = MoneyUtils.roundOff(rebateApplTaxAmt.multiply(SECOND_REBATETAX_PERC).divide(
+                        BigDecimal.valueOf(100)));
             else
                 rebate = BigDecimal.ZERO;
         LOGGER.debug("calcEarlyPayRebate rebate " + rebate);
@@ -544,7 +528,8 @@ public class PropertyTaxCollection extends TaxCollection {
     /**
      * Gives the tax amount of Account head for which Rebate applicable
      *
-     * @param List of <code>ReceiptDetail</code>
+     * @param List
+     *            of <code>ReceiptDetail</code>
      * @return rebate applicable tax amount.
      */
     public BigDecimal getRebateApplAmount(final List<ReceiptDetail> receiptDetails) {
@@ -552,8 +537,9 @@ public class PropertyTaxCollection extends TaxCollection {
         for (final ReceiptDetail rd : receiptDetails)
             if (rd.getAccounthead().getGlcode().equals(GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_GENERAL_TAX))) {
                 /*
-                 * getting rebate amount from getCramountToBePaid() because before receipt created CrAmount is Zero and it will
-                 * updated as part of receipt creation.
+                 * getting rebate amount from getCramountToBePaid() because
+                 * before receipt created CrAmount is Zero and it will updated
+                 * as part of receipt creation.
                  */
                 taxAmount = rd.getCramountToBePaid();
                 break;
@@ -600,7 +586,8 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     /**
-     * Method used to calculate the Total Cheque amount from he BillreceiptInfo object which is received from Collections Module.
+     * Method used to calculate the Total Cheque amount from he BillreceiptInfo
+     * object which is received from Collections Module.
      *
      * @param billRcptInfo
      * @return Total Cheque amount
@@ -632,10 +619,10 @@ public class PropertyTaxCollection extends TaxCollection {
         return CHQ_BOUNCE_PENALTY;
     }
 
-
     /**
-     * Method used to create new EgDemandDetail Object depending upon the EgDemandReason , Collected amount and Demand
-     * amount(which are compulsory),Other wise returns Empty EgDemandDetails Object.
+     * Method used to create new EgDemandDetail Object depending upon the
+     * EgDemandReason , Collected amount and Demand amount(which are
+     * compulsory),Other wise returns Empty EgDemandDetails Object.
      *
      * @param egDemandReason
      * @param amtCollected
@@ -683,8 +670,8 @@ public class PropertyTaxCollection extends TaxCollection {
 
         if (advanceCollectionAmount != null && advanceCollectionAmount.compareTo(BigDecimal.ZERO) > 0) {
 
-            final EgDemandReasonMaster egDemandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(demandReason,
-                    module());
+            final EgDemandReasonMaster egDemandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(
+                    demandReason, module());
 
             if (egDemandReasonMaster == null)
                 throw new ApplicationRuntimeException(
@@ -717,14 +704,13 @@ public class PropertyTaxCollection extends TaxCollection {
     }
 
     @Override
-    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid,
-            final List<ReceiptDetail> receiptDetailList) {
+    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
+            final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         final Long billID = Long.valueOf(billReferenceNumber);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(0);
         final EgBill bill = ptBillServiceImpl.updateBillWithLatest(billID);
         LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
-                + billReferenceNumber + ", for Amount Paid :"
-                + actualAmountPaid);
+                + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
         boolean isEligibleForCurrentRebate = false;
         final boolean isEligibleForAdvanceRebate = false;
         if (propertyTaxUtil.isRebatePeriodActive())
@@ -750,28 +736,29 @@ public class PropertyTaxCollection extends TaxCollection {
         BigDecimal latePaymentCharges = BigDecimal.ZERO;
         BigDecimal arrearLibCess = BigDecimal.ZERO;
         BigDecimal currLibCess = BigDecimal.ZERO;
+        BigDecimal rebateAmount = BigDecimal.ZERO;
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
 
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
-                final String installment = desc[1];
-
-                if (PropertyTaxUtil.getCurrentInstallment().getDescription().equals(installment)) {
-                    if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_PENALTY))
-                        latePaymentCharges = latePaymentCharges.add(rcptAccInfo.getCrAmount());
-                    else if (desc[0].equals(DEMANDRSN_STR_LIBRARY_CESS))
-                        currLibCess = currLibCess.add(rcptAccInfo.getCrAmount());
-                    else
-                        currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
-                } else if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_PENALTY))
+                final String reason = desc[0];
+                if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_PENALTY) && reason.equals(DEMANDRSN_STR_PENALTY_FINES))
                     latePaymentCharges = latePaymentCharges.add(rcptAccInfo.getCrAmount());
-                else if (desc[0].equals(DEMANDRSN_STR_LIBRARY_CESS))
+                else if (rcptAccInfo.getGlCode().equals(GLCODEMAP_FOR_CURRENTTAX.get(DEMANDRSN_CODE_LIBRARY_CESS))
+                        && reason.equals(DEMANDRSN_STR_LIBRARY_CESS))
+                    currLibCess = currLibCess.add(rcptAccInfo.getCrAmount());
+                else if (rcptAccInfo.getGlCode().equals(GLCODEMAP_FOR_ARREARTAX.get(DEMANDRSN_CODE_LIBRARY_CESS))
+                        && reason.equals(DEMANDRSN_STR_LIBRARY_CESS))
                     arrearLibCess = arrearLibCess.add(rcptAccInfo.getCrAmount());
-                else
+                else if (rcptAccInfo.getGlCode().equals(ARREAR_DEMANDRSN_GLCODE))
                     arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
-            }
+                else
+                    currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+            } else if (rcptAccInfo.getDrAmount() != null && rcptAccInfo.getDrAmount().compareTo(BigDecimal.ZERO) == 1)
+                if (rcptAccInfo.getGlCode().equals(GLCODE_FOR_TAXREBATE))
+                    rebateAmount = rebateAmount.add(rcptAccInfo.getDrAmount());
 
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
             final String[] desc = billDet.getDescription().split("-", 2);
@@ -794,6 +781,7 @@ public class PropertyTaxCollection extends TaxCollection {
         receiptAmountInfo.setArrearsAmount(arrearAmount);
         receiptAmountInfo.setCurrentCess(currLibCess);
         receiptAmountInfo.setArrearCess(arrearLibCess);
+        receiptAmountInfo.setReductionAmount(rebateAmount);
         return receiptAmountInfo;
     }
 

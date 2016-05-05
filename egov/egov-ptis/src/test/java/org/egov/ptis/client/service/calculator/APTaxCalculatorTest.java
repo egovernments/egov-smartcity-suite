@@ -1,10 +1,5 @@
 package org.egov.ptis.client.service.calculator;
 
-import static org.mockito.MockitoAnnotations.initMocks;
-
-import java.util.Date;
-import java.util.HashMap;
-
 import org.egov.builder.entities.BoundaryBuilder;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -16,6 +11,11 @@ import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Date;
+import java.util.HashMap;
+
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class APTaxCalculatorTest {
 	@Autowired

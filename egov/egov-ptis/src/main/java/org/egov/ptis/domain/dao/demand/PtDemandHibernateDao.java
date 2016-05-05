@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,39 +24,24 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.domain.dao.demand;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgBill;
@@ -73,10 +58,25 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 
 @Repository(value = "ptDemandDAO")
 public class PtDemandHibernateDao implements PtDemandDao {
@@ -98,6 +98,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -438,14 +441,15 @@ public class PtDemandHibernateDao implements PtDemandDao {
         Ptdemand egptPtdemand = null;
 
         if (property != null) {
+            CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
             qry = getCurrentSession()
                     .createQuery(
                             "from  Ptdemand egptDem left join fetch egptDem.egDemandDetails dd left join fetch dd.egDemandReason dr "
                                     + "where egptDem.egptProperty =:property "
                                     + "and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) ");
             qry.setEntity(PROPERTY, property);
-            qry.setDate("fromYear", new Date());
-            qry.setDate("toYear", new Date());
+            qry.setDate("fromYear", currentFinancialYear.getStartingDate());
+            qry.setDate("toYear", currentFinancialYear.getStartingDate());
             /*
              * if (qry.list().size() == 1) { egptPtdemand = (Ptdemand)
              * qry.uniqueResult(); } else { egptPtdemand = (Ptdemand)
@@ -485,8 +489,8 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
     @Override
     public Ptdemand update(final Ptdemand ptdemand) {
-        // TODO Auto-generated method stub
-        return null;
+    	getCurrentSession().update(ptdemand);
+        return ptdemand;
     }
 
     @Override
@@ -516,9 +520,10 @@ public class PtDemandHibernateDao implements PtDemandDao {
         String selectQuery = "";
         if (connectionType.equals("METERED")) {
             selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
-                    + " from  egwtr_connection conn,egwtr_connectiondetails bp, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+                    + " from  egwtr_connection conn,egwtr_connectiondetails bp, egwtr_demand_connection demconn ,eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                     + " where conn.id =bp.connection "
-                    + " and bp.demand = d.id "
+                    + " and demconn.connectiondetails = bp.id "
+                    + " and demconn.demand = d.id "
                     + " and d.id = dd.id_demand "
                     + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
@@ -527,9 +532,10 @@ public class PtDemandHibernateDao implements PtDemandDao {
         } else {
 
             selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
-                    + " from  egwtr_connection conn,egwtr_connectiondetails bp, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
-                    + " where conn.id =bp.connection " + " and bp.demand = d.id " + " and d.id = dd.id_demand "
+                    + " from  egwtr_connection conn,egwtr_connectiondetails bp,egwtr_demand_connection demconn , eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
+                    + " where conn.id =bp.connection " + " and demconn.connectiondetails = bp.id " + " and demconn.demand = d.id " + " and d.id = dd.id_demand "
                     + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                    + " and d.is_history='N' "
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
                     + " and dd.amount > dd.amt_collected  ";
             // +

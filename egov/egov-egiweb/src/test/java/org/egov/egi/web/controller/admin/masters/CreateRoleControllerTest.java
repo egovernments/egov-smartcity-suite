@@ -40,6 +40,19 @@
 package org.egov.egi.web.controller.admin.masters;
 
 
+import org.egov.egi.web.controller.AbstractContextControllerTest;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.controller.admin.masters.role.CreateRoleController;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.test.web.servlet.MockMvc;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -53,19 +66,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
-import org.egov.egi.web.controller.AbstractContextControllerTest;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.web.controller.admin.masters.role.CreateRoleController;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.test.web.servlet.MockMvc;
 
 public class CreateRoleControllerTest extends AbstractContextControllerTest<CreateRoleController> {
 	

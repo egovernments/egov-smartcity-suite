@@ -37,15 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infstr.utils.seqgen;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.hibernate.JDBCException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
-import org.hibernate.JDBCException;
-import org.hibernate.Query;
 
 /**
  * A wrapper over a database sequence, providing access to its "nextval" with the option of 
@@ -162,8 +162,6 @@ public class DatabaseSequence {
     }
     
     private void createAndFail() {
-        //HibernateUtil.rollbackTransaction();
-        //HibernateUtil.beginTransaction();
         String createSql = new StringBuilder()
             .append("create sequence ")
             .append(name)

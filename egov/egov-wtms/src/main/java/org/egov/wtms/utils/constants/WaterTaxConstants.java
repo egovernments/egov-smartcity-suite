@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.wtms.utils.constants;
 
@@ -49,6 +49,7 @@ public class WaterTaxConstants {
     public static final String FILESTORE_MODULECODE = "WTMS";
     public static final String MODULE_NAME = "Water Tax Management";
     public static final String PROPERTY_MODULE_NAME = "Property Tax";
+    public static final String  DATAENTRYEDIT ="DATAENTRYEDIT";
     public static final String MODULETYPE = "WATERTAXAPPLICATION";
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
@@ -107,6 +108,7 @@ public class WaterTaxConstants {
     public static final String ROLE_SUPERUSER = "Super User";
     public static final String ROLE_CITIZEN = "Citizen";
     public static final String ROLE_OPERATOR = "Operator";
+    public static final String ROLE_ADMIN = "Property Administrator";
 
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";
@@ -207,6 +209,7 @@ public class WaterTaxConstants {
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
     public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
+    public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
     public static final String WF_RECONNECTIONACKNOWLDGEENT_BUTTON = "Generate Reconnection Ack";
     public static final String WATER_RATES_NONMETERED_PTMODULE = "Property Tax";
 
@@ -294,4 +297,8 @@ public class WaterTaxConstants {
     public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
     public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";
     public static final String SIGN_ALL = "SIGN_ALL";
+    public static final String  PDFEXTENTION =".pdf";
+    public static final String  APPLICATIONPDFNAME ="application/pdf";
+    public static final String  DOCUMENTNAMEFORBILL ="DemandBill";
+    public static final Integer QUARTZ_BULKBILL_JOBS = 3;
 }

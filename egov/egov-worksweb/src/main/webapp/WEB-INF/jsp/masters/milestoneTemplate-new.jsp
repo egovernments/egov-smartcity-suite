@@ -1,55 +1,56 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+<%@ include file="/includes/taglibs.jsp" %>
 
 <html>
 <title><s:text name='page.title.milestone.template'/></title>
-<body onload="populateDesignation();" class="yui-skin-sam">
+<body class="yui-skin-sam">
 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script>
 
 function enableFieldsForModify(){
 	if(validateModfiy()){
     	id=dom.get('id').value;
-    	document.milestoneTemplateForm.action='${pageContext.request.contextPath}/masters/milestoneTemplate!edit.action?id='+id+'&mode=modify&sourcepage=search';
+    	document.milestoneTemplateForm.action='${pageContext.request.contextPath}/masters/milestoneTemplate-edit.action?id='+id+'&mode=modify&sourcepage=search';
     	document.milestoneTemplateForm.submit();
     }
     else{
@@ -132,16 +133,6 @@ function validateMilestoneTemplateFormAndSubmit() {
     return true;
 }
 
-function validateCancel() {
-	var msg='<s:text name="milestone.temmplate.cancel.confirm"/>';
-	var code='<s:property value="model.code"/>'; 
-	if(!confirmCancel(msg,code)) {
-		return false;
-	}
-	else {
-		return true;
-	}
-}
 
 function trim(str) {
         return str.replace(/^\s+|\s+$/g,"");
@@ -187,76 +178,29 @@ function validate(obj,text){
         	
         </div>
     </s:if>
-    <s:form theme="simple" name="milestoneTemplateForm" cssClass="form-horizontal form-groups-bordered">
+    <s:form action="milestoneTemplate-save" theme="simple" name="milestoneTemplateForm" cssClass="form-horizontal form-groups-bordered" >
     <s:token/>
 <s:push value="model">
 
 	
-<s:if test="%{model.id!=null}">
 	<s:hidden name="id" value="%{id}" id="id"/>
-    <s:hidden name="mode" value="%{mode}" id="mode"/>
-</s:if> 
-<s:else>
-    <s:hidden name="id" value="%{null}" id="mode" />
-</s:else>
-<s:hidden name="sourcepage" value="%{sourcepage}" id="sourcepage"/>
-<s:hidden name="scriptName" id="scriptName" value="MilestoneTemplate"></s:hidden>
-
+    <s:hidden name="mode" id="mode"/>
+    <s:hidden name="sourcepage" value="%{sourcepage}" id="sourcepage"/>
+	
 <%@ include file='milestoneTemplate-header.jsp'%>
 <%@ include file='milestoneTemplateActivity.jsp'%>
-<div id="manual_workflow">
-		<%@ include file="../workflow/workflow.jsp"%> 	 
-	</div>
 
  <div class="row">
 		<div class="col-xs-12 text-center buttonholdersearch">
 			
 			<input type="hidden" name="actionName" id="actionName" />
-		<s:if test="%{mode=='modify' && (model.egwStatus.code=='APPROVED' || model.egwStatus.code=='NEW')}">
-			<!-- egov authorization tag-->
-			<egov-authz:authorize actionName="createMilestoneTemplate">
-				<s:submit type="submit" cssClass="btn btn-primary"
-					value="Save" id="save" name="save"
-					method="save"
-					onclick="document.milestoneTemplateForm.actionName.value='save';return validate('noncancel','save');" />
-				<s:submit type="submit" cssClass="btn btn-primary"
-					value="Save & Submit" id="submit_for_approval" name="submit_for_approval"
-					method="save"
-					onclick="document.milestoneTemplateForm.actionName.value='submit_for_approval';return validate('noncancel','submit_for_approval');" />
-			</egov-authz:authorize>
-		</s:if>
-		<s:elseif test="%{(mode!='view') && (sourcepage=='inbox' || model.egwStatus==null || hasErrors())}">
-				<s:iterator value="%{validActions}">
-					<s:if test="%{description!=''}">
-						<s:if test="%{description=='CANCEL'}">
-							<s:submit type="submit" cssClass="btn btn-primary" value="%{description}" id="%{name}" 
-								name="%{name}" method="cancel" 
-								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('cancel','%{name}');"/>
-						</s:if>								
-						<s:elseif test="%{description=='REJECT'}">
-							<s:submit type="submit" cssClass="btn btn-primary" value="%{description}" id="%{name}" 
-								name="%{name}" method="reject" 
-								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('reject','%{name}');"/>
-						</s:elseif>								
-						<s:else>
-							<s:submit type="submit" cssClass="btn btn-primary"
-								value="%{description}" id="%{name}" name="%{name}"
-								method="save"
-								onclick="document.milestoneTemplateForm.actionName.value='%{name}';return validate('noncancel','%{name}');" />
-						</s:else>
-				 	</s:if>
-				</s:iterator>
-			</s:elseif>
-	 		<s:if test="%{mode=='view' && sourcepage=='search' && model.egwStatus.code=='APPROVED'}">
-	 			<egov-authz:authorize actionName="createMilestoneTemplate">
-					<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
-				</egov-authz:authorize>
-			</s:if>  	
+			<s:hidden type="mode" id="mode" />
+				
+			<s:submit type="submit" cssClass="btn btn-primary" value="Save"	id="saveButton" name="button" method="save" />&nbsp;
 			<s:if test="%{model.id==null}" >
 				<input type="button" class="btn btn-default" value="Clear" id="clear" name="clear" onclick="this.form.reset();">&nbsp;
 			</s:if>
 			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
-		
 		</div>
  </div>
 
@@ -267,27 +211,6 @@ function validate(obj,text){
 		disableSelect();
 		enableButtons();
   </s:if>
-  
-  	<s:if test="%{sourcepage=='inbox' && (model.egwStatus.code=='CREATED'||model.egwStatus.code =='RESUBMITTED')}">
-	      hideElements(['workflowDetials']);
-	      showElements(['approverCommentsRow']);
-	      disableSelect();
-	      enableButtons();
-	</s:if>
-	<s:if test="%{sourcepage=='inbox' && (model.egwStatus.code=='NEW' ||model.egwStatus.code=='REJECTED') }">
-	      showElements(['approverCommentsRow']);
-	 </s:if>
-	 <s:if test="%{sourcepage!='inbox' && model.id!=null && model.egwStatus.code!='NEW'}">
-	 	hideElements(['workflowDetials']);
-	    hideElements(['approverCommentsRow']);
-	 </s:if>
-	 <s:if test="%{model.id==null || model.egwStatus.code=='NEW'}">
-	 	showElements(['approverCommentsRow']);
-	 </s:if>
-	 <s:if test="%{mode=='modify' && (model.egwStatus.code=='NEW' || model.egwStatus.code=='APPROVED')}">
-	 	showElements(['workflowDetials']);
-	 	showElements(['approverCommentsRow']);
-	 </s:if>
 </script>           
 
 </body>

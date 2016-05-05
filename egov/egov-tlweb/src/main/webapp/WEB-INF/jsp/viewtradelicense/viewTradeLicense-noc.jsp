@@ -37,11 +37,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
 <title><s:text name="page.title.viewtrade" /></title>
-<sx:head />
 <script>
 	function closethis() {
 		if (confirm("Do you want to close this window ?")) {
@@ -85,7 +85,7 @@
 											</td>
 										</tr>
 									</table>
-									<s:form action="viewTradeLicense" theme="css_xhtml"
+									<s:form action="viewTradeLicense" theme="simple"
 										name="viewForm">
 										<s:push value="model">
 											<s:hidden name="id" id="id" />

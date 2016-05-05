@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.persistence.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+package org.egov.infra.persistence.validator;
 
 import org.egov.infra.persistence.validator.annotation.Numeric;
 import org.egov.infra.validation.regex.Constants;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class NumericValidator implements ConstraintValidator<Numeric, Object> {
 

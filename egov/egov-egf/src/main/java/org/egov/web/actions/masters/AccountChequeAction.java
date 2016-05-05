@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,32 +24,23 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /**
  *
  */
 package org.egov.web.actions.masters;
-
-
-
-import org.egov.infstr.services.PersistenceService;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -61,8 +52,8 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
@@ -72,6 +63,11 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Results({
         @Result(name = "new", location = "accountCheque-new.jsp"),
@@ -85,20 +81,20 @@ public class AccountChequeAction extends BaseFormAction {
     private List<ChequeDeptMapping> chequeList;
     private Bankaccount bankaccount;
     private List<ChequeDetail> chequeDetailsList;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     @Qualifier("accountChequesService")
     private AccountChequesService accountChequesService;
-    
+
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     private String deletedChqDeptId;
 
     public AccountChequeAction() {
@@ -158,7 +154,8 @@ public class AccountChequeAction extends BaseFormAction {
             chequeDetail.setToChqNo(chequeDeptMapping.getAccountCheque().getToChequeNumber());
             chequeDetail.setDeptName(chequeDeptMapping.getAllotedTo().getName());
             chequeDetail.setDeptId(chequeDeptMapping.getAllotedTo().getId().intValue());
-            CFinancialYear fy = (CFinancialYear) financialYearDAO.findById(Long.valueOf(chequeDeptMapping.getAccountCheque().getSerialNo()), false);
+            CFinancialYear fy = (CFinancialYear) financialYearDAO.findById(
+                    Long.valueOf(chequeDeptMapping.getAccountCheque().getSerialNo()), false);
             chequeDetail.setSerialNoH(fy.getFinYearRange());
             chequeDetail
                     .setReceivedDate(Constants.DDMMYYYYFORMAT2.format(chequeDeptMapping.getAccountCheque().getReceivedDate()));

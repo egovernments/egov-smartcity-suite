@@ -1,3 +1,43 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 $(document).ready(function(){
 	try{
 		$.fn.dataTable.moment( 'DD/MM/YYYY' );
@@ -100,7 +140,6 @@ $(document).ready(function(){
 				$.each(response, function(index, value) {
 					$('#subcategories').append($('<option>').text(value.description).attr('value', value.id));
 				});
-				
 			}, 
 			error: function (response) {
 				console.log("failed");
@@ -133,6 +172,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
 			"columns" : [
+			              { "data" : "id","visible": false, "searchable": false },
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
@@ -183,6 +223,7 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
+			  {"data" : "id", "visible": false, "searchable" : false},
 		      { "data" : "advertisementNumber", "title":"Advertisement No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "applicationFromDate", "title": "Application Date"},
@@ -206,35 +247,36 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"autoWidth": false,
 			"columns" : [
+			  { "data" : "id","visible" : false, "searchable": false},
 		      { "data" : "advertisementNumber", "title":"Advertisement No."},
 			  { "data" : "applicationNumber", "title": "Application No."},
 			  { "data" : "agencyName", "title": "Agency"},
 			  { "data" : "status", "title": "Hoarding Status"},
-			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View Demand and Collect</button>&nbsp;'}			 
+			  { "data" : "","title": "Actions", "target":-1,"defaultContent": '<button type="button" class="btn btn-xs btn-secondary fa-demandCollection"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB Report</button>&nbsp;'}			 
 			  ]
 		});
 		e.stopPropagation();
 	});
 	
 	$("#search-dcbresult-table").on('click','tbody tr td .fa-demandCollection',function(e) {
-		var hoardingNo = datadcbtbl.fnGetData($(this).parent().parent(),0);
-		window.open("getHoardingDcb/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		var hoardingId = datadcbtbl.fnGetData($(this).parent().parent(),0);
+		window.open("getHoardingDcb/"+hoardingId, ''+hoardingId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-edit',function(e) {
-		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		window.open("updateLegacy/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		var hoardingId = datatbl.fnGetData($(this).parent().parent().parent(),0);
+		window.open("updateLegacy/"+hoardingId, ''+hoardingId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {
-		var hoardingNo = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		var permitId = datatbl.fnGetData($(this).parent().parent().parent(),5);
+		var hoardingId = datatbl.fnGetData($(this).parent().parent().parent(),0);
+		var permitId = datatbl.fnGetData($(this).parent().parent().parent(),6);
 		window.open("view/"+permitId, ''+permitId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#adtax_search").on('click','tbody tr td .collect-hoardingWiseFee',function(event) {
-		var hoardingNo = oTable.fnGetData($(this).parent().parent(),0);
-		window.open("generatebill/hoarding/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		var permitId = oTable.fnGetData($(this).parent().parent(),0);
+		window.open("generatebill/hoarding/"+permitId, ''+permitId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 
 	});
 	
@@ -242,11 +284,39 @@ $(document).ready(function(){
 		var hoardingIds = oTable.fnGetData($(this).parent().parent(),0);
 		var agencyName = oTable.fnGetData($(this).parent().parent(),1);
 		var pendingAmount = oTable.fnGetData($(this).parent().parent(),3); 
-
-		window.open("collectTaxByAgency/"+agencyName+"/"+hoardingIds+"/"+pendingAmount ,''+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		openPopupPage("collectTaxByAgency",agencyName,hoardingIds,pendingAmount);
+		//window.open("collectTaxByAgency/"+agencyName+"/"+hoardingIds+"/"+pendingAmount ,''+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	
 	});
 	
+	function openPopupPage(relativeUrl,agencyName,hoardingIds,pendingAmount)
+	{
+	 var param = { 'agencyName' : agencyName, 'hoardingIds': hoardingIds ,'total': pendingAmount };
+	 OpenWindowWithPost(relativeUrl, "width=1000, height=600, left=100, top=100, resizable=yes, scrollbars=yes", "collectTaxByAgency", param);
+	}
+	 
+	 
+	function OpenWindowWithPost(url, windowoption, name, params)
+	{
+	 var form = document.createElement("form");
+	 form.setAttribute("action", url);
+	 form.setAttribute("target", name);
+	 form.setAttribute("method", "post");
+	 for (var i in params)
+	 {
+	   if (params.hasOwnProperty(i))
+	   {
+	     var input = document.createElement('input');
+	     input.type = 'hidden';
+	     input.name = i;
+	     input.value = params[i];
+	     form.appendChild(input);
+	   }
+	 }
+	 document.body.appendChild(form);
+	 window.open("collectTaxByAgency", name, windowoption);
+	 form.submit();
+	}
 
 		
 });

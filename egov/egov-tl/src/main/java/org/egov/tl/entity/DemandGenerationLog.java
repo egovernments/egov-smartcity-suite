@@ -37,10 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.tl.entity.enums.ProcessStatus;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -53,10 +55,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.tl.entity.enums.ProcessStatus;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "egtl_demandgenerationlog")

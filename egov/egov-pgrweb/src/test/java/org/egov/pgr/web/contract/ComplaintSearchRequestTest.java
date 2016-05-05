@@ -39,19 +39,19 @@
  */
 package org.egov.pgr.web.contract;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.egov.search.domain.RangeFilter;
 import org.egov.search.domain.TermsStringFilter;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class ComplaintSearchRequestTest {
 

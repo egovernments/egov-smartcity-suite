@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -73,7 +75,7 @@
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css'  context='/egi'/>">
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+	href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/typeahead.css'  context='/egi'/>">
 <link rel="stylesheet"
@@ -98,43 +100,40 @@
 	src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.js' context='/egi'/>"></script>
 <link
 	src="<c:url value='/resources/global/js/jquery-ui/jquery-ui.css' context='/egi'/>"></link>
-<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
 
 <link rel="stylesheet" type="text/css"
-	href="/egi/commonyui/yui2.8/fonts/fonts-min.css" />
+	href="/EGF/resources/commonyui/yui2.8/fonts/fonts-min.css" />
 <link rel="stylesheet" type="text/css"
-	href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css" />
+	href="/EGF/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css" />
 <link rel="stylesheet" type="text/css"
-	href="/egi/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />
-<!-- <script type="text/javascript" src="/egi/commonyui/yui2.8/animation/animation-min.js"></script> -->
+	href="/EGF/resources/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />
+<!-- <script type="text/javascript" src="/EGF/resources/commonyui/yui2.8/animation/animation-min.js"></script> -->
 <script type="text/javascript"
-	src="/egi/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
+	src="/EGF/resources/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
 <script type="text/javascript"
-	src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
+	src="/EGF/resources/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
 <script type="text/javascript"
-	src="/egi/commonyui/yui2.8/element/element-min.js"></script>
+	src="/EGF/resources/commonyui/yui2.8/element/element-min.js"></script>
 <script type="text/javascript"
-	src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
+	src="/EGF/resources/commonyui/yui2.8/connection/connection-min.js"></script>
 <script type="text/javascript"
-	src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
+	src="/EGF/resources/commonyui/yui2.8/datasource/datasource-min.js"></script>
 <script type="text/javascript"
-	src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
+	src="/EGF/resources/commonyui/yui2.8/datatable/datatable-min.js"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete.js"></script>
+
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/helper.js?rnd=${app_release_no}"></script>
 
-<%-- <script type="text/javascript"
-			src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script> --%>
-<script type="text/javascript"
-	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
 
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
 
 </head>

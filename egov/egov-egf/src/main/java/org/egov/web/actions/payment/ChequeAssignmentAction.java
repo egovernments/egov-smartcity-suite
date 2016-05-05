@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,46 +24,22 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.payment;
 
-
-
-import org.egov.infstr.services.PersistenceService;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.opensymphony.xwork2.validator.annotations.Validation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -92,7 +68,7 @@ import org.egov.infra.script.entity.Script;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentVoucher;
@@ -118,7 +94,27 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 @ParentPackage("egov")
 @Validation
@@ -156,11 +152,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private static final String SURRENDERSEARCH = "surrendersearch";
     private static final String SURRENDERRTGSSEARCH = "surrenderRTGSsearch";
     private String paymentMode, inFavourOf;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     @Qualifier("paymentService")
     private PaymentService paymentService;
     private Integer bankaccount, selectedRows = 0, bankbranch;
@@ -252,6 +248,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Boolean nonSubledger = false;
     private FinancialYearDAO financialYearDAO;
     private boolean containsRTGS = false;
+
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
     }
@@ -785,9 +782,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Map<String, String> loadChequeSerialNo(final Integer acc) {
 
         chequeSlNoMap = new LinkedHashMap<String, String>();
-        final List<Object[]> cheueSlList = persistenceService.getSession()
+        final List<Object[]> cheueSlList = persistenceService
+                .getSession()
                 .createSQLQuery(
-                        "select distinct(serialNo) ,fs.financialyear from  egf_account_cheques ac,financialyear fs where ac.serialno = fs.id and  bankAccountId=" + acc
+                        "select distinct(serialNo) ,fs.financialyear from  egf_account_cheques ac,financialyear fs where ac.serialno = fs.id and  bankAccountId="
+                                + acc
                                 + " order by serialNo desc ").list();
         if (cheueSlList != null)
             for (final Object[] s : cheueSlList)
@@ -1143,7 +1142,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
-                                "Payment date is less than RTGS Date" + chqAssgn.getVoucherNumber());
+                                " RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             } else if (resultMap.containsKey(chqAssgn.getBankAccountId().toString())) {
                 resultMap.get(chqAssgn.getBankAccountId().toString()).add(chqAssgn);
@@ -1155,7 +1154,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
-                                "Payment date is less than RTGS Date" + chqAssgn.getVoucherNumber());
+                                "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             } else {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
@@ -1169,7 +1168,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
-                                "Payment date is less than RTGS Date" + chqAssgn.getVoucherNumber());
+                                "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
             }
         try {
@@ -1660,7 +1659,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         loadChequeSerialNo(bankaccount);
 
         try {
-            
+
             if (surrender == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender Cheque ",
                         "Please select the atleast one Cheque for Surrendering ")));
@@ -1809,7 +1808,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         {
             final InstrumentHeader newInstrumentHeader = instrumentHeader.clone();
             newInstrumentHeader.setInstrumentNumber(chequeNoList.get(i).toString());
-            newInstrumentHeader.setSerialNo(serialNoList.get(i).toString());
+            newInstrumentHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(serialNoList.get(i).toString()), false));
             newInstrumentHeader.setStatusId(instrumentService.getStatusId(FinancialConstants.INSTRUMENT_CREATED_STATUS));
             newInstrumentHeader.setInstrumentDate(chequeDatelist.get(i));
             i++;
@@ -2550,6 +2549,5 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     public void setContainsRTGS(boolean containsRTGS) {
         this.containsRTGS = containsRTGS;
     }
-
 
 }

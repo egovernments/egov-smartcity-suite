@@ -1,47 +1,47 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
- * government organizations.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- * Copyright (C) <2015> eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
- * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this program. If not, see
- * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
- * complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
- * material be marked in reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
- * trade names or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.wtms.utils;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -49,12 +49,14 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.messaging.MessagingService;
@@ -79,6 +81,16 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
 @Service
 public class WaterTaxUtils {
@@ -135,6 +147,12 @@ public class WaterTaxUtils {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+
+    @Autowired
+    private ModuleService moduleService;
+
+    @Autowired
+    private InstallmentDao installmentDao;
 
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -293,17 +311,16 @@ public class WaterTaxUtils {
             final Department deptObj = departmentService
                     .getDepartmentByName(WaterTaxConstants.ROLE_COMMISSIONERDEPARTEMNT);
             List<Assignment> assignlist = null;
-            assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),
-                    new Date());
+            assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(),
+                    new Date(), new Date());
             if (assignlist.isEmpty())
-                assignlist = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desgnObj.getId(),
-                        new Date());
+                assignlist = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null,
+                        desgnObj.getId(), new Date());
             if (assignlist.isEmpty())
                 assignlist = assignmentService.getAllActiveAssignments(desgnObj.getId());
 
             return assignlist.get(0).getPosition();
-        } else
-        {
+        } else {
             final Position userPosition = getZonalLevelClerkForLoggedInUser(assessmentNumber);
             return userPosition;
         }
@@ -321,12 +338,10 @@ public class WaterTaxUtils {
         List<Assignment> asignList = null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        if (assignment != null)
-        {
+        if (assignment != null) {
             asignList = new ArrayList<Assignment>();
             asignList.add(assignment);
-        }
-        else if (assignment == null)
+        } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
@@ -402,10 +417,15 @@ public class WaterTaxUtils {
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         Assignment assignmentObj = null;
         /*
-         * final HierarchyType hierarchy = hierarchyTypeService.getHierarchyTypeByName (WaterTaxConstants.HIERARCHYNAME_ADMIN);
-         * final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(
-         * assessmentDetails.getBoundaryDetails().getWardBoundaryType(), hierarchy); final Boundary boundaryObj =
-         * boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj, assessmentDetails .getBoundaryDetails().getAdminWardNumber());
+         * final HierarchyType hierarchy =
+         * hierarchyTypeService.getHierarchyTypeByName
+         * (WaterTaxConstants.HIERARCHYNAME_ADMIN); final BoundaryType
+         * boundaryTypeObj =
+         * boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(
+         * assessmentDetails.getBoundaryDetails().getWardBoundaryType(),
+         * hierarchy); final Boundary boundaryObj =
+         * boundaryService.getBoundaryByTypeAndNo(boundaryTypeObj,
+         * assessmentDetails .getBoundaryDetails().getAdminWardNumber());
          */
         // TODO: check whether adminward always mandatory
         final Boundary boundaryObj = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails()
@@ -416,11 +436,13 @@ public class WaterTaxUtils {
     }
 
     /**
-     * Getting User assignment based on designation ,department and zone boundary Reading Designation and Department from
-     * appconfig values and Values should be 'Senior Assistant,Junior Assistant' for designation and
+     * Getting User assignment based on designation ,department and zone
+     * boundary Reading Designation and Department from appconfig values and
+     * Values should be 'Senior Assistant,Junior Assistant' for designation and
      * 'Revenue,Accounts,Administration' for department
      *
-     * @param asessmentNumber ,
+     * @param asessmentNumber
+     *            ,
      * @Param assessmentDetails
      * @param boundaryObj
      * @return Assignment
@@ -468,12 +490,19 @@ public class WaterTaxUtils {
                 startDate, PTMODULENAME);
     }
 
+    public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
+        final List<Installment> installments = installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
+        return installments;
+    }
+
     public Double waterConnectionDue(final long parentId) {
         BigDecimal waterTaxDueforParent = BigDecimal.ZERO;
         final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsService
                 .getAllConnectionDetailsByParentConnection(parentId);
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
-            waterTaxDueforParent = waterTaxDueforParent.add(waterConnectionDetailsService.getTotalAmount(waterconnectiondetails));
+            waterTaxDueforParent = waterTaxDueforParent.add(waterConnectionDetailsService
+                    .getTotalAmount(waterconnectiondetails));
         return waterTaxDueforParent.doubleValue();
     }
 

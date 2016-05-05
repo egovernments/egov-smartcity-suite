@@ -1,53 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.service;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -59,6 +49,17 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class CollectionReportService {
@@ -108,8 +109,7 @@ public class CollectionReportService {
     }
 
     public List<Object[]> getUlbNames(final String districtName) {
-        final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct ulbname from public.onlinepayment_view opv where 1=1");
+        final StringBuilder queryStr = new StringBuilder("select distinct ulbname from public.onlinepayment_view opv where 1=1");
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
         final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
@@ -119,8 +119,7 @@ public class CollectionReportService {
     }
 
     public List<Object[]> getDistrictNames() {
-        final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct districtname from public.onlinepayment_view");
+        final StringBuilder queryStr = new StringBuilder("select distinct districtname from public.onlinepayment_view");
         final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         return query.list();
     }
@@ -148,9 +147,9 @@ public class CollectionReportService {
         .append(" INNER JOIN EGEIS_EMPLOYEE EG_EMPLOYEE ON EG_USER.ID = EG_EMPLOYEE.ID")
         .append(" INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID")
         .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
-        .append(" EGCL_COLLECTIONHEADER.RECEIPTTYPE='B' AND EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
 
-        final StringBuilder onlineQueryStr = new StringBuilder(500);
+        final StringBuilder onlineQueryStr = new StringBuilder();
         onlineQueryStr
         .append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
         .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
@@ -166,7 +165,7 @@ public class CollectionReportService {
         .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
         // .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
         .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
-        .append(" EGCL_COLLECTIONHEADER.RECEIPTTYPE='B' AND EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
         final StringBuilder queryStrGroup = new StringBuilder(100);
         queryStrGroup
         .append(" GROUP BY  SOURCE, COUNTER_NAME, EMPLOYEE_NAME, USERID,SERVICE_NAME, EGF_INSTRUMENTTYPE.TYPE");
@@ -196,13 +195,13 @@ public class CollectionReportService {
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
             if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
                 queryStr.setLength(0);
-                onlineQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = :paymentMode");
+                onlineQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in (:paymentMode)");
                 queryStr.append(onlineQueryStr);
                 queryStr.append(queryStrGroup);
             } else {
-                queryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = :paymentMode");
+                queryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in (:paymentMode)");
                 queryStr.append(queryStrGroup);
-                onlineQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = :paymentMode");
+                onlineQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in (:paymentMode)");
             }
         } else {
             defaultQueryStr.append(queryStr);
@@ -210,7 +209,7 @@ public class CollectionReportService {
             defaultQueryStr.append(queryStrGroup);
             defaultQueryStr.append(" union ");
             defaultQueryStr.append(queryStr);
-            defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'cheque'");
+            defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in ('cheque', 'dd')");
             defaultQueryStr.append(queryStrGroup);
             defaultQueryStr.append(" union ");
             defaultQueryStr.append(onlineQueryStr);
@@ -225,7 +224,7 @@ public class CollectionReportService {
         aggregateQueryStr.append(queryStrGroup);
         aggregateQueryStr.append(" union ");
         aggregateQueryStr.append(onlineQueryStr);
-        aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'cheque'");
+        aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in( 'cheque','dd')");
         aggregateQueryStr.append(queryStrGroup);
         aggregateQueryStr.append(" union ");
         aggregateQueryStr.append(onlineQueryStr);
@@ -239,7 +238,7 @@ public class CollectionReportService {
                 .append(queryStr)
                 .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
 
-        final StringBuilder finalAggregateQryStr = new StringBuilder(500);
+        final StringBuilder finalAggregateQryStr = new StringBuilder();
         finalAggregateQryStr
                 .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID FROM (");
         finalAggregateQryStr
@@ -259,8 +258,14 @@ public class CollectionReportService {
             aggrQuery.setLong("serviceId", serviceId);
         }
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
+            if(paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
+                query.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
+                aggrQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
+            } else
+            { 
             query.setString("paymentMode", paymentMode);
             aggrQuery.setString("paymentMode", paymentMode);
+            }
         }
         final List<CollectionSummaryReport> reportResults = populateQueryResults(query.list());
         final List<CollectionSummaryReport> aggrReportResults = populateQueryResults(aggrQuery.list());
@@ -282,9 +287,9 @@ public class CollectionReportService {
                     : (BigDecimal) arrayObjectInitialIndex[1];
             onlineCnt = (BigDecimal) arrayObjectInitialIndex[2] == null ? BigDecimal.ZERO
                     : (BigDecimal) arrayObjectInitialIndex[2];
-            collSummaryReportResult.setCashCount(cashCnt == BigDecimal.ZERO ? "" : cashCnt.toString());
-            collSummaryReportResult.setChequeddCount(chequeddCnt == BigDecimal.ZERO ? "" : chequeddCnt.toString());
-            collSummaryReportResult.setOnlineCount(onlineCnt == BigDecimal.ZERO ? "" : onlineCnt.toString());
+            collSummaryReportResult.setCashCount(cashCnt.equals(BigDecimal.ZERO) ? "" : cashCnt.toString());
+            collSummaryReportResult.setChequeddCount(chequeddCnt.equals(BigDecimal.ZERO) ? "" : chequeddCnt.toString());
+            collSummaryReportResult.setOnlineCount(onlineCnt.equals(BigDecimal.ZERO) ? "" : onlineCnt.toString());
             collSummaryReportResult.setSource((String) arrayObjectInitialIndex[3]);
             collSummaryReportResult.setCounterName((String) arrayObjectInitialIndex[4]);
             collSummaryReportResult.setEmployeeName((String) arrayObjectInitialIndex[5]);
@@ -294,7 +299,7 @@ public class CollectionReportService {
             collSummaryReportResult.setOnlineAmount((BigDecimal) arrayObjectInitialIndex[9]);
             final BigDecimal receiptCount = cashCnt.add(chequeddCnt).add(onlineCnt);
             collSummaryReportResult
-            .setTotalReceiptCount(receiptCount == BigDecimal.ZERO ? "" : receiptCount.toString());
+            .setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount.toString());
             collSummaryReportResult
                     .setTotalAmount(((BigDecimal) arrayObjectInitialIndex[7] != null ? (BigDecimal) arrayObjectInitialIndex[7]
                     : BigDecimal.ZERO).add(

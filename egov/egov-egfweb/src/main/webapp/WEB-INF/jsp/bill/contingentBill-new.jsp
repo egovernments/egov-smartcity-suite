@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <html>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
@@ -47,9 +49,11 @@
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js?rnd=${app_release_no}"></script>
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+<link rel="stylesheet"
+	href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
 	TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -515,32 +519,28 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 									class="mandatory1">*</span></td>
 								<s:date name='commonBean.billDate' id="commonBean.billDateId"
 									format='dd/MM/yyyy' />
-								<td class="bluebox"><s:textfield name="commonBean.billDate"
-										id="billDate"
+								<td class="bluebox"><s:textfield id="billDate"
+										name="commonBean.billDate" value="%{commonBean.billDateId}"
+										data-date-end-date="0d"
 										onkeyup="DateFormat(this,this.value,event,false,'3')"
-										value="%{commonBean.billDateId}" /> <a tabindex="-1"
-									href="javascript:show_calendar('cbill.billDate');"
-									style="text-decoration: none">&nbsp;<img
-										src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+										placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+										data-inputmask="'mask': 'd/m/y'" /></td>
 							</tr>
 							<%@include file="contingentBill-form.jsp"%>
 						</table>
 					</div>
-				<!-- 	<div class="tabbertab" id="checkList">
+					<div class="tabbertab" id="checkList">
 						<h2>Check List</h2>
 						<div class="yui-skin-sam" align="center">
 							<div id="checkListTable"></div>
 						</div>
 
 						<script>
-			   	makeCheckListTable();
-			   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
-	</script>
+			   				makeCheckListTable();
+			   				document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
+						</script>
 
-
-						
-
-					</div> -->
+					</div>
 					<s:hidden name="actionName" id="actionName" />
 					<div class="tabbertab" id="approval">
 						<h2>Approval Information</h2>
@@ -640,12 +640,11 @@ loadDropDownCodesForAccountDetailType(null);
 function onSubmit()
 {
 	if(validate()){
-			document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
-    		document.cbill.submit();
-			
-		}else{
-			return false;
-			}
+		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
+    	return true;
+	}else{
+		return false;
+	}
 }
 </script>
 </body>

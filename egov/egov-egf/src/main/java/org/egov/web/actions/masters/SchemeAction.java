@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,25 +24,23 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.masters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -51,6 +49,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -59,9 +59,12 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -81,6 +84,8 @@ public class SchemeAction extends BaseFormAction {
     public static final String VIEW = "view";
     private static final Logger LOGGER = Logger.getLogger(SchemeAction.class);
     List<Scheme> schemeList;
+    @Autowired
+    @Qualifier("schemeService")
     private SchemeService schemeService;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
@@ -176,6 +181,8 @@ public class SchemeAction extends BaseFormAction {
     @Action(value = "/masters/scheme-edit")
     public String edit() {
         try {
+        	scheme.setLastModifiedDate(new Date());
+        	scheme.setLastModifiedBy((User)schemeService.getSession().load(User.class, EgovThreadLocals.getUserId()));
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
             LOGGER.error("ValidationException in creating Scheme" + e.getMessage());
@@ -199,6 +206,8 @@ public class SchemeAction extends BaseFormAction {
             LOGGER.debug("............................Creating New Scheme method.......................");
 
         try {
+        	scheme.setCreatedDate(new Date());
+        	scheme.setCreatedBy((User)schemeService.getSession().load(User.class, EgovThreadLocals.getUserId()));
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
             LOGGER.error("ValidationException in create Scheme" + e.getMessage());
@@ -224,16 +233,16 @@ public class SchemeAction extends BaseFormAction {
             LOGGER.debug("......Scheme Unique check Begins......");
         if (uniqueCode) {
             if (!scheme.getCode().equals("") && scheme.getId() != null)
-                scheme_validate = (Scheme) persistenceService.find("from Scheme where code=? and id!=?",
-                        scheme.getCode(), scheme.getId());
+                scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(code)=? and id!=?",
+                        scheme.getCode().toLowerCase(), scheme.getId());
             else if (!scheme.getCode().equals(""))
-                scheme_validate = (Scheme) persistenceService.find("from Scheme where code=?", scheme.getCode());
+                scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(code)=?", scheme.getCode().toLowerCase());
             uniqueCode = false;
         } else if (!scheme.getName().equals("") && scheme.getId() != null)
-            scheme_validate = (Scheme) persistenceService.find("from Scheme where name=? and id!=?", scheme.getName(),
+            scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(name)=? and id!=?", scheme.getName().toLowerCase(),
                     scheme.getId());
         else if (!scheme.getName().equals(""))
-            scheme_validate = (Scheme) persistenceService.find("from Scheme where name=?", scheme.getName());
+            scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(name)=?", scheme.getName().toLowerCase());
         if (scheme_validate != null)
             isDuplicate = true;
         if (LOGGER.isDebugEnabled())

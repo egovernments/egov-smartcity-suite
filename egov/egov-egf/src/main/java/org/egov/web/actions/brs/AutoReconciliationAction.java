@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,20 +24,39 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.brs;
+
+import net.sf.jasperreports.engine.JRException;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.commons.Bank;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.Bankbranch;
+import org.egov.commons.Bankreconciliation;
+import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.model.brs.AutoReconcileBean;
+import org.egov.utils.Constants;
+import org.egov.utils.ReportHelper;
+import org.jboss.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,24 +68,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.jasperreports.engine.JRException;
-
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.Bankbranch;
-import org.egov.commons.Bankreconciliation;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.model.brs.AutoReconcileBean;
-import org.egov.utils.Constants;
-import org.egov.utils.ReportHelper;
-import org.jboss.logging.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
@@ -128,6 +129,11 @@ public class AutoReconciliationAction extends BaseFormAction {
     private BigDecimal bankBookBalance;
     @Autowired
     private AutoReconcileHelper autoReconcileHelper;
+    
+    @Autowired
+    private BankHibernateDAO bankHibernateDAO;
+    
+    
 
     public BigDecimal getBankBookBalance() {
         return autoReconcileHelper.getBankBookBalance();
@@ -166,9 +172,8 @@ public class AutoReconciliationAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     public void prepare()
     {
-        final List bankList = persistenceService
-                .findAllBy("select   b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and b.isactive=true order by upper(b.name)");
-        dropdownData.put("bankList", bankList);
+    	List<Bank> allBankHavingAccounts = bankHibernateDAO.getAllBankHavingBranchAndAccounts(); 
+        dropdownData.put("bankList", allBankHavingAccounts);  
         dropdownData.put("branchList", branchList);
         dropdownData.put("accountList", accountList);
         if (branchId != null)

@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <script type="text/javascript"
@@ -52,10 +54,13 @@
 		cellpadding="0" cellspacing="0" export="true"
 		requestURI="generalLedgerReport-searchDrilldown.action">
 		<display:caption>
-			<div class="headingsmallbgnew" align="center"
-				style="text-align: center; width: 100%;">
-				<s:property value="%{heading}" />
-			</div>
+			<table width="100%" border="1" cellspacing="0" cellpadding="0">
+				<tr>
+					<th class="bluebgheadtd" align="center"
+						style="text-align: center; width: 100%;"><strong
+						style="font-size: 15px;"><s:property value="%{heading}" /></strong></th>
+				</tr>
+			</table>
 			<%-- <div align="left" style="text-align: left; width: 100%;">
 				<s:property value="%{generalLedgerReportBean.isConfirmedCount}" />
 				in
@@ -64,10 +69,8 @@
 			</div> --%>
 			<table width="100%" border="1" cellspacing="0" cellpadding="0">
 				<tr>
-					<th class="bluebgheadtd" ><s:text
-							name="generalLedger.debit" /></th>
-					<th class="bluebgheadtd" ><s:text
-							name="generalLedger.credit" /></th>
+					<th class="bluebgheadtd"><s:text name="generalLedger.debit" /></th>
+					<th class="bluebgheadtd"><s:text name="generalLedger.credit" /></th>
 				</tr>
 			</table>
 		</display:caption>
@@ -187,8 +190,9 @@
 	</display:table>
 
 </s:if>
-</br></br>
+</br>
+</br>
 <center>
-<input type="button" id="Close" value="Close"
-							onclick="javascript:window.close()" class="button" />
-	</center>
+	<input type="button" id="Close" value="Close"
+		onclick="javascript:window.close()" class="button" />
+</center>

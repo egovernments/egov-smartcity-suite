@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,40 +24,27 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /**
  *
  */
 package org.egov.web.actions.contra;
 
-
-
-import org.egov.infstr.services.PersistenceService;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.exilant.exility.common.TaskFailedException;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -80,7 +67,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentHeader;
@@ -103,9 +90,18 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.exilant.exility.common.TaskFailedException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author mani
@@ -115,7 +111,8 @@ import com.exilant.exility.common.TaskFailedException;
         @Result(name = "new", location = "contraBTB-new.jsp"),
         @Result(name = "edit", location = "contraBTB-edit.jsp"),
         @Result(name = "reverse", location = "contraBTB-reverse.jsp"),
-        @Result(name = "view", location = "contraBTB-view.jsp")
+        @Result(name = "view", location = "contraBTB-view.jsp"),
+        @Result(name = "success", location = "contraBTB-success.jsp")
 })
 public class ContraBTBAction extends BaseVoucherAction {
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
@@ -140,11 +137,11 @@ public class ContraBTBAction extends BaseVoucherAction {
     private String sourceGlcode;
     private String destinationGlcode;
     private ContraJournalVoucher contraVoucher;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private InstrumentService instrumentService;
     private String mode;
     @Autowired
@@ -199,7 +196,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     public void prepare() {
         super.prepare();
         ModeOfCollectionMap = new LinkedHashMap<String, String>();
-        ModeOfCollectionMap.put(MDC_CHEQUE, MDC_CHEQUE);
+        // ModeOfCollectionMap.put(MDC_CHEQUE, MDC_CHEQUE);
         ModeOfCollectionMap.put(MDC_OTHER, MDC_OTHER);
         final List<CChartOfAccounts> glCodeList = persistenceService
                 .findAllBy("from CChartOfAccounts coa where coa.purposeId=8 and coa.classification=4 and coa.isActiveForPosting=true order by coa.glcode ");
@@ -258,8 +255,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 if (contraBean.getModeOfCollection().equals(MDC_CHEQUE))
                     validateChqNumber(contraBean.getChequeNumber(), contraVoucher.getFromBankAccountId().getId(), voucherHeader);
             voucherHeader = contraBTBActionHelper.create(contraBean, contraVoucher, voucherHeader);
-            addActionMessage(getText("transaction.success")
-                    + voucherHeader.getVoucherNumber());
+            addActionMessage("Bank to Bank Transfer "+ getText("transaction.success") + " with Voucher number: "+ voucherHeader.getVoucherNumber());
             setVhId(voucherHeader.getId());
             LoadAjaxedDropDowns();
             if (LOGGER.isDebugEnabled())
@@ -275,7 +271,7 @@ public class ContraBTBAction extends BaseVoucherAction {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
-        return NEW;
+        return SUCCESS;
     }
 
     /**
@@ -615,12 +611,19 @@ public class ContraBTBAction extends BaseVoucherAction {
     @SkipValidation
     @Action(value = "/contra/contraBTB-newform")
     public String newform() {
-        reset();
-        LoadAjaxedDropDowns();
-        loadDefalutDates();
-        final Date currDate = new Date();
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        contraBean.setChequeDate(sdf.format(currDate));
+        try {
+
+            reset();
+            LoadAjaxedDropDowns();
+            loadDefalutDates();
+            final Date currDate = new Date();
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            contraBean.setChequeDate(sdf.format(currDate));
+            voucherDate = sdf.parse(sdf.format(currDate));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return NEW;
     }
 
@@ -783,14 +786,13 @@ public class ContraBTBAction extends BaseVoucherAction {
                     || contraBean.getToBankAccountId().equals("-1"))
                 addFieldError("contraBean.toBankAccountId()",
                         getText("toBankAccountId.required"));
-            if (contraBean.getToFundId() != null && !contraBean.getToFundId().equals("-1")) {
-                final Fund toFund = (Fund) persistenceService.find("from Fund where id=?", contraBean.getToFundId());
-                if (!toFund.getCode().equalsIgnoreCase("03"))
-                    if (contraBean.getToDepartment() == null
-                            || contraBean.getToDepartment().equals("-1"))
-                        addFieldError("contraBean.contraBean.toDepartment()",
-                                getText("toDepartment.required"));
-            }
+            /*
+             * if (contraBean.getToFundId() != null && !contraBean.getToFundId().equals("-1")) { final Fund toFund = (Fund)
+             * persistenceService.find("from Fund where id=?", contraBean.getToFundId()); if
+             * (!toFund.getCode().equalsIgnoreCase("03")) if (contraBean.getToDepartment() == null ||
+             * contraBean.getToDepartment().equals("-1")) addFieldError("contraBean.contraBean.toDepartment()",
+             * getText("toDepartment.required")); }
+             */
             if (voucherHeader.getVouchermis().getDepartmentid() == null
                     || voucherHeader.getVouchermis().getDepartmentid().getId() == null) {
                 addFieldError("voucherHeader.vouchermis.departmentid.id",
@@ -822,6 +824,10 @@ public class ContraBTBAction extends BaseVoucherAction {
                         || contraBean.getSourceGlcode().equals("-1"))
                     addFieldError("contraBean.sourceGlcode",
                             getText("sourceGlcode.required"));
+                if (contraBean.getToDepartment() == null
+                        || contraBean.getToDepartment().equals("-1"))
+                    addFieldError("contraBean.contraBean.toDepartment()",
+                            getText("toDepartment.required"));
             }
 
             if (getAmount() == null)
@@ -1661,7 +1667,7 @@ public class ContraBTBAction extends BaseVoucherAction {
                 if (!generalled.getGlcode().equalsIgnoreCase(contraVoucher.getToBankAccountId().getChartofaccounts()
                         .getGlcode()))
                     contraBean.setDestinationGlcode(generalled.getGlcode());
-        }else{
+        } else {
             generalLedgerDesList = persistenceService.findAllBy(
                     "from CGeneralLedger where voucherHeaderId.refvhId = ?",
                     voucherHeader.getId());

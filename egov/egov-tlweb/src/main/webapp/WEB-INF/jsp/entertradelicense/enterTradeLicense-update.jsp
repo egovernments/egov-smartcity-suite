@@ -37,7 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>

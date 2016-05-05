@@ -1,42 +1,43 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <style type="text/css">
 #yui-dt0-bodytable,#yui-dt1-bodytable,#yui-dt2-bodytable {
 	Width: 100%;
@@ -45,11 +46,11 @@ ul {
 list-style-type: none;
 }
 </style>
-<script src="<egov:url path='resources/js/works.js'/>"></script>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script>
 function createDeleteImageFormatter(baseURL){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/cancel.png";
+	    var imageURL="/resources/erp2/images/cancel.png";
 	    markup='<img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/>';
 	    el.innerHTML = markup;
 	}
@@ -86,6 +87,7 @@ function enableLastEndDate(){
 	var i;
 	var records= scheduleOfRateDataTable.getRecordSet();
 
+	hideColumn('deleteRate');
 	disablePrevRates();
 	for(i=0;i<records.getLength();i++){
 		if(i <= (persistedRatesCnt-1)) {
@@ -102,6 +104,10 @@ function enableLastEndDate(){
 	}
 	dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).readonly=false;
 	dom.get("endDate"+records.getRecord(persistedRatesCnt-1).getId()).disabled=false;	
+}
+
+function hideColumn(colKey) {
+	scheduleOfRateDataTable.hideColumn(colKey);
 }
 
 function disableEnablePrevRateDetails(records,j) {
@@ -130,6 +136,7 @@ function disableEnablePrevRateDetails(records,j) {
 
 function disablePreviousRatesOnLoad() {
 	<s:if test="%{id!=null && mode=='edit'}">
+	hideColumn('deleteRate');
 		disablePrevRates();
 	</s:if>
 } 
@@ -198,7 +205,7 @@ var makeScheduleOfRateDataTable = function() {
 		{key:"rate", label:'<span class="mandatory"></span>Rate', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
 		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
 		{key:"endDate",label:'End Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
-		{key:'deleteRate',hidden:true,label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
+		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	
 	var scheduleOfRateDataSource = new YAHOO.util.DataSource(); 
@@ -289,7 +296,7 @@ var makeScheduleOfRateDataTable = function() {
 			<div id="scheduleOfRateTable"></div>
 
 <script>
-var imgURL="/egi/resources/erp2/images/cancel.png";	
+var imgURL="/resources/erp2/images/cancel.png";	
 function validateInput(){ 
 		var elems = document.getElementsByTagName("input");
 		for (var i=0; i<elems.length; i++) {
@@ -320,16 +327,14 @@ function initializeDatePicker()
 				);
 	          </s:if>
 	          <s:else>
-	          debugger;
 	          scheduleOfRateDataTable.addRow(
-	    	          
-			        						{id:'<s:property value="id"/>',											
-			                                SlNo:'<s:property value="#rate_row_status.count"/>',
-			                                rate:'<s:property value="rate"/>',
-			                                startDate:'<s:property value="validity.startDate"/>',
-			                                endDate:'<s:property value="validity.endDate"/>'
-											}
-											);
+	             	{id:'<s:property value="id"/>',											
+                    SlNo:'<s:property value="#rate_row_status.count"/>',
+                    rate:'<s:property value="rate"/>',
+                    startDate:'<s:property value="validity.startDate"/>',
+                    endDate:'<s:property value="validity.endDate"/>'
+						}
+						);
 			</s:else>
 				var record = scheduleOfRateDataTable.getRecord(parseInt('<s:property value="#rate_row_status.index"/>'));			  									
 				var rateidValue='<s:property value="id"/>';		
@@ -443,6 +448,10 @@ function initializeDatePicker()
 	for(i=0;i<links.length;i++){    
 	links[i].onclick=function(){return false;};
 	}
+</s:if>
+<s:if test="%{mode=='edit'}">
+scheduleOfRateDataTable.removeListener('cellClickEvent');
+hideColumn('deleteRate');
 </s:if>
 <s:if test="%{estimateDtFlag=='yes' || woDateFlag=='yes' || hasErrors()}">
 scheduleOfRateDataTable.removeListener('cellClickEvent');	

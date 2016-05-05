@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,9 +36,11 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ page import="org.egov.utils.Constants;"%>
+<%@ page import="org.egov.utils.Constants"%>
 
 <table border="0" width="30%" align="center">
 	<tr></tr>

@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <html>
 <head>
 <%@ include file="/includes/taglibs.jsp"%>
@@ -94,20 +96,21 @@
 
 						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox" width="34%"><input type="text"
-							name="voucherDate" id="voucherDate" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value='<s:date name="voucherDate" format="dd/MM/yyyy"/>' /> <a
-							href="javascript:show_calendar('cbtbform.voucherDate',null,null,'DD/MM/YYYY');"
-							style="text-decoration: none">&nbsp;<img tabIndex="-1"
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>(dd/mm/yyyy)</td>
+						<td class="bluebox" width="34%"><s:textfield id="voucherDate"
+								name="voucherDate" data-date-end-date="0d"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" class="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 						<td class="bluebox"></td>
 						<td class="bluebox"></td>
 					</tr>
 					<%@include file="contraBTB-form.jsp"%>
 				</table>
-				<div class="mandatory1" align="left">* Mandatory Fields</div>
 			</div>
+			<div class="mandatory1" align="left">* Mandatory Fields</div>
+
+			</br>
+			</br>
 			<%@include file="../voucher/SaveButtons.jsp"%>
 			<input type="hidden" id=name name="name" value="BankToBank" />
 			<input type="hidden" id="type" name="type" value="Contra" />
@@ -116,7 +119,6 @@
 			<s:hidden id="startDateForBalanceCheckStr"
 				name="startDateForBalanceCheckStr"
 				value="%{startDateForBalanceCheckStr}" />
-			</div>
 		</s:push>
 	</s:form>
 	<SCRIPT type="text/javascript">
@@ -131,7 +133,9 @@ function	onLoadTask_new()
 	{
 		if(srcFund!=desFund)
 		{
-		document.getElementById('interFundRow').style.visibility="visible";
+		document.getElementById('interFundRow1').style.visibility="visible";
+		document.getElementById('interFundRow2').style.visibility="visible";
+		document.getElementById('interFundRow3').style.visibility="visible";
 		}
 	}
 	
@@ -213,7 +217,9 @@ function	onLoadTask_new()
 				d.value=val;
 		</s:if>
 		
-	
+		jQuery(document).ready(function() {
+			jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
+			});
 </script>
 </body>
 </html>

@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <s:iterator var="obj" value="objections">
 	<tr>
 		<td colspan="5" class="headingwk">

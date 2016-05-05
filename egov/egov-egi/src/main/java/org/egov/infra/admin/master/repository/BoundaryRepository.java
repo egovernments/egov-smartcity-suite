@@ -37,15 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.admin.master.repository;
-
-import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.QueryHint;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -57,6 +50,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.QueryHint;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 
 @Repository
 public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
@@ -130,7 +130,7 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     Boundary findByBoundaryTypeNameAndHierarchyTypeNameAndLevel(@Param("boundaryType") String boundaryType,
             @Param("hierarchyType") String hierarchyType, @Param("hierarchyLevel") Long hierarchyLevel);
 
-    @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) like UPPER(:name) order by b.id")
+    @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) like UPPER(:name)||'%' order by b.id")
     List<Boundary> findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName, @Param("name") String name);
 

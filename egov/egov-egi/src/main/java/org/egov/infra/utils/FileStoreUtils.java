@@ -37,16 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.utils;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -56,39 +48,51 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class FileStoreUtils {
 
+    @Qualifier("localDiskFileStoreService")
     @Autowired
     private FileStoreService fileStoreService;
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
 
-    public void fetchFileAndWriteToStream(final String fileStoreId, final String moduleName, final boolean toSave,
-            final HttpServletResponse response) throws IOException {
-        final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(fileStoreId);
+    public void fetchFileAndWriteToStream(String fileStoreId, String moduleName, boolean toSave,
+                                          HttpServletResponse response) throws IOException {
+        FileStoreMapper fileStoreMapper = this.fileStoreMapperRepository.findByFileStoreId(fileStoreId);
         if (fileStoreMapper != null) {
-            final File file = fileStoreService.fetch(fileStoreMapper, moduleName);
+            File file = this.fileStoreService.fetch(fileStoreMapper, moduleName);
             if (toSave)
                 response.setHeader("Content-Disposition", "attachment;filename=" + fileStoreMapper.getFileName());
             else
                 response.setHeader("Content-Disposition", "inline;filename=" + fileStoreMapper.getFileName());
             response.setContentType(fileStoreMapper.getContentType());
-            final OutputStream out = response.getOutputStream();
+            OutputStream out = response.getOutputStream();
             IOUtils.write(FileUtils.readFileToByteArray(file), out);
             IOUtils.closeQuietly(out);
         }
     }
 
-    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files, final String moduleName) {
-        return addToFileStore(files, moduleName, false);
+    public Set<FileStoreMapper> addToFileStore(MultipartFile[] files, String moduleName) {
+        return this.addToFileStore(files, moduleName, false);
     }
 
-    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files, final String moduleName, final boolean compressImage) {
+    public Set<FileStoreMapper> addToFileStore(MultipartFile[] files, String moduleName, boolean compressImage) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays
                     .asList(files)
@@ -97,16 +101,24 @@ public class FileStoreUtils {
                     .map(file -> {
                         try {
                             if (compressImage && file.getContentType().contains("image"))
-                                return fileStoreService.store(ImageUtils.compressImage(file.getInputStream()), file.getOriginalFilename(),
+                                return this.fileStoreService.store(ImageUtils.compressImage(file.getInputStream()), file.getOriginalFilename(),
                                         "image/jpeg", moduleName);
                             else
-                                return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                return this.fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
                                         file.getContentType(), moduleName);
-                        } catch (final Exception e) {
+                        } catch (Exception e) {
                             throw new ApplicationRuntimeException("err.input.stream", e);
                         }
                     }).collect(Collectors.toSet());
         else
             return null;
+    }
+
+    public void copyFileToPath(Path newFilePath, String fileStoreId, String moduleName) throws IOException {
+        FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(fileStoreId);
+        if (fileStoreMapper != null) {
+            File file = fileStoreService.fetch(fileStoreMapper, moduleName);
+            Files.copy(file.toPath(), newFilePath);
+        }
     }
 }

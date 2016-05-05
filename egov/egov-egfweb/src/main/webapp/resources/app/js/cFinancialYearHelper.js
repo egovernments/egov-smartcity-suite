@@ -1,3 +1,43 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 jQuery('#btnsearch').click(function(e) {
 
 	callAjaxSearch();
@@ -17,38 +57,50 @@ function getFormData($form){
 }
 
 function validateFields(){
-	var tbl=document.getElementById("fiscalPeriodTable");
-	var lastRow = (tbl.rows.length)-1;
-	var startingDate=getControlInBranch(tbl.rows[1],'startDate').value;
-	var name=getControlInBranch(tbl.rows[lastRow],'name').value;
-	var lastRowStartDate=getControlInBranch(tbl.rows[lastRow],'startDate').value;
-	var lastRowEndDate=getControlInBranch(tbl.rows[lastRow],'endDate').value;
-	var finYearRange=document.getElementById("name").value;
-	var finYearStartDate=document.getElementById("startingDate").value;
-	var finYearEndDate=document.getElementById("endingDate").value;
-
-	if(name=='' || lastRowStartDate=='' || lastRowEndDate=='' || finYearRange=='')
-	{
-		bootbox.alert('Enter all values before submit');
-		getControlInBranch(tbl.rows[1],'name').focus();
-		return false;
-	}
-
-
-	if(startingDate!=finYearStartDate){
-		bootbox.alert('Enter valid Start date');
-		getControlInBranch(tbl.rows[1],'startDate').value='';
-		getControlInBranch(tbl.rows[1],'startDate').focus();
-		return false;
-	}
-	if(lastRowEndDate!=finYearEndDate)
-	{
-		bootbox.alert('Enter valid End date');
-		getControlInBranch(tbl.rows[lastRow],'endDate').value='';
-		getControlInBranch(tbl.rows[lastRow],'endDate').focus();
-		return false;
-	}
-	return true;
+		var tbl=document.getElementById("fiscalPeriodTable");
+		var lastRow = (tbl.rows.length)-1;
+		var startingDate=getControlInBranch(tbl.rows[1],'startDate').value;
+		var finYearStartDate=document.getElementById("startingDate").value;
+		var lastRowEndDate=getControlInBranch(tbl.rows[lastRow],'endDate').value;
+		var finYearEndDate=document.getElementById("endingDate").value;
+		
+		if(startingDate!=finYearStartDate){
+			bootbox.alert('Enter valid Start date');
+			getControlInBranch(tbl.rows[1],'startDate').value='';
+			getControlInBranch(tbl.rows[1],'startDate').focus();
+			return false;
+		}
+		if(lastRowEndDate!=finYearEndDate)
+		{
+			bootbox.alert('Enter valid End date');
+			getControlInBranch(tbl.rows[lastRow],'endDate').value='';
+			getControlInBranch(tbl.rows[lastRow],'endDate').focus();
+			return false;
+		}
+		
+	    var previousRow = lastRow - 1;
+		var name=getControlInBranch(tbl.rows[lastRow],'name').value;
+		var lastRowFiscalName = getControlInBranch(tbl.rows[lastRow],'name').value;
+		var lastRowStartDate=getControlInBranch(tbl.rows[lastRow],'startDate').value;
+	    var previousEndDate=getControlInBranch(tbl.rows[previousRow],'endDate').value;
+		var finYearRange=document.getElementById("name").value;
+		
+	    if( compareDate(formatDate6(previousEndDate),formatDate6(lastRowStartDate)) == -1 )
+		{
+		     bootbox.alert('Enter valid Start Date');
+			 getControlInBranch(tbl.rows[lastRow],'startDate').value='';
+			 getControlInBranch(tbl.rows[lastRow],'startDate').focus();
+			 return false;
+		}
+	
+		if(lastRowFiscalName==""){
+			bootbox.alert('Enter Fiscal Period Name');
+			getControlInBranch(tbl.rows[1],'name').value='';
+			getControlInBranch(tbl.rows[1],'name').focus();
+			return false;
+		}
+	
+	 return true;
 
 }
 
@@ -56,7 +108,6 @@ function validateFields(){
 
 function addRow1() 
 {
-
 	var table = document.getElementById('fiscalPeriodTable');
 
 	if(!checkforNonEmptyPrevRow())
@@ -164,6 +215,7 @@ function validateStartDate() {
 			return false;
 		}
 	}
+	return true;
 }
 
 function validateEndDate() {

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,20 +24,31 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.constants;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static java.util.Calendar.APRIL;
 import static java.util.Calendar.AUGUST;
@@ -54,17 +65,6 @@ import static java.util.Calendar.SEPTEMBER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_COUNTER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public interface PropertyTaxConstants {
 
@@ -102,8 +102,10 @@ public interface PropertyTaxConstants {
     // Others
     public static final String CURR_DMD_STR = "CURR_DMD";
     public static final String ARR_DMD_STR = "ARR_DMD";
+    public static final String CURR_BAL_STR = "CURR_BAL";
     public static final String CURR_COLL_STR = "CURR_COLL";
     public static final String ARR_COLL_STR = "ARR_COLL";
+    public static final String ARR_BAL_STR = "ARR_BAL";
     public static final String CURR_PENALTY_DMD_STR = "CURR_PEANLTY_DMD";
     public static final String ARR_PENALTY_DMD_STR = "ARR_PENALTY_DMD";
     public static final String CURR_PENALTY_COLL_STR = "CURR_PENALTY_COLL";
@@ -395,6 +397,9 @@ public interface PropertyTaxConstants {
     public static final String QUERY_DEMANDDET_FOR_PROPERTY = "getDemandDetForProperty";
     public static final String QUERY_DEMANDDETAILS_EXCLUDING_REASONS = "demandDetailsExcludingReasons";
     public static final String QUERY_PROPERTIES_FOR_PENALTY_CALCULATION = "propertiesForPenaltyCalculation";
+    public static final String QUERY_DEMAND_BILL_STATUS = "demandBillstatus";
+    public static final String QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR = "INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR";
+    
 
     // Base Rents
     public static final BigDecimal BASERENT_FROM_APRIL2008_BUILDINGS = new BigDecimal("10");
@@ -681,7 +686,7 @@ public interface PropertyTaxConstants {
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DEPT_CODE_TAX = "T";
-    public static final String FUNCTION_CODE = "90919100";
+    public static final String FUNCTION_CODE = "9100";
 
     // Roles
     public static final String CSC_OPERATOR_ROLE = "CSC Operator";
@@ -812,7 +817,7 @@ public interface PropertyTaxConstants {
 
     public static final BigDecimal FIRST_REBATETAX_PERC = new BigDecimal("4");
     public static final BigDecimal SECOND_REBATETAX_PERC = new BigDecimal("2");
-    public static final BigDecimal CHQ_BOUNCE_PENALTY = new BigDecimal("1000");
+    public static final BigDecimal CHQ_BOUNCE_PENALTY = new BigDecimal("750");
 
     // Penalty
     public static final String ARR_LP_DATE_CONSTANT = "01/06/2010";
@@ -1227,6 +1232,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_VACANCY_REMISSION = "Vacancy_Remission";
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
     public static final String APPLICATION_TYPE_GRP = "General_Revision_Petition";
+    public static final String APPLICATION_TYPE_EDIT_DEMAND = "Edit_demand";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
@@ -1379,4 +1385,6 @@ public interface PropertyTaxConstants {
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String ARREARS = "Arrears";
     
+    public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
+    public static final String REVISIONPETITION_STATUS_CODE = "RP";
 }

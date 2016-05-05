@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,16 +36,20 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title>RTGS Ref. No Assignment Search</title>
 </head>
 <body onload="onload()">
-	<s:form action="chequeAssignment" theme="simple" id = "chequeAssignment" name = "chequeAssignment">
+	<s:form action="chequeAssignment" theme="simple" id="chequeAssignment"
+		name="chequeAssignment">
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="RTGS Ref. No. Assignment Search" />
 		</jsp:include>
@@ -59,20 +63,18 @@
 				<tr>
 					<td class="bluebox" width="30%"><s:text
 							name="chq.assignment.paymentvoucherdatefrom" /></td>
-					<td class="bluebox"><s:textfield name="fromDate" id="fromDate"
-							maxlength="20" value="%{fromDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].fromDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
+					<td class="bluebox"><s:textfield id="fromDate" name="fromDate"
+							value="%{fromDate}" data-date-end-date="0d"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" class="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 					<td class="bluebox" width="30%"><s:text
 							name="chq.assignment.paymentvoucherdateto" /></td>
-					<td class="bluebox"><s:textfield name="toDate" id="toDate"
-							maxlength="20" value="%{toDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].toDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+					<td class="bluebox"><s:textfield id="toDate" name="toDate"
+							value="%{toDate}" data-date-end-date="0d"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" class="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 				<tr>
 					<td class="greybox"><s:text name="payment.mode" /><span
@@ -150,45 +152,47 @@
 		<s:hidden name="region" id="region" value="%{region}" />
 	</s:form>
 	<script>
-				var date='<s:date name="currentDate" format="dd/MM/yyyy"/>';
-				function onload()
-				{
-					populatebank_branch();                      
-				}
-							
-				function loadBank(obj)
-				{
-					var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
-					
-					if(obj.options[obj.selectedIndex].value!=-1){
-						populatebank_branch({fundId:obj.options[obj.selectedIndex].value+'&asOnDate='+date});              
-					}else{
-						populatebank_branch();                         
-					}
-				}
-				function loadBankAccount(obj)
-				{
-					var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
-					var fund = document.getElementById('fundId');
-					if(obj.options[obj.selectedIndex].value!=-1)
-					{
-						var x=	obj.options[obj.selectedIndex].value.split("-");
-						//bootbox.alert("heelo"+x);                            
-						document.getElementById("bankbranch").value=x[1];
-						populatebankaccount({branchId:x[1]+'&asOnDate='+date,fundId:fund.options[fund.selectedIndex].value});
-					}
-					
-				}
-				function submitForm(){
-					document.chequeAssignment.action='/EGF/payment/chequeAssignment-searchRTGS.action';
-		    		document.chequeAssignment.submit();
-					}
-			</script>
+		var date = '<s:date name="currentDate" format="dd/MM/yyyy"/>';
+		function onload() {
+			populatebank_branch();
+		}
+
+		function loadBank(obj) {
+			var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
+
+			if (obj.options[obj.selectedIndex].value != -1) {
+				populatebank_branch({
+					fundId : obj.options[obj.selectedIndex].value
+							+ '&asOnDate=' + date
+				});
+			} else {
+				populatebank_branch();
+			}
+		}
+		function loadBankAccount(obj) {
+			var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
+			var fund = document.getElementById('fundId');
+			if (obj.options[obj.selectedIndex].value != -1) {
+				var x = obj.options[obj.selectedIndex].value.split("-");
+				//bootbox.alert("heelo"+x);                            
+				document.getElementById("bankbranch").value = x[1];
+				populatebankaccount({
+					branchId : x[1] + '&asOnDate=' + date,
+					fundId : fund.options[fund.selectedIndex].value
+				});
+			}
+
+		}
+		function submitForm() {
+			document.chequeAssignment.action = '/EGF/payment/chequeAssignment-searchRTGS.action';
+			document.chequeAssignment.submit();
+		}
+	</script>
 	<s:if test="%{!validateUser('chequeassignment')}">
 		<script>
-					document.getElementById('searchBtn').disabled=true;
-					document.getElementById('errorSpan').innerHTML='<s:text name="chq.assignment.invalid.user"/>'
-				</script>
+			document.getElementById('searchBtn').disabled = true;
+			document.getElementById('errorSpan').innerHTML = '<s:text name="chq.assignment.invalid.user"/>'
+		</script>
 	</s:if>
 </body>
 </html>

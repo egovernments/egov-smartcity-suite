@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,26 +24,20 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.bill;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
@@ -60,9 +54,9 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.utils.SequenceGenerator;
-import org.egov.infstr.workflow.Action;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.CommonBean;
 import org.egov.model.voucher.VoucherDetails;
@@ -76,6 +70,12 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.egov.web.actions.voucher.BaseVoucherAction;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class BaseBillAction extends BaseVoucherAction {
     protected static final long serialVersionUID = 6627521670678057404L;
@@ -116,7 +116,7 @@ public class BaseBillAction extends BaseVoucherAction {
     protected VoucherService voucherService;
     protected String mode;
     protected String nextLevel;
-    protected List<Action> validButtons;
+    protected List<WorkflowAction> validButtons;
     protected Integer departmentId;
     protected EisUtilService eisUtilService;
     protected VoucherHelper voucherHelper;
@@ -388,11 +388,11 @@ public class BaseBillAction extends BaseVoucherAction {
         this.nextLevel = nextLevel;
     }
 
-    public List<Action> getValidButtons() {
+    public List<WorkflowAction> getValidButtons() {
         return validButtons;
     }
 
-    public void setValidButtons(final List<Action> validButtons) {
+    public void setValidButtons(final List<WorkflowAction> validButtons) {
         this.validButtons = validButtons;
     }
 

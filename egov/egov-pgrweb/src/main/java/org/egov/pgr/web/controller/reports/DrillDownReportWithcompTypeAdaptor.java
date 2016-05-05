@@ -37,16 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.web.controller.reports;
-
-import java.lang.reflect.Type;
-
-import org.egov.pgr.entity.enums.CitizenFeedback;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.pgr.entity.enums.CitizenFeedback;
+
+import java.lang.reflect.Type;
 
 public class DrillDownReportWithcompTypeAdaptor implements JsonSerializer<DrillDownReportResult> {
 

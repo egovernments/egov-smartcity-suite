@@ -1,10 +1,10 @@
 
 package org.egov.collection.integration.pgi;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.egov.collection.entity.CollectionObjectFactory;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * The PaymentRequestAdaptor class frames the request object for the payment service.

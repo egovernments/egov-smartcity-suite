@@ -1,70 +1,61 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.adtax.service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementRepository;
-import org.egov.adtax.search.contract.HoardingDcbReport;
-import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
-import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgdmCollectedReceipt;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,7 +63,7 @@ public class AdvertisementService {
 
     @Autowired
     private  AdvertisementRepository advertisementRepository;
-  
+   
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -182,54 +173,10 @@ public class AdvertisementService {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
     
-public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoarding) {
-     List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
-    Map<String,BillReceiptInfo> billReceiptInfoMap = new HashMap<String,BillReceiptInfo>();
-        if(hoarding!=null && hoarding.getDemandId()!=null)
- {
-            for (EgDemandDetails demandDtl : hoarding.getDemandId().getEgDemandDetails()) {
-                HoardingDcbReport hoardingReport = new HoardingDcbReport();
-                Set<String> receiptNumbetSet = new HashSet<String>();
-                StringBuffer agencyName = new StringBuffer();
-                StringBuffer receiptNumber = new StringBuffer();
-                hoardingReport.setDemandReason(demandDtl.getEgDemandReason().getEgDemandReasonMaster()
-                        .getReasonMaster());
-                hoardingReport.setInstallmentYearDescription(demandDtl.getEgDemandReason().getEgInstallmentMaster()
-                        .getDescription());
-                hoardingReport.setDemandAmount(demandDtl.getAmount());
-                hoardingReport.setCollectedAmount(demandDtl.getAmtCollected());
-
-                for (EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts()) {
-                    if (!collRecpt.isCancelled()) {
-                        receiptNumbetSet.add(collRecpt.getReceiptNumber());
-                        receiptNumber.append(collRecpt.getReceiptNumber()).append(" ");
-                    }
-                }
-                if (receiptNumbetSet.size() > 0) {
-                    hoardingReport.setReceiptNumber(receiptNumber.toString());
-                    billReceiptInfoMap = collectionIntegrationService.getReceiptInfo(
-                            AdvertisementTaxConstants.SERVICE_CODE, receiptNumbetSet);
-
-                }
-                if (billReceiptInfoMap.size() > 0) {
-                    for (Map.Entry<String, BillReceiptInfo> map : billReceiptInfoMap.entrySet()) {
-                        agencyName.append(map.getValue().getPayeeName());
-                        agencyName.append(" ");
-                    }
-
-                }
-                hoardingReport.setPayeeName(agencyName.toString());
-                HoardingDcbReportResults.add(hoardingReport);
-            }
-        }
-    return HoardingDcbReportResults;
-
-}
-  
-
     public Advertisement findByAdvertisementNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
+    
     public Advertisement findBy(final Long hoardingId) {
         return advertisementRepository.findOne(hoardingId);
     }
@@ -237,4 +184,5 @@ public List<HoardingDcbReport> getHoardingWiseDCBResult(final Advertisement hoar
     public Advertisement getAdvertisementByDemand(final EgDemand demand) {
         return advertisementRepository.findByDemandId(demand);
     }
-}
+    
+    }

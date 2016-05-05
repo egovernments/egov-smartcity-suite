@@ -1,5 +1,6 @@
 <%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %> 
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
+
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.

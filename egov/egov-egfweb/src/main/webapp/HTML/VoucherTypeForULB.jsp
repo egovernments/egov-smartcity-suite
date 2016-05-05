@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 /*
 This File reads the VoucherNumber Generation Type From egf_Config.xml For the ULB.
 Pass The Type of Voucher Tobe generated is 'Journal','Contra','Payment' Or 'Receipt'
@@ -48,7 +50,7 @@ It will read the Value from egf_config.xml for the current ULB And Returns 'Auto
 */
 
 
-<%@ page import="com.exilant.eGov.src.transactions.VoucherTypeForULB,org.apache.log4j.Logger;" %>
+<%@ page import="com.exilant.eGov.src.transactions.VoucherTypeForULB,org.apache.log4j.Logger" %>
 
 
 <% 

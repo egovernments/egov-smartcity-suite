@@ -1,47 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.web.actions.reports;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -55,7 +51,14 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Action class for the cash collection summary report
@@ -73,13 +76,16 @@ public class CollectionSummaryAction extends ReportFormAction {
     private static final String COLLECTION_SUMMARY_TEMPLATE = "collection_summary";
     private static final String EGOV_SOURCE = "EGOV_SOURCE";
     private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
+    private static final String EGOV_SERVICE_NAME = "EGOV_SERVICE_NAME";
 
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
     private CollectionsUtil collectionsUtil;
     @Autowired
     private CollectionReportService reportService;
-
+    @PersistenceContext
+    EntityManager entityManager;
+    
     /**
      * @return the payment mode list to be shown to user in criteria screen
      */
@@ -133,6 +139,10 @@ public class CollectionSummaryAction extends ReportFormAction {
     @Override
     @Action(value = "/reports/collectionSummary-report")
     public String report() {
+        if (getServiceId() != null && getServiceId() != -1) {
+            ServiceDetails serviceDets = (ServiceDetails) entityManager.find(ServiceDetails.class, getServiceId());
+            setServiceName(serviceDets.getName());
+        }
         setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(), getSource(), getServiceId()));
         return super.report();
     }
@@ -214,6 +224,14 @@ public class CollectionSummaryAction extends ReportFormAction {
 
     public void setServiceId(final Long serviceId) {
         setReportParam(EGOV_SERVICE_ID, serviceId);
+    }
+    
+    public Long getServiceName() {
+        return (Long) getReportParam(EGOV_SERVICE_ID);
+    }
+
+    public void setServiceName(final String serviceName) {
+        setReportParam(EGOV_SERVICE_NAME, serviceName);
     }
 
     @Override

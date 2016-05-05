@@ -1,55 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	xsi:schemaLocation="
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"
-	default-lazy-init="true">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	   default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.works" />
-
 	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" 
 		/> <bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" 
 		scope="prototype"> <property name="sessionFactory" ref="egovSessionFactory" 
@@ -85,7 +81,7 @@
 		<property name="type" value="org.egov.works.models.masters.ScheduleCategory"/>
 	</bean>
 	<bean id="worksStatusService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.tender.SetStatus" />
+		<property name="type" value="org.egov.works.models.tender.OfflineStatus" />
 	</bean>
 	
 	<bean class="org.egov.works.services.AbstractEstimateService" id="abstractEstimateService"
@@ -135,13 +131,6 @@
 			ref="sequenceGenerator"/> -->
 	</bean>
 
-	<bean
-		class="org.egov.works.models.contractorBill.ContractorBillNumberGenerator"
-		id="contractorBillNumberGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
-	</bean>
-
 	<bean class="org.egov.works.models.estimate.ProjectCodeGenerator"
 		id="projectcodeGenerator">
 		<!--  <property name="sequenceGenerator" 
@@ -154,10 +143,6 @@
 	</bean>
 	<bean id="overheadService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.masters.Overhead" />
-	</bean>
-
-	<bean id="projectCodeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.estimate.ProjectCode" />
 	</bean>
 
 	<bean id="assetsForEstimateService" parent="persistenceService"
@@ -196,6 +181,7 @@
 	<bean class="org.egov.works.services.TenderResponseService" id="tenderResponseService"
 		parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.tender.TenderResponse" />
+		<property name="persistenceService" ref="persistenceService" />
 		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->
 	</bean>
 
@@ -296,11 +282,6 @@
 		</constructor-arg>
 		<property name="genericService" ref="persistenceService" />
 		<property name="worksService" ref="worksService" />
-		<property name="contractorBillNumberGenerator" ref="contractorBillNumberGenerator" />
-		<property name="egovCommon" ref="egovCommon" />
-		<property name="checklistService" ref="checklistService" />
-		<property name="commonAssetsService" ref="commonAssetsService" />
-		<property name="assetService" ref="assetService" />
 		<property name="tenderResponseService" ref="tenderResponseService" />
 		<property name="contractorAdvanceService" ref="contractorAdvanceService" />
 	</bean>
@@ -375,10 +356,10 @@
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 	</bean>
 
-
+<!-- 
 	<bean id="depositCodeService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.masters.DepositCode" />
-	</bean>
+	</bean> -->
 
 	<bean class="org.egov.works.models.masters.DepositCodeGenerator"
 		id="depositCodeGenerator">
@@ -431,9 +412,6 @@
 		scope="prototype">
 		<property name="type"
 			value="org.egov.works.models.estimate.AbstractEstimateAppropriation" />
-	</bean>
-	<bean id="budgetUsageService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.model.budget.BudgetUsage" />
 	</bean>
 	<bean id="milestoneTemplateService" parent="persistenceService"
 		scope="prototype">
@@ -555,11 +533,16 @@
 	</bean> -->
 
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
-	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"/>
 	<bean id="contractorGradeService" class="org.egov.works.master.services.ContractorGradeService">
 		<property name="type" value="org.egov.commons.ContractorGrade"/>
 	</bean>
 	<bean id="uomService" class="org.egov.works.master.services.UOMService">
 		<property name="type" value="org.egov.common.entity.UOM"/>
 	</bean>
+	<bean id="schemeService" class="org.egov.services.masters.SchemeService">
+      <constructor-arg index="0" value="org.egov.commons.Scheme" />
+    </bean>
+    <bean id="subSchemeService" class="org.egov.services.masters.SubSchemeService" >
+      <constructor-arg index="0" value="org.egov.commons.SubScheme" />
+    </bean>
 </beans>

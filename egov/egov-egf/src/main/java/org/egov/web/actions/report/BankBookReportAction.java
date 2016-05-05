@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,37 +24,22 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.report;
 
-
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import net.sf.jasperreports.engine.JRException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -79,7 +64,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
@@ -90,19 +75,29 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-
-import net.sf.jasperreports.engine.JRException;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = "results", location = "bankBookReport-results.jsp"),
-    @Result(name = "chequeDetails", location = "bankBookReport-chequeDetails.jsp"),
-    @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-            "application/pdf", "contentDisposition", "no-cache;filename=BankBookReport.pdf" }),
-            @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                    "application/xls", "contentDisposition", "no-cache;filename=BankBookReport.xls" })
+        @Result(name = "results", location = "bankBookReport-results.jsp"),
+        @Result(name = "chequeDetails", location = "bankBookReport-chequeDetails.jsp"),
+        @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/pdf", "contentDisposition", "no-cache;filename=BankBookReport.pdf" }),
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=BankBookReport.xls" })
 })
 public class BankBookReportAction extends BaseFormAction {
     /**
@@ -128,7 +123,7 @@ public class BankBookReportAction extends BaseFormAction {
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
     private Fund fundId = new Fund();
-    private CFunction function=new CFunction();
+    private CFunction function = new CFunction();
     private Vouchermis vouchermis = new Vouchermis();
     private Long voucherId;
     private List<InstrumentHeader> chequeDetails = new ArrayList<InstrumentHeader>();
@@ -136,13 +131,13 @@ public class BankBookReportAction extends BaseFormAction {
     private String voucherStr = "";
     private StringBuffer header = new StringBuffer();
     private Date todayDate;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private final List<String> voucherNo = new ArrayList<String>();
     private boolean isCreditOpeningBalance = false;
@@ -153,25 +148,26 @@ public class BankBookReportAction extends BaseFormAction {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
+
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;
     }
 
     @Override
     public String execute() throws Exception {
-    	finYearDate();
+        finYearDate();
         return "form";
     }
+
     public void finYearDate() {
 
         final String financialYearId = financialYearDAO.getCurrYearFiscalId();
         if (financialYearId == null || financialYearId.equals(""))
-        	startDate = new Date();
+            startDate = new Date();
         else
-        	startDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
+            startDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
                     Long.parseLong(financialYearId));
         endDate = null;
-        
 
     }
 
@@ -243,17 +239,17 @@ public class BankBookReportAction extends BaseFormAction {
         if (parameters.containsKey("bankAccount.id") && parameters.get("bankAccount.id")[0] != null) {
             startDate = parseDate("startDate");
             endDate = parseDate("endDate");
-            
-            CFinancialYear financialYear=financialYearDAO.getFinYearByDate(startDate);
-            Date endingDate=financialYear.getEndingDate();
-            
+
+            CFinancialYear financialYear = financialYearDAO.getFinYearByDate(startDate);
+            Date endingDate = financialYear.getEndingDate();
+
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             String endFormat = formatter.format(endDate);
             String endFormat1 = formatter.format(endingDate);
-            if(endFormat.compareTo(endFormat1)>0 ) 
+            if (endFormat.compareTo(endFormat1) > 0)
             {
-            	addActionError(getText("End date should be within a financial year"));
-            	return "results";
+                addActionError(getText("End date should be within a financial year"));
+                return "results";
             }
             setTodayDate(new Date());
             bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
@@ -443,7 +439,7 @@ public class BankBookReportAction extends BaseFormAction {
                                 }
 
                                 listofcheque.append(getStringValue(iv[1])).append(" ")
-                                .append(getDateValue(iv[4]) != null ? sdf.format(getDateValue(iv[4])) : "");
+                                        .append(getDateValue(iv[4]) != null ? sdf.format(getDateValue(iv[4])) : "");
                                 // String chqDate=sdf.format(iv.getInstrumentHeaderId().getInstrumentDate());
                                 if (chequeComp.contains("-MULTIPLE"))
                                 {
@@ -480,19 +476,19 @@ public class BankBookReportAction extends BaseFormAction {
                                         if (chequeNumber != null && !chequeNumber.equalsIgnoreCase("")) {
                                             final String chqDate = getDateValue(instrumentVoucher[4]) != null ? sdf
                                                     .format(getDateValue(instrumentVoucher[4])) : "";
-                                                    voucherStr = chequeNumber + " " + chqDate + "-MULTIPLE";
+                                            voucherStr = chequeNumber + " " + chqDate + "-MULTIPLE";
                                         }
                                         else {
                                             chequeNumber = getStringValue(instrumentVoucher[5]);
                                             final String chqDate = getDateValue(instrumentVoucher[6]) != null ? sdf
                                                     .format(getDateValue(instrumentVoucher[6])) : "";
-                                                    voucherStr = chequeNumber + " " + chqDate + "-MULTIPLE";
+                                            voucherStr = chequeNumber + " " + chqDate + "-MULTIPLE";
                                         }
                                     }
                                     else if (chequeNumber != null && !chequeNumber.equalsIgnoreCase("")) {
                                         final String chqDate = getDateValue(instrumentVoucher[4]) != null ? sdf
                                                 .format(getDateValue(instrumentVoucher[4])) : "";
-                                                voucherStr = chequeNumber + " " + chqDate;
+                                        voucherStr = chequeNumber + " " + chqDate;
                                     }
                                     else {  // voucherStr=" ";
                                         chequeNumber = getStringValue(instrumentVoucher[5]);
@@ -550,14 +546,16 @@ public class BankBookReportAction extends BaseFormAction {
 
     private void getInstrumentVouchersByInstrumentHeaderIds() {
 
-        final List<Object[]> objs = persistenceService.getSession()
+        final List<Object[]> objs = persistenceService
+                .getSession()
                 .createSQLQuery(
                         "SELECT ih.id,vh1.id as voucherHeaderId"
                                 +
                                 " FROM VOUCHERHEADER vh1,egf_instrumentvoucher iv ,egf_instrumentheader ih,egw_status es1 WHERE vh1.id = iv.voucherheaderid AND iv.instrumentheaderid=ih.id"
                                 +
-                                " AND ih.id_status = es1.id AND ih.id in (select ih2.id as instrHeaderId " + getInstrumentsByVoucherIdsQuery + ")")
-                                .list();
+                                " AND ih.id_status = es1.id AND ih.id in (select ih2.id as instrHeaderId "
+                                + getInstrumentsByVoucherIdsQuery + ")")
+                .list();
 
         for (final Object[] obj : objs)
             if (InstrumentHeaderIdsAndInstrumentVouchersMap.containsKey(getLongValue(obj[0])))
@@ -661,11 +659,11 @@ public class BankBookReportAction extends BaseFormAction {
             LOGGER.debug("Main query :" + query1 + queryFrom + OrderBy);
 
         final Query query = persistenceService.getSession().createSQLQuery(query1 + queryFrom + OrderBy)
-                .addScalar("voucherId",new BigDecimalType())
+                .addScalar("voucherId", new BigDecimalType())
                 .addScalar("voucherDate")
                 .addScalar("voucherNumber")
                 .addScalar("particulars")
-                .addScalar("amount",new BigDecimalType())
+                .addScalar("amount", new BigDecimalType())
                 .addScalar("type")
                 .addScalar("chequeDetail")
                 .addScalar("glCode")
@@ -706,12 +704,11 @@ public class BankBookReportAction extends BaseFormAction {
         if (getVouchermis() != null && getVouchermis().getDivisionid() != null && getVouchermis().getDivisionid().getId() != null
                 && getVouchermis().getDivisionid().getId() != -1)
             query.append(" and vmis.DIVISIONID =").append(getVouchermis().getDivisionid().getId().toString());
-       /* if (function != null && function.getId() != null && function.getId() != -1)
-            {
-        	query.append(" and vmis.FUNCTIONID=").append(function.getId().toString());
-            final CFunction func = (CFunction) persistenceService.find("from CFunction where id=?", function.getId());
-            header.append(" in " + func.getName() + " ");
-            }*/
+        /*
+         * if (function != null && function.getId() != null && function.getId() != -1) {
+         * query.append(" and vmis.FUNCTIONID=").append(function.getId().toString()); final CFunction func = (CFunction)
+         * persistenceService.find("from CFunction where id=?", function.getId()); header.append(" in " + func.getName() + " "); }
+         */
         if (getVouchermis() != null && getVouchermis().getFunction() != null
                 && getVouchermis().getFunction().getId() != null && getVouchermis().getFunction().getId() != -1) {
             query.append(" and vmis.functionid=").append(getVouchermis().getFunction().getId());
@@ -719,17 +716,15 @@ public class BankBookReportAction extends BaseFormAction {
                     .getFunction().getId());
             header.append(" in " + func.getName() + " ");
         }
-        
+
         return query.toString();
     }
 
-   /* public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
-        final List<String> result = query.list();
-        if (result != null)
-            return result.get(0);
-        return EMPTY_STRING;
-    }*/
+    /*
+     * public String getUlbName() { final Query query =
+     * persistenceService.getSession().createSQLQuery("select name from companydetail"); final List<String> result = query.list();
+     * if (result != null) return result.get(0); return EMPTY_STRING; }
+     */
 
     Date parseDate(final String stringDate) {
         if (parameters.containsKey(stringDate) && parameters.get(stringDate)[0] != null)
@@ -943,29 +938,29 @@ public class BankBookReportAction extends BaseFormAction {
         InstrumentHeaderIdsAndInstrumentVouchersMap = instrumentHeaderIdsAndInstrumentVouchersMap;
     }
 
-	public AppConfigValueService getAppConfigValuesService() {
-		return appConfigValuesService;
-	}
+    public AppConfigValueService getAppConfigValuesService() {
+        return appConfigValuesService;
+    }
 
-	public void setAppConfigValuesService(
-			AppConfigValueService appConfigValuesService) {
-		this.appConfigValuesService = appConfigValuesService;
-	}
+    public void setAppConfigValuesService(
+            AppConfigValueService appConfigValuesService) {
+        this.appConfigValuesService = appConfigValuesService;
+    }
 
-	public CFunction getFunction() {
-		return function;
-	}
+    public CFunction getFunction() {
+        return function;
+    }
 
-	public void setFunction(CFunction function) {
-		this.function = function;
-	}
-    
-	 public FinancialYearDAO getFinancialYearDAO() {
-	        return financialYearDAO;
-	    }
+    public void setFunction(CFunction function) {
+        this.function = function;
+    }
 
-	    public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
-	        this.financialYearDAO = financialYearDAO;
-	    }
+    public FinancialYearDAO getFinancialYearDAO() {
+        return financialYearDAO;
+    }
+
+    public void setFinancialYearDAO(FinancialYearDAO financialYearDAO) {
+        this.financialYearDAO = financialYearDAO;
+    }
 
 }

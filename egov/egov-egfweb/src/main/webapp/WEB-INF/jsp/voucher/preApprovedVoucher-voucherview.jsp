@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
@@ -61,7 +63,10 @@ function openSource(){
 	if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
 		bootbox.alert('Source is not available');
 	else{
-		var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>'+ '&showMode=view' 
+		if("<s:property value='%{billRegister.expendituretype}' escape='false'/>"!='Expense')
+			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>' ;
+		else
+			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>'+ '&showMode=view';
 		window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
 
 	}   

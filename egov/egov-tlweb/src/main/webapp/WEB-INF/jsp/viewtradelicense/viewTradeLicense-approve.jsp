@@ -37,12 +37,12 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
 		<title><s:text name="page.title.approve.trade" />
 		</title>
-		<sx:head />
 		<script>
 	  		function validateForm(obj) {
 	    		document.forms[0].action = '/tl/newtradelicense/newTradeLicense-approve.action';
@@ -74,7 +74,7 @@
 											</td>
 										</tr>
 									</table>
-									<s:form action="viewTradeLicense" theme="css_xhtml" enctype="multipart/form-data" name="viewForm" validate="true">
+									<s:form action="viewTradeLicense" theme="simple" enctype="multipart/form-data" name="viewForm" validate="true">
 									<s:token/>
 										<s:push value="model">
 											<s:hidden name="docNumber" id="docNumber" />

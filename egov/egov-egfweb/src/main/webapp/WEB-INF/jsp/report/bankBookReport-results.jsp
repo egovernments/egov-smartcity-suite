@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,11 +36,15 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <script language="javascript"
 	src="../resources/javascript/jsCommonMethods.js?rnd=${app_release_no}"></script>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<h5 style="color: red"><s:actionerror /></h5>
+<h5 style="color: red">
+	<s:actionerror />
+</h5>
 <s:if test="%{bankBookViewEntries.size()>0}">
 	<br />
 
@@ -50,13 +54,15 @@
 				<div>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<th class="subheadnew" colspan="14" bgcolor="#CCCCCC" ><center><s:property
-									value="ulbName" /><br /> Bank Book Report for <s:property
-									value="bankAccount.bankbranch.bank.name" />-<s:property
-									value="bankAccount.bankbranch.branchname" />-<s:property
-									value="bankAccount.accountnumber" /> <s:property value="header" />
-								from <s:property value="%{getFormattedDate(startDate)}" /> to <s:property
-									value="%{getFormattedDate(endDate)}" /></center></th>
+							<th class="bluebgheadtd" width="100%" colspan="14"><strong
+								style="font-size: 15px;"><s:property value="ulbName" /><br />
+									Bank Book Report for <s:property
+										value="bankAccount.bankbranch.bank.name" />-<s:property
+										value="bankAccount.bankbranch.branchname" />-<s:property
+										value="bankAccount.accountnumber" /> <s:property
+										value="header" /> from <s:property
+										value="%{getFormattedDate(startDate)}" /> to <s:property
+										value="%{getFormattedDate(endDate)}" /> </strong></th>
 						</tr>
 
 					</table>
@@ -171,4 +177,7 @@
 	</tr>
 	</table>
 </s:if>
-<s:else><h5 style="color: red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No data found</h5></s:else>
+<s:else>
+	<h5 style="color: red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No
+		data found</h5>
+</s:else>

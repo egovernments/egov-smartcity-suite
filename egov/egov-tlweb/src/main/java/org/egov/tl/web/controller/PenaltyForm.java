@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.web.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.egov.tl.web.controller;
 
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PenaltyForm {
     private LicenseAppType licenseAppType;

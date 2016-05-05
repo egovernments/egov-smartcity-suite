@@ -37,11 +37,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
 <title><s:text name="page.title.renewtrade" /></title>
-<sx:head />
 </head>
 <body>
 	<div class="row">

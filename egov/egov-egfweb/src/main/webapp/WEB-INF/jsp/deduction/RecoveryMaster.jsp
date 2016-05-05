@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,26 +36,23 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
-<%@ page import="java.util.*"%>
-<%@ page import="java.text.*"%>
-<%@ page import="java.math.*"%>
 <%@ page import="org.apache.log4j.Logger"%>
-<%@ page import="org.egov.infstr.utils.EgovMasterDataCaching"%>
-<%@ page import="org.egov.commons.EgwTypeOfWork"%>
-<%@ page import="org.egov.commons.EgPartytype"%>
-<%@ page import="org.egov.commons.EgwTypeOfWork"%>
 <%@ page import="org.egov.deduction.client.RecoverySetupForm"%>
+<%@ page import="org.egov.infstr.utils.EgovMasterDataCaching"%>
+<%@ page import="java.util.ArrayList"%>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>eGov - Recovery Masters</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>eGov - Recovery Masters</title>
 
-<%
+	<%
 	RecoverySetupForm rsf = (RecoverySetupForm)request.getAttribute("RecoverySetupForm");
 	Logger logger = Logger.getLogger(getClass().getName()); 
 

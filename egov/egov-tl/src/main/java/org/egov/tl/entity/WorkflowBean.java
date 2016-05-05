@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.entity;
 
-import java.util.List;
+package org.egov.tl.entity;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Designation;
+
+import java.util.List;
 
 public class WorkflowBean {
     private String actionName;

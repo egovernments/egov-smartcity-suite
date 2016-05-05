@@ -1,42 +1,43 @@
-<!-- #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
@@ -53,16 +54,16 @@
 		<title>Citizen Portal Registration</title>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		<script src='https://www.google.com/recaptcha/api.js'></script>
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
 	</head>
 	<body class="page-body">
@@ -103,7 +104,7 @@
                              <div class="form-group" id="wrap">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-user theme-color style-color"></i>
+										<i class="fa fa-user theme-color style-color"></i>
 									</div>
 									<form:input path="username" cssClass="form-control style-form patternvalidation" data-pattern="username" id="username" placeholder="Username" minlength="2" maxlength="64" autocomplete="off" required="required" data-container="#wrap" data-toggle="popover" data-content="Should contain only upper case, lower case alphabet, number, underscore and dot"/>
 									<span class="mandatory set-mandatory"></span>
@@ -115,7 +116,7 @@
 								<div class="col-md-6" style="margin:0">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-key theme-color style-color"></i>
+											<i class="fa fa-key theme-color style-color"></i>
 										</div>
 										<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" maxlength="32" autocomplete="new-password" required="required" data-container="#wrap" data-toggle="popover" data-content='${pwdmsg}' />
 										<span class="mandatory set-mandatory"></span>
@@ -124,7 +125,7 @@
 								<div class="col-md-6" style="margin:0">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-key theme-color style-color"></i>
+											<i class="fa fa-key theme-color style-color"></i>
 										</div>
 										<input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password" 
 										autocomplete="new-password" required="required" maxlength="32"/><span class="mandatory set-mandatory"></span>
@@ -138,7 +139,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-user theme-color style-color"></i>
+										<i class="fa fa-user theme-color style-color"></i>
 									</div>
 									<form:input path="name" cssClass="form-control style-form patternvalidation" data-pattern="alphabetwithspace" id="name" placeholder="Full name" minlength="2" maxlength="100" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
@@ -148,7 +149,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-mobile theme-color style-color"></i>
+										<i class="fa fa-phone theme-color style-color"></i>
 									</div>
 									<form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="is_valid_number" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
@@ -158,7 +159,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-mail theme-color style-color"></i>
+										<i class="fa fa-envelope theme-color style-color"></i>
 									</div>
 									<form:input path="emailId" cssClass="form-control style-form" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Enter vaild Email ID!" id="emailId" placeholder="Email" minlength="5" maxlength="128" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
@@ -219,7 +220,7 @@
 		                                <div class="form-group">
 		                                    <div class="input-group">
 		                                        <div class="input-group-addon style-label">
-		                                            <i class="entypo-key theme-color style-color"></i>
+		                                            <i class="fa fa-key theme-color style-color"></i>
 		                                        </div>
 		                                        <input style="display:none" type="password">
 		                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" />

@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.search.elastic.entity;
 
-import java.util.Date;
+package org.egov.infra.search.elastic.entity;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
 import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
+
+import java.util.Date;
 
 /**
  * Builder class for Application Index

@@ -1,3 +1,43 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 $(document).ready(function(){
 	try{
 		$.fn.dataTable.moment( 'DD/MM/YYYY' );
@@ -107,23 +147,43 @@ $(document).ready(function(){
 			"bDestroy": true,
 			"ajax": "/adtax/hoarding/search-adtax-result?"+$("#adtaxsearchform").serialize(),
 			"columns" : [
+			              { "data" : "agencyName", "title": "Agency"},
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
 						  { "data" : "applicationFromDate", "title": "Application Date"},
-						  { "data" : "agencyName", "title": "Agency"},
 						  { "data" : "pendingDemandAmount", "title": "Amount"},
 						  { "data" : "penaltyAmount", "title": "Penalty Amount"},
+						  { "data" : "totalAmount", "title": "Total Amount"},
 						  { "data" : "permissionNumber", "visible": false},
 						  { "data" : "permitStatus", "visible": false},
 						  { "data" : "id", "visible": false},
+						  { "data" : "isLegacy", "visible":false},
 						  {"title" : "Actions","sortable":false,
 				        	   render : function(data, type, row) {
-				        			   if (undefined != row.permissionNumber && (row.permitStatus=="ADTAXPERMITGENERATED" || row.permitStatus=="ADTAXAMTPAYMENTPAID")) {
-				        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option><option value="0">Generate Permit Order</option><option value="1">Generate Demand Notice</option></select>');   
-				        				   }else if(row.permitStatus=="APPROVED"){
-				        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option><option value="1">Generate Demand Notice</option></select>'); 
-				        				   }else
-				        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option></select>')
+				        		   
+				        		   	 if(row.permitStatus=="APPROVED"){
+				        		   		 if(row.totalAmount==0){
+				        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>');
+				        		   		 }
+				        		   		 else{
+			        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option><option value="1">Generate Demand Notice</option></select>');
+				        		   		 }
+				        		   	  } 
+				        		   	 else if(row.permitStatus=="ADTAXAMTPAYMENTPAID" || row.permitStatus=="ADTAXPERMITGENERATED"){
+				        		   		  if(row.isLegacy==true && row.totalAmount==0){
+				        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
+				        		   		  }
+				        		   		  else if(row.isLegacy==true && row.totalAmount!=0){
+				        		   			 return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="1">Generate Demand Notice</option><option value="2">View</option></select>');
+				        		   		  }
+				        		   		  else
+				        		   			  {
+					        		   			return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="0">Generate Permit Order</option><option value="2">View</option></select>'); 
+				        		   			  }
+			        				  } 
+				        		   	 else
+			        					   return ('<select class="dropchange" id="adtaxdropdown" ><option>Select from Below</option><option value="2">View</option></select>');
+				        		   		
 				        			   }}],
 						  "aaSorting": [[4, 'asc']] 
 				});
@@ -137,7 +197,7 @@ $(document).ready(function(){
 	$("#adtax_search").on('change','tbody tr td .dropchange',
 			function() {
 			//var applicationNumber = oTable.fnGetData($(this).parent().parent(), 1);
-			var adtaxid= oTable.fnGetData($(this).parent().parent(), 8);
+			var adtaxid= oTable.fnGetData($(this).parent().parent(), 9);
 			//var advertisementNumber = oTable.fnGetData($(this).parent().parent(), 0);
 						if (this.value == 0) {
 							var url = '/adtax/advertisement/permitOrder/'+ adtaxid;

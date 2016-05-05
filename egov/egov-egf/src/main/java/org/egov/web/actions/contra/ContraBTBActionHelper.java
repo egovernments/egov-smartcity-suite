@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,29 +24,20 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.contra;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
@@ -73,6 +64,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Transactional(readOnly = true)
 @Service
@@ -104,6 +104,7 @@ public class ContraBTBActionHelper {
     public CVoucherHeader create(ContraBean contraBean, ContraJournalVoucher contraVoucher, CVoucherHeader voucherHeader)
             throws Exception {
         try {
+            voucherHeader2 = null;
             final List<InstrumentHeader> instrumentList = instrumentService.addToInstrument(createInstruments(contraBean,
                     contraVoucher, voucherHeader));
             if (contraBean.getToFundId() != null && !voucherHeader.getFundId().getId().equals(contraBean.getToFundId()))
@@ -125,7 +126,15 @@ public class ContraBTBActionHelper {
                 contraVoucher2 = addOrupdateContraJournalVoucher(
                         contraVoucher2, instrumentList2.get(0), voucherHeader2, contraBean);
                 updateInstrument(instrumentList2.get(0), voucherHeader2);
-            }
+            } else {
+                List<Map<String, Object>> iList = new ArrayList<Map<String, Object>>();
+                iList = createInstrumentsForReceipt(contraBean,
+                        contraVoucher, voucherHeader);
+                final List<InstrumentHeader> receiptInstrumentList = instrumentService.addToInstrument(iList);
+                updateInstrument(receiptInstrumentList.get(0), voucherHeader);
+                contraVoucher = addOrupdateContraJournalVoucher(contraVoucher,
+                        receiptInstrumentList.get(0), voucherHeader, contraBean);
+            }   
         } catch (final ValidationException e)
         {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
@@ -205,7 +214,7 @@ public class ContraBTBActionHelper {
                 // change this to advice type later
                 iMap
                         .put("Instrument type",
-                                FinancialConstants.INSTRUMENT_TYPE_ONLINE);
+                                FinancialConstants.INSTRUMENT_TYPE_ADVICE);
             }
             iMap.put("Is pay cheque", "0");
             iList.add(iMap);
@@ -294,7 +303,7 @@ public class ContraBTBActionHelper {
             // change this to advice type later
             iMap
                     .put("Instrument type",
-                            FinancialConstants.INSTRUMENT_TYPE_ONLINE);
+                            FinancialConstants.INSTRUMENT_TYPE_ADVICE);
         }
         iMap.put("Is pay cheque", "1");
         iList.add(iMap);
@@ -375,7 +384,7 @@ public class ContraBTBActionHelper {
             headerDetails.remove(VoucherConstant.FUNDSOURCECODE);
             headerDetails.remove(VoucherConstant.DIVISIONID);
             headerDetails.remove(VoucherConstant.FUNCTIONARYCODE);
-            headerDetails.put(VoucherConstant.REFVOUCHER,voucher.getId());
+            headerDetails.put(VoucherConstant.REFVOUCHER, voucher.getId());
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, contraBean.getAmount()
                     .toString());

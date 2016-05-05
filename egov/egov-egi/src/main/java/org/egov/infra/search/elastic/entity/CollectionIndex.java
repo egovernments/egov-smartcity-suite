@@ -37,10 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.search.elastic.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,12 +53,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * ApplicationIndex class
@@ -123,13 +123,13 @@ public class CollectionIndex extends AbstractAuditable {
     private String billNumber;
 
     @Length(max = 50)
-    @Searchable(name = "consumercode", group = Searchable.Group.CLAUSES)
+    @Searchable(name = "consumercode", group = Searchable.Group.COMMON)
     private String consumerCode;
 
     @NotNull
     @Length(max = 250)
-    @Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
-    private String ulbName;
+    @Searchable(name = "cityname", group = Searchable.Group.CLAUSES)
+    private String cityName;
 
     @Length(max = 250)
     @Searchable(name = "districtname", group = Searchable.Group.CLAUSES)
@@ -153,14 +153,32 @@ public class CollectionIndex extends AbstractAuditable {
     @Searchable(name = "currentcess", group = Searchable.Group.SEARCHABLE)
     private BigDecimal currentCess;
 
+    @Length(max = 50)
     @Searchable(name = "installmentfrom", group = Searchable.Group.SEARCHABLE)
     private String installmentFrom;
 
+    @Length(max = 50)
     @Searchable(name = "installmentto", group = Searchable.Group.SEARCHABLE)
     private String installmentTo;
 
-    @Searchable(name = "payeename", group = Searchable.Group.SEARCHABLE)
-    private String payeeName;
+    @Length(max = 256)
+    @Searchable(name = "consumername", group = Searchable.Group.SEARCHABLE)
+    private String consumerName;
+
+    @Searchable(name = "reductionamount", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal reductionAmount;
+
+    @Length(max = 50)
+    @Searchable(name = "citygrade", group = Searchable.Group.CLAUSES)
+    private String cityGrade;
+
+    @Length(max = 10)
+    @Searchable(name = "citycode", group = Searchable.Group.CLAUSES)
+    private String cityCode;
+
+    @Length(max = 100)
+    @Searchable(name = "receiptcreator", group = Searchable.Group.CLAUSES)
+    private String receiptCreator;
 
     @Override
     public Long getId() {
@@ -276,12 +294,12 @@ public class CollectionIndex extends AbstractAuditable {
         this.consumerCode = consumerCode;
     }
 
-    public String getUlbName() {
-        return ulbName;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
+    public void setCityName(final String cityName) {
+        this.cityName = cityName;
     }
 
     public String getDistrictName() {
@@ -332,12 +350,12 @@ public class CollectionIndex extends AbstractAuditable {
         this.currentCess = currentCess;
     }
 
-    public String getPayeeName() {
-        return payeeName;
+    public String getConsumerName() {
+        return consumerName;
     }
 
-    public void setPayeeName(final String payeeName) {
-        this.payeeName = payeeName;
+    public void setConsumerName(final String consumerName) {
+        this.consumerName = consumerName;
     }
 
     /**
@@ -367,10 +385,66 @@ public class CollectionIndex extends AbstractAuditable {
     public void setInstallmentTo(final String installmentTo) {
         this.installmentTo = installmentTo;
     }
-    
+
     @Override
     public String getIndexId() {
-        return EgovThreadLocals.getCityCode()+"-"+getReceiptNumber();
+        return EgovThreadLocals.getCityCode() + "-" + getReceiptNumber();
+    }
+
+    /**
+     * @return the reductionAmount
+     */
+    public BigDecimal getReductionAmount() {
+        return reductionAmount;
+    }
+
+    /**
+     * @param reductionAmount the reductionAmount to set
+     */
+    public void setReductionAmount(BigDecimal reductionAmount) {
+        this.reductionAmount = reductionAmount;
+    }
+
+    /**
+     * @return the cityGrade
+     */
+    public String getCityGrade() {
+        return cityGrade;
+    }
+
+    /**
+     * @param cityGrade the cityGrade to set
+     */
+    public void setCityGrade(String cityGrade) {
+        this.cityGrade = cityGrade;
+    }
+
+    /**
+     * @return the ulbCode
+     */
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    /**
+     * @param ulbCode the ulbCode to set
+     */
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    /**
+     * @return the receiptCreator
+     */
+    public String getReceiptCreator() {
+        return receiptCreator;
+    }
+
+    /**
+     * @param receiptCreator the receiptCreator to set
+     */
+    public void setReceiptCreator(String receiptCreator) {
+        this.receiptCreator = receiptCreator;
     }
 
 }

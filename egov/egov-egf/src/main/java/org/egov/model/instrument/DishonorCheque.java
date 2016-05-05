@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,51 +24,102 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.model.instrument;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
+import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "EGF_DISHONORCHEQUE")
+@SequenceGenerator(name = DishonorCheque.SEQ_EGF_DISHONORCHEQUE, sequenceName = DishonorCheque.SEQ_EGF_DISHONORCHEQUE, allocationSize = 1)
 public class DishonorCheque extends StateAware {
 
     private static final long serialVersionUID = -6134188498111765210L;
+    public static final String SEQ_EGF_DISHONORCHEQUE = "SEQ_EGF_DISHONORCHQ";
+    @Id
+    @GeneratedValue(generator = SEQ_EGF_DISHONORCHEQUE, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "instrumentheaderid")
     private InstrumentHeader instrumentHeader;
+
+    @Transient
     private Integer payinSlipCreator;
+
+    @Transient
     private User payinSlipCreatorUser;
+
+    @ManyToOne
+    @JoinColumn(name = "originalvhid")
     private CVoucherHeader originalVoucherHeader;
+
+    @ManyToOne
+    @JoinColumn(name = "statusid")
     private EgwStatus status;
+
+    @Column(name = "bankcharges")
     private BigDecimal bankChargesAmt;
 
+    @ManyToOne
+    @JoinColumn(name = "bankchargeglcodeid")
     private CChartOfAccounts bankchargeGlCodeId;
+
     private Date transactionDate;
+
+    @Length(max = 20)
     private String bankReferenceNumber;
+
     private String instrumentDishonorReason;
+
     private String bankreason;
+
+    @ManyToOne
+    @JoinColumn(name = "reversalvhid")
     private CVoucherHeader reversalVoucherHeader;
+
+    @ManyToOne
+    @JoinColumn(name = "bankchargesvhid")
     private CVoucherHeader bankchargesVoucherHeader;
+    @Transient
     private boolean firstStepWk;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "header", targetEntity = DishonorChequeDetails.class)
     private Set<DishonorChequeDetails> details = new HashSet<DishonorChequeDetails>(0);
 
     @Override

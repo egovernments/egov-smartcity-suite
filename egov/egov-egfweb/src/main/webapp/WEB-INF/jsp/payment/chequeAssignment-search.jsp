@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
@@ -59,26 +61,24 @@
 			</div>
 			<table align="center" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
-					<td style="width: 5%"></td>
-					<td class="bluebox" width="30%"><s:text
+					<td class="bluebox"></td>
+					<td class="bluebox"><s:text
 							name="chq.assignment.paymentvoucherdatefrom" /></td>
-					<td class="bluebox"><s:textfield name="fromDate" id="fromDate"
-							maxlength="20" value="%{fromDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].fromDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
-					<td class="bluebox" width="30%"><s:text
+					<td class="bluebox"><s:textfield id="fromDate" name="fromDate"
+							value="%{fromDate}" data-date-end-date="0d"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" class="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+					<td class="bluebox"><s:text
 							name="chq.assignment.paymentvoucherdateto" /></td>
-					<td class="bluebox"><s:textfield name="toDate" id="toDate"
-							maxlength="20" value="%{toDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].toDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+					<td class="bluebox"><s:textfield id="toDate" name="toDate"
+							value="%{toDate}" data-date-end-date="0d"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" class="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 				<tr>
-					<td style="width: 5%"></td>
+					<td class="greybox"></td>
 					<td class="greybox"><s:text name="payment.mode" /><span
 						class="mandatory"></span></td>
 					<td class="greybox"><s:radio id="paymentMode"
@@ -91,7 +91,7 @@
 							id="voucherNumber" value="%{voucherNumber}" /></td>
 				</tr>
 				<tr>
-					<td style="width: 5%"></td>
+					<td class="greybox"></td>
 					<td class="bluebox"><s:text name="chq.assignment.billtype" />
 					</td>
 					<td class="bluebox"><s:select name="billType" id="billType"
@@ -100,7 +100,7 @@
 				</tr>
 				<jsp:include page="../voucher/vouchertrans-filter.jsp" />
 				<tr>
-					<td style="width: 5%"></td>
+					<td class="greybox"></td>
 					<egov:ajaxdropdown id="bank_branch" fields="['Text','Value']"
 						dropdownId="bank_branch"
 						url="voucher/common-ajaxLoadBanksWithApprovedPayments.action" />
@@ -122,11 +122,13 @@
 							value="%{bankaccount}" /></td>
 				</tr>
 				<tr>
-					<td style="width: 5%"></td>
+					<td class="greybox"></td>
 					<td class="bluebox"><s:text
 							name="chq.assignment.re-assignsurrendercheque" /></td class="bluebox">
 					<td class="bluebox"><s:checkbox id="reassignSurrenderChq"
 							name="reassignSurrenderChq" /></td class="bluebox">
+					<td class="greybox"></td>
+					<td class="greybox"></td>
 				</tr>
 			</table>
 			<div class="buttonbottom">

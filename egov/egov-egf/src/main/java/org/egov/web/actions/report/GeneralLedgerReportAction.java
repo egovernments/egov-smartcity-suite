@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,29 +24,26 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.report;
 
-
-
-import org.egov.infstr.services.PersistenceService;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.exilant.eGov.src.reports.GeneralLedgerReport;
+import com.exilant.eGov.src.reports.GeneralLedgerReportBean;
+import com.exilant.exility.common.TaskFailedException;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -63,26 +60,22 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-
-import com.exilant.eGov.src.reports.GeneralLedgerReport;
-import com.exilant.eGov.src.reports.GeneralLedgerReportBean;
-import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.LinkedList;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "generalLedgerReport-"
-            + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp"),
-            @Result(name = "results", location = "generalLedgerReport-results.jsp"),
-            @Result(name = "searchResult", location = "generalLedgerReport-searchDrilldown.jsp")
+        @Result(name = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH, location = "generalLedgerReport-"
+                + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp"),
+        @Result(name = "results", location = "generalLedgerReport-results.jsp"),
+        @Result(name = "searchResult", location = "generalLedgerReport-searchDrilldown.jsp")
 })
 public class GeneralLedgerReportAction extends BaseFormAction {
 
@@ -92,14 +85,14 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     private static final long serialVersionUID = 4734431707050536319L;
     private static final Logger LOGGER = Logger.getLogger(GeneralLedgerReportAction.class);
     private GeneralLedgerReportBean generalLedgerReportBean = new GeneralLedgerReportBean();
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     @Qualifier("generalLedgerReport")
     private GeneralLedgerReport generalLedgerReport;
-    
+
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     protected LinkedList generalLedgerDisplayList = new LinkedList();
     String heading = "";
@@ -120,21 +113,21 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     public Object getModel() {
         return generalLedgerReportBean;
     }
-    
-   
 
     @SuppressWarnings("unchecked")
-	public void prepareNewForm() {
+    public void prepareNewForm() {
         super.prepare();
-        
-       
-       allChartOfAccounts = persistenceService.findAllBy("select ca from CChartOfAccounts ca where"
+
+        allChartOfAccounts = persistenceService
+                .findAllBy(
+                        "select ca from CChartOfAccounts ca where"
                                 +
                                 " ca.glcode not in(select glcode from CChartOfAccounts where glcode like '47%' and glcode not like '471%' and glcode !='4741')"
                                 +
                                 " and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') " +
                                 " and ca.isActiveForPosting=true and ca.classification=4  and ca.glcode like ?", glCode + "%");
-        addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
+        addDropdownData("fundList",
+                persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
         addDropdownData("fundsourceList",
@@ -183,22 +176,23 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     @Action(value = "/report/generalLedgerReport-searchDrilldown")
     public String searchDrilldown()
     {
-    	persistenceService.getSession().setDefaultReadOnly(true);
-    persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
-    if (LOGGER.isDebugEnabled())
-        LOGGER.debug("GeneralLedgerAction | Search | start");
-    try {
-        generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
-    } catch (final Exception e) {
-        e.printStackTrace();
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("GeneralLedgerAction | Search | start");
+        try {
+            generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("GeneralLedgerAction | list | End");
+        heading = getGLHeading();
+        generalLedgerReportBean.setHeading(getGLHeading());
+        prepareNewForm();
+        return "searchResult";
     }
-    if (LOGGER.isDebugEnabled())
-        LOGGER.debug("GeneralLedgerAction | list | End");
-    heading = getGLHeading();
-    generalLedgerReportBean.setHeading(getGLHeading());
-    prepareNewForm();
-    	return "searchResult";
-    }
+
     private String getGLHeading() {
 
         String heading = "";
@@ -207,21 +201,22 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         if (checkNullandEmpty(generalLedgerReportBean.getGlCode1()) && checkNullandEmpty(generalLedgerReportBean.getGlCode1())) {
             glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?",
                     generalLedgerReportBean.getGlCode1());
-            if(generalLedgerReportBean.getFund_id().isEmpty())
+            if (generalLedgerReportBean.getFund_id().isEmpty())
             {
-            	fund = (Fund) persistenceService.find("from Fund where id = ?", 0);
+                fund = (Fund) persistenceService.find("from Fund where id = ?", 0);
             }
             else
-            fund = (Fund) persistenceService.find("from Fund where id = ?", Integer.parseInt(generalLedgerReportBean.getFund_id()));
+                fund = (Fund) persistenceService.find("from Fund where id = ?",
+                        Integer.parseInt(generalLedgerReportBean.getFund_id()));
         }
-        if(fund==null)
+        if (fund == null)
         {
-        	heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() 
+            heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName()
                     + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
         }
         else
-        heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() + " for " + fund.getName()
-                + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
+            heading = "General Ledger Report for " + glCode.getGlcode() + ":" + glCode.getName() + " for " + fund.getName()
+                    + " from " + generalLedgerReportBean.getStartDate() + " to " + generalLedgerReportBean.getEndDate();
         if (checkNullandEmpty(generalLedgerReportBean.getDepartmentId()))
         {
             final Department dept = (Department) persistenceService.find("from Department where id = ?",
@@ -260,29 +255,28 @@ public class GeneralLedgerReportAction extends BaseFormAction {
 
     }
 
-    
     public GeneralLedgerReportBean getGeneralLedgerReportBean() {
-		return generalLedgerReportBean;
-	}
+        return generalLedgerReportBean;
+    }
 
-	public void setGeneralLedgerReportBean(
-			GeneralLedgerReportBean generalLedgerReportBean) {
-		this.generalLedgerReportBean = generalLedgerReportBean;
-	}
+    public void setGeneralLedgerReportBean(
+            GeneralLedgerReportBean generalLedgerReportBean) {
+        this.generalLedgerReportBean = generalLedgerReportBean;
+    }
 
-	public GeneralLedgerReport getGeneralLedgerReport() {
-		return generalLedgerReport;
-	}
+    public GeneralLedgerReport getGeneralLedgerReport() {
+        return generalLedgerReport;
+    }
 
-	public void setGeneralLedgerReport(GeneralLedgerReport generalLedgerReport) {
-		this.generalLedgerReport = generalLedgerReport;
-	}
+    public void setGeneralLedgerReport(GeneralLedgerReport generalLedgerReport) {
+        this.generalLedgerReport = generalLedgerReport;
+    }
 
     public String getHeading() {
         return heading;
     }
 
-	public void setHeading(final String heading) {
+    public void setHeading(final String heading) {
         this.heading = heading;
     }
 
@@ -294,22 +288,22 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         this.generalLedgerDisplayList = generalLedgerDisplayList;
     }
 
-	public AppConfigValueService getAppConfigValuesService() {
-		return appConfigValuesService;
-	}
+    public AppConfigValueService getAppConfigValuesService() {
+        return appConfigValuesService;
+    }
 
-	public void setAppConfigValuesService(
-			AppConfigValueService appConfigValuesService) {
-		this.appConfigValuesService = appConfigValuesService;
-	}
+    public void setAppConfigValuesService(
+            AppConfigValueService appConfigValuesService) {
+        this.appConfigValuesService = appConfigValuesService;
+    }
 
-	public PersistenceService<CChartOfAccounts, Long> getChartOfAccountsService() {
-		return chartOfAccountsService;
-	}
+    public PersistenceService<CChartOfAccounts, Long> getChartOfAccountsService() {
+        return chartOfAccountsService;
+    }
 
-	public void setChartOfAccountsService(
-			PersistenceService<CChartOfAccounts, Long> chartOfAccountsService) {
-		this.chartOfAccountsService = chartOfAccountsService;
-	}
+    public void setChartOfAccountsService(
+            PersistenceService<CChartOfAccounts, Long> chartOfAccountsService) {
+        this.chartOfAccountsService = chartOfAccountsService;
+    }
 
 }

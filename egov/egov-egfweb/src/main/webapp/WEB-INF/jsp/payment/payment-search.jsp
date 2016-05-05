@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
@@ -84,19 +86,17 @@
 				<tr>
 					<td class="bluebox"></td>
 					<td class="greybox"><s:text name="payment.billdatefrom" /></td>
-					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-							maxlength="20" value="%{fromDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].fromDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield id="fromDate" name="fromDate"
+							value="%{fromDate}" data-date-end-date="0d"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" class="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 					<td class="greybox"><s:text name="payment.billdateto" /></td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate"
-							maxlength="20" value="%{toDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].toDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+					<td class="greybox"><s:textfield id="toDate" name="toDate"
+							value="%{toDate}" data-date-end-date="0d"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" class="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 				<tr>
 					<td class="bluebox"></td>

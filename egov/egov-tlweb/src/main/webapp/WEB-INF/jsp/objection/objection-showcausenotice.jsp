@@ -37,11 +37,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
-		<sx:head />
 		<title>Record Inspection/Response</title>
 		<script>
 			 function validateForm(obj) {
@@ -93,7 +93,7 @@
 									<div class="headingbg">
 										<s:text name="Show Cause Notice" />
 									</div>
-									<s:form action="objection" theme="css_xhtml" name="showCauseNoticeForm" validate="true">
+									<s:form action="objection" theme="simple" name="showCauseNoticeForm" validate="true">
 									<s:token/>
 										<s:hidden name="workflowBean.actionName" id="workflowBean.actionName" />
 										<s:hidden name="activities[0].type" value="SCNotice" />

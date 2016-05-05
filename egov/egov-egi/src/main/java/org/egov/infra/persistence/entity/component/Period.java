@@ -37,13 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.persistence.entity.component;
 
-import java.util.Date;
+package org.egov.infra.persistence.entity.component;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.util.Date;
 
 @Embeddable
 public class Period {

@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <s:set var="cntr" value="0" />
 <s:iterator var="act" value="activities" status="status">
 	<s:if test="#act.type == 'Inspection'">

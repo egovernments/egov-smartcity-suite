@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
@@ -44,7 +45,6 @@
 	<head>
 		<title><s:text name="page.title.renewalnoticetrade" />
 		</title>
-		<sx:head />
 		<script>
 		function printNotice() {
 			var html="<html>";

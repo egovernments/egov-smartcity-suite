@@ -1,7 +1,4 @@
 package org.egov.collection.entity;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 public class AccountPayeeDetailTest {  /*extends AbstractPersistenceServiceTest<AccountPayeeDetail,Long> {
 	private CollectionObjectFactory factory;

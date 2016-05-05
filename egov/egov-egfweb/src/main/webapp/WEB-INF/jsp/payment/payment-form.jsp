@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,14 +36,18 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 <head>
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+<link rel="stylesheet"
+	href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
 	TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 </head>
@@ -665,23 +669,18 @@
 				}
 			</s:if>
 			if(!balanceCheck()){
-				bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
-					  if(result)
-						  {
-						  	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
-							document.forms[0].submit();
-						  }
-					  else
-						  {
-						  undoLoadingMask();
-						  }
-					}); 
+				 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+				 if (msg == true) {
+					 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
+					return true;
+				 } else {
+					 undoLoadingMask();
+				   	return false;
+				}
 			}else{
 				document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
-				document.forms[0].submit();
+				return true;
 				}
-			
-			return false;
 		}
 		function checkLength(obj)
 		{

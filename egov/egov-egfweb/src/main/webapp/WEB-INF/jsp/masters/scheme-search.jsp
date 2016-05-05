@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
@@ -116,21 +118,20 @@
 					<td style="width: 10%"></td>
 					<td class="greybox"><s:text name="scheme.startDate" /></td>
 					<td class="greybox"><s:date name="validfrom" id="validfromId"
-							format="dd/MM/yyyy" /> <s:textfield name="validfrom"
-							id="validfromId" value="%{validfrom}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('schemeForm.validfrom',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							format="dd/MM/yyyy" />
+						<s:textfield id="validfromId" name="validfrom"
+							value="%{validfrom}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 
 					<td class="greybox"><s:text name="scheme.endDate" /></td>
 					<td class="greybox"><s:date name="validto" id="validtoId"
-							format="dd/MM/yyyy" /> <s:textfield name="validto" id="validtoId"
-							value="%{validto}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('schemeForm.validto',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							format="dd/MM/yyyy" /> <s:textfield id="validtoId"
+							name="validto" value="%{validto}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 
 			</table>
@@ -164,7 +165,7 @@
 					<th class="bluebgheadtd" style="width: 4%; text-align: center"
 						align="center">End Date</th>
 					<th class="bluebgheadtd" style="width: 4%; text-align: center"
-						align="center">IsActive</th>
+						align="center">Active Y/N</th>
 				</tr>
 				<c:set var="trclass" value="greybox" />
 				<s:iterator var="scheme" value="schemeList" status="f">
@@ -184,7 +185,8 @@
 						<td class="<c:out value="${trclass}"/>" style="text-align: center"
 							align="center"><s:date name="%{validto}" format="dd/MM/yyyy" /></td>
 						<td class="<c:out value="${trclass}"/>" style="text-align: center"
-							align="center"><s:property value="isactive" /></td>
+							align="center"><s:if test="%{isactive==true}">Yes</s:if>
+						<s:else>No</s:else></td>
 						<c:choose>
 							<c:when test="${trclass=='greybox'}">
 								<c:set var="trclass" value="bluebox" />

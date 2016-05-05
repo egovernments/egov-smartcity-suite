@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.collection.utils;
@@ -44,6 +44,7 @@ import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.OnlinePayment;
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
@@ -53,6 +54,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
@@ -78,10 +80,10 @@ import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
@@ -92,17 +94,19 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CollectionsUtil {
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
-    private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>(0);
     public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     private PersistenceService persistenceService;
     @Autowired
@@ -137,6 +141,8 @@ public class CollectionsUtil {
     private EgwStatusHibernateDAO egwStatusDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -145,21 +151,8 @@ public class CollectionsUtil {
      * @return the Status object for given status code for a receipt
      */
     public EgwStatus getReceiptStatusForCode(final String statusCode) {
-        EgwStatus status = statusMap.get(statusCode);
-
-        synchronized (this) {
-            if (status == null) {
-                // Status not yet cached. Get it from DB and cache it
-                status = getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
-
-                if (status != null)
-                    statusMap.put(statusCode, status);
-            }
-        }
-
-        return status;
+        return getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
     }
-   
 
     /**
      * This method returns the <code>EgwStatus</code> for the given module type and status code
@@ -310,27 +303,25 @@ public class CollectionsUtil {
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
         List<Assignment> assignList = null;
-        Boolean isDeptAllowed=false;
+        Boolean isDeptAllowed = false;
         final Boolean isEmp = isEmployee(loggedInUser);
         if (isEmp) {
-            //dept = getDepartmentOfUser(loggedInUser);
+            // dept = getDepartmentOfUser(loggedInUser);
             assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(loggedInUser.getId());
-            for(Assignment assign: assignList) {
-                if(!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
-                isDeptAllowed = true;
-            }
+            for (final Assignment assign : assignList)
+                if (!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
+                    isDeptAllowed = true;
         }
-            
+
         if (isEmp && !isDeptAllowed) {
-            final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
-            validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (!isEmp || isDeptAllowed) {
+            throw new ValidationException(Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
+        } else if (!isEmp || isDeptAllowed)
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-           // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
-        } else {
+        // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+        else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-           // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+            // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         }
         return collectionsModeNotAllowed;
     }
@@ -420,7 +411,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                                .get(0);
+                .get(0);
     }
 
     /**
@@ -640,55 +631,6 @@ public class CollectionsUtil {
         return departments;
     }
 
-    public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {
-        List<Department> departments;
-        Department department;
-        final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
-        if (contraJournalVoucherObj.getVoucherHeaderId() == null)
-            department = getDepartmentOfUser(loggedInUser);
-        else
-            department = contraJournalVoucherObj.getVoucherHeaderId().getVouchermis().getDepartmentid();
-        if (department.getCode().equals('R')) {
-            if (contraJournalVoucherObj.getVoucherHeaderId() == null)
-                departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", 'R');
-            else
-                departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", "CAF");
-        } else
-            departments = persistenceService.findAllBy("select dept from Department dept order by dept.name ");
-
-        return departments;
-    }
-
-    public List<Designation> getDesignationsAllowedForBankRemittanceApproval(final Long departmentId) {
-        Department department;
-        List<Designation> designations;
-        final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
-        department = (Department) persistenceService.find("select dept from Department dept where dept.id=?",
-                departmentId);
-        if (contraJournalVoucherObj.getVoucherHeaderId() == null) {
-            if (department.getCode().equals('R'))
-                designations = persistenceService
-                .findAllBy(
-                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
-                        departmentId, "REVENUE INSPECTOR");
-            else
-                designations = persistenceService
-                .findAllBy(
-                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                        departmentId);
-        } else if (department.getCode().equals("CAF"))
-            designations = persistenceService
-            .findAllBy(
-                    "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
-                    "CAF", "SENIOR GRADE CLERK");
-        else
-            designations = persistenceService
-            .findAllBy(
-                    "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                    departmentId);
-        return designations;
-    }
-
     /**
      * This method checks if the given glcode belongs to an account head representing an arrear account head (for Property Tax).
      * The glcodes for such accounts are retrieved from App Config.
@@ -776,26 +718,30 @@ public class CollectionsUtil {
         ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final ServiceDetails billingService = receiptHeader.getService();
 
-        String instrumentType="";
-        if(!receiptHeader.getReceiptInstrument().isEmpty())
+        String instrumentType = "";
+        if (!receiptHeader.getReceiptInstrument().isEmpty())
             instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
-        final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
-                receiptHeader.getReceiptnumber(), billingService.getName(), instrumentType , receiptHeader.getTotalAmount(),
-                receiptHeader.getSource(),
-                receiptHeader.getStatus().getDescription()
-                );
+        final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(
+                receiptHeader.getReceiptdate(), receiptHeader.getReceiptnumber(), billingService.getName(),
+                instrumentType, receiptHeader.getTotalAmount(), receiptHeader.getSource(), receiptHeader.getStatus()
+                        .getDescription());
 
-        collectionIndexBuilder.consumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "");
-        collectionIndexBuilder.billNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : "");
-        collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment()
-                .getService().getName() : "");
-        collectionIndexBuilder.payeeName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
+        collectionIndexBuilder.consumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode()
+                : "");
+        collectionIndexBuilder.billNumber(receiptHeader.getReferencenumber() != null ? receiptHeader
+                .getReferencenumber() : "");
+        collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader
+                .getOnlinePayment().getService().getName() : "");
+        collectionIndexBuilder.consumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
+        collectionIndexBuilder.receiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getUsername()
+                : "");
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService.getCode()
-                    + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
+                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
-                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
+                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader,
+                        chartOfAccountsHibernateDAO, persistenceService));
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
@@ -810,6 +756,7 @@ public class CollectionsUtil {
         collectionIndexBuilder.arrearCess(receiptAmountInfo.getArrearCess());
         collectionIndexBuilder.latePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges());
         collectionIndexBuilder.currentCess(receiptAmountInfo.getCurrentCess());
+        collectionIndexBuilder.reductionAmount(receiptAmountInfo.getReductionAmount());
         if (receiptAmountInfo.getInstallmentFrom() != null)
             collectionIndexBuilder.installmentFrom(receiptAmountInfo.getInstallmentFrom());
         if (receiptAmountInfo.getInstallmentTo() != null)
@@ -822,15 +769,15 @@ public class CollectionsUtil {
         Boolean createVoucherForBillingService = Boolean.FALSE;
         if (receiptHeader.getService().getVoucherCutOffDate() != null
                 && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
-            if (receiptHeader.getService().getVoucherCreation()!= null)
+            if (receiptHeader.getService().getVoucherCreation() != null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
-            if (receiptHeader.getService().getVoucherCreation()!= null)
+            if (receiptHeader.getService().getVoucherCreation() != null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         return createVoucherForBillingService;
     }
-    
-    public String getApproverName(Position position) {
+
+    public String getApproverName(final Position position) {
         String approver;
         final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(position.getId());
         approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
@@ -838,4 +785,43 @@ public class CollectionsUtil {
         return approver;
     }
 
+    public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
+            final List<ReceiptDetail> receiptDetailList) {
+        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
+                .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
+                receiptHeader.getTotalAmount(), receiptDetailList);
+    }
+
+    public Date getRemittanceVoucherDate(final String receiptDate) {
+        Boolean useReceiptDateAsContraVoucherDate = false;
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date voucherDate = null;
+        Date rcptDate = null;
+        if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA).equals(CollectionConstants.YES))
+            useReceiptDateAsContraVoucherDate = true;
+
+        try {
+            Date finDate = null;
+            if (!receiptDate.isEmpty()) {
+                rcptDate = dateFomatter.parse(receiptDate);
+                finDate = financialYearDAO.getFinancialYearByDate(rcptDate).getStartingDate();
+            }
+            if (finDate != null && finDate.toString().equals(financialYearDAO.getCurrYearStartDate())) {
+                if (useReceiptDateAsContraVoucherDate)
+                    voucherDate = rcptDate;
+                else
+                    voucherDate = sdf.parse(sdf.format(new Date()));
+            }
+            else
+                voucherDate = financialYearDAO.getPreviousFinancialYearByDate(new Date()).getEndingDate();
+        } catch (final ParseException e) {
+
+            LOGGER.debug("Exception in parsing date  " + rcptDate + " - " + e.getMessage());
+            throw new ApplicationRuntimeException("Exception while parsing date", e);
+        }
+        return voucherDate;
+    }
 }

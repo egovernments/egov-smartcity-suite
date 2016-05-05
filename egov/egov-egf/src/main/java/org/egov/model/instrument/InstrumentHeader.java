@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,32 +24,33 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.model.instrument;
+
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bank;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.EgwStatus;
+import org.egov.infstr.models.BaseModel;
+import org.egov.infstr.models.ECSType;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.Bank;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.EgwStatus;
-import org.egov.infstr.models.BaseModel;
-import org.egov.infstr.models.ECSType;
 
 /**
  * EgfInstrumenHeader entity.
@@ -59,11 +60,8 @@ import org.egov.infstr.models.ECSType;
 
 public class InstrumentHeader extends BaseModel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3412036578900689029L;
-    // Fields
+
     private Accountdetailtype detailTypeId;
     private Bankaccount bankAccountId;
     private EgwStatus statusId;
@@ -80,20 +78,20 @@ public class InstrumentHeader extends BaseModel {
     private String payee;
     private String bankBranchName;
     private String surrendarReason;
-    private String serialNo;
+    private CFinancialYear serialNo;
     private ECSType ECSType;
-
-    public String getSerialNo() {
-        return serialNo;
-    }
-
-    public void setSerialNo(final String serialNo) {
-        this.serialNo = serialNo;
-    }
 
     private Set<InstrumentVoucher> instrumentVouchers = new HashSet<InstrumentVoucher>(0);
 
     // Property accessors
+
+    public CFinancialYear getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(CFinancialYear serialNo) {
+        this.serialNo = serialNo;
+    }
 
     /**
      * @return the instrumentVouchers
@@ -424,10 +422,10 @@ public class InstrumentHeader extends BaseModel {
 
         final StringBuffer str = new StringBuffer(1024);
         str.append("id:").append(id)
-        .append("Number:").append(instrumentNumber)
-        .append("Date:").append(instrumentDate)
-        .append("Amount:").append(instrumentAmount)
-        .append("Type:").append(instrumentType);
+                .append("Number:").append(instrumentNumber)
+                .append("Date:").append(instrumentDate)
+                .append("Amount:").append(instrumentAmount)
+                .append("Type:").append(instrumentType);
         return str.toString();
     }
 

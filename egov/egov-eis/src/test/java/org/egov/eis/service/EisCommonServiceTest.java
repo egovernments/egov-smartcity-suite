@@ -39,17 +39,17 @@
  */
 package org.egov.eis.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Date;
-
 import org.egov.eis.EISAbstractSpringIntegrationTest;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Position;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Vaibhav.K

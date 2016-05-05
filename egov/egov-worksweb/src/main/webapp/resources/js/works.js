@@ -1,42 +1,42 @@
-/* #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- */
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 function ChangeColor(tableRow, highLight)
 {
 	if (highLight)
@@ -232,4 +232,170 @@ function reinitializeDatepicker()
 		format : "dd/mm/yyyy",
 		autoclose: true
 	});
+}
+
+function replaceExemptionFormChar() {
+	var exemption = document.getElementById('exemptionForm').innerHTML;
+	exemption = exemption.replace(/_/g, " ");
+    document.getElementById("exemptionForm").innerHTML = exemption;
+}
+
+function methodTest() {
+ 	if(document.getElementById("code").value=="Category Code"){
+		document.getElementById("code").value="";
+	}
+	if(document.getElementById("description").value=="Category Name") {
+		document.getElementById("description").value="";		
+	}
+}
+
+function validateSubledgerCodeBeforeSubmit() {
+    {
+        var codeName = document.getElementById("codeName").value;
+        if (codeName == '') {
+            showMessage('subledgerCode', 'Deposit Works Name is Required');
+            return false;
+
+        }
+        var codeDescription = document.getElementById("codeDescription").value;
+        if (codeDescription == '') {
+            showMessage('subledgerCode', 'Deposit Works Description is Required');
+            return false;
+        }
+        var financialYear = document.getElementById("financialYear").value;
+        if (financialYear == '-1') {
+            showMessage('subledgerCode', 'Financial Year is Required');
+            return false;
+        }
+        var fund = document.getElementById("fund").value;
+        if (fund == '-1') {
+            showMessage('subledgerCode', 'Fund is Required');
+            return false;
+        }
+        var fundSource = document.getElementById("fundSource").value;
+        if (fundSource == '-1') {
+            showMessage('subledgerCode', 'Financing source is Required');
+            return false;
+        }
+    }
+    return true;
+}
+
+function disableFields() {
+	var mode = document.getElementById('mode').value;
+	if(mode=='view'){
+	document.getElementById("code").disabled = true;
+	document.getElementById("description").disabled = true;	
+	}
+	else if(mode=='edit'){
+	document.getElementById("code").disabled = false;
+	document.getElementById("description").disabled = false;	
+	}
+}
+
+function createNewContractor() {
+	window.location = "contractor-newform.action";
+}
+
+function modifyContractorData() {
+	var model = document.getElementById('model').value;
+	window.location = 'contractor-edit.action?mode=edit&id='+model;
+}
+
+function setContractorId(val) {
+	document.getElementById('id').value = val;
+}
+
+function modifyContractorData1() {
+	var id = document.getElementById('id').value;
+	window.location = 'contractor-edit.action?mode=edit&id='+id;
+}
+function modifyContractorDataOnSearch() {
+	var id = document.getElementById('id').value;
+    if (id == '' || id == null) {
+    	var message = document.getElementById('selectMessage').value;
+        showMessage('contractorError', message);
+        window.scrollTo(0, 0);
+        return false;
+    } else
+        window.location = 'contractor-edit.action?mode=edit&id=' + id;
+    return true;
+}
+function validate(){
+	document.searchContractorForm.action='contractor-viewResult.action'; 
+   	document.searchContractorForm.submit();
+	
+}
+
+function viewContractorDataOnSearch() {
+	var id = document.getElementById('id').value;
+    if (id == '' || id == null) {
+    	var message = document.getElementById('selectMessage').value;
+        showMessage('contractorError', message);
+        window.scrollTo(0, 0);
+        return false;
+    } else
+        window.location = 'contractor-edit.action?mode=view&id=' + id;
+    return true;
+}
+
+function createNewEsimate() {
+	window.location = "estimateTemplate-newform.action";
+}
+
+function modifyEstimate() {
+	var id=document.getElementById('id')
+	window.location = "estimateTemplate-edit.action?mode=edit&id="+ id;
+}
+
+function setSorId(val) {
+	document.getElementById('id').value = val;
+} 
+
+function viewScheduleData() {
+	var id = document.getElementById('id').value;
+    if (id == '' || id == null) {
+    	var message = document.getElementById('selectMessage').value;
+        showMessage('sor.sorError', message);
+        window.scrollTo(0, 0);
+        return false;
+    } else
+		window.open("scheduleOfRate-edit.action?mode=view&id="+id+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+   		return true;
+}
+
+function modifyScheduleData() {
+	var id = document.getElementById('id').value;
+    if (id == '' || id == null) {
+    	var message = document.getElementById('selectMessage').value;
+        showMessage('sor.sorError', message);
+        window.scrollTo(0, 0);
+        return false;
+    } else
+        window.open("scheduleOfRate-edit.action?mode=edit&id="+id+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+    	return true;
+}		
+
+function validateSOR(){	
+	document.searchSORForm.action='scheduleOfRate-searchSorDetails.action';
+	document.searchSORForm.submit();
+}
+
+function modifyGradeData() {
+	var id = document.getElementById('id').value;
+	window.location = 'contractorGrade-edit.action?mode=edit&id='+id;
+}
+
+function viewGradeData() {
+	var id = document.getElementById('id').value;
+	window.location = 'contractorGrade-edit.action?mode=view&id='+id;
+}
+
+function modifyMilestoneTemplateData() {
+	var id = document.getElementById('id').value;
+	window.location = 'milestoneTemplate-edit.action?mode=edit&id='+id;
+}
+
+function createNewMilestoneTemplate() {
+	window.location = "milestoneTemplate-newform.action";
 }

@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <%@page contentType="text/html"%>
@@ -108,22 +110,23 @@
 	type="text/css" />
 </head>
 <script>
-  function doAfterSubmit(){
-		document.getElementById('loading').style.display ='block';
+	function doAfterSubmit() {
+		document.getElementById('loading').style.display = 'block';
 	}
-	
-  function populateSubLedger(){
-		var glCode= document.getElementById("glCode1").value;
-		populatesubledger({glCode:glCode})
+
+	function populateSubLedger() {
+		var glCode = document.getElementById("glCode1").value;
+		populatesubledger({
+			glCode : glCode
+		})
 	}
-  function onBodyLoad()
-  {
-  	var drillDownFromSchedule=	document.getElementById("drillDownFromSchedule").value;
-  	if( drillDownFromSchedule == 'true')
-  	{
-  		document.getElementById('tbl-header').style.display="none";
-  	}
-  }
+	function onBodyLoad() {
+		var drillDownFromSchedule = document
+				.getElementById("drillDownFromSchedule").value;
+		if (drillDownFromSchedule == 'true') {
+			document.getElementById('tbl-header').style.display = "none";
+		}
+	}
 </script>
 <body onLoad="onBodyLoad()">
 	<s:form name="subLedgerForm" id="subLedgerForm"
@@ -193,9 +196,9 @@
 							<td class="bluebox"><s:textfield id="accEntitycode"
 									name="accEntitycode" autocomplete="off"
 									onfocus='autocompleteEntityDetails(this);'
-									onblur='splitEntityDetails(this);' />
-								<s:textfield id="entityName" name="entityName"
-									value="%{entityName}" readonly="true" /></td>
+									onblur='splitEntityDetails(this);' /> <s:textfield
+									id="entityName" name="entityName" value="%{entityName}"
+									readonly="true" /></td>
 
 						</tr>
 						<tr>
@@ -212,7 +215,7 @@
 
 					</table>
 					<br />
-                  	<div class="buttonbottom">
+					<div class="buttonbottom">
 						<table align="center">
 							<tr>
 								<td><s:submit cssClass="buttonsubmit" value="Search"
@@ -230,10 +233,13 @@
 				uid="currentRowObject" class="tablebottom" style="width:100%;"
 				cellpadding="0" cellspacing="0" export="true" requestURI="">
 				<display:caption>
-					<div class="headingsmallbgnew" align="center"
-						style="text-align: center; width: 98%;">
-						<b><s:property value="%{heading}" /></b>
-					</div>
+					<table width="100%" border="1" cellspacing="0" cellpadding="0">
+						<tr>
+							<th class="bluebgheadtd" width="100%" colspan="5"><strong
+								style="font-size: 15px;"> <s:property
+										value="%{heading}" /></strong></th>
+						</tr>
+					</table>
 					<table width="100%" border="1" cellspacing="0" cellpadding="0">
 						<tr>
 							<td class="bluebgheadtd" colspan="4"><s:text
@@ -357,7 +363,7 @@
 			</display:table>
 
 		</s:if>
-	<div id="codescontainer" />
+		<div id="codescontainer" />
 	</s:form>
 </body>
 </html>

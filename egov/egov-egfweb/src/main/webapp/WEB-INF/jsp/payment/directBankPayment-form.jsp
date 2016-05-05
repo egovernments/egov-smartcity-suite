@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <jsp:include page="../voucher/vouchertrans-filter-new.jsp" />
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <tr>
@@ -74,9 +76,9 @@
 			value="%{commonBean.accnumnar}" readonly="true" tabindex="-1" /></td>
 	<egov:updatevalues id="availableBalance" fields="['Text']"
 		url="/payment/payment-ajaxGetAccountBalance.action" />
-	<td class="bluebox" id="balanceText" ><s:text
+	<td class="bluebox" id="balanceText"><s:text
 			name="balance.available" /></td>
-	<td class="bluebox" id="balanceAvl" ><s:textfield
+	<td class="bluebox" id="balanceAvl"><s:textfield
 			name="commonBean.availableBalance" id="availableBalance"
 			readonly="true" style="text-align:right"
 			value="%{commonBean.availableBalance}" /></td>
@@ -116,13 +118,12 @@
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<s:date name='commonBean.documentDate' id="commonBean.documentDateId"
 		format='dd/MM/yyyy' />
-	<td class="greybox"><s:textfield name="commonBean.documentDate"
-			id="documentDate"
+	<td class="greybox"><s:textfield id="documentDate"
+			name="commonBean.documentDate" value="%{commonBean.documentDateId}"
+			data-date-end-date="0d"
 			onkeyup="DateFormat(this,this.value,event,false,'3')"
-			value="%{commonBean.documentDateId}" /> <a
-		href="javascript:show_calendar('dbpform.documentDate');"
-		style="text-decoration: none">&nbsp;<img tabIndex="-1"
-			src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+			placeholder="DD/MM/YYYY" class="form-control datepicker"
+			data-inputmask="'mask': 'd/m/y'" /></td>
 </tr>
 
 

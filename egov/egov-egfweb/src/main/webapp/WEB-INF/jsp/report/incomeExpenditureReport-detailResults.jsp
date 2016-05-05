@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <s:if test="%{incomeExpenditureStatement.size()>0}">
 	<br />
@@ -48,12 +50,10 @@
 					<table border="0" cellspacing="0" cellpadding="0"
 						class="tablebottom" width="100%">
 						<tr>
-							<td colspan="12">
-								<div class="subheadsmallnew">
-									<strong><s:text name="report.ie.schedule.heading" /> <s:property
-											value="model.financialYear.finYearRange" /><br /> </strong>
-								</div>
-							</td>
+							<th class="bluebgheadtd" width="100%" colspan="12"><strong
+								style="font-size: 15px;"> <s:text
+										name="report.ie.schedule.heading" /> <s:property
+										value="model.financialYear.finYearRange" /></strong></th>
 						</tr>
 						<tr>
 							<td class="bluebox" colspan="4"><strong><s:text
@@ -111,7 +111,8 @@
 									status="stat">
 									<td class="blueborderfortd">
 										<div align="right">
-											<s:property	value="fundWiseAmount[name]" />&nbsp;
+											<s:property value="fundWiseAmount[name]" />
+											&nbsp;
 										</div>
 									</td>
 								</s:iterator>
@@ -120,8 +121,7 @@
 										<s:if test='%{displayBold == true}'>
 											<strong><s:if test='%{currentYearTotal != 0}'>
 													<s:property value="currentYearTotal" />
-												</s:if>
-												<s:else>0.00</s:else></strong>
+												</s:if> <s:else>0.00</s:else></strong>
 										</s:if>
 										<s:else>
 											<s:if test='%{currentYearTotal != 0}'>
@@ -137,8 +137,7 @@
 										<s:if test='%{displayBold == true}'>
 											<strong><s:if test='%{previousYearTotal != 0}'>
 													<s:property value="previousYearTotal" />
-												</s:if>
-												<s:else>0.00</s:else></strong>
+												</s:if> <s:else>0.00</s:else></strong>
 										</s:if>
 										<s:else>
 											<s:if test='%{previousYearTotal != 0}'>

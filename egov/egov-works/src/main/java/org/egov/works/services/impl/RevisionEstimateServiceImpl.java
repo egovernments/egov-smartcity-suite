@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.works.services.impl;
@@ -69,7 +69,7 @@ import java.util.List;
 /**
  * This class will expose all Revision Estimate related operations.
  */
-public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long>implements
+public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long> implements
         RevisionEstimateService {
 
     private AbstractEstimateService abstractEstimateService;
@@ -78,8 +78,8 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     private DepositWorksUsageService depositWorksUsageService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private BudgetDetailsDAO budgetDetailsDAO;
-@Autowired
-private FinancialYearHibernateDAO finHibernateDao;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     private static final String MODULE_NAME = "Works";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
 
@@ -335,7 +335,7 @@ private FinancialYearHibernateDAO finHibernateDao;
         boolean isDepositWorks = false;
         final List<String> depositTypeList = getAppConfigValuesToSkipBudget();
         for (final String type : depositTypeList)
-            if (type.equals(estimate.getType().getName()))
+            if (type.equals(estimate.getNatureOfWork().getName()))
                 isDepositWorks = true;
         return isDepositWorks;
     }
@@ -379,7 +379,6 @@ private FinancialYearHibernateDAO finHibernateDao;
     public void setDepositWorksUsageService(final DepositWorksUsageService depositWorksUsageService) {
         this.depositWorksUsageService = depositWorksUsageService;
     }
-
 
     public void setEstimateAppropriationService(
             final PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService) {

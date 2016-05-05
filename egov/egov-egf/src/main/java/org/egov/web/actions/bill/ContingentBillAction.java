@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,43 +24,26 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /**
  *
  */
 package org.egov.web.actions.bill;
 
-
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.script.ScriptContext;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -79,16 +62,16 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.utils.NumberToWord;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.NumberToWord;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBilldetails;
@@ -99,9 +82,22 @@ import org.egov.model.voucher.WorkflowBean;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.script.ScriptContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author mani
@@ -143,11 +139,10 @@ public class ContingentBillAction extends BaseBillAction {
     private String sanctionedMessge;
     private Department primaryDepartment;
 
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private EgovMasterDataCaching masterDataCache;
 
     @Override
@@ -350,7 +345,7 @@ public class ContingentBillAction extends BaseBillAction {
                     throw new ValidationException(Arrays.asList(new ValidationError("bill number", "Duplicate Bill Number : "
                             + commonBean.getBillNumber())));
             populateWorkflowBean();
-            bill = egBillRegisterService.createBill(bill, workflowBean);
+            bill = egBillRegisterService.createBill(bill, workflowBean,checkListsTable);
             addActionMessage(getText("cbill.transaction.succesful") + bill.getBillnumber());
             billRegisterId = bill.getId();
             if (bill.getEgBillregistermis().getBudgetaryAppnumber() != null)
@@ -554,7 +549,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billRegisterId);
         for (final EgChecklists chk : checkLists)
             persistenceService.delete(chk);
-        createCheckList(bill);
+        //createCheckList(bill);
     }
 
     private EgBillregister updateBill(EgBillregister bill) {
@@ -846,19 +841,7 @@ public class ContingentBillAction extends BaseBillAction {
         return REVERSE;
     }
 
-    private void createCheckList(final EgBillregister bill) {
-        if (checkListsTable != null)
-            for (final CheckListHelper clh : checkListsTable)
-            {
-                final EgChecklists checkList = new EgChecklists();
-                final AppConfigValues configValue = (AppConfigValues) persistenceService.find("from AppConfigValues where id=?",
-                        clh.getId());
-                checkList.setObjectid(bill.getId());
-                checkList.setAppconfigvalue(configValue);
-                checkList.setChecklistvalue(clh.getVal());
-                persistenceService.getSession().saveOrUpdate(checkList);
-            }
-    }
+    
 
     public List<CheckListHelper> getCheckListsTable() {
         return checkListsTable;
@@ -912,6 +895,8 @@ public class ContingentBillAction extends BaseBillAction {
 
                         payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                         payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
+                        payeedetails.setLastUpdatedTime(new Date());
+                        billdetails.setLastupdatedtime(new Date());
                         payeedetails.setEgBilldetailsId(billdetails);
                         payeedetailsSet.add(payeedetails);
                         if (entityKey == null)
@@ -923,6 +908,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
+            billdetails.setLastupdatedtime(new Date());
             billdetailsSet.add(billdetails);
         }
         if (billDetailsTableCreditFinal != null)
@@ -945,6 +931,8 @@ public class ContingentBillAction extends BaseBillAction {
                             payeedetails.setCreditAmount(sub.getDebitAmountDetail());
                             payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                             payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
+                            payeedetails.setLastUpdatedTime(new Date());
+                            billdetails.setLastupdatedtime(new Date());
                             payeedetails.setEgBilldetailsId(billdetails);
                             payeedetailsSet.add(payeedetails);
                             if (entityKey == null)
@@ -956,6 +944,7 @@ public class ContingentBillAction extends BaseBillAction {
                     billdetails.setEgBillPaydetailes(payeedetailsSet);
 
                 }
+                billdetails.setLastupdatedtime(new Date());
                 billdetailsSet.add(billdetails);
             }
 
@@ -987,6 +976,8 @@ public class ContingentBillAction extends BaseBillAction {
                         payeedetails.setCreditAmount(sub.getDebitAmountDetail());
                         payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
                         payeedetails.setAccountDetailTypeId(commonBean.getSubledgerType());
+                        payeedetails.setLastUpdatedTime(new Date());
+                        billdetails.setLastupdatedtime(new Date());
                         payeedetails.setEgBilldetailsId(billdetails);
                         payeedetailsSet.add(payeedetails);
                         if (entityKey == null)
@@ -997,6 +988,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
+            billdetails.setLastupdatedtime(new Date());
             billdetailsSet.add(billdetails);
         }
 
@@ -1054,6 +1046,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
+            billdetails.setLastupdatedtime(new Date());
             billdetailsSet.add(billdetails);
         }
         if (billDetailsTableCreditFinal != null)
@@ -1091,6 +1084,7 @@ public class ContingentBillAction extends BaseBillAction {
                     billdetails.setEgBillPaydetailes(payeedetailsSet);
 
                 }
+                billdetails.setLastupdatedtime(new Date());
                 billdetailsSet.add(billdetails);
             }
 
@@ -1139,6 +1133,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetails.setEgBillPaydetailes(payeedetailsSet);
 
             }
+            billdetails.setLastupdatedtime(new Date());
             billdetailsSet.add(billdetails);
         }
 

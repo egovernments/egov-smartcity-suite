@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <html>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
@@ -329,14 +331,12 @@
 						<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy' />
 						<td class="bluebox" width="34%">
 							<div name="daterow">
-								<s:textfield name="voucherDate" id="voucherDate" maxlength="10"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" size="15"
-									value="%{voucherDateId}" />
-								<a
-									href="javascript:show_calendar('forms[0].voucherDate',null,null,'DD/MM/YYYY');"
-									style="text-decoration: none" align="left"> <img img
-									width="18" height="18" border="0" align="absmiddle" alt="Date"
-									src="/egi/resources/erp2/images/calendaricon.gif" /></a>
+								<s:textfield id="voucherDate" name="voucherDate"
+									value="%{voucherDateId}" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" />
+
 							</div>
 						</td>
 					</tr>
@@ -376,13 +376,13 @@ function onLoadTask_new()
 				{
 						var vhId='<s:property value="voucherHeader.id"/>';
 						document.forms[0].action = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+vhId;
-						document.forms[0].submit();
+						return true;
 				}
 			else if(button=="Save_New")
 				{      	
 					document.forms[0].button.value='';
 				    document.forms[0].action = "directBankPayment-newform.action";
-				 	document.forms[0].submit();
+				 	return true;
 				}
 		}
 		
@@ -433,22 +433,17 @@ function onSubmit()
 		return false;
 	}
 	else if(!balanceCheck()){
-		bootbox.confirm("Insuffiecient Bank Balance. Do you want to process ?", function(result) {
-			  if(result)
-				  {
-				  	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-					document.dbpform.submit();
-				  }
-			  else
-				  {
-				  console.log("else");
-				  }
-			}); 
+		 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+		 if (msg == true) {
+		   	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
+			return true;
+		 } else {
+		   	return false;
+		  } 
 	}else{
 		document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
-		document.dbpform.submit();
+		return true;
 		}
-	return false;
 }
 </SCRIPT>
 </body>

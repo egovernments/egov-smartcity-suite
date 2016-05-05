@@ -37,15 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.service.masters;
 
-import java.util.List;
+package org.egov.tl.service.masters;
 
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.repository.LicenseCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

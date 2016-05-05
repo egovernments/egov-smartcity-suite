@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ page language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <link href="<egov:url path='/resources/css/displaytagFormatted.css?rnd=${app_release_no}'/>"
@@ -51,7 +53,13 @@
 	{
 		var showMode='<s:property value="showMode" />';
 		if(showMode=='edit' )
+			{ 
 			document.getElementById("type").disabled=true;
+			}
+		if(document.getElementById('type').value!=-1)
+		{
+		loadVoucherNames(document.getElementById('type').value);
+		}
 	}
 	</script>
 </head>
@@ -95,21 +103,24 @@
 					<td class="greybox"><s:text name="voucher.fromdate" /><span
 						class="mandatory1">*</span></td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
-					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-							maxlength="20" value="%{tempFromDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].fromDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
+					<td class="greybox">
+							<s:textfield id="fromDate" name="fromDate"
+							value="%{tempFromDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" />
+							</td>
 					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
 					<td class="greybox"><s:text name="voucher.todate" /><span
 						class="mandatory1">*</span></td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate"
-							maxlength="20" value="%{tempToDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('forms[0].toDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)</td>
+					<td class="greybox">
+							<s:textfield id="toDate" name="toDate"
+							value="%{tempToDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" />
+							
+							</td>
 				</tr>
 				<tr>
 					<jsp:include page="../voucher/voucher-filter.jsp" />
@@ -270,7 +281,7 @@
 		 </s:iterator>   
 		 }
 		 </s:iterator>
-			  
+		 document.getElementById('name').value='<s:property value="name"/>' ;   
 			
 		}
 		function openVoucher(vid,url,voucherNumber,voucherDate){
