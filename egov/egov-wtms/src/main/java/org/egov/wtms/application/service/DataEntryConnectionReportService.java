@@ -72,7 +72,7 @@ public class DataEntryConnectionReportService {
                 + "dcbinfo.pt_firsthalf_demand + dcbinfo.pt_secondhalf_demand - dcbinfo.pt_firsthalf_collection - dcbinfo.pt_secondhalf_collection as \"propertyTaxDue\" "
                 + "from egwtr_mv_dcb_view dcbinfo"
                 + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
-        queryStr.append(" where dcbinfo.connectionstatus = 'ACTIVE' and dcbinfo.legacy = true ");
+        queryStr.append(" where dcbinfo.connectionstatus = 'ACTIVE' and dcbinfo.legacy = true  and dcbinfo.approvalnumber IS NULL and dcbinfo.connectiontype = 'NON_METERED' ");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
