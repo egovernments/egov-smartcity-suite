@@ -100,7 +100,6 @@ public class SubSchemeAction extends BaseFormAction {
     public SubSchemeAction() {
         addRelatedEntity("scheme", Scheme.class, "name");
         addRelatedEntity("department", Department.class, "name");
-        addRelatedEntity("createdBy", User.class);
     }
 
     @Override
