@@ -68,7 +68,7 @@
 								code="lbl.appType" /></label>
 						<div class="col-sm-6 add-margin dynamic-span capitalize">
 							<form:radiobuttons path="applicationType"
-								items="${radioButtonMap}" element="span" onchange="resetPropertyDetailsafterCheckBox();"/>
+								items="${radioButtonMap}" element="span" />
 						</div>
 					</div>
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -136,7 +136,6 @@
 				return true;
 		    }
 			function resetPropertyDetailsafterCheckBox() {
-				 $('#propertyIdentifier').attr("disabled",false);
 				$('#propertyIdentifier').val('');
 				$('#applicantname').val('');
 				$('#mobileNumber').val('');
