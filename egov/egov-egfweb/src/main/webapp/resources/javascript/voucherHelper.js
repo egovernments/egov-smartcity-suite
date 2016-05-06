@@ -557,6 +557,9 @@ function loadDropDownCodesForAccountDetailType(obj)
 		  {
 			var codes2=req2.responseText;
 			
+			codes2=	codes2.trim();
+			
+			
 			var a = codes2.split("^");
 			var codes = a[0];
 			acccodeArray=codes.split("+");
@@ -791,8 +794,8 @@ function autocompletecodeCommon(obj,myEvent)
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]-452/3+27+"px"; 
-	target.style.width="650px";	
+	target.style.top=(posSrc[1]-((452/3)+20))+"px"; 
+	target.style.width="450px";	
 	var coaCodeObj=obj;
 //if multiple tables are there this wont support
 	//var  currRow=getRowIndex(obj);
@@ -902,7 +905,10 @@ function autocompletecodeFunctionHeader(obj,myEvent)
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]-(452/3)+27+"px";  
+	target.style.top=(posSrc[1]-((452/3)+10))+"px";  
+	console.log(posSrc[1]);
+	console.log(target.style.top);
+	
 	target.style.width=650;	
 		
 	var coaCodeObj=obj;

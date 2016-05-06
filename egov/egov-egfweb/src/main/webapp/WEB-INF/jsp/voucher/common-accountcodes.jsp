@@ -37,5 +37,4 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<s:iterator var="s"	value="accountCodesForDetailTypeList" status="status">	<s:property value="%{glcode}" />`-`<s:property value="%{name}" />`~`<s:property		value="%{id}" /><s:if test="%{chartOfAccountDetails.size()>0}">`-`true</s:if>+</s:iterator>^
+<s:iterator var="s"	value="accountCodesForDetailTypeList" status="status"><s:property value="%{glcode}" />`-`<s:property value="%{name}" />`~`<s:property		value="%{id}" /><s:if test="%{chartOfAccountDetails.size()>0}">`-`true</s:if>+</s:iterator>^
