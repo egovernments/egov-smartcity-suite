@@ -36,6 +36,4 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-<s:property value="%{value}" />
+  --%><s:property value="%{value}" />

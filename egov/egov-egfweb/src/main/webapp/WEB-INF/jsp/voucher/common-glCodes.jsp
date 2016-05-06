@@ -36,6 +36,4 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-<s:if test="glCode==null">Please select account code </s:if><s:else><s:if test="glCodesList.size == 0 "></s:if><s:else><s:iterator var="s" value="glCodesList" status="status"><s:property value="%{glcode}" />`~`<s:property value="%{name}" />~^</s:iterator></s:else></s:else>
+  --%><s:if test="glCode==null">Please select account code </s:if><s:else><s:if test="glCodesList.size == 0 "></s:if><s:else><s:iterator var="s" value="glCodesList" status="status"><s:property value="%{glcode}" />`~`<s:property value="%{name}" />~^</s:iterator></s:else></s:else>
