@@ -741,30 +741,18 @@ public class PenaltyCalculationService {
 	        return installmentDemandAndCollection;
 	    }
 	 
-	 public Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final Property property, EgDemand currentDemand) {
-	        final Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<Installment, EgDemandDetails>();
-	        final Installment currentInstall = currentDemand.getEgInstallmentMaster();
-	        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
-	                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
-	                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
-	                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
-	                + "and ptd.egInstallmentMaster = :installment " + "and drm.code = :penaltyReasonCode";
-
-	        final List list = entityManager.unwrap(Session.class).createQuery(query).setEntity("property", property)
-	                .setEntity("installment", currentInstall)
-	                .setString("penaltyReasonCode", DEMANDRSN_CODE_PENALTY_FINES).list();
-
-	        Ptdemand ptDemand = null;
-
-	        if (list.isEmpty()) {
-	        } else {
-	            ptDemand = (Ptdemand) list.get(0);
-	            for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails())
-	                installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
-	        }
-
-	        return installmentWisePenaltyDemandDetails;
-	    }
+	public Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(
+			final Property property, EgDemand currentDemand) {
+		final Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<Installment, EgDemandDetails>();
+		for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails()) {
+			if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
+					.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
+					&& dmdDet.getAmount().compareTo(BigDecimal.ZERO) > 0)
+				installmentWisePenaltyDemandDetails.put(dmdDet
+						.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+		}
+		return installmentWisePenaltyDemandDetails;
+	}
 	 
 	  
 	  public boolean isEarlyPayRebateActive() {
