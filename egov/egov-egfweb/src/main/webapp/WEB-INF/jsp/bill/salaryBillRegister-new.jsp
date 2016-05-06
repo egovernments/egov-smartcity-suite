@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,14 +36,14 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 <head>
 <title><s:text name="bill.salarybill.register" /></title>
-<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}" rel="stylesheet"
-	type="text/css" />
 <link href="/EGF/css/commonegov.css?rnd=${app_release_no}" rel="stylesheet" type="text/css" />
 <style type="text/css">
 #codescontainer {

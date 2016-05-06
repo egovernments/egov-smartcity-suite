@@ -51,7 +51,6 @@ public class AjaxReceiptCreateActionTest {/*extends AbstractPersistenceServiceTe
 	
 		action = new AjaxReceiptCreateAction();
 		action.setPersistenceService(genericService);
-		session=HibernateUtil.getCurrentSession();
 		objectFactory = new CollectionObjectFactory(session);
 		employeeDetailType=(Accountdetailtype)genericService.find("from Accountdetailtype where name=?", "Employee");
 	}

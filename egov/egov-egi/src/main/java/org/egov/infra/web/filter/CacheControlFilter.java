@@ -37,9 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.filter;
 
-import java.io.IOException;
+package org.egov.infra.web.filter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -48,6 +47,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * This Filter is used to improve ui performance by setting Cache-Control header to static resources like js,css,jpg,gif,etc.

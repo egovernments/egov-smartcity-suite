@@ -37,11 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.entity;
 
-import java.util.Date;
-
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.util.Date;
 
 public class LicenseStatus implements java.io.Serializable {
 

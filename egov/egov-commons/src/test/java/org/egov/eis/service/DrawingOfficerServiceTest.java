@@ -39,11 +39,6 @@
  */
 package org.egov.eis.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.eis.entity.DrawingOfficerBuilder;
 import org.egov.eis.repository.DrawingOfficerRepository;
@@ -51,6 +46,11 @@ import org.egov.pims.commons.Position;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DrawingOfficerServiceTest {
 

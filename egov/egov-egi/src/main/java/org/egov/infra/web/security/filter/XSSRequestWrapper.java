@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.security.filter;
 
-import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
+package org.egov.infra.web.security.filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
 
 /**
  * Request wrapper where it sanitize user inputs

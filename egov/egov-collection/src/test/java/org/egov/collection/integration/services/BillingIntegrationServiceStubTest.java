@@ -3,18 +3,12 @@
  */
 package org.egov.collection.integration.services;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.egov.collection.entity.CollectionObjectFactory;
-import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+
+import java.io.File;
+import java.lang.reflect.Method;
 
 /**
  * JUnit Test class for testing the billing integration service 

@@ -37,16 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.struts.annotation;
+
+import com.opensymphony.xwork2.validator.ValidationInterceptor;
+import org.egov.infra.validation.exception.ValidationException;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.egov.infra.validation.exception.ValidationException;
-
-import com.opensymphony.xwork2.validator.ValidationInterceptor;
 
 /**
  * This annotation is used to annotate, action's method which possibly 

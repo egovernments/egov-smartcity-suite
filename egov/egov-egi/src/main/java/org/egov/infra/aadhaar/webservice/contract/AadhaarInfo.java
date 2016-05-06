@@ -37,15 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.aadhaar.webservice.contract;
+
+import com.google.gson.GsonBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.gson.GsonBuilder;
 
 public abstract class AadhaarInfo implements Serializable {
 

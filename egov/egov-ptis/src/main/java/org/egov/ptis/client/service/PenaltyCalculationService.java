@@ -1,54 +1,71 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
- * 
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.client.service;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_BREAKUP;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.LP_PERCENTAGE_CONSTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_PRATIVRUTTA;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.MoneyUtils;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.ptis.client.bill.PenaltyBill;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.RebatePeriod;
+import org.egov.ptis.domain.service.property.RebatePeriodService;
+import org.egov.ptis.notice.PtNotice;
+import org.hibernate.Session;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -62,30 +79,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infra.utils.MoneyUtils;
-import org.egov.ptis.client.bill.PenaltyBill;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.RebatePeriod;
-import org.egov.ptis.domain.service.property.RebatePeriodService;
-import org.egov.ptis.notice.PtNotice;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_BREAKUP;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_LP_DATE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.LP_PERCENTAGE_CONSTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE127;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE134;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_PRATIVRUTTA;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 
 /**
  * Provieds api's for penalty calculation
@@ -99,7 +101,8 @@ public class PenaltyCalculationService {
 
 	private Logger LOGGER = LoggerFactory.getLogger(PenaltyCalculationService.class);
 
-	private PropertyTaxUtil propertyTaxUtil = new PropertyTaxUtil();
+	@Autowired
+	private PropertyTaxUtil propertyTaxUtil;
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	private static final BigDecimal VALUE_HUNDRED = new BigDecimal(100);
 	
@@ -110,11 +113,11 @@ public class PenaltyCalculationService {
 	private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail;
 	
 	@Autowired
-	private ApplicationContext beanProvider;
-	@Autowired
 	private RebatePeriodService rebatePeriodService;
 
-	
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	public PenaltyCalculationService() {}
 	
 	public PenaltyCalculationService(BasicProperty basicProperty, 
@@ -371,7 +374,7 @@ public class PenaltyCalculationService {
 				+ "where bill.is_Cancelled = 'N' and bill.egBillType.code = :billTypeCode and bill.billNo = notice.noticeNo "
 				+ "and notice.noticeType = :noticeType and bp.upicNo = :upicNo order by notice.noticeDate";
 
-		List<PtNotice> demandBills = HibernateUtil.getCurrentSession().createQuery(query)
+		List<PtNotice> demandBills = entityManager.unwrap(Session.class).createQuery(query)
 				.setString("billTypeCode", BILLTYPE_MANUAL).setString("noticeType", NOTICE_TYPE_BILL)
 				.setString("upicNo", upicNo).list();
 		
@@ -609,7 +612,7 @@ public class PenaltyCalculationService {
 				+ " and n.noticeDate is not null "
 				+ "and pvr.noticeDate is not null ";
 
-		List result = HibernateUtil.getCurrentSession().createQuery(stringQuery).setString("upicNo", propertyId)
+		List result = entityManager.unwrap(Session.class).createQuery(stringQuery).setString("upicNo", propertyId)
 				.setString("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
 				.setString("noticePVR", NOTICE_PRATIVRUTTA).list();
 		
@@ -738,30 +741,18 @@ public class PenaltyCalculationService {
 	        return installmentDemandAndCollection;
 	    }
 	 
-	 public Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(final Property property, EgDemand currentDemand) {
-	        final Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<Installment, EgDemandDetails>();
-	        final Installment currentInstall = currentDemand.getEgInstallmentMaster();
-	        final String query = "select ptd from Ptdemand ptd " + "inner join fetch ptd.egDemandDetails dd "
-	                + "inner join fetch dd.egDemandReason dr " + "inner join fetch dr.egDemandReasonMaster drm "
-	                + "inner join fetch ptd.egptProperty p " + "inner join fetch p.basicProperty bp "
-	                + "where bp.active = true " + "and (p.status = 'A' or p.status = 'I') " + "and p = :property "
-	                + "and ptd.egInstallmentMaster = :installment " + "and drm.code = :penaltyReasonCode";
-
-	        final List list = HibernateUtil.getCurrentSession().createQuery(query).setEntity("property", property)
-	                .setEntity("installment", currentInstall)
-	                .setString("penaltyReasonCode", DEMANDRSN_CODE_PENALTY_FINES).list();
-
-	        Ptdemand ptDemand = null;
-
-	        if (list.isEmpty()) {
-	        } else {
-	            ptDemand = (Ptdemand) list.get(0);
-	            for (final EgDemandDetails dmdDet : ptDemand.getEgDemandDetails())
-	                installmentWisePenaltyDemandDetails.put(dmdDet.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
-	        }
-
-	        return installmentWisePenaltyDemandDetails;
-	    }
+	public Map<Installment, EgDemandDetails> getInstallmentWisePenaltyDemandDetails(
+			final Property property, EgDemand currentDemand) {
+		final Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetails = new TreeMap<Installment, EgDemandDetails>();
+		for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails()) {
+			if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode()
+					.equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)
+					&& dmdDet.getAmount().compareTo(BigDecimal.ZERO) > 0)
+				installmentWisePenaltyDemandDetails.put(dmdDet
+						.getEgDemandReason().getEgInstallmentMaster(), dmdDet);
+		}
+		return installmentWisePenaltyDemandDetails;
+	}
 	 
 	  
 	  public boolean isEarlyPayRebateActive() {

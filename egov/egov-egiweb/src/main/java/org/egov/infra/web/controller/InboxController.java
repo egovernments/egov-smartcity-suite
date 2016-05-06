@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.controller;
 
 import com.google.gson.GsonBuilder;
@@ -63,8 +64,8 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.infra.workflow.entity.StateAware.byCreatedDateComparator;
 import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
+import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
 
 @Controller
 @RequestMapping("/inbox")
@@ -95,7 +96,7 @@ public class InboxController {
 
     private String createInboxData(final List<StateAware> inboxStates) {
         final List<Inbox> inboxItems = new LinkedList<>();
-        inboxStates.sort(byCreatedDateComparator());
+        inboxStates.sort(byCreatedDate());
         for (final StateAware stateAware : inboxStates) {
             final State state = stateAware.getCurrentState();
             final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());

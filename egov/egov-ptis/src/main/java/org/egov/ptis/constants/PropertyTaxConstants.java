@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,20 +24,31 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.constants;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static java.util.Calendar.APRIL;
 import static java.util.Calendar.AUGUST;
@@ -54,17 +65,6 @@ import static java.util.Calendar.SEPTEMBER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_COUNTER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public interface PropertyTaxConstants {
 
@@ -105,6 +105,7 @@ public interface PropertyTaxConstants {
     public static final String CURR_BAL_STR = "CURR_BAL";
     public static final String CURR_COLL_STR = "CURR_COLL";
     public static final String ARR_COLL_STR = "ARR_COLL";
+    public static final String ARR_BAL_STR = "ARR_BAL";
     public static final String CURR_PENALTY_DMD_STR = "CURR_PEANLTY_DMD";
     public static final String ARR_PENALTY_DMD_STR = "ARR_PENALTY_DMD";
     public static final String CURR_PENALTY_COLL_STR = "CURR_PENALTY_COLL";
@@ -685,7 +686,7 @@ public interface PropertyTaxConstants {
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DEPT_CODE_TAX = "T";
-    public static final String FUNCTION_CODE = "90919100";
+    public static final String FUNCTION_CODE = "9100";
 
     // Roles
     public static final String CSC_OPERATOR_ROLE = "CSC Operator";

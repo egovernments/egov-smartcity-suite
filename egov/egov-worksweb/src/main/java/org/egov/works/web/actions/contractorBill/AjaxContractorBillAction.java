@@ -1,57 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.web.actions.contractorBill;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -96,6 +82,19 @@ import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class AjaxContractorBillAction extends BaseFormAction {
     /**
@@ -316,7 +315,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
                 workOrderEstimateId);
         logger.info("length of appconfig values>>>>>> " + appConfigValuesList.size());
         for (final AppConfigValues appValues : appConfigValuesList)
-            if (appValues.getValue().equals(workOrderEstimate.getEstimate().getType().getName())) {
+            if (appValues.getValue().equals(workOrderEstimate.getEstimate().getNatureOfWork().getName())) {
                 checkBudget = false;
                 return;
             }
@@ -355,15 +354,15 @@ public class AjaxContractorBillAction extends BaseFormAction {
         checklistValues.add("No");
 
         try {
-            if ((workOrderEstimate.getEstimate().getType().getCode().equals("Improvement Works")
-                    || workOrderEstimate.getEstimate().getType().getCode().equals("Capital Works"))
+            if ((workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Improvement Works")
+                    || workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Capital Works"))
                     && billType.contains("Final"))
                 finalBillChecklist = worksService.getAppConfigValue(WORKS, "CONTRACTOR_Bill_FinalChecklist");
-            else if ((workOrderEstimate.getEstimate().getType().getCode().equals("Improvement Works")
-                    || workOrderEstimate.getEstimate().getType().getCode().equals("Capital Works"))
+            else if ((workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Improvement Works")
+                    || workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Capital Works"))
                     && billType.contains("Part"))
                 finalBillChecklist = worksService.getAppConfigValue(WORKS, "CONTRACTOR_Bill_RunChecklist");
-            else if (workOrderEstimate.getEstimate().getType().getCode().equals("Repairs and maintenance")
+            else if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals("Repairs and maintenance")
                     && (billType.contains("Final") || billType.contains("Part")))
                 finalBillChecklist = worksService.getAppConfigValue(WORKS, "CONTRACTOR_Bill_MaintananceChecklist");
 
@@ -481,8 +480,8 @@ public class AjaxContractorBillAction extends BaseFormAction {
             assetList = workOrderEstimate.getAssetValues();
             final String accountCodeFromBudgetHead = worksService.getWorksConfigValue("BILL_DEFAULT_BUDGETHEAD_ACCOUNTCODE");
             showValidationMsg = WorksConstants.NO;
-            if (workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.CAPITAL_WORKS)
-                    || workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.IMPROVEMENT_WORKS)) {
+            if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(WorksConstants.CAPITAL_WORKS)
+                    || workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(WorksConstants.IMPROVEMENT_WORKS)) {
                 if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                         && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_CWIP))) {
                     coaList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(
@@ -496,7 +495,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else
                     coaList = Collections.EMPTY_LIST;
-            } else if (workOrderEstimate.getEstimate().getType().getCode().equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
+            } else if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
                 if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                         && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_REPAIRS))) {
                     coaList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(
@@ -510,7 +509,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else
                     coaList = Collections.EMPTY_LIST;
-            } else if (getAppConfigValuesToSkipBudget().contains(workOrderEstimate.getEstimate().getType().getName()))
+            } else if (getAppConfigValuesToSkipBudget().contains(workOrderEstimate.getEstimate().getNatureOfWork().getName()))
                 if (StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_DEPOSIT)) && checkBudget) {
                     // Story# 806 - Show all the CWIP codes in the contractor bill screen where we show the deposit COA code
                     // now

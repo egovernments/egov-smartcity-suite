@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.entity;
 
-import java.util.Date;
+package org.egov.tl.entity;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Date;
 
 public class LicenseStatusValues extends BaseModel {
 

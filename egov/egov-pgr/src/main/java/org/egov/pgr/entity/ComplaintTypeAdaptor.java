@@ -37,14 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.entity;
 
-import java.lang.reflect.Type;
+package org.egov.pgr.entity;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
+import java.lang.reflect.Type;
 
 public class ComplaintTypeAdaptor implements JsonSerializer<ComplaintType> {
 

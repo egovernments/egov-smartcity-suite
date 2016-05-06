@@ -37,19 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.struts.interceptors;
-
-import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
-
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.StrutsStatics;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import org.apache.struts2.StrutsStatics;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Iterator;
+import java.util.Map;
+
+import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
 
 public class TrimInterceptor extends AbstractInterceptor implements StrutsStatics {
 

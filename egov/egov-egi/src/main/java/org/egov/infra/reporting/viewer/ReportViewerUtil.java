@@ -37,17 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.reporting.viewer;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
 
 import org.egov.infra.cache.impl.LRUCache;
 import org.egov.infra.reporting.engine.ReportConstants;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+
+import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility methods related to report viewing

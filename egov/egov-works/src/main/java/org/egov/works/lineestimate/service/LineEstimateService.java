@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.lineestimate.service;
 
@@ -69,10 +69,11 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
@@ -159,6 +160,9 @@ public class LineEstimateService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EstimateService estimateService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -259,7 +263,8 @@ public class LineEstimateService {
                 .createAlias("lineEstimateDetails", "lineEstimateDetail");
         if (lineEstimateSearchRequest != null) {
             if (lineEstimateSearchRequest.getAdminSanctionNumber() != null)
-                criteria.add(Restrictions.eq("adminSanctionNumber", lineEstimateSearchRequest.getAdminSanctionNumber()).ignoreCase());
+                criteria.add(
+                        Restrictions.eq("adminSanctionNumber", lineEstimateSearchRequest.getAdminSanctionNumber()).ignoreCase());
             if (lineEstimateSearchRequest.getBudgetHead() != null)
                 criteria.add(Restrictions.eq("budgetHead.id", lineEstimateSearchRequest.getBudgetHead()));
             if (lineEstimateSearchRequest.getExecutingDepartment() != null)
@@ -303,7 +308,7 @@ public class LineEstimateService {
                             lineEstimateForLoaSearchRequest.getExecutingDepartment()));
                 if (lineEstimateForLoaSearchRequest.getEstimateNumber() != null)
                     criteria.add(Restrictions.eq("estimateNumber",
-                            lineEstimateForLoaSearchRequest.getEstimateNumber()));
+                            lineEstimateForLoaSearchRequest.getEstimateNumber()).ignoreCase());
                 if (lineEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
                     criteria.add(Restrictions.ge("lineEstimate.adminSanctionDate",
                             lineEstimateForLoaSearchRequest.getAdminSanctionFromDate()));
@@ -315,7 +320,7 @@ public class LineEstimateService {
                             lineEstimateForLoaSearchRequest.getLineEstimateCreatedBy()));
                 if (lineEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
                     criteria.add(Restrictions.eq("projectCode.code",
-                            lineEstimateForLoaSearchRequest.getWorkIdentificationNumber()));
+                            lineEstimateForLoaSearchRequest.getWorkIdentificationNumber()).ignoreCase());
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
                 criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
 
@@ -492,8 +497,12 @@ public class LineEstimateService {
                     for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                         lineEstimateDetailService.setProjectCode(led);
                 } else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()) &&
-                        !workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                        !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
                     setTechnicalSanctionBy(lineEstimate);
+                    for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+                        // TODO:create abstract estimate on technical sanction. Need to remove once Abstract Estimate is in place.
+                        estimateService.createAbstractEstimateOnLineEstimateTechSanction(led);
+                }
                 if (lineEstimate.getStatus().getCode()
                         .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
                     final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -508,7 +517,7 @@ public class LineEstimateService {
                     final AppConfigValues value = values.get(0);
                     if (value.getValue().equalsIgnoreCase("Y"))
                         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
-                            releaseBudgetOnReject(led);
+                            releaseBudgetOnReject(led, null, null);
                 }
 
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
@@ -554,9 +563,10 @@ public class LineEstimateService {
             else
                 appropriationAmount = led.getEstimateAmount();
 
-            if(appropriationAmount.compareTo(BigDecimal.ZERO) == 1) {
-                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(led, getCurrentFinancialYear(new Date())
-                        .getId(),
+            if (appropriationAmount.compareTo(BigDecimal.ZERO) == 1) {
+                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(led,
+                        getCurrentFinancialYear(new Date())
+                                .getId(),
                         appropriationAmount.doubleValue(), budgetheadid);
 
                 if (!flag)
@@ -701,7 +711,8 @@ public class LineEstimateService {
                 WorksConstants.CANCELLED_STATUS);
     }
 
-    public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails) throws ValidationException {
+    public boolean releaseBudgetOnReject(final LineEstimateDetails lineEstimateDetails, Double budgApprAmnt,
+            String appropriationnumber) throws ValidationException {
 
         final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationRepository
                 .findLatestByLineEstimateDetails_EstimateNumber(lineEstimateDetails.getEstimateNumber());
@@ -710,10 +721,16 @@ public class LineEstimateService {
         BudgetUsage budgetUsage = null;
         final boolean flag = false;
 
+        if (budgApprAmnt == null)
+            budgApprAmnt = lineEstimateAppropriation.getBudgetUsage().getConsumedAmount();
+
+        if (appropriationnumber == null)
+            appropriationnumber = lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber();
+
         budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
                 lineEstimateAppropriation.getBudgetUsage() == null ? null
                         : budgetAppropriationNumberGenerator.generateCancelledBudgetAppropriationNumber(
-                                lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber()),
+                                appropriationnumber),
                 lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
                 Integer.valueOf(11),
                 lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),
@@ -733,7 +750,7 @@ public class LineEstimateService {
                         : budgetheadid,
                 lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund() == null ? null
                         : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund().getId(),
-                lineEstimateAppropriation.getBudgetUsage().getConsumedAmount());
+                budgApprAmnt);
 
         if (lineEstimateAppropriation.getLineEstimateDetails() != null)
             persistBudgetReleaseDetails(lineEstimateDetails, budgetUsage);
@@ -788,6 +805,10 @@ public class LineEstimateService {
             newLineEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
         }
+
+        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+            // TODO:create abstract estimate on technical sanction. Need to remove once Abstract Estimate is in place.
+            estimateService.createAbstractEstimateOnLineEstimateTechSanction(led);
         return newLineEstimate;
     }
 

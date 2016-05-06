@@ -40,20 +40,6 @@
 
 package org.egov.infra.workflow.inbox;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.egov.infra.workflow.inbox.InboxRenderService.INBOX_RENDER_SERVICE_SUFFIX;
-import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -72,6 +58,20 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.infra.workflow.inbox.InboxRenderService.INBOX_RENDER_SERVICE_SUFFIX;
+import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 @Service
 @Transactional(readOnly = true)

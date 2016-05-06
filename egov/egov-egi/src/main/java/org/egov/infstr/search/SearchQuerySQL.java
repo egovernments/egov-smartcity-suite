@@ -37,14 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.search;
 
-import java.math.BigInteger;
-import java.util.List;
+package org.egov.infstr.search;
 
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
+
+import java.math.BigInteger;
+import java.util.List;
 
 /**
  * Class representing a search query. Stores the query and list of parameters. This can be used to represent SQL queries with a full query string and optional parameters.

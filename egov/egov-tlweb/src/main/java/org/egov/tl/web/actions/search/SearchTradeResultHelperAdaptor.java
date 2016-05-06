@@ -37,16 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.web.actions.search;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
+package org.egov.tl.web.actions.search;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm> {
 

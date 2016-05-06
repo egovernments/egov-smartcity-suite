@@ -49,7 +49,6 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.enums.UserType;

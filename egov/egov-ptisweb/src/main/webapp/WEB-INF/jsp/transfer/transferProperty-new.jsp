@@ -1,49 +1,51 @@
-<!-- #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
 <title><s:text name='transferProperty' /></title>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 
 <link
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
@@ -58,7 +60,7 @@
 		try {
 			jQuery(".datepicker").datepicker({
 				format : "dd/mm/yyyy",
-				autoclose:true
+				autoclose : true
 			});
 		} catch (e) {
 			console.warn("No Date Picker " + e);
@@ -100,9 +102,9 @@
 						<td class="bluebox"><span class="bold"><s:property
 									value="basicproperty.upicNo" default="N/A" /></span> <s:hidden
 								name="assessmentNo" id="assessmentNo"
-								value="%{basicproperty.upicNo}" />
-								<s:hidden name="meesevaApplicationNumber" id="meesevaApplicationNumber" value="%{meesevaApplicationNumber}" />
-			</td>
+								value="%{basicproperty.upicNo}" /> <s:hidden
+								name="meesevaApplicationNumber" id="meesevaApplicationNumber"
+								value="%{meesevaApplicationNumber}" /></td>
 						<td class="bluebox">&nbsp;</td>
 						<td style="width: 25%;">&nbsp;</td>
 					</tr>
@@ -111,27 +113,35 @@
 						<td class="bluebox"><s:text name="PropertyAddress"></s:text>
 							:</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.address" default="N/A"/></span></td>
+									value="basicproperty.address" default="N/A" /></span></td>
 						<td class="bluebox"><s:text name="Zone"></s:text> :</td>
 						<td class="bluebox"><span class="bold"><s:property
-									value="basicproperty.propertyID.zone.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.zone.name" default="N/A" /></span></td>
 					</tr>
 
 					<tr>
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="Ward" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.ward.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.ward.name" default="N/A" /></span></td>
 						<td class="greybox"><s:text name="block" /> :</td>
 						<td class="greybox"><span class="bold"><s:property
-									value="basicproperty.propertyID.area.name" default="N/A"/></span></td>
+									value="basicproperty.propertyID.area.name" default="N/A" /></span></td>
 					</tr>
 
 					<tr>
 						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="currentpropertytax" /> :</td>
+						<td class="greybox"><s:text name="CurrentTax" /> :</td>
 						<td class="greybox"><span class="bold">Rs. <s:property
-									value="currentPropertyTax" /> /-
+									value="currentPropertyTaxFirstHalf" /> /-
+						</span></td>
+					</tr>
+
+					<tr>
+						<td class="greybox2">&nbsp;</td>
+						<td class="greybox"><s:text name="CurrentSecondHalfTax" /> :</td>
+						<td class="greybox"><span class="bold">Rs. <s:property
+									value="currentPropertyTaxSecondHalf" /> /-
 						</span></td>
 					</tr>
 					<tr>
@@ -158,37 +168,32 @@
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
-											<td class="blueborderfortd" align="center">
-												<s:if test='%{owner.aadhaarNumber == ""}'>
-							        				<span
-												class="bold">N/A</span>
-							        			</s:if>
-							        			<s:else>
-													<span
-												class="bold"><s:property value="%{owner.aadhaarNumber}" default="N/A" />  </span>      			
-							        			</s:else>
-											</td>
+											<td class="blueborderfortd" align="center"><s:if
+													test='%{owner.aadhaarNumber == ""}'>
+													<span class="bold">N/A</span>
+												</s:if> <s:else>
+													<span class="bold"><s:property
+															value="%{owner.aadhaarNumber}" default="N/A" /> </span>
+												</s:else></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.mobileNumber" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.name" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.gender" /></span></td>
+											<td class="blueborderfortd" align="center"><s:if
+													test='%{owner.emailId == ""}'>
+													<span class="bold">N/A</span>
+												</s:if> <s:else>
+													<span class="bold"><s:property
+															value="%{owner.emailId}" /></span>
+												</s:else></td>
 											<td class="blueborderfortd" align="center"><span
 												class="bold"><s:property
-													value="owner.mobileNumber" /></span></td>
+														value="owner.guardianRelation" default="N/A" /></span></td>
 											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-													value="owner.name" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-													value="owner.gender" /></span></td>
-											<td class="blueborderfortd" align="center">
-												<s:if test='%{owner.emailId == ""}'><span
-												class="bold">N/A</span></s:if>
-	        		   							<s:else><span
-												class="bold"><s:property value="%{owner.emailId}" /></span></s:else>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-													value="owner.guardianRelation" default="N/A" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-													value="owner.guardian" default="N/A" /></span></td>
+												class="bold"><s:property value="owner.guardian"
+														default="N/A" /></span></td>
 										</tr>
 									</s:iterator>
 								</tbody>
@@ -204,8 +209,7 @@
 								id="transRsnId" list="dropdownData.MutationReason" listKey="id"
 								listValue="mutationName" headerKey="-1"
 								headerValue="%{getText('default.select')}"
-								value="%{mutationReason.id}" onchange="enableBlock();" />
-						</td>
+								value="%{mutationReason.id}" onchange="enableBlock();" /></td>
 						<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
@@ -219,7 +223,8 @@
 						<td class="greybox"><s:text name="docNum" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64" onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
+								maxlength="64"
+								onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
 						<td class="greybox"><s:text name="docDate" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:date name="deedDate" var="docDate"
@@ -292,8 +297,8 @@
 				}
 			}
 		}
-		
 	</script>
-	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script
+		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </body>
 </html>

@@ -40,17 +40,6 @@
 
 package org.egov.tl.service.integration;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -86,9 +75,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
@@ -107,6 +96,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 @Service
 @Transactional(readOnly = true)
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -114,7 +114,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private static final Logger LOG = LoggerFactory.getLogger(LicenseBillService.class);
 
     protected License license;
-    public static final String TL_FUNCTION_CODE = "10151500";
+    public static final String TL_FUNCTION_CODE = "1500";
 
     @Autowired
     private EgBillDetailsDao egBillDetailsDao;
@@ -268,6 +268,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 billdetail.setOrderNo(i++);
                 billdetail.setDescription(reason.getEgDemandReasonMaster().getReasonMaster() + " - "
                         + installment.getDescription());
+                billdetail.setFunctionCode(TL_FUNCTION_CODE);
                 billDetails.add(billdetail);
             }
 

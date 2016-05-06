@@ -37,11 +37,11 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.entity;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -56,9 +56,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-
-import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "egtl_feematrix")

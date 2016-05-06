@@ -37,14 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.taglib;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.tagext.Tag;
 
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.Role;
@@ -54,6 +48,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
+
+import javax.servlet.jsp.JspTagException;
+import javax.servlet.jsp.tagext.Tag;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A tag that shows/hides html within it depending on user's access

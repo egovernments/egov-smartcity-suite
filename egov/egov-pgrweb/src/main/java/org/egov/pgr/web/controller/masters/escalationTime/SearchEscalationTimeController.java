@@ -37,11 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.web.controller.masters.escalationTime;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.util.List;
 
 import org.egov.eis.service.DesignationService;
 import org.egov.pgr.entity.ComplaintType;
@@ -57,6 +54,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/escalationTime")

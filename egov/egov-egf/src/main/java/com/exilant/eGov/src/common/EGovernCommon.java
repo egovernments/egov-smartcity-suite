@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,24 +24,44 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /*
  * Created on Jan 7, 2005
  *
  */
 package com.exilant.eGov.src.common;
+
+import com.exilant.exility.common.AbstractTask;
+import com.exilant.exility.common.DataCollection;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.updateservice.PrimaryKeyGenerator;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.egov.commons.CFiscalPeriod;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.utils.VoucherHelper;
+import org.hibernate.Query;
+import org.hibernate.exception.SQLGrammarException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -54,28 +74,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.egov.commons.CFiscalPeriod;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
-import org.hibernate.exception.SQLGrammarException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.exilant.exility.common.AbstractTask;
-import com.exilant.exility.common.DataCollection;
-import com.exilant.exility.common.TaskFailedException;
-import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 
 /**
  * @author pushpendra.singh

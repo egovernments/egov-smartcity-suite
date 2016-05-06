@@ -37,13 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.security.filter;
 
-import java.io.IOException;
+package org.egov.infra.web.security.filter;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * Filter which handles possible XSS attack

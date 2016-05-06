@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 
 <%@ page language="java"%>
@@ -79,12 +81,13 @@
 				<tr>
 					<td></td>
 					<td class="bluebox"><s:text
-							name="masters.subscheme.search.fund" /></td>
+							name="masters.subscheme.search.fund" /><span class="mandatory1">
+							*</span></td>
 					<td class="bluebox"><s:select list="dropdownData.fundList"
-							listKey="id" listValue="name" name="fundId" headerKey="0"
-							headerValue="---- Choose ----" onchange="loadScheme(this)"></s:select>
-						<egov:ajaxdropdown id="schemeId" dropdownId="schemeId"
-							fields="['Text','Value']"
+							id="fundId" listKey="id" listValue="name" name="fundId"
+							headerKey="0" headerValue="---- Choose ----"
+							onchange="loadScheme(this)"></s:select> <egov:ajaxdropdown
+							id="schemeId" dropdownId="schemeId" fields="['Text','Value']"
 							url="voucher/common-ajaxLoadSchemes.action" selectedValue="%{id}" />
 					</td>
 					<td class="bluebox"><s:text
@@ -165,8 +168,7 @@
 					<td class="<c:out value='${trclass}'/>"><s:property
 							value="initialEstimateAmount" /></td>
 					<td class="<c:out value="${trclass}"/>"><s:if
-							test="%{isactive==true}">Yes</s:if>
-						<s:else>No</s:else></td>
+							test="%{isactive==true}">Yes</s:if> <s:else>No</s:else></td>
 				</tr>
 				<c:choose>
 					<c:when test="${trclass=='greybox'}">
@@ -227,7 +229,12 @@
 				
 
 	    function submitForm(){
-	    	document.subSchemeForm.action='${pageContext.request.contextPath}/masters/subScheme-search.action';
+		    if(document.getElementById("fundId").value==0)
+			    {
+		    	bootbox.alert("Please select Fund");
+				return false;
+			    }
+	    	document.subSchemeForm.action='/EGF/masters/subScheme-search.action';
 	    	document.subSchemeForm.submit();
 	    	return true;
 	    }     

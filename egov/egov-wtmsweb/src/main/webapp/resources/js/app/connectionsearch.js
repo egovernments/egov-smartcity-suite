@@ -1,42 +1,42 @@
-/*#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------*/
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 var tableContainer;
 jQuery(document).ready(function($) {
 	
@@ -119,6 +119,12 @@ jQuery(document).ready(function($) {
 										} 
 										if (this.value == 13) {
 											var url = '/wtms/application/editDemand/'+ consumerNumber;
+											$('#waterSearchRequestForm').attr('method', 'get');
+											$('#waterSearchRequestForm').attr('action', url);
+											window.location = url;
+										} 
+										if (this.value == 14) {
+											var url = '/wtms/application/newConnection-editExisting/'+ consumerNumber;
 											$('#waterSearchRequestForm').attr('method', 'get');
 											$('#waterSearchRequestForm').attr('action', url);
 											window.location = url;
@@ -232,8 +238,9 @@ function submitButton()
 		            return '<div style="font-style: italic;text-decoration: underline;" class="view-content">'+data+'</div>';} },
 	           {title : 'Address',data : 'resource.searchable.locality'},
 	           {title : 'apptype',data : 'resource.clauses.applicationcode',"bVisible" : false},
+	           {title : 'legacy',data : 'resource.clauses.islegacy',"bVisible" : false},
 	           {title : 'Usage Type',data : 'resource.clauses.usage'},
-	           {title : 'Property Tax Due',
+	           {title : 'Property Tax Due',class : 'text-right',
 	        	   render: function (data, type, full) {
 	        		   if(citizenRole != 'true') {
 							return full.resource.clauses.totaldue;
@@ -244,7 +251,7 @@ function submitButton()
 			   {title : 'Status',data : 'resource.clauses.status'},
 	           {title : 'conntype',data : 'resource.clauses.connectiontype',"bVisible" : false},
 	           {title : 'conndate',data : 'resource.common.createdDate',"bVisible" : false},
-	           {title : 'Water Charge Due',data : 'resource.clauses.waterTaxDue'},
+	           {title : 'Water Charge Due',class : 'text-right',data : 'resource.clauses.waterTaxDue'},
 		       {title : 'Actions',
 	        	   render : function(data,type,full) {
 	        		     
@@ -303,6 +310,13 @@ function submitButton()
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option></select>');
 
 	        				   }
+	        				   
+	        				   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
+		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option><option value="14">Modify Connection Details</option</select>');
+		        			   }
+		        			   else if(superUserRole!=null && superUserRole!="" ){
+	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
+	        				   }
 	        			   } else if (((cscUserRole!=null && cscUserRole!="" )||( ulbUserRole!=null &&  ulbUserRole!="") )
 	        					   && full.resource.clauses.status == 'DISCONNECTED') {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="10">Reconnection</option></select>');
@@ -310,12 +324,7 @@ function submitButton()
 	        			   else if(superUserRole!=null && full.resource.clauses.status == 'DISCONNECTED') {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 	        			   }
-	        			   else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
-	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
-	        			   }
-	        			   else if(superUserRole!=null && superUserRole!="" ){
-        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
-        				   }
+	        			   
 	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!=""))&& full.resource.clauses.status == 'CLOSED' && full.resource.searchable.closureType=='T'  ) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="10">ReConnection</option></select>');
         				   }
@@ -372,7 +381,7 @@ function submitButton()
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
 	        				   }
 	        				  else if(((superUserRole!=null && superUserRole!=""  ) || (administratorRole!=null && administratorRole!="")) && full.resource.clauses.islegacy ==true) {
-		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option></select>');
+		        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="13">Add/Edit DCB</option><option value="14">Modify Connection Details</option</select>');
 		        			   }
 	        				   else if(superUserRole!=null && superUserRole!="" ){
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');

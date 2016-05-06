@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,37 +24,20 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.services.instrument;
-
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ADVICE;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ATM;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_BANK;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_BANK_TO_BANK;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CARD;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CASH;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CHEQUE;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_DD;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ECS;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ONLINE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -66,7 +49,6 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ECSType;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentAccountCodes;
@@ -81,6 +63,23 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ADVICE;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ATM;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_BANK;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_BANK_TO_BANK;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CARD;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CASH;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CHEQUE;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_DD;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ECS;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ONLINE;
 
 @Transactional(readOnly = true)
 public class InstrumentService {

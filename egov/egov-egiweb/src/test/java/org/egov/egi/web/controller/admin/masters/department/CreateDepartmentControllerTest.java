@@ -39,6 +39,16 @@
  ******************************************************************************/
 package org.egov.egi.web.controller.admin.masters.department;
 
+import org.egov.egi.web.controller.AbstractContextControllerTest;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.web.controller.admin.masters.department.CreateDepartmentController;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.springframework.test.web.servlet.MockMvc;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -51,16 +61,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
-import org.egov.egi.web.controller.AbstractContextControllerTest;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.web.controller.admin.masters.department.CreateDepartmentController;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * This Class is used to test Create Department Controller

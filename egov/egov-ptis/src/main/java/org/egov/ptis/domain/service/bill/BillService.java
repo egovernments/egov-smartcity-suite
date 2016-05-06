@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,38 +24,23 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.domain.service.bill;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUARTZ_BULKBILL_JOBS;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -67,14 +52,12 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.calculator.DemandNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -82,8 +65,25 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUARTZ_BULKBILL_JOBS;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 
 /**
  * Provides API to Generate a Demand Notice or the Bill giving the break up of
@@ -106,10 +106,8 @@ public class BillService {
     InputStream billPDF;
     @Autowired
     private ModuleService moduleDao;
-    @Autowired
-    private InstallmentDao installmentDao;
-    @Autowired
-    private PtDemandDao ptDemandDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private PropertyTaxBillable propertyTaxBillable;
     private PersistenceService persistenceService;
@@ -197,8 +195,7 @@ public class BillService {
     private int getNumberOfBills(final BasicProperty basicProperty) {
         final Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
 
-        final Long count = (Long) HibernateUtil
-                .getCurrentSession()
+        final Long count = (Long) entityManager.unwrap(Session.class)
                 .createQuery(
                         "SELECT COUNT (*) FROM EgBill WHERE module = ? "
                                 + "AND egBillType.code = ? AND consumerId = ? AND is_Cancelled = 'N' "

@@ -1,0 +1,162 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+package org.egov.works.abstractestimate.service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
+import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.models.estimate.FinancialDetail;
+import org.egov.works.models.estimate.MultiYearEstimate;
+import org.egov.works.utils.WorksConstants;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class EstimateService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private final AbstractEstimateRepository abstractEstimateRepository;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
+
+    @Autowired
+    private EstimateTechnicalSanctionService estimateTechnicalSanctionService;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    @Autowired
+    public EstimateService(final AbstractEstimateRepository abstractEstimateRepository) {
+        this.abstractEstimateRepository = abstractEstimateRepository;
+    }
+
+    public AbstractEstimate getAbstractEstimateById(final Long id) {
+        return abstractEstimateRepository.findOne(id);
+    }
+
+    @Transactional
+    public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(final LineEstimateDetails lineEstimateDetails) {
+
+        final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository
+                .save(populateAbstractEstimate(lineEstimateDetails));
+        saveTechnicalSanction(savedAbstractEstimate);
+        return savedAbstractEstimate;
+    }
+
+    private AbstractEstimate populateAbstractEstimate(final LineEstimateDetails lineEstimateDetails) {
+        final AbstractEstimate abstractEstimate = new AbstractEstimate();
+        abstractEstimate.setEstimateDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+        abstractEstimate.setEstimateNumber(lineEstimateDetails.getEstimateNumber());
+        abstractEstimate.setName(lineEstimateDetails.getNameOfWork());
+        abstractEstimate.setDescription(lineEstimateDetails.getNameOfWork());
+        abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
+        abstractEstimate.setNatureOfWork(lineEstimateDetails.getLineEstimate().getNatureOfWork());
+        abstractEstimate.setLocation(lineEstimateDetails.getLineEstimate().getLocation().getName());
+        abstractEstimate.setParentCategory(lineEstimateDetails.getLineEstimate().getTypeOfWork());
+        abstractEstimate.setCategory(lineEstimateDetails.getLineEstimate().getSubTypeOfWork());
+        abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
+        abstractEstimate.setWorkValue(new Money(lineEstimateDetails.getActualEstimateAmount().doubleValue()));
+        abstractEstimate.setEstimateValue(new Money(lineEstimateDetails.getActualEstimateAmount().doubleValue()));
+        abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()));
+        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
+        abstractEstimate.setApprovedDate(lineEstimateDetails.getLineEstimate().getTechnicalSanctionDate());
+        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
+        abstractEstimate.addFinancialDetails(populateEstimateFinancialDetails(abstractEstimate));
+        abstractEstimate.addMultiYearEstimate(populateMultiYearEstimate(abstractEstimate));
+        return abstractEstimate;
+    }
+
+    private FinancialDetail populateEstimateFinancialDetails(final AbstractEstimate abstractEstimate) {
+        final FinancialDetail financialDetail = new FinancialDetail();
+        financialDetail.setAbstractEstimate(abstractEstimate);
+        financialDetail.setFund(abstractEstimate.getLineEstimateDetails().getLineEstimate().getFund());
+        financialDetail.setFunction(abstractEstimate.getLineEstimateDetails().getLineEstimate().getFunction());
+        financialDetail.setBudgetGroup(abstractEstimate.getLineEstimateDetails().getLineEstimate().getBudgetHead());
+        financialDetail.setScheme(abstractEstimate.getLineEstimateDetails().getLineEstimate().getScheme());
+        financialDetail.setSubScheme(abstractEstimate.getLineEstimateDetails().getLineEstimate().getSubScheme());
+        return financialDetail;
+    }
+
+    private MultiYearEstimate populateMultiYearEstimate(final AbstractEstimate abstractEstimate) {
+        final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
+        multiYearEstimate.setAbstractEstimate(abstractEstimate);
+        multiYearEstimate.setFinancialYear(financialYearHibernateDAO.getFinYearByDate(abstractEstimate.getEstimateDate()));
+        multiYearEstimate.setPercentage(100);
+        return multiYearEstimate;
+    }
+
+    private EstimateTechnicalSanction saveTechnicalSanction(final AbstractEstimate abstractEstimate) {
+        final EstimateTechnicalSanction estimateTechnicalSanction = new EstimateTechnicalSanction();
+        estimateTechnicalSanction.setAbstractEstimate(abstractEstimate);
+        estimateTechnicalSanction.setTechnicalSanctionNumber(
+                abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionNumber());
+        estimateTechnicalSanction
+                .setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
+        estimateTechnicalSanction
+                .setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionBy());
+
+        // TODO: move to cascade save with AbstractEstimate object once AbstractEstimate entity converted to JPA
+        return estimateTechnicalSanctionService.save(estimateTechnicalSanction);
+    }
+
+    public AbstractEstimate getAbstractEstimateByEstimateNumber(final String estimateNumber) {
+        return abstractEstimateRepository.findByEstimateNumberAndEgwStatus_codeNotLike(estimateNumber,
+                AbstractEstimate.EstimateStatus.CANCELLED.toString());
+    }
+
+}

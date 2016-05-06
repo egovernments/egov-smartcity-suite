@@ -37,11 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.web.controller.complaint;
-
-import static java.util.Arrays.asList;
-
-import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
@@ -74,6 +71,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 @Controller
 // @RequestMapping(value = "/complaint/citizen/anonymous/search")

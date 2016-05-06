@@ -37,7 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+
+<%@ page language="java" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 	<div class="panel-heading custom_form_panel_heading">
 	    <div class="panel-title"><s:text name='license.title.applicantdetails' /></div>

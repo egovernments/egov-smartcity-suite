@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-	var tableContainer;
+
+var tableContainer;
 	
     $('#toggle-searchcomp').click(function () {
         if ($(this).html() == "More..") {

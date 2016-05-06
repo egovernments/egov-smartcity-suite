@@ -1,42 +1,43 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <style>
 #warning {
   display:none;
@@ -51,7 +52,7 @@ warnings['natureOfWorkChanged']='<s:text name="estimate.header.warning.natureOfW
 warnings['dateChanged']='<s:text name="estimate.header.warning.dateChanged"/>'
 warnings['improperWardSelection']='<s:text name="estimate.header.warning.improperWardSelection"/>'
 
-function warn(type){
+function warn(type){ 
     dom.get(type+"Warning").innerHTML=warnings[type]
     dom.get(type+"Warning").style.display='';
     YAHOO.lang.later(3000,null,function(){dom.get(type+"Warning").style.display='none';});
@@ -100,21 +101,6 @@ function validateHeaderBeforeSubmit(abstractEstimateForm) {
       if (wardName.length == 0) {
         abstractEstimateForm.wardID.value = -1;
        }
-      if(dom.get('userDepartment').value==-1)
-      {
-    	  dom.get("worktypeerror").style.display='';
-          dom.get("worktypeerror").innerHTML='<s:text name="estimate.userDept.null" />';
-          window.scroll(0,0);
-          return false;   
-      }
-      else
-      {
-          if(dom.get("worktypeerror").innerHTML=='<s:text name="estimate.userDept.null" />')
-          {
-        	  dom.get("worktypeerror").style.display='none';
-              dom.get("worktypeerror").innerHTML='';    
-          }    
-      }
       if(document.getElementById('wardSearch').value=='')
       {
     	  dom.get("worktypeerror").style.display='';
@@ -130,7 +116,7 @@ function validateHeaderBeforeSubmit(abstractEstimateForm) {
               dom.get("worktypeerror").innerHTML='';    
           }    
       }
-      if(dom.get('type').value==-1)
+      if(dom.get('natureOfWork').value==-1)
       {
     	  dom.get("worktypeerror").style.display='';
           dom.get("worktypeerror").innerHTML='<s:text name="estimate.natureofwork.null" />';
@@ -335,7 +321,7 @@ function jurisdictionSearchParameters(){
 	   
 	  <div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <s:text name="estimate.user.department" /><span class="mandatory"></span>
+			    <s:text name="estimate.user.department" /></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="userDepartment" id="userDepartment" cssClass="form-control" list="dropdownData.userDepartmentList" onchange="clearMsg(this);" listKey="id" listValue="name" value="%{userDepartment.id}"/> 
@@ -385,10 +371,10 @@ function jurisdictionSearchParameters(){
 			</label>
 			<div class="col-sm-3 add-margin">
 				 <s:if test="%{(dropdownData.typeList.size==1)}" >
-	                <s:select name="type" id="type" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" />
+	                <s:select name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.natureOfWorkList" listKey="id" listValue="name" value="%{natureOfWork.id}" />
                 </s:if>
                 <s:else>
-	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="type" id="type" cssClass="form-control" list="dropdownData.typeList" listKey="id" listValue="name" value="%{type.id}" 
+	                <s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="natureOfWork" id="natureOfWork" cssClass="form-control" list="dropdownData.natureOfWorkList" listKey="id" listValue="name" value="%{natureOfWork.id}" 
 	                	onChange="javascript:warn('natureOfWorkChanged');resetAssets(this.options[this.selectedIndex].value);"/>	                
                 </s:else>
                 <span class='warning' id="natureOfWorkChangedWarning"></span>

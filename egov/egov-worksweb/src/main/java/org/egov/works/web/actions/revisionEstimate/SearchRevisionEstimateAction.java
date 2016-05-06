@@ -1,55 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.web.actions.revisionEstimate;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -61,6 +49,7 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
@@ -68,7 +57,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.utils.DateUtils;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
@@ -90,6 +78,18 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 @ParentPackage("egov")
 @Result(name = SearchRevisionEstimateAction.SEARCH, location = "searchRevisionEstimate-search.jsp")
@@ -134,7 +134,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
         addRelatedEntity("category", EgwTypeOfWork.class);
         addRelatedEntity("parentCategory", EgwTypeOfWork.class);
         addRelatedEntity("executingDepartment", Department.class);
-        addRelatedEntity("type", NatureOfWork.class);
+        addRelatedEntity("natureOfWork", NatureOfWork.class);
         addRelatedEntity("egwStatus", EgwStatus.class);
     }
 
@@ -156,7 +156,7 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
                                 "from EgwStatus s where moduletype=? and code in ('CREATED','REJECTED','RESUBMITTED','CANCELLED','BUDGETARY_APPR_CHECKED','BUDGETARY_APPROPRIATION_DONE','BUDGETARY_APPR_VALIDATED','APPROVED') order by orderId",
                                 AbstractEstimate.class.getSimpleName()));
         addDropdownData("executingDepartmentList", persistenceService.findAllBy("from Department dt"));
-        addDropdownData("typeList", persistenceService.findAllBy("from WorkType dt"));
+        addDropdownData("typeList", persistenceService.findAllBy("from NatureOfWork"));
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
         addDropdownData("categoryList", Collections.emptyList());
@@ -197,9 +197,9 @@ public class SearchRevisionEstimateAction extends SearchFormAction {
             query.append(" and woeC.estimate.estimateNumber like '%'||?||'%'");
             paramList.add(estimates.getEstimateNumber());
         }
-        if (estimates.getType() != null) {
-            query.append(" and woeP.estimate.type.id = ?");
-            paramList.add(estimates.getType().getId());
+        if (estimates.getNatureOfWork() != null) {
+            query.append(" and woeP.estimate.natureOfWork.id = ?");
+            paramList.add(estimates.getNatureOfWork().getId());
         }
         if (null != fromDate && getFieldErrors().isEmpty()) {
             query.append(" and woeC.estimate.estimateDate >= ?");

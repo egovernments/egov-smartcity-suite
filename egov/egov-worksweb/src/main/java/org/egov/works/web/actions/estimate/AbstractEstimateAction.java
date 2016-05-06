@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.web.actions.estimate;
 
@@ -86,9 +86,9 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
@@ -216,7 +216,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         addRelatedEntity("userDepartment", Department.class);
         addRelatedEntity("executingDepartment", Department.class);
         addRelatedEntity("ward", Boundary.class);
-        addRelatedEntity("type", NatureOfWork.class);
+        addRelatedEntity("natureOfWork", NatureOfWork.class);
         addRelatedEntity("category", EgwTypeOfWork.class);
         addRelatedEntity("parentCategory", EgwTypeOfWork.class);
         addRelatedEntity("depositCode", DepositCode.class);
@@ -497,10 +497,10 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     }
 
     private void validateForAssetSelection() {
-        if (abstractEstimate.getType() != null
-                && !(abstractEstimate.getType().getName().equals(WorksConstants.DEPOSIT_WORKS_THIRDPARTY_ASSET)
+        if (abstractEstimate.getNatureOfWork() != null
+                && !(abstractEstimate.getNatureOfWork().getName().equals(WorksConstants.DEPOSIT_WORKS_THIRDPARTY_ASSET)
                         || abstractEstimate
-                                .getType().getName().equals(WorksConstants.DEPOSIT_WORKS_NO_ASSET_CREATED))) {
+                                .getNatureOfWork().getName().equals(WorksConstants.DEPOSIT_WORKS_NO_ASSET_CREATED))) {
             final String isAssetRequired = worksService.getWorksConfigValue("ASSET_MANDATORY");
             if (isAssetRequired.equals("yes") && actionAssetValues != null) {
                 boolean isAssetPresent = false;
@@ -747,8 +747,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                 // on update of estimate for child objects
                 multiYearEstimate.setCreatedBy(worksService.getCurrentLoggedInUser());
                 multiYearEstimate.setCreatedDate(new Date());
-                multiYearEstimate.setModifiedBy(worksService.getCurrentLoggedInUser());
-                multiYearEstimate.setModifiedDate(new Date());
+                multiYearEstimate.setLastModifiedBy(worksService.getCurrentLoggedInUser());
+                multiYearEstimate.setLastModifiedDate(new Date());
                 abstractEstimate.addMultiYearEstimate(multiYearEstimate);
             }
             if (multiYearEstimate != null && actionMultiYearEstimateValues.size() == count && totalPerc != 0.0
@@ -867,7 +867,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         boolean isDepositWorks = false;
         final List<String> depositTypeList = getAppConfigValuesToSkipBudget();
         for (final String type : depositTypeList)
-            if (type.equals(abstractEstimate.getType().getName()))
+            if (type.equals(abstractEstimate.getNatureOfWork().getName()))
                 isDepositWorks = true;
         return isDepositWorks;
     }

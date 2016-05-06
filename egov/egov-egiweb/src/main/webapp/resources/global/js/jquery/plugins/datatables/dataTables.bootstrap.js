@@ -49,8 +49,8 @@ jQuery.extend( jQuery.fn.dataTableExt.oPagination, {
 
 			jQuery(nPaging).append(
 				'<ul class="pagination pagination-sm">'+
-					'<li class="prev disabled"><a href="#"><i class="entypo-left-open"></i></a></li>'+
-					'<li class="next disabled"><a href="#"><i class="entypo-right-open"></i></a></li>'+
+					'<li class="prev disabled"><a href="#"><i class="fa fa-angle-left"></i></a></li>'+
+					'<li class="next disabled"><a href="#"><i class="fa fa-angle-right"></i></a></li>'+
 				'</ul>'
 			);
 			var els = jQuery('a', nPaging);

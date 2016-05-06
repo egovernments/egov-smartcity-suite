@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <c:choose>
 	<c:when test="${trclass=='greybox'}">
 		<c:set var="trclass" value="bluebox" />

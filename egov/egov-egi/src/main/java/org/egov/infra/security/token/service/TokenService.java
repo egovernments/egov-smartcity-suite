@@ -37,10 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.security.token.service;
 
-import java.util.Date;
-import java.util.UUID;
+package org.egov.infra.security.token.service;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.service.CityService;
@@ -50,6 +48,9 @@ import org.egov.infra.security.token.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)

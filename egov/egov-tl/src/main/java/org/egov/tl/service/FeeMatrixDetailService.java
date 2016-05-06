@@ -40,10 +40,6 @@
 
 package org.egov.tl.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.repository.FeeMatrixDetailRepository;
@@ -51,6 +47,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

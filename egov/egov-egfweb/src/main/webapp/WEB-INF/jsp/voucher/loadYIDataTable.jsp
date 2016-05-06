@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
@@ -144,10 +146,10 @@
 		var tr = tfoot.insertRow(-1);
 		var th = tr.appendChild(document.createElement('th'));
 		<s:if test='%{isRestrictedtoOneFunctionCenter == true}'>
-		th.colSpan = 4;
+		th.colSpan = 5;
 		</s:if>
 		<s:else>
-		th.colSpan = 3;
+		th.colSpan = 4;
 		</s:else>
 		
 		th.innerHTML = 'Total&nbsp;&nbsp;&nbsp;';

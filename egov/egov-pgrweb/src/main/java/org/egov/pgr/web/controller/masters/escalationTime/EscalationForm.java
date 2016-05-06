@@ -37,16 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.web.controller.masters.escalationTime;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.egov.pgr.web.controller.masters.escalationTime;
 
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pims.commons.Position;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EscalationForm {
     private ComplaintType complaintType;

@@ -1,42 +1,43 @@
-<!--
-	eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-    Copyright (C) <2015>  eGovernments Foundation
- 
-	The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
- 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
- 
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -54,8 +55,7 @@
                 <spring:hasBindErrors name="meterCost">
         		<%-- <form:errors path="pipeSize" cssClass="add-margin error-msg" /> --%>
           		<form:errors path="meterMake" cssClass="add-margin error-msg" /> 
-          	<%-- 	<form:errors path="amount" cssClass="add-margin error-msg" /> --%>
-        	</spring:hasBindErrors>
+         </spring:hasBindErrors>
 				<div class="form-group">
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.hscpipesize" />:<span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
@@ -63,7 +63,7 @@
 						<form:option value=""><spring:message code="lbl.select" /></form:option>
 						<%-- <form:options items="${pipeSize}" itemValue="id" itemLabel="name" /> --%>
 						<c:forEach var="pipeSize" items="${pipeSize}">
-						<form:option value="${pipeSize}"><c:out value="${pipeSize.sizeInInch}"/></form:option>  
+						<form:option value="${pipeSize}"><c:out value="${pipeSize.code}"/></form:option>  
 						</c:forEach>
 					</form:select>
 				</div>
@@ -75,8 +75,9 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.metercost" />:<span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin"  id="amount">
-						<form:input cssClass="form-control patternvalidation"  title="It will allow upto 8 digits and 2 decimal points" pattern="\d{0,8}(\.\d{0,3})?" data-pattern="decimalvalue" 
-							 maxlength="10" id="amountid" path="amount" required="required" />
+						<form:input cssClass="form-control patternvalidation" data-pattern="decimalvalue"  pattern="\d{0,5}(\.\d{1,2})?" title="It will allow upto 5 digits and 2 decimal points"   data-first-option="false&true"
+							maxlength="8"  id="amountid" path="amount" required="required" />
+							 <form:errors path="amount" cssClass="add-margin error-msg" />
 					</div>
 				</div>
 			<div class="form-group">
@@ -92,7 +93,7 @@
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
 
 			<div class="form-group text-center">
-				<button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
+				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
 				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
 				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
 				<button type="button" class="btn btn-default" value="Reset" id="resetid" ><spring:message code="lbl.reset"/></button>

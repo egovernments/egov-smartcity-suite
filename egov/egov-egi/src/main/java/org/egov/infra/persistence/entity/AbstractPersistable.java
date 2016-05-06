@@ -40,13 +40,12 @@
 
 package org.egov.infra.persistence.entity;
 
-import java.io.Serializable;
+import org.egov.infra.search.elastic.Indexable;
+import org.egov.infra.utils.EgovThreadLocals;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
-
-import org.egov.infra.search.elastic.Indexable;
-import org.egov.infra.utils.EgovThreadLocals;
+import java.io.Serializable;
 
 @MappedSuperclass
 public abstract class AbstractPersistable<PK extends Serializable> implements Serializable, Indexable {

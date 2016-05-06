@@ -40,8 +40,7 @@
 
 package org.egov.tl.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -53,8 +52,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name="egtl_feematrix_detail")

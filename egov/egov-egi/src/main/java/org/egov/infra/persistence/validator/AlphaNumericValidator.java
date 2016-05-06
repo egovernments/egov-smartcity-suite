@@ -37,15 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.persistence.validator;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+import org.egov.infra.persistence.validator.annotation.AlphaNumeric;
+import org.egov.infra.validation.regex.Constants;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.egov.infra.persistence.validator.annotation.AlphaNumeric;
-import org.egov.infra.validation.regex.Constants;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class AlphaNumericValidator implements ConstraintValidator<AlphaNumeric, String> {
 

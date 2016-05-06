@@ -39,13 +39,13 @@
  */
 package org.egov.eis.service;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.egov.eis.EISAbstractSpringIntegrationTest;
 import org.egov.eis.entity.EmployeeView;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.Assert.assertNotNull;
 
 @Ignore
 public class EmployeeViewServiceTest extends EISAbstractSpringIntegrationTest {
