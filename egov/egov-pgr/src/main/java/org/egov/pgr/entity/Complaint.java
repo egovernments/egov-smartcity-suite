@@ -342,7 +342,7 @@ public class Complaint extends StateAware {
 
     @Override
     protected StateInfoBuilder buildStateInfo() {
-        return super.buildStateInfo().citizenName(this.getComplainant().getName()).citizenAddress(this.getComplainant().getMobile())
-                .citizenAddress(this.getComplainant().getAddress()).refNo(this.getCrn()).locationWard(this.getLocation().getName());
+        return super.buildStateInfo().citizenName(this.getComplainant().getName()).refDate(this.getCreatedDate()).citizenPhoneno(this.getComplainant().getMobile())
+                .citizenAddress(this.getComplainant().getAddress()).refNum(this.getCrn()).location(this.getLocation().getName()).task("Grievance").status(this.getStatus().getName());
     }
 }
