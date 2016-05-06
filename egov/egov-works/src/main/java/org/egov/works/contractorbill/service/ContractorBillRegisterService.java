@@ -52,6 +52,7 @@ import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -482,5 +483,68 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatusAndNotContractorBillRegister(workOrder,
                 ContractorBillRegister.BillStatus.CANCELLED.toString(), id);
     }
+    
+    public List<ContractorBillRegister> searchContractorBillsToCancel(final SearchRequestContractorBill searchRequestContractorBill) {
+        // TODO Need TO handle in single query
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
+                .createAlias("workOrder", "cbrwo")
+                .createAlias("cbrwo.contractor", "cbrwocont");
 
+        if (searchRequestContractorBill != null) {
+            if (searchRequestContractorBill.getBillNumber() != null)
+                criteria.add(Restrictions.ilike("billnumber", searchRequestContractorBill.getBillNumber(), MatchMode.ANYWHERE));
+            if (searchRequestContractorBill.getStatus() != null)
+                criteria.add(Restrictions.eq("billstatus", searchRequestContractorBill.getStatus()));
+            if (searchRequestContractorBill.getWorkIdentificationNumber() != null) {
+                final List<String> estimateNumbersforWIN = lineEstimateService
+                        .getEstimateNumbersForWorkIdentificationNumber(searchRequestContractorBill.getWorkIdentificationNumber());
+                if (estimateNumbersforWIN.isEmpty())
+                    estimateNumbersforWIN.add("");
+                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforWIN));
+            }
+            if (searchRequestContractorBill.getDepartment() != null) {
+                final List<String> estimateNumbers = lineEstimateService
+                        .getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());
+                if (estimateNumbers.isEmpty())
+                    estimateNumbers.add("");
+                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbers));
+            }
+            if (searchRequestContractorBill.getWorkOrderNumber() != null) {
+                final List<String> workOrderNumbers = contractorBillRegisterRepository
+                        .findWorkOrderNumbersToCancel("%" + searchRequestContractorBill.getWorkOrderNumber() + "%",
+                                ContractorBillRegister.BillStatus.APPROVED.toString());
+                if (workOrderNumbers.isEmpty())
+                    workOrderNumbers.add("");
+                criteria.add(Restrictions.in("cbrwo.workOrderNumber", workOrderNumbers));
+            }
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+    
+    public List<String> findWorkIdentificationNumbersToSearchContractorBillToCancel(final String code) {
+        final List<String> workIdNumbers = contractorBillRegisterRepository
+                .findWorkIdentificationNumberToSearchContractorBillToCancel("%" + code + "%",
+                        ContractorBillRegister.BillStatus.APPROVED.toString());
+        return workIdNumbers;
+    }
+    
+    public List<String> findBillNumbersToSearchContractorBillToCancel(final String billNumber) {
+        final List<String> workIdNumbers = contractorBillRegisterRepository
+                .findBillNumberToSearchContractorBillToCancel("%" + billNumber + "%",
+                        ContractorBillRegister.BillStatus.APPROVED.toString());
+        return workIdNumbers;
+    }
+
+    @Transactional
+    public ContractorBillRegister cancel(final ContractorBillRegister contractorBillRegister) {
+        contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
+                ContractorBillRegister.BillStatus.CANCELLED.toString()));
+        contractorBillRegister.setBillstatus(ContractorBillRegister.BillStatus.CANCELLED.toString());
+        List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(contractorBillRegister);
+        for(MBHeader mbHeader : mbHeaders) {
+            mbHeaderService.cancel(mbHeader);
+        }
+        return contractorBillRegisterRepository.save(contractorBillRegister);
+    }
 }

@@ -53,6 +53,7 @@ public class SearchRequestContractorBill {
     private String contractorName;
     private Long department;
     private boolean spillOverFlag;
+    private String workOrderNumber;
 
     public SearchRequestContractorBill() {
     }
@@ -129,4 +130,11 @@ public class SearchRequestContractorBill {
         this.spillOverFlag = spillOverFlag;
     }
 
+    public String getWorkOrderNumber() {
+        return workOrderNumber;
+    }
+
+    public void setWorkOrderNumber(String workOrderNumber) {
+        this.workOrderNumber = workOrderNumber;
+    }
 }

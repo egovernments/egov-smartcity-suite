@@ -115,6 +115,10 @@ public class ContractorBillRegister extends EgBillregister {
 
     @Transient
     private MBHeader mbHeader;
+    
+    private String cancellationReason;
+    
+    private String cancellationRemarks;
 
     @Override
     public String getStateDetails() {
@@ -245,5 +249,21 @@ public class ContractorBillRegister extends EgBillregister {
 
     public void setMbHeader(final MBHeader mbHeader) {
         this.mbHeader = mbHeader;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+
+    public String getCancellationRemarks() {
+        return cancellationRemarks;
+    }
+
+    public void setCancellationRemarks(String cancellationRemarks) {
+        this.cancellationRemarks = cancellationRemarks;
     }
 }
