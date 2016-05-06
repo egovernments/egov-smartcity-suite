@@ -115,30 +115,51 @@ public class TransferClosingBalanceAction extends BaseFormAction {
                 previousFinancialYear = financialYearDAO.getPreviousFinancialYearByDate(fy.getStartingDate());
             } catch (final Exception e) {
                 // Ignore
+                
+                //TODO- we need to throw exception
             }
             try {
                 nextFinancialYear = financialYearDAO.getNextFinancialYearByDate(fy.getStartingDate());
             } catch (final Exception e) {
+                //TODO validation message to be changed
                 throw new ValidationException("Next Financial Year is not exist in system or not active",
-                        "Next Financial Year is not exist in system or not active");
+                        "Next Financial Year does not exist in system.");
             }
+            
             if (!validatePreviousFinancialYear())
+                //TODO- spelling mistakes
                 throw new ValidationException("Previos Financial Year is Open, it can not be closed",
                         "Previos Financial Year is Open, it can not be closed");
             deleteNextFYTransactionSummary();
+            //TODO- this checking to be done just after getting the next year
             if (nextFinancialYear == null || !nextFinancialYear.getIsActive())
                 throw new ValidationException("Next Financial Year is not exist in system or not active",
                         "Next Financial Year is not exist in system or not active");
             fyStartingDate = FORMATDDMMYYYY.format(fy.getStartingDate());
             fyEndingDate = FORMATDDMMYYYY.format(fy.getEndingDate());
 
+            /*
+             * Processing all the COA which are non- subledger codes.
+             * Also we will process for all COAs that are control codes which are having data with accountdetail type
+             * which is not same as that of what is mentioned in the database.
+             * The result data is been inserted into the opening balance
+             * Note- COA code for Excess IE is been excluded for processing as this will be taken care separately.
+             */
             query = persistenceService.getSession().createSQLQuery(getQueryForNonControlCodesAndMisMatchsInControlCodes());
             query.executeUpdate();
-
+            
+            /*
+             * Processing all control codes both transaction and opening balance and the net balance 
+             * is been inserted as the opening balance.
+             */
             query = null;
             query = persistenceService.getSession().createSQLQuery(getQueryForControlCodes());
             query.executeUpdate();
-
+            
+            /*
+             * COA for Excess IE transaction balance + Opening balance will be calculated along with the
+             * Income - expenses for that year.
+             */
             query = null;
             query = persistenceService.getSession().createSQLQuery(getQueryForIncomeOverExpense());
             query.executeUpdate();
