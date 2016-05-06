@@ -181,17 +181,19 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         Property modProperty = propService.createDemand(propertyModel, effectiveDate);
         Ptdemand currPtDmd = null;
         for (final Ptdemand demand : modProperty.getPtDemandSet())
-            if (demand.getIsHistory().equalsIgnoreCase("N"))
+            if (demand.getIsHistory().equalsIgnoreCase("N")){
                 if (demand.getEgInstallmentMaster().equals(currInstall)) {
                     currPtDmd = demand;
                     break;
                 }
+            }
         Ptdemand oldCurrPtDmd = null;
         for (final Ptdemand ptDmd : oldProperty.getPtDemandSet())
             if (ptDmd.getIsHistory().equalsIgnoreCase("N")) {
-                if (ptDmd.getEgInstallmentMaster().equals(currInstall))
+                if (ptDmd.getEgInstallmentMaster().equals(currInstall)){
                     oldCurrPtDmd = ptDmd;
                 	break;
+                }
             }
 
         Installment effectiveInstall = null;
