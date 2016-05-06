@@ -104,4 +104,20 @@
         <put-attribute name="page-title" value="title.registration" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/report-registrationstatus.jsp"/>
     </definition>
+    
+    <definition name="reissue-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.reissue" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/reissue/reissue-form.jsp"/>
+    </definition> 	
+    
+    <definition name="reissue-ack" extends="base_layout">
+        <put-attribute name="page-title" value="title.reissue" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/reissue/reissue-ack.jsp"/>
+    </definition>
+    
+    <definition name="reissue-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.reissue" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/reissue/reissue-view.jsp"/>
+    </definition>
+    
 </tiles-definitions>

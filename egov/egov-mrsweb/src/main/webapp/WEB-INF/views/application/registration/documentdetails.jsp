@@ -64,7 +64,19 @@
 			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file">
 			<form:errors path="documents[${status.index}].file" cssClass="add-margin error-msg" />
 		</div>
-		<div class="col-sm-1"></div>
+		<div class="col-sm-1">
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${registration.registrationDocuments}" var="regdoc" varStatus="loopStatus">
+				<c:if test="${regdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="registrationfile${status.index}" value="${regdoc.fileStoreMapper.fileName}|${regdoc.fileStoreMapper.contentType}|${regdoc.base64EncodedFile}">
+					<a id="regdoc${status.index}">Download</a>
+				</c:if>
+			</c:forEach>
+			<c:if test="${!isDocFound}">
+				NA
+			</c:if>
+		</div>
 	</div>
 </c:forEach>
 <div class="row">
@@ -95,13 +107,38 @@
 		<div class="col-sm-2 add-margin text-center">
 			<input type="file" id="file${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
 			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
+			&nbsp;&nbsp;
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${registration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+				<c:if test="${appdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+					<a id="husbanddoc${status.index}">Download</a>
+				</c:if>
+			</c:forEach>
+			<c:if test="${!isDocFound}">
+				NA
+			</c:if>
 		</div>
 		<div class="col-sm-2 add-margin text-center">
 			<input type="file" id="file${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
 			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
+			&nbsp;&nbsp;
+			<c:set value="false" var="isDocFound"></c:set>
+			<c:forEach items="${registration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+				<c:if test="${appdoc.document.id == doc.id}">
+					<c:set value="true" var="isDocFound"></c:set>
+					<input type="hidden" id="wifefile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+					<a id="wifedoc${status.index}">Download</a>
+				</c:if>
+			</c:forEach>
+			<c:if test="${!isDocFound}">
+				NA
+			</c:if>
 		</div>
 		<div class="col-sm-1"></div>
 	</div>
 </c:forEach> 
 
 <script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>
+<script src="<c:url value='/resources/js/app/viewdocumentsupload.js'/>"></script>

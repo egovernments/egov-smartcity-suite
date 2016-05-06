@@ -45,16 +45,28 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="true">
 	
 	<context:component-scan base-package="org.egov.mrs" />
+	
     <bean id="RegistrationPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.mrs.domain.entity.Registration" />
     </bean>
         
     <bean id="RegistrationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="RegistrationPersistenceService"/>
+    </bean>
+    
+    <bean id="ReIssuePersistenceService" parent="persistenceService">
+        <property name="type" value="org.egov.mrs.domain.entity.ReIssue" />
+    </bean>
+    
+    <bean id="ReIssueInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="ReIssuePersistenceService"/>
     </bean>        
     
     <bean id="MRCollectionsInterface" class="org.egov.mrs.application.service.collection.MarriageFeeCollection" scope="prototype">
     </bean>
+    
+    <!-- <bean id="MRRCollectionsInterface" class="org.egov.mrs.application.service.collection.MarriageReIssueFeeCollection" scope="prototype">
+    </bean> -->
     
    <!--  <bean id="mrsBillServiceImpl" class="org.egov.mrs.application.service.collection.MarriageBillService" scope="prototype" lazy-init="false">
 		<property name="propertyTaxCollection" ref="propertyTaxCollection" />

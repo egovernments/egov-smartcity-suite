@@ -61,12 +61,25 @@
 	</div>
 	</div>
 	<div class="col-sm-5">
-	<div class="row">
-		<div class="col-sm-6">
-		</div>		
-		<div class="col-sm-6">
+		<div class="row">
+			<div class="form-group">
+				<label class="col-sm-5 text-right" style="padding-right: 25px;">
+					<spring:message code="lbl.signature"/>
+				</label>
+				<div class="col-sm-5">
+					<c:choose>
+						<c:when test="${param.signature == null || param.signature == ''}">
+							NA
+						</c:when>
+						<c:otherwise>
+							<input type="hidden" id="signaturecontent${status.index}" value="${param.signature}">
+							<a id="signaturelink${status.index}">Click to download</a>
+						</c:otherwise>
+					</c:choose>
+				</div>
+				<div class="col-sm-2"></div>
+			</div>
 		</div>
-	</div>
 	</div>
 </div>
 <div class="row">
@@ -96,23 +109,13 @@
 		<div class="row">
 			<div class="col-sm-5 add-margin"><spring:message code="lbl.photo"/></div>
 			<div class="col-sm-6 add-margin">
-				<img class="add-border" id="${applicant}-photo" height="150" width="130" src="">
-				<c:set value="${applicant}.getEncodePhotoToString()" var="photoString" />
-				<script>
+				<c:set value="${param.photo}" var="ph"/>
+				<img class="add-border" id="${applicant}-photo" height="150" width="130" src="data:image/jpeg;base64,${param.photo}">
+				<!-- <script>
 					var applicant = '<c:out value="${applicant}" />';
-					 var strData = '';
-
-					if (applicant == 'husband') {
-						strData = '<c:out value="${husbandPhoto}" />';
-					} else {
-						strData = '<c:out value="${wifePhoto}" />';
-					} 
-
-					//var strData = '<c:out value="${photoString}" />';
-					$('#'+applicant+'-photo').prop('src', "data:image/jpeg;base64," + toBinaryString(strData));
-					
-				</script>
-				<span></span>
+					var strData = '<c:out value="${ph}" />';
+					$('#'+applicant+'-photo').prop('src', "data:image/jpeg;base64," + strData);
+				</script> -->
 			</div>
 		</div>
 	</div>

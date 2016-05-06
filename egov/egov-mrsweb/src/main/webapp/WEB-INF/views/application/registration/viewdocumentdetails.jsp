@@ -104,6 +104,7 @@
 			<c:forEach items="${registration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
+					<%-- <img src="data:image/jpeg;base64,${appdoc.base64EncodedFile}" width="250px" height="250px"> --%>
 					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
 					<a id="husbanddoc${status.index}">Click to download</a>
 				</c:if>

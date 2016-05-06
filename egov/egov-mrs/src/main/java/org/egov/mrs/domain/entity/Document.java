@@ -40,6 +40,8 @@
 package org.egov.mrs.domain.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,6 +51,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.mrs.domain.enums.FeeType;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,6 +82,10 @@ public class Document extends AbstractAuditable {
     private String code;
 
     private boolean individual;
+    
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private FeeType type;
 
     @Transient
     private MultipartFile file;
@@ -115,6 +122,14 @@ public class Document extends AbstractAuditable {
 
     public void setIndividual(final boolean individual) {
         this.individual = individual;
+    }
+
+    public FeeType getType() {
+        return type;
+    }
+
+    public void setType(FeeType type) {
+        this.type = type;
     }
 
     public MultipartFile getFile() {

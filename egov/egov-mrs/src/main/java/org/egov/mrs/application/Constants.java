@@ -47,5 +47,7 @@ public class Constants {
     
     public static final String APPROVER_ROLE_NAME = "ULB Operator";
     public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
+    
+    public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
 
 }

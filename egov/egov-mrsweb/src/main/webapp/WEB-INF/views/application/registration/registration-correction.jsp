@@ -150,7 +150,7 @@
 				</div>
 			</div>
 			<div class="buttonbottom" align="center">
-				<form:button type="submit" id="btn_regcorrection" class="btn btn-primary"><spring:message code="lbl.update.registration"></spring:message></form:button>
+				<form:button type="submit" id="btn_regcorrection" class="btn btn-primary" onclick="return removeMandatory();"><spring:message code="lbl.update.registration"></spring:message></form:button>
 				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 			</div>
 		</form:form>

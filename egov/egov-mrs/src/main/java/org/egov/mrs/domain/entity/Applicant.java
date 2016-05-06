@@ -140,7 +140,7 @@ public class Applicant extends AbstractAuditable {
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "applicant")
     private List<ApplicantDocument> applicantDocuments = new ArrayList<ApplicantDocument>();
-
+    
     @Transient
     private List<Document> documents;
 
@@ -150,6 +150,35 @@ public class Applicant extends AbstractAuditable {
     @Transient
     private MultipartFile signatureFile;
 
+    private transient String encodedPhoto;
+    private transient String encodedSignature;
+
+    public String getFullName() {
+        String fullName = getName().getFirstName();
+
+        fullName += getName().getMiddleName() == null ? "" : " " + getName().getMiddleName();
+        fullName += getName().getLastName() == null ? "" : " " + getName().getLastName();
+
+        return fullName;
+    }
+
+    /**
+     * Copies MultipartFile bytes to persistent byte array
+     *
+     * @throws IOException
+     */
+    public void copyPhotoAndSignatureToByteArray() throws IOException {
+        setPhoto(FileCopyUtils.copyToByteArray(getPhotoFile().getInputStream()));
+
+        if (getSignatureFile() != null)
+            setSignature(FileCopyUtils.copyToByteArray(getSignatureFile().getInputStream()));
+    }
+    
+    public boolean isCopyFilesToByteArray() {
+        return photoFile.getSize() > 0 || signatureFile.getSize() > 0;
+    }
+
+    
     @Override
     public Long getId() {
         return id;
@@ -301,28 +330,23 @@ public class Applicant extends AbstractAuditable {
         this.signatureFile = signatureFile;
     }
 
-    public String getFullName() {
-        String fullName = getName().getFirstName();
-
-        fullName += getName().getMiddleName() == null ? "" : " " + getName().getMiddleName();
-        fullName += getName().getLastName() == null ? "" : " " + getName().getLastName();
-
-        return fullName;
-    }
-
-    /**
-     * Copies MultipartFile bytes to persistent byte array
-     *
-     * @throws IOException
-     */
-    public void copyPhotoAndSignatureToByteArray() throws IOException {
-        setPhoto(FileCopyUtils.copyToByteArray(getPhotoFile().getInputStream()));
-
-        if (getSignatureFile() != null)
-            setSignature(FileCopyUtils.copyToByteArray(getSignatureFile().getInputStream()));
-    }
-
     public String getEncodePhotoToString() {
         return Base64.getEncoder().encodeToString(getPhoto());
+    }
+
+    public String getEncodedPhoto() {
+        return encodedPhoto;
+    }
+    
+    public void setEncodedPhoto(String encodedPhoto) {
+        this.encodedPhoto = encodedPhoto;
+    }
+    
+    public String getEncodedSignature() {
+        return encodedSignature;
+    }
+    
+    public void setEncodedSignature(String encodedSignature) {
+        this.encodedSignature = encodedSignature;
     }
 }

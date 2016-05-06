@@ -1909,3 +1909,7 @@ footer.main {
 footer.main a {
   color: #f2851f;
 }
+
+table.dataTable tbody tr.selected {
+    background-color: #FEC38B;
+}

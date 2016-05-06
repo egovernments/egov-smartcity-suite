@@ -53,6 +53,13 @@ import org.egov.mrs.application.Constants;
 import org.egov.mrs.domain.enums.FeeType;
 import org.springframework.stereotype.Service;
 
+/**
+ * 
+ * Creates registration fee details
+ * 
+ * @author nayeem
+ *
+ */
 @Service
 public class RegistrationDemandService extends DemandService {
 

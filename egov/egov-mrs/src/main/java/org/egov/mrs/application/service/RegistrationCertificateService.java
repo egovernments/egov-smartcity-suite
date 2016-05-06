@@ -47,6 +47,7 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.Registration;
 import org.egov.mrs.domain.entity.RegistrationCertificate;
 import org.egov.mrs.domain.service.RegistrationService;
@@ -80,6 +81,9 @@ public class RegistrationCertificateService {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private RegistrationWorkflowService workflowService;
 
     /**
      * Generates Marriage Registration Certificate and returns the certificate id
@@ -95,6 +99,7 @@ public class RegistrationCertificateService {
                 null);
         reportOutput = reportService.createReport(reportInput);
         registration.setCertificateIssued(true);
+        workflowService.transition(registration, null, null);
         registrationService.update(registration);
         httpSession.removeAttribute(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         return ReportViewerUtil.addReportToSession(reportOutput, httpSession);

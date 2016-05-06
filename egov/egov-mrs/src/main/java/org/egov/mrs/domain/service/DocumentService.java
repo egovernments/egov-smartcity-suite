@@ -42,6 +42,7 @@ package org.egov.mrs.domain.service;
 import java.util.List;
 
 import org.egov.mrs.domain.entity.Document;
+import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,5 +82,9 @@ public class DocumentService {
     
     public List<Document> getGeneralDocuments() {
         return documentRepository.findByIndividual(false);
+    }
+    
+    public List<Document> getReIssueApplicantDocs() {
+        return documentRepository.findByType(FeeType.REISSUE);
     }
 }

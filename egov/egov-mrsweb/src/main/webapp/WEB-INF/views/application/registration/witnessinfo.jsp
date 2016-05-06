@@ -147,9 +147,17 @@
 				<spring:message code="lbl.photo"/>
 			</label>
 			<div class="col-sm-6">			 	
-				<img class="add-border attach-photo" height="160" width="140">
-				<span></span>
-				<input type="hidden" name="${witness}.photo">
+				<c:set value="${witness}.encodedPhoto" var="ph"/>
+				<img class="add-border" id="${witness}-imgphoto" height="160" width="140">
+				<script>
+					var w = '<c:out value="${witness}" />';
+					var strData = '<c:out value="${ph}" />';
+					if (strData != null && strData.length > 0) {
+						$('#'+w+'-imgphoto').prop('src', "data:image/jpg;base64," + toBinaryString(strData));
+					}
+					
+				</script>
+				<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file">
 			</div>
 		</div>
 	</div>

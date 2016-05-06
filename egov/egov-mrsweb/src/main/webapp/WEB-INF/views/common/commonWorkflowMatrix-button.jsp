@@ -60,17 +60,6 @@
 				$('#approvalPosition').attr('required', 'required');
 				$('#approvalComent').removeAttr('required');
 
-				$('input[id$="photo"').each( function (field) {
-					console.log('field=' + field);
-					var val = $(this).val();
-					if (val == '') {
-						var span = $(this).siblings('span'); 
-						$(span).addClass('error-msg');
-				    	$(span).text("Photo is required");
-				    	return false;
-					}
-				})
-				
 				if (!validateChecklists()) {
 					return false;
 				}
@@ -86,7 +75,6 @@
 				$('#approvalComent').removeAttr('required');
 			}
 		}
-
 		document.forms[0].submit;
 	   return true;
 	}
@@ -97,14 +85,16 @@
 		<tr>
 			<td>
 				<c:set value="" var="disabledClass" />
-				<c:if test="${registration.id != null}">
+				<c:if test="${registration.id != null && registration.status == 'Approved'}">
 					<c:set value="${registration.feeCollected}" var="isFeeCollected"></c:set>
 					<c:if test="${!isFeeCollected}">
 						<c:set value="disabled" var="disabledClass" />
+						<c:out value="${registration.currentState.nextAction}" />
+						<div class="add-margin error-msg" align="center"><font size="3px;">Fee collection is pending.</font></div><br/>
 					</c:if>
 				</c:if>
 				<c:forEach items="${validActionList}" var="validButtons">
-					<form:button type="submit" id="${validButtons}" class="btn btn-primary" value="${validButtons}" onclick="return validateWorkFlowApprover('${validButtons}');" >
+					<form:button type="submit" id="${validButtons}" class="btn btn-primary ${disabledClass}" value="${validButtons}" onclick="return validateWorkFlowApprover('${validButtons}');" >
 						<c:out value="${validButtons}" /> 
 					</form:button>
 				</c:forEach>

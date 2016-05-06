@@ -63,9 +63,9 @@
 			<div class="nav-right-menu col-md-2 col-xs-2">
 				<ul class="hr-menu text-right">
 					<li class="ico-menu">
-						<a href="http://www.egovernments.org" target="_blank">
+						<%-- <a href="http://www.egovernments.org" target="_blank">
 							<img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
-						</a>
+						</a> --%>
 					</li>
 					
 				</ul>

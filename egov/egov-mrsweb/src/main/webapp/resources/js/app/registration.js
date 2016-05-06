@@ -69,18 +69,6 @@ $(document).ready( function () {
 	});
 
 
-	$('.nav-tabs-top a[data-toggle="tab"]').on('click', function(){
-	    $('.nav-tabs-bottom li.active').removeClass('active')
-	    var tabRef = '#'+ $(this).prop('href').split('#')[1];	   
-	    $('.nav-tabs-bottom a[href="'+tabRef+'"]').parent().addClass('active');
-	})
-
-	$('.nav-tabs-bottom a[data-toggle="tab"]').on('click', function(){
-	    $('.nav-tabs-top li.active').removeClass('active')
-	    var tabRef = '#'+ $(this).prop('href').split('#')[1];	    
-	    $('.nav-tabs-top a[href="'+tabRef+'"]').parent().addClass('active');
-	})
-	
 	// Showing the respective tab when mandatory data is not filled in
 	$('div.tab-content input').bind('invalid', function(e) {
 	    if (!e.target.validity.valid) {
@@ -108,37 +96,12 @@ $(document).ready( function () {
 	    }  
 	});
 
-	$("input[id$='religionPractice1'").prop("checked", true);
+	$("input[id$='religionPractice1']").prop("checked", true);
 	
 	$('#table_search').keyup(function(){
     	$('#registration_table').fnFilter(this.value);
     });
 	
-	var registrationId;
-	$('body').on( 'click', 'tr', function () {
-		if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-            $('#btn_viewdetails').addClass('disabled');
-            $('#btn_collectfee').addClass('disabled');
-        } else {
-            $('#registration_table > tbody > tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-            /*console.log('reg_table.fnSettings()' + reg_table.fnSettings());
-            var data = reg_table.fnSettings().aoData;
-            var selectedRowData = data[reg_table.$('tr.selected')[0]._DT_RowIndex];
-            registrationId = selectedRowData._aData[0];
-            var isFeeCollectionPending = selectedRowData._aData[9];*/
-            //console.log('isFeeCollected= ' + isFeeCollectionPending);
-            //console.log('click tr > registrationId = ' + registrationId);
-            /*$('#btn_viewdetails').removeClass('disabled');
-            
-            if (isFeeCollectionPending) {
-            	$('#btn_collectfee').removeClass('disabled');
-            } else {
-            	$('#btn_collectfee').addClass('disabled');
-            }*/
-        }
-    });
 	
 	/*$('#btn_viewdetails').click( function () {
 		console.log('registrationId = ' + registrationId);
@@ -178,76 +141,16 @@ $(document).ready( function () {
 		}
 	})
 	
-})
-
-var reg_table = null;
-$('#btnregistrationsearch').click( function () {
-
-	reg_table = $('#registration_table').dataTable({
-		"sPaginationType": "bootstrap",
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-		columnDefs: [{
-               "targets": [ 0 ],
-               "visible": false,
-               "searchable": false
-           }, {
-               "targets": [ 9 ],
-               "visible": false,
-               "searchable": false
-           }
-		]
-    });
+	$('a[id^="signature"]').click( function () {
+		var content = $( $(this).siblings('input[type="hidden"]') ).val();
+		var value = "data:image/jpeg;base64," + content ;
+		var link = document.createElement('a');
+		link.href = toBinaryString(value);
+		link.download = 'signature.jpg';
+		link.click();		
+	})
 	
-	$.ajax({
-		type : "POST",
-		contentType: "application/json",
-		accept: "application/json",
-		url : "http://localhost:9080/mrs/registration/search",
-		data : '{ "registrationNo": "'+$('#registrationNo').val()+'", "dateOfMarriage": "'+$('#dateOfMarriage').val()+'", "husbandName": "'+$('#husbandName').val()+'", "wifeName": "'+$('#wifeName').val()+'", "registrationDate": "'+$('#registrationDate').val()+'" }',
-		dataType : "json",
-		success : function (response, textStatus, xhr) {
-			var searchResults = response.data;
-			console.log('searchResults = ' + searchResults);
-			$.each(searchResults, function (index, result) {
-				var certificateIssued = result.certificateIssued ? 'Yes' : 'No';
-				var action = '<select class="form-control" id="select-actions'+index+'" style="width:125px;" onchange="performSelectedAction(this);"><option value="default">select</option><option value="view">View</option><option value="correction">Data Entry</option>';
-				if (result.feeCollectionPending) {
-					action += '<option value="collectfee">Collect Fee</option>';
-				}
-				action += '</select>';
-				console.log('registrationDate=' + result.registrationDate);
-				reg_table.fnAddData([result.registrationId, result.registrationNo, result.registrationDate, result.dateOfMarriage, result.husbandName, result.wifeName, certificateIssued, result.status, result.feePaid, result.feeCollectionPending, action]);
-            });
-			$('#table_container').show();
-			/*$('#btn_searchresults').removeClass('hidden');
-			$('#btn_searchresults').addClass('show');*/
-			$('#registration_table_length').remove();				
-			$('#registration_table_filter').addClass('text-right');
-		},
-		error : function (xhr, textStatus, errorThrown) {
-			console.log ( 'errorThrown=' + errorThrown );
-		}
-	});
-});
-
-function performSelectedAction(dropdown) {
-	var optionSelected = $(dropdown).val();	
-	var data = reg_table.fnSettings().aoData;
-    var selectedRowData = data[reg_table.$('tr.selected')[0]._DT_RowIndex];
-    registrationId = selectedRowData._aData[0];    
-    var url = '';    
-    if (optionSelected === 'view') {
-		url = '/mrs/registration/' + registrationId + '?mode=view';
-	} else if (optionSelected === 'collectfee') {
-		url = '/mrs/collection/bill/' + registrationId;
-	} else if (optionSelected === 'correction') {
-		url = '/mrs/registration/update/' + registrationId;
-	}
-    
-    if (optionSelected != 'select')
-    	window.open(url);
-}
+})
 
 function validateChecklists() {
 	var noOfCheckboxes1 = $('input[id^="ageProofH"]:checked').length;
@@ -278,5 +181,12 @@ function validateChecklists() {
 		return false;
 	}
 	
+	return true;
+}
+
+function removeMandatory() {
+	$('#husband-photo').removeAttr('required');
+	$('#wife-photo').removeAttr('required');
+	document.forms[0].submit;
 	return true;
 }

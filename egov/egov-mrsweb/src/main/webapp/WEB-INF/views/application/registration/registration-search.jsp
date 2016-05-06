@@ -157,4 +157,4 @@
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 
-<script src="<c:url value='/resources/js/app/registration.js'/> "></script>
+<script src="<c:url value='/resources/js/app/registrationsearch.js'/> "></script>

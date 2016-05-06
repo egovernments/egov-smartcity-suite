@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-        1) All versions of this program, verbatim or modified must carry this 
+        1) All versions of this program, verbatim or modified must carry this
            Legal Notice.
 
-        2) Any misrepresentation of the origin of the material is prohibited. It 
-           is required that all modified versions of this material be marked in 
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
            reasonable ways as different from the original version.
 
-        3) This license does not grant any rights to any user of the program 
-           with regards to rights under trademark law for use of the trade names 
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
            or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -87,7 +87,7 @@ public class Registration extends StateAware {
 
     @NotNull
     private String applicationNo;
-    
+
     @NotNull
     private Date applicationDate;
 
@@ -105,6 +105,13 @@ public class Registration extends StateAware {
     @SafeHtml
     @Length(max = 30)
     private String placeOfMarriage;
+
+    /*
+     * @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "registration") //Refers to registration field of
+     * the Applicant class private Applicant husband = new Applicant();
+     * @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "registration") //Refers to registration field of
+     * the Applicant class private Applicant wife = new Applicant();
+     */
 
     @NotNull
     @Valid
@@ -143,42 +150,61 @@ public class Registration extends StateAware {
 
     @NotNull
     private Double feePaid;
-    
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone")
     private Boundary zone;
-    
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "demand")
     private EgDemand demand;
-    
+
     @NotNull
     @Length(max = 30)
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
-    
+
     @Length(max = 256)
     private String rejectionReason;
-    
+
     @Length(max = 256)
     private String remarks;
-    
+
     private boolean certificateIssued;
-    
+
     @Transient
     private Long approvalDepartment;
 
     @Transient
     private String approvalComent;
-    
+
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     private List<RegistrationDocument> registrationDocuments = new ArrayList<RegistrationDocument>();
-    
+
     @Transient
     private List<Document> documents;
+
+    @Override
+    public String getStateDetails() {
+        return "Marriage registration application no : " + applicationNo;
+    }
+
+    public boolean isFeeCollected() {
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
+    }
+
+    public void addRegistrationDocument(final RegistrationDocument registrationDocument) {
+        registrationDocument.setRegistration(this);
+        getRegistrationDocuments().add(registrationDocument);
+    }
+
+    public void addWitness(final Witness witness) {
+        witness.setRegistration(this);
+        getWitnesses().add(witness);
+    }
 
     @Override
     public Long getId() {
@@ -257,47 +283,47 @@ public class Registration extends StateAware {
     public boolean hasMemorandumOfMarriage() {
         return memorandumOfMarriage;
     }
-    
+
     public boolean getMemorandumOfMarriage() {
         return memorandumOfMarriage;
     }
-    
-    public void setMemorandumOfMarriage(boolean memorandumOfMarriage) {
+
+    public void setMemorandumOfMarriage(final boolean memorandumOfMarriage) {
         this.memorandumOfMarriage = memorandumOfMarriage;
     }
-    
+
     public boolean getCourtFeeStamp() {
         return courtFeeStamp;
     }
-    
-    public void setCourtFeeStamp(boolean courtFeeStamp) {
+
+    public void setCourtFeeStamp(final boolean courtFeeStamp) {
         this.courtFeeStamp = courtFeeStamp;
     }
-    
+
     public boolean hasAffidavit() {
         return affidavit;
     }
-    
+
     public boolean getAffidavit() {
         return affidavit;
     }
-    
-    public void setAffidavit(boolean affidavit) {
+
+    public void setAffidavit(final boolean affidavit) {
         this.affidavit = affidavit;
     }
-    
+
     public boolean hasMarriageCard() {
         return marriageCard;
     }
-    
+
     public boolean getMarriageCard() {
         return marriageCard;
     }
-    
-    public void setMarriageCard(boolean marriageCard) {
+
+    public void setMarriageCard(final boolean marriageCard) {
         this.marriageCard = marriageCard;
     }
-    
+
     public boolean isCoupleFromSamePlace() {
         return coupleFromSamePlace;
     }
@@ -334,39 +360,39 @@ public class Registration extends StateAware {
         return zone;
     }
 
-    public void setZone(Boundary zone) {
+    public void setZone(final Boundary zone) {
         this.zone = zone;
     }
-    
+
     public EgDemand getDemand() {
         return demand;
     }
 
-    public void setDemand(EgDemand demand) {
+    public void setDemand(final EgDemand demand) {
         this.demand = demand;
     }
 
     public ApplicationStatus getStatus() {
         return status;
     }
-    
-    public void setStatus(ApplicationStatus status) {
+
+    public void setStatus(final ApplicationStatus status) {
         this.status = status;
     }
-    
+
     public String getRejectionReason() {
         return rejectionReason;
     }
-    
-    public void setRejectionReason(String rejectionReason) {
+
+    public void setRejectionReason(final String rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
-    
+
     public String getRemarks() {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -374,23 +400,23 @@ public class Registration extends StateAware {
         return approvalDepartment;
     }
 
-    public void setApprovalDepartment(Long approvalDepartment) {
+    public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
-    
+
     public String getApprovalComent() {
         return approvalComent;
     }
-    
-    public void setApprovalComent(String approvalComent) {
+
+    public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
-    
+
     public Date getApplicationDate() {
         return applicationDate;
     }
 
-    public void setApplicationDate(Date applicationDate) {
+    public void setApplicationDate(final Date applicationDate) {
         this.applicationDate = applicationDate;
     }
 
@@ -398,37 +424,23 @@ public class Registration extends StateAware {
         return certificateIssued;
     }
 
-    public void setCertificateIssued(boolean certificateIssued) {
+    public void setCertificateIssued(final boolean certificateIssued) {
         this.certificateIssued = certificateIssued;
     }
-    
+
     public List<RegistrationDocument> getRegistrationDocuments() {
         return registrationDocuments;
     }
-    
-    public void setRegistrationDocuments(List<RegistrationDocument> registrationDocuments) {
+
+    public void setRegistrationDocuments(final List<RegistrationDocument> registrationDocuments) {
         this.registrationDocuments = registrationDocuments;
     }
-    
+
     public List<Document> getDocuments() {
         return documents;
     }
-    
-    public void setDocuments(List<Document> documents) {
-        this.documents = documents;
-    }
 
-    @Override
-    public String getStateDetails() {
-        return "Marriage registration application no : " + this.applicationNo;
-    }
-    
-    public boolean isFeeCollected() {
-        return this.demand.getBaseDemand().compareTo(this.demand.getAmtCollected()) == 0 ? true : false;
-    }
-    
-    public void addRegistrationDocument(final RegistrationDocument registrationDocument) {
-        registrationDocument.setRegistration(this);
-        getRegistrationDocuments().add(registrationDocument);
+    public void setDocuments(final List<Document> documents) {
+        this.documents = documents;
     }
 }

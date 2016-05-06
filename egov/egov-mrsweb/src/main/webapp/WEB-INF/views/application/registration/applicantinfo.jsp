@@ -71,14 +71,14 @@
 	<div class="col-sm-5">
 	<div class="row">
 		<div class="form-group">
-		<label class="col-sm-5 text-right" style="padding-right: 25px;">
-			<spring:message code="lbl.signature"/>
-		</label>
-		<div class="col-sm-5">
-			<input type="file" id="${applicant}.signatureFile" name="${applicant}.signatureFile" class="file-ellipsis upload-file">
+			<label class="col-sm-5 text-right" style="padding-right: 25px;">
+				<spring:message code="lbl.signature"/>
+			</label>
+			<div class="col-sm-5">
+				<input type="file" id="${applicant}.signatureFile" name="${applicant}.signatureFile" class="file-ellipsis upload-file">
+			</div>
+			<div class="col-sm-2"></div>
 		</div>
-		<div class="col-sm-2"></div>
-	</div>
 	</div>
 	</div>
 </div>
@@ -145,22 +145,22 @@
 			</label>
 			<div class="col-sm-6">
 				<img class="add-border" id="${applicant}-photo" height="150" width="130" name="${applicant}.photo">
-				<span></span>
 				<script>
 					var applicant = '<c:out value="${applicant}" />';
-					 var strData = '';
-					var pstr = '<c:out value="${husbandPhoto}" />';
-					if (applicant == 'husband') {
-						strData = '<c:out value="${husbandPhoto}" />';
-					} else {
-						strData = '<c:out value="${wifePhoto}" />';
-					} 
+					var strData = '';
 
-					//var strData = '<c:out value="${photoString}" />';
-					$('#'+applicant+'-photo').prop('src', "data:image/jpg;base64," + toBinaryString(strData));
+					if (applicant == 'husband') {
+						strData = '<c:out value="${registration.husband.encodedPhoto}" />';
+					} else {
+						strData = '<c:out value="${registration.wife.encodedPhoto}" />';
+					} 
+					
+					if (strData != null && strData.length > 0) {
+						$('#'+applicant+'-photo').prop('src', "data:image/jpg;base64," + strData);
+					}
 					
 				</script>
-				<input type="file" id="${applicant}.photo" name="${applicant}.photoFile" class="file-ellipsis upload-file" required="required">
+				<input type="file" id="${applicant}-photo" name="${applicant}.photoFile" class="file-ellipsis upload-file" required="required">
 			</div>
 		</div>
 	</div>
@@ -205,7 +205,7 @@
 					<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width is_valid_alphaNumWithsplchar" maxlength="256" placeholder="" autocomplete="off" required="required"/>
+					<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required"/>
                     <form:errors path="${applicant}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 				</div>
 			</div>
@@ -218,7 +218,7 @@
 					<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.officeAddress" id="txt-officeAddress" type="text" class="form-control low-width is_valid_alphaNumWithsplchar" maxlength="256" placeholder="" autocomplete="off" required="required"/>
+					<form:textarea path="${applicant}.contactInfo.officeAddress" id="txt-officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required"/>
                     <form:errors path="${applicant}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 				</div>
 			</div>

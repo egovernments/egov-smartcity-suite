@@ -39,21 +39,14 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.mrs.application.Constants;
-import org.egov.mrs.domain.entity.Document;
 import org.egov.mrs.domain.entity.Registration;
-import org.egov.mrs.domain.entity.Witness;
 import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -76,14 +69,16 @@ public class ViewRegistrationController extends RegistrationController {
         final Registration registration = registrationService.get(registrationId);
 
         model.addAttribute("registration", registration);
-        model.addAttribute("husbandPhoto", Base64.getEncoder().encodeToString(registration.getHusband().getPhoto()));
-        model.addAttribute("wifePhoto", Base64.getEncoder().encodeToString(registration.getWife().getPhoto()));
         model.addAttribute("mode", mode);
         
         registrationService.prepareDocumentsForView(registration);
         applicantService.prepareDocumentsForView(registration.getHusband());
         applicantService.prepareDocumentsForView(registration.getWife());
-
+        registration.getWitnesses()
+            .stream()
+            .filter(witness -> witness.getPhoto() != null && witness.getPhoto().length > 0)
+            .forEach(witness -> witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto())));
+                
         String screen = null;
 
         if (registration.getStatus() != ApplicationStatus.Approved) {
@@ -96,10 +91,6 @@ public class ViewRegistrationController extends RegistrationController {
             screen = "registration-view";
 
         int i = 0;
-        
-        //TODO move this logic to Witness with a property, implement like Applicant
-        for (final Witness witness : registration.getWitnesses())
-            model.addAttribute("witness" + i++ + "Photo", Base64.getEncoder().encodeToString(witness.getPhoto()));
 
         prepareWorkflow(model, registration, new WorkflowContainer());
         return screen;

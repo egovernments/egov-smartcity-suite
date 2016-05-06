@@ -69,16 +69,16 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.mrs.application.Constants;
 import org.egov.mrs.application.service.RegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
-import org.egov.mrs.domain.entity.AbstractDocument;
 import org.egov.mrs.domain.entity.Applicant;
-import org.egov.mrs.domain.entity.ApplicantDocument;
 import org.egov.mrs.domain.entity.Document;
+import org.egov.mrs.domain.entity.IdentityProof;
 import org.egov.mrs.domain.entity.Registration;
 import org.egov.mrs.domain.entity.RegistrationDocument;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.repository.RegistrationRepository;
+import org.egov.mrs.domain.repository.WitnessRepository;
 import org.egov.mrs.masters.service.ActService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
@@ -148,12 +148,15 @@ public class RegistrationService {
 
     @Autowired
     private DocumentService documentService;
-    
+
     @Autowired
     private ApplicantService applicantService;
-    
+
     @Autowired
     private RegistrationDocumentService registrationDocumentService;
+
+    @Autowired
+    protected WitnessRepository witnessRepository;
 
     @Autowired
     public RegistrationService(final RegistrationRepository registrationRepository) {
@@ -171,7 +174,7 @@ public class RegistrationService {
 
     @Transactional
     public Registration update(final Registration registration) {
-        return registrationRepository.saveAndFlush(registration);
+        return entityManager.merge(registration);
     }
 
     public Registration get(final Long id) {
@@ -190,7 +193,6 @@ public class RegistrationService {
             registration.setApplicationDate(new Date());
         }
 
-        registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
         registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
         registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
@@ -212,14 +214,22 @@ public class RegistrationService {
             LOG.error("Error while copying Multipart file bytes", e);
         }
 
+        registration.getWitnesses().forEach(witness -> {
+            try {
+                witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
+            } catch (Exception e) {
+                LOG.error("Error while copying Multipart file bytes", e);
+            }
+        });
+
         final Map<Long, Document> generalDocumentAndId = new HashMap<Long, Document>();
         documentService.getGeneralDocuments().forEach(document -> generalDocumentAndId.put(document.getId(), document));
-        
+
         addDocumentsToFileStore(null, registration, generalDocumentAndId);
-        
+
         final Map<Long, Document> individualDocumentAndId = new HashMap<Long, Document>();
         documentService.getIndividualDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
-        
+
         applicantService.addDocumentsToFileStore(null, registration.getHusband(), individualDocumentAndId);
         applicantService.addDocumentsToFileStore(null, registration.getWife(), individualDocumentAndId);
 
@@ -230,12 +240,32 @@ public class RegistrationService {
         return registration.getApplicationNo();
     }
 
+    @Transactional
+    public Registration forwardRegistration(final Long id, final Registration regModel,
+            final WorkflowContainer workflowContainer) {
+       
+        final Registration registration = get(id);
+
+        updateRegistrationData(regModel, registration);
+
+        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        return update(registration);
+    }
+    
+    @Transactional
+    public Registration updateRegistration(final Long id, final Registration regModel) {
+        final Registration registration = get(id);
+        updateRegistrationData(regModel, registration);
+        return update(registration);
+    }
+    
     /**
      * Adds the uploaded registration document to file store and associates with the registration
      *
      * @param registration
      */
-    private void addDocumentsToFileStore(final Registration registrationModel, final Registration registration, final Map<Long, Document> documentAndId) {
+    private void addDocumentsToFileStore(final Registration registrationModel, final Registration registration,
+            final Map<Long, Document> documentAndId) {
         List<Document> documents = registrationModel == null ? registration.getDocuments() : registrationModel.getDocuments();
         documents.stream()
                 .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
@@ -246,18 +276,7 @@ public class RegistrationService {
                     registrationDocument.setFileStoreMapper(addToFileStore(document.getFile()));
                     return registrationDocument;
                 }).collect(Collectors.toList())
-        .forEach(doc -> registration.addRegistrationDocument(doc));
-    }
-
-    @Transactional
-    public Registration forwardRegistration(final Long id, final Registration regModel,
-            final WorkflowContainer workflowContainer) {
-        final Registration registration = get(id);
-
-        updateRegistrationData(regModel, registration);
-
-        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
-        return update(registration);
+                .forEach(doc -> registration.addRegistrationDocument(doc));
     }
 
     private void updateRegistrationData(final Registration regModel, final Registration registration) {
@@ -265,51 +284,78 @@ public class RegistrationService {
         registration.setPlaceOfMarriage(regModel.getPlaceOfMarriage());
         registration.setFeeCriteria(regModel.getFeeCriteria());
         registration.setFeePaid(regModel.getFeePaid());
-        
-        registration.setHusband(regModel.getHusband());
-        registration.setWife(regModel.getWife());
-
-        registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
-        registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
         registration.setDemand(registrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
         registration.setStatus(ApplicationStatus.Created);
 
+        witnessRepository.delete(registration.getWitnesses());
         registration.getWitnesses().clear();
 
-        regModel.getWitnesses().stream().forEach(witness -> {
-            witness.setRegistration(registration);
-            registration.getWitnesses().add(witness);
-        });
+        regModel.getWitnesses().stream().forEach(witness -> registration.addWitness(witness));
         
-       try {
-           if (registration.getHusband().getPhotoFile().getSize() > 0)
-               registration.getHusband().copyPhotoAndSignatureToByteArray();
-           
-           if (registration.getWife().getPhotoFile().getSize() > 0)
-               registration.getWife().copyPhotoAndSignatureToByteArray();
-       } catch (IOException e) {
-           LOG.error("Error while copying Multipart file bytes", e);
-       }
+        updateApplicantInfo(regModel.getHusband(), registration.getHusband());
+        updateApplicantInfo(regModel.getWife(), registration.getWife());
 
-       deleteDocuments(regModel, registration);
-       applicantService.deleteDocuments(regModel.getHusband(), registration.getHusband());
-       applicantService.deleteDocuments(regModel.getWife(), registration.getWife());
-       
-       final Map<Long, Document> generalDocumentAndId = new HashMap<Long, Document>();
-       documentService.getGeneralDocuments().forEach(document -> generalDocumentAndId.put(document.getId(), document));
-       
-       addDocumentsToFileStore(regModel, registration, generalDocumentAndId);
-       
-       final Map<Long, Document> individualDocumentAndId = new HashMap<Long, Document>();
-       documentService.getIndividualDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
-       
-       applicantService.addDocumentsToFileStore(regModel.getHusband(), registration.getHusband(), individualDocumentAndId);
-       applicantService.addDocumentsToFileStore(regModel.getWife(), registration.getWife(), individualDocumentAndId);
+        updateDocuments(regModel, registration);
+        
+        updateProofInfo(regModel.getHusband().getProofsAttached(), registration.getHusband().getProofsAttached());
+        updateProofInfo(regModel.getWife().getProofsAttached(), registration.getWife().getProofsAttached());
+    }
 
+    private void updateDocuments(final Registration regModel, final Registration registration) {
+        deleteDocuments(regModel, registration);
+        applicantService.deleteDocuments(regModel.getHusband(), registration.getHusband());
+        applicantService.deleteDocuments(regModel.getWife(), registration.getWife());
 
-        registration.getHusband().setProofsAttached(regModel.getHusband().getProofsAttached());
-        registration.getWife().setProofsAttached(regModel.getWife().getProofsAttached());
+        final Map<Long, Document> generalDocumentAndId = new HashMap<Long, Document>();
+        documentService.getGeneralDocuments().forEach(document -> generalDocumentAndId.put(document.getId(), document));
+
+        addDocumentsToFileStore(regModel, registration, generalDocumentAndId);
+
+        final Map<Long, Document> individualDocumentAndId = new HashMap<Long, Document>();
+        documentService.getIndividualDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
+
+        applicantService.addDocumentsToFileStore(regModel.getHusband(), registration.getHusband(), individualDocumentAndId);
+        applicantService.addDocumentsToFileStore(regModel.getWife(), registration.getWife(), individualDocumentAndId);
+    }
+
+    private void updateApplicantInfo(final Applicant modelApplicant, final Applicant dbApplicant) {
+        dbApplicant.getName().setFirstName(modelApplicant.getName().getFirstName());
+        dbApplicant.getName().setMiddleName(modelApplicant.getName().getMiddleName());
+        dbApplicant.getName().setLastName(modelApplicant.getName().getLastName());
+        dbApplicant.setOtherName(modelApplicant.getOtherName());
+
+        try {
+            if (modelApplicant.isCopyFilesToByteArray())
+                modelApplicant.copyPhotoAndSignatureToByteArray();
+        } catch (IOException e) {
+            LOG.error("Error while copying Multipart file bytes", e);
+        }
+
+        dbApplicant.setPhoto(modelApplicant.getPhoto());
+        dbApplicant.setSignature(modelApplicant.getSignature());
+        dbApplicant.setReligion(religionService.getProxy(modelApplicant.getReligion().getId()));
+        dbApplicant.setReligionPractice(modelApplicant.getReligionPractice());
+        dbApplicant.setAgeInYearsAsOnMarriage(modelApplicant.getAgeInYearsAsOnMarriage());
+        dbApplicant.setAgeInMonthsAsOnMarriage(modelApplicant.getAgeInMonthsAsOnMarriage());
+        dbApplicant.setMaritalStatus(modelApplicant.getMaritalStatus());
+        dbApplicant.setOccupation(modelApplicant.getOccupation());
+        dbApplicant.getContactInfo().setResidenceAddress(modelApplicant.getContactInfo().getResidenceAddress());
+        dbApplicant.getContactInfo().setOfficeAddress(modelApplicant.getContactInfo().getOfficeAddress());
+        dbApplicant.getContactInfo().setMobileNo(modelApplicant.getContactInfo().getMobileNo());
+        dbApplicant.getContactInfo().setEmail(modelApplicant.getContactInfo().getEmail());
+    }
+
+    private void updateProofInfo(final IdentityProof fromModel, final IdentityProof fromDb) {
+        fromDb.setPhotograph(fromModel.getPhotograph());
+        fromDb.setDeaceasedDeathCertificate(fromModel.getDeaceasedDeathCertificate());
+        fromDb.setDivorceCertificate(fromModel.getDivorceCertificate());
+        fromDb.setSchoolLeavingCertificate(fromModel.getSchoolLeavingCertificate());
+        fromDb.setBirthCertificate(fromModel.getBirthCertificate());
+        fromDb.setPassport(fromModel.getPassport());
+        fromDb.setRationCard(fromModel.getRationCard());
+        fromDb.setMsebBill(fromModel.getMsebBill());
+        fromDb.setTelephoneBill(fromModel.getTelephoneBill());
     }
 
     @Transactional
@@ -384,12 +430,11 @@ public class RegistrationService {
     }
 
     public List<Registration> getRegistrations() {
-        return Collections.emptyList();
-        //return registrationRepository.findAll();
+        return registrationRepository.findAll();
     }
 
     public List<Registration> searchRegistration(final SearchModel searchModel, final boolean isForReport) {
-        
+
         final Criteria criteria = getCurrentSession().createCriteria(Registration.class, "registration");
 
         if (StringUtils.isNotBlank(searchModel.getRegistrationNo()))
@@ -403,46 +448,30 @@ public class RegistrationService {
 
         if (StringUtils.isNotBlank(searchModel.getWifeName()))
             criteria.createCriteria("wife").add(Restrictions.ilike("name.firstName", searchModel.getWifeName()));
-        
+
         if (isForReport) {
-            if (searchModel.getFromDate() != null && searchModel.getToDate() != null) 
+            if (searchModel.getFromDate() != null && searchModel.getToDate() != null)
                 criteria.add(Restrictions.between("createdDate", searchModel.getFromDate(), searchModel.getToDate()));
-                
-            ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved : ApplicationStatus.Rejected;
+
+            ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved
+                    : ApplicationStatus.Rejected;
             criteria.add(Restrictions.eq("status", status));
         }
-        
-        
-        
-        /*QRegistration registration = QRegistration.registration;
-        BooleanExpression withRegistrationNo = null;
-        BooleanExpression withDateOfMarriage = null;
-        BooleanExpression withHusbandName = null;
-        BooleanExpression withWifeName = null;
-        
-        BooleanExpression expression = null;
-        
-        if (StringUtils.isNotBlank(searchModel.getRegistrationNo())) {
-            withRegistrationNo = registration.registrationNo.eq(searchModel.getRegistrationNo());
-            expression = withRegistrationNo;
-        }
 
-        if (searchModel.getDateOfMarriage() != null) {
-            withDateOfMarriage = registration.dateOfMarriage.eq(searchModel.getDateOfMarriage());
-            expression.and(withDateOfMarriage);
-        }
-
-        if (StringUtils.isNotBlank(searchModel.getHusbandName())) {
-            withHusbandName = registration.husband().name().firstName.equalsIgnoreCase(searchModel.getHusbandName());
-            expression.and(withHusbandName);
-        }
-            
-        if (StringUtils.isNotBlank(searchModel.getWifeName())) {
-            withWifeName = registration.wife().name().firstName.equalsIgnoreCase(searchModel.getWifeName());
-            expression.and(withWifeName);
-        }*/
-            //registrationRepository.findAll(expression);
-         return criteria.list();
+        /*
+         * QRegistration registration = QRegistration.registration; BooleanExpression withRegistrationNo = null; BooleanExpression
+         * withDateOfMarriage = null; BooleanExpression withHusbandName = null; BooleanExpression withWifeName = null;
+         * BooleanExpression expression = null; if (StringUtils.isNotBlank(searchModel.getRegistrationNo())) { withRegistrationNo
+         * = registration.registrationNo.eq(searchModel.getRegistrationNo()); expression = withRegistrationNo; } if
+         * (searchModel.getDateOfMarriage() != null) { withDateOfMarriage =
+         * registration.dateOfMarriage.eq(searchModel.getDateOfMarriage()); expression.and(withDateOfMarriage); } if
+         * (StringUtils.isNotBlank(searchModel.getHusbandName())) { withHusbandName =
+         * registration.husband().name().firstName.equalsIgnoreCase(searchModel.getHusbandName());
+         * expression.and(withHusbandName); } if (StringUtils.isNotBlank(searchModel.getWifeName())) { withWifeName =
+         * registration.wife().name().firstName.equalsIgnoreCase(searchModel.getWifeName()); expression.and(withWifeName); }
+         */
+        // registrationRepository.findAll(expression);
+        return criteria.list();
     }
 
     private FileStoreMapper addToFileStore(final MultipartFile file) {
@@ -455,36 +484,31 @@ public class RegistrationService {
         }
         return fileStoreMapper;
     }
-    
+
     public void deleteDocuments(final Registration regModel, final Registration registration) {
         List<RegistrationDocument> toDelete = new ArrayList<RegistrationDocument>();
         Map<Long, RegistrationDocument> documentIdAndRegistrationDoc = new HashMap<Long, RegistrationDocument>();
-        registration.getRegistrationDocuments().forEach(regDoc -> documentIdAndRegistrationDoc.put(regDoc.getDocument().getId(), regDoc));
+        registration.getRegistrationDocuments()
+                .forEach(regDoc -> documentIdAndRegistrationDoc.put(regDoc.getDocument().getId(), regDoc));
 
         regModel.getDocuments().stream()
-            .filter(doc -> doc.getFile().getSize() > 0)
-            .map(doc -> {
-                RegistrationDocument regDoc = documentIdAndRegistrationDoc.get(doc.getId());
-                fileStoreService.delete(regDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
-                return regDoc;
-            }).collect(Collectors.toList())
-            .forEach(regDoc -> toDelete.add(regDoc));
-        
+                .filter(doc -> doc.getFile().getSize() > 0)
+                .map(doc -> {
+                    RegistrationDocument regDoc = documentIdAndRegistrationDoc.get(doc.getId());
+                    fileStoreService.delete(regDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
+                    return regDoc;
+                }).collect(Collectors.toList())
+                .forEach(regDoc -> toDelete.add(regDoc));
+
         registrationDocumentService.delete(toDelete);
     }
-   
-    @Transactional
-    public Registration updateRegistration(final Long id, final Registration regModel) {
-        final Registration registration = get(id);
-        updateRegistrationData(regModel, registration);
-        return update(registration);
-    }
-    
+
     public List<Registration> searchRegistrationBetweenDateAndStatus(final SearchModel searchModel) {
         ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved : ApplicationStatus.Rejected;
-        return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(), searchModel.getToDate(), status);
+        return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(),
+                searchModel.getToDate(), status);
     }
-    
+
     public void prepareDocumentsForView(final Registration registration) {
         registration.getRegistrationDocuments().forEach(appDoc -> {
             final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);

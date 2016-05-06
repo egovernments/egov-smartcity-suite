@@ -708,7 +708,6 @@ function populateapportioningamount()
 
 function validate()
 {
-	
 	callpopulateapportioningamountforbills();	
 
 	if (document.getElementById("bankChallanDate").value=='DD/MM/YYYY')	{
@@ -720,7 +719,6 @@ function validate()
 	document.getElementById("invaliddateformat").style.display="none";
 	document.getElementById("receipt_dateerror_area").style.display="none";
 	var validation = true;
-	
 		<s:if test="%{!isBillSourcemisc()}"> 
 		if(document.getElementById('manualreceiptinfo').checked==true){
 				if(document.getElementById("manualReceiptDate").value=="" ){
@@ -787,7 +785,8 @@ function validate()
 		if(document.getElementById("instrHeaderCash.instrumentAmount")!=null)
 		{
 			cashamount=document.getElementById("instrHeaderCash.instrumentAmount").value;
-			if(cashamount==null || cashamount=="" || isNaN(cashamount) || cashamount<0 || cashamount.startsWith('+')){
+			//|| cashamount.startsWith('+')
+			if(cashamount==null || cashamount=="" || isNaN(cashamount) || cashamount<0){
 				document.getElementById("receipt_error_area").innerHTML+=
 				'<s:text name="billreceipt.invalidcashamount.errormessage" />'+ '<br>';
 				validation = false;
@@ -979,7 +978,6 @@ function validate()
 	    	document.getElementById('instrumentDate').value="";
 	    }
 	}
-	
 	if(validation==false){
 		return false;
 	}

@@ -59,6 +59,7 @@ public class ViewBoundaryTypeControllerTest extends AbstractContextControllerTes
     @Mock
     private BoundaryTypeService boundaryTypeService;
     
+    
     @Before
     public void before() {
         mockMvc = mvcBuilder.build();

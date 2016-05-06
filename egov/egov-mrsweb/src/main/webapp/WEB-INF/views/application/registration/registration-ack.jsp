@@ -53,7 +53,7 @@
 			<div class="col-md-12 text-center">
 				<c:choose>
 					<c:when test="${not empty message}">
-	                    <spring:message code="${message}"/>
+	                    <c:out value="${message}"/>
 	                </c:when>
 	                <c:otherwise>
 	                	<c:choose>
@@ -68,8 +68,8 @@
 				</c:choose>
 			</div>
 		</div>
-		<div class="buttonbottom" align="center">
-				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
-		</div>
 	</div>
 </form:form>
+<div class="buttonbottom" align="center">
+		<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
+</div>

@@ -50,7 +50,8 @@
 </div>
 <c:forEach items="${registration.witnesses}" varStatus="loop" var="witness">
 	<div class="row">
-		<div class="col-sm-7">
+		<div class="col-sm-1"></div>
+		<div class="col-sm-6">
 		<div class="row">
 		<div class="form-group">
 			<div class="col-sm-5 add-margin"><spring:message code="lbl.fullname"/></div>
@@ -73,7 +74,8 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-7">
+		<div class="col-sm-1"></div>
+		<div class="col-sm-6">
 		<div class="row">
 				<div class="col-sm-5 add-margin"><spring:message code="lbl.occupation"/></div>
 				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.occupation}" default="NA"></c:out></div>
@@ -108,18 +110,15 @@
 					<spring:message code="lbl.photo"/>
 				</div>
 				<div class="col-sm-6">			 	
-					<img class="add-border" id="witness${loop.index}"height="160" width="140">
+					<c:set value="${witness.encodedPhoto}" var="ph"/>
+					<c:set value="${loop.index}" var="index" />
+					<img class="add-border" id="witness${index}-imgphoto" height="160" width="140">
 					<script>
-						var idx = '<c:out value="${loop.index}" />';
-						var strData = '';
-						if (idx == 0) {
-							strData = '<c:out value="${witness0Photo}" />';
-						} else if (idx == 1){
-							strData = '<c:out value="${witness1Photo}" />';
-						} else {
-							strData = '<c:out value="${witness2Photo}" />';
+						var strData = '<c:out value="${ph}" />';
+						var index = '<c:out value="${index}" />';
+						if (strData != null && strData.length > 0) {
+							$('#witness'+index+'-imgphoto').prop('src', "data:image/jpg;base64," + strData);
 						}
-						$('#witness'+idx).prop('src', atob(strData));					
 					</script>
 				</div>
 			</div>

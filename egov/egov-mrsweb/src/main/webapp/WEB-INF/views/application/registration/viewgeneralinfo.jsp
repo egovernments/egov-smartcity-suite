@@ -87,6 +87,8 @@
 	<jsp:param value="${registration.husband.name.firstName}" name="appFirstName"/>
 	<jsp:param value="${registration.husband.name.middleName}" name="appMiddleName"/>
 	<jsp:param value="${registration.husband.name.lastName}" name="appLastName"/>
+	<jsp:param value="${registration.husband.encodedSignature}" name="signature"/>
+	<jsp:param value="${registration.husband.encodedPhoto}" name="photo"/>
 	<jsp:param value="${registration.husband.otherName}" name="appOtherName"/>
 	<jsp:param value="${registration.husband.religion.name}" name="appReligion"/>
 	<jsp:param value="${registration.husband.religionPractice}" name="appReligionPractice"/>
@@ -106,6 +108,8 @@
 	<jsp:param value="${registration.wife.name.firstName}" name="appFirstName"/>
 	<jsp:param value="${registration.wife.name.middleName}" name="appMiddleName"/>
 	<jsp:param value="${registration.wife.name.lastName}" name="appLastName"/>
+	<jsp:param value="${registration.wife.encodedSignature}" name="signature"/>
+	<jsp:param value="${registration.wife.encodedPhoto}" name="photo"/>
 	<jsp:param value="${registration.wife.otherName}" name="appOtherName"/>
 	<jsp:param value="${registration.wife.religion.name}" name="appReligion"/>
 	<jsp:param value="${registration.wife.religionPractice}" name="appReligionPractice"/>

@@ -60,6 +60,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.Registration;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,42 +73,70 @@ public class MarriageBillService extends BillServiceInterface {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private RegistrationBillable billableRegistration;
-    
+
+    @Autowired
+    private ReIssueBillable billableReIssue;
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private EgBillDao egBillDAO;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    
+
     /**
-     * 
+     *
      * Generates Bill for Marriage fee collection
-     * 
+     *
      * @param registration
      * @return xml representation of the bill
      */
-    public String generateBill(Registration registration) {
-        
+    public String generateBill(final Registration registration) {
+
         billableRegistration.setRegistration(registration);
         billableRegistration.setUserId(securityUtils.getCurrentUser().getId());
         billableRegistration.setBillType(egBillDAO.getBillTypeByCode(RegistrationBillable.BILLTYPE_AUTO));
         billableRegistration.setReferenceNumber(registration.getApplicationNo());
 
         final String billXml;
-        
+
         try {
             billXml = URLEncoder.encode(getBillXML(billableRegistration), "UTF-8");
         } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException(e.getMessage());
         }
-        
+
+        return billXml;
+    }
+
+    /**
+     *
+     * Generates Bill for Re-Issue fee collection
+     *
+     * @param registration
+     * @return xml representation of the bill
+     */
+    public String generateBill(final ReIssue reIssue) {
+
+        billableReIssue.setReIssue(reIssue);
+        billableReIssue.setUserId(securityUtils.getCurrentUser().getId());
+        billableReIssue.setBillType(egBillDAO.getBillTypeByCode(RegistrationBillable.BILLTYPE_AUTO));
+        billableReIssue.setReferenceNumber(reIssue.getRegistration().getApplicationNo());
+
+        final String billXml;
+
+        try {
+            billXml = URLEncoder.encode(getBillXML(billableRegistration), "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
         return billXml;
     }
 

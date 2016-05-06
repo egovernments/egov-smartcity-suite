@@ -72,8 +72,8 @@ public class EgDemandHibernateDao implements EgDemandDao {
 
 	@Override
 	public EgDemand create(EgDemand egDemand) {
-		// TODO Auto-generated method stub
-		return null;
+	    getCurrentSession().save(egDemand);
+	    return egDemand;
 	}
 
 	@Override

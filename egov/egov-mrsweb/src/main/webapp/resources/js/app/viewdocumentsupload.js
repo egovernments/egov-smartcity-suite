@@ -39,14 +39,15 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-	$('a[id*="doc"').click( function () {
+	$('a[id*="doc"]').click( function () {
 		var val = $( $(this).siblings('input[type="hidden"]') ).val().split('|');
 		var fileName = val[0];
 		var contentType = val[1]
 		var content = val[2];
-		var value = "data:"+contentType+";base64," + content ;
+		var value = "data:"+contentType+";base64," + content;
 		var link = document.createElement('a');
-		link.href = toBinaryString(value);
+		link.href = value;
+		console.log('link.href=' + link.href);
 		link.download = fileName;
 		link.click();		
 	})

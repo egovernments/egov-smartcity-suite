@@ -84,9 +84,11 @@ public class SearchRegistrationController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String showSearch(@ModelAttribute final SearchModel searchModel, final Model model) {
-        final Role collectionOperator = securityUtils.getCurrentUser().getRoles().stream()
-                .filter(role -> role.getName().equalsIgnoreCase("Collection Operator")).collect(Collectors.toList()).get(0);
-        final boolean isCollectionOperator = collectionOperator == null ? false : true;
+        
+        final List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
+                .filter(role -> role.getName().equalsIgnoreCase("Collection Operator")).collect(Collectors.toList());
+        
+        final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
         return "registration-search";
     }

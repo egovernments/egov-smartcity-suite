@@ -42,6 +42,7 @@ package org.egov.mrs.domain.repository;
 import java.util.List;
 
 import org.egov.mrs.domain.entity.Document;
+import org.egov.mrs.domain.enums.FeeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -51,7 +52,9 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     Document findById(Long id);
 
     Document findByName(String ame);
-    
+
     List<Document> findByIndividual(boolean individual);
+
+    List<Document> findByType(FeeType type);
 
 }

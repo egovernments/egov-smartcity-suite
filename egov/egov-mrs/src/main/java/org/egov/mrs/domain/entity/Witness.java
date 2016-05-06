@@ -39,6 +39,7 @@
 
 package org.egov.mrs.domain.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,11 +50,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egmrs_witness")
@@ -90,6 +93,11 @@ public class Witness extends AbstractAuditable {
 
     private byte[] signature;
     private byte[] photo;
+    
+    private transient MultipartFile photoFile;
+    private transient MultipartFile signatureFile;
+    private transient String encodedPhoto;
+    private transient String encodedSignature;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -180,4 +188,37 @@ public class Witness extends AbstractAuditable {
     public void setContactInfo(final Contact contactInfo) {
         this.contactInfo = contactInfo;
     }
+
+    public MultipartFile getPhotoFile() {
+        return photoFile;
+    }
+    
+    public void setPhotoFile(MultipartFile photoFile) {
+        this.photoFile = photoFile;
+    }
+    
+    public MultipartFile getSignatureFile() {
+        return signatureFile;
+    }
+    
+    public void setSignatureFile(MultipartFile signatureFile) {
+        this.signatureFile = signatureFile;
+    }
+    
+    public String getEncodedPhoto() {
+        return encodedPhoto;
+    }
+    
+    public void setEncodedPhoto(String encodedPhoto) {
+        this.encodedPhoto = encodedPhoto;
+    }
+    
+    public String getEncodedSignature() {
+        return encodedSignature;
+    }
+    
+    public void setEncodedSignature(String encodedSignature) {
+        this.encodedSignature = encodedSignature;
+    }
+    
 }

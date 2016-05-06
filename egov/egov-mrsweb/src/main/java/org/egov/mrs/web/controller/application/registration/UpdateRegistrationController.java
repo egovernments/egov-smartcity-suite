@@ -68,8 +68,10 @@ public class UpdateRegistrationController extends RegistrationController {
     public String showRegistration(@PathVariable final Long id, final Model model) {
         Registration registration = registrationService.get(id);
         model.addAttribute("registration", registration);
-        model.addAttribute("husbandPhoto", Base64.getEncoder().encodeToString(registration.getHusband().getPhoto()));
-        model.addAttribute("wifePhoto", Base64.getEncoder().encodeToString(registration.getWife().getPhoto()));
+        registrationService.prepareDocumentsForView(registration);
+        applicantService.prepareDocumentsForView(registration.getHusband());
+        applicantService.prepareDocumentsForView(registration.getWife());
+        registration.getWitnesses().forEach(witness -> witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto())));
         return "registration-correction";
     }
 

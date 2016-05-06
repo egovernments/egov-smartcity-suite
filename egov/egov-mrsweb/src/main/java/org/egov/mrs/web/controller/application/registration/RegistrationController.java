@@ -49,6 +49,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.Utils;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
+import org.egov.mrs.domain.repository.ApplicantRepository;
 import org.egov.mrs.domain.service.ApplicantService;
 import org.egov.mrs.domain.service.DocumentService;
 import org.egov.mrs.domain.service.RegistrationService;
@@ -88,6 +89,9 @@ public abstract class RegistrationController extends GenericWorkFlowController {
     
     @Autowired
     protected ApplicantService applicantService;
+    
+    @Autowired
+    protected ApplicantRepository applicantRepository;
     
     @ModelAttribute
     public void prepareForm(final Model model) {

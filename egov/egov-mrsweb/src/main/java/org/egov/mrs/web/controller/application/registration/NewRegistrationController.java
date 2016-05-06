@@ -61,7 +61,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/registration")
 public class NewRegistrationController extends RegistrationController {
-
+    
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(@ModelAttribute final Registration registration, final Model model) {
         prepareWorkflow(model, registration, new WorkflowContainer());

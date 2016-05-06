@@ -96,6 +96,14 @@ public class ApplicantService {
     }
 
     public void prepareDocumentsForView(final Applicant applicant) {
+        
+        if (applicant.getPhoto() != null && applicant.getPhoto().length > 0)
+            applicant.setEncodedPhoto(Base64.getEncoder().encodeToString(applicant.getPhoto()));
+        
+        if (applicant.getSignature() != null && applicant.getSignature().length > 0)
+            applicant.setEncodedSignature(Base64.getEncoder().encodeToString(applicant.getSignature()));
+
+        
         applicant.getApplicantDocuments().forEach(appDoc -> {
             final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
             try {
@@ -119,7 +127,7 @@ public class ApplicantService {
                 fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
                 return appDoc;
             }).collect(Collectors.toList())
-            .forEach(appDoc -> toDelete.add(appDoc));
+            .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
         
         applicantDocumentService.delete(toDelete);
     }

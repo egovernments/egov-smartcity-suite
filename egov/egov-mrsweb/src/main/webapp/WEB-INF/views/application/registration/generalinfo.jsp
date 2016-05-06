@@ -50,24 +50,6 @@
 	<div class="col-sm-3 text-center"><spring:message code="subheading.general.info"/></div>
 	<div class="col-sm-9 text-center"></div>
 </div>
-<%-- <div class="row">
-	<div class="form-group">
-		<label class="col-sm-3 control-label">
-			<spring:message code="lbl.application.no"/><span class="mandatory"></span>
-		</label>
-		<div class="col-sm-3">
-			<form:input path="applicationNo" id="txt-applicationNo" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
-            <form:errors path="applicationNo" cssClass="add-margin error-msg"/>
-		</div>
-		<label class="col-sm-3 control-label">
-			<spring:message code="lbl.application.date"/><span class="mandatory"></span>
-		</label>
-		<div class="col-sm-3">
-			<form:input path="applicationDate" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" placeholder="" autocomplete="off" required="required"/>
-            <form:errors path="applicationDate" cssClass="add-margin error-msg"/>
-		</div>
-	</div>
-</div> --%>
 <form:hidden path="id"/>
 <div class="row">
 	<div class="form-group">
@@ -75,7 +57,7 @@
 			<spring:message code="lbl.date.of.marriage"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:input path="dateOfMarriage" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" placeholder="" autocomplete="off" required="required"/>
+			<form:input path="dateOfMarriage" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" data-date-end-date="0d" placeholder="" autocomplete="off" required="required"/>
             <form:errors path="dateOfMarriage" cssClass="add-margin error-msg"/>
 		</div>
 		<label class="col-sm-3 control-label">
@@ -119,7 +101,7 @@
 			<spring:message code="lbl.fee.criteria"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="feePaid" id="select-marriagefees" cssClass="form-control" 
+			<form:select path="" id="select-marriagefees" cssClass="form-control" 
 						cssErrorClass="form-control error" required="required">
                  <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
                  <form:options items="${feesList}" itemValue="fees" itemLabel="criteria"/>
@@ -127,7 +109,7 @@
              <form:hidden path="feeCriteria" name="feeCriteria" id="txt_feecriteria"/>
 		</div>
 		<label class="col-sm-3 control-label">
-			<spring:message code="lbl.fee"/><span class="mandatory"></span>
+			<spring:message code="lbl.marriage.fee"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
 			<form:input path="feePaid" id="txt-feepaid" type="text" class="form-control low-width patternvalidation" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>

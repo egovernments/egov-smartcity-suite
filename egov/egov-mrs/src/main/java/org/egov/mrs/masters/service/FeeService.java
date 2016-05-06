@@ -91,5 +91,9 @@ public class FeeService {
         
         return getFeeForDays(daysAfterMarriage);
     }
+    
+    public Fee getFeeForCriteria(String criteria) {
+        return feeRepository.findByCriteria(criteria);
+    }
 
 }

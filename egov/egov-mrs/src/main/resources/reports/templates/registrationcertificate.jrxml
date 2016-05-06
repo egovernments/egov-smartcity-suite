@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02afdd73-b1f8-4b82-bdec-843293ab245b">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="70"/>
+	<property name="ireport.y" value="395"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.mrs.domain.entity.RegistrationCertificate"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -44,6 +44,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
 			</textField>
+			<image onErrorType="Blank">
+				<reportElement uuid="029a8ae4-8907-4f01-95fb-d32390932676" x="45" y="9" width="60" height="60"/>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>
@@ -71,8 +75,8 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement uuid="a6a3a340-d82c-43f9-a590-a28a152fbaa5" x="12" y="178" width="527" height="94"/>
-				<textElement markup="html"/>
-				<textFieldExpression><![CDATA["Certificate of the marriage <strong>" + $F{husbandName} + "</strong> (Name of the Husband) residing at " + $F{husbandAddress} + " and " + $F{wifeName} + " (Name of Wife) residing at " + $F{wifeAddress} + " solemnized on " + $F{dateOfMarriage} + " at " + $F{placeOfMarriage} + " is registered by me on " + $F{dateOfRegistration} + " at Serial No ___ of Volume ___ of Register of Marriage maintainer under the Registration of Marriage Act 1990"]]></textFieldExpression>
+				<textElement markup="styled"/>
+				<textFieldExpression><![CDATA["Certificate of the marriage " + $F{husbandName} + " (Name of the Husband) residing at " + $F{husbandAddress} + " and " + $F{wifeName} + " (Name of Wife) residing at " + $F{wifeAddress} + " solemnized on " + $F{dateOfMarriage} + " at " + $F{placeOfMarriage} + " is registered by me on " + $F{dateOfRegistration} + " at Serial No ___ of Volume ___ of Register of Marriage maintainer under the Registration of Marriage Act 1990"]]></textFieldExpression>
 			</textField>
 			<image isUsingCache="true">
 				<reportElement uuid="e7614b3f-22e3-41d1-8499-887099162c29" x="54" y="7" width="89" height="95"/>
