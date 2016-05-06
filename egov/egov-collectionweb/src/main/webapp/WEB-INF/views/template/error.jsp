@@ -53,7 +53,7 @@
 		<title>eGov Urban Portal</title>
 		
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
 		
 		
@@ -73,7 +73,7 @@
 					
 					
 					<div class="error-symbol">
-						<i class="entypo-attention"></i>
+						<i class="fa fa-exclamation-triangle"></i>
 					</div>
 					
 					<div class="error-text">

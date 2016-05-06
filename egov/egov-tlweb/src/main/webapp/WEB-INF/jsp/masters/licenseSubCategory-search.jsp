@@ -46,7 +46,6 @@
 <html>
 <head>
 	<title><s:text name='licenseSubCategory.Search' /></title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 	function validateFormAndSubmit(){
 			var subCategoryId= document.getElementById("subCategory").value;
