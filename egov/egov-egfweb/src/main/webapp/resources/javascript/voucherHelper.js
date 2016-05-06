@@ -1022,8 +1022,6 @@ function fillNeibrAfterSplitGlcode(obj)
 }
 function fillNeibrAfterSplitFunction(obj)
 {
-	if(obj!=null)
-	{
 	var temp = obj.value;
 	var currRow=getRowIndex(obj);
 	var funId = document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value;
@@ -1055,7 +1053,6 @@ function fillNeibrAfterSplitFunction(obj)
 	}
 		
 	loadSlFunction();
-	}
 }
 function loadSlFunction(){
 	
@@ -1168,7 +1165,7 @@ function createDropdownFormatterPJV(prefix){
 			
         }
 
-        selectEl = collection[0];fillNeibrAfterSplitFunction(obj)
+        selectEl = collection[0];
 
         if(selectEl) {
             selectEl.innerHTML = "";
