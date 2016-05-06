@@ -74,8 +74,7 @@ $(document).ready(function(){
 
 });
 
-
-function applicationValidation(){
+$('#buttonid').click(function() {
 	 if ($( "#applicationProcessTimeform" ).valid())
 		{
 		 $.ajax({
@@ -89,8 +88,7 @@ function applicationValidation(){
      success: function (response) {
 			console.log("success"+response);
 			if(response > 0){
-				var res = overwriteprocesstime(response)
-				if(res==false)
+				if(!overwriteprocesstime(response))
 				return false;
  			}
 			else{
@@ -102,20 +100,12 @@ function applicationValidation(){
 		}
 	});
 		}
-}
+});
 
 function overwriteprocesstime(res)
 {
-	var r=confirm("With entered combination,Processing time is present as "+res+ ",Do you want to overwrite it?")
-	if (r ==true){	
-
-		document.forms[0].submit();
-	}
-	else
-	{
-
-	    return false;
-	}
+	document.forms[0].submit();
+	
 }
 
 $('#listid').click(function() {
