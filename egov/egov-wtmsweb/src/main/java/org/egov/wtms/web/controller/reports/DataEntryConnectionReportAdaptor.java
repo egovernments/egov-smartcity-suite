@@ -60,8 +60,7 @@ public class DataEntryConnectionReportAdaptor implements JsonSerializer<DataEntr
         jsonObject.addProperty("hscNo", dataEntryConnectionReport.getHscNo());
         jsonObject.addProperty("assessmentNo", dataEntryConnectionReport.getAssessmentNo());
         jsonObject.addProperty("ownerName", dataEntryConnectionReport.getOwnerName());
-        jsonObject.addProperty("wardName", dataEntryConnectionReport.getRevenueWard());
-        jsonObject.addProperty("houseNo", dataEntryConnectionReport.getHouseNumber());
+        jsonObject.addProperty("wardName", dataEntryConnectionReport.getZone()+"/"+dataEntryConnectionReport.getRevenueWard()+"/"+dataEntryConnectionReport.getBlock());
         jsonObject.addProperty("locality", dataEntryConnectionReport.getLocality());
         jsonObject.addProperty("address", dataEntryConnectionReport.getAddress());
         jsonObject.addProperty("mobileNumber", dataEntryConnectionReport.getMobileNumber());

@@ -45,12 +45,13 @@ import java.util.Date;
 public class DataEntryConnectionReport {
 
     private String zone;
+    private String block;
     private String propertyType;
     private String applicationType;
     private String connectionType;
     private String usageType;
     private String category;
-    private double pipeSizeInInch;
+    private String pipeSizeInInch;
     private String hscNo;
     private String assessmentNo;
     private String ulbName;
@@ -86,6 +87,14 @@ public class DataEntryConnectionReport {
 
     public void setPropertyType(final String propertyType) {
         this.propertyType = propertyType;
+    }
+
+    public String getBlock() {
+        return block;
+    }
+
+    public void setBlock(final String block) {
+        this.block = block;
     }
 
     public String getApplicationType() {
@@ -216,11 +225,11 @@ public class DataEntryConnectionReport {
         this.monthlyFee = monthlyFee;
     }
 
-    public double getPipeSizeInInch() {
+    public String getPipeSizeInInch() {
         return pipeSizeInInch;
     }
 
-    public void setPipeSizeInInch(final double pipeSizeInInch) {
+    public void setPipeSizeInInch(final String pipeSizeInInch) {
         this.pipeSizeInInch = pipeSizeInInch;
     }
 

@@ -107,8 +107,7 @@ body
 		   </div>
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="dataEntryReport-table" width="200%">
-			<tbody>
-			</tbody>
+			
 		</table>
 		
 	</div>
