@@ -178,6 +178,25 @@ public class TransferClosingBalanceAction extends BaseFormAction {
 
     }
 
+    /**
+     * This function is called to calculate the closing balance for GlCodes of type A,L (Excluding ExcessIE code)
+     * 
+     * Transaction entries for Non-Control codes(1st Query)
+     * 
+     * UNION
+     * 
+     * Opening Balance entries for Non-Control codes(2nd Query)
+     * 
+     * UNION
+     * 
+     * Mismatch Transaction entries for Control codes(3rd Query)
+     * 
+     * UNION
+     * 
+     * Mismatch Opening Balance entries for Control codes(4th Query)
+     * 
+     */
+
     private String getQueryForNonControlCodesAndMisMatchsInControlCodes() {
         StringBuilder query = new StringBuilder();
         query.append(" INSERT INTO TransactionSummary (id, financialYearId, lastmodifiedby, glcodeid,fundId,departmentid,functionid ,openingdebitbalance, openingcreditbalance, accountdetailtypeid, accountdetailkey,lastmodifieddate)");
@@ -189,6 +208,9 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(" FROM ( ");
         query.append(" SELECT glcodeId AS glCodeId,fundId AS fundId,deptId AS deptId,functionid AS functionId,SUM(dr) AS dr,SUM(cr) AS cr,SUM(balance) AS balance ");
         query.append(" FROM ( ");
+
+        // Transaction entries for Non-Control codes(1st Query)
+
         query.append(" SELECT gl.glcodeId AS glCodeId,vh.fundId AS fundId,mis.departmentid  AS deptId, gl.functionid AS functionId,SUM(CASE WHEN debitamount = 0 THEN 0 ELSE debitamount END) AS dr, ");
         query.append(" SUM(CASE WHEN creditAmount = 0 THEN 0 ELSE creditAmount END) AS cr,(SUM(CASE WHEN debitamount = 0 THEN 0 ELSE debitamount END) - SUM(CASE WHEN creditAmount = 0 THEN 0 ELSE creditAmount END)) AS balance ");
         query.append(" FROM voucherHeader vh,vouchermis mis,chartOfAccounts coa,generalledger gl LEFT JOIN generalledgerdetail gld ON gl.id = gld.generalledgerid ");
@@ -200,7 +222,11 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(fyEndingDate);
         query.append("','dd/mm/yyyy') AND vh.status NOT  IN(4,5) AND coa.type IN('A','L') ");
         query.append(" GROUP BY gl.glcodeId,vh.fundId,mis.departmentid,gl.functionid ");
+
         query.append(" UNION ALL ");
+
+        // Opening Balance entries for Non-Control codes(2nd Query)
+
         query.append(" SELECT ts.glcodeid AS glCodeId,ts.fundid AS fundId,ts.departmentid  AS deptId,ts.functionid AS functionId,SUM(CASE WHEN ts.openingdebitbalance = 0 THEN 0 ELSE ts.openingdebitbalance END) AS dr, ");
         query.append(" SUM(CASE WHEN ts.openingcreditbalance = 0 THEN 0 ELSE ts.openingcreditbalance END) AS cr,(SUM( CASE WHEN ts.openingdebitbalance = 0 THEN 0 ELSE ts.openingdebitbalance END) - SUM(CASE WHEN ts.openingcreditbalance = 0 THEN 0 ELSE ts.openingcreditbalance END)) AS balance ");
         query.append(" FROM transactionsummary ts,chartofaccounts coa ");
@@ -209,7 +235,11 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(financialYear);
         query.append(" ");
         query.append(" GROUP BY ts.glcodeid,ts.fundid ,ts.departmentid ,ts.functionid ");
+
         query.append(" UNION ALL ");
+
+        // Mismatch Transaction entries for Control codes(3rd Query)
+
         query.append(" SELECT gl.glcodeId AS glCodeId,vh.fundId AS fundId,mis.departmentid AS deptId,gl.functionid AS functionId,SUM(CASE WHEN gl.debitamount = 0 THEN 0 ELSE gld.amount END) AS dr, SUM(CASE WHEN gl.creditamount = 0 THEN 0 ELSE gld.amount END) AS cr, ");
         query.append(" SUM(CASE WHEN gl.debitamount = 0 THEN 0 ELSE gld.amount END)-SUM(CASE WHEN gl.creditamount = 0 THEN 0 ELSE gld.amount END) AS balance ");
         query.append(" FROM voucherHeader vh, vouchermis mis, chartOfAccounts coa,generalledger gl,generalLedgerDetail gld");
@@ -220,7 +250,10 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(fyEndingDate);
         query.append("','dd/mm/yyyy') AND coa.type IN('A','L') AND vh.status NOT  IN(4,5) ");
         query.append(" GROUP BY gl.glcodeId,vh.fundId,mis.departmentid,gl.functionid ");
+
         query.append(" UNION ALL ");
+
+        // Mismatch Opening Balance entries for Control codes(4th Query)
         query.append(" SELECT ts.glcodeid AS glCodeId,ts.fundid AS fundId,ts.departmentid  AS deptId,ts.functionid AS functionId,SUM(CASE WHEN ts.openingdebitbalance = 0 THEN 0 ELSE ts.openingdebitbalance END) AS dr, ");
         query.append(" SUM(CASE WHEN ts.openingcreditbalance = 0 THEN 0 ELSE ts.openingcreditbalance  END) AS cr,(SUM(CASE WHEN ts.openingdebitbalance = 0 THEN 0 ELSE ts.openingdebitbalance END) - SUM(CASE WHEN ts.openingcreditbalance = 0 THEN 0 ELSE ts.openingcreditbalance END)) AS balance ");
         query.append(" FROM transactionsummary ts,chartofaccounts coa ");
@@ -229,6 +262,7 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(financialYear);
         query.append("");
         query.append(" GROUP BY ts.glcodeid,ts.fundid ,ts.departmentid ,ts.functionid");
+
         query.append(") closingbalance");
         query.append(" GROUP BY glcodeId ,fundId ,deptId ,functionid ");
         query.append(" ORDER BY glcodeId ,fundId ,deptId ,functionid ) final");
@@ -236,6 +270,17 @@ public class TransferClosingBalanceAction extends BaseFormAction {
 
     }
 
+    /**
+     * This function is called to calculate the closing balance for GlCodes of type A,L (Excluding ExcessIE code)
+     * 
+     * Transaction entries for Control codes(1st Query)
+     * 
+     * UNION
+     * 
+     * Opening Balance entries for Control codes(2nd Query)
+     * 
+     * 
+     */
     private String getQueryForControlCodes() {
         StringBuilder query = new StringBuilder();
         query.append(" INSERT INTO TransactionSummary (id, financialYearId, lastmodifiedby, glcodeid,fundId,departmentid,functionid , accountdetailtypeid, accountdetailkey,openingdebitbalance, openingcreditbalance,lastmodifieddate)");
@@ -247,6 +292,9 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(" FROM ( ");
         query.append(" SELECT glcodeId AS glCodeId,fundId AS fundId, deptId AS deptId,functionid AS functionId,detailTypeId  AS detailTypeId,detailKeyId AS detailKeyId,SUM(dr) AS dr,SUM(cr) AS cr,SUM(balance)   AS balance ");
         query.append(" FROM (");
+
+        // Transaction entries for Control codes(1st Query)
+
         query.append(" SELECT gl.glcodeId AS glCodeId,vh.fundId AS fundId,mis.departmentid  AS deptId,gl.functionid AS functionId,gld.detailTypeId  AS detailTypeId,gld.detailKeyId AS detailKeyId,SUM(CASE WHEN gl.debitamount = 0 THEN 0 ELSE gld.amount END) AS dr, ");
         query.append(" SUM(CASE WHEN gl.creditamount = 0 THEN 0 ELSE gld.amount END) AS cr,SUM(CASE WHEN gl.debitamount = 0 THEN 0 ELSE gld.amount END)-SUM(CASE WHEN gl.creditamount = 0   THEN 0 ELSE gld.amount END) AS balance ");
         query.append(" FROM voucherHeader vh,vouchermis mis,chartOfAccounts coa,chartofaccountdetail coadtl,generalledger gl,generalLedgerDetail gld ");
@@ -257,7 +305,11 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(fyEndingDate);
         query.append("','dd/mm/yyyy') AND coa.type IN('A','L') AND vh.status NOT IN(4,5) ");
         query.append(" GROUP BY gl.glcodeId,gld.detailTypeId,gld.detailKeyId,vh.fundId,mis.departmentid,gl.functionid ");
+
         query.append(" UNION ALL ");
+
+        // Opening Balance entries for Control codes(2nd Query)
+
         query.append(" SELECT ts.glcodeid AS glCodeId,ts.fundid AS fundId,ts.departmentid AS deptId,ts.functionid AS functionId,ts.accountdetailtypeid AS detailTypeId ,ts.accountdetailkey AS detailKeyId ,SUM(CASE WHEN ts.openingdebitbalance = 0 THEN 0 ELSE ts.openingdebitbalance END) AS dr, ");
         query.append(" SUM(CASE WHEN ts.openingcreditbalance = 0 THEN 0 ELSE ts.openingcreditbalance END) AS cr,(SUM(CASE WHEN ts.openingdebitbalance = 0 THEN 0 ELSE ts.openingdebitbalance END) - SUM(CASE WHEN ts.openingcreditbalance = 0 THEN 0 ELSE ts.openingcreditbalance END)) AS balance ");
         query.append(" FROM transactionsummary ts,chartofaccounts coa,chartofaccountdetail coadtl WHERE coa.id = coadtl.glcodeid AND ts.accountdetailtypeid =coadtl.detailtypeid AND coa.id = ts.glcodeid AND (coa.purposeid IS NULL OR coa.purposeid NOT IN (SELECT id FROM egf_accountcode_purpose WHERE name = 'ExcessIE' ) ) ");
@@ -265,6 +317,7 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(financialYear);
         query.append(" ");
         query.append(" GROUP BY ts.glcodeid,ts.accountdetailtypeid ,ts.accountdetailkey,ts.fundid ,ts.departmentid ,ts.functionid ");
+
         query.append(" ) closingbalance ");
         query.append(" GROUP BY glcodeId ,detailTypeId,detailKeyId,fundId ,deptId ,functionid ");
         query.append("ORDER BY glcodeId ,detailTypeId,detailKeyId,fundId ,deptId ,functionid ");
@@ -273,6 +326,29 @@ public class TransferClosingBalanceAction extends BaseFormAction {
 
     }
 
+    /**
+     * This function is called to calculate the closing balance for GlCodes of type I,E and ExcessIE Code
+     * 
+     * Transaction entries for Income codes(1st Query) (X)
+     * 
+     * UNION
+     * 
+     * Transaction entries for Expense codes(2nd Query) (Y)
+     * 
+     */
+
+    /**
+     * (X-Y)
+     * 
+     * UNION
+     * 
+     * Transaction entries for ExcessIE Code(3rd Query)
+     * 
+     * UNION
+     * 
+     * Opening Balance entries for ExcessIE Code(4th Query)
+     * 
+     */
     private String getQueryForIncomeOverExpense() {
         StringBuilder query = new StringBuilder();
         query.append(" INSERT INTO TransactionSummary (id, financialYearId, lastmodifiedby, glcodeid,fundId,departmentid,functionid ,openingdebitbalance, openingcreditbalance, accountdetailtypeid, accountdetailkey,lastmodifieddate)");
@@ -284,8 +360,14 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(" FROM ( ");
         query.append(" SELECT fundid AS fundId,deptId  AS deptId , functionid   AS functionId, SUM(balance) AS balance ");
         query.append(" FROM ( ");
+
+        // (X-Y)
+
         query.append(" SELECT fundid AS fundId, deptId AS deptId ,functionid AS functionId,SUM(Income)-SUM(Expense) AS balance ");
         query.append(" FROM ( ");
+
+        // Transaction entries for Income codes(1st Query) (X)
+
         query.append(" SELECT vh.fundid AS fundId,vmis.departmentid AS deptId ,gl.functionid AS functionId,CASE WHEN SUM(gl.creditAmount)-SUM(gl.debitamount) IS NULL THEN 0 ELSE SUM(gl.creditAmount)-SUM(gl.debitamount) END AS Income, 0   AS Expense ");
         query.append(" FROM chartofaccounts coa, generalledger gl,voucherHeader vh,vouchermis vmis WHERE vh.ID = gl.VOUCHERHEADERID  AND gl.glcode =coa.glcode AND vmis.voucherheaderid=vh.id AND vh.VOUCHERDATE >= to_date('");
         query.append(fyStartingDate);
@@ -294,7 +376,11 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append("','dd/mm/yyyy') AND vh.status NOT IN(4,5)");
         query.append(" AND coa.TYPE = 'I' ");
         query.append(" GROUP BY vh.fundId,vmis.departmentid,gl.functionid ");
+
         query.append(" UNION ALL ");
+
+        // Transaction entries for Expense codes(2nd Query) (Y)
+
         query.append(" SELECT vh.fundid    AS fundId,vmis.departmentid AS deptId ,gl.functionid AS functionId, 0 AS Income,CASE WHEN SUM(gl.debitamount)-SUM(gl.creditAmount) IS NULL THEN 0 ELSE SUM(gl.debitamount)-SUM(gl.creditAmount) END AS Expense ");
         query.append(" FROM chartofaccounts coa,generalledger gl,voucherHeader vh,vouchermis vmis WHERE vh.ID = gl.VOUCHERHEADERID AND gl.glcode =coa.glcode AND vmis.voucherheaderid=vh.id AND vh.VOUCHERDATE  >= to_date('");
         query.append(fyStartingDate);
@@ -302,7 +388,11 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append(fyEndingDate);
         query.append("','dd/mm/yyyy') AND vh.status NOT IN(4,5) AND coa.TYPE = 'E' ");
         query.append(" GROUP BY vh.fundId,vmis.departmentid,gl.functionid ) IncomeAndExpense GROUP BY fundId,deptId,functionId ");
+
         query.append(" UNION ALL ");
+
+        // Transaction entries for ExcessIE Code(3rd Query)
+
         query.append(" SELECT fundid  AS fundId,deptId AS deptId ,functionid  AS functionId, SUM(balance) AS balance ");
         query.append(" FROM ( ");
         query.append(" SELECT vh.fundid   AS fundId,vmis.departmentid AS deptId ,gl.functionid AS functionId,CASE WHEN SUM(gl.creditAmount)-SUM(gl.debitamount) IS NULL THEN 0 ELSE SUM(gl.creditAmount)-SUM(gl.debitamount) END AS balance ");
@@ -314,16 +404,22 @@ public class TransferClosingBalanceAction extends BaseFormAction {
         query.append("','dd/mm/yyyy') ");
         query.append(" AND vh.status NOT IN(4,5) ");
         query.append(" GROUP BY vh.fundId,vmis.departmentid,gl.functionid ");
+
         query.append(" UNION ALL ");
+
+        // Opening Balance entries for ExcessIE Code(4th Query)
+
         query.append(" SELECT ts.fundid AS fundId,ts.departmentid  AS deptId,ts.functionid AS functionId,SUM( ts.openingcreditbalance ) - SUM( ts.openingdebitbalance ) AS balance ");
         query.append(" FROM transactionsummary ts,chartofaccounts coa ");
         query.append(" WHERE coa.id  = ts.glcodeid AND coa.purposeid IN (SELECT id FROM egf_accountcode_purpose WHERE name = 'ExcessIE' ) AND ts.financialyearid = ");
         query.append(financialYear);
         query.append(" ");
         query.append(" GROUP BY ts.fundid ,ts.departmentid ,ts.functionid ");
+
         query.append(" ) ExcessIECode ");
         query.append(" GROUP BY fundid , deptId ,functionid ");
         query.append(" ) IncomeOverExpense ");
+
         query.append(" GROUP BY fundid ,deptId ,functionid ");
         query.append(" ) final");
         return query.toString();
