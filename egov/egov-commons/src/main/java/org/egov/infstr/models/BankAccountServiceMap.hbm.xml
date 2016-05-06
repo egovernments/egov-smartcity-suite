@@ -78,8 +78,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 
 		<many-to-one name="deptId" class="org.egov.infra.admin.master.entity.Department"
 			fetch="select">
-			<column name="department" precision="22" scale="0"
-				not-null="true" />
+			<column name="department" precision="22" scale="0"/>
 		</many-to-one>
 		
 		<many-to-one name="ecsType" class="org.egov.infstr.models.ECSType"
@@ -88,20 +87,5 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		</many-to-one>
 		
 	</class>
-	<query name="GETSERVICETYPENOTMAPPED">
-    <![CDATA[select s from  ServiceDetails s where id not in(select bs.serviceDetails from BankAccountServiceMap bs)order by id]]></query>
-    
-	<query name="BANK_NAME_ATLEAST_ONE_BRANCH">
-		<![CDATA[select b from org.egov.commons.Bank b where b.id in (select bb.bank from org.egov.commons.Bankbranch bb)]]>
-	</query>
-	      
-    <query name="BANKBRANCH_NAME_ATLEAST_ONE_BRANCH">
-		<![CDATA[select bb from org.egov.commons.Bankbranch bb where bb.id in(select ba.bankbranch from org.egov.commons.Bankaccount ba) ]]>
-	</query>
-
-	<query name="BANKACCOUNT">
-		<![CDATA[select ba from org.egov.commons.Bankaccount ba ]]>
-	</query>
-	     
 </hibernate-mapping>
 		

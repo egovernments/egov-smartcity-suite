@@ -136,6 +136,10 @@
 		<property name="type" value="org.egov.infstr.models.ServiceDetails" />
 	</bean>
 	
+	<bean id="bankAccountService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infstr.models.BankAccountServiceMap" />
+	</bean>
+	
 	<bean id="bankAccountServiceMap" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.models.BankAccountServiceMap" />
 	</bean>
