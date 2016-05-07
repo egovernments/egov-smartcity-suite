@@ -40,8 +40,6 @@
 package org.egov.collection.web.actions.receipts;
 
 import java.math.BigInteger;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,6 +58,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.service.BankAccountService;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
@@ -73,7 +72,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @Results({
         @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
@@ -115,8 +113,7 @@ public class BankRemittanceAction extends BaseFormAction {
     @Autowired
     private EmployeeService employeeService;
     @Autowired
-    private BankAccountService bankAccountSer;
-
+    private BankaccountHibernateDAO bankaccountHibernateDAO;
     protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private Double totalCashAmount;
     private Double totalChequeAmount;
@@ -255,7 +252,7 @@ public class BankRemittanceAction extends BaseFormAction {
         if(getSession().get("REMITTANCE_LIST")!=null)
             getSession().remove("REMITTANCE_LIST");
         getSession().put("REMITTANCE_LIST", bankRemittanceList);
-        Bankaccount bankAcc = bankAccountSer.findById(Long.valueOf(accountNumberId), false);
+        Bankaccount bankAcc = bankaccountHibernateDAO.findById(Long.valueOf(accountNumberId), false);
         bankAccount = bankAcc.getAccountnumber();
         bank = bankAcc.getBankbranch().getBank().getName();
         totalCashAmount = getSum(getTotalCashAmountArray());
