@@ -390,12 +390,3 @@ function viewGradeData() {
 	var id = document.getElementById('id').value;
 	window.location = 'contractorGrade-edit.action?mode=view&id='+id;
 }
-
-function modifyMilestoneTemplateData() {
-	var id = document.getElementById('id').value;
-	window.location = 'milestoneTemplate-edit.action?mode=edit&id='+id;
-}
-
-function createNewMilestoneTemplate() {
-	window.location = "milestoneTemplate-newform.action";
-}

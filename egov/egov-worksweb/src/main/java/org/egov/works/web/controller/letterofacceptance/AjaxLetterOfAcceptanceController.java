@@ -41,10 +41,11 @@ package org.egov.works.web.controller.letterofacceptance;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.master.services.ContractorService;
+import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;

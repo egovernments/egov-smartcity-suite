@@ -38,29 +38,53 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.works.master.services;
+package org.egov.works.master.service;
 
-import org.egov.common.entity.UOM;
-import org.egov.infstr.services.PersistenceService;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
+import javax.transaction.Transactional;
 
-public class UOMService extends PersistenceService<UOM, Long> {
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.works.models.masters.DepositCode;
+import org.egov.works.services.WorksService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service("depositCodeService")
+@Transactional
+public class DepositCodeService extends PersistenceService<DepositCode, Long> {
+
+    @Autowired
+    private WorksService worksService;
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public UOM getUOMById(final Long uomId) {
-        final UOM uom = entityManager.find(UOM.class, uomId);
-        return uom;
+    public DepositCode getDepositCodeById(final Long DepositCodeId) {
+        final DepositCode depositCode = entityManager.find(DepositCode.class, DepositCodeId);
+        return depositCode;
     }
 
-    public List<UOM> getAllUOMs() {
-        final Query query = entityManager.createQuery("from UOM  order by upper(uom)");
-        final List<UOM> uomList = query.getResultList();
-        return uomList;
+    public List<DepositCode> getAllDepositCodes() {
+        final Query query = entityManager.createQuery("from DepositCode");
+        final List<DepositCode> depositCodeList = query.getResultList();
+        return depositCodeList;
+    }
+
+    public void createAccountDetailKey(final DepositCode dc) {
+        final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
+        final Accountdetailkey adk = new Accountdetailkey();
+        adk.setGroupid(1);
+        adk.setDetailkey(dc.getId().intValue());
+        adk.setDetailname(accountdetailtype.getAttributename());
+        adk.setAccountdetailtype(accountdetailtype);
+        accountdetailkeyHibernateDAO.create(adk);
     }
 }

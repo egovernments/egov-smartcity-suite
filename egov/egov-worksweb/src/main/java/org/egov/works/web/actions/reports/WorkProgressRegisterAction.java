@@ -39,6 +39,20 @@
  */
 package org.egov.works.web.actions.reports;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -75,17 +89,17 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.model.PersonalInformation;
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.milestone.entity.MilestoneActivity;
+import org.egov.works.milestone.entity.PaymentDetail;
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.egov.works.milestone.entity.TrackMilestoneActivity;
+import org.egov.works.milestone.entity.WorkProgressRegister;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.milestone.Milestone;
-import org.egov.works.models.milestone.MilestoneActivity;
-import org.egov.works.models.milestone.PaymentDetail;
-import org.egov.works.models.milestone.TrackMilestone;
-import org.egov.works.models.milestone.TrackMilestoneActivity;
-import org.egov.works.models.milestone.WorkProgressRegister;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
@@ -95,20 +109,6 @@ import org.egov.works.services.ContractorBillService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @ParentPackage("egov")
 @Results({
@@ -291,12 +291,12 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             if (workOrderEstimate != null && workOrderEstimate.getMilestone() != null
                     && workOrderEstimate.getMilestone().size() != 0)
                 for (final Milestone tempMilestone : workOrderEstimate.getMilestone())
-                    if (tempMilestone.getEgwStatus().getCode().equalsIgnoreCase("APPROVED"))
+                    if (tempMilestone.getStatus().getCode().equalsIgnoreCase("APPROVED"))
                         milestone = tempMilestone;
 
             if (milestone != null && milestone.getTrackMilestone() != null && milestone.getTrackMilestone().size() != 0)
                 for (final TrackMilestone temptrackMilestone : milestone.getTrackMilestone())
-                    if (temptrackMilestone.getEgwStatus().getCode().equalsIgnoreCase("APPROVED"))
+                    if (temptrackMilestone.getStatus().getCode().equalsIgnoreCase("APPROVED"))
                         trackMilestone = temptrackMilestone;
             if (workOrderEstimate != null) {
                 final WorkProgressRegister workProgress = new WorkProgressRegister();
@@ -409,10 +409,10 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 }
                 workProgress.setContractPeriod(workOrder.getContractPeriod().toString());
                 workProgress.setWorkOrderDate(DateUtils.getFormattedDate(workOrder.getWorkOrderDate(), dateFormat));
-                if (trackMilestone != null && "APPROVED".equalsIgnoreCase(trackMilestone.getEgwStatus().getCode())) {
+                if (trackMilestone != null && "APPROVED".equalsIgnoreCase(trackMilestone.getStatus().getCode())) {
                     workProgress.setTrackMilestoneActivities(trackMilestone.getActivities());
                     workProgress.setCompletedPercentage(trackMilestone.getTotal());
-                } else if (milestone != null && "APPROVED".equalsIgnoreCase(milestone.getEgwStatus().getCode())) {
+                } else if (milestone != null && "APPROVED".equalsIgnoreCase(milestone.getStatus().getCode())) {
                     final List<TrackMilestoneActivity> trackList = new LinkedList<TrackMilestoneActivity>();
                     for (final MilestoneActivity milestoneActivity : milestone.getActivities()) {
                         final TrackMilestoneActivity trackMilestoneActivity = new TrackMilestoneActivity();

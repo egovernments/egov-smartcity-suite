@@ -78,7 +78,7 @@
 		</list>
 		<set name="milestone" inverse="true" >
 			<key column="WORKORDER_ESTIMATE_ID" />
-			<one-to-many class="org.egov.works.models.milestone.Milestone"  />
+			<one-to-many class="org.egov.works.milestone.entity.Milestone"  />
 		</set>
 		<set name="contractorAdvanceRequisitions" inverse="true" >
 			<key column="WORKORDER_ESTIMATE_ID" />

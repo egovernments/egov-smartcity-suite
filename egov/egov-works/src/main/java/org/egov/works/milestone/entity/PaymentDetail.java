@@ -37,23 +37,74 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.works.milestone.entity;
 
-package org.egov.works.master.services;
+import java.math.BigDecimal;
 
-import org.egov.works.master.repository.NatureOfWorkRepository;
-import org.egov.works.models.masters.NatureOfWork;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+public class PaymentDetail {
 
-import java.util.List;
+    String billNumber;
+    String billDate;
+    String billType;
+    BigDecimal billAmount;
+    String cjvNo;
+    BigDecimal releasedAmount;
+    BigDecimal outstandingAmount;
 
-@Service
-public class NatureOfWorkService {
-
-    @Autowired
-    private NatureOfWorkRepository natureOfWorkRepository;
-
-    public List<NatureOfWork> findAll() {
-        return natureOfWorkRepository.findAll();
+    public String getBillNumber() {
+        return billNumber;
     }
+
+    public void setBillNumber(final String billNumber) {
+        this.billNumber = billNumber;
+    }
+
+    public String getBillDate() {
+        return billDate;
+    }
+
+    public void setBillDate(final String billDate) {
+        this.billDate = billDate;
+    }
+
+    public String getBillType() {
+        return billType;
+    }
+
+    public void setBillType(final String billType) {
+        this.billType = billType;
+    }
+
+    public BigDecimal getBillAmount() {
+        return billAmount;
+    }
+
+    public void setBillAmount(final BigDecimal billAmount) {
+        this.billAmount = billAmount;
+    }
+
+    public BigDecimal getReleasedAmount() {
+        return releasedAmount;
+    }
+
+    public void setReleasedAmount(final BigDecimal releasedAmount) {
+        this.releasedAmount = releasedAmount;
+    }
+
+    public BigDecimal getOutstandingAmount() {
+        return outstandingAmount;
+    }
+
+    public void setOutstandingAmount(final BigDecimal outstandingAmount) {
+        this.outstandingAmount = outstandingAmount;
+    }
+
+    public String getCjvNo() {
+        return cjvNo;
+    }
+
+    public void setCjvNo(final String cjvNo) {
+        this.cjvNo = cjvNo;
+    }
+
 }

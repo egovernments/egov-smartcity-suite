@@ -38,15 +38,16 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.works.master.services;
+package org.egov.works.master.service;
 
-import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.masters.ScheduleCategory;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
+
+import org.egov.infstr.services.PersistenceService;
+import org.egov.works.models.masters.ScheduleCategory;
 
 public class ScheduleCategoryService extends PersistenceService<ScheduleCategory, Long> {
 

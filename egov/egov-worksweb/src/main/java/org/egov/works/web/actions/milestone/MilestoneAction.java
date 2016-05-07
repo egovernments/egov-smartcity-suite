@@ -39,6 +39,10 @@
  */
 package org.egov.works.web.actions.milestone;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -53,18 +57,13 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.milestone.Milestone;
-import org.egov.works.models.milestone.MilestoneActivity;
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 @ParentPackage("egov")
 @Result(name = MilestoneAction.NEW, location = "milestone-new.jsp")
@@ -136,10 +135,10 @@ public class MilestoneAction extends BaseFormAction {
         final String actionName = parameters.get("actionName")[0];
 
         if (id == null)
-            milestone.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MILESTONE_MODULE_KEY, "NEW"));
+            milestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MILESTONE_MODULE_KEY, "NEW"));
 
         milestone = milestoneService.persist(milestone);
-        milestoneWorkflowService.transition(actionName, milestone, milestone.getWorkflowapproverComments());
+        milestoneWorkflowService.transition(actionName, milestone, milestone.getApprovalComent());
         milestone = milestoneService.persist(milestone);
         messageKey = "milestone." + actionName;
         addActionMessage(getText(messageKey, "The Milestone was saved successfully"));
@@ -155,7 +154,7 @@ public class MilestoneAction extends BaseFormAction {
     public String cancel() {
         if (milestone.getId() != null) {
             milestoneWorkflowService.transition(Milestone.Actions.CANCEL.toString(), milestone,
-                    milestone.getWorkflowapproverComments());
+                    milestone.getApprovalComent());
             milestone = milestoneService.persist(milestone);
         }
         messageKey = "milestone.cancel";
@@ -165,7 +164,7 @@ public class MilestoneAction extends BaseFormAction {
 
     public String reject() {
         milestoneWorkflowService.transition(Milestone.Actions.REJECT.toString(), milestone,
-                milestone.getWorkflowapproverComments());
+                milestone.getApprovalComent());
         milestone = milestoneService.persist(milestone);
         messageKey = "milestone.reject";
         getDesignation(milestone);
@@ -173,8 +172,8 @@ public class MilestoneAction extends BaseFormAction {
     }
 
     public void getDesignation(final Milestone milestone) {
-        if (milestone.getEgwStatus() != null
-                && !WorksConstants.NEW.equalsIgnoreCase(milestone.getEgwStatus().getCode())) {
+        if (milestone.getStatus() != null
+                && !WorksConstants.NEW.equalsIgnoreCase(milestone.getStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(milestone.getState().getOwnerPosition(), milestone
                     .getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
@@ -236,8 +235,8 @@ public class MilestoneAction extends BaseFormAction {
 
     @SkipValidation
     public String edit() {
-        if (SOURCE_INBOX.equalsIgnoreCase(sourcepage) || milestone.getEgwStatus() != null
-                && milestone.getEgwStatus().getCode().equals(WorksConstants.NEW)) {
+        if (SOURCE_INBOX.equalsIgnoreCase(sourcepage) || milestone.getStatus() != null
+                && milestone.getStatus().getCode().equals(WorksConstants.NEW)) {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(milestone, user);
             if (isValidUser)
@@ -260,11 +259,11 @@ public class MilestoneAction extends BaseFormAction {
 
         if (null == milestone.getActivities() || milestone.getActivities().size() == 0)
             addFieldError("milestone.activity.missing", "Milestone Activity is not added");
-        BigDecimal percentage = BigDecimal.ZERO;
+        Double percentage=0.0;
         for (final MilestoneActivity milestoneActivity : milestone.getActivities())
             if (milestoneActivity.getPercentage() != null)
-                percentage = percentage.add(milestoneActivity.getPercentage());
-        if (percentage.compareTo(BigDecimal.valueOf(100)) != 0)
+                percentage += milestoneActivity.getPercentage();
+        if (percentage != 100)
             addFieldError("milestone.activity.total.percentage", "Total activity percentage should be equal to 100%");
     }
 

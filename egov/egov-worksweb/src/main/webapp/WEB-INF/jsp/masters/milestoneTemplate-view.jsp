@@ -41,37 +41,19 @@
 <script
 	src="<egov:url path='/resources/js/milestonetemplate/milestonetemplate.js?${app_release_no}'/>"></script>
 <html>
-<head>
-<style type="text/css">
-ul {
-	list-style-type: none;
-}
-</style>
-</head>
 <body onload="replaceStatus()">
-	<s:if test="%{hasActionMessages()}">
-		<div id="msgsDiv" class="new-page-header">
-			<s:actionmessage theme="simple" />
-		</div>
-	</s:if>
+	<div class="new-page-header">
+		<s:text name="search.milestonetepmlate.view" />
+	</div>
 
 	<%@ include file='milestoneTemplate-commonView.jsp'%>
 
-	<s:hidden name="model.id" id="id" />
-	<s:hidden name="mode" id="mode" />
 	<div class="row text-center">
 		<div class="add-margin">
-			<input type="submit" name="MODIFY" Class="btn btn-primary"
-				value="Modify" id="MODIFY" onclick="modifyMilestoneTemplateData();" />
-			<s:if test="%{mode != 'edit' && mode == ''}">
-				<input type="submit" name="create" Class="btn btn-primary"
-					value="Add New Milestone Template" id="CREATE" name="button"
-					onclick="createNewMilestoneTemplate();" />
-			</s:if>
 			<input type="submit" name="closeButton" id="closeButton"
 				value="Close" Class="btn btn-default" onclick="window.close();" />
 		</div>
 	</div>
-</body>
 
+</body>
 </html>

@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.services;
+package org.egov.works.master.service;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;

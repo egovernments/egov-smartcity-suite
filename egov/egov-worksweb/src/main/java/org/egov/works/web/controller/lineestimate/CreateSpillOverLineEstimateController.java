@@ -64,7 +64,7 @@ import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.master.services.NatureOfWorkService;
+import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
@@ -82,6 +82,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;

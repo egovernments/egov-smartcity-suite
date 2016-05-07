@@ -74,10 +74,10 @@
 			<null />
 		</constructor-arg>
 	</bean>
-	<bean id="scheduleOfRateService" class="org.egov.works.master.services.ScheduleOfRateService">
+	<bean id="scheduleOfRateService" class="org.egov.works.master.service.ScheduleOfRateService">
 		<property name="type" value="org.egov.works.models.masters.ScheduleOfRate" />
 	</bean>
-	<bean id="scheduleCategoryService" class="org.egov.works.master.services.ScheduleCategoryService">
+	<bean id="scheduleCategoryService" class="org.egov.works.master.service.ScheduleCategoryService">
 		<property name="type" value="org.egov.works.models.masters.ScheduleCategory"/>
 	</bean>
 	<bean id="worksStatusService" parent="persistenceService" scope="prototype">
@@ -413,11 +413,11 @@
 		<property name="type"
 			value="org.egov.works.models.estimate.AbstractEstimateAppropriation" />
 	</bean>
-	<bean id="milestoneTemplateService" parent="persistenceService"
+	<!-- <bean id="milestoneTemplateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
 			value="org.egov.works.models.masters.MilestoneTemplate" />
-	</bean>
+	</bean> -->
 
 	<!-- <bean class="org.egov.works.services.MilestoneTemplateWFService"
 		id="milestoneTemplateWFService" parent="persistenceService" scope="prototype">
@@ -431,7 +431,7 @@
 		<constructor-arg value="org.egov.works.models.masters.MilestoneTemplate" />
 	</bean>
 	<bean id="milestoneService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.milestone.Milestone" />
+		<property name="type" value="org.egov.works.milestone.entity.Milestone" />
 	</bean>
 
 	<bean class="org.egov.works.services.MilestoneWFService" id="milestoneWFService"
@@ -443,14 +443,14 @@
 	<bean id="milestoneWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="milestoneWFService" />
-		<constructor-arg value="org.egov.works.models.milestone.Milestone" />
+		<constructor-arg value="org.egov.works.milestone.entity.Milestone" />
 	</bean> -->
-	<bean id="trackMilestoneService" parent="persistenceService"
+<!-- 	<bean id="trackMilestoneService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.milestone.TrackMilestone" />
+			value="org.egov.works.milestone.entity.TrackMilestone" />
 	</bean>
-<!-- 
+ --><!-- 
 	<bean class="org.egov.works.services.TrackMilestoneWFService" id="trackMilestoneWFService"
 		parent="persistenceService" scope="prototype">
 			<property name="employeeServiceOld" ref="employeeServiceOld" /> 
@@ -460,7 +460,7 @@
 	<bean id="trackMilestoneWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="trackMilestoneWFService" />
-		<constructor-arg value="org.egov.works.models.milestone.TrackMilestone" />
+		<constructor-arg value="org.egov.works.milestone.entity.TrackMilestone" />
 	</bean> -->
 
 	<bean id="reportHelper" class="org.egov.utils.ReportHelper" />
@@ -533,10 +533,10 @@
 	</bean> -->
 
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
-	<bean id="contractorGradeService" class="org.egov.works.master.services.ContractorGradeService">
+	<bean id="contractorGradeService" class="org.egov.works.master.service.ContractorGradeService">
 		<property name="type" value="org.egov.commons.ContractorGrade"/>
 	</bean>
-	<bean id="uomService" class="org.egov.works.master.services.UOMService">
+	<bean id="uomService" class="org.egov.works.master.service.UOMService">
 		<property name="type" value="org.egov.common.entity.UOM"/>
 	</bean>
 	<bean id="schemeService" class="org.egov.services.masters.SchemeService">

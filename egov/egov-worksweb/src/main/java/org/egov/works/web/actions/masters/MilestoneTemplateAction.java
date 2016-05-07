@@ -39,6 +39,12 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -46,76 +52,68 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwTypeOfWork;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
-import org.egov.infra.workflow.entity.WorkflowAction;
-import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.service.MilestoneTemplateService;
 import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.models.masters.MilestoneTemplateActivity;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
         @Result(name = MilestoneTemplateAction.NEW, location = "milestoneTemplate-new.jsp"),
         @Result(name = MilestoneTemplateAction.SEARCH, location = "milestoneTemplate-search.jsp"),
         @Result(name = MilestoneTemplateAction.SUCCESS, location = "milestoneTemplate-success.jsp"),
-        @Result(name = MilestoneTemplateAction.EDIT, location = "milestoneTemplate-edit.jsp")
+        @Result(name = MilestoneTemplateAction.EDIT, location = "milestoneTemplate-edit.jsp"),
+        @Result(name = MilestoneTemplateAction.VIEW, location = "milestoneTemplate-view.jsp")
 
 })
 public class MilestoneTemplateAction extends SearchFormAction {
 
     private static final long serialVersionUID = 5517312981738363805L;
     private MilestoneTemplate template = new MilestoneTemplate();
-    private PersistenceService<MilestoneTemplate, Long> milestoneTemplateService;
-    private Long id;
-    private String mode = " ";
-    private WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService;
-    private String messageKey;
-    private String actionName;
-    private String sourcepage;
-    private String nextEmployeeName;
-    private String nextDesignation;
-    private String designation;
+
+    @Autowired
+    private MilestoneTemplateService milestoneTemplateService;
+
+    @Autowired
     private WorksService worksService;
+
+    Long id;
+    private String mode;
+    private String messageKey;
+    private String sourcepage;
+
     private List<MilestoneTemplateActivity> templateActivities = new LinkedList<MilestoneTemplateActivity>();
     public static final String SEARCH = "search";
     public static final String SUCCESS = "success";
     public static final String EDIT = "edit";
+    public static final String VIEW = "view";
 
     public MilestoneTemplateAction() {
-        addRelatedEntity("workType", EgwTypeOfWork.class);
-        addRelatedEntity("subType", EgwTypeOfWork.class);
+        addRelatedEntity("typeOfWork", EgwTypeOfWork.class);
+        addRelatedEntity("subTypeOfWork", EgwTypeOfWork.class);
     }
 
     @Override
     public void prepare() {
         if (id != null)
-            template = milestoneTemplateService.findById(id, false);
+            template = milestoneTemplateService.getMilestoneTemplateById(id);
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         super.prepare();
-        setupDropdownDataExcluding("workType", "subType");
+        setupDropdownDataExcluding("typeOfWork", "subTypeOfWork");
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw where etw.parentid is null"));
-        populateCategoryList(ajaxEstimateAction, template.getWorkType() != null);
-
+        populateCategoryList(ajaxEstimateAction, template.getTypeOfWork() != null);
     }
 
     @Override
     public Object getModel() {
-
         return template;
     }
 
@@ -123,6 +121,12 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @SkipValidation
     public String newform() {
         return NEW;
+    }
+
+    @Action(value = "/masters/milestoneTemplate-view")
+    @SkipValidation
+    public String view() {
+        return VIEW;
     }
 
     @Override
@@ -135,16 +139,12 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @Action(value = "/masters/milestoneTemplate-save")
     public String save() {
         populateActivities();
-        template = milestoneTemplateService.persist(template);
+        template = milestoneTemplateService.save(template);
+        if (StringUtils.isBlank(mode))
+            addActionMessage(getText("milestonetemplate.save.success", new String[] { template.getCode() }));
+        else
+            addActionMessage(getText("milestonetemplate.modified.success", new String[] { template.getCode() }));
         return SUCCESS;
-    }
-
-    public String getActionName() {
-        return actionName;
-    }
-
-    public void setActionName(final String actionName) {
-        this.actionName = actionName;
     }
 
     public String getMessageKey() {
@@ -163,35 +163,13 @@ public class MilestoneTemplateAction extends SearchFormAction {
         this.sourcepage = sourcepage;
     }
 
-    public String getNextEmployeeName() {
-        return nextEmployeeName;
-    }
-
-    public void setNextEmployeeName(final String nextEmployeeName) {
-        this.nextEmployeeName = nextEmployeeName;
-    }
-
-    public String getNextDesignation() {
-        return nextDesignation;
-    }
-
-    public void setNextDesignation(final String nextDesignation) {
-        this.nextDesignation = nextDesignation;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(final String designation) {
-        this.designation = designation;
-    }
-
     @Action(value = "/masters/milestoneTemplate-edit")
     @SkipValidation
     public String edit() {
-        template = milestoneTemplateService.findById(template.getId(), false);
-        return EDIT;
+        template = milestoneTemplateService.getMilestoneTemplateById(id);
+        if (mode.equals("edit"))
+            return EDIT;
+        return VIEW;
     }
 
     @SkipValidation
@@ -204,8 +182,8 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @Action(value = "/masters/milestoneTemplate-searchDetails")
     @SkipValidation
     public String searchDetails() {
-        if (template.getWorkType() == null || template.getWorkType().getId() == -1) {
-            final String messageKey = "milestone.template.search.workType.error";
+        if (template.getTypeOfWork() == null || template.getTypeOfWork().getId() == -1) {
+            final String messageKey = "milestone.template.search.typeOfWork.error";
             addActionError(getText(messageKey));
             return SEARCH;
         }
@@ -217,21 +195,22 @@ public class MilestoneTemplateAction extends SearchFormAction {
     @Override
     public void validate() {
         populateActivities();
-
+        if (milestoneTemplateService.getCode(template.getCode()) && id == null)
+            addFieldError("Unique.MilestoneTemplate.code", getText("milestonetemplate.code.isunique"));
         if (null == template.getMilestoneTemplateActivities() || template.getMilestoneTemplateActivities().size() == 0)
-            addFieldError("milestone.activity.missing", "Template Activity is not added");
-        BigDecimal percentage = BigDecimal.ZERO;
+            addFieldError("milestone.activity.missing", getText("milestone.activity.missing"));
+        Double percentage = 0.0;
         for (final MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities())
             if (templateActivities.getPercentage() != null)
-                percentage = percentage.add(templateActivities.getPercentage());
-        if (percentage.compareTo(BigDecimal.valueOf(100)) != 0)
-            addFieldError("milestone.activity.total.percentage", "Total activity percentage should be equal to 100%");
+                percentage += templateActivities.getPercentage();
+        if (percentage != 100)
+            addFieldError("milestone.activity.total.percentage", getText("milestone.activity.total.percentage"));
     }
 
     protected void populateCategoryList(
             final AjaxEstimateAction ajaxEstimateAction, final boolean categoryPopulated) {
         if (categoryPopulated) {
-            ajaxEstimateAction.setCategory(template.getWorkType().getId());
+            ajaxEstimateAction.setCategory(template.getTypeOfWork().getId());
             ajaxEstimateAction.subcategories();
             addDropdownData("categoryList", ajaxEstimateAction.getSubCategories());
         } else
@@ -243,12 +222,16 @@ public class MilestoneTemplateAction extends SearchFormAction {
         for (final MilestoneTemplateActivity activity : templateActivities) {
             if (activity != null)
                 template.addMilestoneTemplateActivity(activity);
+            activity.setMilestoneTemplate(template);
 
             // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting
             // triggered on update of estimate for child objects
             template.setCreatedBy(worksService.getCurrentLoggedInUser());
             template.setCreatedDate(new Date());
-
+            activity.setCreatedBy(worksService.getCurrentLoggedInUser());
+            activity.setCreatedDate(new Date());
+            activity.setLastModifiedBy(worksService.getCurrentLoggedInUser());
+            activity.setLastModifiedDate(new Date());
         }
     }
 
@@ -256,25 +239,17 @@ public class MilestoneTemplateAction extends SearchFormAction {
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         String dynQuery = " from MilestoneTemplate mt where mt.id is not null ";
         final List<Object> paramList = new ArrayList<Object>();
-        if (template.getWorkType() != null && template.getWorkType().getId() != -1) {
-            dynQuery = dynQuery + " and mt.workType.id = ? ";
-            paramList.add(template.getWorkType().getId());
+        if (template.getTypeOfWork() != null && template.getTypeOfWork().getId() != -1) {
+            dynQuery = dynQuery + " and mt.typeOfWork.id = ? ";
+            paramList.add(template.getTypeOfWork().getId());
         }
-        if (template.getSubType() != null && template.getSubType().getId() != -1) {
-            dynQuery = dynQuery + " and mt.subType.id = ? ";
-            paramList.add(template.getSubType().getId());
+        if (template.getSubTypeOfWork() != null && template.getSubTypeOfWork().getId() != -1) {
+            dynQuery = dynQuery + " and mt.subTypeOfWork.id = ? ";
+            paramList.add(template.getSubTypeOfWork().getId());
         }
         if (StringUtils.isNotBlank(template.getCode().trim())) {
             dynQuery = dynQuery + " and UPPER(mt.code) like '%'||?||'%'";
             paramList.add(template.getCode().trim().toUpperCase());
-        }
-        if (StringUtils.isNotBlank(template.getName().trim())) {
-            dynQuery = dynQuery + " and UPPER(mt.name) like '%'||?||'%'";
-            paramList.add(template.getName().trim().toUpperCase());
-        }
-        if (StringUtils.isNotBlank(template.getDescription().trim())) {
-            dynQuery = dynQuery + " and UPPER(mt.description) like '%'||?||'%'";
-            paramList.add(template.getDescription().trim().toUpperCase());
         }
         if (template.getStatus() != null && template.getStatus() != -1) {
             dynQuery = dynQuery + " and mt.status = ? ";
@@ -290,15 +265,6 @@ public class MilestoneTemplateAction extends SearchFormAction {
 
     public void setTemplate(final MilestoneTemplate template) {
         this.template = template;
-    }
-
-    public PersistenceService<MilestoneTemplate, Long> getMilestoneTemplateService() {
-        return milestoneTemplateService;
-    }
-
-    public void setMilestoneTemplateService(
-            final PersistenceService<MilestoneTemplate, Long> milestoneTemplateService) {
-        this.milestoneTemplateService = milestoneTemplateService;
     }
 
     public void setMode(final String mode) {
@@ -317,28 +283,21 @@ public class MilestoneTemplateAction extends SearchFormAction {
         this.id = id;
     }
 
-    public List<WorkflowAction> getValidActions() {
-        return milestoneTemplateWorkflowService.getValidActions(template);
+    public List<MilestoneTemplateActivity> getTemplateActivities() {
+        return templateActivities;
     }
 
-    public void setMilestoneTemplateWorkflowService(final WorkflowService<MilestoneTemplate> milestoneTemplateWorkflowService) {
-        this.milestoneTemplateWorkflowService = milestoneTemplateWorkflowService;
+    public WorksService getWorksService() {
+        return worksService;
     }
 
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
     }
 
-    public List<MilestoneTemplateActivity> getTemplateActivities() {
-        return templateActivities;
-    }
-
     public void setTemplateActivities(
             final List<MilestoneTemplateActivity> templateActivities) {
         this.templateActivities = templateActivities;
-    }
-
-    public void setUserService(final UserService userService) {
     }
 
 }
