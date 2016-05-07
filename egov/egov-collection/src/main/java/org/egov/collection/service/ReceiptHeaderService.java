@@ -743,7 +743,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     cashQueryBuilder
                     .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
 
-                    final Object arguments[] = new Object[6];
+                    final Object arguments[] = new Object[8];
                     CVoucherHeader voucherHeaderCash = null;
 
                     arguments[0] = serviceName;
