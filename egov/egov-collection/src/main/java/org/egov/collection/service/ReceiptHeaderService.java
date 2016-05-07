@@ -740,6 +740,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     cashQueryBuilder.append(instrumentTypeCondition);
                     cashQueryBuilder.append(receiptFundCondition);
                     cashQueryBuilder.append(receiptDepartmentCondition);
+                    cashQueryBuilder
+                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
 
                     final Object arguments[] = new Object[6];
                     CVoucherHeader voucherHeaderCash = null;
@@ -755,6 +757,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     arguments[3] = CollectionConstants.INSTRUMENTTYPE_CASH;
                     arguments[4] = fundCodeArray[i];
                     arguments[5] = departmentCodeArray[i];
+                    arguments[6] = CollectionConstants.MODULE_NAME_RECEIPTHEADER;
+                    arguments[7] = CollectionConstants.RECEIPT_STATUS_CODE_APPROVED;
 
                     final List<InstrumentHeader> instrumentHeaderListCash = persistenceService.findAllBy(
                             cashQueryBuilder.toString(), arguments);

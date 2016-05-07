@@ -115,8 +115,7 @@ public class BankRemittanceAction extends BaseFormAction {
     @Autowired
     private EmployeeService employeeService;
     @Autowired
-    @Qualifier("bankAccountService")
-    private BankAccountService bankAccountService;
+    private BankAccountService bankAccountSer;
 
     protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private Double totalCashAmount;
@@ -256,7 +255,7 @@ public class BankRemittanceAction extends BaseFormAction {
         if(getSession().get("REMITTANCE_LIST")!=null)
             getSession().remove("REMITTANCE_LIST");
         getSession().put("REMITTANCE_LIST", bankRemittanceList);
-        Bankaccount bankAcc = bankAccountService.findById(Long.valueOf(accountNumberId), false);
+        Bankaccount bankAcc = bankAccountSer.findById(Long.valueOf(accountNumberId), false);
         bankAccount = bankAcc.getAccountnumber();
         bank = bankAcc.getBankbranch().getBank().getName();
         totalCashAmount = getSum(getTotalCashAmountArray());
@@ -267,7 +266,6 @@ public class BankRemittanceAction extends BaseFormAction {
 
     private List<CollectionBankRemittanceReport> prepareBankRemittanceReport(final List<ReceiptHeader> receiptHeaders) {
         final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         for (ReceiptHeader receiptHead : receiptHeaders) {
             final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
             collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
@@ -286,7 +284,6 @@ public class BankRemittanceAction extends BaseFormAction {
             reportList.add(collBankRemitReport);
         }
         return reportList;
-
     }
 
     private Double getSum(final String[] array) {
