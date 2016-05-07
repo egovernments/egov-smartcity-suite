@@ -136,7 +136,7 @@
 		<property name="type" value="org.egov.infstr.models.ServiceDetails" />
 	</bean>
 	
-	<bean id="bankAccountService" parent="persistenceService" scope="prototype">
+	<bean id="bankAccountMappingService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.models.BankAccountServiceMap" />
 	</bean>
 	
@@ -153,7 +153,7 @@
    <bean id="WESCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
    </bean>
 
-	 <bean id="TLCollectionsInterface" class="org.egov.tl.service.integration.LicenseBillService" scope="prototype" >
+	<bean id="TLCollectionsInterface" class="org.egov.tl.service.integration.LicenseBillService" scope="prototype" >
 			<property name="licenseUtils" ref="licenseUtils" />
 			<property name="updateIndexService" ref="updateIndexService" />
 			<property name="tradeLicenseSmsAndEmailService" ref="tradeLicenseSmsAndEmailService" />
