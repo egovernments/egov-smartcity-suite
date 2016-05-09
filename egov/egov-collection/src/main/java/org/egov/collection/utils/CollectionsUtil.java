@@ -40,6 +40,17 @@
 
 package org.egov.collection.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
@@ -93,17 +104,6 @@ import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class CollectionsUtil {
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
@@ -313,9 +313,9 @@ public class CollectionsUtil {
                     isDeptAllowed = true;
         }
 
-        if (isEmp && !isDeptAllowed) {
+        if (isEmp && !isDeptAllowed)
             throw new ValidationException(Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
-        } else if (!isEmp || isDeptAllowed)
+        else if (!isEmp || isDeptAllowed)
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
         // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         else {
@@ -741,7 +741,7 @@ public class CollectionsUtil {
                     .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
                 receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader,
-                        chartOfAccountsHibernateDAO, persistenceService));
+                        chartOfAccountsHibernateDAO, persistenceService, null));
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";

@@ -54,7 +54,6 @@ import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-
 public class DishonorChequeService implements FinancialIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(DishonorChequeService.class);

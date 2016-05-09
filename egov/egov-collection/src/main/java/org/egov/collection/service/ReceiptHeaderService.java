@@ -248,7 +248,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     || instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
                 if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                         CollectionConstants.APPCONFIG_VALUE_RECEIPTVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                        CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
+                                CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERTYPE)) {
                     headerdetails.put(VoucherConstant.VOUCHERNAME,
                             CollectionConstants.FINANCIAL_JOURNALVOUCHER_VOUCHERNAME);
                     headerdetails.put(VoucherConstant.VOUCHERTYPE,
@@ -297,7 +297,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         for (final ReceiptDetail receiptDetail : receiptDetailSet)
             if (receiptDetail.getCramount().compareTo(BigDecimal.ZERO) != 0
-                    || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
+            || receiptDetail.getDramount().compareTo(BigDecimal.ZERO) != 0) {
 
                 final HashMap<String, Object> accountcodedetailsHashMap = new HashMap<String, Object>(0);
                 accountcodedetailsHashMap.put(VoucherConstant.GLCODE, receiptDetail.getAccounthead().getGlcode());
@@ -402,20 +402,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
         if (receiptHeader.getState() == null && !createVoucherForBillingService)
             receiptHeader
-                    .transition()
-                    .start()
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition()
+            .start()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
                     .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
         else if (createVoucherForBillingService) {
             createVoucherForReceipt(receiptHeader);
             receiptHeader
-                    .transition()
-                    .start()
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition()
+            .start()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipt voucher created")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -423,9 +423,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (receiptHeader.getReceiptMisc().getDepositedInBank() != null)
             receiptHeader
-                    .transition(true)
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition(true)
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipts Submitted for Approval")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -625,10 +625,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         .get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE))
                         && arrayObjectInitialIndexTemp[2].equals(objHashMapTemp
                                 .get(CollectionConstants.BANKREMITTANCE_SERVICENAME))
-                        && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
-                                .get(CollectionConstants.BANKREMITTANCE_FUNDCODE))
-                        && arrayObjectInitialIndexTemp[7].equals(objHashMapTemp
-                                .get(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE))) {
+                                && arrayObjectInitialIndexTemp[6].equals(objHashMapTemp
+                                        .get(CollectionConstants.BANKREMITTANCE_FUNDCODE))
+                                        && arrayObjectInitialIndexTemp[7].equals(objHashMapTemp
+                                                .get(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE))) {
                     check = m;
                     break;
                 } else
@@ -712,7 +712,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
 
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
@@ -771,7 +771,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                         headerdetails
-                                .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                        .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
                         headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
@@ -829,7 +829,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     chequeQueryBuilder.append(instrumentStatusCondition);
                     chequeQueryBuilder.append("and instruments.instrumentType.type in ( ?, ?)");
                     chequeQueryBuilder
-                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     chequeQueryBuilder.append(receiptFundCondition);
                     chequeQueryBuilder.append(receiptDepartmentCondition);
 
@@ -876,7 +876,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                         headerdetails
-                                .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                        .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
                         headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
@@ -967,7 +967,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                         headerdetails
-                                .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                        .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
                         headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
@@ -1062,7 +1062,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         headerdetails.put(VoucherConstant.VOUCHERTYPE,
                                 CollectionConstants.FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE);
                         headerdetails
-                                .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
+                        .put(VoucherConstant.DESCRIPTION, CollectionConstants.FINANCIAL_VOUCHERDESCRIPTION);
                         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherDate);
                         headerdetails.put(VoucherConstant.FUNDCODE, fundCodeArray[i]);
                         headerdetails.put(VoucherConstant.DEPARTMENTCODE, CollectionConstants.DEPT_CODE_FOR_ACCOUNTS);
@@ -1166,7 +1166,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 final InstrumentHeader instrumentHeaderObj = financialsUtil.updateInstrumentHeaderStatus(
                         instrumentHeader, instrumentStatusDeposited, depositedBankAccount);
                 financialsUtil
-                        .updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode, instrumentHeaderObj, cashMap);
+                .updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode, instrumentHeaderObj, cashMap);
             }
     }
 
@@ -1254,13 +1254,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
         if (position != null)
             receiptHeaderToBeCancelled
-                    .transition(true)
-                    .end()
-                    .withSenderName(
-                            receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
-                                    + receiptHeaderToBeCancelled.getCreatedBy().getName())
-                    .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
-                    .withOwner(position).withDateInfo(new Date());
+            .transition(true)
+            .end()
+            .withSenderName(
+                    receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
+                            + receiptHeaderToBeCancelled.getCreatedBy().getName())
+                            .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
+                            .withOwner(position).withDateInfo(new Date());
     }
 
     /**
@@ -1291,7 +1291,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     && !receiptHeader.getState().getValue().equals(CollectionConstants.WF_STATE_END))
                 endReceiptWorkFlowOnCancellation(receiptHeader);
             if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
-                updateBillingSystemWithReceiptInfo(receiptHeader, null);
+                updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
         }
         // For bill based collection, push data to index only upon successful
         // update to billing system
@@ -1575,23 +1575,23 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     @Transactional
     public void perform(final ReceiptHeader receiptHeader, final String wfState, final String newStatusCode,
             final String nextAction, final Position ownerPosition, final String remarks)
-            throws ApplicationRuntimeException {
+                    throws ApplicationRuntimeException {
         receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));
 
         if (receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED))
             // Receipt approved. end workflow for this receipt.
             receiptHeader
-                    .transition()
-                    .end()
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition()
+            .end()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments("Receipt Approved - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
                     .withOwner(ownerPosition).withDateInfo(new Date());
         else
             receiptHeader
-                    .transition()
-                    .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+            .transition()
+            .withSenderName(
+                    receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
                     .withComments(remarks).withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date())
                     .withNextAction(nextAction);
         getSession().flush();
@@ -1666,7 +1666,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             LOGGER.info("Workflow started for newly created receipts");
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
 
-                updateBillingSystemWithReceiptInfo(receiptHeader, null);
+                updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
                 LOGGER.info("Updated billing system ");
             }
 
@@ -1709,7 +1709,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      */
     @Transactional
     public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader,
-            final BillingIntegrationService billingService) throws ApplicationRuntimeException {
+            final BillingIntegrationService billingService, final InstrumentHeader bouncedInstrumentInfo)
+                    throws ApplicationRuntimeException {
 
         /**
          * for each receipt created, send the details back to the billing system
@@ -1719,7 +1720,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
                         : ""));
         final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
-        billReceipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService));
+        billReceipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                persistenceService, bouncedInstrumentInfo));
 
         if (updateBillingSystem(receiptHeader.getService(), billReceipts, billingService)) {
             receiptHeader.setIsReconciled(true);
@@ -1782,7 +1784,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         } catch (final ApplicationRuntimeException ex) {
             throw new ApplicationRuntimeException("Failed to create voucher in Financials");
         }
-        updateBillingSystemWithReceiptInfo(receiptHeader, billingService);
+        updateBillingSystemWithReceiptInfo(receiptHeader, billingService, null);
         return receiptHeader;
     }
 
@@ -1798,13 +1800,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Transactional
     public void updateDishonoredInstrumentStatus(final ReceiptHeader receiptHeader,
-            final InstrumentHeader instrumentHeader, final EgwStatus receiptStatus, final boolean isReconciled) {
-        financialsUtil.updateInstrumentHeader(instrumentHeader);
+            final InstrumentHeader bounceInstrumentInfo, final EgwStatus receiptStatus, final boolean isReconciled) {
+        financialsUtil.updateInstrumentHeader(bounceInstrumentInfo);
         // update receipts - set status to INSTR_BOUNCED and recon flag to false
         updateReceiptHeaderStatus(receiptHeader, receiptStatus, false);
         LOGGER.debug("Updated receipt status to " + receiptStatus.getCode() + " set reconcilation to false");
 
-        updateBillingSystemWithReceiptInfo(receiptHeader, null);
+        updateBillingSystemWithReceiptInfo(receiptHeader, null, bounceInstrumentInfo);
     }
 
     /**

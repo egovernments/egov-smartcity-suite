@@ -49,12 +49,10 @@ public class AxisReconciliationJob extends AbstractQuartzJob {
     private static final long serialVersionUID = -8293830861860894611L;
     SchedularService schedularService;
 
-
     @Override
     public void executeJob() {
         schedularService.reconcileAXIS();
     }
-
 
     public void setSchedularService(final SchedularService schedularService) {
         this.schedularService = schedularService;

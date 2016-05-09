@@ -88,12 +88,10 @@ public class SchedularService {
                 .getSession()
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
-                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate"
-                                + " and receipt.receiptHeader.service=:billingservicecode")
+                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
                 .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_AXIS);
-        qry.setString("billingservicecode", CollectionConstants.SERVICECODE_PROPERTYTAX);
         qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
         final List<OnlinePayment> reconcileList = qry.list();
 
