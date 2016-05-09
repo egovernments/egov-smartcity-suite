@@ -125,6 +125,8 @@
 	
 	<bean id="propertyTaxUtil" class="org.egov.ptis.client.util.PropertyTaxUtil"/>
 	
+	<bean id="propertyTaxCommonUtils" class="org.egov.ptis.service.utils.PropertyTaxCommonUtils"/>
+	
 	<bean id="propertyTaxCollection" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
     </bean>

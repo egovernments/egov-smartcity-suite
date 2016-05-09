@@ -62,6 +62,7 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
@@ -71,6 +72,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -119,6 +121,8 @@ public class BillService {
     private BoundaryService boundaryService;
     @Autowired
     private CityService cityService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * Generates a Demand Notice or the Bill giving the break up of the tax
@@ -145,7 +149,7 @@ public class BillService {
             demandNoticeInfo.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
             demandNoticeInfo.setBillNo(getBillNo());
             demandNoticeInfo.setLocality(basicProperty.getPropertyID().getLocality().getName());
-            demandNoticeInfo.setBillPeriod(PropertyTaxUtil.getCurrentInstallment().getDescription());
+            demandNoticeInfo.setBillPeriod(propertyTaxCommonUtils.getCurrentInstallment().getDescription());
             final PropertyWiseConsumptions pwc = propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getUpicNo());
             demandNoticeInfo.setPropertyWiseConsumptions(pwc);
             demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty, pwc));
@@ -193,7 +197,7 @@ public class BillService {
      * @return
      */
     private int getNumberOfBills(final BasicProperty basicProperty) {
-        final Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
 
         final Long count = (Long) entityManager.unwrap(Session.class)
                 .createQuery(
@@ -280,7 +284,7 @@ public class BillService {
         StringBuilder queryString = new StringBuilder(200);
         final StringBuilder zoneParamString = new StringBuilder();
         final StringBuilder wardParamString = new StringBuilder();
-        final Installment currentInstallment = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         final Module ptModule = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
         // read zone and ward saved in bulkbillgeneration table.
         final List<BulkBillGeneration> bulkBillGeneration = getPersistenceService().findAllBy(

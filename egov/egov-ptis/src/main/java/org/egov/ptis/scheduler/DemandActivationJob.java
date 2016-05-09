@@ -40,25 +40,24 @@
 
 package org.egov.ptis.scheduler;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.StatefulJob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This job activates the demand after 21 days for the properties.
@@ -77,10 +76,12 @@ public class DemandActivationJob extends AbstractQuartzJob implements StatefulJo
     private static final Logger LOGGER = Logger.getLogger(DemandActivationJob.class);
     private static final String STR_REMARKS_DEMAND_ACTIVATION = "Demand activated by system on 15thd day after notice generation";
 
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
+    
     @Autowired
     private PropertyPersistenceService basicPropertyService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -155,11 +156,11 @@ public class DemandActivationJob extends AbstractQuartzJob implements StatefulJo
 
         LOGGER.debug("getQueryString, query=" + stringQuery);
 
-        final List<Ptdemand> properties = HibernateUtil.getCurrentSession().createQuery(stringQuery)
+        final List<Ptdemand> properties = basicPropertyService.getSession().createQuery(stringQuery)
                 .setString("bpStatus", PropertyTaxConstants.STATUS_OBJECTED_STR)
                 .setParameter("pastDate", date15DaysPast)
                 .setString("noticeType", PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)
-                .setEntity("currInstallment", PropertyTaxUtil.getCurrentInstallment()).list();
+                .setEntity("currInstallment", propertyTaxCommonUtils.getCurrentInstallment()).list();
 
         LOGGER.debug("Exting from getQueryString");
         return properties;

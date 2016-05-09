@@ -43,6 +43,7 @@ import org.egov.commons.Installment;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,52 +56,54 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping(value ="/rebatePeriod/create")
+@RequestMapping(value = "/rebatePeriod/create")
 public class CreateRebatePeriodController {
 
-	private RebatePeriodService rebatePeriodService;
-	private PropertyTaxUtil propertyTaxUtil;
-	private Installment currentInstallment;
-	
-	@Autowired
-	public CreateRebatePeriodController(RebatePeriodService rebatePeriodService, PropertyTaxUtil propertyTaxUtil){
-		this.propertyTaxUtil = propertyTaxUtil;
-		this.rebatePeriodService = rebatePeriodService;
-	}
-	
-	@ModelAttribute
-	public RebatePeriod rebatePeriodModel(){
-		currentInstallment = propertyTaxUtil.getCurrentInstallment();
-		RebatePeriod rebatePeriod = null;
-		if(currentInstallment!=null){
-			rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
-			if(rebatePeriod!=null){
-			}
-			else{
-				rebatePeriod = new RebatePeriod();
-			}
-		}
-		return rebatePeriod;
-	}
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String newForm(final Model model){
-		return "rebatePeriod-form";
-	}
-	
-	@RequestMapping(method =RequestMethod.POST)
-	public String create(@Valid @ModelAttribute RebatePeriod rebatePeriod, final BindingResult errors, RedirectAttributes redirectAttrs, final Model model) {
-    	
+    private RebatePeriodService rebatePeriodService;
+    private PropertyTaxUtil propertyTaxUtil;
+    private Installment currentInstallment;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    public CreateRebatePeriodController(RebatePeriodService rebatePeriodService, PropertyTaxUtil propertyTaxUtil) {
+        this.propertyTaxUtil = propertyTaxUtil;
+        this.rebatePeriodService = rebatePeriodService;
+    }
+
+    @ModelAttribute
+    public RebatePeriod rebatePeriodModel() {
+        currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
+        RebatePeriod rebatePeriod = null;
+        if (currentInstallment != null) {
+            rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
+            if (rebatePeriod != null) {
+            } else {
+                rebatePeriod = new RebatePeriod();
+            }
+        }
+        return rebatePeriod;
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String newForm(final Model model) {
+        return "rebatePeriod-form";
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute RebatePeriod rebatePeriod, final BindingResult errors,
+            RedirectAttributes redirectAttrs, final Model model) {
+
         if (errors.hasErrors())
             return "rebatePeriod-form";
-        
-        if(rebatePeriod.getId()==null){
-        	rebatePeriod.setInstallment(currentInstallment);
+
+        if (rebatePeriod.getId() == null) {
+            rebatePeriod.setInstallment(currentInstallment);
         }
         rebatePeriodService.saveRebatePeriod(rebatePeriod);
         model.addAttribute("message", "Rebate period saved successfully !");
 
         return "rebatePeriod-success";
     }
-	
+
 }

@@ -39,31 +39,9 @@
  */
 package org.egov.ptis.domain.service.report;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.RegionalHeirarchy;
-import org.egov.commons.RegionalHeirarchyType;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.service.RegionalHeirarchyService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.search.elastic.entity.CollectionIndex;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.domain.entity.property.BaseRegisterResult;
-import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
-import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
-import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
-import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
-import org.egov.ptis.domain.entity.property.FloorDetailsView;
-import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
-import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -75,9 +53,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
+import org.apache.commons.lang.StringUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.RegionalHeirarchy;
+import org.egov.commons.RegionalHeirarchyType;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.RegionalHeirarchyService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.search.elastic.entity.CollectionIndex;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
+import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
+import org.egov.ptis.domain.entity.property.DailyCollectionReportResult;
+import org.egov.ptis.domain.entity.property.FloorDetailsView;
+import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class ReportService {
@@ -99,8 +99,7 @@ public class ReportService {
     private static final String PRIVATE = "PRIVATE";
     private PersistenceService propPerServ;
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
+   
     @Autowired
     private RegionalHeirarchyService regionalHeirarchyService;
 
@@ -108,6 +107,8 @@ public class ReportService {
     private UserService userService;
 
     private @Autowired FinancialYearDAO financialYearDAO;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -176,7 +177,7 @@ public class ReportService {
         List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
                 propMatView.getInstDmdColl());
         for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
-            if (instDmdCollObj.getInstallment().equals(propertyTaxUtil.getCurrentInstallment())) {
+            if (instDmdCollObj.getInstallment().equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 if (propertyType.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
                     baseRegisterResultObj.setPropertyTax(instDmdCollObj.getVacantLandTax());
                 } else {

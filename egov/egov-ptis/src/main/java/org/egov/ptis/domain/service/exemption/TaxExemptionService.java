@@ -95,6 +95,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,6 +135,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     PropertyImpl propertyModel = new PropertyImpl();
 
@@ -299,7 +303,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             Map<String, Map<String, BigDecimal>> demandCollMap;
             try {
                 demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                        PropertyTaxUtil.getCurrentInstallment());
+                        propertyTaxCommonUtils.getCurrentInstallment());
            
             Map<String, BigDecimal> currentTaxDetails = propService.getCurrentTaxDetails(demandCollMap, new Date());
             model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));

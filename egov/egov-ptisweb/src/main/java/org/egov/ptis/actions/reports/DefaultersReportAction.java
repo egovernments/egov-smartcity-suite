@@ -41,6 +41,7 @@ package org.egov.ptis.actions.reports;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -59,11 +60,13 @@ import org.egov.ptis.bean.DefaultersInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -91,6 +94,8 @@ public class DefaultersReportAction extends BaseFormAction {
     private BoundaryService boundaryService;
     @Autowired
     public PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
     private Map<String, String> ownerShipMap;
     private String ownerShipType;
 
@@ -174,7 +179,7 @@ public class DefaultersReportAction extends BaseFormAction {
         BigDecimal currPenalty = BigDecimal.ZERO;
         BigDecimal currPenaltyColl = BigDecimal.ZERO;
         int count = 0;
-        Installment curInstallment = propertyTaxUtil.getCurrentInstallment();
+        Installment curInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         for (final PropertyMaterlizeView propView : propertyViewList) {
             defaultersInfo = new DefaultersInfo();
             totalDue = BigDecimal.ZERO;

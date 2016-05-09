@@ -72,6 +72,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,6 +131,9 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Override
     protected Module module() {
@@ -139,7 +143,7 @@ public class PropertyTaxCollection extends TaxCollection {
     @Override
     public void updateDemandDetails(final BillReceiptInfo billRcptInfo) throws ApplicationRuntimeException {
         totalAmount = billRcptInfo.getTotalAmount();
-        currInstallment = PropertyTaxUtil.getCurrentInstallment();
+        currInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         LOGGER.debug("updateDemandDetails : Updating Demand Details Started, billRcptInfo : " + billRcptInfo);
         try {
             final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));

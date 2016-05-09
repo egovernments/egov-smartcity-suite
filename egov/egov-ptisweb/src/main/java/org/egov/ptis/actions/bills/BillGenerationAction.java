@@ -46,6 +46,7 @@
 package org.egov.ptis.actions.bills;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -83,6 +84,7 @@ import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -161,6 +163,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     @Autowired
     private ApplicationContext beanProvider;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Override
     public StateAware getModel() {
@@ -302,7 +307,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         ReportInfo reportInfo;
         Integer totalProps = 0;
         Integer totalBillsGen = 0;
-        final Installment currInst = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currInst = propertyTaxCommonUtils.getCurrentInstallment();
 
         final StringBuilder billQueryString = new StringBuilder();
         final StringBuilder propQueryString = new StringBuilder();

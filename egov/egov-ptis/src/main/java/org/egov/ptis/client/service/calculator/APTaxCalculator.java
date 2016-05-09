@@ -61,6 +61,7 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -105,6 +106,9 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     @Autowired
     private ModuleService moduleService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * @param property
@@ -125,7 +129,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         taxRateProps = propertyTaxUtil.loadTaxRates();
         isCorporation = propertyTaxUtil.isCorporation();
         isSeaShoreULB = propertyTaxUtil.isSeaShoreULB();
-        currInstallment = propertyTaxUtil.getCurrentInstallment();
+        currInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         if (isCorporation)
             isPrimaryServiceChrApplicable = propertyTaxUtil.isPrimaryServiceApplicable();
 

@@ -358,7 +358,7 @@ public class PropertyTransferService {
             noticeBean.setMunicipalityName(cityName);
             BasicProperty basicProp = propertyMutation.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<String, Object>();
-            reportParams.put("userId", EgovThreadLocals.getUserId());
+            reportParams.put("usersignature", new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()));
             reportParams.put("isCorporation", isCorporation);
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
@@ -391,7 +391,7 @@ public class PropertyTransferService {
                 } else {
                     noticeService.updateNotice(notice, new ByteArrayInputStream(reportOutput.getReportOutputData()));
                 }
-                noticeService.getSession().flush();
+                //noticeService.getSession().flush();
             }
         }
         return reportOutput;
