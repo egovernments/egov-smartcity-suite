@@ -134,32 +134,24 @@ window.document.onkeydown = function(event) {
 	 </div>
 	  
 	  <script>
-      var i=0;
-	    // jQuery plugin to prevent double submission of forms
-		jQuery.fn.preventDoubleSubmission = function() {
-		jQuery(this).on('submit',function(e){
-         console.log("inside onsubmitt "+(++i));
-		    var $form = jQuery(this);
-		    if ($form.data('submitted') === true) {
-	         console.log("inside already submitted"+(++i));
-  	      // Previously submitted - don't submit again
-		      e.preventDefault();
-		    } else {
-		      // Mark it so that the next submit can be ignored
-              console.log("inside first time submitted"+(++i));
-		      $form.data('submitted', true);
-		    }
-		  });
-		  // Keep chainability
-		  return this;
-		};
 
 		jQuery("form").submit(function( event ) {
 			jQuery('.loader-class').modal('show', {backdrop: 'static'});
 		});
-		
-        console.log("calling prevent default");
-		jQuery('form').preventDoubleSubmission();
+
+		jQuery('form').submit(function() {
+		    if(typeof jQuery.data(this, "disabledOnSubmit") == 'undefined') {
+		      jQuery.data(this, "disabledOnSubmit", { submited: true });
+		      jQuery('input[type=submit], input[type=button]', this).each(function() {
+		    	  jQuery(this).attr("disabled", "disabled");
+		      });
+		      return true;
+		    }
+		    else
+		    {
+		      return false;
+		    }
+		  });
 		
 		jQuery(".datepicker").datepicker({
 			format: "dd/mm/yyyy",
