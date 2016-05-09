@@ -50,9 +50,9 @@
 		 <tr>
 			<td class="greybox">&nbsp;</td>
 		    <td class="greybox"><label for="serviceCode"><s:text name="masters.serviceCategory.servicCategoryeCode"/><span class="mandatory1">*</span> :</label></td>
-		    <td class="greybox"><s:textfield label="servicCategoryeCode" name="model.code"/></td>
+		    <td class="greybox"><s:textfield label="servicCategoryeCode" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace"  name="model.code"/></td>
 		 </tr>	
-		 <tr>
+		 <tr
 			<td class="greybox">&nbsp;</td>
 		    <td class="greybox"><label for="isActive"><s:text name="masters.serviceCategory.serviceIsEnable/Disable"/> :</label></td>
 		    <td class="greybox"><s:checkbox label="ischecked" name="model.isActive" id="isActive"/></td>
