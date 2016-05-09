@@ -134,7 +134,7 @@ public class SearchRequestContractorBill {
         return workOrderNumber;
     }
 
-    public void setWorkOrderNumber(String workOrderNumber) {
+    public void setWorkOrderNumber(final String workOrderNumber) {
         this.workOrderNumber = workOrderNumber;
     }
 }

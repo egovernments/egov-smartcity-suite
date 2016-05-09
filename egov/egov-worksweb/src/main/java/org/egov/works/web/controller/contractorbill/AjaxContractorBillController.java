@@ -39,8 +39,7 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -59,7 +58,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
@@ -73,7 +73,7 @@ public class AjaxContractorBillController {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    
+
     @Autowired
     private SearchContractorBillsToCancelJsonAdaptor searchContractorBillsToCancelJsonAdaptor;
 
@@ -108,29 +108,31 @@ public class AjaxContractorBillController {
     public @ResponseBody List<CChartOfAccounts> findDetailedAccountCodesByGlcodeLike(@RequestParam final String searchQuery) {
         return chartOfAccountsHibernateDAO.findDetailedAccountCodesByGlcodeOrNameLike(searchQuery);
     }
-    
+
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchContractorBillsToCancel(final Model model,
             @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill) {
         final List<ContractorBillRegister> searchContractorBillList = contractorBillRegisterService
                 .searchContractorBillsToCancel(searchRequestContractorBill);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchContractorBillsToCancelJson(searchContractorBillList))
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchContractorBillsToCancelJson(searchContractorBillList))
                 .append("}").toString();
         return result;
     }
 
     public Object toSearchContractorBillsToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(ContractorBillRegister.class, searchContractorBillsToCancelJsonAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(ContractorBillRegister.class, searchContractorBillsToCancelJsonAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxworkidentificationnumbers-contractorbilltocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersToCancelContractorBill(@RequestParam final String code) {
         return contractorBillRegisterService.findWorkIdentificationNumbersToSearchContractorBillToCancel(code);
     }
-    
+
     @RequestMapping(value = "/ajaxbillnumbers-contractorbilltocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findBillNumbersToCancelContractorBill(@RequestParam final String billNumber) {
         return contractorBillRegisterService.findBillNumbersToSearchContractorBillToCancel(billNumber);
