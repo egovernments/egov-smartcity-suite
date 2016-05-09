@@ -499,9 +499,13 @@ public class LineEstimateService {
                 } else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()) &&
                         !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
                     setTechnicalSanctionBy(lineEstimate);
-                    for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+                    int i = 0;
+                    for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                         // TODO:create abstract estimate on technical sanction. Need to remove once Abstract Estimate is in place.
-                        estimateService.createAbstractEstimateOnLineEstimateTechSanction(led);
+                        if (lineEstimate.getLineEstimateDetails().size() > 1)
+                            i++;
+                        estimateService.createAbstractEstimateOnLineEstimateTechSanction(led, i);
+                    }
                 }
                 if (lineEstimate.getStatus().getCode()
                         .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
@@ -805,10 +809,13 @@ public class LineEstimateService {
             newLineEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
         }
-
-        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+        int i = 0;
+        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            if (lineEstimate.getLineEstimateDetails().size() > 1)
+                i++;
             // TODO:create abstract estimate on technical sanction. Need to remove once Abstract Estimate is in place.
-            estimateService.createAbstractEstimateOnLineEstimateTechSanction(led);
+            estimateService.createAbstractEstimateOnLineEstimateTechSanction(led, i);
+        }
         return newLineEstimate;
     }
 
