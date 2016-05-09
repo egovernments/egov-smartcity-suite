@@ -115,15 +115,8 @@ public class ServiceDetailsAction extends BaseFormAction {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     public ServiceDetailsAction() {
-
         addRelatedEntity("serviceCategory", ServiceCategory.class);
         addRelatedEntity("fund", Fund.class);
-        /*
-         * addRelatedEntity("scheme", Scheme.class);
-         * addRelatedEntity("subscheme", SubScheme.class);
-         * addRelatedEntity("fundSource", Fundsource.class);
-         * addRelatedEntity("functionary", Functionary.class);
-         */
         addRelatedEntity("function", CFunction.class);
     }
 
@@ -134,7 +127,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     @Action(value = "/service/serviceDetails-newform")
     public String newform() {
-        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        addDropdownData("serviceCategoryList",
+                serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         return NEW;
     }
 
@@ -363,13 +357,7 @@ public class ServiceDetailsAction extends BaseFormAction {
                 addActionError(getText("service.accdetailType.entrymissing", new String[] { subledger
                         .getServiceAccountDetail().getGlCodeId().getGlcode() }));
                 return Boolean.FALSE;
-            }/*
-              * else if(null == subledger.getDetailKeyId()){
-              * addActionError(getText("service.accdetailKey.entrymissing",new
-              * String
-              * []{subledger.getServiceAccountDetail().getGlCodeId().getGlcode
-              * ()})); return Boolean.FALSE; }
-              */
+            }
 
             else if (null != subledgerAmount.get(subledger.getServiceAccountDetail().getGlCodeId().getGlcode())) {
 
@@ -415,22 +403,20 @@ public class ServiceDetailsAction extends BaseFormAction {
             final String header = value.substring(0, value.indexOf('|'));
             headerFields.add(header);
             final String mandate = value.substring(value.indexOf('|') + 1);
-            if (mandate.equalsIgnoreCase("M"))
+            if (mandate.equalsIgnoreCase(CollectionConstants.Mandatory))
                 mandatoryFields.add(header);
         }
     }
 
     @Action(value = "/service/serviceDetails-codeUniqueCheck")
     public String codeUniqueCheck() {
-
         return "codeUniqueCheck";
     }
 
     public boolean getCodeCheck() {
-
         boolean codeExistsOrNot = false;
-        final ServiceDetails service = serviceDetailsService.find("from ServiceDetails where code='"
-                + serviceDetails.getCode() + "'");
+        final ServiceDetails service = serviceDetailsService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CODE,
+                serviceDetails.getCode());
         if (null != service)
             codeExistsOrNot = true;
         return codeExistsOrNot;

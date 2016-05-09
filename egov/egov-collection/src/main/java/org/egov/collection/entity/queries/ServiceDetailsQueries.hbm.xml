@@ -46,18 +46,6 @@
 	-->
 <hibernate-mapping>
 
-	<query name="getServicesByType">
-    <![CDATA[select s from ServiceDetails s where s.serviceType = ?]]></query>
-
-	<query name="getCollectionServices">
-    <![CDATA[select s from ServiceDetails s where s.serviceType in ('B', 'C')]]></query>
-
-	<query name="getServiceByCode">
-    <![CDATA[select s from ServiceDetails s where s.code=?]]></query>
-    
-    <query name="getServicesByName">
-    <![CDATA[select s from ServiceDetails s where s.name = ?]]></query>
-
 	<query name="getInstrumentTypeByType">
     <![CDATA[select i from InstrumentType  i where i.type=?]]></query>
 
