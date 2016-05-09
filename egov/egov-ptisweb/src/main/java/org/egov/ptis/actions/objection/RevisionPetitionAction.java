@@ -935,18 +935,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.getBasicProperty().setStatus(
                     propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
             objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
-            /*
-             * Mean if commissioner reject revision petition, then current
-             * workflow property will become history record.
-             */
-            objection.getProperty().setStatus(STATUS_ISHISTORY);
-
             objection.end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withOwner(position).withOwner(user)
                     .withComments(approverComments);
 
         } else
-            updateStateAndStatus(objection); // If objection not rejected, then
-        // print special notice.
+            updateStateAndStatus(objection); // If objection not rejected, then print special notice.
         getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportOutput = createEndoresement(reportOutput, objection);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
