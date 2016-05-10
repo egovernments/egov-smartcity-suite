@@ -103,7 +103,7 @@ function loadingReport()
 							  { "data" : "locality", "title": "Locality"},
 							  { "data" : "address", "title": "address"},
 							  { 
-								  "data" : "mobileNumber", "title": "Mobile Number",
+								  "data" : "mobileNumber", "title": "Mobile Number","className": "text-center",
 								  "render" : function(data, type, row) {
 									  return (!data || parseInt(data)==0? "NA" : data);
 								  }
@@ -115,7 +115,7 @@ function loadingReport()
 							  { "data" : "connectionType", "title": "Connection Type"},
 							  { "data" : "usageType", "title": "Usage Type"},
 							  { "data" : "category", "title": "Category"},
-							  { "data" : "pipeSizeInInch", "title": "H.S.C Pipe Size(Inches)"},
+							  { "data" : "pipeSizeInInch", "title": "H.S.C Pipe Size(Inches)","className": "text-center"},
 							  { "data" : "aadharNumber", "title": "Aaadhar No"},
 							  { "data" : "noOfPersons", "title": "No.Of Persons", "className": "text-right"},
 							  { "data" : "noOfFloors", "title": "No of floors", "className": "text-right"},
