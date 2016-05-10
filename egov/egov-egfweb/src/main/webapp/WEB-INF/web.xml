@@ -203,24 +203,7 @@
         <servlet-name>egfweb</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-    
-	<servlet>
-		<servlet-name>action</servlet-name>
-		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-		<init-param>
-			<param-name>config</param-name>
-			<param-value>/WEB-INF/struts-config.xml</param-value>
-		</init-param>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>2</param-value>
-		</init-param>
-		<init-param>
-			<param-name>detail</param-name>
-			<param-value>2</param-value>
-		</init-param>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
+
 	<servlet>
 		<servlet-name>reportViewer</servlet-name>
 		<servlet-class>org.egov.infra.reporting.viewer.ReportViewer</servlet-class>

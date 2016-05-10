@@ -435,11 +435,11 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 			<script>
 		document.getElementById('paymentAmountspan').innerHTML = "<fmt:formatNumber value='${totalAmt}' pattern='#0.00'/>";
 		if('<%=request.getParameter("paymentid")%>'==null || '<%=request.getParameter("paymentid")%>'=='null'){
-			document.getElementById('backbtnid').style.display='inline';
+			//document.getElementById('backbtnid').style.display='inline';
 			document.getElementById('printPreview').disabled=true;
 		}
 		else{
-			document.getElementById('backbtnid').style.display='none';
+			//document.getElementById('backbtnid').style.display='none';
 			document.getElementById('printPreview').disabled=false;
 		}
 			
@@ -459,7 +459,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 		
 		if(document.getElementById('actionName').value!='' ||( '<%=request.getParameter("showMode")%>'!=null && '<%=request.getParameter("showMode")%>'=='view'))
 		{
-			document.getElementById('backbtnid').style.display='none';
+			//document.getElementById('backbtnid').style.display='none';
 			if(document.getElementById('wfBtn0'))
 				document.getElementById('wfBtn0').style.display='none';
 			if(document.getElementById('wfBtn1'))

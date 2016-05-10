@@ -216,7 +216,12 @@ public class PaymentAction extends BasePaymentAction {
 
     @Override
     public void prepare() {
+    	
         super.prepare();
+        if(fromDate==null)
+        	fromDate="";
+        if(toDate==null)
+        	toDate="";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting prepare...");
         // mandatoryFields = new ArrayList<String>();
@@ -522,6 +527,7 @@ public class PaymentAction extends BasePaymentAction {
                 contractorBillList = getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList();
             final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contractorBillList);
             contractorBillList.clear();
+            
             contractorBillList.addAll(tempBillList);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("contractorBillSql  ===> " + contractorBillSql);
@@ -861,8 +867,10 @@ public class PaymentAction extends BasePaymentAction {
 
         String tempAttributes = "";
         if (list != null) {
-            for (final PaymentBean bean : list)
-                if (bean.getIsSelected()) {
+            for (final PaymentBean bean : list){
+            	if(bean==null)
+            		continue;
+            //    if (bean.getIsSelected()) {
                     if (chk.equals("")) {
                         chk = "checked";
                         fundNameStr = bean.getFundName() == null ? "" : bean.getFundName();
@@ -892,7 +900,7 @@ public class PaymentAction extends BasePaymentAction {
                     if (attributes.equalsIgnoreCase(tempAttributes)) {
                         billList.add(bean);
                         ids = ids + bean.getBillId() + ",";
-                    }
+                      }  
                     else {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("Validation Error mismatch in attributes ");
@@ -900,8 +908,8 @@ public class PaymentAction extends BasePaymentAction {
                                 "Mismatch in attributes!!")));
                     }
                 }
-                else
-                    continue;
+          //      else
+            //        continue;
             if (ids.length() > 0)
                 ids = ids.substring(0, ids.length() - 1);
         }
