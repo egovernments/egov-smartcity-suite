@@ -1,42 +1,43 @@
-#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 @charset "utf-8";
 
 div.topbar {
@@ -46,7 +47,7 @@ div.topbar {
 	font-size: 17px;
 	font-weight: bold;
 	color: #666666;
-	background-image: url(/egi/resources/erp2/images/topbannerbg.gif);
+	background-image: url(/egassets/resources/erp2/images/topbannerbg.gif);
 	background-repeat: repeat-x;
 	background-color: #FFFFFF;
 	}
@@ -58,7 +59,7 @@ input.buttonfinal {
 	padding-right: 5px;
 	padding-bottom: -2px;
 	padding-left: 5px;
-	background-image: url(/egi/resources/erp2/images/buttonbgyellow.gif);
+	background-image: url(/egassets/resources/erp2/images/buttonbgyellow.gif);
 	background-repeat: repeat-x;
 	background-position: bottom;
 	background-color: #FAD584;
@@ -75,7 +76,7 @@ input.buttonfinal1 {
 	padding-right: 5px;
 	padding-bottom: -2px;
 	padding-left: 5px;
-	background-image: url(/egi/resources/erp2/images/buttonbgyellow.gif);
+	background-image: url(/egassets/resources/erp2/images/buttonbgyellow.gif);
 	background-repeat: repeat-x;
 	background-position: bottom;
 	background-color: #FAD584;
@@ -169,7 +170,7 @@ input.buttonadd {
 div.formheading {
 	width: 100%;
 	height:23px;
-	background-image:url(/egi/resources/erp2/images/gbluebg.gif);
+	background-image:url(/egassets/resources/erp2/images/gbluebg.gif);
 	background-repeat: repeat-x;
 	}
 	
@@ -189,13 +190,13 @@ div.insidecontent {
 }
 
 .rbroundbox2 {
-	background-image: url(/egi/resources/erp2/images/nt.gif);
+	background-image: url(/egassets/resources/erp2/images/nt.gif);
 	background-repeat: repeat;
 	}
-.rbtop2 div { background: url(/egi/resources/erp2/images/tl.gif) no-repeat top left; }
-.rbtop2 { background: url(/egi/resources/erp2/images/tr.gif) no-repeat top right; }
-.rbbot2 div { background: url(/egi/resources/erp2/images/bl.gif) no-repeat bottom left; }
-.rbbot2 { background: url(/egi/resources/erp2/images/br.gif) no-repeat bottom right; }
+.rbtop2 div { background: url(/egassets/resources/erp2/images/tl.gif) no-repeat top left; }
+.rbtop2 { background: url(/egassets/resources/erp2/images/tr.gif) no-repeat top right; }
+.rbbot2 div { background: url(/egassets/resources/erp2/images/bl.gif) no-repeat bottom left; }
+.rbbot2 { background: url(/egassets/resources/erp2/images/br.gif) no-repeat bottom right; }
 .rbtop2 div, .rbtop2, .rbbot2 div, .rbbot2 {
 	width: 100%;
 	height: 7px;
@@ -230,7 +231,7 @@ div.navibarwk {
 	padding-bottom: 0px;
 	padding-left: 15px;
 	text-align: left;
-	background-image: url(/egi/resources/erp2/images/yellowbg.gif);
+	background-image: url(/egassets/resources/erp2/images/yellowbg.gif);
 	background-repeat: repeat-x;
 	vertical-align: middle;
 	height: 30px;
@@ -239,14 +240,14 @@ div.navibarwk {
 	
 div.navibarshadowwk {
 	background-color: #FFFFFF;
-	background-image: url(/egi/resources/erp2/images/topshadow.gif);
+	background-image: url(/egassets/resources/erp2/images/topshadow.gif);
 	background-repeat: repeat-x;
 	height: 19px;
 	}
 	
 div.navibarshadow2wk {
 	background-color: #FFFFFF;
-	background-image: url(/egi/resources/erp2/images/topshadow.gif);
+	background-image: url(/egassets/resources/erp2/images/topshadow.gif);
 	background-repeat: repeat-x;
 	height: 19px;
 	margin-right: 8px;
@@ -261,7 +262,7 @@ div.formmainheadwk {
 	font-weight: bold;
 	color: #000000;
 	background-color: #FFFFFF;
-	background-image: url(/egi/resources/erp2/images/subheadingbg.gif);
+	background-image: url(/egassets/resources/erp2/images/subheadingbg.gif);
 	background-repeat: repeat-x;
 	height: 29px;
 	text-align: center;
@@ -270,7 +271,7 @@ div.urlwk {
 	margin-top: 10px;
 	padding: 15px;
 	background-color:#FFFFFF;
-	background-image: url(/egi/resources/erp2/images/urlBg.gif);
+	background-image: url(/egassets/resources/erp2/images/urlBg.gif);
 	background-repeat: repeat-x;
 	height: 58px;
 	border-top-width: 1px;
@@ -300,7 +301,7 @@ UNKNOWN {
 	WIDTH: 100%;
 	LINE-HEIGHT: normal;
 	background-color: #dae0d2;
-	background-image: url(/egi/resources/erp2/images/bg.gif);
+	background-image: url(/egassets/resources/erp2/images/bg.gif);
 	background-repeat: repeat-x;
 	background-position: 50% bottom;
 	font-family: Arial, Helvetica, sans-serif;
@@ -457,7 +458,7 @@ div.buttonholderwk {
 }
 
 td.headingwk {
-	background-image: url(/egi/resources/erp2/images/tableheadbg.gif);
+	background-image: url(/egassets/resources/erp2/images/tableheadbg.gif);
 	border-top-width: 1px;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -540,7 +541,7 @@ div.arrowiconwk{
  text-align:right;}
  
  td.shadowwk{
-	background-image:url(/egi/resources/erp2/images/tablebottom.gif);
+	background-image:url(/egassets/resources/erp2/images/tablebottom.gif);
 	background-repeat: repeat-x;
 	height:5px;
 	background-position: bottom;
@@ -577,11 +578,11 @@ div.headplacer {
 	padding: 0;
 	margin: 0;
 	float: left;
-	background: url(/egi/resources/erp2/images/TabTL.png) top left repeat-x;
+	background: url(/egassets/resources/erp2/images/TabTL.png) top left repeat-x;
 }
 
 #Tabs a{
-	background: url(/egi/resources/erp2/images/TabTR.png) top right no-repeat;
+	background: url(/egassets/resources/erp2/images/TabTR.png) top right no-repeat;
 	padding: 5px 30px 6px 8px;
 	float: left;
 	color: #fff;
@@ -590,12 +591,12 @@ div.headplacer {
 }
 
 #Tabs li.Active{
-	background: url(/egi/resources/erp2/images/TabATL.png) top left repeat-x;
+	background: url(/egassets/resources/erp2/images/TabATL.png) top left repeat-x;
 }
 
 #Tabs li.Active a{
 	color: #005C7D;
-	background: url(/egi/resources/erp2/images/TabATR.png) top right no-repeat;
+	background: url(/egassets/resources/erp2/images/TabATR.png) top right no-repeat;
 	text-decoration:none;
 }
 #Tabs li.First{
@@ -603,13 +604,13 @@ div.headplacer {
 	padding-left: 6px;
 }
 #Tabs li.Last a{
-	background: url(/egi/resources/erp2/images/TabTRLast.png) top right no-repeat;
+	background: url(/egassets/resources/erp2/images/TabTRLast.png) top right no-repeat;
 }
 #Tabs li.BeforeActive a{
-	background: url(/egi/resources/erp2/images/TabBeforeATR.png) top right no-repeat;
+	background: url(/egassets/resources/erp2/images/TabBeforeATR.png) top right no-repeat;
 }
 #Tabs li.ActiveLast a{
-	background: url(/egi/resources/erp2/images/TabATRLast.png) top right no-repeat;
+	background: url(/egassets/resources/erp2/images/TabATRLast.png) top right no-repeat;
 }
 
 div.estimateno {
@@ -715,7 +716,7 @@ margin: 3px 8px;
 	font-weight: normal;
 	margin-right: 25px;
 	margin-left: 25px;
-	background-image: url(/egi/resources/erp2/images/arrow.gif);
+	background-image: url(/egassets/resources/erp2/images/arrow.gif);
 	background-repeat: no-repeat;
 	background-position: left top;
 	margin-top: 25px;

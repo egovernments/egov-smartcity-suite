@@ -37,14 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.entity;
 
-import java.util.Date;
+package org.egov.tl.entity;
 
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.Date;
 
 /**
  * The Class Schedule.

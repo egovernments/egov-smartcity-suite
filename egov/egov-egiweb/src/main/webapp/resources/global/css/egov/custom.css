@@ -150,12 +150,14 @@ label.error {
 }
 .add-border {
   border-bottom: 1px solid #ebebeb;
+  padding: 5px 0;
 }
 .add-padding {
   padding: 0 5px;
 }
 .add-border:last-child {
   border-bottom: none;
+  padding-bottom: 0;
 }
 .view-content {
   font-family: semibold;
@@ -224,6 +226,82 @@ label.error {
   padding-left: 0;
   padding-top: 62px;
 }
+.page-container.horizontal-menu .search {
+  position: fixed;
+  top: 63px;
+  left: 0;
+  z-index: 10;
+  width: 250px;
+  background: #6b4f2c;
+}
+.page-container.horizontal-menu .search #searchtree {
+  padding: 14px;
+  width: 250px;
+  color: #fff;
+  background: #6b4f2c;
+}
+.page-container.horizontal-menu .search #searchtree::-webkit-input-placeholder {
+  color: #fff;
+}
+.page-container.horizontal-menu .search #searchtree:-moz-placeholder {
+  color: #fff;
+}
+.page-container.horizontal-menu .search #searchtree::-moz-placeholder {
+  color: #fff;
+}
+.page-container.horizontal-menu .search .searchicon {
+  position: absolute;
+  left: 14px;
+  top: 18px;
+  color: #fff;
+  cursor: pointer;
+}
+.page-container.horizontal-menu .search_list {
+  position: fixed;
+  top: 114px;
+  left: 0;
+  z-index: 9;
+  background: #6b4f2c;
+  width: 250px;
+}
+.page-container.horizontal-menu .search_list .list {
+  position: relative;
+}
+.page-container.horizontal-menu .search_list .list ul {
+  margin: 0;
+  padding: 0;
+}
+.page-container.horizontal-menu .search_list .list ul a {
+  position: relative;
+  color: #fff;
+  padding: 11px 16px;
+  display: block;
+  border-bottom: 1px solid #5a3e1b;
+}
+.page-container.horizontal-menu .search_list .list ul a:focus,
+.page-container.horizontal-menu .search_list .list ul a:hover,
+.page-container.horizontal-menu .search_list .list ul li.focus {
+  background: #f2851f;
+}
+.page-container.horizontal-menu .search_list::-webkit-scrollbar {
+  width: 5px;
+  background-color: #f2851f;
+}
+.page-container.horizontal-menu .search_list::-webkit-scrollbar-thumb {
+  background-color: #f2851f;
+  border-radius: 10px;
+}
+.page-container.horizontal-menu .search_list::-webkit-scrollbar-thumb:hover {
+  background-color: #f2851f;
+}
+.page-container.horizontal-menu .search_list::-webkit-scrollbar-thumb:active {
+  background-color: #f2851f;
+}
+.page-container.horizontal-menu .search_list::-webkit-scrollbar-track {
+  border: 1px gray solid;
+  border-radius: 10px;
+  -webkit-box-shadow: 0 0 6px gray inset;
+}
 /*Homepage header - Left and right side */
 .page-container.horizontal-menu header.navbar {
   position: absolute;
@@ -288,13 +366,11 @@ label.error {
 .page-container.horizontal-menu header.navbar ul.nav > li.dropdown a {
   position: relative;
   display: block;
-  padding: 0;
-  margin: 10px;
-  margin-top: 18px;
-  margin-bottom: 16px;
+  padding: 8px;
+  margin: 14px 15px 5px 0;
 }
 .page-container.horizontal-menu header.navbar ul.nav > li.dropdown a i {
-  font-size: 19px;
+  font-size: 16px;
 }
 .page-container.horizontal-menu header.navbar ul.nav > li.dropdown a:hover,
 .page-container.horizontal-menu header.navbar ul.nav > li.dropdown a:focus {
@@ -368,6 +444,8 @@ label.error {
   font-weight: normal;
   font-family: regular;
   font-size: 18px;
+  height: 20px;
+  overflow: hidden;
 }
 .multilevelpushmenu_wrapper ul {
   font-family: regular;
@@ -716,7 +794,7 @@ label.error {
 }
 .page-container .main-content .signin-title {
   font-size: 22px;
-  padding: 0 0 0 18px;
+  padding: 0 0 0 12px;
 }
 .page-container .main-content .feature-top {
   padding: 20px 0 10px 0;
@@ -1544,6 +1622,7 @@ label.error {
   top: 10px;
   right: 30px;
   z-index: 10;
+  padding: 0 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
 }
@@ -1659,7 +1738,7 @@ label.error {
 .panel-primary .panel-body .remove-img {
   position: absolute;
   top: -11px;
-  left: 3px;
+  left: 5px;
   font-size: 16px;
   cursor: pointer;
 }

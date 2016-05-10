@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.workflow.inbox;
+
+import org.egov.infra.workflow.entity.StateAware;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.egov.infra.workflow.entity.StateAware;
 
 public interface InboxRenderService<T extends StateAware> {
 	

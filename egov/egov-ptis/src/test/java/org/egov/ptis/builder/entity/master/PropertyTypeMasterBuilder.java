@@ -1,7 +1,6 @@
 package org.egov.ptis.builder.entity.master;
 
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.junit.Ignore;
 
 /**
  * @author Ramki

@@ -1,55 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.web.actions.receipts;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -100,15 +88,27 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.NumberUtil;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.NumberUtil;
-import org.egov.infstr.utils.StringUtils;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
@@ -247,7 +247,7 @@ public class ReceiptAction extends BaseFormAction {
 
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
-    private ServiceDetails service;
+    private Long serviceId;
 
     @Autowired
     private FundHibernateDAO fundDAO;
@@ -338,12 +338,8 @@ public class ReceiptAction extends BaseFormAction {
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }
-        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
-        if (null != service && null != service.getServiceCategory() && service.getServiceCategory().getId() != -1)
-            addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
-                    service.getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
-        else
-            addDropdownData("serviceList", Collections.EMPTY_LIST);
+        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
+        addDropdownData("serviceList", Collections.EMPTY_LIST);
         if (instrumentProxyList == null)
             instrumentCount = 0;
         else
@@ -437,9 +433,8 @@ public class ReceiptAction extends BaseFormAction {
 
         ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS);
-        if (null != this.service && null != this.service.getId() && this.service.getId() != -1)
-            service = serviceDetailsService.findById(this.service.getId(), false);
-        // final ReceiptHeader receiptHeader = new ReceiptHeader();
+        if (null != serviceId && serviceId != -1)
+            service = serviceDetailsService.findById(serviceId, false);
         receiptHeader.setPartPaymentAllowed(false);
         receiptHeader.setService(service);
         final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(),false);
@@ -533,10 +528,6 @@ public class ReceiptAction extends BaseFormAction {
         } else
             return false;
         setTotalDebitAmount(debitamount);
-        /*
-         * receiptHeader.setReceiptPayeeDetails(receiptPayee); receiptPayee.addReceiptHeader(receiptHeader);
-         * modelPayeeList.add(receiptPayee);
-         */
         return true;
     }
 
@@ -835,14 +826,14 @@ public class ReceiptAction extends BaseFormAction {
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
         // this.paidBy = payeename;
-        if (null != service && null != service.getId() && service.getId() != -1)
+        /*if (null != service && null != service.getId() && service.getId() != -1)
             setServiceName(serviceDetailsService.findById(service.getId(), false).getName());
         else {
             final ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS);
             setServiceName(service.getName());
         }
-
+*/
         final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
         if (getDeptId() == null)
             setDeptId(dept.getId().toString());
@@ -1008,7 +999,7 @@ public class ReceiptAction extends BaseFormAction {
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads for revenue accounts should not be considered
             if (oldDetail.getOrdernumber() != null
-            && !FinancialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList)) {
+            && !FinancialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramount(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
@@ -1771,14 +1762,6 @@ public class ReceiptAction extends BaseFormAction {
         this.serviceDetailsService = serviceDetailsService;
     }
 
-    public ServiceDetails getService() {
-        return service;
-    }
-
-    public void setService(final ServiceDetails service) {
-        this.service = service;
-    }
-
     public List<InstrumentHeader> getInstrumentProxyList() {
         return instrumentProxyList;
     }
@@ -1841,5 +1824,13 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setFunctionId(final Long functionId) {
         this.functionId = functionId;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 }

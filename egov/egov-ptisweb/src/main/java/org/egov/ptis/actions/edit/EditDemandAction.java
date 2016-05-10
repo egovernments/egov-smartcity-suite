@@ -1,59 +1,74 @@
-/*******************************************************************************
-n * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
- * 
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.ptis.actions.edit;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
-import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
-import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.dcb.bean.DCBDisplayInfo;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.ptis.bean.DemandDetail;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -72,36 +87,21 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
-import org.egov.commons.dao.InstallmentHibDao;
-import org.egov.dcb.bean.DCBDisplayInfo;
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.ptis.bean.DemandDetail;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.bill.PropertyTaxBillable;
-import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
-import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.service.property.PropertyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
+import static org.egov.ptis.constants.PropertyTaxConstants.AUDITDATA_STRING_SEP;
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
 
 /**
  * <p>
@@ -176,6 +176,8 @@ public class EditDemandAction extends BaseFormAction {
     private InstallmentHibDao installmentDAO;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
@@ -407,7 +409,7 @@ public class EditDemandAction extends BaseFormAction {
                 }
             }
 
-            Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
+            Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
             resultPage = RESULT_NEW;
         }
 
@@ -516,7 +518,7 @@ public class EditDemandAction extends BaseFormAction {
 
         List<EgDemandDetails> demandDetailsFromDB = getPersistenceService().findAllBy(QUERY_NONZERO_DEMAND_DETAILS,
                 basicProperty);
-        Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
+        Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<Installment, List<EgDemandDetails>>();
         Map<Installment, BigDecimal> baseDemands = new TreeMap<Installment, BigDecimal>();
 

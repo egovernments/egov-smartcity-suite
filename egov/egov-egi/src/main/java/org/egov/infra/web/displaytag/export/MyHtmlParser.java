@@ -37,13 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.displaytag.export;
 
-import java.io.IOException;
-import java.io.Reader;
+package org.egov.infra.web.displaytag.export;
 
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
+import java.io.IOException;
+import java.io.Reader;
 
 public class MyHtmlParser {
 	Reader inReader;

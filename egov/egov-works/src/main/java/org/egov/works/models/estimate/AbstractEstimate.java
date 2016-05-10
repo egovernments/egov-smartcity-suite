@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.models.estimate;
 
@@ -60,12 +60,13 @@ import org.egov.commons.Fundsource;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.Auditable;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.models.Money;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.revisionEstimate.RevisionType;
@@ -100,7 +101,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     private String location;
 
-    private NatureOfWork type;
+    private NatureOfWork natureOfWork;
 
     private EgwTypeOfWork category;
     private EgwTypeOfWork parentCategory;
@@ -111,24 +112,9 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     private BigDecimal budgetAvailable = new BigDecimal("0.0");
 
-    @Valid
-    private List<OverheadValue> overheadValues = new LinkedList<OverheadValue>();
-
-    @Valid
-    private List<AssetsForEstimate> assetValues = new LinkedList<AssetsForEstimate>();
-
-    @Valid
-    private List<Activity> activities = new LinkedList<Activity>();
-    @Valid
-    private List<MultiYearEstimate> multiYearEstimates = new LinkedList<MultiYearEstimate>();
-
-    private Set<AbstractEstimateAppropriation> abstractEstimateAppropriations = new HashSet<AbstractEstimateAppropriation>();
-
     private Money workValue;
     private Money estimateValue;
     private String estimateNumber;
-    private Long documentNumber;
-    private List<FinancialDetail> financialDetails = new LinkedList<FinancialDetail>();
     private ProjectCode projectCode;
     private String budgetApprNo;
 
@@ -144,11 +130,36 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private AbstractEstimate parent;
     private Date approvedDate;
     private String isCopiedEst = "N";
-    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
+
     private BigDecimal latitude;
     private BigDecimal longitude;
 
     private Date budgetApprDate;
+
+    private LineEstimateDetails lineEstimateDetails;
+
+    @Valid
+    private List<OverheadValue> overheadValues = new LinkedList<OverheadValue>();
+
+    @Valid
+    private List<AssetsForEstimate> assetValues = new LinkedList<AssetsForEstimate>();
+
+    @Valid
+    private List<Activity> activities = new LinkedList<Activity>();
+    @Valid
+    private List<MultiYearEstimate> multiYearEstimates = new LinkedList<MultiYearEstimate>();
+
+    private Set<AbstractEstimateAppropriation> abstractEstimateAppropriations = new HashSet<AbstractEstimateAppropriation>();
+
+    private List<FinancialDetail> financialDetails = new LinkedList<FinancialDetail>();
+    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
+
+    /*
+     * @OrderBy("id")
+     * @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true,
+     * targetEntity = EstimateTechnicalSanction.class) private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new
+     * ArrayList<EstimateTechnicalSanction>(0);
+     */
 
     public EgwStatus getEgwStatus() {
         return egwStatus;
@@ -206,12 +217,12 @@ public class AbstractEstimate extends StateAware implements Auditable {
     }
 
     @Required(message = "estimate.natureofwork.null")
-    public NatureOfWork getType() {
-        return type;
+    public NatureOfWork getNatureOfWork() {
+        return natureOfWork;
     }
 
-    public void setType(final NatureOfWork type) {
-        this.type = type;
+    public void setNatureOfWork(final NatureOfWork natureOfWork) {
+        this.natureOfWork = natureOfWork;
     }
 
     public EgwTypeOfWork getCategory() {
@@ -222,7 +233,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.category = category;
     }
 
-    @Required(message = "estimate.userDept.null")
+    // @Required(message = "estimate.userDept.null")
     public Department getUserDepartment() {
         return userDepartment;
     }
@@ -251,12 +262,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public Money getWorkValue() {
         double amt = 0;
-        for (final Activity activity : activities)
-            if (activity.getRevisionType() != null && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
-                amt -= activity.getAmount().getValue();
-            else
-                amt += activity.getAmount().getValue();
-        workValue = new Money(amt);
+        if (!activities.isEmpty()) {
+            for (final Activity activity : activities)
+                if (activity.getRevisionType() != null && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                    amt -= activity.getAmount().getValue();
+                else
+                    amt += activity.getAmount().getValue();
+            workValue = new Money(amt);
+        }
         return workValue;
     }
 
@@ -618,15 +631,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.totalNonSORAmtInclTax = totalNonSORAmtInclTax;
     }
 
-    public Long getDocumentNumber() {
-        return documentNumber;
-    }
-
-    public void setDocumentNumber(final Long documentNumber) {
-        this.documentNumber = documentNumber;
-    }
-
-    @Required(message = "estimate.fund.null")
+    // @Required(message = "estimate.fund.null")
     public Fundsource getFundSource() {
         return fundSource;
     }
@@ -773,4 +778,18 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.id = id;
     }
 
+    public LineEstimateDetails getLineEstimateDetails() {
+        return lineEstimateDetails;
+    }
+
+    public void setLineEstimateDetails(final LineEstimateDetails lineEstimateDetails) {
+        this.lineEstimateDetails = lineEstimateDetails;
+    }
+
+    /*
+     * public List<EstimateTechnicalSanction> getEstimateTechnicalSanctions() { return estimateTechnicalSanctions; } public void
+     * setEstimateTechnicalSanctions(List<EstimateTechnicalSanction> estimateTechnicalSanctions) { this.estimateTechnicalSanctions
+     * = estimateTechnicalSanctions; } public void addEstimateTechnicalSanction(final EstimateTechnicalSanction
+     * estimateTechnicalSanction) { estimateTechnicalSanctions.add(estimateTechnicalSanction); }
+     */
 }

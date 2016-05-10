@@ -1,12 +1,11 @@
 package org.egov.ptis.builder.entity.property;
 
-import java.util.Date;
-
 import org.egov.commons.Area;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyOccupation;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.junit.Ignore;
+
+import java.util.Date;
 
 /**
  * @author Ramki

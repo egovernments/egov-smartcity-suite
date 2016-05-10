@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.letterofacceptance.service;
 
@@ -46,20 +46,31 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Designation;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.letterofacceptance.entity.WorkOrderHistory;
 import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
+import org.egov.works.letterofacceptance.repository.WorkOrderHistoryRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
@@ -68,6 +79,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -103,6 +115,18 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private LineEstimateService lineEstimateService;
+    
+    @Autowired
+    private LineEstimateDetailService lineEstimateDetailService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
+    
+    @Autowired
+    private WorkOrderHistoryRepository workOrderHistoryRepository;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -191,25 +215,27 @@ public class LetterOfAcceptanceService {
         // TODO Need TO handle in single query
         final List<String> estimateNumbers = lineEstimateDetailsRepository
                 .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+        if (estimateNumbers.isEmpty())
+            estimateNumbers.add("");
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
+                .addOrder(Order.asc("workOrderDate"))
                 .createAlias("wo.contractor", "woc")
                 .createAlias("egwStatus", "status");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()));
+                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getFromDate() != null)
                 criteria.add(Restrictions.ge("workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
             if (searchRequestLetterOfAcceptance.getToDate() != null)
                 criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
             if (searchRequestLetterOfAcceptance.getName() != null)
-                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()));
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getFileNumber() != null)
                 criteria.add(
                         Restrictions.ilike("fileNumber", searchRequestLetterOfAcceptance.getFileNumber(), MatchMode.ANYWHERE));
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()));
-            if (searchRequestLetterOfAcceptance.getDepartmentName() != null
-                    && !searchRequestLetterOfAcceptance.getEstimateNumber().isEmpty())
+                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()).ignoreCase());
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
                 criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
             if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
@@ -233,17 +259,17 @@ public class LetterOfAcceptanceService {
 
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()));
+                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getFromDate() != null)
                 criteria.add(Restrictions.ge("workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
             if (searchRequestLetterOfAcceptance.getToDate() != null)
                 criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
             if (searchRequestLetterOfAcceptance.getName() != null)
-                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()));
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getFileNumber() != null)
-                criteria.add(Restrictions.eq("fileNumber", searchRequestLetterOfAcceptance.getFileNumber()));
+            criteria.add(Restrictions.ilike("fileNumber", searchRequestLetterOfAcceptance.getFileNumber(), MatchMode.ANYWHERE));
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()));
+                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()).ignoreCase());
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
                 criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
             if (workOrderNumbers != null && !workOrderNumbers.isEmpty())
@@ -304,5 +330,180 @@ public class LetterOfAcceptanceService {
         else
             return false;
     }
+    
+    public List<ContractorDetail> searchContractorDetails(final SearchRequestContractor searchRequestContractor) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorDetail.class, "cd")
+                .createAlias("contractor", "contractor");
+        if (searchRequestContractor != null) {
+            if (searchRequestContractor.getDepartment() != null)
+                criteria.add(Restrictions.eq("department.id", searchRequestContractor.getDepartment()));
+            if (searchRequestContractor.getContractorClass() != null)
+                criteria.add(Restrictions.ge("grade.id", searchRequestContractor.getContractorClass()));
+            if (searchRequestContractor.getContractorCode() != null)
+                criteria.add(Restrictions.eq("contractor.code", searchRequestContractor.getContractorCode()).ignoreCase());
+            if (searchRequestContractor.getNameOfAgency() != null)
+                criteria.add(Restrictions.ilike("contractor.name", searchRequestContractor.getNameOfAgency(), MatchMode.ANYWHERE));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+    
+    public List<String> findLoaWorkOrderNumberForMilestone(final String workOrderNumber) {
+        final List<WorkOrder> workorders = letterOfAcceptanceRepository
+                .findByWorkOrderNumberContainingIgnoreCaseAndEgwStatus_codeEquals(workOrderNumber, WorksConstants.APPROVED);
+        final List<String> results = new ArrayList<String>();
+        for (final WorkOrder details : workorders)
+            results.add(details.getWorkOrderNumber());
+        return results;
+    }
+    
+    public List<String> findWorkIdentificationNumbersToCreateMilestone(final String code) {
+        final List<String> workIdNumbers = letterOfAcceptanceRepository
+                .findWorkIdentificationNumberToCreateMilestone("%" + code + "%");
+        return workIdNumbers;
+    }
+    
+    public List<WorkOrder> getLoaForCreateMilestone(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final StringBuilder queryStr = new StringBuilder(500);
+           
+            buildWhereClause(searchRequestLetterOfAcceptance, queryStr);
+            final Query query = setParameterForMilestone(searchRequestLetterOfAcceptance, queryStr);
+            final List<WorkOrder> workOrderList = query.getResultList();
+            return workOrderList;      
+    }
+    
+    private void buildWhereClause(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
+        
+        queryStr.append("select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status ");
+        queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.executingDepartment.id = :departmentName)");
+        
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
+            queryStr.append(" and wo.estimateNumber = (select led.estimateNumber from LineEstimateDetails led where led.projectCode = (select po.id from ProjectCode po where upper(po.code) = :workIdentificationNumber))");
 
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getEstimateNumber()))
+            queryStr.append(" and upper(wo.estimateNumber) = :estimateNumber");
+           
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkOrderNumber()))
+            queryStr.append(" and upper(wo.workOrderNumber) = :workOrderNumber");
+
+        if (searchRequestLetterOfAcceptance.getTypeOfWork() != null)
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.typeOfWork = :typeOfWork)");
+
+        if (searchRequestLetterOfAcceptance.getSubTypeOfWork() != null)
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.subTypeOfWork = subTypeOfWork)");
+        
+        if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.adminSanctionDate >= :adminSanctionFromDate)");
+
+        if (searchRequestLetterOfAcceptance.getAdminSanctionToDate() != null)
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.adminSanctionDate <= :adminSanctionFromDate)");
+    
+    }
+
+    private Query setParameterForMilestone(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+
+            qry.setParameter("status", WorksConstants.APPROVED);
+            qry.setParameter("moduleType", WorksConstants.WORKORDER);
+        if (searchRequestLetterOfAcceptance != null ) {
+            qry.setParameter("departmentName", searchRequestLetterOfAcceptance.getDepartmentName());
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
+            qry.setParameter("workIdentificationNumber", searchRequestLetterOfAcceptance.getWorkIdentificationNumber().toUpperCase());
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getEstimateNumber()))
+            qry.setParameter("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber().toUpperCase());
+        if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkOrderNumber()))
+            qry.setParameter("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber().toUpperCase());
+        if (searchRequestLetterOfAcceptance.getTypeOfWork() != null)
+            qry.setParameter("typeOfWork", searchRequestLetterOfAcceptance.getTypeOfWork());
+        if (searchRequestLetterOfAcceptance.getSubTypeOfWork() != null)
+            qry.setParameter("subTypeOfWork", searchRequestLetterOfAcceptance.getSubTypeOfWork());
+        if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
+            qry.setParameter("adminSanctionFromDate", searchRequestLetterOfAcceptance.getAdminSanctionFromDate());
+        if (searchRequestLetterOfAcceptance.getAdminSanctionToDate() != null)
+            qry.setParameter("adminSanctionToDate", searchRequestLetterOfAcceptance.getAdminSanctionToDate());
+
+        }
+        return qry;
+    }
+    
+    public Double getGrossBillAmountOfBillsCreated(String workOrderNumber, String status, String billstatus) {
+        return letterOfAcceptanceRepository.getGrossBillAmountOfBillsCreated(workOrderNumber, status, billstatus);
+    }
+
+    @Transactional
+    public WorkOrder update(WorkOrder workOrder, LineEstimateDetails lineEstimateDetails, Double appropriationAmount, Double revisedWorkOrderAmount)
+            throws ValidationException {
+        WorkOrderHistory history = new WorkOrderHistory();
+        history.setWorkOrder(workOrder);
+        history.setWorkOrderAmount(workOrder.getWorkOrderAmount());
+        history.setRevisedWorkOrderAmount(revisedWorkOrderAmount);
+        
+        workOrderHistoryRepository.save(history);
+        
+        workOrder.setWorkOrderAmount(revisedWorkOrderAmount);
+        if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
+            workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+        final AppConfigValues value = values.get(0);
+        if(workOrder.getPercentageSign().equals("+")) {
+            if(appropriationAmount > 0 && value.getValue().equalsIgnoreCase("Y")) {
+                final List<Long> budgetheadid = new ArrayList<Long>();
+                budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
+                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(lineEstimateDetails,
+                        lineEstimateService.getCurrentFinancialYear(new Date())
+                                .getId(),
+                        appropriationAmount, budgetheadid);
+
+                if (!flag)
+                    throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
+            }
+        } else if(workOrder.getPercentageSign().equals("-")) {
+            if(appropriationAmount > 0 && value.getValue().equalsIgnoreCase("Y")) {
+                String appropriationNumber = lineEstimateAppropriationService.generateBudgetAppropriationNumber(lineEstimateDetails);
+                lineEstimateService.releaseBudgetOnReject(lineEstimateDetails, appropriationAmount, appropriationNumber);
+            }
+        }
+        final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+        return savedworkOrder;
+    }
+    
+    public List<WorkOrder> searchLetterOfAcceptanceToModify(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        // TODO Need TO handle in single query
+        final List<String> estimateNumbers = lineEstimateDetailsRepository
+                .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+        final List<String> workOrderNumbers = letterOfAcceptanceRepository.findWorkOrderNumbersToModifyLoa(
+                WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(),
+                BillTypes.Final_Bill.toString());
+        if (estimateNumbers.isEmpty())
+            estimateNumbers.add("");
+        if(workOrderNumbers.isEmpty())
+            workOrderNumbers.add("");
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
+                .addOrder(Order.asc("workOrderDate"))
+                .createAlias("wo.contractor", "woc")
+                .createAlias("egwStatus", "status");
+        if (searchRequestLetterOfAcceptance != null) {
+            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
+                criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()).ignoreCase());
+            if (searchRequestLetterOfAcceptance.getFromDate() != null)
+                criteria.add(Restrictions.ge("workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
+            if (searchRequestLetterOfAcceptance.getToDate() != null)
+                criteria.add(Restrictions.le("workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
+            if (searchRequestLetterOfAcceptance.getName() != null)
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getName()).ignoreCase());
+            if (searchRequestLetterOfAcceptance.getFileNumber() != null)
+                criteria.add(
+                        Restrictions.ilike("fileNumber", searchRequestLetterOfAcceptance.getFileNumber(), MatchMode.ANYWHERE));
+            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
+                criteria.add(Restrictions.eq("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()).ignoreCase());
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
+                criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
+                criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
+        }
+        criteria.add(Restrictions.in("workOrderNumber", workOrderNumbers));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
 }

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,40 +24,20 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.client.bill;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_MUTATION_FEE;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_FEE_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -85,9 +65,30 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FUNCTION_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_MUTATION_FEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_FEE_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 public class PTBillServiceImpl extends BillServiceInterface {
     private static final Logger LOGGER = Logger.getLogger(PTBillServiceImpl.class);
@@ -122,6 +123,9 @@ public class PTBillServiceImpl extends BillServiceInterface {
     @Autowired
     private ApplicationContext context;
     
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -145,7 +149,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         final PropertyTaxBillable billable = (PropertyTaxBillable) billObj;
 
         if (billable.isMutationFeePayment()) {
-            final Installment currInstallment = PropertyTaxUtil.getCurrentInstallment();
+            final Installment currInstallment = propertyTaxCommonUtils.getCurrentInstallment();
             billdetail = new EgBillDetails();
             billdetail.setOrderNo(1);
             billdetail.setCreateDate(new Date());

@@ -37,11 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.controller.admin.masters.appConfig;
-
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.Module;
@@ -54,6 +51,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @Controller

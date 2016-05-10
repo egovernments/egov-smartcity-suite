@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
@@ -91,7 +93,7 @@
 							name="chq.assignment.surrendarreason" /></th>
 					<s:if test="%{!isChequeNoGenerationAuto()}">
 						<th class="bluebgheadtdnew"><s:text
-								name="chq.assignment.instrument.serialno" /></th>
+								name="chq.assignment.instrument.newserialno" /></th>
 						<th class="bluebgheadtdnew"><s:text
 								name="chq.assignment.newchequenumber" /></th>
 						<th class="bluebgheadtdnew"><s:text

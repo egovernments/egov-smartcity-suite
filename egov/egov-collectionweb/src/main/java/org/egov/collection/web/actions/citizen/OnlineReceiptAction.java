@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.web.actions.citizen;
 
@@ -95,10 +95,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
-    @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
-    @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
-    @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
-    @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
+        @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
+        @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
+        @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
+        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction implements ServletRequestAware {
 
     private static final Logger LOGGER = Logger.getLogger(OnlineReceiptAction.class);
@@ -275,10 +275,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
      * displayed back to the user
      */
     private void processFailureMsg() {
-
-        final EgwStatus receiptStatus = collectionsUtil
-                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
-        onlinePaymentReceiptHeader.setStatus(receiptStatus);
+        onlinePaymentReceiptHeader.setStatus(collectionsUtil
+                .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
 
         final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
                 CollectionConstants.MODULE_NAME_ONLINEPAYMENT, CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
@@ -359,7 +357,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
                 for (final ReceiptDetail receiptDetail : receipts[i].getReceiptDetails())
                     if (!FinancialsUtil.isRevenueAccountHead(receiptDetail.getAccounthead(),
-                            chartOfAccountsHibernateDAO.getBankChartofAccountCodeList())) {
+                            chartOfAccountsHibernateDAO.getBankChartofAccountCodeList(), persistenceService)) {
                         final ReceiptDetail newReceiptDetail = new ReceiptDetail();
                         if (receiptDetail.getOrdernumber() != null)
                             newReceiptDetail.setOrdernumber(receiptDetail.getOrdernumber());
@@ -394,9 +392,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             if (CollectionConstants.ONLINEPAYMENT_STATUS_CODE_TO_BE_REFUNDED.equals(getStatusCode()[i])
                     || CollectionConstants.ONLINEPAYMENT_STATUS_CODE_REFUNDED.equals(getStatusCode()[i])) {
-                final EgwStatus receiptStatus = collectionsUtil
-                        .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED);
-                receipts[i].setStatus(receiptStatus);
+                receipts[i].setStatus(collectionsUtil
+                        .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
 
                 receipts[i].getOnlinePayment().setTransactionNumber(getTransactionId()[i]);
                 receipts[i].getOnlinePayment().setTransactionAmount(receipts[i].getTotalAmount());

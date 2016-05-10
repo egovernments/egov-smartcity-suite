@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.web.actions.receipts;
 
@@ -86,15 +86,16 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.NumberUtil;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.hibernate.StaleObjectStateException;
@@ -102,11 +103,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ChallanAction.NEW, location = "challan-new.jsp"),
-        @Result(name = CollectionConstants.CREATERECEIPT, location = "challan-createReceipt.jsp"),
-        @Result(name = CollectionConstants.CANCELRECEIPT, location = "challan-cancelReceipt.jsp"),
-        @Result(name = ChallanAction.SUCCESS, location = "challan-success.jsp"),
-        @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp") })
+    @Result(name = CollectionConstants.CREATERECEIPT, location = "challan-createReceipt.jsp"),
+    @Result(name = CollectionConstants.CANCELRECEIPT, location = "challan-cancelReceipt.jsp"),
+    @Result(name = ChallanAction.SUCCESS, location = "challan-success.jsp"),
+    @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp"),
+    @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp") })
 public class ChallanAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(ChallanAction.class);
@@ -147,8 +148,7 @@ public class ChallanAction extends BaseFormAction {
     private Integer designationId;
 
     /**
-     * A <code>String</code> value representing the challan number for which the
-     * challan has to be retrieved
+     * A <code>String</code> value representing the challan number for which the challan has to be retrieved
      */
     private String challanNumber;
 
@@ -157,14 +157,14 @@ public class ChallanAction extends BaseFormAction {
     private Boolean chequeDDAllowed = Boolean.TRUE;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the cash
-     * instrument details entered by the user during receipt creation
+     * An instance of <code>InstrumentHeader</code> representing the cash instrument details entered by the user during receipt
+     * creation
      */
     private InstrumentHeader instrHeaderCash;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the card
-     * instrument details entered by the user during receipt creation
+     * An instance of <code>InstrumentHeader</code> representing the card instrument details entered by the user during receipt
+     * creation
      */
     private InstrumentHeader instrHeaderCard;
 
@@ -200,8 +200,7 @@ public class ChallanAction extends BaseFormAction {
     Position position = null;
 
     /**
-     * A <code>Long</code> array of receipt header ids , which have to be
-     * displayed for view/print/cancel purposes
+     * A <code>Long</code> array of receipt header ids , which have to be displayed for view/print/cancel purposes
      */
     private Long[] selectedReceipts;
 
@@ -236,8 +235,7 @@ public class ChallanAction extends BaseFormAction {
     private Long functionId;
 
     /**
-     * An array of <code>ReceiptHeader</code> instances which have to be
-     * displayed for view/print/cancel purposes
+     * An array of <code>ReceiptHeader</code> instances which have to be displayed for view/print/cancel purposes
      */
     // private ReceiptHeader[] receipts;
 
@@ -258,8 +256,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method is invoked when the user clicks on Create Challan from Menu
-     * Tree
+     * This method is invoked when the user clicks on Create Challan from Menu Tree
      *
      * @return
      */
@@ -274,9 +271,8 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method is invoked when user clicks on Save challan from Create
-     * Challan UI. All workflow transitions for the challan happen through this
-     * method.
+     * This method is invoked when user clicks on Save challan from Create Challan UI. All workflow transitions for the challan
+     * happen through this method.
      *
      * @return the string
      */
@@ -305,8 +301,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method in invoked when the user clicks on Create Challan Receipt
-     * from Menu Tree.
+     * This method in invoked when the user clicks on Create Challan Receipt from Menu Tree.
      *
      * @return the string
      */
@@ -323,8 +318,8 @@ public class ChallanAction extends BaseFormAction {
                         "No Valid Challan Found. Please check the challan number."));
                 throw new ValidationException(errors);
             }
-            
-            if(CollectionConstants.CHALLAN_STATUS_CODE_CANCELLED.equals(receiptHeader.getChallan().getStatus().getCode())){
+
+            if (CollectionConstants.CHALLAN_STATUS_CODE_CANCELLED.equals(receiptHeader.getChallan().getStatus().getCode())) {
                 errors.add(new ValidationError(getText("challan.cancel.receipt.error"),
                         "Challan is cancelled. Cannot create Receipt for Challan."));
                 throw new ValidationException(errors);
@@ -368,8 +363,7 @@ public class ChallanAction extends BaseFormAction {
 
         if (CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName))
         {
-        	  addActionMessage(getText(
-                      "challan.validatesuccess.message"));
+            addActionMessage(getText("challan.validatesuccess.message"));
             return viewChallan();
         }
         return viewChallan();
@@ -397,8 +391,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method is invoked on click of create button from Create Challan
-     * Receipt Screen
+     * This method is invoked on click of create button from Create Challan Receipt Screen
      *
      * @return
      */
@@ -533,9 +526,8 @@ public class ChallanAction extends BaseFormAction {
 
             if (collectionsUtil.checkChallanValidity(receiptHeader.getChallan())) {
                 /**
-                 * if instrument has been deposited create a new receipt in
-                 * place of the cancelled the model is turned into a copy of the
-                 * receipt to be cancelled without the instrument details
+                 * if instrument has been deposited create a new receipt in place of the cancelled the model is turned into a copy
+                 * of the receipt to be cancelled without the instrument details
                  */
 
                 // the reason for cancellation has to be persisted
@@ -587,12 +579,12 @@ public class ChallanAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    public List<org.egov.infstr.workflow.Action> getValidActions() {
+    public List<WorkflowAction> getValidActions() {
         Challan challan = receiptHeader.getChallan();
         if (challan == null)
             challan = new Challan();
-        final List<org.egov.infstr.workflow.Action> actions = challanWorkflowService.getValidActions(challan);
-        return actions;
+        final List<WorkflowAction> workflowActions = challanWorkflowService.getValidActions(challan);
+        return workflowActions;
     }
 
     /**
@@ -635,7 +627,7 @@ public class ChallanAction extends BaseFormAction {
             if (instrumentProxyList.get(0).getInstrumentType().getType()
                     .equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
                     || instrumentProxyList.get(0).getInstrumentType().getType()
-                            .equals(CollectionConstants.INSTRUMENTTYPE_DD))
+                    .equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
         instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
 
@@ -643,15 +635,11 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This instrument creates instrument header instances for the receipt, when
-     * the instrument type is Cheque or DD. The created
+     * This instrument creates instrument header instances for the receipt, when the instrument type is Cheque or DD. The created
      * <code>InstrumentHeader</code> instance is persisted
      *
-     * @param k
-     *            an int value representing the index of the instrument type as
-     *            chosen from the front end
-     * @return an <code>InstrumentHeader</code> instance populated with the
-     *         instrument details
+     * @param k an int value representing the index of the instrument type as chosen from the front end
+     * @return an <code>InstrumentHeader</code> instance populated with the instrument details
      */
     private List<InstrumentHeader> populateInstrumentHeaderForChequeDD(
             final List<InstrumentHeader> instrumentHeaderList, final List<InstrumentHeader> instrumentProxyList) {
@@ -664,7 +652,7 @@ public class ChallanAction extends BaseFormAction {
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
             if (instrumentHeader.getBankId() != null) {
-                final Bank bank = (Bank) bankDAO.findById(instrumentHeader.getBankId().getId(), false);
+                final Bank bank = bankDAO.findById(instrumentHeader.getBankId().getId(), false);
                 instrumentHeader.setBankId(bank);
             }
             chequeInstrumenttotal = chequeInstrumenttotal.add(instrumentHeader.getInstrumentAmount());
@@ -675,10 +663,9 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method creates a receipt along with the challan. The receipt is
-     * created in PENDING status where as the challan is created with a CREATED
-     * status. The receipt is actually created later when there is a request for
-     * it to be created against the challan.
+     * This method creates a receipt along with the challan. The receipt is created in PENDING status where as the challan is
+     * created with a CREATED status. The receipt is actually created later when there is a request for it to be created against
+     * the challan.
      */
     private void populateAndPersistChallanReceipt() {
 
@@ -693,10 +680,8 @@ public class ChallanAction extends BaseFormAction {
         }
 
         /*
-         * receiptHeader.setService((ServiceDetails)
-         * getPersistenceService().findByNamedQuery(
-         * CollectionConstants.QUERY_SERVICE_BY_CODE,
-         * CollectionConstants.SERVICE_CODE_COLLECTIONS));
+         * receiptHeader.setService((ServiceDetails) getPersistenceService().findByNamedQuery(
+         * CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS));
          */
         receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
@@ -712,7 +697,7 @@ public class ChallanAction extends BaseFormAction {
         receiptHeader.setService(serviceDetailsService.findById(serviceId, false));
         receiptHeader.getService().setServiceCategory(serviceCategoryService.findById(serviceCategoryId, false));
 
-        receiptHeader.getReceiptMisc().setFund(fundDAO.fundById(receiptHeader.getReceiptMisc().getFund().getId(),false));
+        receiptHeader.getReceiptMisc().setFund(fundDAO.fundById(receiptHeader.getReceiptMisc().getFund().getId(), false));
 
         final Department dept = (Department) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_DEPARTMENT_BY_ID, Long.valueOf(deptId));
@@ -741,7 +726,7 @@ public class ChallanAction extends BaseFormAction {
 
             totalAmt = totalAmt.add(receiptDetail.getCramount()).subtract(receiptDetail.getDramount());
 
-            final CFinancialYear financialYear = (CFinancialYear) financialYearDAO.findById(
+            final CFinancialYear financialYear = financialYearDAO.findById(
                     rDetails.getFinancialYearId(), false);
             receiptDetail.setFinancialYear(financialYear);
 
@@ -765,8 +750,7 @@ public class ChallanAction extends BaseFormAction {
         receiptHeader.setTotalAmount(totalAmt);
 
         /*
-         * if (receiptHeader.getChallan().getCreatedBy() == null)
-         * receiptHeader.getChallan
+         * if (receiptHeader.getChallan().getCreatedBy() == null) receiptHeader.getChallan
          * ().setCreatedBy(collectionsUtil.getLoggedInUser());
          */
 
@@ -788,7 +772,7 @@ public class ChallanAction extends BaseFormAction {
             final ReceiptDetail receiptDetail) {
         for (final ReceiptDetailInfo subvoucherDetails : subLedgerlist)
             if (subvoucherDetails.getGlcode() != null && subvoucherDetails.getGlcode().getId() != 0
-                    && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
+            && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
 
                 final Accountdetailtype accdetailtype = (Accountdetailtype) getPersistenceService().findByNamedQuery(
                         CollectionConstants.QUERY_ACCOUNTDETAILTYPE_BY_ID, subvoucherDetails.getDetailType().getId());
@@ -827,12 +811,12 @@ public class ChallanAction extends BaseFormAction {
                     && rDetails.getGlcodeDetail().trim().length() != 0)
                 errors.add(new ValidationError("challan.accdetail.amountZero",
                         "Enter debit/credit amount for the account code : {0}", new String[] { rDetails
-                                .getGlcodeDetail() }));
+                        .getGlcodeDetail() }));
             else if (rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0
                     && rDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0)
                 errors.add(new ValidationError("challan.accdetail.amount",
                         "Please enter either debit/credit amount for the account code : {0}", new String[] { rDetails
-                                .getGlcodeDetail() }));
+                        .getGlcodeDetail() }));
             else if ((rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0 || rDetails
                     .getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0)
                     && rDetails.getGlcodeDetail().trim().length() == 0)
@@ -894,8 +878,8 @@ public class ChallanAction extends BaseFormAction {
 
                     final StringBuffer subledgerDetailRow = new StringBuffer();
                     subledgerDetailRow.append(rDetails.getGlcode().getId().toString())
-                            .append(rDetails.getDetailType().getId().toString())
-                            .append(rDetails.getDetailKeyId().toString());
+                    .append(rDetails.getDetailType().getId().toString())
+                    .append(rDetails.getDetailKeyId().toString());
                     if (null == subLedgerMap.get(subledgerDetailRow.toString()))
                         subLedgerMap.put(subledgerDetailRow.toString(), subledgerDetailRow.toString());
                     else
@@ -908,7 +892,7 @@ public class ChallanAction extends BaseFormAction {
                 if (null == subledAmtmap.get(glcodeId))
                     errors.add(new ValidationError("miscreciept.samesubledger.entrymissing",
                             "Subledger detail entry is missing for account code: {0}", new String[] { map.get("glcode")
-                                    .toString() }));
+                            .toString() }));
                 else if (!subledAmtmap.get(glcodeId).equals(new BigDecimal(map.get("amount").toString())))
                     errors.add(new ValidationError("miscreciept.samesubledger.entrymissing",
                             "Total subledger amount is not matching for account code : {0}", new String[] { map.get(
@@ -920,8 +904,7 @@ public class ChallanAction extends BaseFormAction {
     /**
      * Removes the empty rows.
      *
-     * @param list
-     *            the list
+     * @param list the list
      */
     void removeEmptyRows(final List list) {
         for (final Iterator<ReceiptDetailInfo> detail = list.iterator(); detail.hasNext();)
@@ -936,8 +919,8 @@ public class ChallanAction extends BaseFormAction {
         setDeptId(receiptHeader.getReceiptMisc().getDepartment().getId().toString());
         setDept(receiptHeader.getReceiptMisc().getDepartment());
         if (!receiptHeader.getReceiptDetails().isEmpty()) {
-            CFunction function = receiptHeader.getReceiptDetails().iterator().next().getFunction();
-            if(function!=null) {
+            final CFunction function = receiptHeader.getReceiptDetails().iterator().next().getFunction();
+            if (function != null) {
                 setFunctionId(function.getId());
                 setFunction(function);
             }
@@ -947,9 +930,10 @@ public class ChallanAction extends BaseFormAction {
         setServiceId(receiptHeader.getService().getId());
         if (null != receiptHeader.getService() && null != receiptHeader.getService().getServiceCategory()
                 && receiptHeader.getService().getServiceCategory().getId() != -1)
-            addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
-                    receiptHeader.getService().getServiceCategory().getId(),
-                    CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+            addDropdownData("serviceList",
+                    serviceDetailsService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE,
+                            receiptHeader.getService().getServiceCategory().getId(),
+                            CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
         else
             addDropdownData("serviceList", Collections.EMPTY_LIST);
         setBillDetailslist(collectionCommon.setReceiptDetailsList(receiptHeader,
@@ -1005,13 +989,12 @@ public class ChallanAction extends BaseFormAction {
                     && receiptHeader.getChallan().getService().getId() == -1)
                 receiptHeader.getChallan().setService(null);
         }
-        addDropdownData("designationMasterList", new ArrayList());
-        addDropdownData("postionUserList", new ArrayList());
+        addDropdownData("designationMasterList", Collections.EMPTY_LIST);
+        addDropdownData("postionUserList", Collections.EMPTY_LIST);
         setCurrentFinancialYearId(collectionCommon.getFinancialYearIdByDate(new Date()));
         /**
-         * super class prepare is called at the end to ensure that the modified
-         * values are available to the model. The super class prepare need not
-         * run for cancel challan as the values should not be modified
+         * super class prepare is called at the end to ensure that the modified values are available to the model. The super class
+         * prepare need not run for cancel challan as the values should not be modified
          **/
         if (!CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName))
             super.prepare();
@@ -1029,10 +1012,12 @@ public class ChallanAction extends BaseFormAction {
             setupDropdownDataExcluding("receiptMisc.fund");
             addDropdownData("fundList", collectionsUtil.getAllFunds());
         }
-        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        addDropdownData("serviceCategoryList",
+                serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         if (null != service && null != service.getServiceCategory() && service.getServiceCategory().getId() != -1)
-            addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
-                    service.getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+            addDropdownData("serviceList",
+                    serviceDetailsService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE,
+                            service.getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
         else
             addDropdownData("serviceList", Collections.EMPTY_LIST);
         if (headerFields.contains(CollectionConstants.DEPARTMENT))
@@ -1086,23 +1071,6 @@ public class ChallanAction extends BaseFormAction {
             if (CollectionConstants.Mandatory.equalsIgnoreCase(mandate))
                 mandatoryFields.add(header);
         }
-
-        /*
-         * final String isBillNoReqd = appConfigValuesService.getAppConfigValue(
-         * CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-         * CollectionConstants.APPCONFIG_VALUE_ISBILLNUMREQD,
-         * CollectionConstants.NO); final String isServiceReqd =
-         * appConfigValuesService.getAppConfigValue(
-         * CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-         * CollectionConstants.APPCONFIG_VALUE_ISSERVICEREQD,
-         * CollectionConstants.NO); if
-         * (!CollectionConstants.NO.equals(isBillNoReqd)) {
-         * headerFields.add(CollectionConstants.BILLNUMBER);
-         * mandatoryFields.add(CollectionConstants.BILLNUMBER); } if
-         * (!CollectionConstants.NO.equals(isServiceReqd)) {
-         * headerFields.add(CollectionConstants.SERVICE);
-         * mandatoryFields.add(CollectionConstants.SERVICE); }
-         */
     }
 
     public List getHeaderFields() {
@@ -1213,8 +1181,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param challanId
-     *            the challanId to set
+     * @param challanId the challanId to set
      */
     public void setChallanId(final String challanId) {
         this.challanId = challanId;
@@ -1228,8 +1195,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param approvalRemarks
-     *            the approvalRemarks to set
+     * @param approvalRemarks the approvalRemarks to set
      */
     public void setApprovalRemarks(final String approvalRemarks) {
         this.approvalRemarks = approvalRemarks;
@@ -1243,24 +1209,21 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param positionUser
-     *            the positionUser to set
+     * @param positionUser the positionUser to set
      */
     public void setPositionUser(final Long positionUser) {
         this.positionUser = positionUser;
     }
 
     /**
-     * @param collectionCommon
-     *            the collectionCommon to set
+     * @param collectionCommon the collectionCommon to set
      */
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
     }
 
     /**
-     * @param receiptHeaderService
-     *            The receipt header service to set
+     * @param receiptHeaderService The receipt header service to set
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
@@ -1362,8 +1325,7 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param designationId
-     *            the designationId to set
+     * @param designationId the designationId to set
      */
     public void setDesignationId(final Integer designationId) {
         this.designationId = designationId;

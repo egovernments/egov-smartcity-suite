@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,26 +24,20 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.payment;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -53,7 +47,9 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Vouchermis;
+import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -72,6 +68,11 @@ import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @ParentPackage("egov")
 @Results({
         @Result(name = BankEntriesNotInBankBookAction.NEW, location = "bankEntriesNotInBankBook-new.jsp"),
@@ -84,10 +85,19 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
     private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
 
     private Integer bankaccount;
+    
+    private Integer bank;
+    
+    private Integer bank_branch;
 
     private List<BankEntriesNotInBankBook> bankEntriesNotInBankBookList;
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
+    @Autowired
+    private BankBranchHibernateDAO bankBranchHibernateDAO;
+    @Autowired
+    private BankaccountHibernateDAO bankaccountHibernateDAO;
+    
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     @Autowired
@@ -97,6 +107,8 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
     private BankEntriesService bankEntriesService;
 
     private Long beId;
+    
+    private String mode;
 
     @Override
     public StateAware getModel() {
@@ -159,6 +171,9 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
             bankEntriesNotInBankBookList.add(new BankEntriesNotInBankBook());
         prepareNewform();
         addDropdownData("bankList", bankHibernateDAO.getAllBanksByFund(voucherHeader.getFundId().getId()));
+        addDropdownData("bankBranchList", bankBranchHibernateDAO.getAllBankBranchsByBank(bank));
+        addDropdownData("bankAccountList", bankaccountHibernateDAO.getBankAccountByBankBranch(bank_branch));
+        mode = "save";
         return NEW;
     }
 
@@ -239,6 +254,30 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
 
     public void setBeId(Long beId) {
         this.beId = beId;
+    }
+
+    public Integer getBank() {
+        return bank;
+    }
+
+    public void setBank(Integer bank) {
+        this.bank = bank;
+    }
+
+    public Integer getBank_branch() {
+        return bank_branch;
+    }
+
+    public void setBank_branch(Integer bank_branch) {
+        this.bank_branch = bank_branch;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
 }

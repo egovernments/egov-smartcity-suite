@@ -6,7 +6,6 @@ import org.egov.commons.entity.InstallmentBuilder;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.junit.Ignore;
 
 /**
  * @author Ramki

@@ -1,42 +1,42 @@
-/* #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- */
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 var dom=YAHOO.util.Dom;
 
 function roundTo(value,decimals,decimal_padding){
@@ -134,9 +134,9 @@ function validateDecimalForOnePlace(val,errorId){
  }
 }
 
-function createDeleteImageFormatter(baseURL){
+function createDeleteImageFormatter(baseURL){ 
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/cancel.png";
+	    var imageURL=baseURL+"/resources/erp2/images/cancel.png";
 	    var id=oColumn.getKey()+oRecord.getId(); 
 	    markup='<img height="16" border="0" width="16" id="'+id+'" alt="Delete" src="'+imageURL+'"/>';
 	    el.innerHTML = markup;
@@ -146,7 +146,7 @@ function createDeleteImageFormatter(baseURL){
 
 function createAddImageFormatter(baseURL){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/add.png";
+	    var imageURL=baseURL+"/resources/erp2/images/add.png";
 	    markup='<img height="16" border="0" width="16" alt="Add" src="'+imageURL+'"/>'
 	    el.innerHTML = markup;
 	}
@@ -155,7 +155,7 @@ function createAddImageFormatter(baseURL){
 
 function createSearchImageFormatter(baseURL){
 	var searchImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/magnifier.png";
+	    var imageURL=baseURL+"/resources/erp2/images/magnifier.png";
 	    markup='<img height="16" border="0" width="16" alt="Search" src="'+imageURL+'"/>'
 	    el.innerHTML = markup;
 	}
@@ -164,7 +164,7 @@ function createSearchImageFormatter(baseURL){
 
 function viewImageFormatter(baseURL){
 	var searchImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/resources/erp2/images/book_open.png";
+	    var imageURL=baseURL+"/resources/erp2/images/book_open.png";
 	    markup='<img height="16" border="0" width="16" alt="Search" src="'+imageURL+'"/>'
 	    el.innerHTML = markup;
 	}

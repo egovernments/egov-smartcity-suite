@@ -1,43 +1,44 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+<%@ include file="/includes/taglibs.jsp" %>
 <style>
 #warning {
   display:none;
@@ -585,7 +586,7 @@ LatestMBDateFailureHandler = function(){
 <div class="errorstyle" id="contractorBill_error" style="display: none;"></div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>	<s:hidden name="sourcepage" id="sourcepage" value="%{sourcepage}"/>	
-		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name="contractorBill.subHeader.workOrderDetails" /></div></td>
 	</tr>	
 	<tr>
@@ -727,7 +728,7 @@ LatestMBDateFailureHandler = function(){
 	</tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr>		
-		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name="contractorBill.billDetails" /></div></td>
 	</tr>
 	<tr>
@@ -736,7 +737,7 @@ LatestMBDateFailureHandler = function(){
         <td class="greyboxwk"><span class="mandatory">*</span><s:text name='contractorBill.billDate'/>: </td>        
         <td class="greybox2wk"><s:date name="billdate" var="billDateFormat" format="dd/MM/yyyy"/>
          <s:textfield name="billdate" value="%{billDateFormat}" id="billdate" cssClass="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" onBlur="populateHeaderDetails();calculateStatutoryDeduction();validateYearEndAppropriation();" onChange="populateHeaderDetails();calculateStatutoryDeduction();validateYearEndAppropriation();"/>
-         <a href="javascript:show_calendar('forms[0].billdate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img id="billDateImage" src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+         <a href="javascript:show_calendar('forms[0].billdate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img id="billDateImage" src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
           <s:hidden id='hiddenbillDate' name='hiddenbillDate' />
          </td>
 	</tr>
@@ -747,7 +748,7 @@ LatestMBDateFailureHandler = function(){
          <td id="completiondateText" class="whitebox2wk">
          <s:date name="completionDate" var="completionDateFormat" format="dd/MM/yyyy"/>
          <s:textfield name="completionDate" value="%{completionDateFormat}" id="completionDate" cssClass="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" onblur="validateWorkCompletionDate(this)" />
-         <a href="javascript:show_calendar('forms[0].completionDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+         <a href="javascript:show_calendar('forms[0].completionDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
         </td>
         <td class="whiteboxwk">&nbsp;</td>        
         <td class="whitebox2wk">&nbsp;</td>
@@ -759,7 +760,7 @@ LatestMBDateFailureHandler = function(){
         <td class="greyboxwk"><span class="mandatory">*</span><s:text name='contractorBill.bill.Date'/>: </td>        
         <td class="greybox2wk"><s:date name="partyBillDate" var="conbillDateFor" format="dd/MM/yyyy"/>
          <s:textfield name="partyBillDate" value="%{conbillDateFor}" id="conbillDate" cssClass="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')" onblur="validateAgainstBillDate(this)" />
-         <a href="javascript:show_calendar('forms[0].conbillDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+         <a href="javascript:show_calendar('forms[0].conbillDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
        </td>
 	</tr>
 	<tr id="trTenderedNonTendered">
@@ -799,7 +800,7 @@ LatestMBDateFailureHandler = function(){
 	
 	<tr><td>&nbsp;</td></tr>
 	<tr>		
-		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egi/resources/erp2/images/arrow.gif" /></div>
+		<td colspan="4" class="headingwk"><div class="arrowiconwk"><img src="/egworks/resources/erp2/images/arrow.gif" /></div>
 		<div class="headplacer"><s:text name='contractorBill.mb.details' /></div></td>
 	</tr>
 	<tr>

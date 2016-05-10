@@ -37,13 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.config.persistence.multitenancy;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Map;
-
-import javax.sql.DataSource;
 
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.AvailableSettings;
@@ -55,6 +50,11 @@ import org.hibernate.service.spi.ServiceRegistryAwareService;
 import org.hibernate.service.spi.ServiceRegistryImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Map;
 
 @SuppressWarnings("all")
 public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider, ServiceRegistryAwareService {

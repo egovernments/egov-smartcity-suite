@@ -37,9 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.config.persistence.event.listener;
 
-import java.util.Date;
+package org.egov.infra.config.persistence.event.listener;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -54,6 +53,8 @@ import org.hibernate.event.spi.PreUpdateEvent;
 import org.hibernate.event.spi.PreUpdateEventListener;
 import org.hibernate.event.spi.SaveOrUpdateEvent;
 import org.hibernate.event.spi.SaveOrUpdateEventListener;
+
+import java.util.Date;
 
 /**
  * This Event listener class sets the audit properties createdBy, createdDate modifiedBy and modifiedDate. It does this by hooking

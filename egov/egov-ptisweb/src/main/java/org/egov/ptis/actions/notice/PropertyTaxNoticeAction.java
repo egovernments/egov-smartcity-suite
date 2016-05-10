@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,19 +24,19 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.ptis.actions.notice;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
@@ -69,7 +69,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -99,7 +98,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.PropertyNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -117,6 +115,7 @@ import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -173,6 +172,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     @Autowired
     private ModuleService moduleDao;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     public PropertyTaxNoticeAction() {
     }
@@ -513,7 +515,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             BigDecimal propertyTax, Ptdemand currDemand, String noticeMode) {
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .equals(PropertyTaxUtil.getCurrentInstallment())) {
+                    .equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 totalTax = totalTax.add(demandDetail.getAmount());
 
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -560,7 +562,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             BigDecimal propertyTax, Ptdemand currDemand) {
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .equals(PropertyTaxUtil.getCurrentInstallment())) {
+                    .equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 totalTax = totalTax.add(demandDetail.getAmount());
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS)) {

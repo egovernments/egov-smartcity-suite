@@ -37,13 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.utils;
-
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.StringUtils.upperCase;
-
-import java.io.Serializable;
-import java.sql.SQLException;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
@@ -52,6 +47,12 @@ import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.sql.SQLException;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.StringUtils.upperCase;
 
 @Service
 public class ApplicationNumberGenerator {

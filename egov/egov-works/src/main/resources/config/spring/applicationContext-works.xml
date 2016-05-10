@@ -1,52 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	xsi:schemaLocation="
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"
-	default-lazy-init="true">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	   default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.works" />
 	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" 
@@ -77,10 +74,10 @@
 			<null />
 		</constructor-arg>
 	</bean>
-	<bean id="scheduleOfRateService" class="org.egov.works.master.services.ScheduleOfRateService">
+	<bean id="scheduleOfRateService" class="org.egov.works.master.service.ScheduleOfRateService">
 		<property name="type" value="org.egov.works.models.masters.ScheduleOfRate" />
 	</bean>
-	<bean id="scheduleCategoryService" class="org.egov.works.master.services.ScheduleCategoryService">
+	<bean id="scheduleCategoryService" class="org.egov.works.master.service.ScheduleCategoryService">
 		<property name="type" value="org.egov.works.models.masters.ScheduleCategory"/>
 	</bean>
 	<bean id="worksStatusService" parent="persistenceService" scope="prototype">
@@ -124,20 +121,14 @@
 
 	<bean class="org.egov.works.models.estimate.EstimateNumberGenerator"
 		id="estimateNumberGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean class="org.egov.works.models.estimate.BudgetNumberGenerator"
 		id="budgetNumberGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean class="org.egov.works.models.estimate.ProjectCodeGenerator"
 		id="projectcodeGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean id="egwTypeOfWorkService" parent="persistenceService" scope="prototype">
@@ -170,9 +161,6 @@
 
 	<bean class="org.egov.works.models.tender.NegotiationNumberGenerator"
 		id="negotiationNumberGenerator">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> <property name="commonsService" ref="commonsService" 
-			/> -->
 	</bean>
 
 	<bean id="contractorDetailService" parent="persistenceService"
@@ -222,14 +210,10 @@
 	<!-- on dec14th -->
 	<bean class="org.egov.works.models.workorder.WorkOrderNumberGenerator"
 		id="workOrderNumberGenerators">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean class="org.egov.works.models.tender.WorksPackageNumberGenerator"
 		id="workspackageGenerator">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean id="egwStatusService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.EgwStatus" />
@@ -315,8 +299,6 @@
 		<property name="assetService" ref="assetService" />
 	</bean>
 	<bean class="org.egov.asset.model.AssetCategoryNumberGenrator" id="assetCategoryNumberGenrator">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.asset.service.impl.AssetCategoryServiceImpl"
 		id="assetCategoryService" scope="prototype">
@@ -330,8 +312,6 @@
 		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator" />
 	</bean>
 	<bean class="org.egov.asset.model.AssetNumberGenrator" id="assetNumberGenrator">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.asset.service.impl.AssetServiceImpl" id="assetService"
 		scope="prototype">
@@ -366,8 +346,6 @@
 
 	<bean class="org.egov.works.models.masters.DepositCodeGenerator"
 		id="depositCodeGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.works.services.impl.DepositWorksUsageServiceImpl"
 		id="depositWorksUsageService" scope="prototype">
@@ -416,11 +394,11 @@
 		<property name="type"
 			value="org.egov.works.models.estimate.AbstractEstimateAppropriation" />
 	</bean>
-	<bean id="milestoneTemplateService" parent="persistenceService"
+	<!-- <bean id="milestoneTemplateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
 			value="org.egov.works.models.masters.MilestoneTemplate" />
-	</bean>
+	</bean> -->
 
 	<!-- <bean class="org.egov.works.services.MilestoneTemplateWFService"
 		id="milestoneTemplateWFService" parent="persistenceService" scope="prototype">
@@ -434,7 +412,7 @@
 		<constructor-arg value="org.egov.works.models.masters.MilestoneTemplate" />
 	</bean>
 	<bean id="milestoneService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.milestone.Milestone" />
+		<property name="type" value="org.egov.works.milestone.entity.Milestone" />
 	</bean>
 
 	<bean class="org.egov.works.services.MilestoneWFService" id="milestoneWFService"
@@ -446,14 +424,14 @@
 	<bean id="milestoneWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="milestoneWFService" />
-		<constructor-arg value="org.egov.works.models.milestone.Milestone" />
+		<constructor-arg value="org.egov.works.milestone.entity.Milestone" />
 	</bean> -->
-	<bean id="trackMilestoneService" parent="persistenceService"
+<!-- 	<bean id="trackMilestoneService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.milestone.TrackMilestone" />
+			value="org.egov.works.milestone.entity.TrackMilestone" />
 	</bean>
-<!-- 
+ --><!-- 
 	<bean class="org.egov.works.services.TrackMilestoneWFService" id="trackMilestoneWFService"
 		parent="persistenceService" scope="prototype">
 			<property name="employeeServiceOld" ref="employeeServiceOld" /> 
@@ -463,7 +441,7 @@
 	<bean id="trackMilestoneWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="trackMilestoneWFService" />
-		<constructor-arg value="org.egov.works.models.milestone.TrackMilestone" />
+		<constructor-arg value="org.egov.works.milestone.entity.TrackMilestone" />
 	</bean> -->
 
 	<bean id="reportHelper" class="org.egov.utils.ReportHelper" />
@@ -506,7 +484,6 @@
 	<bean
 		class="org.egov.works.models.contractoradvance.ContractorAdvanceRequisitionNumberGenerator"
 		id="contractorAdvanceRequisitionNumberGenerator">
-		<property name="sequenceGenerator" ref="sequenceGenerator" />
 	</bean>
 
 	<bean id="contractorAdvanceService" parent="persistenceService"
@@ -536,10 +513,10 @@
 	</bean> -->
 
 	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
-	<bean id="contractorGradeService" class="org.egov.works.master.services.ContractorGradeService">
+	<bean id="contractorGradeService" class="org.egov.works.master.service.ContractorGradeService">
 		<property name="type" value="org.egov.commons.ContractorGrade"/>
 	</bean>
-	<bean id="uomService" class="org.egov.works.master.services.UOMService">
+	<bean id="uomService" class="org.egov.works.master.service.UOMService">
 		<property name="type" value="org.egov.common.entity.UOM"/>
 	</bean>
 	<bean id="schemeService" class="org.egov.services.masters.SchemeService">

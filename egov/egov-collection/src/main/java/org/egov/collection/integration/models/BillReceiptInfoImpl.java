@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.integration.models;
 
@@ -56,6 +56,7 @@ import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 
 /**
@@ -67,8 +68,6 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      * The private receipt header object. This is used by the getters to provide bill receipt information
      */
     private final ReceiptHeader receiptHeader;
-    
-   
 
     /**
      * Indicates the last event that has occurred on this receipt
@@ -92,29 +91,34 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     private final String additionalInfo;
 
     /**
-     * Creates bill receipt information object for given receipt header
+     * Creates bill receipt information object for given receipt header and bounced instrument(if any)
      *
      * @param receiptHeader the receipt header object
      * @param chartOfAccountsHibernateDAO TODO
      */
-    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
+    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader,
+            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO,
+            final PersistenceService persistenceService, final InstrumentHeader bouncedInstrumentInfo) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         additionalInfo = null;
+        final String receiptStatus = receiptHeader.getStatus().getCode();
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail,chartOfAccountsHibernateDAO));
+            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
 
         // Populate set of instrument headers that belong to this receipt
-        for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
-            instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
-        final String receiptStatus = receiptHeader.getStatus().getCode();
+        if (!CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus))
+            for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
+                instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
+        else
+            instrumentDetails.add(new ReceiptInstrumentInfoImpl(bouncedInstrumentInfo));
 
         if (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus)) {
             event = BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED;
-            // find all bounced instruments of this receipt
-            findBouncedInstruments();
+            // find bounced instruments of this receipt
+            findBouncedInstrument();
         } else if (CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_APPROVED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED.equals(receiptStatus))
@@ -125,20 +129,20 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     }
 
     /**
-     * Creates bill receipt information object for given receipt header 
-     * and additional message
+     * Creates bill receipt information object for given receipt header and additional message
      *
      * @param receiptHeader the receipt header object
      * @param chartOfAccountsHibernateDAO TODO
      */
-    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final String additionalInfo, ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
+    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final String additionalInfo,
+            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO, final PersistenceService persistenceService) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         this.additionalInfo = additionalInfo;
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail,chartOfAccountsHibernateDAO));
+            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
 
         // Populate set of instrument headers that belong to this receipt
         for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
@@ -148,7 +152,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         if (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus)) {
             event = BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED;
             // find all bounced instruments of this receipt
-            findBouncedInstruments();
+            findBouncedInstrument();
         } else if (CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_APPROVED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED.equals(receiptStatus))
@@ -159,20 +163,22 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     }
 
     public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final EgovCommon egovCommon,
-            final ReceiptHeader receiptHeaderRefObj, ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO) {
+            final ReceiptHeader receiptHeaderRefObj, final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO,
+            final PersistenceService persistenceService) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         additionalInfo = null;
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail,chartOfAccountsHibernateDAO));
+            accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
 
         // Populate set of instrument headers that belong to this receipt
         for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
             instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
         // String receiptStatus = receiptHeader.getEgwStatus().getCode();
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
-            challan = new ChallanInfo(receiptHeader, egovCommon, receiptHeaderRefObj, chartOfAccountsHibernateDAO);
+            challan = new ChallanInfo(receiptHeader, egovCommon, receiptHeaderRefObj, chartOfAccountsHibernateDAO,
+                    persistenceService);
             challanDetails.add(challan);
         }
     }
@@ -341,7 +347,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      * Finds all instruments of this receipt that are in bounced (dishonored) status and adds them to the set of bounced
      * instruments.
      */
-    private void findBouncedInstruments() {
+    private void findBouncedInstrument() {
         for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
             if (instrumentInfo.isBounced())
                 bouncedInstruments.add(instrumentInfo);
@@ -420,7 +426,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         Boolean legacy = Boolean.FALSE;
         for (final ReceiptAccountInfo receiptAccountInfo : getAccountDetails())
             if (receiptAccountInfo.getDescription() != null && !"".equals(receiptAccountInfo.getDescription())
-            && (!receiptAccountInfo.getDescription().contains("#") ||
+                    && (!receiptAccountInfo.getDescription().contains("#") ||
                     receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE))) {
                 legacy = Boolean.TRUE;
                 break;
@@ -435,6 +441,11 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     @Override
     public String getAdditionalInfo() {
         return additionalInfo;
+    }
+
+    @Override
+    public String getSource() {
+        return receiptHeader.getSource() == null ? "" : receiptHeader.getSource();
     }
 
 }

@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.ptis.domain.service.report;
 
@@ -48,7 +48,6 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +64,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
@@ -75,6 +73,7 @@ import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,8 +99,7 @@ public class ReportService {
     private static final String PRIVATE = "PRIVATE";
     private PersistenceService propPerServ;
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
+   
     @Autowired
     private RegionalHeirarchyService regionalHeirarchyService;
 
@@ -109,6 +107,8 @@ public class ReportService {
     private UserService userService;
 
     private @Autowired FinancialYearDAO financialYearDAO;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -177,7 +177,7 @@ public class ReportService {
         List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
                 propMatView.getInstDmdColl());
         for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
-            if (instDmdCollObj.getInstallment().equals(propertyTaxUtil.getCurrentInstallment())) {
+            if (instDmdCollObj.getInstallment().equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 if (propertyType.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
                     baseRegisterResultObj.setPropertyTax(instDmdCollObj.getVacantLandTax());
                 } else {
@@ -305,7 +305,7 @@ public class ReportService {
             result.setReceiptNumber(collectionIndex.getReceiptNumber());
             result.setReceiptDate(collectionIndex.getReceiptDate());
             result.setAssessmentNumber(collectionIndex.getConsumerCode());
-            result.setOwnerName(collectionIndex.getPayeeName());
+            result.setOwnerName(collectionIndex.getConsumerName());
             result.setPaidAt(collectionIndex.getChannel());
             result.setWard(basicProperty.getPropertyID().getWard().getName());
 

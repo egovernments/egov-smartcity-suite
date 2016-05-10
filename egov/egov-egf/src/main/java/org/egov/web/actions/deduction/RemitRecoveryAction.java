@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,40 +24,27 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /**
  *
  */
 package org.egov.web.actions.deduction;
 
-
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
@@ -91,10 +78,10 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.deduction.RemittanceBean;
 import org.egov.model.instrument.InstrumentHeader;
@@ -112,15 +99,21 @@ import org.egov.utils.FinancialConstants;
 import org.egov.web.actions.payment.BasePaymentAction;
 import org.egov.web.actions.voucher.CommonAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-/**
- * @author manoranjan
- *
- */
 @ParentPackage("egov")
 @Validation
 @Results({
@@ -156,11 +149,12 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public boolean showApprove = false;
     private CommonBean commonBean;
     private String modeOfPayment;
-    
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired CreateVoucher createVoucher;
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    CreateVoucher createVoucher;
     private Integer departmentId;
     private String wfitemstate;
     private String comments;
@@ -183,7 +177,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private ChartOfAccounts chartOfAccounts;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     public BigDecimal getBalance() {
         return balance;
     }
@@ -508,13 +502,11 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @Action(value = "/deduction/remitRecovery-viewInboxItem")
     public String viewInboxItem() {
         paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
-       /* if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty()
-                && paymentheader.getState().getValue().contains("Reject"))
-        {
-            voucherHeader.setId(paymentheader.getVoucherheader().getId());
-            showCancel = true;
-            return beforeEdit();
-        }*/
+        /*
+         * if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty() &&
+         * paymentheader.getState().getValue().contains("Reject")) {
+         * voucherHeader.setId(paymentheader.getVoucherheader().getId()); showCancel = true; return beforeEdit(); }
+         */
         showApprove = true;
         voucherHeader.setId(paymentheader.getVoucherheader().getId());
         prepareForViewModifyReverse();
@@ -529,7 +521,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         showApprove = true;
         // voucherHeader.setId(paymentheader.getVoucherheader().getId());
         prepareForViewModifyReverse();
-        //loadApproverUser(voucherHeader.getType());
+        // loadApproverUser(voucherHeader.getType());
         return EDIT;
     }
 
@@ -555,7 +547,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             sendForApproval();
             addActionMessage(getText("remittancepayment.transaction.success") + voucherHeader.getVoucherNumber());
         } catch (final ValidationException e) {
-            //loadApproverUser(voucherHeader.getType());
+            // loadApproverUser(voucherHeader.getType());
             loadAjaxedDropDowns();
             throw e;
         }

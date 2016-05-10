@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <html>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
@@ -288,7 +290,7 @@
 </script>
 
 </head>
-<body>
+<body onload="load();">
 	<s:form action="bankEntriesNotInBankBook" theme="simple"
 		name="bankEntriesNotInBankBookform" id="bankEntriesNotInBankBookform">
 		<s:push value="model">
@@ -329,6 +331,8 @@
 							class="mandatory1">*</span></td>
 						<td class="greybox" colspan="2"><s:select name="bank_branch"
 								id="bank_branch" list="dropdownData.bankBranchList"
+								listKey="id"
+								listValue="branchname"
 								headerKey="-1" headerValue="----Choose----"
 								onchange="loadBankAccount(this)" value="%{bank_branch}" /></td>
 					</tr>
@@ -342,7 +346,7 @@
 						<td class="greybox" colspan="2"><s:select name="bankaccount"
 								id="bankaccount" list="dropdownData.bankAccountList"
 								listKey="id"
-								listValue="chartofaccounts.glcode+'--'+accountnumber+'---'+accounttype"
+								listValue="chartofaccounts.glcode+'--'+accountnumber"
 								headerKey="-1" headerValue="----Choose----"
 								value="%{bankaccount}" /></td>
 						<td class="greybox"></td>
@@ -486,8 +490,8 @@
 				return false;
 			 }
 		</s:if>
-		console.log(jQuery("#bankEntriesNotInBankBookform").serialize());
 			doLoadingMask();
+			enableAll();
 			document.bankEntriesNotInBankBookform.action = '/EGF/payment/bankEntriesNotInBankBook-search.action';
 			document.bankEntriesNotInBankBookform.submit();
 
@@ -576,13 +580,19 @@
 		console.log(jQuery("#bankEntriesNotInBankBookform").serialize());
 		if(validate()){
 			doLoadingMask();
+			enableAll();
 			document.bankEntriesNotInBankBookform.action = '/EGF/payment/bankEntriesNotInBankBook-save.action';
 			document.bankEntriesNotInBankBookform.submit();
 		}
 
 		}
 		
-	
+		function load(){
+			<s:if test="%{mode == 'save'}"> 
+				disableAll();
+			</s:if>
+		}	
+			
 	</SCRIPT>
 </body>
 </html>

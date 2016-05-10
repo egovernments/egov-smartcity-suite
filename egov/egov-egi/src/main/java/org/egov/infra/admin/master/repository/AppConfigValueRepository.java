@@ -37,16 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.admin.master.repository;
 
-import java.util.Date;
-import java.util.List;
+package org.egov.infra.admin.master.repository;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface AppConfigValueRepository extends JpaRepository<AppConfigValues, Long> {

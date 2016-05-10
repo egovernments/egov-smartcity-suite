@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
@@ -91,8 +92,7 @@
 						</div>
 	                 </div>
 					<%-- <div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><small><i
-							class="entypo-star error-msg"></i></small></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:input id="com_position" path="position.name" type="text" 
 							class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />

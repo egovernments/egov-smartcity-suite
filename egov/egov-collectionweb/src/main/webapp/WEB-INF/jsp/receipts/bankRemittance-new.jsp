@@ -1,42 +1,43 @@
 
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-     Copyright (C) <2015>  eGovernments Foundation
- 
-     The updated version of eGov suite of products as by eGovernments Foundation 
-     is available at http://www.egovernments.org
- 
-     This program is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     any later version.
- 
-     This program is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with this program. If not, see http://www.gnu.org/licenses/ or 
-     http://www.gnu.org/licenses/gpl.html .
- 
-     In addition to the terms of the GPL license to be adhered to in using this
-     program, the following additional terms are to be complied with: 
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -96,26 +97,6 @@
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
 			}
 		}
-
-		var serviceNameArray = document.getElementsByName('serviceNameArray');
-		for (j = 0; j < serviceNameArray.length; j++) {
-			if (document.getElementsByName('serviceNameArray')[j].value != "") {
-				for (k = 0; k < isSelected.length; k++) {
-					if (isSelected[k].checked == true) {
-						if ((document.getElementsByName('serviceNameArray')[j].value == document
-								.getElementsByName('serviceNameTempArray')[k].value)
-								&& (document.getElementsByName('fundCodeArray')[j].value == document
-										.getElementsByName('fundCodeTempArray')[k].value)) {
-						} else {
-							dom.get("multipleserviceselectionerror").style.display = "block";
-							dom.get("button32").disabled = true;
-							dom.get("button32").className = "button";
-							return false;
-						}
-					}
-				}
-			}
-		}
 	}
 
 	// Check if at least one receipt is selected
@@ -158,12 +139,6 @@
 			dom.get("selectremittanceerror").style.display = "block";
 			return false;
 		} else {
-			/* if (document.getElementById('positionUser') != null
-					&& document.getElementById('positionUser').value == -1) {
-				dom.get("approvalSelectionError").style.display = "block";
-				return false;
-			} */
-
 			doLoadingMask('#loadingMask');
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			document.bankRemittanceForm.submit();
@@ -307,7 +282,6 @@
 			<div class="subheadnew">
 				<s:text name="bankRemittance.title" />
 			</div>
-			<logic:notEmpty name="paramList">
 					<div align="center">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
@@ -340,9 +314,10 @@
 							<input name="search" type="button" class="buttonsubmit"
 							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
+					<logic:notEmpty name="paramList">
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
-							export="false" requestURI="" excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray receiptDateArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
+							export="false" requestURI="" excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
 							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
 								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
 								style="width:5%; text-align: center">
@@ -472,6 +447,7 @@
 							id="button" value="Close" onclick="window.close()" />
 					</div>
 					</logic:notEmpty>
+					<s:if test="%{isListData}">
 					<logic:empty name="paramList">
 						<div class="formmainbox">
 							<table width="90%" border="0" align="center" cellpadding="0"
@@ -489,8 +465,8 @@
 							<input name="buttonClose" type="button" class="button"
 								id="buttonClose" value="Close" onclick="window.close()" />
 						</div>
-
 					</logic:empty>
+					</s:if>
 		</div>
 	</s:form>
 </body>

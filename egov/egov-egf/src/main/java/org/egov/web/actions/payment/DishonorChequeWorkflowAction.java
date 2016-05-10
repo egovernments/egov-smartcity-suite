@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,35 +24,23 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.payment;
-import org.springframework.beans.factory.annotation.Qualifier;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
+//import com.exilant.eGov.src.domain.BankEntries;
+import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -82,7 +70,6 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.instrument.DishonorCheque;
 import org.egov.model.instrument.DishonorChequeDetails;
 import org.egov.model.instrument.InstrumentHeader;
@@ -99,12 +86,22 @@ import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.exilant.eGov.src.domain.BankEntries;
-import com.exilant.exility.common.TaskFailedException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 
 @Results({
@@ -149,7 +146,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     private String mode = null;
     private List desgnationList;
     
-    private @Autowired BankEntries bankEntries;
+   // private @Autowired BankEntries bankEntries;
 
     public DishonorChequeWorkflowAction() {
         this.addRelatedEntity("instrumentHeader", InstrumentHeader.class);
@@ -243,7 +240,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         return Constants.DDMMYYYYFORMAT2.format(date);
     }
 
-    BankEntries createBankEntry() {
+  /*  BankEntries createBankEntry() {
         bankEntries.setBankAccountId(dishonorChequeView.getInstrumentHeader().getBankAccountId().getId().intValue());
         bankEntries.setRefNo(dishonorChequeView.getBankReferenceNumber());
         bankEntries.setTxnAmount(dishonorChequeView.getBankChargesAmt().toString());
@@ -253,7 +250,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         bankEntries.setGlcodeId(dishonorChequeView.getBankchargeGlCodeId().getId().toString());
         return bankEntries;
     }
-
+*/
     private CVoucherHeader createVoucherHeader(final String type, final String reason) throws ParseException {
         final CVoucherHeader voucherHeader = new CVoucherHeader();
         voucherHeader.setType(type);
@@ -265,7 +262,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     public CVoucherHeader createBankReversalVoucher() throws ParseException, HibernateException, TaskFailedException,
             SQLException {
         CVoucherHeader BankVoucher = null;
-        bankEntries = createBankEntry();
+       // bankEntries = createBankEntry();
         final String narration = "Reversal Bank Charges Entry for receipt number "
                 + dishonorChequeView.getOriginalVoucherHeader().getVoucherNumber() +
                 ", Cheque Number " + dishonorChequeView.getInstrumentHeader().getInstrumentNumber() + " Cheque Dated :"
@@ -289,9 +286,9 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         BankVoucher = createVoucher(BankVoucher, headerDetails, "Bank Entry");
 
         updateInstrumentVoucherReference(Arrays.asList(instrument), BankVoucher);
-        bankEntries.setVoucherheaderId(BankVoucher.getId().toString());
-        bankEntries.setInstrumentHeaderId(instrument.getId());
-        bankEntries.insert();
+        //bankEntries.setVoucherheaderId(BankVoucher.getId().toString());
+       // bankEntries.setInstrumentHeaderId(instrument.getId());
+       /// bankEntries.insert();
 
         return BankVoucher;
 

@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
+package org.egov.tl.entity;
 
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class MotorMaster extends BaseModel {
     private static final long serialVersionUID = 1L;

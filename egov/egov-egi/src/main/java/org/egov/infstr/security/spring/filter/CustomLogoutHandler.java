@@ -37,23 +37,23 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infstr.security.spring.filter;
-
-import java.util.Date;
-import java.util.HashMap;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.security.audit.entity.SystemAudit;
 import org.egov.infra.security.audit.service.SystemAuditService;
-import org.egov.infstr.security.utils.SecurityConstants;
+import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.HashMap;
 
 @Component
 public class CustomLogoutHandler implements LogoutHandler {

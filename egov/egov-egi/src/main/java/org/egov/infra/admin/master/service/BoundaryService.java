@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.admin.master.service;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -49,7 +50,7 @@ import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.StringUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.feature.FeatureCollection;

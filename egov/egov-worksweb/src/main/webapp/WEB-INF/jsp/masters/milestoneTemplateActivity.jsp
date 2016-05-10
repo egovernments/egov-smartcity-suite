@@ -1,43 +1,44 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %>  
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+<%@ include file="/includes/taglibs.jsp" %>
 <style type="text/css">
 #yui-dt0-bodytable, #yui-dt1-bodytable, #yui-dt2-bodytable {
     Width:100%;
@@ -77,10 +78,10 @@ var temptActvDataTable;
 var makeTmptActvDataTable = function() {
 	var cellEditor=new YAHOO.widget.TextboxCellEditor()
 	var tmptActvColumnDefs = [ 
-		{key:"stageOrderNo", label:'Stage Order No<span class="mandatory"></span>', minWidth:100,formatter:sTextboxFormatter},
+		{key:"stageOrderNo", label:'Stage Order No<span class="mandatory"></span>', minWidth:100,formatter:sTextboxFormatter,resizeable:true},
 		{key:"description", width:450,label:'Stage Description<span class="mandatory"></span>', formatter:textboxDescFormatter, resizeable:true},		
-		{key:"percentage",label:'Percentage of Stage<span class="mandatory"></span>',minWidth:100, formatter:pTextBoxFormatter},
-		{key:'TemptActvDelete',label:'Delete',minWidth:50,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
+		{key:"percentage",label:'Percentage of Stage<span class="mandatory"></span>',minWidth:100, formatter:pTextBoxFormatter,resizeable:true},
+		{key:'TemptActvDelete',label:'Delete',minWidth:50,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}"),resizeable:true},
 	];
 	var temptActvDataSource = new YAHOO.util.DataSource(); 
 	temptActvDataTable = new YAHOO.widget.DataTable("tmptAtctTable",tmptActvColumnDefs, temptActvDataSource,{MSG_EMPTY:"<s:text name='milestoneTemplate.activity.initial.table.message'/>"});
@@ -98,7 +99,29 @@ var makeTmptActvDataTable = function() {
 				calculateTotalPercentage();
 		}        
 	});
+
+
+	var tfoot = temptActvDataTable.getTbodyEl().parentNode.createTFoot();
+
+	var tr = tfoot.insertRow(-1);
+	var th = tr.appendChild(document.createElement('td'));
+	th.colSpan = 1;
+	th.className= 'whitebox4wk';
+	th.innerHTML = '&nbsp;';
+
+	var td = tr.insertCell(1);
+	td.className= 'whitebox4wk';
+	td.innerHTML = '<span class="bold text-right" style="display:block;padding:5px;">Total:</span>';
+
+	var td = tr.insertCell(2);
+	td.className= 'whitebox4wk';
+	td.innerHTML = '<span id="totalValue" class="bold text-right" style="display:block;padding:5px;">0</span>';
+
+	var td = tr.insertCell(3);
+	td.className= 'whitebox4wk';
+	td.innerHTML = '&nbsp;';
 	
+
 	return {
 	    oDS: temptActvDataSource,
 	    oDT: temptActvDataTable
@@ -134,7 +157,7 @@ function validatePercentage(){
 	}
 
 	if(isValidPercentage){
-		temptActvDataTable.addRow({SlNo:temptActvDataTable.getRecordSet().getLength()+1});
+		temptActvDataTable.addRow({SlNo:temptActvDataTable.getRecordSet().getLength()+1});		
 	}else{
 		alert("Please enter Valid Template Activity Details.");
 		return false;
@@ -152,64 +175,61 @@ function calculateTotalPercentage(){
 	dom.get('totalValue').innerHTML=total;
 }
 
-</script>		
-      
-       
-       
+</script>
+<div id="temptActvTable" class="panel panel-primary" data-collapsed="0"
+	style="text-align: left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<s:text name="milestone.template.activityDetails" />
+			<s:if
+				test="%{mode=='view' || model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED'}">
+			</s:if>
+			<s:else>
+				<div class="pull-right">
+					<a id="temptActvRow" href="#"
+						onclick="validatePercentage();return false;"
+						class="btn btn-primary"><s:text name="milestone.template.addactivity" /> </a>
+				</div>
+			</s:else>
+		</div>
+	</div>
+	<div class="panel-body no-margin-bottom">
+		<div class="form-group no-margin-bottom">
+			<div class="yui-skin-sam">
+				<div id="tmptAtctTable" align="center"></div>
+			</div>
+		</div>
+	</div>
+</div>
 
-		<div id="temptActvTable"  class="panel panel-primary" data-collapsed="0" style="text-align:left">
-				<div class="panel-heading">
-					<div class="panel-title">
-					  Template Activity Details
-					  
-						<s:if test="%{mode=='view' || model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED'}">
-	                	</s:if>
-	                	<s:else>
-							<div class="pull-right">
-				   
-						      <a id="temptActvRow" href="#" onclick="validatePercentage();return false;" class="btn btn-primary">
-					   	       Add Template Activity
-					   	      </a>
-						   
-					   		</div>
-					   </s:else>
-					  
-					</div>
-				</div>
-				<div class="panel-body no-margin-bottom">
-					<div class="form-group no-margin-bottom">
-						<div class="yui-skin-sam">
-                	    	<div id="tmptAtctTable" align="center"></div>  
-                		</div> 
-                		<div class="text-right" style="padding-right:112px;">
-                		   <s:text name="milestone.template.activity.label.total.percentage" /> : <span id="totalValue"></span>
-                		</div>
-					</div>
-					
-				</div>
-       </div>	
-              	
-	<script>
-		makeTmptActvDataTable();
-		<s:iterator  value="stages" status="row_status">
-            temptActvDataTable.addRow({
-                                    stageOrderNo:'<s:property value="stageOrderNo"/>',
-                                    description:'<s:property value="description" escape="false"/>',
-                                    percentage:'<s:property value="percentage"/>',
-                                    Delete:'X'});
-        var record = temptActvDataTable.getRecord(parseInt('<s:property value="#row_status.index"/>'));
-    
-        var column = temptActvDataTable.getColumn('description');
-        // Important to use escape=false. Otherwise struts will replace double quotes with &quote;  
-        dom.get(column.getKey()+record.getId()).value = '<s:property value="description" escape="false"/>';
+<script>
+	makeTmptActvDataTable();
+	<s:iterator  id="milestoneTemplate" value="milestoneTemplateActivities" status="row_status">
+	temptActvDataTable.addRow({
+		stageOrderNo : '<s:property value="stageOrderNo"/>',
+		description : '<s:property value="description" escape="false"/>',
+		percentage : '<s:property value="percentage"/>',
+		Delete : 'X'
+	});
+
 	
-	 var column = temptActvDataTable.getColumn('stageOrderNo');
-        dom.get(column.getKey()+record.getId()).value = '<s:property value="stageOrderNo" />';
-        
- 	var column = temptActvDataTable.getColumn('percentage');
-        dom.get(column.getKey()+record.getId()).value = '<s:property value="percentage" />';
-        </s:iterator>
-        calculateTotalPercentage();
-	</script> 
+	var record = temptActvDataTable
+			.getRecord(parseInt('<s:property value="#row_status.index"/>'));
+
+	var column = temptActvDataTable.getColumn('description');
+	// Important to use escape=false. Otherwise struts will replace double quotes with &quote;  
+	dom.get(column.getKey() + record.getId()).value = '<s:property value="description" escape="false"/>';
+
+	var column = temptActvDataTable.getColumn('stageOrderNo');
+	dom.get(column.getKey() + record.getId()).value = '<s:property value="stageOrderNo" />';
+
+	var column = temptActvDataTable.getColumn('percentage');
+	dom.get(column.getKey() + record.getId()).value = '<s:property value="percentage" />';
+	</s:iterator>
+	calculateTotalPercentage();
+
+	
+
+</script> 
 	
  

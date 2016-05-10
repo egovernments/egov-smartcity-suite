@@ -37,7 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.filestore.entity;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,10 +51,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.NotBlank;
 
 @Table(name = "eg_filestoremap")
 @Entity

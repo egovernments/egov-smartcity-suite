@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.admin.master.repository;
+
+import org.egov.infra.admin.master.entity.Role;
 
 import java.util.List;
 import java.util.Set;
-
-import org.egov.infra.admin.master.entity.Role;
 
 public interface ModuleRepositoryCustom {
 

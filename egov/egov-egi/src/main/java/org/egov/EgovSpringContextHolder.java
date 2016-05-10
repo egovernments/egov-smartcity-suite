@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov;
 
-import javax.persistence.EntityManagerFactory;
+package org.egov;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+
+import javax.persistence.EntityManagerFactory;
 
 /**
  * Do not use this unless you are not able to use spring for injecting

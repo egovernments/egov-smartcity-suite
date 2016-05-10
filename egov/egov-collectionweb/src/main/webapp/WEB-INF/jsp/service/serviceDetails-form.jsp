@@ -1,42 +1,44 @@
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-     Copyright (C) <2015>  eGovernments Foundation
- 
-     The updated version of eGov suite of products as by eGovernments Foundation 
-     is available at http://www.egovernments.org
- 
-     This program is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     any later version.
- 
-     This program is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with this program. If not, see http://www.gnu.org/licenses/ or 
-     http://www.gnu.org/licenses/gpl.html .
- 
-     In addition to the terms of the GPL license to be adhered to in using this
-     program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
---> 
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>  
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <script>
 function populateSchemes(fund){
@@ -74,50 +76,51 @@ function validate(){
 	}
 	 <s:if test="%{isFieldMandatory('fund')}"> 
      if(null != document.getElementById('fundId') && document.getElementById('fundId').value == -1){
-    
             document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.fundcode.errormessage" />'+  "<br>";
+            dom.get("error_area").style.display="block";
             valid=false;
      }
      </s:if>
 	     <s:if test="%{isFieldMandatory('department')}"> 
 	     if(null!= document.getElementById('deptId') && document.getElementById('deptId').value == -1){
-	
 	            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.deptcode.errormessage" />'+ '<br>';
+	            dom.get("error_area").style.display="block";
 	            valid=false;
 	     }
 		</s:if>
 		<s:if test="%{isFieldMandatory('scheme')}"> 
 		     if(null!=document.getElementById('schemeId') &&  document.getElementById('schemeId').value == -1){
-		
 		            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.schemeId.errormessage" />'+ '<br>';
+		            dom.get("error_area").style.display="block";
 		            valid=false;
 		     }
 		</s:if>
 		<s:if test="%{isFieldMandatory('subscheme')}"> 
 		     if(null!= document.getElementById('subschemeId') && document.getElementById('subschemeId').value == -1){
-		
 		            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.subschemeId.errormessage" />'+ '<br>';
+		            dom.get("error_area").style.display="block";
 		            valid=false;
 		     }
 		</s:if>
 		<s:if test="%{isFieldMandatory('functionary')}"> 
 		     if(null!=document.getElementById('receiptMisc.idFunctionary.id') &&  document.getElementById('receiptMisc.idFunctionary.id').value == -1){
-		
 		            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.functionarycode.errormessage" />'+ '<br>';
+		            dom.get("error_area").style.display="block";
 		            valid=false;
 		     }
 		</s:if>
 		<s:if test="%{isFieldMandatory('fundsource')}"> 
 		     if(null !=document.getElementById('receiptMisc.fundsource.id') &&  document.getElementById('receiptMisc.fundsource.id').value == -1){
-		
 		            document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.fundsourcecode.errormessage" />'+ '<br>';
+		            dom.get("error_area").style.display="block";
 		            valid=false;
 		    }
 		</s:if>
 		<s:if test="%{isFieldMandatory('function')}">                     
 		 if(null!= document.getElementById('functionId') && document.getElementById('functionId').value == -1){
-			 document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.functioncode.errormessage" />'+ '<br>';                                
-			valid=false;
+			 document.getElementById("error_area").innerHTML+='<s:text name="miscreceipt.functioncode.errormessage" />'+ '<br>';
+			 dom.get("error_area").style.display="block";                                
+			 valid=false;
 		 }            
 		</s:if>
 		window.scroll(0,0);
@@ -173,7 +176,7 @@ function clearCodeIfExists(){
 			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails-codeUniqueCheck.action'
 			 key='service.code.already.exists' />
 			<td class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory1">*</span></td>
-			<td class="bluebox"><s:textfield name="code" id="serviceCode" maxLength="12"
+			<td class="bluebox"><s:textfield name="code" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace" id="serviceCode" maxLength="12"
 			 onblur="uniqueCheckCode();clearCodeIfExists();"></s:textfield> </td>
 			<td class="bluebox"> <s:text name="service.create.name"></s:text><span class="mandatory1">*</span></td>
 			<td class="bluebox"> <s:textfield name="name" id="name" maxLength="100" ></s:textfield> </td>

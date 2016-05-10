@@ -1,41 +1,47 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
- * government organizations.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- * Copyright (C) <2015> eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
- * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this program. If not, see
- * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
- * complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
- * material be marked in reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
- * trade names or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 /**
  *
  */
 package org.egov.web.actions.voucher;
 
-
-
-import org.egov.infstr.services.PersistenceService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,9 +65,10 @@ import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.voucher.VoucherDetails;
@@ -75,7 +82,6 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -105,11 +111,11 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private String wfitemstate;
     private VoucherHelper voucherHelper;
     // private boolean isRejectedVoucher=false;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private ChartOfAccounts chartOfAccounts;
     private ChartOfAccounts engine;
     private static final String ACTIONNAME = "actionName";
@@ -133,12 +139,10 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
-        persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("approvaldepartmentList", Collections.EMPTY_LIST);
         addDropdownData("designationList", Collections.EMPTY_LIST);
@@ -186,7 +190,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         getBillInfo();
         loadSchemeSubscheme();
         loadFundSource();
-      //  loadApproverUser("default");
+        // loadApproverUser("default");
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view")) {
             return "view";
         }
@@ -279,7 +283,6 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         removeEmptyRowsSubledger(subLedgerlist);
 
         try {
-            populateWorkflowBean();
             if (!validateData(billDetailslist, subLedgerlist)) {
                 voucherHeader = journalVoucherActionHelper.editVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean, parameters.get("totaldbamount")[0]);
@@ -389,8 +392,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     }
 
     @SkipValidation
-    public List<Action> getValidActions(final String purpose) {
-        final List<Action> validButtons = new ArrayList<Action>();
+    public List<WorkflowAction> getValidActions(final String purpose) {
+        final List<WorkflowAction> validButtons = new ArrayList<WorkflowAction>();
         final List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons", ScriptService.createContext(
                 "eisCommonServiceBean", eisCommonService, "userId", EgovThreadLocals.getUserId().intValue(), "date", new Date(),
                 "purpose", purpose));
@@ -398,8 +401,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         {
             if ("invalid".equals(s))
                 break;
-            final Action action = (Action) getPersistenceService().find(
-                    " from org.egov.infstr.workflow.Action where type='CVoucherHeader' and name=?", s.toString());
+            final WorkflowAction action = (WorkflowAction) getPersistenceService().find(
+                    " from WorkflowAction where type='CVoucherHeader' and name=?", s.toString());
             validButtons.add(action);
         }
         return validButtons;

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,19 +24,19 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /**
  * @author nayeem
  *
@@ -45,21 +45,7 @@
 
 package org.egov.ptis.actions.bills;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMAND_BILL_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
-
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -98,12 +84,27 @@ import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMAND_BILL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 
 @ParentPackage("egov")
 @Validations
@@ -162,6 +163,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     @Autowired
     private ApplicationContext beanProvider;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Override
     public StateAware getModel() {
@@ -303,7 +307,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         ReportInfo reportInfo;
         Integer totalProps = 0;
         Integer totalBillsGen = 0;
-        final Installment currInst = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currInst = propertyTaxCommonUtils.getCurrentInstallment();
 
         final StringBuilder billQueryString = new StringBuilder();
         final StringBuilder propQueryString = new StringBuilder();

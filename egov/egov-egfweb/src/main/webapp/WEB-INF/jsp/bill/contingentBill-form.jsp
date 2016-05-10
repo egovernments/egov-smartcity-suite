@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <jsp:include page="../voucher/vouchertrans-filter-new-contingent.jsp" />
@@ -45,7 +47,7 @@
 	<td class="greybox"><s:text name="function" /><span
 		class="mandatory1"> *</span></td>
 	<td class="greybox"><s:textfield name="commonBean.functionName"
-			id="commonBean.functionName"
+			id="commonBean.functionName" autocomplete='off'
 			onkeyup="autocompletecodeFunctionHeader(this,event)"
 			onblur="fillNeibrAfterSplitFunctionHeader(this)" size="30" /> <s:hidden
 			name="commonBean.functionId" id="commonBean.functionId" /></td>

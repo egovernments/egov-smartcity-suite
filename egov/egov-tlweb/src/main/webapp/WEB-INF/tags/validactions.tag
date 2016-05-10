@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ tag dynamic-attributes="true" isELIgnored="false"%>
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>  
 

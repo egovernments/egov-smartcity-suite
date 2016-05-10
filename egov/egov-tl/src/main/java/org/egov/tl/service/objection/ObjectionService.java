@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.service.objection;
 
 import org.egov.eis.entity.Assignment;
@@ -45,11 +46,9 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.Sequence;
-import org.egov.infstr.utils.SequenceGenerator;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.PositionService;
 import org.egov.tl.entity.License;
@@ -59,7 +58,6 @@ import org.egov.tl.entity.objection.Activity;
 import org.egov.tl.entity.objection.LicenseObjection;
 import org.egov.tl.entity.objection.Notice;
 import org.egov.tl.service.AbstractLicenseService;
-import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,7 +69,6 @@ import static org.egov.tl.utils.Constants.BUTTONREJECT;
 
 public class ObjectionService extends PersistenceService<LicenseObjection, Long> {
 
-    protected SequenceGenerator sequenceGenerator;
     @Autowired
     protected AbstractLicenseService licenseService;
     @Autowired
@@ -96,7 +93,7 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
     @SuppressWarnings("unchecked")
     public LicenseObjection recordObjection(LicenseObjection objection, Long licenseId,
                                             WorkflowBean workflowBean) {
-        String runningNumber = this.getNextRunningNumber(Constants.OBJECTIONNUMBERPREFIX);
+        String runningNumber = "";//TODO this.getNextRunningNumber(Constants.OBJECTIONNUMBERPREFIX);
         objection.generateNumber(runningNumber);
         License license = (License) this.licenseService.licensePersitenceService().find("from License where id=?", licenseId);
         objection.setLicense(license);
@@ -227,15 +224,6 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
         this.licenseService = licenseService;
     }
 
-    public String getNextRunningNumber(String type) {
-        Sequence seq = this.sequenceGenerator.getNextNumberWithFormat(type, Constants.APPLICATIONNO_LENGTH, new Character('0'));
-        return seq.getFormattedNumber();
-    }
-
-    public void setSequenceGenerator(SequenceGenerator sequenceGenerator) {
-        this.sequenceGenerator = sequenceGenerator;
-    }
-
     public LicenseObjection recordResponseOrInspection(LicenseObjection objection, WorkflowBean workflowBean) {
         if (objection.getActivities().get(objection.getActivities().size() - 1).getType() != null
                 || workflowBean.getActionName().equalsIgnoreCase(BUTTONAPPROVE)) {
@@ -275,7 +263,7 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
     private Notice getNotices(String noticeType, LicenseObjection objection) {
         Notice notice = new Notice();
         if (objection.getActivities().get(objection.getActivities().size() - 1).getType().equals(noticeType)) {
-            String runningNumber = this.getNextRunningNumber(Constants.OBJECTIONNOICENUMBERPREFIX);
+            String runningNumber = "";//TODO this.getNextRunningNumber(Constants.OBJECTIONNOICENUMBERPREFIX);
             notice.generateNumber(runningNumber);
             // notice.setNoticeNumber(objection.getNumber());
             notice.setDocNumber(objection.getNumber() + "_" + noticeType);

@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.collection.utils;
 
@@ -93,9 +93,9 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.egov.infra.utils.MoneyUtils;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.MoneyUtils;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -192,27 +192,18 @@ public class CollectionCommon {
         case CollectionConstants.RECEIPT_TYPE_CHALLAN:
             templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
             break;
-        /*case CollectionConstants.RECEIPT_TYPE_ADHOC:
-            templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;
-            if (!reportService.isValidTemplate(templateName)) {
-                LOGGER.info("Billing system specific report template [" + templateName
-                        + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
-                        + "]");
-                templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
-
-                if (!reportService.isValidTemplate(templateName)) {
-                    // No template available for creating the receipt report.
-                    // Throw
-                    // exception.
-                    final String errMsg = "Report template [" + templateName
-                            + "] not available!Miscellaneous Receipt report cannot be generated.";
-                    LOGGER.error(errMsg);
-                    throw new ApplicationRuntimeException(errMsg);
-                }
-            }*/
+        /*
+         * case CollectionConstants.RECEIPT_TYPE_ADHOC: templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE +
+         * CollectionConstants.RECEIPT_TEMPLATE_NAME; if (!reportService.isValidTemplate(templateName)) {
+         * LOGGER.info("Billing system specific report template [" + templateName +
+         * "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME + "]"); templateName =
+         * CollectionConstants.RECEIPT_TEMPLATE_NAME; if (!reportService.isValidTemplate(templateName)) { // No template available
+         * for creating the receipt report. // Throw // exception. final String errMsg = "Report template [" + templateName +
+         * "] not available!Miscellaneous Receipt report cannot be generated."; LOGGER.error(errMsg); throw new
+         * ApplicationRuntimeException(errMsg); } }
+         */
         case CollectionConstants.RECEIPT_TYPE_ADHOC:
-                templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
+            templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
             break;
         }
         return templateName;
@@ -372,18 +363,21 @@ public class CollectionCommon {
             for (final ReceiptHeader receiptHeader : receipts) {
                 final ReceiptHeader receipHeaderRefObj = (ReceiptHeader) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_CHALLANRECEIPT_BY_REFERENCEID, receiptHeader.getId());
-                receiptList.add(new BillReceiptInfoImpl(receiptHeader, egovCommon, receipHeaderRefObj, chartOfAccountsHibernateDAO));
+                receiptList.add(new BillReceiptInfoImpl(receiptHeader, egovCommon, receipHeaderRefObj,
+                        chartOfAccountsHibernateDAO, persistenceService));
             }
         } else
             for (final ReceiptHeader receiptHeader : receipts) {
                 String additionalMessage = null;
                 if (receiptType == CollectionConstants.RECEIPT_TYPE_BILL)
                     additionalMessage = receiptHeaderService.getAdditionalInfoForReceipt(serviceCode,
-                            new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
+                            new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
                 if (additionalMessage != null)
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage, chartOfAccountsHibernateDAO));
+                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, additionalMessage, chartOfAccountsHibernateDAO,
+                            persistenceService));
                 else
-                    receiptList.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
+                    receiptList
+                            .add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
             }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
@@ -404,7 +398,8 @@ public class CollectionCommon {
      */
     public Integer generateChallan(final ReceiptHeader receipt, final Map<String, Object> session, final boolean flag) {
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
-        receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader(), chartOfAccountsHibernateDAO));
+        receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader(), chartOfAccountsHibernateDAO,
+                persistenceService));
 
         final String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
         final Map reportParams = new HashMap<String, Object>();
@@ -446,7 +441,7 @@ public class CollectionCommon {
         final List<ReceiptDetailInfo> billDetailslist = new ArrayList<ReceiptDetailInfo>(0);
         final List<CChartOfAccounts> bankCOAList = chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
         for (final ReceiptDetail rDetails : rh.getReceiptDetails())
-            if (!FinancialsUtil.isRevenueAccountHead(rDetails.getAccounthead(), bankCOAList)) {
+            if (!FinancialsUtil.isRevenueAccountHead(rDetails.getAccounthead(), bankCOAList, persistenceService)) {
                 final ReceiptDetailInfo rInfo = new ReceiptDetailInfo();
                 rInfo.setGlcodeDetail(rDetails.getAccounthead().getGlcode());
                 rInfo.setGlcodeIdDetail(rDetails.getAccounthead().getId());
@@ -507,7 +502,7 @@ public class CollectionCommon {
 
         } catch (final Exception e) {
             LOGGER.error("Exception while setting subledger details", e);
-            throw new ApplicationRuntimeException("Exception while setting subledger details" , e);
+            throw new ApplicationRuntimeException("Exception while setting subledger details", e);
         }
         if (subLedgerlist.isEmpty())
             subLedgerlist.add(new ReceiptDetailInfo());
@@ -565,7 +560,7 @@ public class CollectionCommon {
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads should not be considered
             // This is to omit revenueheadaccounts
-            if (!FinancialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList)) {
+            if (!FinancialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramountToBePaid(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
@@ -715,7 +710,7 @@ public class CollectionCommon {
         if (paytInfoBank.getBankAccountId() == null)
             invalidBankPaytMsg += "Missing Bank Account Id \n";
         else {
-            account = (Bankaccount) bankAccountDAO.findById(paytInfoBank.getBankAccountId().intValue(), false);
+            account = bankAccountDAO.findById(paytInfoBank.getBankAccountId().intValue(), false);
 
             if (account == null)
                 invalidBankPaytMsg += "No account found for bank account id[" + paytInfoBank.getBankAccountId()
@@ -767,7 +762,7 @@ public class CollectionCommon {
                     + "] cannot be a future date \n";
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
-            bank = (Bank) bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);
+            bank = bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);
             if (bank == null)
                 invalidChequeDDPaytMsg += "No bank present for bank id [" + paytInfoChequeDD.getBankId() + "] \n";
         }
@@ -801,7 +796,8 @@ public class CollectionCommon {
         for (final ReceiptDetail receiptDetail : receiptDetails)
             totalCreditAmount = totalCreditAmount.add(receiptDetail.getCramount());
         if (totalCreditAmount.intValue() == 0)
-            throw new ApplicationRuntimeException("Apportioning Failed at the Billing System: " + receiptHeader.getService().getCode()
+            throw new ApplicationRuntimeException("Apportioning Failed at the Billing System: "
+                    + receiptHeader.getService().getCode()
                     + ", for bill number: " + receiptHeader.getReferencenumber());
         return receiptDetails;
     }

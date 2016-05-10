@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
@@ -114,7 +115,7 @@
 						<spring:message code="lbl.complaintLocation"/>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-location">
-						<span class="map-tool-class btn-secondary" data-toggle="tooltip" title="Locate on map" data-work="Locate on map" onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i class="entypo-globe"></i></span>
+						<span class="map-tool-class btn-secondary" data-toggle="tooltip" title="Locate on map" data-work="Locate on map" onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker"></i></span>
 						<span id="address_locate">${complaint.childLocation.name} - ${complaint.location.name}</span>
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin">

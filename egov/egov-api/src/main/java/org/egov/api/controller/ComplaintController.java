@@ -1,55 +1,47 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
- * government organizations.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- * Copyright (C) <2015> eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
- * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this program. If not, see
- * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
- * complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
- * material be marked in reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
- * trade names or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.api.controller;
 
-import static java.util.Arrays.asList;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -57,30 +49,36 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.egov.api.adapter.ComplaintActionAdapter;
 import org.egov.api.adapter.ComplaintAdapter;
 import org.egov.api.adapter.ComplaintStatusAdapter;
 import org.egov.api.adapter.ComplaintTypeAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiUrl;
+import org.egov.api.model.ComplaintAction;
 import org.egov.api.model.ComplaintSearchRequest;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
+import org.egov.search.domain.Document;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
@@ -97,6 +95,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
@@ -125,6 +145,15 @@ public class ComplaintController extends ApiController {
     @Autowired
     protected FileStoreUtils fileStoreUtils;
 
+    @Autowired
+    protected ComplaintStatusMappingService complaintStatusMappingService;
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
     // --------------------------------------------------------------------------------//
     /**
      * This will returns all complaint types
@@ -611,5 +640,61 @@ public class ComplaintController extends ApiController {
 			return getResponseHandler().error(getMessage("server.error"));
         }
     }
+    
+    /* EMPLOYEE RELATED COMPLAINT OPERATIONS START */
 
+    //get complaint available status and forward departments
+    @RequestMapping(value = ApiUrl.EMPLOYEE_COMPLAINT_ACTIONS, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getComplaintActions(@PathVariable final String complaintNo) {
+        try {
+        	
+        	final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
+        	
+        	ComplaintAction complaintActions=new ComplaintAction();
+        	complaintActions.setStatus(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
+                    complaint.getStatus()));
+        	complaintActions.setApprovalDepartments(departmentService.getAllDepartments());
+        	
+            return getResponseHandler().setDataAdapter(new ComplaintActionAdapter()).success(complaintActions);
+            
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
+        }
+    }
+    
+    @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> updateComplaintFromEmployee(@PathVariable final String complaintNo, @RequestParam(value = "jsonParams", required = false) String complaintJsonStr, @RequestParam("files") final MultipartFile[] files) {
+
+    	try {
+        	
+        	JsonObject complaintJson=new JsonParser().parse(complaintJsonStr).getAsJsonObject();
+        	
+            final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
+            final ComplaintStatus cmpStatus = complaintStatusService.getByName(complaintJson.get("action").getAsString());
+            complaint.setStatus(cmpStatus);
+            
+            Long approvalPosition;
+            
+            if(!complaintJson.has("approvalposition"))
+            {
+            	approvalPosition=securityUtils.getCurrentUser().getId();
+            }
+            else{
+            	approvalPosition= Long.valueOf(complaintJson.get("approvalposition").getAsString());
+            }
+            
+            if(files.length>0)
+            {
+            	complaint.getSupportDocs().addAll(addToFileStore(files));
+            }
+            complaintService.update(complaint, approvalPosition, complaintJson.get("comment").getAsString());
+            return getResponseHandler().success("", getMessage("msg.complaint.status.update.success"));
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
+        }
+
+    }
+  
 }

@@ -37,11 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.controller.admin.masters.city;
-
-import java.io.IOException;
-
-import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
@@ -58,6 +55,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/city/setup")

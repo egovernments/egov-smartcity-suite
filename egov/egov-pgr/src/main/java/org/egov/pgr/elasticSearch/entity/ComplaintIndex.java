@@ -37,17 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.elasticSearch.entity;
-
-import java.util.Date;
-
-import javax.persistence.Transient;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.entity.Complaint;
 import org.egov.search.domain.Searchable;
 import org.elasticsearch.common.geo.GeoPoint;
+
+import java.util.Date;
 
 public class ComplaintIndex extends Complaint {
 

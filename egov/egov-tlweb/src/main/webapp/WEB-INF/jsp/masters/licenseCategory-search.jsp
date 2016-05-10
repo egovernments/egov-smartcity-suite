@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -45,7 +46,6 @@
 <html>
 <head>
 	<title><s:text name='licenseCategory.Search' /></title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 	function validateFormAndSubmit(){
 			var categoryId= document.getElementById("categoryId").value;

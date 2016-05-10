@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.wtms.application.service.collection;
 
@@ -45,6 +45,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,10 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
@@ -70,16 +75,18 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.rest.CollectionApportioner;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
@@ -95,6 +102,7 @@ public class WaterTaxCollection extends TaxCollection {
     private EgBillDao egBillDAO;
     @Autowired
     private ModuleService moduleService;
+    
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -115,6 +123,16 @@ public class WaterTaxCollection extends TaxCollection {
 
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private  FinancialYearDAO financialYearDAO;
+
+    @Autowired
+    private FunctionHibernateDAO functionDAO;
+
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    
+    
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -144,9 +162,9 @@ public class WaterTaxCollection extends TaxCollection {
                 updateWaterConnDetailsStatus(demand, billRcptInfo);
                 updateWaterTaxIndexes(demand);
             }
-            else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)){
+            else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)) {
                 updateCollForChequeBounce(demand, billRcptInfo);
-            	updateWaterTaxIndexes(demand);
+                updateWaterTaxIndexes(demand);
             }
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
@@ -155,8 +173,7 @@ public class WaterTaxCollection extends TaxCollection {
             throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
     }
-    
-    
+
     private void updateCollForChequeBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
                 + " with BillReceiptInfo - " + billRcptInfo);
@@ -165,6 +182,7 @@ public class WaterTaxCollection extends TaxCollection {
         updateDmdDetForRcptCancel(demand, billRcptInfo);
         LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " + demand);
     }
+
     /**
      * @param demand Updates WaterConnectionDetails Object once Collection Is done. send Record move to Commissioner and Send SMS
      * and Email after Collection
@@ -180,7 +198,8 @@ public class WaterTaxCollection extends TaxCollection {
             final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails
                     .getStateType(), null, null, WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE,
                     waterConnectionDetails.getCurrentState().getValue(), null);
-            final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation(),waterConnectionDetails.getConnection().getPropertyIdentifier());
+            final Position posobj = waterTaxUtils.getCityLevelCommissionerPosition(wfmatrix.getNextDesignation(),
+                    waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (posobj != null)
                 approvalPosition = posobj.getId();
             final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
@@ -214,8 +233,8 @@ public class WaterTaxCollection extends TaxCollection {
 
         final StringBuilder query = new StringBuilder(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-        .append("WHERE dmdet.egDemand.id = :demand");
+                .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+                .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -248,12 +267,14 @@ public class WaterTaxCollection extends TaxCollection {
                     final String[] installsplit = desc[1].split("#");
                     final String reason = desc[0].trim();
                     final String instDesc = installsplit[0].trim();
+                    if(!installmentWiseDemandDetailsByReason.isEmpty() && installmentWiseDemandDetailsByReason.get(instDesc) !=null){
                     demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
                     demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                     if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                         demand.addCollected(rcptAccInfo.getCrAmount());
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
                             billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+                    }
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("Persisted demand and receipt details for tax : " + reason + " installment : "
                                 + instDesc + " with receipt No : " + billRcptInfo.getReceiptNum() + " for Rs. "
@@ -269,7 +290,20 @@ public class WaterTaxCollection extends TaxCollection {
 
     public EgDemand getCurrentDemand(final Long billId) {
         final EgBill egBill = egBillDAO.findById(billId, false);
-        return egBill.getEgDemand();
+        WaterConnectionDetails waterconndet=null;
+        EgDemand demand=null;
+        if(  egBill.getEgDemand()!=null &&  egBill.getEgDemand().getIsHistory()!=null &&
+        		 egBill.getEgDemand().getIsHistory().equals(WaterTaxConstants.DEMANDISHISTORY))
+        	demand= egBill.getEgDemand();
+        else{
+        waterconndet=waterConnectionDetailsService.getWaterConnectionDetailsByDemand(egBill.getEgDemand());
+       for(WaterDemandConnection waterDemand:waterconndet.getWaterDemandConnection())
+       {
+    	   if(waterDemand!=null && waterDemand.getDemand()!=null && waterDemand.getDemand().getIsHistory().equals(WaterTaxConstants.DEMANDISHISTORY))
+    		   demand=  waterDemand.getDemand();
+       }
+        }
+       return  demand;
     }
 
     // Receipt cancellation ,updating bill,demanddetails,demand
@@ -300,9 +334,9 @@ public class WaterTaxCollection extends TaxCollection {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-        	 if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                     && (!rcptAccInfo.getIsRevenueAccount())) {
-            	
+
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String[] installsplit = desc[1].split("#");
@@ -321,7 +355,7 @@ public class WaterTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
@@ -420,7 +454,7 @@ public class WaterTaxCollection extends TaxCollection {
                 + actualAmountPaid);
         final CollectionApportioner apportioner = new CollectionApportioner();
         billDetails.addAll(bill.getEgBillDetails());
-        return apportioner.reConstruct(actualAmountPaid, billDetails);
+        return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO);
     }
 
     @Override
@@ -458,20 +492,32 @@ public class WaterTaxCollection extends TaxCollection {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
-
+        final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         BigDecimal arrearAmount = BigDecimal.ZERO;
-
-        for (final EgBillDetails billDet : egBill.getEgBillDetails())
-            if (billDet.getCrAmount() != null && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
-                final String[] desc = billDet.getDescription().split("-", 2);
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .getWaterConnectionDetailsByDemand(egBill.getEgDemand());
+        for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+            	final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String[] installsplit = desc[1].split("#");
-                if (installsplit[0].trim().equals(installsplit[1].trim()))
-                    currentInstallmentAmount = currentInstallmentAmount.add(billDet.getCrAmount());
+                final String[] installsplit1 = installsplit[0].split("-");
+             if(waterConnectionDetails!=null && (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED) || 
+            		   waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))){
+                 if (installsplit1[0].trim().equals((financialyear !=null ? financialyear.getFinYearRange().split("-")[0]:null)) )
+                    currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
                 else
-                    arrearAmount = arrearAmount.add(billDet.getCrAmount());
-
+                    arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
             }
+               else
+               {
+            	   if(installsplit[0].split("/")[1].split("-")[1].trim().equals(financialyear.getFinYearRange().split("-")[1].trim()))
+            		   currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                   else
+                       arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
+               }
+            }
+      
 
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
             if (billDet.getOrderNo() == 1) {

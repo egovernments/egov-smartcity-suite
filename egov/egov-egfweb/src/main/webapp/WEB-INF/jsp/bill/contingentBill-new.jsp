@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,7 +36,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <html>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
@@ -314,7 +316,7 @@ var makeVoucherDetailTableSubledger = function() {
 {key:"subledgerCode",label:'Subledger Code',  formatter:subledgerFormatter("billDetailsTableSubledger",".subledgerCode","text")},
 {key:"detailCode",label:'Entity Code', formatter:detailcodeFormatter("billDetailsTableSubledger",".detailCode","text")},
 {key:"detailName",label:'Entity Name', formatter:detailnameFormatter("billDetailsTableSubledger",".detailName","text")},
-{key:"accounthead", label:'Account Head', width:600,formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
+{key:"accounthead", label:'Account Head', width:400,formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
 {key:"amount",label:'Amount',formatter:amountFormatter("billDetailsTableSubledger",".debitAmountDetail","text")},
 {key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTableSubledger',this)")},
 {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTableSubledger',this)")}
@@ -566,7 +568,7 @@ autocompleteEntitiesBy20();
 document.getElementById("budgetReappRow").style.display="none";
 document.getElementById("billDetailsTableNet[0].detailTypes").value='<s:property value="%{detailTypeIdandName}"/>';
 var net=document.getElementById('billDetailsTableNet[0].glcodeDetail');
-//bootbox.alert("hii"+net.value+"text"+net.text);                         
+//bootbox.alert("hii"+net.value+"text"+net.text);   
 net.options[0] =new Option("----Choose----","-1");
 var i=1;           
 <s:iterator value="netPayList" status="stat">
@@ -638,12 +640,11 @@ loadDropDownCodesForAccountDetailType(null);
 function onSubmit()
 {
 	if(validate()){
-			document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
-    		document.cbill.submit();
-			
-		}else{
-			return false;
-			}
+		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
+    	return true;
+	}else{
+		return false;
+	}
 }
 </script>
 </body>

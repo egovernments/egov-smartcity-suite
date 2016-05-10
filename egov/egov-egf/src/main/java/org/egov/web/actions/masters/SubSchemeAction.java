@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,26 +24,23 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.web.actions.masters;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -63,14 +60,17 @@ import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 
 @Results({
     @Result(name = SubSchemeAction.NEW, location = "subScheme-new.jsp"),
     @Result(name = SubSchemeAction.SEARCH, location = "subScheme-search.jsp"),
+    @Result(name = SchemeAction.UNIQUECHECKFIELD, location = "subScheme-fieldUniqueCheck.jsp"),
     @Result(name = SubSchemeAction.VIEW, location = "subScheme-view.jsp") })
 public class SubSchemeAction extends BaseFormAction {
     private static final long serialVersionUID = -3712472100095261379L;
@@ -84,12 +84,12 @@ public class SubSchemeAction extends BaseFormAction {
     private int schemeId;
     private Long subSchemeId;
     private List<SubScheme> subSchemeList;
-    private List<SubScheme> subSchemeListCN;
     public static final String SEARCH = "search";
     public static final String VIEW = "view";
     private String showMode;
     private SubSchemeService subSchemeService;
-
+    public static final String UNIQUECHECKFIELD = "fieldUniqueCheck";
+    private boolean uniqueCode = false;
     private String code;
 	private String name;
     @Override
@@ -100,7 +100,6 @@ public class SubSchemeAction extends BaseFormAction {
     public SubSchemeAction() {
         addRelatedEntity("scheme", Scheme.class, "name");
         addRelatedEntity("department", Department.class, "name");
-        addRelatedEntity("createdBy", User.class);
     }
 
     @Override
@@ -135,26 +134,7 @@ public class SubSchemeAction extends BaseFormAction {
         subScheme.setCreatedDate(new Date());
         subScheme.setCreatedBy(getLoggedInUser());
         subScheme.setLastmodifieddate(new Date());
-        subSchemeListCN = persistenceService
-				.findAllBy(
-						"from SubScheme where code=? or name=? ",code,name);
-        if(subSchemeListCN.size()!=0)
-        {
-        	for(SubScheme s:subSchemeListCN)
-        	{
-        if(name.equalsIgnoreCase(s.getName()))
-        {
-        	addActionError(getText("subscheme.name.already.exists"));
-        	
-        }
-        if(code.equalsIgnoreCase(s.getCode())) 
-        {
-        	addActionError(getText("subscheme.code.already.exists"));
-        	
-        }
-        	}
-        return NEW;
-        }
+       
         try {
             subSchemeService.persist(subScheme);
             subSchemeService.getSession().flush();
@@ -276,6 +256,45 @@ public class SubSchemeAction extends BaseFormAction {
         else
             dropdownData.put("subSchemeList", Collections.emptyList());
 
+    }
+    
+    
+    @SkipValidation
+    public boolean getCheckField() {
+    	SubScheme subScheme_validate = null;
+        boolean isDuplicate = false;
+        
+        if (uniqueCode) {
+            if (!subScheme.getCode().equals("") && subScheme.getId() != null)
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=? and id!=?",
+                		subScheme.getCode().toLowerCase(), subScheme.getId());
+            else if (!subScheme.getCode().equals(""))
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?", subScheme.getCode().toLowerCase());
+            uniqueCode = false;
+        } else if (!subScheme.getName().equals("") && subScheme.getId() != null)
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=? and id!=?", subScheme.getName().toLowerCase(),
+            		subScheme.getId());
+        else if (!subScheme.getName().equals(""))
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?", subScheme.getName().toLowerCase());
+        if (subScheme_validate != null)
+            isDuplicate = true;
+        
+        return isDuplicate;
+    }
+    
+    @SkipValidation
+    @Action(value = "/masters/subScheme-codeUniqueCheck")
+    public String codeUniqueCheck() {
+        
+        uniqueCode = true;
+        return UNIQUECHECKFIELD;
+    }
+
+    @SkipValidation
+    @Action(value = "/masters/subScheme-nameUniqueCheck")
+    public String nameUniqueCheck() {
+        
+        return UNIQUECHECKFIELD;
     }
 
     private User getLoggedInUser() {

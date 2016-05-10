@@ -1,43 +1,43 @@
 <?xml version="1.0"?>
 <!--
-  eGov suite of products aim to improve the internal efficiency,transparency,
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It
-  	   is required that all modified versions of this material be marked in
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program
-  	   with regards to rights under trademark law for use of the trade names
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Jul 19, 2007 2:57:28 PM by Hibernate Tools 3.2.0.b9 -->
@@ -66,7 +66,7 @@
 		<many-to-one name="ward" class="org.egov.infra.admin.master.entity.Boundary">
 			<column name="JURISDICTION" not-null="true"/>
 		</many-to-one>
-		<many-to-one name="type"
+		<many-to-one name="natureOfWork"
 			class="org.egov.works.models.masters.NatureOfWork" fetch="select">
 			<column name="NATUREOFWORK" not-null="true"/>
 		</many-to-one>
@@ -89,7 +89,7 @@
 		</many-to-one>
 		<many-to-one name="userDepartment"
 			class="org.egov.infra.admin.master.entity.Department" fetch="select">
-			<column name="USER_DEPARTMENT" not-null="true"/>
+			<column name="USER_DEPARTMENT"/>
 		</many-to-one>
 		<many-to-one name="executingDepartment"
 			class="org.egov.infra.admin.master.entity.Department" fetch="select">
@@ -104,11 +104,8 @@
 				scale="20" column="ESTIMATE_VALUE"  />
 		</component>
 		<many-to-one name="fundSource" class="org.egov.commons.Fundsource" fetch="select">
-			<column name="FUNDSOURCE_ID" not-null="true"/>
+			<column name="FUNDSOURCE_ID"/>
 		</many-to-one>
-		<property name="documentNumber" type="long">
-            <column name="DOCUMENT_NUMBER"/>
-        </property>		
 		<many-to-one name="egwStatus" column="STATUS_ID" /> 		
 		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
 			cascade="all">
@@ -140,6 +137,8 @@
 		<property name="isCopiedEst" type="string">
 			<column name="IS_COPIED_EST" length="1" />
 		</property>	
+		
+		<many-to-one name="lineEstimateDetails" column="LINEESTIMATEDETAILS" />
 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
@@ -185,7 +184,13 @@
 			<list-index column="est_photo_index" />
 			<one-to-many
 				class="org.egov.works.models.estimate.EstimatePhotographs" />
-		</list>		
+		</list>			
+		<!-- <list name="estimateTechnicalSanctions" cascade="all,delete-orphan">
+			<key column="abstractestimate" not-null="true" />
+			<list-index column="idx" />
+			<one-to-many
+				class="org.egov.works.abstractestimate.entity.EstimateTechnicalSanction" />
+		</list>		 -->	
 	</class>
 	
 	<query name="MY_NEW_ESTIMATES">

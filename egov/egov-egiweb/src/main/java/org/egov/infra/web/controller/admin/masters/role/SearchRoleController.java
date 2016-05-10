@@ -37,11 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.controller.admin.masters.role;
-
-import java.util.List;
-
-import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;
@@ -53,6 +50,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/role")

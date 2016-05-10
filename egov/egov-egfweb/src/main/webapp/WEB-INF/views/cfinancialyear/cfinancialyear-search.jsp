@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -36,10 +36,12 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
+
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="search" modelAttribute="cFinancialYear"
+<form:form role="form" action="search" modelAttribute="CFinancialYear"
 	id="cFinancialYearsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
@@ -48,37 +50,42 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Search FinancialYear</div>
+						<div class="panel-title">Search Financial Year</div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.finyearrange" /> </label>
 							<div class="col-sm-3 add-margin">
-								<form:input path="finYearRange"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="128" />
+								<form:select path="finYearRange" id="finYearRange"
+									class="form-control">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<form:options items="${financialYears}" itemValue="finYearRange"
+										itemLabel="finYearRange" />
+								</form:select>
 								<form:errors path="finYearRange" cssClass="error-msg" />
 							</div>
+						</div>
+						<input type="hidden" id="mode" name="mode" value="${mode}" />
+						<div class="form-group">
+							<div class="text-center">
+								<button type='button' class='btn btn-primary' id="btnsearch">
+									<spring:message code='lbl.search' />
+								</button>
+								<a href='javascript:void(0)' class='btn btn-default'
+									onclick='self.close()'><spring:message code='lbl.close' /></a>
 							</div>
-							<input type="hidden" id="mode" name="mode" value="${mode}" />
-							<div class="form-group">
-								<div class="text-center">
-									<button type='button' class='btn btn-primary' id="btnsearch">
-										<spring:message code='lbl.search' />
-									</button>
-									<a href='javascript:void(0)' class='btn btn-default'
-										onclick='self.close()'><spring:message code='lbl.close' /></a>
-								</div>
-							</div>
-						
+						</div>
+
 					</div>
 				</div>
 			</div>
 		</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">CFinancialYear
+	<div class="col-md-12 table-header text-left">Financial Year
 		Search Result</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
@@ -105,8 +112,6 @@
 		}
 	});
 </script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"

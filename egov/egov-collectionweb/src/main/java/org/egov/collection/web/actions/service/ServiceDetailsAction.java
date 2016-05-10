@@ -1,52 +1,44 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.collection.web.actions.service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -76,6 +68,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
@@ -115,15 +115,8 @@ public class ServiceDetailsAction extends BaseFormAction {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     public ServiceDetailsAction() {
-
         addRelatedEntity("serviceCategory", ServiceCategory.class);
         addRelatedEntity("fund", Fund.class);
-        /*
-         * addRelatedEntity("scheme", Scheme.class);
-         * addRelatedEntity("subscheme", SubScheme.class);
-         * addRelatedEntity("fundSource", Fundsource.class);
-         * addRelatedEntity("functionary", Functionary.class);
-         */
         addRelatedEntity("function", CFunction.class);
     }
 
@@ -134,7 +127,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     @Action(value = "/service/serviceDetails-newform")
     public String newform() {
-        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        addDropdownData("serviceCategoryList",
+                serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         return NEW;
     }
 
@@ -337,12 +331,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     private boolean validateAccountDetails() {
         int index = 0;
         for (final ServiceAccountDetails account : accountDetails)
-            if (null != account.getGlCodeId() && null != account.getGlCodeId().getGlcode()
-                    && account.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-                addActionError(getText("service.accdetail.amountZero", new String[] { "" + ++index,
-                        account.getGlCodeId().getGlcode() }));
-                return Boolean.FALSE;
-            } else if (account.getAmount().compareTo(BigDecimal.ZERO) > 0
+            if (account.getAmount().compareTo(BigDecimal.ZERO) > 0
                     && (null == account.getGlCodeId() || null == account.getGlCodeId().getId())) {
                 addActionError(getText("service.accdetail.accmissing", new String[] { "" + ++index }));
                 return Boolean.FALSE;
@@ -368,13 +357,7 @@ public class ServiceDetailsAction extends BaseFormAction {
                 addActionError(getText("service.accdetailType.entrymissing", new String[] { subledger
                         .getServiceAccountDetail().getGlCodeId().getGlcode() }));
                 return Boolean.FALSE;
-            }/*
-              * else if(null == subledger.getDetailKeyId()){
-              * addActionError(getText("service.accdetailKey.entrymissing",new
-              * String
-              * []{subledger.getServiceAccountDetail().getGlCodeId().getGlcode
-              * ()})); return Boolean.FALSE; }
-              */
+            }
 
             else if (null != subledgerAmount.get(subledger.getServiceAccountDetail().getGlCodeId().getGlcode())) {
 
@@ -420,22 +403,20 @@ public class ServiceDetailsAction extends BaseFormAction {
             final String header = value.substring(0, value.indexOf('|'));
             headerFields.add(header);
             final String mandate = value.substring(value.indexOf('|') + 1);
-            if (mandate.equalsIgnoreCase("M"))
+            if (mandate.equalsIgnoreCase(CollectionConstants.Mandatory))
                 mandatoryFields.add(header);
         }
     }
 
     @Action(value = "/service/serviceDetails-codeUniqueCheck")
     public String codeUniqueCheck() {
-
         return "codeUniqueCheck";
     }
 
     public boolean getCodeCheck() {
-
         boolean codeExistsOrNot = false;
-        final ServiceDetails service = serviceDetailsService.find("from ServiceDetails where code='"
-                + serviceDetails.getCode() + "'");
+        final ServiceDetails service = serviceDetailsService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CODE,
+                serviceDetails.getCode());
         if (null != service)
             codeExistsOrNot = true;
         return codeExistsOrNot;

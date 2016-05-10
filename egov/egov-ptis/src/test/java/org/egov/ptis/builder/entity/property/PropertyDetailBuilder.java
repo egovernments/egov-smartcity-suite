@@ -1,14 +1,14 @@
 package org.egov.ptis.builder.entity.property;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.ptis.builder.entity.master.PropertyTypeMasterBuilder;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.VacantProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ramki

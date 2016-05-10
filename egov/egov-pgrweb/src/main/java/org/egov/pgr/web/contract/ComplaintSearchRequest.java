@@ -37,11 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.web.contract;
 
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
+import org.egov.search.domain.Filter;
+import org.egov.search.domain.Filters;
+import org.jboss.logging.Logger;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,9 +51,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
+import static org.egov.search.domain.Filter.queryStringFilter;
+import static org.egov.search.domain.Filter.rangeFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
 public class ComplaintSearchRequest {
     private String searchText;

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,27 +24,21 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.services.voucher;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
@@ -70,6 +64,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Transactional(readOnly = true)
 @Service
@@ -124,14 +123,16 @@ public class BankEntriesNotInBankBookActionHelper {
             CChartOfAccounts coa = new CChartOfAccounts();
             for (BankEntriesNotInBankBook object : bankEntriesNotInBankBookList) {
 
-                if (object.getBeId() != null && object.getCreateVoucher() != null && object.getCreateVoucher()) {
-                    bankEntry = new BrsEntries();
-                    bankEntry = bankEntriesService.findById(object.getBeId(), false);
-                    object.setDate(bankEntry.getTxnDate());
-                    object.setType(bankEntry.getType());
-                    object.setAmount(bankEntry.getTxnAmount());
-                    bankEntry.setVoucherHeaderId(createVoucher(voucherHeader, object, bankAccount, bankEntry.getGlCodeId()));
-                    bankEntriesService.update(bankEntry);
+                if (object.getBeId() != null) {
+                    if (object.getCreateVoucher() != null && object.getCreateVoucher()) {
+                        bankEntry = new BrsEntries();
+                        bankEntry = bankEntriesService.findById(object.getBeId(), false);
+                        object.setDate(bankEntry.getTxnDate());
+                        object.setType(bankEntry.getType());
+                        object.setAmount(bankEntry.getTxnAmount());
+                        bankEntry.setVoucherHeaderId(createVoucher(voucherHeader, object, bankAccount, bankEntry.getGlCodeId()));
+                        bankEntriesService.update(bankEntry);
+                    }
                 } else {
                     bankEntry = new BrsEntries();
                     bankEntryMis = new BrsEntrieMis();

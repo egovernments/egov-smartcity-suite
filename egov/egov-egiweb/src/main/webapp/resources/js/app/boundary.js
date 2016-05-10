@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 function populateBoundaryTypes(dropdown) {
 	populateboundaryTypeSelect({
 		hierarchyTypeId : dropdown.value
