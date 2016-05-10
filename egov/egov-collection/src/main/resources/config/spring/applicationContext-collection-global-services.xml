@@ -159,8 +159,6 @@
 			<property name="tradeLicenseSmsAndEmailService" ref="tradeLicenseSmsAndEmailService" />
 	</bean>
 	
-	<bean id=" BDPGIPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.BillDeskAdaptor" />
-	
 	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AxisAdaptor"/>
 	
 	<bean class="org.egov.collection.integration.services.ReconciliationService" id="reconciliationService" scope="prototype">
