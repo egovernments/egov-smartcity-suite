@@ -151,9 +151,9 @@ public class EstimateService {
         }
         estimateTechnicalSanction.setTechnicalSanctionNumber(stringBuilder.toString());
         estimateTechnicalSanction
-                .setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
+        .setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
         estimateTechnicalSanction
-                .setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionBy());
+        .setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionBy());
 
         // TODO: move to cascade save with AbstractEstimate object once AbstractEstimate entity converted to JPA
         return estimateTechnicalSanctionService.save(estimateTechnicalSanction);
@@ -162,6 +162,11 @@ public class EstimateService {
     public AbstractEstimate getAbstractEstimateByEstimateNumber(final String estimateNumber) {
         return abstractEstimateRepository.findByEstimateNumberAndEgwStatus_codeNotLike(estimateNumber,
                 AbstractEstimate.EstimateStatus.CANCELLED.toString());
+    }
+
+    public AbstractEstimate getAbstractEstimateByEstimateNumberAndStatus(final String estimateNumber) {
+        return abstractEstimateRepository.findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(estimateNumber,
+                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
     }
 
 }

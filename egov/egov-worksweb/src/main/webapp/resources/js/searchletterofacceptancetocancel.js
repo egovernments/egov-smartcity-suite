@@ -47,7 +47,7 @@ function callAjaxSearch() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/egworks/contractorbill/cancel/ajax-search",
+					url : "/egworks/letterofacceptance/cancel/ajax-search",
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
@@ -61,12 +61,13 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)',row).html('<input type="radio" data="'+ data.voucherNumber +'" name="selectCheckbox" value="'+ data.id +'"/>');
-					if (data.billNumber != null)
+					$('td:eq(0)',row).html('<input type="radio" data="'+ data.isMileStoneCreated +'" name="selectCheckbox" value="'+ data.id +'"/>');
+					if (data.workOrderNumber != null)
 						$('td:eq(1)', row).html(
-								'<a href="javascript:void(0);" onclick="openLineEstimate(\''
+								'<a href="javascript:void(0);" onclick="viewLetterOfAcceptance(\''
 										+ data.id + '\')">'
-										+ data.billNumber + '</a>');
+										+ data.workOrderNumber + '</a>');
+					$('td:eq(3)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting : [],
@@ -77,36 +78,33 @@ function callAjaxSearch() {
 					"data" : "",
 					"sClass" : "text-center","autoWidth": "false"
 				}, {
-					"data" : "billDate",
+					"data" : "workOrderDate",
 					"sClass" : "text-center" ,"width": "6%",
 					render: function (data, type, full) {
-						if(full!=null &&  full.billDate != undefined) {
-							var regDateSplit = full.billDate.split(" ")[0].split("-");		
+						if(full!=null &&  full.workOrderDate != undefined) {
+							var regDateSplit = full.workOrderDate.split(" ")[0].split("-");		
 							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
 						}
 						else return "";
 			    	}
 				}, {
-					"data" : "estimateNumber",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "workOrderAmount",
+					"sClass" : "text-right","autoWidth": "false"
+				}, {
+					"data" : "",
+					"sClass" : "text-center","autoWidth": "false",
+					 "render":function(data, type, full, meta){
+					       return full.contractorCode + " - " + full.contractor;
+					    } 
 				}, {
 					"data" : "workIdentificationNumber",
 					"sClass" : "text-center","autoWidth": "false"
-				}, {
-					"data" : "workOrderNumber",
-					"sClass" : "text-center","autoWidth": "false"
-				}, {
-					"data" : "contractorName",
-					"sClass" : "text-center","autoWidth": "false",
-					 "render":function(data, type, full, meta){
-					       return full.contractorCode + " - " + full.contractorName;
-					    } 
-				} ]
+				}, ]
 			});
 }
 
-function openLineEstimate(contractorBillId) {
-	window.open("/egworks/contractorbill/view/" + contractorBillId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+function viewLetterOfAcceptance(id) {
+	window.open("/egworks/letterofacceptance/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 function getFormData($form) {
@@ -127,7 +125,7 @@ $(document).ready(function() {
 	    },
 	    queryTokenizer: Bloodhound.tokenizers.whitespace,
 	    remote: {
-	        url: '/egworks/contractorbill/ajaxworkidentificationnumbers-contractorbilltocancel?code=%QUERY',
+	        url: '/egworks/letterofacceptance/ajaxworkidentificationnumbers-loatocancel?code=%QUERY',
 	        filter: function (data) {
 	            return $.map(data, function (ct) {
 	                return {
@@ -148,13 +146,13 @@ $(document).ready(function() {
 		source : workIdNumber.ttAdapter()
 	});
 	
-	var billNumber = new Bloodhound({
+	var contractor = new Bloodhound({
 	    datumTokenizer: function (datum) {
 	        return Bloodhound.tokenizers.whitespace(datum.value);
 	    },
 	    queryTokenizer: Bloodhound.tokenizers.whitespace,
 	    remote: {
-	        url: '/egworks/contractorbill/ajaxbillnumbers-contractorbilltocancel?billNumber=%QUERY',
+	        url: '/egworks/letterofacceptance/ajaxcontractors-loatocancel?code=%QUERY',
 	        filter: function (data) {
 	            return $.map(data, function (ct) {
 	                return {
@@ -165,20 +163,20 @@ $(document).ready(function() {
 	    }
 	});
 
-	billNumber.initialize();
-	var billNumber_typeahead = $('#billNumber').typeahead({
+	contractor.initialize();
+	var contractor_typeahead = $('#contractor').typeahead({
 		hint : true,
 		highlight : true,
 		minLength : 3
 	}, {
 		displayKey : 'name',
-		source : billNumber.ttAdapter()
+		source : contractor.ttAdapter()
 	});
 	
 	$('#btncancel').click(function() {
-		var contractorBillId = $('input[name=selectCheckbox]:checked').val();
-		if(contractorBillId == null) {
-			bootbox.alert("Please select a Contractor Bill to Cancel");
+		var letterOfAcceptanceId = $('input[name=selectCheckbox]:checked').val();
+		if(letterOfAcceptanceId == null) {
+			bootbox.alert("Please select a Letter of Acceptance to Cancel");
 		} else {
 			if($('#cancellationReason').val() == 'Others')
 				$('#cancellationRemarks').attr('required', 'required');
@@ -186,18 +184,33 @@ $(document).ready(function() {
 				$('#cancellationRemarks').removeAttr('required');
 			
 			if($("#cancelForm").valid()) {
-				$('#cancelForm #id').val(contractorBillId);
-				var voucherNumber = $('input[name=selectCheckbox]:checked').attr('data');
-				if(voucherNumber != "") {
-					bootbox.alert($('#voucherCreatedMessage').val() + " " + voucherNumber);
+				$('#cancelForm #id').val(letterOfAcceptanceId);
+				var isMileStoneCreated = $('input[name=selectCheckbox]:checked').attr('data');
+				if(isMileStoneCreated == 'true') {
+					bootbox.alert($('#mileStonesCreatedMessage').val());
 				} else {
-					bootbox.confirm($('#confirm').val(), function(result) {
-						if(!result) {
-							bootbox.hideAll();
-							return false;
-						} else {
-							$("#cancelForm").attr('action','/egworks/contractorbill/cancel');
-							$("#cancelForm").submit();
+					$.ajax({
+						url: "/egworks/letterofacceptance/ajax-checkifbillscreated?id="+letterOfAcceptanceId,     
+						type: "GET",
+						dataType: "json",
+						success: function (message) {
+							if(message == "") {
+								bootbox.confirm($('#confirm').val(), function(result) {
+									if(!result) {
+										bootbox.hideAll();
+										return false;
+									} else {
+										$("#cancelForm").attr('action','/egworks/letterofacceptance/cancel');
+										$("#cancelForm").submit();
+									}
+								});
+							} else {
+								message = message.replace(/,\s*$/, ".");
+								bootbox.alert(message);
+							}
+						}, 
+						error: function (response) {
+							console.log("failed");
 						}
 					});
 				}

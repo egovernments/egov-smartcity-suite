@@ -39,6 +39,18 @@
  */
 package org.egov.works.models.workorder;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.EgwStatus;
 import org.egov.eis.entity.Employee;
 import org.egov.infra.persistence.entity.Auditable;
@@ -55,17 +67,6 @@ import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.revisionEstimate.RevisionType;
 import org.egov.works.models.tender.OfflineStatus;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 public class WorkOrder extends StateAware implements Auditable {
 
@@ -151,6 +152,10 @@ public class WorkOrder extends StateAware implements Auditable {
     private Set<MBHeader> mbHeaders = new HashSet<MBHeader>();
 
     private transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+
+    private String cancellationReason;
+
+    private String cancellationRemarks;
 
     @Override
     public Long getId() {
@@ -490,6 +495,22 @@ public class WorkOrder extends StateAware implements Auditable {
 
     public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
         this.documentDetails = documentDetails;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(final String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+
+    public String getCancellationRemarks() {
+        return cancellationRemarks;
+    }
+
+    public void setCancellationRemarks(final String cancellationRemarks) {
+        this.cancellationRemarks = cancellationRemarks;
     }
 
 }

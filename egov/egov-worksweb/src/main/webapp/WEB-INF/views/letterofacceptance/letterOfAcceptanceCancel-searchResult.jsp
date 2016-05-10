@@ -38,40 +38,26 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<div class="page-container" id="page-container">
-	<div class="main-content">
-	<input type="hidden" id="id" value="${workOrder.id }" />
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="alert text-center" style="color:green;">
-				<c:if test="${workOrder.getId() != null}">
-					<c:choose>
-						<c:when test="${mode == 'modify' }">
-							<spring:message code="loa.modify.success" arguments="${workOrder.getWorkOrderNumber()}"/>
-						</c:when>
-						<c:when test="${mode == 'cancel' }">
-							<spring:message code="loa.cancel.success" arguments="${workOrder.getWorkOrderNumber()}"/>
-						</c:when>
-						<c:otherwise>
-							<spring:message code="loa.create.success" arguments="${workOrder.getWorkOrderNumber()}"/>
-						</c:otherwise>
-					</c:choose>
-				</c:if>
-			</div>
-			<div class="alert text-center" style="color:red;">
-				<c:out value="${errorMessage }" />
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-12 text-center">
-				<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
-				<c:if test="${workOrder.egwStatus.code == 'APPROVED'}">
-					<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.loapdf" /></a>
-				</c:if>
-			</div>
-		</div>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.contractorbill.search" />
+	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.selectonly" /></th>
+					<th><spring:message code="lbl.loanumber" /></th>
+					<th><spring:message code="lbl.loadate" /></th>
+					<th><spring:message code="lbl.agreement.amount" /></th>
+					<th><spring:message code="lbl.contractor.name" /></th>
+					<th><spring:message code="lbl.workidentificationnumber" /></th>
+				</tr>
+			</thead>
+		</table>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/searchletterofacceptancehelper.js?rnd=${app_release_no}'/>"></script>
+<jsp:include page="../common/commonCancel-form.jsp"/>

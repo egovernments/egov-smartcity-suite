@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.controller.contractorbill;
+package org.egov.works.web.controller.letterofacceptance;
 
 import java.util.List;
 
@@ -47,10 +47,10 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
-import org.egov.works.contractorbill.service.ContractorBillRegisterService;
+import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -60,13 +60,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value = "/contractorbill")
-public class CancelContractorBillController extends GenericWorkFlowController {
+@RequestMapping(value = "/letterofacceptance")
+public class CancelLetterOfAcceptanceController extends GenericWorkFlowController {
     @Autowired
     private LineEstimateService lineEstimateService;
 
     @Autowired
-    private ContractorBillRegisterService contractorBillRegisterService;
+    private LetterOfAcceptanceService letterOfAcceptanceService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -75,38 +75,41 @@ public class CancelContractorBillController extends GenericWorkFlowController {
     private ResourceBundleMessageSource messageSource;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
-    public String showSearchContractorBillForm(
-            @ModelAttribute final SearchRequestContractorBill searchRequestContractorBill,
+    public String showSearchLetterOfAcceptanceForm(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
-            searchRequestContractorBill.setDepartment(departments.get(0).getId());
-        model.addAttribute("searchRequestContractorBill", searchRequestContractorBill);
-        return "searchcontractorbill-cancel";
+            searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
+        model.addAttribute("searchRequestContractorBill", searchRequestLetterOfAcceptance);
+        return "searchloa-cancel";
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
-    public String cancelContractorBill(final HttpServletRequest request,
+    public String cancelLetterOfAcceptance(final HttpServletRequest request,
             final Model model) throws ApplicationException {
-        final Long contractorId = Long.parseLong(request.getParameter("id"));
+        final Long letterOfAcceptanceId = Long.parseLong(request.getParameter("id"));
         final String cancellationReason = request.getParameter("cancellationReason");
         final String cancellationRemarks = request.getParameter("cancellationRemarks");
-        ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContractorBillById(contractorId);
-        if (contractorBillRegister.getEgBillregistermis() != null
-                && contractorBillRegister.getEgBillregistermis().getVoucherHeader() != null
-                && contractorBillRegister.getEgBillregistermis().getVoucherHeader().getStatus() != 4) {
-            model.addAttribute("errorMessage", messageSource.getMessage("error.contractorbill.voucher.created",
-                    new String[] {}, null) + " "
-                    + contractorBillRegister.getEgBillregistermis().getVoucherHeader().getVoucherNumber());
-            return "contractorBill-success";
+        WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(letterOfAcceptanceId);
+        final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(workOrder.getId());
+        if (!billNumbers.equals("")) {
+            String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
+            model.addAttribute("errorMessage", message);
+            return "letterofacceptance-success";
         }
-        contractorBillRegister.setCancellationReason(cancellationReason);
-        contractorBillRegister.setCancellationRemarks(cancellationRemarks);
-        contractorBillRegister = contractorBillRegisterService.cancel(contractorBillRegister);
-        model.addAttribute("contractorBillRegister", contractorBillRegister);
-        model.addAttribute("message", messageSource.getMessage("msg.contractorbill.cancel",
-                new String[] { contractorBillRegister.getBillnumber() }, null));
-        return "contractorBill-success";
+        
+        if(letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {
+            model.addAttribute("errorMessage", messageSource.getMessage("error.loa.milestone.created",
+                    new String[] {}, null));
+            return "letterofacceptance-success";
+        }
+        workOrder.setCancellationReason(cancellationReason);
+        workOrder.setCancellationRemarks(cancellationRemarks);
+        workOrder = letterOfAcceptanceService.cancel(workOrder);
+        model.addAttribute("workOrder", workOrder);
+        model.addAttribute("mode", "cancel");
+        return "letterofacceptance-success";
     }
 }

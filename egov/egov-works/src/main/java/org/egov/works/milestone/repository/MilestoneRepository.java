@@ -39,6 +39,8 @@
  */
 package org.egov.works.milestone.repository;
 
+import java.util.List;
+
 import org.egov.works.milestone.entity.Milestone;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -47,5 +49,7 @@ import org.springframework.stereotype.Repository;
 public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
 
     Milestone findById(final Long id);
-    
+
+    List<Milestone> findByWorkOrderEstimate_Id(final Long id);
+
 }

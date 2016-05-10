@@ -39,9 +39,20 @@
  */
 package org.egov.works.milestone.service;
 
+import java.util.List;
+
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.milestone.repository.MilestoneRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MilestoneService {
 
+    @Autowired
+    private MilestoneRepository milestoneRepository;
+
+    public List<Milestone> getMilestoneByWorkOrderEstimateId(final Long id) {
+        return milestoneRepository.findByWorkOrderEstimate_Id(id);
+    }
 }
