@@ -39,6 +39,14 @@
  */
 package org.egov.collection.integration.services;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptDetail;
@@ -72,14 +80,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Collections integration service implementation - exposes APIs that can be used by other applications (typically billing
@@ -139,7 +139,7 @@ CollectionIntegrationService {
             return null;
 
         for (final ReceiptHeader receiptHeader : receiptHeaders)
-            receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService));
+            receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
         return receipts;
     }
 
@@ -172,7 +172,7 @@ CollectionIntegrationService {
             return null;
 
         for (final ReceiptHeader receiptHeader : receiptHeaders)
-            receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService));
+            receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
         return receipts;
     }
 
@@ -205,7 +205,7 @@ CollectionIntegrationService {
         else {
             // Create bill receipt info
             final BillReceiptInfoImpl receiptInfo = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
-                    persistenceService);
+                    persistenceService, null);
 
             return receiptInfo;
         }
@@ -340,7 +340,7 @@ CollectionIntegrationService {
 
         receiptHeaderService.persistFieldReceipt(receiptHeader, instrumentHeaderList);
         LOGGER.info("Logs for CreateReceipt : Receipt Creation Finished....");
-        return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService);
+        return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null);
     }
 
     /*
@@ -358,7 +358,7 @@ CollectionIntegrationService {
             return null;
         else {
             for (final ReceiptHeader receiptHeader : receiptHeaders)
-                receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService));
+                receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
             return receipts;
         }
 
@@ -460,7 +460,7 @@ CollectionIntegrationService {
          * receiptHeaderService.updateInstrument(voucherHeaderList, instrumentHeaderList); }
          */
         LOGGER.info("Logs For Miscellaneous Receipt : Receipt Creation Finished....");
-        return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService);
+        return new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null);
     }
 
     /*

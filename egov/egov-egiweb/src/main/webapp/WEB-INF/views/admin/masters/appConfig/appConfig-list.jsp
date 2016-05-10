@@ -90,8 +90,7 @@
 					</div>
 				</div>
 								<%-- <div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"></spring:message><small><i
-										class="entypo-star error-msg"></i></small></label>
+								<label class="col-sm-3 control-label"><spring:message code="lbl.AppconfigKeyName"></spring:message><span class="mandatory"></span></label>
 								<div class="col-sm-6 add-margin">
 	                            <form:select path="keyName"
 	                                         id="comp_type_dept" cssClass="form-control" cssErrorClass="form-control error" required="required">

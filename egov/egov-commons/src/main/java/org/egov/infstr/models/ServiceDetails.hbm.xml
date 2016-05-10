@@ -112,8 +112,21 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		</set>
 	</class>
 	
-		<query name="SERVICE_BY_CATEGORY_FOR_TYPE">
+	<query name="SERVICE_BY_CATEGORY_FOR_TYPE">
 		<![CDATA[select sd from org.egov.infstr.models.ServiceDetails sd where sd.serviceCategory.id=? and sd.serviceType=? and sd.isEnabled=?]]>
 	</query>
+	
+	<query name="getServicesByType">
+    <![CDATA[select s from ServiceDetails s where s.serviceType = ?]]></query>
+
+	<query name="getCollectionServices">
+    <![CDATA[select s from ServiceDetails s where s.serviceType in ('B', 'C')]]></query>
+
+	<query name="getServiceByCode">
+    <![CDATA[select s from ServiceDetails s where s.code=?]]></query>
+    
+    <query name="getServicesByName">
+    <![CDATA[select s from ServiceDetails s where s.name = ?]]></query>
+	
 	
 </hibernate-mapping>

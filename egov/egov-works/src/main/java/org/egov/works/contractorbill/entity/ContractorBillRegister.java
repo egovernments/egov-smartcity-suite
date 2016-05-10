@@ -39,15 +39,10 @@
  */
 package org.egov.works.contractorbill.entity;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.model.bills.EgBilldetails;
-import org.egov.model.bills.EgBillregister;
-import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.DeductionTypeForBill;
-import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -59,10 +54,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.model.bills.EgBilldetails;
+import org.egov.model.bills.EgBillregister;
+import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.models.contractorBill.AssetForBill;
+import org.egov.works.models.contractorBill.DeductionTypeForBill;
+import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
+import org.egov.works.models.measurementbook.MBHeader;
+import org.egov.works.models.workorder.WorkOrder;
 
 @Entity
 @Table(name = "EGW_CONTRACTORBILL")
@@ -115,6 +116,10 @@ public class ContractorBillRegister extends EgBillregister {
 
     @Transient
     private MBHeader mbHeader;
+
+    private String cancellationReason;
+
+    private String cancellationRemarks;
 
     @Override
     public String getStateDetails() {
@@ -245,5 +250,21 @@ public class ContractorBillRegister extends EgBillregister {
 
     public void setMbHeader(final MBHeader mbHeader) {
         this.mbHeader = mbHeader;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(final String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+
+    public String getCancellationRemarks() {
+        return cancellationRemarks;
+    }
+
+    public void setCancellationRemarks(final String cancellationRemarks) {
+        this.cancellationRemarks = cancellationRemarks;
     }
 }

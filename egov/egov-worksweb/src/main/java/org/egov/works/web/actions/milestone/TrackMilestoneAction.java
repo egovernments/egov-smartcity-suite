@@ -52,10 +52,10 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.milestone.Milestone;
-import org.egov.works.models.milestone.MilestoneActivity;
-import org.egov.works.models.milestone.TrackMilestone;
-import org.egov.works.models.milestone.TrackMilestoneActivity;
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.milestone.entity.MilestoneActivity;
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
@@ -169,7 +169,7 @@ public class TrackMilestoneAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/milestone/trackMilestone-newform")
     public String newform() {
-        if (trackMilestone.getEgwStatus() != null && trackMilestone.getEgwStatus().getCode().equals(WorksConstants.NEW)) {
+        if (trackMilestone.getStatus() != null && trackMilestone.getStatus().getCode().equals(WorksConstants.NEW)) {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(trackMilestone, user);
             if (isValidUser)
@@ -188,10 +188,10 @@ public class TrackMilestoneAction extends BaseFormAction {
         final String actionName = parameters.get("actionName")[0];
 
         if (id == null)
-            trackMilestone.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
+            trackMilestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
 
-        if (mode.equalsIgnoreCase("modify") && trackMilestone.getEgwStatus().getCode().equalsIgnoreCase("APPROVED"))
-            trackMilestone.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
+        if (mode.equalsIgnoreCase("modify") && trackMilestone.getStatus().getCode().equalsIgnoreCase("APPROVED"))
+            trackMilestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRACK_MILESTONE_MODULE_KEY, "NEW"));
         /*
          * TODO - check for application for commenting out this line for any issues
          */
@@ -200,7 +200,7 @@ public class TrackMilestoneAction extends BaseFormAction {
             trackMilestone.setIsProjectCompleted(Boolean.FALSE);
         trackMilestone = trackMilestoneService.persist(trackMilestone);
         trackMilestoneWorkflowService.transition(actionName, trackMilestone,
-                trackMilestone.getWorkflowapproverComments());
+                trackMilestone.getApprovalComent());
         trackMilestone = trackMilestoneService.persist(trackMilestone);
         messageKey = "trackMilestone." + actionName;
         addActionMessage("Estimate - "
@@ -219,7 +219,7 @@ public class TrackMilestoneAction extends BaseFormAction {
     public String cancel() {
         if (trackMilestone.getId() != null) {
             trackMilestoneWorkflowService.transition(TrackMilestone.Actions.CANCEL.toString(), trackMilestone,
-                    trackMilestone.getWorkflowapproverComments());
+                    trackMilestone.getApprovalComent());
             trackMilestone = trackMilestoneService.persist(trackMilestone);
         }
         messageKey = "trackMilestone.cancel";
@@ -229,7 +229,7 @@ public class TrackMilestoneAction extends BaseFormAction {
 
     public String reject() {
         trackMilestoneWorkflowService.transition(TrackMilestone.Actions.REJECT.toString(), trackMilestone,
-                trackMilestone.getWorkflowapproverComments());
+                trackMilestone.getApprovalComent());
         trackMilestone = trackMilestoneService.persist(trackMilestone);
         messageKey = "trackMilestone.reject";
         getDesignation(trackMilestone);
@@ -245,8 +245,8 @@ public class TrackMilestoneAction extends BaseFormAction {
     }
 
     public void getDesignation(final TrackMilestone trackMilestone) {
-        if (trackMilestone.getEgwStatus() != null
-                && !WorksConstants.NEW.equalsIgnoreCase(trackMilestone.getEgwStatus().getCode())) {
+        if (trackMilestone.getStatus() != null
+                && !WorksConstants.NEW.equalsIgnoreCase(trackMilestone.getStatus().getCode())) {
             final String result = worksService.getEmpNameDesignation(trackMilestone.getState().getOwnerPosition(),
                     trackMilestone.getState().getCreatedDate());
             if (result != null && !"@".equalsIgnoreCase(result)) {
@@ -309,13 +309,13 @@ public class TrackMilestoneAction extends BaseFormAction {
     @SkipValidation
     public String edit() {
         if ((SOURCE_INBOX.equalsIgnoreCase(sourcepage) || MODE_MODIFY.equalsIgnoreCase(mode))
-                && trackMilestone.getEgwStatus() != null
-                && !trackMilestone.getEgwStatus().getCode()
+                && trackMilestone.getStatus() != null
+                && !trackMilestone.getStatus().getCode()
                         .equals(TrackMilestone.TrackMilestoneStatus.APPROVED.toString())
-                && !trackMilestone.getEgwStatus().getCode()
+                && !trackMilestone.getStatus().getCode()
                         .equals(TrackMilestone.TrackMilestoneStatus.CANCELLED.toString())
-                || trackMilestone.getEgwStatus() != null
-                        && trackMilestone.getEgwStatus().getCode().equals(WorksConstants.NEW)) {
+                || trackMilestone.getStatus() != null
+                        && trackMilestone.getStatus().getCode().equals(WorksConstants.NEW)) {
             final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
             final boolean isValidUser = worksService.validateWorkflowForUser(trackMilestone, user);
             if (isValidUser)
@@ -345,8 +345,8 @@ public class TrackMilestoneAction extends BaseFormAction {
             addFieldError("milestone.activity.missing", "Milestone Activity is not added");
         BigDecimal percentage = BigDecimal.ZERO;
         for (final TrackMilestoneActivity trackmilestoneActivity : trackMilestone.getActivities()) {
-            if (trackmilestoneActivity.getComplPercentage() != null)
-                percentage = trackmilestoneActivity.getComplPercentage();
+            if (trackmilestoneActivity.getCompletedPercentage() != null)
+                percentage = trackmilestoneActivity.getCompletedPercentage();
             if (percentage.compareTo(BigDecimal.valueOf(100)) == 1) {
                 addFieldError("milestone.activity.total.percentage",
                         "Total activity percentage should not be greater than 100%");

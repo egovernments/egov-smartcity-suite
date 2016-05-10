@@ -39,13 +39,13 @@
  */
 package org.egov.collection.integration.models;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Location;
-import org.egov.infra.admin.master.entity.User;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
+
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Location;
+import org.egov.infra.admin.master.entity.User;
 
 public interface BillReceiptInfo {
 
@@ -164,6 +164,6 @@ public interface BillReceiptInfo {
      * @return Any additional information to be printed in receipt
      */
     public abstract String getAdditionalInfo();
-    
+
     public abstract String getSource();
 }

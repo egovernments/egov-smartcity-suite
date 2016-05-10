@@ -68,20 +68,20 @@ function loadingReport()
 					"aButtons" : [ 
 					               {
 						             "sExtends": "pdf",
-						             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+						             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],
 	                                 "sPdfMessage": "Data Entry Connection Report as on "+today+"",
 	                                 "sTitle": "Data Entry Connection Report",
 	                                 "sPdfOrientation": "landscape"
 					                },
 					                {
 							             "sExtends": "xls",
-							             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+							             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],
 		                                 "sPdfMessage": "Data Entry Connection Report",
 		                                 "sTitle": "Data Entry Connection Report"
 						             },
 						             {
 							             "sExtends": "print",
-							             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+							             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],
 		                                 "sPdfMessage": "Data Entry Connection Report",
 		                                 "sTitle": "Data Entry Connection Report"
 						             }],
@@ -100,11 +100,10 @@ function loadingReport()
 							  { "data" : "assessmentNo", "title": "PT Assessment Number"},
 							  { "data" : "ownerName", "title": "Name of the Applicant"},
 							  { "data" : "wardName", "title": "Zone / Ward / Block"},
-							  { "data" : "houseNo", "title": "Door No"},
 							  { "data" : "locality", "title": "Locality"},
 							  { "data" : "address", "title": "address"},
 							  { 
-								  "data" : "mobileNumber", "title": "Mobile Number",
+								  "data" : "mobileNumber", "title": "Mobile Number","className": "text-center",
 								  "render" : function(data, type, row) {
 									  return (!data || parseInt(data)==0? "NA" : data);
 								  }
@@ -116,16 +115,16 @@ function loadingReport()
 							  { "data" : "connectionType", "title": "Connection Type"},
 							  { "data" : "usageType", "title": "Usage Type"},
 							  { "data" : "category", "title": "Category"},
-							  { "data" : "pipeSizeInInch", "title": "H.S.C Pipe Size(Inches)"},
+							  { "data" : "pipeSizeInInch", "title": "H.S.C Pipe Size(Inches)","className": "text-center"},
 							  { "data" : "aadharNumber", "title": "Aaadhar No"},
-							  { "data" : "noOfPersons", "title": "No.Of Persons"},
-							  { "data" : "noOfFloors", "title": "No of floors"},
-							  { "data" : "sumpCapacity", "title": "Sump Capacity (Litres)"},
-							  { "data" : "donationCharges", "title": "Donation Charges"},
+							  { "data" : "noOfPersons", "title": "No.Of Persons", "className": "text-right"},
+							  { "data" : "noOfFloors", "title": "No of floors", "className": "text-right"},
+							  { "data" : "sumpCapacity", "title": "Sump Capacity (Litres)", "className": "text-right"},
+							  { "data" : "donationCharges", "title": "Donation Charges", "className": "text-right"},
 							  { "data" : "connectionDate", "title": "Connection Date"},
-							  { "data" : "monthlyFee", "title": "Monthly Fee"},
-							  { "data" : "waterTaxDue", "title": "Water Tax Due"},
-							  { "data" : "propertyTaxDue", "title": "Property Tax Due"}
+							  { "data" : "monthlyFee", "title": "Monthly Fee", "className": "text-right"},
+							  { "data" : "waterTaxDue", "title": "Water Charge Due", "className": "text-right"},
+							  { "data" : "propertyTaxDue", "title": "Property Tax Due", "className": "text-right"}
 							],
 							  "footerCallback" : function(row, data, start, end, display) {
 									var api = this.api(), data;

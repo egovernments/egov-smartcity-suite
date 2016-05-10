@@ -82,6 +82,7 @@ import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +149,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected WorkflowBean workflowBean;
     @Autowired
     private PropertyUsageService propertyUsageService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private List<File> uploads = new ArrayList<File>();
     private List<String> uploadFileNames = new ArrayList<String>();
@@ -348,7 +351,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 if (modifyRsn != null
                         && modifyRsn.equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)
                         && propertyTaxUtil.checkIsNagarPanchayat()) {
-                    currentInstallment = propertyTaxUtil.getCurrentInstallment();
+                    currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
                 }
                 for (final Floor floor : floorList) {
                     List<String> msgParams = null;

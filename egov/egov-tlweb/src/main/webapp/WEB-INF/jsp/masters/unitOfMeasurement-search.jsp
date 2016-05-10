@@ -46,7 +46,6 @@
 <html>
 <head>
 	<title><s:text name='uommaster.Search' /></title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 	function validateFormAndSubmit(mode){
 			var uomId= document.getElementById("uomId").value;

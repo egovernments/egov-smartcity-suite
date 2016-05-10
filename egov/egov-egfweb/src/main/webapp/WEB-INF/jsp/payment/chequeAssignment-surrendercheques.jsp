@@ -93,7 +93,7 @@
 							name="chq.assignment.surrendarreason" /></th>
 					<s:if test="%{!isChequeNoGenerationAuto()}">
 						<th class="bluebgheadtdnew"><s:text
-								name="chq.assignment.instrument.serialno" /></th>
+								name="chq.assignment.instrument.newserialno" /></th>
 						<th class="bluebgheadtdnew"><s:text
 								name="chq.assignment.newchequenumber" /></th>
 						<th class="bluebgheadtdnew"><s:text

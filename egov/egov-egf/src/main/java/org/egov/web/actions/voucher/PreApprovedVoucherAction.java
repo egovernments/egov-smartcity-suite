@@ -39,7 +39,15 @@
  */
 package org.egov.web.actions.voucher;
 
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -106,14 +114,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @Results({
         @Result(name = "editVoucher", type = "redirectAction", location = "journalVoucherModify-beforeModify", params = {
@@ -197,7 +198,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private ScriptService scriptService;
     private String mode = "";
     protected Long voucherId;
-    private EgBillregister billRegister ; 
+    private EgBillregister billRegister;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
 

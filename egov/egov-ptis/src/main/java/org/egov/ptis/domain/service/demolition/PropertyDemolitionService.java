@@ -40,6 +40,36 @@
 
 package org.egov.ptis.domain.service.demolition;
 
+import static java.lang.Boolean.FALSE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_FULL_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_PROPERTY_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -71,8 +101,9 @@ import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.FlushMode;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,16 +111,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-
-import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PropertyDemolitionService extends PersistenceService<PropertyImpl, Long> {
 
@@ -133,6 +154,9 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     
     @Autowired
     private ModuleService moduleDao;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Transactional
     public void saveProperty(Property oldProperty, Property newProperty, Character status, String comments,
@@ -163,7 +187,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
-        Installment currInstall = PropertyTaxUtil.getCurrentInstallment();
+        Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
         Date effectiveDate = null;
         boolean calculateForNextFinYear = false;
         
@@ -181,17 +205,19 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         Property modProperty = propService.createDemand(propertyModel, effectiveDate);
         Ptdemand currPtDmd = null;
         for (final Ptdemand demand : modProperty.getPtDemandSet())
-            if (demand.getIsHistory().equalsIgnoreCase("N"))
+            if (demand.getIsHistory().equalsIgnoreCase("N")){
                 if (demand.getEgInstallmentMaster().equals(currInstall)) {
                     currPtDmd = demand;
                     break;
                 }
+            }
         Ptdemand oldCurrPtDmd = null;
         for (final Ptdemand ptDmd : oldProperty.getPtDemandSet())
             if (ptDmd.getIsHistory().equalsIgnoreCase("N")) {
-                if (ptDmd.getEgInstallmentMaster().equals(currInstall))
+                if (ptDmd.getEgInstallmentMaster().equals(currInstall)){
                     oldCurrPtDmd = ptDmd;
                 	break;
+                }
             }
 
         Installment effectiveInstall = null;
@@ -329,7 +355,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         	try {
         		//Based on the current installment, fetch tax details for the respective installment
 				Map<String, Map<String,BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-				        PropertyTaxUtil.getCurrentInstallment());
+				        propertyTaxCommonUtils.getCurrentInstallment());
 				Map<String, BigDecimal> currentTaxDetails = propService.getCurrentTaxDetails(demandCollMap, new Date());
 				model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
 	            model.addAttribute("eduCess", (currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));

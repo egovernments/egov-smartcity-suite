@@ -42,7 +42,9 @@ package org.egov.api.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import net.coobird.thumbnailator.Thumbnails;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -76,6 +78,7 @@ import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
+import org.egov.search.domain.Document;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
@@ -96,6 +99,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -662,8 +666,7 @@ public class ComplaintController extends ApiController {
     @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateComplaintFromEmployee(@PathVariable final String complaintNo, @RequestParam(value = "jsonParams", required = false) String complaintJsonStr, @RequestParam("files") final MultipartFile[] files) {
 
-        String msg = null;
-        try {
+    	try {
         	
         	JsonObject complaintJson=new JsonParser().parse(complaintJsonStr).getAsJsonObject();
         	

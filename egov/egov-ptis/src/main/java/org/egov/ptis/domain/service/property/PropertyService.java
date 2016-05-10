@@ -100,6 +100,7 @@ import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +108,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -191,6 +193,8 @@ public class PropertyService {
     protected AssignmentService assignmentService;
     @Autowired
     private PropertyTaxCollection propertyTaxCollection;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private BigDecimal totalAlv = BigDecimal.ZERO;
 
@@ -477,7 +481,7 @@ public class PropertyService {
         List<Installment> instList = new ArrayList<Installment>();
         instList = new ArrayList<Installment>(instTaxMap.keySet());
         LOGGER.debug("createDemand: instList: " + instList);
-        currentInstall = PropertyTaxUtil.getCurrentInstallment();
+        currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
         // Clear existing EgDemandDetails and recreate them below 
         property.getPtDemandSet().clear(); 
        
@@ -560,7 +564,7 @@ public class PropertyService {
         LOGGER.debug("createDemandForModify: instList: " + instList);
         Ptdemand ptDemandOld = new Ptdemand();
         Ptdemand ptDemandNew = new Ptdemand();
-        final Installment currentInstall = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         ptDemandOld = oldPtdemandMap.get(currentInstall.getDescription());
         final PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
@@ -756,7 +760,7 @@ public class PropertyService {
         Ptdemand currentDemand = null;
 
         for (final Ptdemand ptdemand : property.getPtDemandSet())
-            if (ptdemand.getEgInstallmentMaster().equals(PropertyTaxUtil.getCurrentInstallment())) {
+            if (ptdemand.getEgInstallmentMaster().equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 currentDemand = ptdemand;
                 break;
             }
@@ -1473,7 +1477,7 @@ public class PropertyService {
         final Module module = moduleDao.getModuleByName(PTMODULENAME);
         final Installment effectiveInstall = installmentDao
                 .getInsatllmentByModuleForGivenDate(module, dateOfCompletion);
-        final Installment currInstall = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
         for (final Ptdemand demand : property.getPtDemandSet())
             if (demand.getIsHistory().equalsIgnoreCase("N"))
                 if (demand.getEgInstallmentMaster().equals(currInstall)) {
@@ -1760,7 +1764,7 @@ public class PropertyService {
                 DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS,
                 DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-        final Installment currerntInstallment = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currerntInstallment = propertyTaxCommonUtils.getCurrentInstallment();
 
         for (final Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment : excessCollAmtMap
                 .entrySet()) {
@@ -1902,7 +1906,7 @@ public class PropertyService {
                                  */
                                 if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
                                     EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
-                                            newDemandDetailsByInstallment.get(PropertyTaxUtil.getCurrentInstallment()),
+                                            newDemandDetailsByInstallment.get(propertyTaxCommonUtils.getCurrentInstallment()),
                                             demandReason);
                                     /**
                                      * if the demand reason does not exist in the current installment then adjusting the remaining
@@ -1915,7 +1919,7 @@ public class PropertyService {
                                         reasons.remove(demandReason);
                                         for (final String rsn : reasons) {
                                             currentDemandDetail = getEgDemandDetailsForReason(
-                                                    newDemandDetailsByInstallment.get(PropertyTaxUtil
+                                                    newDemandDetailsByInstallment.get(propertyTaxCommonUtils
                                                             .getCurrentInstallment()), rsn);
                                             if (currentDemandDetail != null)
                                                 break;

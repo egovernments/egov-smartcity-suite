@@ -187,6 +187,7 @@ function validate(obj,text){
 <s:if test="%{model.id!=null}">
 	<s:hidden name="id" value="%{id}" id="id"/>
     <s:hidden name="mode" value="%{mode}" id="mode"/>
+    
 </s:if> 
 <s:else>
     <s:hidden name="id" value="%{null}" id="id" />

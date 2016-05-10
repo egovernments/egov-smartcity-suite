@@ -165,5 +165,10 @@
 		<put-attribute name="page-title" value="hdr.letterofacceptance.modify" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-view.jsp"/>
 	</definition>
+	
+	<definition name="searchcontractorbill-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.contractor.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractorbill/searchContractorBillToCancel-header.jsp"/>
+    </definition>
     
 </tiles-definitions>

@@ -36,9 +36,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-<html>
+  --%><html>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <head>
 <script type="text/javascript">
@@ -103,10 +101,5 @@ function goToParent(glcode,coaid) {
 				onclick="javascript:window.close()" class="button" />
 		</div>
 	</s:form>
-
-
-
-
 </body>
 </html>
-

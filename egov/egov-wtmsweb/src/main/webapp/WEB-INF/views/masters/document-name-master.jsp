@@ -66,7 +66,7 @@
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.document.name" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin"  id="documentNamesdiv">
-					<form:input class="form-control patternvalidation"  data-pattern="alphanumericwithspaceanddot"  maxlength="32" id="documentName"path="documentName" required="required" />
+					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspaceanddot" maxlength="32" id="documentName" path="documentName" required="required" />
 				</div>
 			</div>
 			<div class="form-group" id="reqdiv">

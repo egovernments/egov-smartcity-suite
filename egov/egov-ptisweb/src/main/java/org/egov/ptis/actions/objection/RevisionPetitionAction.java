@@ -104,10 +104,12 @@ import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -219,6 +221,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
     private MessagingService messagingService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
     private SMSEmailService sMSEmailService;
     private String actionType;
     private String fileStoreIds;
@@ -843,7 +847,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			BigDecimal totalTax, BigDecimal propertyTax, Ptdemand currDemand,String propertyType) {
 		for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
 		    if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-		            .equals(PropertyTaxUtil.getCurrentInstallment())){
+		            .equals(propertyTaxCommonUtils.getCurrentInstallment())){
 		    	totalTax = totalTax.add(demandDetail.getAmount());
 
 			    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -935,18 +939,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             objection.getBasicProperty().setStatus(
                     propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_CODE_ASSESSED));
             objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
-            /*
-             * Mean if commissioner reject revision petition, then current
-             * workflow property will become history record.
-             */
-            objection.getProperty().setStatus(STATUS_ISHISTORY);
-
             objection.end().withStateValue(PropertyTaxConstants.WFLOW_ACTION_END).withOwner(position).withOwner(user)
                     .withComments(approverComments);
 
         } else
-            updateStateAndStatus(objection); // If objection not rejected, then
-        // print special notice.
+            updateStateAndStatus(objection); // If objection not rejected, then print special notice.
         getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportOutput = createEndoresement(reportOutput, objection);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
@@ -1550,6 +1547,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         viewPropertyAction.setPtDemandDAO(ptDemandDAO);
         viewPropertyAction.setPropertyId(propertyId);
         viewPropertyAction.setPropertyTaxUtil(propertyTaxUtil);
+        viewPropertyAction.setPropertyTaxCommonUtils(propertyTaxCommonUtils);
         viewPropertyAction.setUserService(userService);
         viewPropertyAction.setSession(getSession());
         viewPropertyAction.viewForm();

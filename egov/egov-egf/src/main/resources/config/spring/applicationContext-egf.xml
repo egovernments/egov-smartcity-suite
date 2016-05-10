@@ -207,7 +207,10 @@
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="financialYearDAO" ref="financialYearDAO" />
 	</bean>
-
+	
+	<bean id="transferClosingBalanceService" class="org.egov.services.pea.TransferClosingBalanceService">
+	</bean>
+	
 	<bean id="bankService" class="org.egov.services.masters.BankService">
 		<constructor-arg index="0" value="org.egov.commons.Bank" />
 	</bean>

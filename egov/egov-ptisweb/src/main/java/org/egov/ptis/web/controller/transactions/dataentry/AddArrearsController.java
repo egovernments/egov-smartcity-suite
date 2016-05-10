@@ -55,6 +55,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,6 +68,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -104,6 +106,9 @@ public class AddArrearsController {
 
     @Autowired
     private PersistenceService<Ptdemand, Long> persistenceService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @ModelAttribute
     public ArrearsInfo getArrearsInfo() {
@@ -122,7 +127,7 @@ public class AddArrearsController {
                 Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, installmentDate);
                 Ptdemand ptDemand = persistenceService.find(
                         "from  Ptdemand ptd where ptd.egptProperty =? and ptd.egInstallmentMaster.id =? ",
-                        property, PropertyTaxUtil.getCurrentInstallment().getId());
+                        property, propertyTaxCommonUtils.getCurrentInstallment().getId());
                 Boolean arrearDemandExists = checkDemandExistsForInstallment(ptDemand, installment);
                 model.addAttribute("propertyType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
                 model.addAttribute("arrearsMessage", "Arrears as on " + installment.getDescription());
@@ -164,7 +169,7 @@ public class AddArrearsController {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         Ptdemand ptDemand = persistenceService.find(
                 "from  Ptdemand ptd where ptd.egptProperty =? and ptd.egInstallmentMaster.id =? ",
-                basicProperty.getActiveProperty(), PropertyTaxUtil.getCurrentInstallment().getId());
+                basicProperty.getActiveProperty(), propertyTaxCommonUtils.getCurrentInstallment().getId());
         addDemandDetails(arrearsInfo, ptDemand);
         persistenceService.update(ptDemand);
         model.addAttribute("successMessage", "Arrears are added successfully!");

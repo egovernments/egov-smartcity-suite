@@ -39,13 +39,30 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
@@ -69,26 +86,13 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 
 @Service
 @Transactional(readOnly = true)
@@ -98,6 +102,7 @@ public class WaterTaxCollection extends TaxCollection {
     private EgBillDao egBillDAO;
     @Autowired
     private ModuleService moduleService;
+    
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -118,12 +123,16 @@ public class WaterTaxCollection extends TaxCollection {
 
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private  FinancialYearDAO financialYearDAO;
 
     @Autowired
     private FunctionHibernateDAO functionDAO;
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    
+    
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -483,20 +492,32 @@ public class WaterTaxCollection extends TaxCollection {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
-
+        final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         BigDecimal arrearAmount = BigDecimal.ZERO;
-
-        for (final EgBillDetails billDet : egBill.getEgBillDetails())
-            if (billDet.getCrAmount() != null && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
-                final String[] desc = billDet.getDescription().split("-", 2);
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .getWaterConnectionDetailsByDemand(egBill.getEgDemand());
+        for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+            	final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String[] installsplit = desc[1].split("#");
-                if (installsplit[0].trim().equals(installsplit[1].trim()))
-                    currentInstallmentAmount = currentInstallmentAmount.add(billDet.getCrAmount());
+                final String[] installsplit1 = installsplit[0].split("-");
+             if(waterConnectionDetails!=null && (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED) || 
+            		   waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))){
+                 if (installsplit1[0].trim().equals((financialyear !=null ? financialyear.getFinYearRange().split("-")[0]:null)) )
+                    currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
                 else
-                    arrearAmount = arrearAmount.add(billDet.getCrAmount());
-
+                    arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
             }
+               else
+               {
+            	   if(installsplit[0].split("/")[1].split("-")[1].trim().equals(financialyear.getFinYearRange().split("-")[1].trim()))
+            		   currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                   else
+                       arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
+               }
+            }
+      
 
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
             if (billDet.getOrderNo() == 1) {

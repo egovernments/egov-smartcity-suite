@@ -65,12 +65,14 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -121,6 +123,9 @@ public class PTBillServiceImpl extends BillServiceInterface {
     @Autowired
     private ApplicationContext context;
     
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -144,7 +149,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         final PropertyTaxBillable billable = (PropertyTaxBillable) billObj;
 
         if (billable.isMutationFeePayment()) {
-            final Installment currInstallment = PropertyTaxUtil.getCurrentInstallment();
+            final Installment currInstallment = propertyTaxCommonUtils.getCurrentInstallment();
             billdetail = new EgBillDetails();
             billdetail.setOrderNo(1);
             billdetail.setCreateDate(new Date());

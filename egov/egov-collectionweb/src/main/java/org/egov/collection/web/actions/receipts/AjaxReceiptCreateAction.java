@@ -386,7 +386,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
         if (null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0]
                 && Integer.valueOf(parameters.get("serviceCatId")[0]) != -1)
-            serviceList = getPersistenceService().findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
+            serviceList = getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE,
                     Long.valueOf(parameters.get("serviceCatId")[0]), CollectionConstants.SERVICE_TYPE_COLLECTION,
                     Boolean.TRUE);
         else

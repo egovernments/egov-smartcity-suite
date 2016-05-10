@@ -83,20 +83,15 @@
 						<c:if test="${!contractorBillRegister.documentDetails.isEmpty()}">
 							<jsp:include page="uploadDocuments.jsp"/>
 						</c:if>
-						<c:if test="${mode == 'readOnly'}">
-						<div class="row">
-							<div class="col-sm-12 text-center">
-								<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
-								<c:if test="${contractorBillRegister.billstatus == 'APPROVED' }">
-								<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.contractorbillpdf" /></a>
-								</c:if>
-							</div>
-						</div>
-						</c:if>
 						</div>
 					</div>
 				</div>
-			</div>	
+			</div>
+			<c:if test="${contractorBillRegister.cancellationReason != null}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<jsp:include page="contractorBillCancel-view.jsp"></jsp:include>
+				</div>
+			</c:if>
 			<c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
@@ -112,6 +107,16 @@
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
+			</c:if>
+			<c:if test="${mode == 'readOnly'}">
+				<div class="row">
+					<div class="col-sm-12 text-center">
+						<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+						<c:if test="${contractorBillRegister.billstatus == 'APPROVED' }">
+						<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.contractorbillpdf" /></a>
+						</c:if>
+					</div>
+				</div>
 			</c:if>
 		</form:form>  
 	

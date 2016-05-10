@@ -40,6 +40,32 @@
 
 package org.egov.ptis.domain.service.exemption;
 
+import static java.lang.Boolean.FALSE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.commons.Installment;
@@ -48,6 +74,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -68,7 +95,8 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.joda.time.DateTime;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,15 +105,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -116,6 +135,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     PropertyImpl propertyModel = new PropertyImpl();
 
@@ -133,6 +155,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
     @Autowired
     private MessagingService messagingService;
+    
+    Property property = null;
 
     @Transactional
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
@@ -264,7 +288,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             LOGGER.debug(" WorkFlow Transition Completed for Demolition ...");
     }
 
-        Property property = null;
         public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
         if (null != basicProperty.getWFProperty())
             property = basicProperty.getWFProperty();
@@ -277,30 +300,41 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             model.addAttribute("ARV", BigDecimal.ZERO);
         model.addAttribute("propertyByEmployee", propService.isEmployee(securityUtils.getCurrentUser()));
         if (!property.getIsExemptedFromTax()) {
-            final Map<String, BigDecimal> demandCollMap = null;
-            model.addAttribute("currTax", demandCollMap.get(CURR_DMD_STR));
-            model.addAttribute("eduCess", demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-            model.addAttribute("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-            model.addAttribute("libraryCess", demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS));
-            model.addAttribute("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
+            Map<String, Map<String, BigDecimal>> demandCollMap;
+            try {
+                demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+                        propertyTaxCommonUtils.getCurrentInstallment());
+           
+            Map<String, BigDecimal> currentTaxDetails = propService.getCurrentTaxDetails(demandCollMap, new Date());
+            model.addAttribute("currTax", currentTaxDetails.get(CURR_DMD_STR));
+            model.addAttribute("eduCess", currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+            model.addAttribute("currTaxDue", currentTaxDetails.get(CURR_DMD_STR).subtract(currentTaxDetails.get(CURR_COLL_STR)));
+            model.addAttribute("libraryCess", currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS));
+            model.addAttribute("totalArrDue", currentTaxDetails.get(ARR_DMD_STR).subtract(currentTaxDetails.get(ARR_COLL_STR)));
             BigDecimal propertyTax = BigDecimal.ZERO;
-            if (null != demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX))
-                propertyTax = demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX);
+            if (null != currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX))
+                propertyTax = currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX);
             else
-                propertyTax = demandCollMap.get(DEMANDRSN_STR_VACANT_TAX);
+                propertyTax = currentTaxDetails.get(DEMANDRSN_STR_VACANT_TAX);
             final BigDecimal totalTax = propertyTax
-                    .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                    .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
+                    .add(currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_LIBRARY_CESS))
+                    .add(currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
             model.addAttribute("propertyTax", propertyTax);
-            if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null) {
-                model.addAttribute("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-                model.addAttribute("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
+            if (currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)!=null) {
+                model.addAttribute("unauthorisedPenalty", currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
+                model.addAttribute("totalTax", totalTax.add(currentTaxDetails.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
                 model.addAttribute("showUnauthorisedPenalty", "yes");
             } else {
                 model.addAttribute("totalTax", totalTax);
                 model.addAttribute("showUnauthorisedPenalty", "no");
             }
         }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            throw new ApplicationRuntimeException("Exception in addModelAttributes : " + e);
+        }
+        }
+        
     }
 
     public Boolean isPropertyByEmployee(final Property property) {

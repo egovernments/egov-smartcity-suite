@@ -162,7 +162,7 @@ public class ContractorBillRegisterService {
             final LineEstimateDetails lineEstimateDetails, final MultipartFile[] files,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction)
-                    throws IOException {
+            throws IOException {
 
         contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                 ContractorBillRegister.BillStatus.CREATED.toString()));
@@ -317,11 +317,11 @@ public class ContractorBillRegisterService {
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             final String stateValue = WorksConstants.WF_STATE_REJECTED;
             contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approvalComent)
-                    .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator.getPosition())
-                    .withNextAction("")
-                    .withNatureOfTask(natureOfwork);
+            .withComments(approvalComent)
+            .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+            .withOwner(wfInitiator.getPosition())
+            .withNextAction("")
+            .withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
@@ -330,27 +330,27 @@ public class ContractorBillRegisterService {
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, currState, null);
                 contractorBillRegister.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
+                .withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction())
+                .withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
                 contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction("")
-                        .withNatureOfTask(natureOfwork);
+                .withComments(approvalComent)
+                .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
+                .withNextAction("")
+                .withNatureOfTask(natureOfwork);
             } else {
                 wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister.getStateType(), null,
                         null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
                 contractorBillRegister.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
+                .withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                .withNextAction(wfmatrix.getNextAction())
+                .withNatureOfTask(natureOfwork);
             }
         }
         if (LOG.isDebugEnabled())
@@ -483,4 +483,67 @@ public class ContractorBillRegisterService {
                 ContractorBillRegister.BillStatus.CANCELLED.toString(), id);
     }
 
+    public List<ContractorBillRegister> searchContractorBillsToCancel(
+            final SearchRequestContractorBill searchRequestContractorBill) {
+        // TODO Need TO handle in single query
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
+                .createAlias("workOrder", "cbrwo")
+                .createAlias("cbrwo.contractor", "cbrwocont");
+
+        if (searchRequestContractorBill != null) {
+            if (searchRequestContractorBill.getBillNumber() != null)
+                criteria.add(Restrictions.ilike("billnumber", searchRequestContractorBill.getBillNumber(), MatchMode.ANYWHERE));
+            if (searchRequestContractorBill.getStatus() != null)
+                criteria.add(Restrictions.eq("billstatus", searchRequestContractorBill.getStatus()));
+            if (searchRequestContractorBill.getWorkIdentificationNumber() != null) {
+                final List<String> estimateNumbersforWIN = lineEstimateService
+                        .getEstimateNumbersForWorkIdentificationNumber(searchRequestContractorBill.getWorkIdentificationNumber());
+                if (estimateNumbersforWIN.isEmpty())
+                    estimateNumbersforWIN.add("");
+                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforWIN));
+            }
+            if (searchRequestContractorBill.getDepartment() != null) {
+                final List<String> estimateNumbers = lineEstimateService
+                        .getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());
+                if (estimateNumbers.isEmpty())
+                    estimateNumbers.add("");
+                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbers));
+            }
+            if (searchRequestContractorBill.getWorkOrderNumber() != null) {
+                final List<String> workOrderNumbers = contractorBillRegisterRepository
+                        .findWorkOrderNumbersToCancel("%" + searchRequestContractorBill.getWorkOrderNumber() + "%",
+                                ContractorBillRegister.BillStatus.APPROVED.toString());
+                if (workOrderNumbers.isEmpty())
+                    workOrderNumbers.add("");
+                criteria.add(Restrictions.in("cbrwo.workOrderNumber", workOrderNumbers));
+            }
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
+    public List<String> findWorkIdentificationNumbersToSearchContractorBillToCancel(final String code) {
+        final List<String> workIdNumbers = contractorBillRegisterRepository
+                .findWorkIdentificationNumberToSearchContractorBillToCancel("%" + code + "%",
+                        ContractorBillRegister.BillStatus.APPROVED.toString());
+        return workIdNumbers;
+    }
+
+    public List<String> findBillNumbersToSearchContractorBillToCancel(final String billNumber) {
+        final List<String> workIdNumbers = contractorBillRegisterRepository
+                .findBillNumberToSearchContractorBillToCancel("%" + billNumber + "%",
+                        ContractorBillRegister.BillStatus.APPROVED.toString());
+        return workIdNumbers;
+    }
+
+    @Transactional
+    public ContractorBillRegister cancel(final ContractorBillRegister contractorBillRegister) {
+        contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
+                ContractorBillRegister.BillStatus.CANCELLED.toString()));
+        contractorBillRegister.setBillstatus(ContractorBillRegister.BillStatus.CANCELLED.toString());
+        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(contractorBillRegister);
+        for (final MBHeader mbHeader : mbHeaders)
+            mbHeaderService.cancel(mbHeader);
+        return contractorBillRegisterRepository.save(contractorBillRegister);
+    }
 }

@@ -126,8 +126,10 @@ public class DataEntryConnectionReportController {
         for (final DataEntryConnectionReport dataEntryReport : dataEntryConnectionReportlist) {
             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                     .findByApplicationNumberOrConsumerCode(dataEntryReport.getHscNo());
-            if (waterConnectionDetails.getExistingConnection()!=null)
-            dataEntryReport.setMonthlyFee(waterConnectionDetails.getExistingConnection().getMonthlyFee());
+            if (waterConnectionDetails.getExistingConnection() != null) {
+                dataEntryReport.setDonationCharges(waterConnectionDetails.getExistingConnection().getDonationCharges());
+                dataEntryReport.setMonthlyFee(waterConnectionDetails.getExistingConnection().getMonthlyFee());
+            }
         }
         result = new StringBuilder("{ \"data\":").append(toJSON(dataEntryConnectionReportlist)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

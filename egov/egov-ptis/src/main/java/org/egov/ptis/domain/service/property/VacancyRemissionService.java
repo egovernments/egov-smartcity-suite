@@ -68,7 +68,8 @@ import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
-import org.joda.time.DateTime;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,6 +136,9 @@ public class VacancyRemissionService {
 
     @Autowired
     private MessagingService messagingService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
     
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo);
@@ -239,14 +243,6 @@ public class VacancyRemissionService {
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
 	                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
-	                	Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-	                    Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
-	                    Installment installmentSecondHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
-	                    /*
-	                     * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
-	                     */
-	                    if(DateUtils.between(vacancyRemission.getVacancyToDate(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
-	                    	updateDemandDetailsWithRebate(vacancyRemission, installmentFirstHalf, installmentSecondHalf);
 	            		buildSMS(vacancyRemission, workFlowAction);
 	                }
             }
@@ -293,7 +289,7 @@ public class VacancyRemissionService {
         	try {
         		//Based on the current installment, fetch tax details for the respective installment
 				Map<String, Map<String,BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-				        PropertyTaxUtil.getCurrentInstallment());
+				        propertyTaxCommonUtils.getCurrentInstallment());
 				Map<String, BigDecimal> currentTaxDetails = propertyService.getCurrentTaxDetails(demandCollMap, new Date());
 				model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
 	            model.addAttribute("eduCess", (currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
@@ -426,7 +422,7 @@ public class VacancyRemissionService {
             } else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemissionApproval.getStateType(), null,
                         null, additionalRule, vacancyRemissionApproval.getCurrentState().getValue(), null);
-                if (wfmatrix != null)
+                if (wfmatrix != null){
                     if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                         vacancyRemissionApproval.transition().end().withSenderName(user.getName())
                                 .withComments(approvalComent).withDateInfo(currentDate.toDate());
@@ -435,6 +431,17 @@ public class VacancyRemissionService {
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
+	                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
+	                	Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+	                    Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+	                    Installment installmentSecondHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+	                    /*
+	                     * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
+	                     */
+	                    if(DateUtils.between(vacancyRemissionApproval.getVacancyRemission().getVacancyToDate(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
+	                    	updateDemandDetailsWithRebate(vacancyRemissionApproval.getVacancyRemission(), installmentFirstHalf, installmentSecondHalf);
+	                }
+                }
             }
         }
         if (LOG.isDebugEnabled())

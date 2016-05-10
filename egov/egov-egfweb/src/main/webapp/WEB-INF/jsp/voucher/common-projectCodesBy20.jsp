@@ -36,6 +36,4 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-<s:if test="fundId==0">Please select Fund</s:if><s:else><s:if test="projectCodeStringList.size() == 0"> Nothing found to display</s:if>	<s:else><s:iterator var="pc" value="projectCodeStringList" status="status"><s:property value="toString()" />~^</s:iterator>	</s:else></s:else>
+  --%><s:if test="fundId==0">Please select Fund</s:if><s:else><s:if test="projectCodeStringList.size() == 0"> Nothing found to display</s:if>	<s:else><s:iterator var="pc" value="projectCodeStringList" status="status"><s:property value="toString()" />~^</s:iterator>	</s:else></s:else>

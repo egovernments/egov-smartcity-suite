@@ -42,6 +42,16 @@
  */
 package org.egov.ptis.actions.recovery;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
@@ -77,18 +87,9 @@ import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.domain.service.notice.NoticeService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 @Transactional(readOnly = true)
 public class BaseRecoveryAction extends PropertyTaxBaseAction {
@@ -112,6 +113,8 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	private ModuleService moduleDao;
 	@Autowired
 	private EgBillDao egBillDAO;
+	@Autowired
+	private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
 	@Override
 	public StateAware getModel() {
@@ -207,7 +210,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	public Long getDemandReason(String demandMaster) {
 		StringBuffer query = new StringBuffer();
 		query.append(" from EgDemandReason where egDemandReasonMaster.reasonMaster='" + demandMaster + "'").append(
-				" and egInstallmentMaster.id='" + propertyTaxUtil.getCurrentInstallment().getId() + "'");
+				" and egInstallmentMaster.id='" + propertyTaxCommonUtils.getCurrentInstallment().getId() + "'");
 		EgDemandReason demandReason = (EgDemandReason) persistenceService.find(query.toString());
 
 		return demandReason.getId();

@@ -64,13 +64,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -113,7 +117,7 @@ public class EditDemandForDataEntryController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final WaterConnectionDetails waterConnectionDetails) {
         final List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
-        final List<DemandDetail> demandDetailBeanTempList = new ArrayList<DemandDetail>();
+        Set <DemandDetail> tempDemandDetail=new LinkedHashSet<DemandDetail>();
         List<Installment> allInstallments = new ArrayList<Installment>();
         final DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
         try {
@@ -143,9 +147,9 @@ public class EditDemandForDataEntryController {
                                 BigDecimal.ZERO, null, waterConnectionDetails);
 
                 }
-                demandDetailBeanTempList.add(dmdDtl);
+                tempDemandDetail.add(dmdDtl);
             }
-        for (final DemandDetail demandDetList : demandDetailBeanTempList)
+        for (final DemandDetail demandDetList : tempDemandDetail)
             if (demandDetList != null)
                 demandDetailBeanList.add(demandDetList);
         model.addAttribute("demandDetailBeanList", demandDetailBeanList);

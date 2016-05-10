@@ -67,6 +67,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -175,6 +176,8 @@ public class EditDemandAction extends BaseFormAction {
     private InstallmentHibDao installmentDAO;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
@@ -406,7 +409,7 @@ public class EditDemandAction extends BaseFormAction {
                 }
             }
 
-            Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
+            Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
             resultPage = RESULT_NEW;
         }
 
@@ -515,7 +518,7 @@ public class EditDemandAction extends BaseFormAction {
 
         List<EgDemandDetails> demandDetailsFromDB = getPersistenceService().findAllBy(QUERY_NONZERO_DEMAND_DETAILS,
                 basicProperty);
-        Installment currentInstallment = propertyTaxUtil.getCurrentInstallment();
+        Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         Map<Installment, List<EgDemandDetails>> demandDetails = new TreeMap<Installment, List<EgDemandDetails>>();
         Map<Installment, BigDecimal> baseDemands = new TreeMap<Installment, BigDecimal>();
 

@@ -36,6 +36,4 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-<s:if test="function==null">Please select function </s:if><s:else><s:if test="functionCodesList.size == 0 ">	</s:if><s:else><s:iterator var="s" value="functionCodesList" status="status"><s:property value="%{code}"/>`~`<s:property value="%{name}"/>`~`<s:property value="%{id}"/>~^</s:iterator></s:else></s:else>
+  --%><s:if test="function==null">Please select function </s:if><s:else><s:if test="functionCodesList.size == 0 ">	</s:if><s:else><s:iterator var="s" value="functionCodesList" status="status"><s:property value="%{code}"/>`~`<s:property value="%{name}"/>`~`<s:property value="%{id}"/>~^</s:iterator></s:else></s:else>

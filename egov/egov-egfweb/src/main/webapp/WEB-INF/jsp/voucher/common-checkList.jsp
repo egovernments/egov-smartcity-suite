@@ -36,7 +36,4 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-<s:iterator var="s" value="checkList" status="status">	<s:property value="%{value}" />`-`<s:property value="id" />+</s:iterator>
-^
+  --%><s:iterator var="s" value="checkList" status="status">	<s:property value="%{value}" />`-`<s:property value="id" />+</s:iterator>^

@@ -39,6 +39,8 @@
  */
 package org.egov.collection.web.actions.service;
 
+import java.util.Collection;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -48,12 +50,10 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
 
-import java.util.Collection;
-
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceCategoryAction.NEW, location = "serviceCategory-new.jsp"),
-        @Result(name = ServiceCategoryAction.EDIT, location = "serviceCategory-edit.jsp"),
-        @Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp") })
+    @Result(name = ServiceCategoryAction.EDIT, location = "serviceCategory-edit.jsp"),
+    @Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp") })
 public class ServiceCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -75,7 +75,8 @@ public class ServiceCategoryAction extends BaseFormAction {
 
     @Action(value = "/service/serviceCategory-edit")
     public String edit() {
-        serviceCategoryInstance = serviceCategoryService.findByNamedQuery("SERVICE_CATEGORY_CODE", code);
+        serviceCategoryInstance = serviceCategoryService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_CATEGORY_BY_CODE,
+                code);
         return EDIT;
     }
 
@@ -106,7 +107,7 @@ public class ServiceCategoryAction extends BaseFormAction {
     public void setServiceCategoryService(final PersistenceService<ServiceCategory, Long> serviceCategoryService) {
         this.serviceCategoryService = serviceCategoryService;
     }
-    
+
     public String getCode() {
         return code;
     }

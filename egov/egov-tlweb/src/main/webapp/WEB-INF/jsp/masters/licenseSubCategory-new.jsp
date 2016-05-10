@@ -56,7 +56,6 @@
 		<s:text name='licenseSubCategory.view' />
 	</s:elseif>	
 	</title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 
 	function bodyOnLoad(){

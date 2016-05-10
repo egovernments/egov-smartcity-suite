@@ -133,7 +133,7 @@
 				<tr>
 					<th><spring:message code="lbl.select" /></th>
 					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.estimateno" /></th>
+					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
 					<th><spring:message code="lbl.lineestimatedate" /></th>

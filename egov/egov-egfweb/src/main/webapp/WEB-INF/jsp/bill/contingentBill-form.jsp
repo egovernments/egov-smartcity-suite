@@ -47,7 +47,7 @@
 	<td class="greybox"><s:text name="function" /><span
 		class="mandatory1"> *</span></td>
 	<td class="greybox"><s:textfield name="commonBean.functionName"
-			id="commonBean.functionName"
+			id="commonBean.functionName" autocomplete='off'
 			onkeyup="autocompletecodeFunctionHeader(this,event)"
 			onblur="fillNeibrAfterSplitFunctionHeader(this)" size="30" /> <s:hidden
 			name="commonBean.functionId" id="commonBean.functionId" /></td>

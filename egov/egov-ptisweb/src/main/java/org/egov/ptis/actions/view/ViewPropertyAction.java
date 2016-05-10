@@ -65,6 +65,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -113,6 +114,8 @@ public class ViewPropertyAction extends BaseFormAction {
     @Autowired
     @Qualifier("transferOwnerService")
     private PropertyTransferService transferOwnerService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private boolean isNagarPanchayat = false;
 
@@ -166,7 +169,7 @@ public class ViewPropertyAction extends BaseFormAction {
             }
             if (!property.getIsExemptedFromTax()) {
                 demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                        propertyTaxUtil.getCurrentInstallment());
+                        propertyTaxCommonUtils.getCurrentInstallment());
                 for (Entry<String, Map<String, BigDecimal>> entry : demandCollMap.entrySet()) {
                     String key = entry.getKey();
                     Map<String, BigDecimal> reasonDmd = entry.getValue();
@@ -432,6 +435,14 @@ public class ViewPropertyAction extends BaseFormAction {
 
     public void setIsCitizen(String isCitizen) {
         this.isCitizen = isCitizen;
+    }
+
+    public PropertyTaxCommonUtils getPropertyTaxCommonUtils() {
+        return propertyTaxCommonUtils;
+    }
+
+    public void setPropertyTaxCommonUtils(PropertyTaxCommonUtils propertyTaxCommonUtils) {
+        this.propertyTaxCommonUtils = propertyTaxCommonUtils;
     }
     
 }

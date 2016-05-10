@@ -39,44 +39,69 @@
  */
 package org.egov.works.models.masters;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.egov.commons.EgwTypeOfWork;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.works.models.workflow.WorkFlow;
-
-import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author vikas
- */
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-@Unique(fields = { "code" }, id = "id", tableName = "EGW_MILESTONE_TEMPLATE", columnName = {
-        "CODE" }, message = "milestonetemplate.code.isunique")
-public class MilestoneTemplate extends WorkFlow {
+import org.egov.commons.EgwTypeOfWork;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
-    private static final long serialVersionUID = 3503700429117169848L;
+@Entity
+@Table(name = "EGW_MILESTONE_TEMPLATE")
+@Unique(id = "id", tableName = "EGW_MILESTONE_TEMPLATE", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = MilestoneTemplate.SEQ_EGW_MILESTONE_TEMPLATE, sequenceName = MilestoneTemplate.SEQ_EGW_MILESTONE_TEMPLATE, allocationSize = 1)
+public class MilestoneTemplate extends AbstractAuditable {
 
-    @Required(message = "milestonetemplate.code.not.null")
+    private static final long serialVersionUID = 474905206086516812L;
+
+    public static final String SEQ_EGW_MILESTONE_TEMPLATE = "SEQ_EGW_MILESTONE_TEMPLATE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_MILESTONE_TEMPLATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     private String code;
-    @Required(message = "milestonetemplate.name.not.null")
+
     private String name;
-    @Required(message = "milestonetemplate.description.not.null")
+
     private String description;
+
     private Integer status;
-    @Required(message = "milestonetemplate.workType.not.null")
-    private EgwTypeOfWork workType;
-    private EgwTypeOfWork subType;
 
-    // private EgwStatus egwStatus;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "typeOfWork", nullable = false)
+    private EgwTypeOfWork typeOfWork;
 
-    @Valid
-    private List<MilestoneTemplateActivity> milestoneTemplateActivities = new LinkedList<MilestoneTemplateActivity>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subTypeOfWork")
+    private EgwTypeOfWork subTypeOfWork;
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "milestoneTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MilestoneTemplateActivity.class)
+    private final List<MilestoneTemplateActivity> milestoneTemplateActivities = new ArrayList<MilestoneTemplateActivity>(0);
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public String getCode() {
         return code;
@@ -110,54 +135,28 @@ public class MilestoneTemplate extends WorkFlow {
         this.status = status;
     }
 
-    public EgwTypeOfWork getWorkType() {
-        return workType;
+    public EgwTypeOfWork getTypeOfWork() {
+        return typeOfWork;
     }
 
-    public void setWorkType(final EgwTypeOfWork workType) {
-        this.workType = workType;
+    public void setTypeOfWork(final EgwTypeOfWork typeOfWork) {
+        this.typeOfWork = typeOfWork;
     }
 
-    public EgwTypeOfWork getSubType() {
-        return subType;
+    public EgwTypeOfWork getSubTypeOfWork() {
+        return subTypeOfWork;
     }
 
-    public void setSubType(final EgwTypeOfWork subType) {
-        this.subType = subType;
-    }
-
-    @Override
-    public String getStateDetails() {
-        return "Milestone Template Code : " + code;
+    public void setSubTypeOfWork(final EgwTypeOfWork subTypeOfWork) {
+        this.subTypeOfWork = subTypeOfWork;
     }
 
     public List<MilestoneTemplateActivity> getMilestoneTemplateActivities() {
         return milestoneTemplateActivities;
     }
 
-    public void setMilestoneTemplateActivities(final List<MilestoneTemplateActivity> milestoneTemplateActivities) {
-        this.milestoneTemplateActivities = milestoneTemplateActivities;
-    }
-
     public void addMilestoneTemplateActivity(final MilestoneTemplateActivity milestoneTemplateactivity) {
         milestoneTemplateActivities.add(milestoneTemplateactivity);
-    }
-
-    public Collection<MilestoneTemplateActivity> getStages() {
-        return CollectionUtils.select(milestoneTemplateActivities, activity -> true);
-    }
-
-    public List<ValidationError> validateActivities() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        for (final MilestoneTemplateActivity activity : milestoneTemplateActivities)
-            validationErrors.addAll(activity.validate());
-        return validationErrors;
-    }
-
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        validationErrors.addAll(validateActivities());
-        return validationErrors;
     }
 
 }

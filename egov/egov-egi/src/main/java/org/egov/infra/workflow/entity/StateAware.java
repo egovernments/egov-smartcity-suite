@@ -272,10 +272,10 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     protected StateInfoBuilder buildStateInfo() {
-        return new StateInfoBuilder().type(this.getState().getNatureOfTask()).
+        return new StateInfoBuilder().task(this.getState().getNatureOfTask()).
                 itemDetails(this.getStateDetails()).status(getCurrentState().getStatus().name()).
-                refDate(this.getCreatedDate()).senderName(this.getState().getSenderName()).
-                senderPhoneNo(this.getState().getExtraInfo());
+                refDate(this.getCreatedDate()).sender(this.getState().getSenderName()).
+                senderPhoneno(this.getState().getExtraInfo());
     }
 
     public String getStateInfoJson() {

@@ -42,8 +42,13 @@
  */
 package org.egov.web.actions.voucher;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-import com.exilant.GLEngine.ChartOfAccounts;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -77,17 +82,11 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.exilant.GLEngine.ChartOfAccounts;
 
 @ParentPackage("egov")
 @Results({
@@ -112,11 +111,11 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private String wfitemstate;
     private VoucherHelper voucherHelper;
     // private boolean isRejectedVoucher=false;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
     private ChartOfAccounts chartOfAccounts;
     private ChartOfAccounts engine;
     private static final String ACTIONNAME = "actionName";
@@ -140,12 +139,10 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
-        persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData("approvaldepartmentList", Collections.EMPTY_LIST);
         addDropdownData("designationList", Collections.EMPTY_LIST);
@@ -193,7 +190,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         getBillInfo();
         loadSchemeSubscheme();
         loadFundSource();
-      //  loadApproverUser("default");
+        // loadApproverUser("default");
         if (null != parameters.get("showMode") && parameters.get("showMode")[0].equalsIgnoreCase("view")) {
             return "view";
         }
@@ -286,7 +283,6 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         removeEmptyRowsSubledger(subLedgerlist);
 
         try {
-            populateWorkflowBean();
             if (!validateData(billDetailslist, subLedgerlist)) {
                 voucherHeader = journalVoucherActionHelper.editVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean, parameters.get("totaldbamount")[0]);

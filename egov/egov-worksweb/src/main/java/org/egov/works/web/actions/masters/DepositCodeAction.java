@@ -54,7 +54,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.master.services.DepositCodeService;
+import org.egov.works.master.service.DepositCodeService;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.ProjectCodeGenerator;
 import org.egov.works.models.masters.DepositCode;

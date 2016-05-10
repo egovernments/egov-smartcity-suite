@@ -197,20 +197,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     }
 
     /**
-     * This method returns the internal reference numbers corresponding to the instrument type.
-     *
-     * @param entity an instance of <code>ReceiptHeader</code>
-     * @return a <code>List</code> of strings , each representing the internal reference numbers for each instrument type for the
-     * given receipt
-     */
-    public List<String> generateInternalReferenceNo(final ReceiptHeader entity) {
-        final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(entity.getCreatedDate());
-        final CFinancialYear currentFinancialYear = collectionsUtil.getFinancialYearforDate(new Date());
-
-        return collectionsNumberGenerator.generateInternalReferenceNumber(entity, financialYear, currentFinancialYear);
-    }
-
-    /**
      * This method is called for voucher creation into the financial system. For each receipt created in the collections module, a
      * voucher is created.
      *
@@ -740,8 +726,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     cashQueryBuilder.append(instrumentTypeCondition);
                     cashQueryBuilder.append(receiptFundCondition);
                     cashQueryBuilder.append(receiptDepartmentCondition);
+                    cashQueryBuilder
+                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
 
-                    final Object arguments[] = new Object[6];
+                    final Object arguments[] = new Object[8];
                     CVoucherHeader voucherHeaderCash = null;
 
                     arguments[0] = serviceName;
@@ -755,6 +743,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     arguments[3] = CollectionConstants.INSTRUMENTTYPE_CASH;
                     arguments[4] = fundCodeArray[i];
                     arguments[5] = departmentCodeArray[i];
+                    arguments[6] = CollectionConstants.MODULE_NAME_RECEIPTHEADER;
+                    arguments[7] = CollectionConstants.RECEIPT_STATUS_CODE_APPROVED;
 
                     final List<InstrumentHeader> instrumentHeaderListCash = persistenceService.findAllBy(
                             cashQueryBuilder.toString(), arguments);
@@ -1287,7 +1277,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     && !receiptHeader.getState().getValue().equals(CollectionConstants.WF_STATE_END))
                 endReceiptWorkFlowOnCancellation(receiptHeader);
             if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
-                updateBillingSystemWithReceiptInfo(receiptHeader, null);
+                updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
         }
         // For bill based collection, push data to index only upon successful
         // update to billing system
@@ -1662,7 +1652,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             LOGGER.info("Workflow started for newly created receipts");
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
 
-                updateBillingSystemWithReceiptInfo(receiptHeader, null);
+                updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
                 LOGGER.info("Updated billing system ");
             }
 
@@ -1705,7 +1695,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      */
     @Transactional
     public void updateBillingSystemWithReceiptInfo(final ReceiptHeader receiptHeader,
-            final BillingIntegrationService billingService) throws ApplicationRuntimeException {
+            final BillingIntegrationService billingService, final InstrumentHeader bouncedInstrumentInfo)
+            throws ApplicationRuntimeException {
 
         /**
          * for each receipt created, send the details back to the billing system
@@ -1715,7 +1706,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 + (receiptHeader.getConsumerCode() != null ? " and consumer code: " + receiptHeader.getConsumerCode()
                         : ""));
         final Set<BillReceiptInfo> billReceipts = new HashSet<BillReceiptInfo>(0);
-        billReceipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService));
+        billReceipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                persistenceService, bouncedInstrumentInfo));
 
         if (updateBillingSystem(receiptHeader.getService(), billReceipts, billingService)) {
             receiptHeader.setIsReconciled(true);
@@ -1778,7 +1770,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         } catch (final ApplicationRuntimeException ex) {
             throw new ApplicationRuntimeException("Failed to create voucher in Financials");
         }
-        updateBillingSystemWithReceiptInfo(receiptHeader, billingService);
+        updateBillingSystemWithReceiptInfo(receiptHeader, billingService, null);
         return receiptHeader;
     }
 
@@ -1794,13 +1786,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Transactional
     public void updateDishonoredInstrumentStatus(final ReceiptHeader receiptHeader,
-            final InstrumentHeader instrumentHeader, final EgwStatus receiptStatus, final boolean isReconciled) {
-        financialsUtil.updateInstrumentHeader(instrumentHeader);
+            final InstrumentHeader bounceInstrumentInfo, final EgwStatus receiptStatus, final boolean isReconciled) {
+        financialsUtil.updateInstrumentHeader(bounceInstrumentInfo);
         // update receipts - set status to INSTR_BOUNCED and recon flag to false
         updateReceiptHeaderStatus(receiptHeader, receiptStatus, false);
         LOGGER.debug("Updated receipt status to " + receiptStatus.getCode() + " set reconcilation to false");
 
-        updateBillingSystemWithReceiptInfo(receiptHeader, null);
+        updateBillingSystemWithReceiptInfo(receiptHeader, null, bounceInstrumentInfo);
     }
 
     /**

@@ -38,9 +38,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-<table cellspacing="1" width="80%" cellpadding="1" border="1">
+  --%><table cellspacing="1" width="80%" cellpadding="1" border="1">
 	<tr>
 		<td class="bluebgheadtd" style="align: center" width="5%">SlNo</td>
 		<td class="bluebgheadtd" style="align: center" width="17%">Code</td>

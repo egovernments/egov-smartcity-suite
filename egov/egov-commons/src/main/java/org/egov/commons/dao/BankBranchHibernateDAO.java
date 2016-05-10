@@ -108,4 +108,27 @@ public class BankBranchHibernateDAO {
         }
         return bankBranchList;
     }
+    
+    /**
+     * @param bankId
+     * @return BankBranch for type "RECEIPTS_PAYMENTS" 
+     */
+    public List<Bankbranch> getAllBankBranchsByBankForReceiptPayments(Integer bankId) {
+        Set<Bankbranch> ss = new LinkedHashSet<Bankbranch>();
+        List<Bankbranch> bankBranchList = new ArrayList<Bankbranch>();
+
+        Query createQuery = getCurrentSession()
+                .createQuery(
+                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS') and bb.bank.id=:bankId and bb.isactive=true")
+                .setInteger("bankId", bankId);
+        if (bankId != null) {
+            List<Bankbranch> list = (List<Bankbranch>) createQuery.list();
+            if (list != null && !list.isEmpty())
+            {
+                ss.addAll(list);
+                bankBranchList.addAll(ss);
+            }
+        }
+        return bankBranchList;
+    }
 }

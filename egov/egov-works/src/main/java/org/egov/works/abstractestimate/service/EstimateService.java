@@ -89,11 +89,11 @@ public class EstimateService {
     }
 
     @Transactional
-    public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(final LineEstimateDetails lineEstimateDetails) {
-
+    public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(final LineEstimateDetails lineEstimateDetails,
+            final int i) {
         final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository
                 .save(populateAbstractEstimate(lineEstimateDetails));
-        saveTechnicalSanction(savedAbstractEstimate);
+        saveTechnicalSanction(savedAbstractEstimate, i);
         return savedAbstractEstimate;
     }
 
@@ -140,11 +140,16 @@ public class EstimateService {
         return multiYearEstimate;
     }
 
-    private EstimateTechnicalSanction saveTechnicalSanction(final AbstractEstimate abstractEstimate) {
+    private EstimateTechnicalSanction saveTechnicalSanction(final AbstractEstimate abstractEstimate, final int i) {
         final EstimateTechnicalSanction estimateTechnicalSanction = new EstimateTechnicalSanction();
         estimateTechnicalSanction.setAbstractEstimate(abstractEstimate);
-        estimateTechnicalSanction.setTechnicalSanctionNumber(
-                abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionNumber());
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionNumber());
+        if (i > 0) {
+            stringBuilder.append("/");
+            stringBuilder.append(i);
+        }
+        estimateTechnicalSanction.setTechnicalSanctionNumber(stringBuilder.toString());
         estimateTechnicalSanction
                 .setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
         estimateTechnicalSanction
