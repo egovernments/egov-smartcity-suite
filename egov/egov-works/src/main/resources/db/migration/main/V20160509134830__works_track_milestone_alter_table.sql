@@ -1,0 +1,42 @@
+ALTER TABLE egw_track_milestone ADD COLUMN version bigint DEFAULT 0;
+ALTER TABLE egw_track_milestone RENAME COLUMN milestone_id TO milestone;
+ALTER TABLE egw_track_milestone RENAME COLUMN total_percentage TO total;
+ALTER TABLE egw_track_milestone RENAME COLUMN status_id TO status;
+ALTER TABLE egw_track_milestone RENAME COLUMN APPROVED_DATE TO approveddate;
+ALTER TABLE egw_track_milestone RENAME COLUMN is_project_completed TO projectcompleted;
+ALTER TABLE egw_track_milestone RENAME COLUMN created_by TO createdby;
+ALTER TABLE egw_track_milestone RENAME COLUMN created_date TO createddate;
+ALTER TABLE egw_track_milestone RENAME COLUMN modified_by TO lastmodifiedby;
+ALTER TABLE egw_track_milestone RENAME COLUMN modified_date TO lastmodifieddate;
+
+ALTER TABLE egw_track_milestone_activity ADD COLUMN version bigint DEFAULT 0;
+ALTER TABLE egw_track_milestone_activity DROP COLUMN trackmilestone_activity_index;
+ALTER TABLE egw_track_milestone_activity RENAME COLUMN trackmilestone_id TO trackmilestone;
+ALTER TABLE egw_track_milestone_activity RENAME COLUMN milestone_activity_id TO milestoneactivity;
+ALTER TABLE egw_track_milestone_activity RENAME COLUMN status_id TO status;
+ALTER TABLE egw_track_milestone_activity RENAME COLUMN completed_percentage TO completedpercentage;
+ALTER TABLE egw_track_milestone_activity ALTER COLUMN completedpercentage TYPE double precision;
+ALTER TABLE egw_track_milestone_activity RENAME COLUMN modifiedby TO lastmodifiedby;
+ALTER TABLE egw_track_milestone_activity RENAME COLUMN modifieddate TO lastmodifieddate;
+
+--rollback ALTER TABLE egw_track_milestone_activity DROP COLUMN version;
+--rollback ALTER TABLE egw_track_milestone_activity ADD COLUMN trackmilestone_activity_index bigint DEFAULT 0;
+--rollback ALTER TABLE egw_track_milestone_activity RENAME COLUMN trackmilestone TO trackmilestone_id;
+--rollback ALTER TABLE egw_track_milestone_activity RENAME COLUMN milestoneactivity TO milestone_activity_id;
+--rollback ALTER TABLE egw_track_milestone_activity RENAME COLUMN status TO status_id;
+--rollback ALTER TABLE egw_track_milestone_activity RENAME COLUMN completedpercentage TO completed_percentage;
+--rollback ALTER TABLE egw_track_milestone_activity RENAME COLUMN lastmodifiedby TO modifiedby;
+--rollback ALTER TABLE egw_track_milestone_activity RENAME COLUMN lastmodifieddate TO modifieddate;
+--rollback ALTER TABLE egw_track_milestone_activity ALTER COLUMN completed_percentage TYPE bigint DEFAULT 0;
+--rollback ALTER TABLE egw_track_milestone_activity RENAME COLUMN projectcompleted TO is_project_completed;
+
+--rollback ALTER TABLE egw_track_milestone DROP COLUMN version;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN milestone TO milestone_id;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN total TO total_percentage;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN approveddate TO APPROVED_DATE;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN status TO status_id;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN isprojectcompleted TO is_project_completed;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN createdby TO created_by;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN createddate TO created_date;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN lastmodifiedby TO modified_by;
+--rollback ALTER TABLE egw_track_milestone RENAME COLUMN lastmodifieddate TO modified_date;

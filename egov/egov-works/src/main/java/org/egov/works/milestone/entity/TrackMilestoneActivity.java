@@ -39,7 +39,6 @@
  */
 package org.egov.works.milestone.entity;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -68,7 +67,7 @@ public class TrackMilestoneActivity {
 
     private String status;
 
-    private BigDecimal completedPercentage;
+    private double completedPercentage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trackMilestone", nullable = false)
@@ -130,11 +129,11 @@ public class TrackMilestoneActivity {
         this.completionDate = completionDate;
     }
 
-    public BigDecimal getCompletedPercentage() {
+    public double getCompletedPercentage() {
         return completedPercentage;
     }
 
-    public void setCompletedPercentage(final BigDecimal completedPercentage) {
+    public void setCompletedPercentage(final double completedPercentage) {
         this.completedPercentage = completedPercentage;
     }
 

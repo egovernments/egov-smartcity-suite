@@ -97,7 +97,7 @@ public class Milestone extends StateAware implements Comparable {
     @Temporal(TemporalType.DATE)
     private Date approvedDate;
 
-    private Long documnetNumber;
+    private Long documentNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", nullable = false)
@@ -135,14 +135,6 @@ public class Milestone extends StateAware implements Comparable {
 
     public void setApprovedDate(final Date approvedDate) {
         this.approvedDate = approvedDate;
-    }
-
-    public Long getDocumnetNumber() {
-        return documnetNumber;
-    }
-
-    public void setDocumnetNumber(final Long documnetNumber) {
-        this.documnetNumber = documnetNumber;
     }
 
     public EgwStatus getStatus() {
@@ -208,6 +200,14 @@ public class Milestone extends StateAware implements Comparable {
 
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
+    }
+
+    public Long getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(final Long documentNumber) {
+        this.documentNumber = documentNumber;
     }
 
 }
