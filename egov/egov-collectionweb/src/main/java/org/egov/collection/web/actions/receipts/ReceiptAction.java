@@ -338,7 +338,7 @@ public class ReceiptAction extends BaseFormAction {
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }
-        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        addDropdownData("serviceCategoryList", serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         addDropdownData("serviceList", Collections.EMPTY_LIST);
         if (instrumentProxyList == null)
             instrumentCount = 0;

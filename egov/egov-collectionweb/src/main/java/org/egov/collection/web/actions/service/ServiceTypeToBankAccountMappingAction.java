@@ -48,6 +48,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.dao.BankHibernateDAO;
@@ -87,7 +88,7 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
     }
 
     private void populateLists() {
-        addDropdownData("serviceCategoryList", persistenceService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        addDropdownData("serviceCategoryList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         addDropdownData("serviceTypeList", Collections.EMPTY_LIST);
         addDropdownData("bankNameList", bankHibernateDAO.getAllBankHavingBranchAndAccounts());
         addDropdownData("bankBranchList", Collections.EMPTY_LIST);
@@ -95,7 +96,7 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
     }
     
     private void populateListsForView() {
-        addDropdownData("serviceCategoryList", persistenceService.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        addDropdownData("serviceCategoryList", persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         addDropdownData("serviceTypeList", Collections.EMPTY_LIST);
         addDropdownData("bankNameList", getBankMappedToService());
         addDropdownData("bankBranchList", Collections.EMPTY_LIST);
