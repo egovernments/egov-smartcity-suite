@@ -78,7 +78,7 @@ public class CollectionsNumberGenerator {
         final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
         final SimpleDateFormat sdf = new SimpleDateFormat("MM");
         final String formattedDate = sdf.format(receiptHeader.getReceiptdate());
-        final String strObj = "RECEIPTHEADER_" + financialYear.getFinYearRange();
+        final String strObj = "SQ_RECEIPTHEADER_" + financialYear.getFinYearRange();
         final String result = formattedDate + '/' + financialYear.getFinYearRange() + '/'
                 + sequenceNumberGenerator.getNextSequence(strObj);
         return result;
