@@ -55,7 +55,6 @@
 	
 	<bean class="org.egov.collection.utils.CollectionsNumberGenerator"
 		id="collectionsNumberGenerator" scope="prototype">
-		<property name="sequenceGenerator" ref="sequenceNumberGenerator" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 	</bean>
 
