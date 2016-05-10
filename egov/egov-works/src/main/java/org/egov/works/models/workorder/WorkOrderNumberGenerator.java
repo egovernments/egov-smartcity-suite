@@ -39,38 +39,34 @@
  */
 package org.egov.works.models.workorder;
 
+import javax.script.ScriptContext;
+
 import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.script.ScriptContext;
-
 public class WorkOrderNumberGenerator {
+
     @Autowired
-    private SequenceGenerator sequenceGenerator;
-    // private PersistenceService<Script, Long> scriptService;
+    private SequenceNumberGenerator sequenceGenerator;
+    @Autowired
+    private DBSequenceGenerator dbSequenceGenerator;
     @Autowired
     private ScriptService scriptService;
 
     public String getWorkOrderNumberGenerator(final AbstractEstimate abstractEstimate,
             final CFinancialYear financialYear, final WorksPackage worksPackage, final WorkOrder workOrder,
             final PersistenceService persistenceService) {
-        /*
-         * List<Script> scripts=null; if(worksPackage==null) scripts = scriptService.findAllByNamedQuery("SCRIPT",
-         * "works.workOrderNumber.generator"); else scripts = scriptService.findAllByNamedQuery("SCRIPT",
-         * "workordernumber.for.workspackage"); return scripts.get(0).eval(Script
-         * .createContext("worksPackage",worksPackage,"estimate" ,abstractEstimate,"finYear",
-         * financialYear,"sequenceGenerator",sequenceGenerator ,"workOrder",workOrder
-         * ,"persistenceService",persistenceService)).toString();
-         */
         try {
             final ScriptContext scriptContext = ScriptService.createContext("worksPackage", worksPackage, "estimate",
-                    abstractEstimate, "finYear", financialYear, "sequenceGenerator", sequenceGenerator, "workOrder",
+                    abstractEstimate, "finYear", financialYear, "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator",
+                    dbSequenceGenerator, "workOrder",
                     workOrder, "persistenceService", persistenceService);
             if (worksPackage == null)
                 return scriptService.executeScript("works.workOrderNumber.generator", scriptContext).toString();

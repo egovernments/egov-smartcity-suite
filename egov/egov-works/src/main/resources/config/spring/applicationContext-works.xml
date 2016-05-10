@@ -121,20 +121,14 @@
 
 	<bean class="org.egov.works.models.estimate.EstimateNumberGenerator"
 		id="estimateNumberGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean class="org.egov.works.models.estimate.BudgetNumberGenerator"
 		id="budgetNumberGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean class="org.egov.works.models.estimate.ProjectCodeGenerator"
 		id="projectcodeGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean id="egwTypeOfWorkService" parent="persistenceService" scope="prototype">
@@ -167,9 +161,6 @@
 
 	<bean class="org.egov.works.models.tender.NegotiationNumberGenerator"
 		id="negotiationNumberGenerator">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> <property name="commonsService" ref="commonsService" 
-			/> -->
 	</bean>
 
 	<bean id="contractorDetailService" parent="persistenceService"
@@ -219,14 +210,10 @@
 	<!-- on dec14th -->
 	<bean class="org.egov.works.models.workorder.WorkOrderNumberGenerator"
 		id="workOrderNumberGenerators">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 
 	<bean class="org.egov.works.models.tender.WorksPackageNumberGenerator"
 		id="workspackageGenerator">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean id="egwStatusService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.EgwStatus" />
@@ -312,8 +299,6 @@
 		<property name="assetService" ref="assetService" />
 	</bean>
 	<bean class="org.egov.asset.model.AssetCategoryNumberGenrator" id="assetCategoryNumberGenrator">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.asset.service.impl.AssetCategoryServiceImpl"
 		id="assetCategoryService" scope="prototype">
@@ -327,8 +312,6 @@
 		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator" />
 	</bean>
 	<bean class="org.egov.asset.model.AssetNumberGenrator" id="assetNumberGenrator">
-		<!-- <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.asset.service.impl.AssetServiceImpl" id="assetService"
 		scope="prototype">
@@ -363,8 +346,6 @@
 
 	<bean class="org.egov.works.models.masters.DepositCodeGenerator"
 		id="depositCodeGenerator">
-		<!--  <property name="sequenceGenerator" 
-			ref="sequenceGenerator"/> -->
 	</bean>
 	<bean class="org.egov.works.services.impl.DepositWorksUsageServiceImpl"
 		id="depositWorksUsageService" scope="prototype">
@@ -503,7 +484,6 @@
 	<bean
 		class="org.egov.works.models.contractoradvance.ContractorAdvanceRequisitionNumberGenerator"
 		id="contractorAdvanceRequisitionNumberGenerator">
-		<property name="sequenceGenerator" ref="sequenceGenerator" />
 	</bean>
 
 	<bean id="contractorAdvanceService" parent="persistenceService"
