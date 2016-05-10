@@ -60,7 +60,7 @@ jQuery(document).ready(function() {
 	
 	
 $('#dailyCollectionReportSearch').click(function(e){
-		if($('form').valid()){
+	if($('form').valid()){
 			if($('#fromDate').val() != '' && $('#toDate').val() != ''){
 				var start = $('#fromDate').val();
 				var end = $('#toDate').val();
@@ -83,6 +83,9 @@ $('#dailyCollectionReportSearch').click(function(e){
 			oTable= $('#dailyCollReport-table');
 			$('#dailyCollectionReport-header').show();
 	        $("#resultDateLabel").html(fromDate+" - "+toDate);	
+	        $.post("/wtms/report/dailyWTCollectionReport/search/",$('#dailyCollectionform').serialize())
+	    	.done(function(searchResult) {
+	    	console.log(JSON.stringify(searchResult));
 			oTable.dataTable({
 				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
@@ -110,32 +113,31 @@ $('#dailyCollectionReportSearch').click(function(e){
 						             }],
 					
 				},
-				ajax : {
-					url : "/wtms/report/dailyWTCollectionReport/search/result",
-					data : {
-						'fromDate' : fromDate,
-						'toDate' : toDate,
-						'collectionMode': mode,
-						'collectionOperator':operator,
-						'status':status
-					}
-				},
-				"columns" : [
-							  { "data" : "receiptNo" , "title": "Receipt no"},  
-							  { "data" : "receiptDate", "title": "Receipt date"},
-							  { "data" : "consumerCode", "title": "Consumer Number"},
-							  { "data" : "consumerName", "title": "Consumer Name"},
-							  { "data" : "doorNumber", "title": "Door no"},
-							  { "data" : "wardName", "title": "Ward Name"},
-							  { "data" : "paidAt", "title": "Paid at"},
-							  { "data" : "paymentMode", "title": "Pay mode"},
-							  { "data" : "connectionType", "title": "Connection Type"},
-							  { "data" : "arrearTotal", "title": "Arrear Total"},
-							  { "data" : "currentTotal", "title": "Current Total"},
-							  { "data" : "total", "title": "Total collection"}, 
-							  { "data" : "cancellationDetails", "title": "Cancellation Details"}
-							],
-							  "aaSorting": [[2, 'desc']] ,
+				searchable : true,
+				data : searchResult,
+				columns : [
+						{title: 'Receipt Number', data: 'resource.clauses.receiptnumber'},
+						{title: 'Receipt Date',
+							render: function (data, type, full) {
+								if(full!=null && full.resource!=undefined &&  full.resource.searchable.receiptdate != undefined) {
+									var regDateSplit = full.resource.searchable.receiptdate.split("T")[0].split("-");		
+									return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+								}
+								else return "";
+							}
+						},
+						{title: 'Consumer Number', data: 'resource.common.consumercode'},
+						{title: 'Consumer Name', data: 'resource.searchable.consumername'},
+						{title: 'Paid At', data: 'resource.clauses.channel'},
+						{title: 'Payment mode', data: 'resource.clauses.paymentmode'},
+						{title: 'Status', data: 'resource.clauses.status'},
+						{title: 'Paid From', data: 'resource.searchable.installmentfrom'},
+						{title: 'Paid To', data: 'resource.searchable.installmentto'},
+						{title: 'Arrear Total', data: 'resource.searchable.arrearamount'},
+						{title: 'Current Total', data: 'resource.searchable.currentamount'},
+						{title: 'Total Collection', data: 'resource.searchable.totalamount'}
+						],
+							  "aaSorting": [[3, 'desc']] ,
 							  "footerCallback" : function(row, data, start, end, display) {
 									var api = this.api(), data;
 									if (data.length == 0) {
@@ -157,11 +159,13 @@ $('#dailyCollectionReportSearch').click(function(e){
 								} ]		
 					});
 			e.stopPropagation();
-		}
+		
 		
 	});
-	
+	}
 });
+});
+
 
 
 function updateTotalFooter(colidx, api) {
