@@ -308,6 +308,7 @@ public class LetterOfAcceptanceService {
             if (workOrderNumbers != null && !workOrderNumbers.isEmpty())
                 criteria.add(Restrictions.not(Restrictions.in("workOrderNumber", workOrderNumbers)));
         }
+        criteria.add(Restrictions.eq("status.code", WorksConstants.APPROVED));
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }

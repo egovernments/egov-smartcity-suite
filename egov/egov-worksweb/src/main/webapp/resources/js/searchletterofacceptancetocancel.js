@@ -94,7 +94,7 @@ function callAjaxSearch() {
 					"data" : "",
 					"sClass" : "text-center","autoWidth": "false",
 					 "render":function(data, type, full, meta){
-					       return full.contractorCode + " - " + full.contractor;
+					       return full.contractorcode + " - " + full.contractor;
 					    } 
 				}, {
 					"data" : "workIdentificationNumber",

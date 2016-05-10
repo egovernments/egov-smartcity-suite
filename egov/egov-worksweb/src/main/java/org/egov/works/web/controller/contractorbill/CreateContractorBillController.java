@@ -56,8 +56,10 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
 import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -71,6 +73,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -105,6 +108,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
@@ -143,7 +149,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         final String loaNumber = request.getParameter("loaNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getByWorkOrderId(workOrder.getId());
         contractorBillRegister.setWorkOrder(workOrder);
+        contractorBillRegister.setWorkOrderEstimate(workOrderEstimate);
 
         validateInput(contractorBillRegister, lineEstimateDetails, resultBinder, request);
 

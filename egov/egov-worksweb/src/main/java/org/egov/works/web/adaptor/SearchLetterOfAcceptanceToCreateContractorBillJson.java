@@ -77,11 +77,11 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
                 jsonObject.addProperty("workOrderDate", "");
             if (workOrder.getContractor() != null) {
                 jsonObject.addProperty("contractor", workOrder.getContractor().getName());
-                jsonObject.addProperty("contractorCode", workOrder.getContractor().getCode());
+                jsonObject.addProperty("contractorcode", workOrder.getContractor().getCode());
             }
             else {
                 jsonObject.addProperty("contractor", "");
-                jsonObject.addProperty("contractorCode", "");
+                jsonObject.addProperty("contractorcode", "");
             }
 
             if (workOrder.getEstimateNumber() != null) {
