@@ -49,12 +49,9 @@
 	<context:component-scan base-package="org.egov.eis"/>
 	
 	<bean id="personalInformationServiceOld" class="org.egov.pims.service.PersonalInformationService">
-		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="commonsService" ref="commonsService"/>
-		<property name="sequenceGenerator" ref="sequenceGenerator"/>
 	</bean>
 	
 	<bean id="employeeServiceOld" class="org.egov.pims.service.EmployeeServiceImpl">
-	    <property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
 </beans>
