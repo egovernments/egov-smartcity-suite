@@ -91,10 +91,10 @@
 												<tr id="Floorinfo" class="item">
 												
 												<td class="blueborderfortd"><form:input type="text" path=""
-														class="form-control low-width" value="${var1.installment}"
+														class="form-control read-only" value="${var1.installment}"
 														name="demandDetailBeanList[${counter.index}].installment"
 														id="demandDetailBeanList[${counter.index}].installment"
-														required="required" readonly="readonly"
+														required="required" 
 														/>
 													</td>
 											<td class="blueborderfortd">
@@ -106,10 +106,10 @@
 														/>
 														
 												<form:input type="text" path="" 
-														class="form-control low-width" value="${var1.reasonMasterDesc}"
+														class="form-control read-only" value="${var1.reasonMasterDesc}"
 														name="demandDetailBeanList[${counter.index}].reasonMasterDesc"
 														id="demandDetailBeanList[${counter.index}].reasonMasterDesc"
-														required="required" readonly="readonly"
+														required="required" 
 														/>
 														
 												</td>
@@ -133,6 +133,7 @@
 														maxlength="7"
 														required="required"  onblur="return calculateAmount(this);"
 														/>
+															
 														  </c:otherwise>
 														</c:choose>
 													
