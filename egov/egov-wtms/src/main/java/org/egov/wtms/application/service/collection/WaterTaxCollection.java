@@ -42,7 +42,6 @@ package org.egov.wtms.application.service.collection;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -165,7 +164,7 @@ public class WaterTaxCollection extends TaxCollection {
                 updateWaterTaxIndexes(demand);
             }
             else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)) {
-                updateCollForChequeBounce(demand, billRcptInfo);
+                updateCollForChequeBounce(demand, billRcptInfo);	
                 updateWaterTaxIndexes(demand);
             }
             if (LOGGER.isDebugEnabled())
@@ -180,51 +179,45 @@ public class WaterTaxCollection extends TaxCollection {
         LOGGER.debug("reconcileCollForChequeBounce : Updating Collection Started For Demand : " + demand
                 + " with BillReceiptInfo - " + billRcptInfo);
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-        final BigDecimal totalCollChqBounced = getTotalChequeAmtqq(billRcptInfo);
         demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
-        updateDmdDetForRcptCancelAndCheckBounce(demand, billRcptInfo,totalCollChqBounced);
+        updateDmdDetForRcptCancelAndCheckBounce(demand, billRcptInfo);
         LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " + demand);
     }
+    
     @Transactional
-    private void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo,BigDecimal totalCollChqBounced) {
-        LOGGER.debug("Entering method updateDmdDetForRcptCancel");
+    private void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        LOGGER.debug("Entering method updateDmdDetForRcptCancelAndCheckBounce");
         String installment = "";
-        String totalCollChqBouncedTrim = totalCollChqBounced.setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
-
-        for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
+       for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
                     && (!rcptAccInfo.getIsRevenueAccount())) {
-
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String[] installsplit = desc[1].split("#");
                 installment = installsplit[0].trim();
-
-                for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
+                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster()
                             .getReasonMaster())
                             && installment.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                                    .getDescription())  && totalCollChqBouncedTrim.equals(rcptAccInfo.getCrAmount().toPlainString())) {
-                        if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0 )
-                            throw new ApplicationRuntimeException(
-                                    "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
-                                            + "to be deducted amount " + rcptAccInfo.getCrAmount()
-                                            + " is greater than the collected amount " + demandDetail.getAmtCollected()
-                                            + " for demandDetail " + demandDetail);
-                        
-                        demandDetail
-                                .setAmtCollected(demandDetail.getAmtCollected().subtract(totalCollChqBounced));
+                                    .getDescription()) ) {
+                    	 for(ReceiptInstrumentInfo instrumentHeader:billRcptInfo.getInstrumentDetails()){
+                    		if(instrumentHeader!=null){
+                        demandDetail.setAmtCollected(demandDetail.getAmtCollected().subtract(instrumentHeader.getInstrumentAmount()));
                         if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-                            demand.setAmtCollected(demand.getAmtCollected().subtract(totalCollChqBounced));
-                       
-
+                            demand.setAmtCollected(demand.getAmtCollected().subtract(instrumentHeader.getInstrumentAmount()));
+                    		}
                         LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
                                 + reason + " and installment : " + installment);
+                        break;
                     }
+                    	 break;
             }
+                 break;
+           } 
+       
         updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-        LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
+        LOGGER.debug("Exiting method updateDmdDetForRcptCancelAndCheckBounce");
     }
     /**
      * @param demand Updates WaterConnectionDetails Object once Collection Is done. send Record move to Commissioner and Send SMS
@@ -371,18 +364,7 @@ public class WaterTaxCollection extends TaxCollection {
             egBill.setIs_Cancelled("Y");
         }
     }
-    public BigDecimal getTotalChequeAmtqq(final BillReceiptInfo billRcptInfo) {
-        BigDecimal totalCollAmt = BigDecimal.ZERO;
-        try {
-        	 for (final ReceiptInstrumentInfo rctInst : billRcptInfo.getInstrumentDetails())
-                    if (rctInst.getInstrumentAmount() != null )
-                    	 totalCollAmt = totalCollAmt.add(rctInst.getInstrumentAmount());
-        } catch (final ApplicationRuntimeException e) {
-            throw new ApplicationRuntimeException("Exception in calculate Total Collected Amt" + e);
-        }
-
-        return totalCollAmt;
-    }
+   
     @Transactional
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
