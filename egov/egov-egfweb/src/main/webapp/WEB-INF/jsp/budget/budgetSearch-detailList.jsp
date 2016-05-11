@@ -140,7 +140,7 @@
 							"budget.id":"<s:property value='budget.name'/>",
 							"budgetGroup.id":"<s:property value='budgetGroup.name'/>",
 							<s:if test="%{shouldShowHeaderField('executingDepartment') || shouldShowGridField('executingDepartment')}">
-								"executingDepartment.id":"<s:property value='executingDepartment.deptName'/>",
+								"executingDepartment.id":"<s:property value='executingDepartment.name'/>",
 							</s:if>
 							<s:if test="%{shouldShowHeaderField('functionary') || shouldShowGridField('functionary')}">				
 								"functionary.id":"<s:property value='functionary.name'/>",
