@@ -1223,7 +1223,7 @@ function validate()
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
- <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+ <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
   	 
 <div class="buttonbottom" align="center">
       <label><input align="center" type="button"  class="buttonsubmit" id="button2" value="Pay"  onclick="return validate();"/></label>
