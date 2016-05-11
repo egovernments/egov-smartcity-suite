@@ -75,7 +75,10 @@
 						   <div align="center"><spring:message code="lbl.monthlyrate" /> </div>
 						</th>
 						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.effectiveformdate" /> </div>
+						   <div align="center"><spring:message code="lbl.effective.fromdate" /> </div>
+						</th>
+						<th  align="center" colspan="1" >
+						   <div align="center"><spring:message code="lbl.effective.todate" /> </div>
 						</th>
 						<th  align="center" colspan="1" >
 						   <div align="center"><spring:message code="lbl.status"/></div>
@@ -105,6 +108,9 @@
 							</td>
 							<td colspan="1" >
 								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${waterRatesHeader.waterRatesDetails[0].fromDate}"/></div>
+							</td>
+							<td colspan="1" >
+								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${waterRatesHeader.waterRatesDetails[0].toDate}"/></div>
 							</td>
 							<td colspan="1" >
 								<div align="center">
