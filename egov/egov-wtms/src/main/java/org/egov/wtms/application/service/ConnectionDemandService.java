@@ -542,6 +542,7 @@ public class ConnectionDemandService {
                         demanddetailBean.getActualCollection(), demanddetailBean.getReasonMaster(),
                         demanddetailBean.getInstallment(), demanddetailBean, waterConnectionDetails));
             }
+        demandObj.getEgDemandDetails().clear();
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
         final int listlength = demandObj.getEgDemandDetails().size() - 1;
         final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
@@ -672,11 +673,19 @@ public class ConnectionDemandService {
     }
 
     public WaterRatesDetails getWaterRatesDetailsForDemandUpdate(final WaterConnectionDetails waterConnectionDetails) {
-        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
+        final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService
                 .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(waterConnectionDetails.getConnectionType(),
                         waterConnectionDetails.getUsageType(), waterConnectionDetails.getWaterSource(),
                         waterConnectionDetails.getPipeSize());
-        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeader(waterRatesHeader);
+        WaterRatesDetails waterRatesDetails = null;
+        for(WaterRatesHeader waterRatesHeadertemp : waterRatesHeaderList)
+        {
+            waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(waterRatesHeadertemp,new Date(), new Date());
+            if (waterRatesDetails != null)
+            {
+               break;
+            }
+        }
         return waterRatesDetails;
     }
 

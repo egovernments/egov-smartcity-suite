@@ -39,6 +39,12 @@
  */
 
 
+$(document).ready(function(e){
+	
+	$('.read-only').attr('readOnly','readOnly');
+	
+});
+
 
 		function calculateAmount(obj){
 	
@@ -109,11 +115,7 @@
 			  $this = $(this);
 			  var actamount = $this.find("#actualAmount").val();
 			  var actcollection = $this.find("#actualCollection").val();
-			  if( actcollection > 0 && actamount == 0 ){
-				  bootbox.alert('please fill actual amount');
-				  e.preventDefault();
-				  return false;
-			  }
+			  
 			  if(actamount == 0 && actcollection == 0){
 				  j++;
 			  }

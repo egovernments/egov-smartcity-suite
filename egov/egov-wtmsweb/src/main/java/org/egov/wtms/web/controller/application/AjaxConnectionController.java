@@ -45,6 +45,7 @@ import org.egov.wtms.application.service.NewConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ApplicationProcessTime;
 import org.egov.wtms.masters.entity.ConnectionCategory;
+import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.entity.PropertyType;
@@ -70,8 +71,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.JsonObject;
+
 import javax.servlet.http.HttpServletResponse;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -207,18 +213,30 @@ public class AjaxConnectionController {
     }
 
     @RequestMapping(value = "/ajax-WaterRatescombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam final ConnectionType categoryType,
+    public @ResponseBody String geWaterRatesByAllCombinatons(@ModelAttribute("waterRatesHeader") @RequestParam final ConnectionType categoryType, 
             @RequestParam final WaterSource waterSource, @RequestParam final UsageType usageType,
-            @RequestParam final PipeSize pipeSize) {
-        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService
+            @RequestParam final PipeSize pipeSize  , @RequestParam final Date fromDate , @RequestParam final Date toDate) {
+        SimpleDateFormat dateformat =  new SimpleDateFormat("dd-MM-yyyy");
+        final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService
                 .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource,
                         pipeSize);
-        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeader(waterRatesHeader);
-
+        WaterRatesDetails waterRatesDetails = null;
+        if (!waterRatesHeaderList.isEmpty())
+        {
+            for (final WaterRatesHeader waterRatesHeaderTemp : waterRatesHeaderList) {
+                waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(waterRatesHeaderTemp,fromDate, toDate);
+                if (waterRatesDetails != null )
+                    break;
+                }
+        }
         if (waterRatesDetails == null)
-            return 0;
-        else
-            return waterRatesDetails.getMonthlyRate();
+            return "";
+        else{
+            JsonObject jsonObj=new JsonObject();
+            jsonObj.addProperty("fromDate", dateformat.format(waterRatesDetails.getFromDate()).toString());
+            jsonObj.addProperty("toDate", dateformat.format(waterRatesDetails.getToDate()).toString());
+            return jsonObj.toString();
+        }
     }
 
     @RequestMapping(value = "/ajax-getapplicationprocesstime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

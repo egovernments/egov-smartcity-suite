@@ -307,7 +307,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
             addFieldError("govtOrderDate", getText("masters.loangrant.govtorderdate.mandatory"));
         if (loanGrantHeader.getGovtOrderNo() == null)
             addFieldError("govtOrderNo", getText("masters.loangrant.govtorderno.mandatory"));
-        if (loanGrantHeader.getProjectCost() == null || loanGrantHeader.getProjectCost().equals(BigDecimal.ZERO))
+        if (loanGrantHeader.getProjectCost() == null || loanGrantHeader.getProjectCost().compareTo(BigDecimal.ZERO)==0)
             addFieldError("projectCost", getText("masters.loangrant.projectcost.mandatory"));
         if (loanGrantHeader.getProjectCost() != null && loanGrantHeader.getSanctionedCost() != null
                 && loanGrantHeader.getSanctionedCost().compareTo(loanGrantHeader.getProjectCost()) > 0)
@@ -431,8 +431,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
     {
         for (final LoanGrantDetail detail : sanctionedAmountLGDetails)
             if (detail == null || detail.getFundingAgency() == null || detail.getFundingAgency().getId() == -1
-            || (detail.getLoanAmount() == null || detail.getLoanAmount().equals(BigDecimal.ZERO))
-            && (detail.getGrantAmount() == null || detail.getGrantAmount().equals(BigDecimal.ZERO)))
+            || (detail.getLoanAmount() == null || detail.getLoanAmount().compareTo(BigDecimal.ZERO)==0)
+            && (detail.getGrantAmount() == null || detail.getGrantAmount().compareTo(BigDecimal.ZERO)==0))
                 continue;
             else
             {
@@ -446,8 +446,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
             }
         for (final LoanGrantDetail detail : unsanctionedAmountLGDetails)
             if (detail == null || detail.getFundingAgency() == null || detail.getFundingAgency().getId() == -1
-            || (detail.getLoanAmount() == null || detail.getLoanAmount().equals(BigDecimal.ZERO))
-            && (detail.getGrantAmount() == null || detail.getGrantAmount().equals(BigDecimal.ZERO)))
+            || (detail.getLoanAmount() == null || detail.getLoanAmount().compareTo(BigDecimal.ZERO)==0)
+            && (detail.getGrantAmount() == null || detail.getGrantAmount().compareTo(BigDecimal.ZERO)==0))
                 continue;
             else
             {
@@ -461,8 +461,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
             }
         for (final LoanGrantDetail detail : revisedAmountLGDetails)
             if (detail == null || detail.getFundingAgency() == null || detail.getFundingAgency().getId() == -1
-            || (detail.getLoanAmount() == null || detail.getLoanAmount().equals(BigDecimal.ZERO))
-            && (detail.getGrantAmount() == null || detail.getGrantAmount().equals(BigDecimal.ZERO)))
+            || (detail.getLoanAmount() == null || detail.getLoanAmount().compareTo(BigDecimal.ZERO)==0)
+            && (detail.getGrantAmount() == null || detail.getGrantAmount().compareTo(BigDecimal.ZERO)==0))
                 continue;
             else
             {

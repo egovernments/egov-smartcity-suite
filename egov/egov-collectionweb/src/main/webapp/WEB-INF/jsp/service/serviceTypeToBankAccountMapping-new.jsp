@@ -70,6 +70,11 @@
 			document.getElementById("error_area").style.display = "block";
 			window.scroll(0, 0);
 		}
+
+		if (jQuery('#serviceAccountId').val())
+			jQuery('#serviceCategory, #serviceDetailsId')
+					.prop('disabled', false);
+		
 		return valid;
 	}
 
@@ -101,12 +106,20 @@
 
 			<div class="formmainbox">
 				<div class="subheadnew">
-					<s:text name="service.master.bankmappping.header" />
+					<s:if test="%{serviceAccountId}">
+						<s:text name="service.master.bankmapppingmodify.header" />
+					</s:if>
+					<s:else>
+						<s:text name="service.master.bankmappping.header" />
+					</s:else>
 				</div>
 
 				<table width="100%" border="0" cellspacing="0" cellpadding="0"
 					style="max-width: 960px; margin: 0 auto;">
 					<tr>
+						<s:hidden id="serviceAccountId" name="serviceAccountId" />
+						<s:hidden id="id" name="id" />
+						<s:hidden id="sourcePage" name="sourcePage" />
 						<td class="bluebox">&nbsp;</td>
 						<td class="bluebox"><s:text
 								name="service.master.search.category" /> <span
@@ -115,7 +128,7 @@
 								headerValue="----Choose----" name="serviceCategory"
 								id="serviceCategory" cssClass="selectwk"
 								list="dropdownData.serviceCategoryList" listKey="id"
-								listValue="name" value="%{serviceCategory.id}"
+								listValue="name" value="%{serviceCategory}"
 								onChange="populateService(this.value);" /> <egov:ajaxdropdown
 								id="service" fields="['Text','Value']"
 								dropdownId="serviceDetailsId"
@@ -125,7 +138,7 @@
 						<td class="bluebox"><s:select headerKey="-1"
 								headerValue="----Choose----" name="serviceDetails"
 								id="serviceDetailsId" cssClass="selectwk"
-								list="dropdownData.serviceTypeList" listKey="id"
+								list="dropdownData.serviceDetailsList" listKey="id"
 								listValue="name" value="%{serviceDetails.id}" /></td>
 					</tr>
 					<tr>
@@ -133,9 +146,9 @@
 						<td class="bluebox"><s:text name="service.master.bankname" />
 							<span class="mandatory" /></td>
 						<td class="bluebox"><s:select headerKey="-1"
-								headerValue="----Choose----" name="bankName" id="bankName"
+								headerValue="----Choose----" name="bankId" id="bankName"
 								cssClass="selectwk" list="dropdownData.bankNameList"
-								listKey="id" listValue="name" value="%{bankName}"
+								listKey="id" listValue="name" value="%{bankId}"
 								onchange="onChangeBankBranch(this.value)" /> <egov:ajaxdropdown
 								id="accountNumberIdDropdown" fields="['Text','Value']"
 								dropdownId='branchName'
@@ -143,12 +156,12 @@
 						<td class="bluebox"><s:text name="service.master.branchName" />
 							<span class="mandatory" /></td>
 						<td class="bluebox"><s:select headerKey="-1"
-								headerValue="----Choose----" name="branchName" id="branchName"
+								headerValue="----Choose----" name="branchId" id="branchName"
 								cssClass="selectwk" list="dropdownData.bankBranchList"
 								listKey="id" listValue="branchname"
-								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
-								id="bankAccountIdDropDown" fields="['Text','Value']"
-								dropdownId='bankAccountId'
+								onChange="onChangeBankAccount(this.value)" value="%{branchId}" />
+							<egov:ajaxdropdown id="bankAccountIdDropDown"
+								fields="['Text','Value']" dropdownId='bankAccountId'
 								url='receipts/ajaxBankRemittance-bankAccountByBankBranch.action' /></td>
 					</tr>
 					<td class="bluebox">&nbsp;</td>
@@ -157,8 +170,8 @@
 					<td class="bluebox"><s:select headerKey="-1"
 							headerValue="----Choose----" name="bankAccountId"
 							id="bankAccountId" cssClass="selectwk"
-							list="dropdownData.accountNumberList" listKey="id"
-							listValue="accountnumber" /></td>
+							list="dropdownData.bankAccountIdList" listKey="id"
+							listValue="accountnumber" value="%{bankAccountId.id}" /></td>
 					<tr>
 					</tr>
 				</table>
@@ -179,5 +192,10 @@
 			</div>
 		</s:push>
 	</s:form>
+	<script>
+		if (jQuery('#serviceAccountId').val())
+			jQuery('#serviceCategory, #serviceDetailsId')
+					.prop('disabled', true);
+	</script>
 </body>
 </html>

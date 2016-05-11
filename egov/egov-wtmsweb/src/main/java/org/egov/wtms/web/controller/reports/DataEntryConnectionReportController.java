@@ -52,15 +52,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.demand.dao.DemandGenericDao;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.DataEntryConnectionReport;
 import org.egov.wtms.application.service.DataEntryConnectionReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,15 +84,6 @@ public class DataEntryConnectionReportController {
 
     @Autowired
     public WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    public ConnectionDemandService connectionDemandService;
-
-    @Autowired
-    private DemandGenericDao demandGenericDao;
-
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
 
     @RequestMapping(method = GET)
     public String search(final Model model) {

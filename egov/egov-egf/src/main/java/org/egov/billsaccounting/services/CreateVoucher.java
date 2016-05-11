@@ -817,8 +817,9 @@ public class CreateVoucher {
 		try {
 			vh = createVoucher(headerdetails, accountcodedetails,
 					subledgerdetails);
-			if (vh.getModuleId() != null)
-				startWorkflow(vh);
+			/*if (vh.getModuleId() != null)
+				startWorkflow(vh);*/ 
+			//if u need workflow enable above lines and fix workflow
 		} catch (final ValidationException ve) {
 			LOGGER.error(ERR, ve);
 			final List<ValidationError> errors = new ArrayList<ValidationError>();

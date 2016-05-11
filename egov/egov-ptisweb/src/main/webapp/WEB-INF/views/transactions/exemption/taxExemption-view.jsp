@@ -93,5 +93,3 @@ body
 		</form:form>
 	</div>
 </div>
-<script type="text/javascript"
-	src="<c:url value='/resources/js/app/taxExemption.js'/>"></script>

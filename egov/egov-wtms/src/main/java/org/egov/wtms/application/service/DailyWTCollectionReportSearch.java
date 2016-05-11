@@ -165,7 +165,7 @@ public class DailyWTCollectionReportSearch {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter("clauses.cityname", ulbName));
         andFilters.add(termsStringFilter("clauses.channel", collectionMode));
-        andFilters.add(termsStringFilter("clauses.receiptCreator", collectionOperator));
+        andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
         andFilters.add(termsStringFilter("clauses.billingservice", "Water Tax"));
         andFilters.add(termsStringFilter("clauses.status", status));
         if (!consumerCode.isEmpty()) {

@@ -40,12 +40,16 @@
 
 package org.egov.egf.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.commons.Fund;
 import org.egov.commons.service.FundService;
 import org.egov.egf.web.adaptor.FundJsonAdaptor;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -59,9 +63,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.Date;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/fund")
@@ -77,6 +80,8 @@ public class FundController {
 	private MessageSource messageSource;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private EgovMasterDataCaching egovMasterDataCaching;
 
 	private void prepareNewForm(Model model) {
 		model.addAttribute("funds", fundService.findByIsnotleaf());
@@ -99,6 +104,7 @@ public class FundController {
 		fundService.create(fund);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.fund.success", null, null));
+		egovMasterDataCaching.removeFromCache("egi-fund");
 		return "redirect:/fund/result/" + fund.getId();
 	}
 
@@ -121,6 +127,7 @@ public class FundController {
 		fundService.update(fund);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.fund.success", null, null));
+		egovMasterDataCaching.removeFromCache("egi-fund");
 		return "redirect:/fund/result/" + fund.getId();
 	}
 

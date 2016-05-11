@@ -60,6 +60,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.collection.integration.models.ReceiptInstrumentInfo;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -163,7 +164,7 @@ public class WaterTaxCollection extends TaxCollection {
                 updateWaterTaxIndexes(demand);
             }
             else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED)) {
-                updateCollForChequeBounce(demand, billRcptInfo);
+                updateCollForChequeBounce(demand, billRcptInfo);	
                 updateWaterTaxIndexes(demand);
             }
             if (LOGGER.isDebugEnabled())
@@ -179,10 +180,45 @@ public class WaterTaxCollection extends TaxCollection {
                 + " with BillReceiptInfo - " + billRcptInfo);
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
         demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
-        updateDmdDetForRcptCancel(demand, billRcptInfo);
+        updateDmdDetForRcptCancelAndCheckBounce(demand, billRcptInfo);
         LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " + demand);
     }
-
+    
+    @Transactional
+    private void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        LOGGER.debug("Entering method updateDmdDetForRcptCancelAndCheckBounce");
+        String installment = "";
+       for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && (!rcptAccInfo.getIsRevenueAccount())) {
+                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                final String reason = desc[0].trim();
+                final String[] installsplit = desc[1].split("#");
+                installment = installsplit[0].trim();
+                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
+                    if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster()
+                            .getReasonMaster())
+                            && installment.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster()
+                                    .getDescription()) ) {
+                    	 for(ReceiptInstrumentInfo instrumentHeader:billRcptInfo.getInstrumentDetails()){
+                    		if(instrumentHeader!=null){
+                        demandDetail.setAmtCollected(demandDetail.getAmtCollected().subtract(instrumentHeader.getInstrumentAmount()));
+                        if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
+                                && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                            demand.setAmtCollected(demand.getAmtCollected().subtract(instrumentHeader.getInstrumentAmount()));
+                    		}
+                        LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
+                                + reason + " and installment : " + installment);
+                        break;
+                    }
+                    	 break;
+            }
+                 break;
+           } 
+       
+        updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
+        LOGGER.debug("Exiting method updateDmdDetForRcptCancelAndCheckBounce");
+    }
     /**
      * @param demand Updates WaterConnectionDetails Object once Collection Is done. send Record move to Commissioner and Send SMS
      * and Email after Collection
@@ -328,7 +364,7 @@ public class WaterTaxCollection extends TaxCollection {
             egBill.setIs_Cancelled("Y");
         }
     }
-
+   
     @Transactional
     private void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");

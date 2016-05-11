@@ -970,7 +970,7 @@ public class BillRegisterReportAction extends SearchFormAction {
      * protected BigDecimal getNetAmount(EgBillregister billRegister){ try { Set<EgBilldetails> billDetails =
      * billRegister.getEgBilldetailes(); List<String> listOfNetPayGlIds = netAccountCode.get(billRegister.getExpendituretype());
      * for (EgBilldetails egBilldetails : billDetails) { if(null != egBilldetails.getCreditamount() &&
-     * !egBilldetails.getCreditamount().equals(BigDecimal.ZERO) ){
+     * egBilldetails.getCreditamount().compareTo(BigDecimal.ZERO)!=0 ){
      * if(listOfNetPayGlIds.contains(egBilldetails.getGlcodeid().toString())) return egBilldetails.getCreditamount().setScale(2);
      * else continue; } } } catch (Exception e) {
      * LOGGER.error("Expecetion Occured while getting Net Amount for bill :"+billRegister.getBillnumber() , e); } return null; }

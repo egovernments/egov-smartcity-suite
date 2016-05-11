@@ -43,18 +43,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.mb.service.MBHeaderService;
-import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -70,19 +66,7 @@ public class CancelContractorBillController extends GenericWorkFlowController {
     private LineEstimateService lineEstimateService;
 
     @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private WorksUtils worksUtils;
-
-    @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
-
-    @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-
-    @Autowired
-    private MBHeaderService mbHeaderService;
 
     @Autowired
     private SecurityUtils securityUtils;

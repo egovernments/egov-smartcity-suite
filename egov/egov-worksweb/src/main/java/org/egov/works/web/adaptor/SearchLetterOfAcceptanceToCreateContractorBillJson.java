@@ -40,23 +40,28 @@
 
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonSerializer<WorkOrder> {
 
     @Autowired
     private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private LetterOfAcceptanceService letterOfAcceptanceService;
 
     @Override
     public JsonElement serialize(final WorkOrder workOrder, final Type type, final JsonSerializationContext jsc) {
@@ -70,14 +75,14 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
                 jsonObject.addProperty("workOrderDate", workOrder.getWorkOrderDate().toString());
             else
                 jsonObject.addProperty("workOrderDate", "");
-            if (workOrder.getContractor() != null)
+            if (workOrder.getContractor() != null) {
                 jsonObject.addProperty("contractor", workOrder.getContractor().getName());
-            else
-                jsonObject.addProperty("contractor", "");
-            if (workOrder.getContractor() != null)
                 jsonObject.addProperty("contractorcode", workOrder.getContractor().getCode());
-            else
+            }
+            else {
+                jsonObject.addProperty("contractor", "");
                 jsonObject.addProperty("contractorcode", "");
+            }
 
             if (workOrder.getEstimateNumber() != null) {
                 jsonObject.addProperty("estimateNumber", workOrder.getEstimateNumber());
@@ -89,6 +94,7 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
             } else
                 jsonObject.addProperty("estimateNumber", "");
 
+            jsonObject.addProperty("isMileStoneCreated", letterOfAcceptanceService.checkIfMileStonesCreated(workOrder));
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrder.getId());

@@ -429,6 +429,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             paymentheader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        	
             paymentheader.getVoucherheader().setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
             paymentheader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
                     .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
@@ -819,7 +820,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         final String newPartyName = parameters.get("newPartyName") == null ? "" : parameters.get("newPartyName")[0];
 
         for (final PaymentBean bean : paymentBillList)
-            if (bean.getIsSelected())
+            if (bean !=null)
             {
                 br = (EgBillregister) persistenceService.find(
                         " from EgBillregister br where br.egBillregistermis.voucherHeader.id=?", bean.getCsBillId());
@@ -1209,7 +1210,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (billList != null)
             for (final PaymentBean bean : billList)
             {
-                if (!bean.getIsSelected())
+                if (bean==null)
                     continue;
 
                 if (type.equals("Contractor"))
@@ -1263,7 +1264,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (billList != null)
             for (final PaymentBean bean : billList)
             {
-                if (!bean.getIsSelected())
+                if (bean==null)
                     continue;
 
                 if (type.equals("Contractor"))
@@ -1319,7 +1320,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             for (final ChequeAssignment bean : billList)
             {
                 billId = bean.getBillId().longValue();
-                if (!bean.getIsSelected())
+                if (bean==null)
                     continue;
 
                 if (type.equals("Contractor"))
@@ -1373,7 +1374,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         int billDateFlag = 0;
         if (billList != null)
             for (final PaymentBean bean : billList)
-                if (bean.getIsSelected() && bean.getBillDate().compareTo(restrictedDate) > 0
+                if (bean!=null && bean.getBillDate().compareTo(restrictedDate) > 0
                         && !paymentMd.equalsIgnoreCase("RTGS"))
                     billDateFlag++;
         if (billDateFlag > 0)
@@ -1416,7 +1417,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
                 "and vh.vouchernumber=?";
         if (null != billList && !billList.isEmpty())
             for (final PaymentBean bean : billList)
-                if (bean.getIsSelected())
+                if (bean !=null)
                 {
                     final SQLQuery createSQLQuery = getSession().createSQLQuery(query);
                     createSQLQuery.setString(0, bean.getBillVoucherNumber());
@@ -1442,7 +1443,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (billList != null)
             for (final PaymentBean bean : billList)
             {
-                if (!bean.getIsSelected())
+                if (bean==null)
                     continue;
                 final Object[] obj = (Object[]) persistenceService
                         .find("select gld.detailTypeId.id,gld.detailKeyId,billmis.egBillregister.expendituretype from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId.id and billmis.voucherHeader = gl.voucherHeaderId and billmis.voucherHeader.id=?",

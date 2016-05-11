@@ -84,106 +84,125 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/report/dailyWTCollectionReport/search/")
 public class DailyWTCollectionReportController {
 
-   
-    
-    @Autowired
-    private SearchService searchService;
-    
-    @Autowired
-    public EgwStatusHibernateDAO egwStatusHibernateDAO;
-    
-    @Autowired
-    public AssignmentService assignmentService;
+	@Autowired
+	private SearchService searchService;
 
-    @Autowired
-    public AppConfigValueService appConfigValueService;
-    
-    @Autowired
-    private CityService cityService;
-    @Autowired
-    private BoundaryService boundaryService;
-    
-    @ModelAttribute
-    public void reportModel(final Model model) {
-    	  final DailyWTCollectionReportSearch dailyCollectionReportResut = new DailyWTCollectionReportSearch();
-          model.addAttribute("dailyWTCollectionReport", dailyCollectionReportResut);
+	@Autowired
+	public EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+	@Autowired
+	public AssignmentService assignmentService;
+
+	@Autowired
+	public AppConfigValueService appConfigValueService;
+
+	@Autowired
+	private CityService cityService;
+	@Autowired
+	private BoundaryService boundaryService;
+
+	@ModelAttribute
+	public void reportModel(final Model model) {
+		final DailyWTCollectionReportSearch dailyCollectionReportResut = new DailyWTCollectionReportSearch();
+		model.addAttribute("dailyWTCollectionReport",
+				dailyCollectionReportResut);
 	}
 
-    @ModelAttribute("collectionMode")
-    public Map<String, String> loadInstrumentTypes() {
-    	final Map<String, String> collectionModeMap = new LinkedHashMap<String, String>(0);
-        collectionModeMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
-        collectionModeMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
-        collectionModeMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
-        collectionModeMap.put(Source.SOFTTECH.toString(), Source.SOFTTECH.toString());
-        collectionModeMap.put(Source.SYSTEM.toString(), Source.SYSTEM.toString());
-        return collectionModeMap;
-    }
-    
+	@ModelAttribute("collectionMode")
+	public Map<String, String> loadInstrumentTypes() {
+		final Map<String, String> collectionModeMap = new LinkedHashMap<String, String>(
+				0);
+		collectionModeMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
+		collectionModeMap.put(Source.MEESEVA.toString(),
+				Source.MEESEVA.toString());
+		collectionModeMap.put(Source.APONLINE.toString(),
+				Source.APONLINE.toString());
+		collectionModeMap.put(Source.SOFTTECH.toString(),
+				Source.SOFTTECH.toString());
+		collectionModeMap.put(Source.SYSTEM.toString(),
+				Source.SYSTEM.toString());
+		return collectionModeMap;
+	}
 
-    @ModelAttribute("operators")
-    public Set<User> loadCollectionOperators() {
-    	final String operatorDesignation = appConfigValueService
-                .getAppConfigValueByDate(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                        CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR, new Date()).getValue();
-        return assignmentService.getUsersByDesignations(operatorDesignation.split(","));
-    }
+	@ModelAttribute("operators")
+	public Set<User> loadCollectionOperators() {
+		final String operatorDesignation = appConfigValueService
+				.getAppConfigValueByDate(
+						CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+						CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR,
+						new Date()).getValue();
+		return assignmentService.getUsersByDesignations(operatorDesignation
+				.split(","));
+	}
 
-    @ModelAttribute("status")
-    public List<EgwStatus> loadStatus() {
-    	
-        return egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
-    }
+	@ModelAttribute("status")
+	public List<EgwStatus> loadStatus() {
 
-    @ModelAttribute("wards")
-    public List<Boundary> wardBoundaries() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
-                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
-    }
-    
-    
+		return egwStatusHibernateDAO
+				.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
+	}
 
-    @RequestMapping(method = GET)
-    public String search(final Model model) {
-        model.addAttribute("currentDate", new Date());
-        return "dailyWTCollection-search";
-    }
-    @RequestMapping(method = RequestMethod.POST)
-    @ResponseBody
-    public List<Document> searchCollection(@ModelAttribute final DailyWTCollectionReportSearch searchRequest) {
+	@ModelAttribute("wards")
+	public List<Boundary> wardBoundaries() {
+		return boundaryService
+				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+						PropertyTaxConstants.WARD,
+						PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+	}
 
-    	SearchResult consumerIndexSearchResult = null;
-        SearchResult collectionIndexSearchResult = null;
-        List<String> consumerCodes = new ArrayList<String>();
-        final List<Document> searchResultFomatted = new ArrayList<Document>(0);
-        final Sort sortByAssessment = Sort.by().field("clauses.ward", SortOrder.ASC);
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        searchRequest.setUlbName(cityWebsite.getName());
-        
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard())) {
-        	consumerIndexSearchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
-                    asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
-                    searchRequest.searchConnectionForWardFilters(), sortByAssessment, Page.NULL);
-            for (Document consumerDocument : consumerIndexSearchResult.getDocuments()) {
-                Map<String, String> consumerCommonMap = (Map<String, String>) consumerDocument.getResource().get("clauses");
-                consumerCodes.add(consumerCommonMap.get("consumercode"));
-            }
-            searchRequest.setConsumerCode(consumerCodes);
-            collectionIndexSearchResult = getCollectionIndex(searchRequest);
-        } else {
-            collectionIndexSearchResult = getCollectionIndex(searchRequest);
-        }
+	@RequestMapping(method = GET)
+	public String search(final Model model) {
+		model.addAttribute("currentDate", new Date());
+		return "dailyWTCollection-search";
+	}
 
-        for (final Document collectionIndexDocument : collectionIndexSearchResult.getDocuments()) {
-            searchResultFomatted.add(collectionIndexDocument);
-        }
-        return searchResultFomatted;
-    }
+	@RequestMapping(method = RequestMethod.POST)
+	@ResponseBody
+	public List<Document> searchCollection(
+			@ModelAttribute final DailyWTCollectionReportSearch searchRequest) {
 
-    private SearchResult getCollectionIndex(final DailyWTCollectionReportSearch searchRequest) {
-        final Sort sortByReceiptDate = Sort.by().field("searchable.receiptdate", SortOrder.ASC);
-        return searchService.search(asList(Index.COLLECTION.toString()),
-                asList(IndexType.COLLECTION_BIFURCATION.toString()), searchRequest.searchQuery(),
-                searchRequest.searchCollectionFilters(), sortByReceiptDate, Page.NULL);
-    }
+		SearchResult consumerIndexSearchResult = null;
+		SearchResult collectionIndexSearchResult = null;
+		final List<String> consumerCodes = new ArrayList<String>();
+		final List<Document> searchResultFomatted = new ArrayList<Document>(0);
+		final Sort sortByAssessment = Sort.by().field("clauses.ward",
+				SortOrder.ASC);
+		final City cityWebsite = cityService.getCityByURL(EgovThreadLocals
+				.getDomainName());
+		searchRequest.setUlbName(cityWebsite.getName());
+
+		if (StringUtils.isNotBlank(searchRequest.getRevenueWard())) {
+			consumerIndexSearchResult = searchService.search(
+					asList(Index.WATERCHARGES.toString()),
+					asList(IndexType.CONNECTIONSEARCH.toString()),
+					searchRequest.searchQuery(),
+					searchRequest.searchConnectionForWardFilters(),
+					sortByAssessment, Page.NULL);
+			for (final Document consumerDocument : consumerIndexSearchResult
+					.getDocuments()) {
+				final Map<String, String> consumerCommonMap = (Map<String, String>) consumerDocument
+						.getResource().get("clauses");
+				consumerCodes.add(consumerCommonMap.get("consumercode"));
+			}
+			searchRequest.setConsumerCode(consumerCodes);
+			collectionIndexSearchResult = getCollectionIndex(searchRequest);
+		} else
+			collectionIndexSearchResult = getCollectionIndex(searchRequest);
+
+		for (final Document collectionIndexDocument : collectionIndexSearchResult
+				.getDocuments())
+			searchResultFomatted.add(collectionIndexDocument);
+		return searchResultFomatted;
+	}
+
+	private SearchResult getCollectionIndex(
+			final DailyWTCollectionReportSearch searchRequest) {
+		final Sort sortByReceiptDate = Sort.by().field(
+				"searchable.receiptdate", SortOrder.ASC);
+		return searchService.search(asList(Index.COLLECTION.toString()),
+				asList(IndexType.COLLECTION_BIFURCATION.toString()),
+				searchRequest.searchQuery(),
+				searchRequest.searchCollectionFilters(), sortByReceiptDate,
+				Page.NULL);
+	}
 }

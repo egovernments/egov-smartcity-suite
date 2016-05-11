@@ -63,7 +63,7 @@ function openSource(){
 	if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
 		bootbox.alert('Source is not available');
 	else{
-		if("<s:property value='%{billRegister.expendituretype}' escape='false'/>"!='Expense')
+		if("<s:property value='%{voucherHeader.moduleId}' escape='false'/>"!="")
 			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>' ;
 		else
 			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>'+ '&showMode=view';

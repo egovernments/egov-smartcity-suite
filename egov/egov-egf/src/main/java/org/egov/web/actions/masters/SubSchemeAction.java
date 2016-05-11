@@ -39,8 +39,11 @@
  */
 package org.egov.web.actions.masters;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -56,14 +59,13 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 
@@ -92,6 +94,8 @@ public class SubSchemeAction extends BaseFormAction {
     private boolean uniqueCode = false;
     private String code;
 	private String name;
+	@Autowired
+	private EgovMasterDataCaching egovMasterDataCaching;
     @Override
     public Object getModel() {
         return subScheme;
@@ -149,7 +153,8 @@ public class SubSchemeAction extends BaseFormAction {
         }
         clearValues = true;
         addActionMessage(getText("subscheme.saved.successfully"));
-        showMode = "";
+        showMode = "new";
+        egovMasterDataCaching.removeFromCache(" egi-subscheme");
         return NEW;
     }
 
@@ -178,6 +183,7 @@ public class SubSchemeAction extends BaseFormAction {
         clearValues = true;
         addActionMessage(getText("subscheme.modified.successfully"));
         showMode = "";
+        egovMasterDataCaching.removeFromCache("egi-subscheme");
         return NEW;
     }
 

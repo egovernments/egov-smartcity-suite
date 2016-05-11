@@ -108,7 +108,12 @@
 		validate="true">
 		<div class="formmainbox">
 			<div class="subheadnew">
+			<s:if test="%{mode=='edit'}">
+				<s:text name="scheme.searchmodify.title" />
+				</s:if>
+				<s:else>
 				<s:text name="scheme.create.title" />
+				</s:else>
 			</div>
 			<s:token />
 			<s:hidden name="mode" id="mode" value="%{mode}" />

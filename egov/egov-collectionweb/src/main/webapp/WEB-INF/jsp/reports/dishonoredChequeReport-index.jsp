@@ -155,7 +155,7 @@
 						href="javascript:show_calendar('forms[0].fromDate');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;" placeholder="DD/MM/YYYY"><img
-							src="/egi/resources/erp2/images/calendaricon.gif" alt="Date"
+							src="/collection/resources/images/calendaricon.gif" alt="Date"
 							width="18" height="18" border="0" align="absmiddle" /></a>
 							<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 					<td class="bluebox"><s:text
@@ -167,7 +167,7 @@
 						href="javascript:show_calendar('forms[0].toDate');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;" placeholder="DD/MM/YYYY"><img
-							src="/egi/resources/erp2/images/calendaricon.gif" alt="Date"
+							src="/collection/resources/images/calendaricon.gif" alt="Date"
 							width="18" height="18" border="0" align="absmiddle" /></a>
 							<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 				</tr>
@@ -220,7 +220,7 @@
 			<div id="loadingMask"
 				style="display: none; overflow: hidden; text-align: center">
 				<img id="removeImage"
-					src="/egi/resources/erp2/images/bar_loader.gif" /> <span
+					src="/collection/resources/images/bar_loader.gif" /> <span
 					id="removeText" style="color: red">Please wait....</span>
 			</div>
 

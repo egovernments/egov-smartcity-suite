@@ -101,4 +101,11 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     
     @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
     List<String> findWorkOrderNumbersToModifyLoa(@Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+
+    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and egwStatus.code = :status)")
+    List<String> findWorkIdentificationNumbersToSearchLOAToCancel(@Param("code") String code,
+            @Param("status") String status);
+
+    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where upper(wo.contractor.name) like upper(:code) and wo.egwStatus.code = :status")
+    List<String> findContractorsToSearchLOAToCancel(@Param("code") String code, @Param("status") String status);
 }

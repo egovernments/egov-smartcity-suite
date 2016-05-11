@@ -754,7 +754,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             if (next != null && (next.getGlcodeDetail() == null || next.getGlcodeDetail().trim().isEmpty())
                     && (next.getFunctionDetail() == null || next.getFunctionDetail().trim().isEmpty())
                     &&
-                    next.getDebitAmountDetail().equals(BigDecimal.ZERO) && next.getCreditAmountDetail().equals(BigDecimal.ZERO))
+                    next.getDebitAmountDetail().compareTo(BigDecimal.ZERO)==0 && next.getCreditAmountDetail().compareTo(BigDecimal.ZERO)==0)
                 detail.remove();
             else if (next == null)
                 detail.remove();

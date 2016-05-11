@@ -39,17 +39,17 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
+import static org.egov.search.domain.Filter.rangeFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
+import org.egov.search.domain.Filter;
+import org.egov.search.domain.Filters;
+import org.jboss.logging.Logger;
 
 public class DailyCollectionReportSearch {
 
@@ -158,7 +158,7 @@ public class DailyCollectionReportSearch {
         andFilters.add(termsStringFilter("clauses.cityname", ulbName));
         andFilters.add(termsStringFilter("clauses.channel", collectionMode));
         andFilters.add(termsStringFilter("clauses.status", status));
-        andFilters.add(termsStringFilter("clauses.receiptCreator", collectionOperator));
+        andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
         andFilters.add(termsStringFilter("clauses.billingservice", "Property Tax"));
         if (!consumerCode.isEmpty()) {
             String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
@@ -167,7 +167,6 @@ public class DailyCollectionReportSearch {
         andFilters.add(rangeFilter("searchable.receiptdate", fromDate, toDate));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
-        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
         return Filters.withAndFilters(andFilters);
     }
 
@@ -177,7 +176,6 @@ public class DailyCollectionReportSearch {
         andFilters.add(termsStringFilter("clauses.revwardname", revenueWard));
         if (logger.isDebugEnabled())
             logger.debug("finished property tax filters");
-        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
         return Filters.withAndFilters(andFilters);
     }
 

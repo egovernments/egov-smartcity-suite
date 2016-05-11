@@ -87,11 +87,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ValidationException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -150,6 +152,16 @@ public class ComplaintService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    final String[] pendingStatus = { "REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED" };
+    final String[] completedStatus = { "COMPLETED", "WITHDRAWN", "CLOSED" };
+    final String[] rejectedStatus = { "REJECTED" };
+    
+    public final String COMPLAINT_ALL="ALL";
+    public final String COMPLAINT_PENDING="PENDING";
+    public final String COMPLAINT_COMPLETED="COMPLETED";
+    public final String COMPLAINT_REJECTED="REJECTED";
+    
+    
     @Transactional
     public Complaint createComplaint(final Complaint complaint) throws ValidationException {
 
@@ -509,23 +521,29 @@ public class ComplaintService {
         criteria.add(Restrictions.eq("complaint.assignee", positionMasterService.getCurrentPositionForUser(user.getId())));
         return criteria.list();
     }
-    
+        
     public Page<Complaint> getMyPendingGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        final String[] pendingStatus = { "REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED" };
         return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), pendingStatus, new PageRequest(offset, pageSize));
     }
     
     public Page<Complaint> getMyCompletedGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        final String[] completedStatus = { "COMPLETED", "WITHDRAWN", "CLOSED" };
         return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), completedStatus, new PageRequest(offset, pageSize));
     }
   
     public Page<Complaint> getMyRejectedGrievances(final int page, final int pageSize) {
         final int offset = page - 1;
-        final String[] rejectedStatus = { "REJECTED" };
         return complaintRepository.findMyComplaintyByStatus(securityUtils.getCurrentUser(), rejectedStatus, new PageRequest(offset, pageSize));
+    }
+    
+    public HashMap<String, Integer> getMyComplaintsCount() {
+        HashMap<String, Integer> complaintsCount=new HashMap<String, Integer>();
+        complaintsCount.put(COMPLAINT_ALL, (complaintRepository.getMyComplaintsTotalCount(securityUtils.getCurrentUser()).intValue()));
+        complaintsCount.put(COMPLAINT_PENDING, (complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), pendingStatus).intValue()));
+        complaintsCount.put(COMPLAINT_COMPLETED, (complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), completedStatus).intValue()));
+        complaintsCount.put(COMPLAINT_REJECTED, (complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), rejectedStatus).intValue()));
+        return complaintsCount;
     }
     
     

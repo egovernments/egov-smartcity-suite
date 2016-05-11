@@ -95,6 +95,12 @@
 		</property>		
 		<property name="estimateNumber" type="string" >
 			<column name="ESTIMATENUMBER" length="100" />
+		</property>
+		<property name="cancellationReason" type="string" >
+			<column name="CANCELLATIONREASON" length="50" />
+		</property>
+		<property name="cancellationRemarks" type="string" >
+			<column name="CANCELLATIONREMARKS" length="256" />
 		</property>		
 				
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" not-null="true" fetch="select" />

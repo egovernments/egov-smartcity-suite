@@ -47,7 +47,7 @@
 <title><s:if test="%{showMode=='edit'}">
 		<s:text name="subscheme.modify" />
 	</s:if> <s:else>
-		<s:text name="subScheme.add" />
+		<s:text name="masters.subscheme.searchview.title" />
 	</s:else></title>
 <script type="text/javascript">
 		function validate(){
@@ -107,7 +107,7 @@
 				<s:text name="subscheme.modify" />
 			</s:if>
 			<s:else>
-				<s:text name="subScheme.add" />
+				<s:text name="masters.subscheme.searchview.title" />
 			</s:else>
 		</div>
 

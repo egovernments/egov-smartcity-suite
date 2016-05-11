@@ -113,7 +113,7 @@
 						<table id="fiscalPeriodTable" width="60%" border=0 id="labelid"
 							class="table table-bordered">
 							<thead>
-								<th>Fiscal Period Name</th>
+								<th>Fiscal Period Name <span class="mandatory"></span></th>
 								<th>Starting Date</th>
 								<th>Ending Date</th>
 								<th></th>

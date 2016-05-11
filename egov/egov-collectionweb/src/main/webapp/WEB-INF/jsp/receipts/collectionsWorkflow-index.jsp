@@ -260,7 +260,7 @@ function readOnlyCheckBox() {
 <body onload="javascript:refreshSummary()">
 <div class="formmainbox">
 
-<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 
 <s:form theme="simple" name="collectionsWorkflowForm">
 	<div class="subheadnew"><s:if test="%{isSubmitAction == true}">

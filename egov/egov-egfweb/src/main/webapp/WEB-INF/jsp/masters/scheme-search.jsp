@@ -101,8 +101,13 @@
 		validate="true">
 		<div class="formmainbox">
 			<div class="subheadnew">
-				<s:text name="scheme.search.title" />
-			</div>
+			<s:if test="%{mode=='edit'}">
+				<s:text name="scheme.searchmodify.title" />
+				</s:if>
+				<s:else>
+				<s:text name="scheme.searchview.title" />
+				</div>
+			</s:else>
 			<s:hidden name="mode" id="mode" value="%{mode}" />
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>

@@ -121,18 +121,6 @@
 	<type>hql</type>
 	<query>from Relationtype order by id desc</query>
 </egi-relationtype> 
-<egi-suppliers>
-	<type>hql</type>
-	<query>from Relation rel where relationtypeid = 1 order by upper(name)</query>
-</egi-suppliers>
-<egi-activesuppliers>
-	<type>hql</type>
-	<query>from Relation rel where relationtypeid = 1 and (statusid = 5 or isactive = true)order by upper(name)</query>
-</egi-activesuppliers>
-<egi-contractors>
-	<type>hql</type>
-	<query>from Relation rel where relationtypeid = 2 order by upper(name)</query>
-</egi-contractors>
 <egi-coaCodes>
 	<type>sql</type>
 	<query>SELECT ID\,GLCODE FROM CHARTOFACCOUNTS WHERE CLASSIFICATION = 4 AND ISACTIVEFORPOSTING=true ORDER BY GLCODE</query>

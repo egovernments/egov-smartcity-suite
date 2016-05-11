@@ -64,6 +64,7 @@ import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 
 @Entity
 @Table(name = "EGW_CONTRACTORBILL")
@@ -120,6 +121,10 @@ public class ContractorBillRegister extends EgBillregister {
     private String cancellationReason;
 
     private String cancellationRemarks;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workOrderEstimate", nullable = false)
+    private WorkOrderEstimate workOrderEstimate;
 
     @Override
     public String getStateDetails() {
@@ -266,5 +271,13 @@ public class ContractorBillRegister extends EgBillregister {
 
     public void setCancellationRemarks(final String cancellationRemarks) {
         this.cancellationRemarks = cancellationRemarks;
+    }
+
+    public WorkOrderEstimate getWorkOrderEstimate() {
+        return workOrderEstimate;
+    }
+
+    public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
+        this.workOrderEstimate = workOrderEstimate;
     }
 }

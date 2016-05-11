@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.masters.repository;
 
+import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
@@ -48,6 +50,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -58,6 +61,9 @@ public interface WaterRatesDetailsRepository extends JpaRepository<WaterRatesDet
     @Query("select A from WaterRatesDetails A where A.waterRatesHeader.connectionType=:connectionType and A.waterRatesHeader.usageType=:usageType and A.startingUnits <= :noofunits and A.endingUnits >= :noofunits and A.waterRatesHeader.active=true")
     List<WaterRatesDetails> findByWaterRate(@Param("connectionType") ConnectionType connectionType,
             @Param("usageType") UsageType usageType, @Param("noofunits") Long noofunits);
+    
+    @Query(" from WaterRatesDetails dd where dd.waterRatesHeader =:waterRatesHeader and ((dd.toDate is not null and :toDate between dd.fromDate and dd.toDate) or (dd.toDate is not null and :fromDate between dd.fromDate and dd.toDate)  or (:fromDate <= dd.fromDate  and :toDate >= dd.toDate))")
+    WaterRatesDetails findByWaterRatesHeaderAndFromDateAndToDate(@Param("waterRatesHeader") WaterRatesHeader waterRatesHeader, @Param("fromDate") Date fromDate ,@Param("toDate") Date toDate);
 
     WaterRatesDetails findByWaterRatesHeader(WaterRatesHeader waterRatesHeader);
 }

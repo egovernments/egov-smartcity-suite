@@ -433,7 +433,7 @@
 					<br />
 					<div id="loadingMask"
 						style="display: none; overflow: hidden; text-align: center">
-						<img src="/egi/resources/erp2/images/bar_loader.gif" alt=""/> <span
+						<img src="/collection/resources/images/bar_loader.gif" alt=""/> <span
 							style="color: red">Please wait....</span>
 					</div>
 

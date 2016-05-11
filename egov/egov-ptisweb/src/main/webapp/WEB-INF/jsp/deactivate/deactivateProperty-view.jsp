@@ -286,7 +286,7 @@
 					</s:else>
 					<s:hidden name="modelId" id="modelId" value="%{modelId}"/>
 				</table>
-				<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
+				<div id="loadingMask" style="display:none"><p align="center"><img src="/ptis/resources/erp2/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 				<div class="buttonbottom" align="center">													
 					<s:submit cssClass="buttonsubmit" value="Approve" id="Deactivate:Approve" theme="simple" method="approve" onclick="setWorkFlowInfo(this);doLoadingMask();"/>					
 					<s:if test="%{isApprPageReq}">

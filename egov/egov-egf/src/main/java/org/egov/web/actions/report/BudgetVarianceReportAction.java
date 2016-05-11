@@ -137,8 +137,6 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     private Department department = new Department();
     private CFunction function = new CFunction();
     private Fund fund = new Fund();
-    @Autowired
-    private EgovMasterDataCaching masterDataCache;
     
     @ValidationErrorPage(value = "form")
     @SkipValidation
@@ -185,7 +183,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             accountTypeList.add(BudgetAccountType.CAPITAL_RECEIPTS.name());
             addDropdownData("accountTypeList", accountTypeList);
             
-            dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
+            dropdownData.put("budgetGroupList", persistenceService.findAllBy("from BudgetGroup where isActive=true order by name"));
             if (isFieldMandatory(Constants.EXECUTING_DEPARTMENT))
                 addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
             if (isFieldMandatory(Constants.FUNCTION))

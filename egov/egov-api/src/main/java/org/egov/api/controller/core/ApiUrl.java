@@ -95,6 +95,8 @@ public class ApiUrl {
 
 	public final static String CITIZEN_GET_MY_COMPLAINT = "/citizen/getMyComplaint/{page}/{pageSize}";
 	
+	public final static String CITIZEN_COMPLAINT_COUNT = "/citizen/getMyComplaint/count";
+	
 	public final static String CITIZEN_SEND_OTP = "/sendOTP";
 	
 	/*
