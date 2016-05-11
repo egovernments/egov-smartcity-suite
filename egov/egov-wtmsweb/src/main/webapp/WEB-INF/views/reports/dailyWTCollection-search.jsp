@@ -110,7 +110,7 @@ body
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${operators}" id="collectionOperator" name="collectionOperator" itemValue="id" itemLabel="name" />
+								<form:options items="${operators}" id="collectionOperator" name="collectionOperator" itemValue="username" itemLabel="name" />
 							</form:select>
 						</div>
 
