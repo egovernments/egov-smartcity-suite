@@ -154,6 +154,7 @@ $(document).ready(function(){
 				
 				 var fromDate = $('#formDate').val();
 				 var toDate = $('#toDate').val();
+				 var activeid = ( $("#activeid").is(':checked') ) ? true : false;
 			  $.ajax({
 				 
 		            url: '/wtms/ajax-WaterRatescombination',
@@ -164,7 +165,8 @@ $(document).ready(function(){
 		        usageType: $('#usageType').val(),
 				pipeSize :$('#pipeSize').val(),
 				fromDate :$('#formDate').val(),
-				toDate :$('#toDate').val()
+				toDate :$('#toDate').val(),
+				activeid : activeid
 		            	
 		            },
 		            dataType : 'json',
@@ -174,7 +176,7 @@ $(document).ready(function(){
 		    			
 		    			if(response){
 		    				response=JSON.parse(response);
-		    				bootbox.alert("For the Selected Combination, there is a existing record with the date range between Effective From Date :"+response.fromDate+"and Effective To Date :"+response.toDate);
+		    				bootbox.alert("For the Selected Combination, there is a existing record with the date range between Effective From Date : "+response.fromDate+"and Effective To Date : "+response.toDate);
 		    				return false;
 			    			}
 		    			else{
