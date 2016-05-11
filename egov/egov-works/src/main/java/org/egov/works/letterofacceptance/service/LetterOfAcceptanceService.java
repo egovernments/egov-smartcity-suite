@@ -551,8 +551,8 @@ public class LetterOfAcceptanceService {
                 criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber())
                         .ignoreCase());
             if (searchRequestLetterOfAcceptance.getContractor() != null) {
-                criteria.add(Restrictions.or(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getContractor()),
-                        Restrictions.eq("woc.code", searchRequestLetterOfAcceptance.getContractor())));
+                criteria.add(Restrictions.or(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getContractor()).ignoreCase(),
+                        Restrictions.eq("woc.code", searchRequestLetterOfAcceptance.getContractor()).ignoreCase()));
             }
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null) {
                 final List<String> estimateNumbers = lineEstimateDetailsRepository

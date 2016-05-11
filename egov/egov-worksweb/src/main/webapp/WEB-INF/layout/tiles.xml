@@ -176,4 +176,9 @@
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptanceToCancel-header.jsp"/>
     </definition>
     
+    <definition name="searchmilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestone-header.jsp"/>
+    </definition>
+    
 </tiles-definitions>

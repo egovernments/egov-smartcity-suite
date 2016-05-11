@@ -41,9 +41,9 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -54,7 +54,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 @Component
-public class SearchContractorBillsToCancelJsonAdaptor implements JsonSerializer<ContractorBillRegister> {
+public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
 
     @Autowired
     private LineEstimateService lineEstimateService;
@@ -63,50 +63,47 @@ public class SearchContractorBillsToCancelJsonAdaptor implements JsonSerializer<
     private WorksUtils worksUtils;
 
     @Override
-    public JsonElement serialize(final ContractorBillRegister contractorBillRegister, final Type type,
+    public JsonElement serialize(final Milestone milestone, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        if (contractorBillRegister != null) {
-            if (contractorBillRegister.getBillnumber() != null)
-                jsonObject.addProperty("billNumber", contractorBillRegister.getBillnumber());
-            else
-                jsonObject.addProperty("billNumber", "");
-            if (contractorBillRegister.getBilldate() != null)
-                jsonObject.addProperty("billDate", contractorBillRegister.getBilldate().toString());
-            else
-                jsonObject.addProperty("billDate", "");
-            if (contractorBillRegister.getWorkOrder().getEstimateNumber() != null) {
-                final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(contractorBillRegister.getWorkOrder()
+        if (milestone != null) {
+            if (milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber() != null) {
+                final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(milestone.getWorkOrderEstimate()
+                        .getWorkOrder()
                         .getEstimateNumber());
                 jsonObject.addProperty("estimateNumber", led.getEstimateNumber());
-                final String workIdentificationNumber = led.getProjectCode().getCode();
-                jsonObject.addProperty("workIdentificationNumber", workIdentificationNumber);
+                jsonObject.addProperty("workIdentificationNumber", led.getProjectCode().getCode());
+                jsonObject.addProperty("nameOfWork", led.getNameOfWork());
+                jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
+                jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getCode());
+                jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode());
+                jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
             }
             else {
                 jsonObject.addProperty("estimateNumber", "");
                 jsonObject.addProperty("workIdentificationNumber", "");
+                jsonObject.addProperty("nameOfWork", "");
+                jsonObject.addProperty("department", "");
+                jsonObject.addProperty("typeOfWork", "");
+                jsonObject.addProperty("subTypeOfWork", "");
+                jsonObject.addProperty("lineEstimateId", "");
             }
-            if (contractorBillRegister.getWorkOrder() != null)
-                jsonObject.addProperty("workOrderNumber", contractorBillRegister.getWorkOrder().getWorkOrderNumber());
-            else
+            if (milestone.getWorkOrderEstimate().getWorkOrder() != null) {
+                jsonObject.addProperty("agreementAmount", milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount());
+                jsonObject.addProperty("workOrderNumber", milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
+                jsonObject.addProperty("workOrderId", milestone.getWorkOrderEstimate().getWorkOrder().getId());
+            }
+            else {
+                jsonObject.addProperty("agreementAmount", "");
                 jsonObject.addProperty("workOrderNumber", "");
-            if (contractorBillRegister.getWorkOrder().getContractor() != null)
-                jsonObject.addProperty("contractorName", contractorBillRegister.getWorkOrder().getContractor().getName());
+                jsonObject.addProperty("workOrderId", "");
+            }
+            if (milestone.getStatus() != null)
+                jsonObject.addProperty("status", milestone.getStatus().getCode());
             else
-                jsonObject.addProperty("contractorName", "");
-            if (contractorBillRegister.getWorkOrder().getContractor() != null)
-                jsonObject.addProperty("contractorCode", contractorBillRegister.getWorkOrder().getContractor().getCode());
-            else
-                jsonObject.addProperty("contractorCode", "");
-            if (contractorBillRegister.getEgBillregistermis() != null
-                    && contractorBillRegister.getEgBillregistermis().getVoucherHeader() != null
-                    && contractorBillRegister.getEgBillregistermis().getVoucherHeader().getStatus() != 4)
-                jsonObject.addProperty("voucherNumber", contractorBillRegister.getEgBillregistermis().getVoucherHeader()
-                        .getVoucherNumber());
-            else
-                jsonObject.addProperty("voucherNumber", "");
+                jsonObject.addProperty("status", "");
 
-            jsonObject.addProperty("id", contractorBillRegister.getId());
+            jsonObject.addProperty("id", milestone.getId());
 
         }
         return jsonObject;
