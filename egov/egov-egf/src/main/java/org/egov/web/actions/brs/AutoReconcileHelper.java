@@ -199,7 +199,6 @@ public class AutoReconcileHelper {
 	    public String upload()
 	    {
 	        try {
-	            persistenceService.getSession().getTransaction().setTimeout(600);
 	            insertQuery = persistenceService.getSession().createSQLQuery(insertsql);
 	            final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?", Long.valueOf(accountId));
 	            accNo = ba.getAccountnumber();
