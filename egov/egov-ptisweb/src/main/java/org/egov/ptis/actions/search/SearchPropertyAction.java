@@ -119,6 +119,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
         @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
+        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp") })
 public class SearchPropertyAction extends BaseFormAction {
     /**
@@ -277,7 +279,7 @@ public class SearchPropertyAction extends BaseFormAction {
         } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)
-                || APPLICATION_TYPE_GRP.equals(applicationType)) {
+                || APPLICATION_TYPE_GRP.equals(applicationType) || APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
             if (!isDemandActive) {
                 addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;
@@ -298,6 +300,15 @@ public class SearchPropertyAction extends BaseFormAction {
             return APPLICATION_TYPE_EDIT_DEMAND;
         }
 
+        if (basicProperty.getProperty().getIsExemptedFromTax()
+                && !(applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION))) {
+            addActionError(getText("action.error.msg.for.taxExempted"));
+            return COMMON_FORM;
+        }
+
+        if (APPLICATION_TYPE_EDIT_OWNER.equals(applicationType)) {
+            return APPLICATION_TYPE_EDIT_OWNER;
+        }
         if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
             if (!isDemandActive) {
