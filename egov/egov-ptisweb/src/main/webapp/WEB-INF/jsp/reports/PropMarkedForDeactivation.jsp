@@ -47,7 +47,7 @@
     <title>Report - List Of Properties Marked For Deactivation</title>
  	<link href="<c:url value='/css/propertytax.css'/>" rel="stylesheet" type="text/css" />
 	<link href="<c:url value='/css/commonegov.css'/>" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="../commonjs/ajaxCommonFunctions.js"></script>
+	<script type="text/javascript" src="<c:url value='/resources/erp2/js/ajaxCommonFunctions.js'/>"></script>
  
 
  <script type="text/javascript">

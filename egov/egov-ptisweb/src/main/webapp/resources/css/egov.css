@@ -2205,15 +2205,15 @@ table.its th.sorted a,th.sortable a {
 }
 
 table.its th.sortable a {
-	background-image: url(../images/arrow_off.png);
+	background-image: url(/ptis/resources/erp2/images/arrow_off.png);
 }
 
 table.its th.order1 a {
-	background-image: url(../images/arrow_down.png);
+	background-image: url(/ptis/resources/erp2/images/arrow_down.png);
 }
 
 table.its table.its th.order2 a {
-	background-image: url(../images/arrow_up.png);
+	background-image: url(/ptis/resources/erp2/images/arrow_up.png);
 }
 
 tr.odd {
@@ -2342,19 +2342,19 @@ span.export {
 }
 
 span.excel {
-	background-image: url(../images/ico_file_excel.png);
+	background-image: url(/ptis/resources/erp2/images/ico_file_excel.png);
 }
 
 span.csv {
-	background-image: url(../images/ico_file_csv.png);
+	background-image: url(/ptis/resources/erp2/images/ico_file_csv.png);
 }
 
 span.xml {
-	background-image: url(../images/ico_file_xml.png);
+	background-image: url(/ptis/resources/erp2/images/ico_file_xml.png);
 }
 
 span.pdf {
-	background-image: url(../images/ico_file_pdf.png);
+	background-image: url(/ptis/resources/erp2/images/ico_file_pdf.png);
 }
 
 span.pagebanner {
@@ -2598,7 +2598,7 @@ div.tbl-containerMoreHeight {
 }
 
 div.commontopyellowbg {
-	background-image: url(../images/commonnewTopbg.jpg);
+	background-image: url(/ptis/resources/erp2/images/commonnewTopbg.jpg);
 	background-color: #ffad01;
 	background-position: right bottom;
 	font-family: Arial, Helvetica, sans-serif;
@@ -2615,7 +2615,7 @@ div.commontopyellowbg {
 }
 
 div.commontopbluebg {
-	background-image: url(../images/commonnewTop2bg.jpg);
+	background-image: url(/ptis/resources/erp2/images/commonnewTop2bg.jpg);
 	background-color: #486f9f;
 	background-position: right bottom;
 	font-family: Arial, Helvetica, sans-serif;
@@ -2654,7 +2654,7 @@ div.commontopbreadc {
 	display: block;
 	padding-right: 15px;
 	padding-left: 15px;
-	background-image: url(../images/commonnewTopbc.jpg);
+	background-image: url(/ptis/resources/erp2/images/commonnewTopbc.jpg);
 	background-repeat: repeat;
 	background-position: center top;
 }
