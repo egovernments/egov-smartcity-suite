@@ -127,6 +127,7 @@
 				<s:actionmessage />
 			</div>
 			<div style="color: red" align="left">
+			</br>
 				<div class="errorstyle" style="display: none" id="codeuniquecode">
 					<s:text name="subscheme.code.already.exists" />
 				</div>
@@ -142,6 +143,8 @@
 				<s:hidden name="showMode" id="showMode" value="%{showMode}" />
 				<s:hidden id="subSchemeId" name="subSchemeId"
 					value="%{subScheme.id}" />
+					
+					</br>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox">&nbsp;</td>
@@ -151,7 +154,7 @@
 								list="dropdownData.schemeList" listKey="id" listValue="name"
 								headerKey="" headerValue="--- Select ---"
 								value="%{subScheme.scheme.id}" /></td>
-						<td class="bluebox" width="20%"><strong>Name<span
+						<td class="bluebox" width="20%"><strong>Sub Scheme Name<span
 								class="mandatory1"> *</span></strong></td>
 						<%-- <s:if test="showMode == 'new'"> --%>
 						<td class="bluebox"><s:textfield id="name" name="name"
@@ -164,7 +167,7 @@
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
-						<td class="greybox"><strong>Code</strong><span
+						<td class="greybox"><strong>Sub Scheme Code</strong><span
 							class="mandatory1"> *</span></td>
 						<%-- <s:if test="showMode == 'new'"> --%>
 						<td class="greybox"><s:textfield id="code" name="code"
@@ -173,20 +176,24 @@
 							fieldtoreset="code" fields="['Value']"
 							url='masters/subScheme-codeUniqueCheck.action' />
 
-						<td class="greybox"><strong>Valid From</strong><span
+						<td class="greybox"><strong>Active</strong></td>
+						<td class="greybox"><s:checkbox id="isactive" name="isactive"
+								value="%{subScheme.isactive}" /></td>
+
+						
+					</tr>
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						
+						<td class="bluebox"><strong>Valid From</strong><span
 							class="mandatory1"> *</span></td>
-						<td class="greybox"><s:date name="subScheme.validfrom"
+						<td class="bluebox"><s:date name="subScheme.validfrom"
 								id="validfromId" format="dd/MM/yyyy" /> <s:textfield
 								id="validfrom" name="validfrom" value="%{validfromId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 								data-inputmask="'mask': 'd/m/y'" /></td>
-
-						</td>
-					</tr>
-					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox"><strong>Valid To</strong><span
+								<td class="bluebox"><strong>Valid To</strong><span
 							class="mandatory1"> *</span></td>
 						<td class="bluebox"><s:date name="subScheme.validto"
 								id="validtoId" format="dd/MM/yyyy" /> <s:textfield
@@ -194,10 +201,8 @@
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 								data-inputmask="'mask': 'd/m/y'" /></td>
-						</td>
-						<td class="bluebox"><strong>Active</strong></td>
-						<td class="bluebox"><s:checkbox id="isactive" name="isactive"
-								value="%{subScheme.isactive}" /></td>
+						
+						
 					</tr>
 					<tr>
 						<td class="greybox">&nbsp;</td>
@@ -296,7 +301,9 @@
 					<div align="center" class="buttonbottom"
 						style="padding-bottom: 10px;">
 						<input type="submit" class="buttonsubmit" value="Save"
-							id="saveButton" name="button" onclick="return validate();" /> <input
+							id="saveButton" name="button" onclick="return validate();" /> 
+							<input type="reset" class="buttonsubmit" value="Reset"
+							id="resetButton" name="button" onclick="return resetSubmit();" /> <input
 							type="button" id="Close" value="Close"
 							onclick="javascript:window.close()" class="button" />
 					</div>
@@ -317,7 +324,8 @@
 				</s:else>
 			</s:form>
 			<script type="text/javascript">
-				/* <s:if test="%{clearValues == true}">
+				function resetSubmit()
+				{
 					document.getElementById('scheme').value = 0;
 					document.getElementById('department').value = 0;
 					document.getElementById('name').value = "";
@@ -334,7 +342,7 @@
 					document.getElementById('govtLoanProposalDate').value = "";
 					document.getElementById('govtAdminSanctionNumber').value = "";
 					document.getElementById('govtAdminSanctionDate').value = "";
-				</s:if> */
+				}
 			</script>
 </body>
 </html>

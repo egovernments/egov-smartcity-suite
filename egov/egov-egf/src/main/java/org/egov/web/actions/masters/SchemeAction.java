@@ -195,7 +195,7 @@ public class SchemeAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(".................................Scheme Modified Successfully......................");
         addActionMessage(getText("Scheme Modified Successfully"));
-        mode = "";
+        mode = EDIT;
         return NEW;
     }
 
