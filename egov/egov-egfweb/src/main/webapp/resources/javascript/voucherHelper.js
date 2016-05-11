@@ -1054,7 +1054,7 @@ function fillNeibrAfterSplitFunction(obj)
 			document.getElementById("billDetailslist['+currRow+'].functionIdDetail").value="";
 		}*/
 		
-		bootbox.alert("Invalid function selected .Please select code from auto complete.");
+		//bootbox.alert("Invalid function selected .Please select code from auto complete.");
 		
 	}
 		

@@ -143,7 +143,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
         dropdownData.put("functionList", masterDataCache.get("egi-function"));
         dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
-        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
+        dropdownData.put("budgetGroupList", persistenceService.findAllBy("from BudgetGroup where isActive=true order by name"));
         dropdownData.put("fundList", masterDataCache.get("egi-fund"));
         if (department.getId() != null && department.getId() != -1)
             department = (Department) persistenceService.find("from Department where id=?", department.getId());
