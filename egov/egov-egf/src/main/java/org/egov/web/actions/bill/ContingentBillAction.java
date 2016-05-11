@@ -691,13 +691,13 @@ public class ContingentBillAction extends BaseBillAction {
                 billDetailsTableNetFinal.add(vd);
 
             }
-            else if (detail.getCreditamount() != null && !detail.getCreditamount().equals(BigDecimal.ZERO))
+            else if (detail.getCreditamount() != null && detail.getCreditamount().compareTo(BigDecimal.ZERO)!=0)
             {
                 vd.setCreditAmountDetail(detail.getCreditamount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 billDetailsTableCreditFinal.add(vd);
             }
 
-            if (detail.getDebitamount() != null && !detail.getDebitamount().equals(BigDecimal.ZERO))
+            if (detail.getDebitamount() != null && detail.getDebitamount().compareTo(BigDecimal.ZERO)!=0)
             {
                 vd.setDebitAmountDetail(detail.getDebitamount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 billDetailsTableFinal.add(vd);
@@ -737,7 +737,7 @@ public class ContingentBillAction extends BaseBillAction {
 
                 subVd.setDetailName(entity.getName());
                 subVd.setDetailCode(entity.getCode());
-                if (detail.getCreditamount() != null && !detail.getCreditamount().equals(BigDecimal.ZERO))
+                if (detail.getCreditamount() != null && detail.getCreditamount().compareTo(BigDecimal.ZERO)!=0)
                     subVd.setDebitAmountDetail(payeedetail.getCreditAmount());
                 else
                     subVd.setDebitAmountDetail(payeedetail.getDebitAmount());

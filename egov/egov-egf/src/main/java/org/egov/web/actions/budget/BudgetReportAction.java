@@ -582,7 +582,7 @@ public class BudgetReportAction extends BaseFormAction {
             printed = true;
             isFirst = false;
         }
-        if (!totalAmt.equals(BigDecimal.ZERO) && !majorcodewise)
+        if (totalAmt.compareTo(BigDecimal.ZERO)!=0 && !majorcodewise)
             budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING, totalAmt,
                     totalAppropriationAmt, totalAmt.add(totalAppropriationAmt), TOTALROW));
         return budgetReportList;
@@ -735,7 +735,7 @@ public class BudgetReportAction extends BaseFormAction {
             printed = true;
             isFirst = false;
         }
-        if (!totalAmt.equals(BigDecimal.ZERO) && !majorcodewise)
+        if (totalAmt.compareTo(BigDecimal.ZERO)!=0 && !majorcodewise)
             budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING, totalAmt,
                     totalAppropriationAmt, totalAmt.add(totalAppropriationAmt), TOTALROW));
         return budgetReportList;
@@ -1027,7 +1027,7 @@ public class BudgetReportAction extends BaseFormAction {
             }
         for (final Entry<String, BudgetReportView> row : entries.entrySet())
             majorCodeList.add(row.getValue());
-        if (!totalAmt.equals(BigDecimal.ZERO))
+        if (totalAmt.compareTo(BigDecimal.ZERO)!=0)
             majorCodeList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING, grandAmt,
                     appropriationGrandAmt, grandAmt
                             .add(appropriationGrandAmt), TOTALROW));
@@ -1667,7 +1667,7 @@ public class BudgetReportAction extends BaseFormAction {
             printed = true;
             isFirst = false;
         }
-        if (!reProposalTotalLocal.equals(BigDecimal.ZERO) && !majorcodewise)
+        if (reProposalTotalLocal.compareTo(BigDecimal.ZERO)!=0 && !majorcodewise)
             budgetReportList.add(new BudgetReportView(EMPTYSTRING, EMPTYSTRING, EMPTYSTRING, TOTALSTRING, EMPTYSTRING,
                     reProposalTotalLocal, reRecomTotalLocal,
                     beProposalTotalLocal, beRecomTotalLocal, TOTALROW));

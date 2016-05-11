@@ -306,7 +306,7 @@ public class ContraCTBAction extends BaseVoucherAction
             addActionError(getText("contra.validate.accnum"));
             return false;
         }
-        if (null == contraBean.getAmount() || contraBean.getAmount().equals(BigDecimal.ZERO)) {
+        if (null == contraBean.getAmount() || contraBean.getAmount().compareTo(BigDecimal.ZERO)==0) {
             addActionError(getText("contra.validate.amt"));
             return false;
         }
