@@ -37,21 +37,51 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.repository;
 
-import java.util.List;
+package org.egov.works.web.adaptor;
 
-import org.egov.works.models.masters.MilestoneTemplateActivity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.lang.reflect.Type;
 
-@Repository
-public interface MilestoneTemplateActivityRepository extends JpaRepository<MilestoneTemplateActivity, Long> {
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.models.masters.MilestoneTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-    MilestoneTemplateActivity findById(final Long id);
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    List<MilestoneTemplateActivity> findByMilestoneTemplate_Id(final Long id);
+@Component
+public class SearchMilestoneTemplateJsonAdaptor implements JsonSerializer<MilestoneTemplate> {
+    @Autowired
+    private LineEstimateService lineEstimateService;
 
-    List<MilestoneTemplateActivity> findByMilestoneTemplate_Code(final String code);
+    @Override
+    public JsonElement serialize(final MilestoneTemplate milestoneTemplate, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (milestoneTemplate != null) {
+            if (milestoneTemplate.getCode() != null)
+                jsonObject.addProperty("code", milestoneTemplate.getCode());
+            else
+                jsonObject.addProperty("code", "");
+            if (milestoneTemplate.getTypeOfWork() != null)
+                jsonObject.addProperty("typeOfWork", milestoneTemplate.getTypeOfWork().getCode());
+            else
+                jsonObject.addProperty("typeOfWork", "");
+            if (milestoneTemplate.getSubTypeOfWork() != null)
+                jsonObject.addProperty("subTypeOfWork", milestoneTemplate.getSubTypeOfWork().getCode());
+            else
+                jsonObject.addProperty("subTypeOfWork", "");
 
+            if (milestoneTemplate.getDescription() != null)
+                jsonObject.addProperty("description", milestoneTemplate.getDescription());
+            else
+                jsonObject.addProperty("description", "");
+
+            jsonObject.addProperty("milestoneId", milestoneTemplate.getId());
+
+        }
+        return jsonObject;
+    }
 }

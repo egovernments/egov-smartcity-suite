@@ -37,21 +37,49 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.repository;
 
-import java.util.List;
+package org.egov.works.milestone.entity;
 
-import org.egov.works.models.masters.MilestoneTemplateActivity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public class SearchRequestMilestoneTemplate {
 
-@Repository
-public interface MilestoneTemplateActivityRepository extends JpaRepository<MilestoneTemplateActivity, Long> {
+    private String name;
+    private String description;
+    private Long typeOfWork;
+    private Long subTypeOfWork;
 
-    MilestoneTemplateActivity findById(final Long id);
+    public SearchRequestMilestoneTemplate() {
+    }
 
-    List<MilestoneTemplateActivity> findByMilestoneTemplate_Id(final Long id);
+    public String getName() {
+        return name;
+    }
 
-    List<MilestoneTemplateActivity> findByMilestoneTemplate_Code(final String code);
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public Long getTypeOfWork() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(final Long typeOfWork) {
+        this.typeOfWork = typeOfWork;
+    }
+
+    public Long getSubTypeOfWork() {
+        return subTypeOfWork;
+    }
+
+    public void setSubTypeOfWork(final Long subTypeOfWork) {
+        this.subTypeOfWork = subTypeOfWork;
+    }
 
 }

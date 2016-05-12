@@ -57,4 +57,8 @@ public class WorkOrderEstimateService {
         return workOrderEstimateRepository.findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(workOrderId, estimateId,
                 WorksConstants.APPROVED);
     }
+    
+    public WorkOrderEstimate getWorkOrderEstimateById(final Long id) {
+        return workOrderEstimateRepository.findOne(id);
+    }
 }

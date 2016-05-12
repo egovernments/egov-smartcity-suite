@@ -41,61 +41,49 @@ package org.egov.works.web.controller.milestone;
 
 import java.util.List;
 
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.milestone.entity.SearchRequestMilestone;
+import org.egov.works.master.service.MilestoneTemplateActivityService;
+import org.egov.works.master.service.MilestoneTemplateService;
 import org.egov.works.models.masters.MilestoneTemplate;
+import org.egov.works.models.masters.MilestoneTemplateActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/milestone")
-public class SearchMilestoneController {
+public class ViewMilestoneControlle {
 
     @Autowired
-    private DepartmentService departmentService;
+    private MilestoneTemplateService milestoneTemplateService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private MilestoneTemplateActivityService milestoneTemplateActivityService;
 
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @RequestMapping(value = "/search-form", method = RequestMethod.GET)
-    public String showSearchMilestoneForm(
-            @ModelAttribute final SearchRequestMilestone searchRequestMilestone,
-            final Model model) throws ApplicationException {
-        setDropDownValues(model);
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        if (departments != null && !departments.isEmpty())
-            searchRequestMilestone.setDepartment(departments.get(0).getId());
-        model.addAttribute("searchRequestMilestone", searchRequestMilestone);
-        return "searchmilestone-form";
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    public String viewMilestoneTemplate(@PathVariable final String id, final Model model,
+            final HttpServletRequest request)
+                    throws ApplicationException {
+        final MilestoneTemplate milestoneTemplate = milestoneTemplateService.getMilestoneTemplateById(Long.parseLong(id));
+        model.addAttribute("milestoneTemplate", milestoneTemplate);
+        model.addAttribute("mode", "view");
+        return "milestoneTemplate-view";
     }
 
-    private void setDropDownValues(final Model model) {
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+    @RequestMapping(value = "/setmilestonetemplateactivities/{id}", method = RequestMethod.GET)
+    public @ResponseBody List<MilestoneTemplateActivity> populateMilestoneTemplateActivity(@PathVariable final String id,
+            final Model model,
+            final HttpServletRequest request)
+                    throws ApplicationException {
+        final List<MilestoneTemplateActivity> milestoneTemplateActivities = milestoneTemplateActivityService
+                .getMilestoneTemplateActivityByMilestoneTemplate(Long.parseLong(id));
+        return milestoneTemplateActivities;
     }
-    
-    @RequestMapping(value = "/searchmilestonetemplate", method = RequestMethod.GET)
-    public String showSearchMilestoneTemplate(
-            @ModelAttribute final MilestoneTemplate milestoneTemplate,
-            final Model model) throws ApplicationException {
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
-        return "milestoneTemplate-search";
-    }
-
 
 }

@@ -37,21 +37,26 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.repository;
+package org.egov.works.master.service;
 
 import java.util.List;
 
+import org.egov.works.master.repository.MilestoneTemplateActivityRepository;
 import org.egov.works.models.masters.MilestoneTemplateActivity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Repository
-public interface MilestoneTemplateActivityRepository extends JpaRepository<MilestoneTemplateActivity, Long> {
+@Service
+public class MilestoneTemplateActivityService {
 
-    MilestoneTemplateActivity findById(final Long id);
+    @Autowired
+    private MilestoneTemplateActivityRepository milestoneTemplateActivityRepository;
 
-    List<MilestoneTemplateActivity> findByMilestoneTemplate_Id(final Long id);
+    public List<MilestoneTemplateActivity> getMilestoneTemplateActivityByMilestoneTemplate(final Long id) {
+        return milestoneTemplateActivityRepository.findByMilestoneTemplate_Id(id);
+    }
 
-    List<MilestoneTemplateActivity> findByMilestoneTemplate_Code(final String code);
-
+    public List<MilestoneTemplateActivity> getMilestoneTemplateActivityByMilestoneTemplateCode(final String code) {
+        return milestoneTemplateActivityRepository.findByMilestoneTemplate_Code(code);
+    }
 }
