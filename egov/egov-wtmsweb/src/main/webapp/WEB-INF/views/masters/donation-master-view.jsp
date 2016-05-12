@@ -83,6 +83,9 @@
 						<th colspan="1" class="text-center">
 						   <spring:message code="lbl.effective.fromdate" />
 						</th>
+						<th  align="center" colspan="1" >
+						   <div align="center"><spring:message code="lbl.effective.todate" /> </div>
+						</th>
 						<th colspan="1" class="text-center">
 						   <spring:message code="lbl.status"/>
 						</th>
@@ -119,6 +122,11 @@
 							<td colspan="1" >
 								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${donationDetails.fromDate}"/></div>
 							</td>
+							
+							<td colspan="1" >
+								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${donationDetails.toDate}"/></div>
+							</td>
+							
 							<td colspan="1" >
 								<div align="center">
 								<c:choose>

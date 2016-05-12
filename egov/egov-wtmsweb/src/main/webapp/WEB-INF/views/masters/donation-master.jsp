@@ -123,6 +123,14 @@
 								id="effectiveDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 								<form:errors path="fromDate" cssClass="add-margin error-msg" />
 						</div>
+<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.effective.todate" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+							<form:input  path="toDate"  
+								class="form-control datepicker" 
+								id="toDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+								<form:errors path="toDate" cssClass="add-margin error-msg" />
+						</div>						
 </div>
 <div class="form-group" id="statusdiv">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active" /></label>

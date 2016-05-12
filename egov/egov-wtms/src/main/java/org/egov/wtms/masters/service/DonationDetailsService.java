@@ -39,6 +39,9 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
@@ -50,8 +53,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -85,10 +86,10 @@ public class DonationDetailsService {
     public DonationDetails findByDonationHeader(final DonationHeader donationHeader) {
         return donationDetailsRepository.findByDonationHeader(donationHeader);
     }
-    
+
     public List<DonationDetails> findAll() {
         return donationDetailsRepository.findAll(new Sort(Sort.Direction.DESC, "donationHeader.propertyType",
-                "donationHeader.category","donationHeader.usageType","donationHeader.minPipeSize"));
+                "donationHeader.category", "donationHeader.usageType", "donationHeader.minPipeSize"));
     }
 
     // findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize
@@ -96,6 +97,11 @@ public class DonationDetailsService {
             final ConnectionCategory categoryType, final UsageType usageType, final PipeSize minPipeSize) {
         return donationDetailsRepository.findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType,
                 categoryType, usageType, minPipeSize);
+    }
+
+    public DonationDetails findByDonationHeaderAndFromDateAndToDate(final DonationHeader donationHeader,
+            final Date fromDate, final Date toDate) {
+        return donationDetailsRepository.findByDonationHeaderAndFromDateAndToDate(donationHeader, fromDate, toDate);
     }
 
 }

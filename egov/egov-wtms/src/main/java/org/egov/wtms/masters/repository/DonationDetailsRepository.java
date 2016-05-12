@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.masters.repository;
 
+import java.util.Date;
+
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
@@ -52,13 +54,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DonationDetailsRepository extends JpaRepository<DonationDetails, Long> {
-    
+
     @Query(" from DonationDetails dd where dd.donationHeader =:donationHeader and ((dd.toDate is not null and current_date between dd.fromDate and dd.toDate) or (dd.toDate is null and dd.fromDate <= current_date))")
     DonationDetails findByDonationHeader(@Param("donationHeader") DonationHeader donationHeader);
+
+    @Query(" from DonationDetails dd where dd.donationHeader =:donationHeader and ((dd.toDate is not null and :toDate between dd.fromDate and dd.toDate) or (dd.toDate is not null and :fromDate between dd.fromDate and dd.toDate)  or (:fromDate <= dd.fromDate  and :toDate >= dd.toDate))")
+    DonationDetails findByDonationHeaderAndFromDateAndToDate(@Param("donationHeader") DonationHeader donationHeader,
+            @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
 
     @Query(" from DonationDetails dd where dd.donationHeader.propertyType=:propertyType and dd.donationHeader.category=:categoryType and dd.donationHeader.usageType=:usageType and dd.donationHeader.minPipeSize=:minPipeSize ")
     DonationDetails findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(
             @Param("propertyType") PropertyType propertyType, @Param("categoryType") ConnectionCategory categoryType,
-            @Param("usageType") UsageType usageType, @Param("minPipeSize") PipeSize minPipeSize
-            );
+            @Param("usageType") UsageType usageType, @Param("minPipeSize") PipeSize minPipeSize);
 }

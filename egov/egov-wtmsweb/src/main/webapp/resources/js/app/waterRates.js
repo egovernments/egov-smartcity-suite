@@ -169,7 +169,14 @@ $(document).ready(function(){
 				
 				 var fromDate = $('#formDate').val();
 				 var toDate = $('#toDate').val();
-				 var activeid = ( $("#activeid").is(':checked') ) ? true : false;
+				 var activeDiv = $('#reqAttr').val();
+					if (activeDiv =='false')
+						{
+						var activeid = true;
+						}
+					else{
+						var activeid = ( $("#activeid").is(':checked') ) ? true : false;
+					    }
 			  $.ajax({
 				 
 		            url: '/wtms/ajax-WaterRatescombination',
