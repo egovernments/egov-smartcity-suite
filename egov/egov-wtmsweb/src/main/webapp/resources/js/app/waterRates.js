@@ -176,7 +176,7 @@ $(document).ready(function(){
 		    			
 		    			if(response){
 		    				response=JSON.parse(response);
-		    				bootbox.alert("For the Selected Combination, there is a existing record with the date range between Effective From Date : "+response.fromDate+"and Effective To Date : "+response.toDate);
+		    				bootbox.alert("For the Selected Combination, there is a existing record with the date range between Effective From Date : "+response.fromDate+" and Effective To Date : "+response.toDate);
 		    				return false;
 			    			}
 		    			else{

@@ -231,13 +231,17 @@ public class AjaxConnectionController {
             }
         if (waterRatesDetails == null)
             return "";
-        else if (waterRatesDetails.getWaterRatesHeader().isActive() == activeid) {
+        else if (waterRatesDetails.getWaterRatesHeader().isActive() == activeid ) {
             final JsonObject jsonObj = new JsonObject();
             jsonObj.addProperty("fromDate", dateformat.format(waterRatesDetails.getFromDate()).toString());
             jsonObj.addProperty("toDate", dateformat.format(waterRatesDetails.getToDate()).toString());
             return jsonObj.toString();
-        } else
-            return "";
+        } else {
+            final JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("fromDate", dateformat.format(waterRatesDetails.getFromDate()).toString());
+            jsonObj.addProperty("toDate", dateformat.format(waterRatesDetails.getToDate()).toString());
+            return jsonObj.toString();
+        }
     }
 
     @RequestMapping(value = "/ajax-getapplicationprocesstime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
