@@ -151,7 +151,6 @@ $(document).ready(function()
 		});
 	
 	$('#routersave').click(function(e){  
-		//var rowCount = $('#bulk_router_table >tbody >tr').length;
 		if($("#bulk_router_table").dataTable().fnSettings().aoData.length == 0){
 			document.forms["bulkRouter"].submit();//submit it
 		}else{

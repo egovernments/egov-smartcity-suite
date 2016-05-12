@@ -84,7 +84,7 @@
 						<label for="field-1" class="col-sm-3 control-label">
 							<spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:select multiple="true" path="complaintTypes" id="complaintTypes" cssClass="form-control" required="required">
+							<form:select style="overflow:auto;" multiple="true" path="complaintTypes" id="complaintTypes" cssClass="form-control" required="required">
 								<form:options items="${complaintTypeCategory.complaintTypes}" itemLabel="name" itemValue="id"/>
 							</form:select>
 						</div>
