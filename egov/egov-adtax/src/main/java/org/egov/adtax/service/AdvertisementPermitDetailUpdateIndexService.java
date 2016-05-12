@@ -147,11 +147,10 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	 	                applicationIndex.setApplicantAddress(address);
 	 	                applicationIndex.setMobileNumber(advertisementPermitDetail.getAgency()!=null?
 		                		 advertisementPermitDetail.getAgency().getMobileNumber():"");
-	 	                applicationIndex.setApproved(ApprovalStatus.APPROVED);
-	 	                applicationIndex.setClosed(ClosureStatus.NO);
 	        		 }
  	                 // mark application index as closed on generate permit order
  	                 if(advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)){
+ 	                         applicationIndex.setApproved(ApprovalStatus.APPROVED);
  	                	 applicationIndex.setClosed(ClosureStatus.YES);
  	                 }
  	                 // mark application index as rejected and closed on advertisement cancellation / Deactivation
@@ -193,7 +192,7 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	                 applicationIndexBuilder.mobileNumber(advertisementPermitDetail.getAgency()!=null?
 	                		 advertisementPermitDetail.getAgency().getMobileNumber():"");
 	                 applicationIndexBuilder.aadharNumber(null);
-	                 applicationIndexBuilder.approved(ApprovalStatus.UNKNOWN);
+	                 applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
                 	 applicationIndexBuilder.closed(ClosureStatus.NO);
 	                 applicationIndex = applicationIndexBuilder.build();
 	                 applicationIndexService.createApplicationIndex(applicationIndex);
