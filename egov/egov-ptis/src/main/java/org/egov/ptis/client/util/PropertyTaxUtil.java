@@ -1859,10 +1859,6 @@ public class PropertyTaxUtil {
         return demandNoticeDetailsInfo;
     }
 
-    public String logoBasePath() {
-        return ReportUtil.logoBasePath();
-    }
-
     public DepreciationMaster getDepreciationByDate(final Date depreciationDate) {
         String depreciationYear = null;
         final int years = DateUtils.getNumberOfYearPassesed(depreciationDate, new Date());
