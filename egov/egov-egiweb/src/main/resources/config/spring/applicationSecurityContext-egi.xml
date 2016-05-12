@@ -50,11 +50,6 @@
 	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<constructor-arg>
 			<list>
-				<security:filter-chain pattern="/commonjs/**" filters="none" />
-				<security:filter-chain pattern="/commonyui/**" filters="none" />
-				<security:filter-chain pattern="/css/**" filters="none" />
-				<security:filter-chain pattern="/images/**" filters="none" />
-				<security:filter-chain pattern="/javascript/**" filters="none" />
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/help*" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
