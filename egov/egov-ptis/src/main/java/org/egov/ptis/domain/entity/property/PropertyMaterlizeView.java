@@ -408,12 +408,13 @@ public class PropertyMaterlizeView implements Serializable {
     public void setArrearCollection(BigDecimal arrearCollection) {
         this.arrearCollection = arrearCollection;
     }
-
-    public boolean isUnderCourtCase() {
+    
+    public Boolean getIsUnderCourtCase() {
         return isUnderCourtCase;
     }
 
-    public void setUnderCourtCase(boolean isUnderCourtCase) {
+    public void setIsUnderCourtCase(Boolean isUnderCourtCase) {
         this.isUnderCourtCase = isUnderCourtCase;
     }
+
 }
