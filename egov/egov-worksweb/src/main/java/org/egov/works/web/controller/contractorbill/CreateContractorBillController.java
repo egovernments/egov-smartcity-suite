@@ -48,6 +48,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
@@ -55,6 +56,7 @@ import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
@@ -111,6 +113,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
     
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
+    
+    @Autowired
+    private EstimateService estimateService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
@@ -149,7 +154,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         final String loaNumber = request.getParameter("loaNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getByWorkOrderId(workOrder.getId());
+        final AbstractEstimate abstractEstimate = estimateService
+                .getAbstractEstimateByEstimateNumberAndStatus(lineEstimateDetails.getEstimateNumber());
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getEstimateByWorkOrderAndEstimateAndStatus(
+                workOrder.getId(), abstractEstimate.getId());
         contractorBillRegister.setWorkOrder(workOrder);
         contractorBillRegister.setWorkOrderEstimate(workOrderEstimate);
 

@@ -38,7 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var department = $('#department').val();
+	var workOrderNumber = $('#workOrderNumber').val();
+	var workIdentificationNumber = $('#workIdentificationNumber').val();
+	var contractor = $('#contractor').val();
+	if(department == '' && workOrderNumber == '' && workIdentificationNumber == '' && contractor == '')
+		bootbox.alert('Atleast one search criteria is mandatory');
+	else
+		callAjaxSearch();
 });
 
 function callAjaxSearch() {
