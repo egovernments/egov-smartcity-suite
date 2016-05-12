@@ -306,11 +306,11 @@ public class RptSubLedgerSchedule {
              
                 try {
                        entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
-                                + " where id=? ",Integer.valueOf(element[0].toString()));
+                                + " where id="+element[0].toString());
                     } catch ( final Exception ee) {
                         LOGGER.error(ee.getMessage(), ee);
                         entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
-                                + " where id=? ", Integer.valueOf(element[0].toString()));
+                                + " where id="+element[0].toString());
                     }    
           
                 if (entity != null) {
