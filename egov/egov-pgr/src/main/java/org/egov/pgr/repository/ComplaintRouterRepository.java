@@ -40,6 +40,8 @@
 
 package org.egov.pgr.repository;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
@@ -48,8 +50,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface ComplaintRouterRepository extends JpaRepository<ComplaintRouter, Long> {
@@ -154,4 +154,9 @@ public interface ComplaintRouterRepository extends JpaRepository<ComplaintRouter
 
     @Query("select cr from ComplaintRouter cr where cr.boundary.parent is null and  cr.complaintType is null and cr.boundary.boundaryType.hierarchyType.name=:hierarchyType")
     public ComplaintRouter findCityAdminGrievanceOfficer(@Param("hierarchyType") String hierarchyType);
+
+    @Query("select cr from ComplaintRouter cr where cr.complaintType in :complaintTypes and cr.boundary in :boundaries")
+    public List<ComplaintRouter> findRoutersByComplaintTypesBoundaries(
+            @Param("complaintTypes") List<ComplaintType> complaintTypes, @Param("boundaries") List<Boundary> boundaries);
+
 }
