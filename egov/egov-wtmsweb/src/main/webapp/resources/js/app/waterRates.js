@@ -38,6 +38,21 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	
+	$('#waterRatesTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 7,
+			"orderable": false
+		} ]
+	});
 
 	$('#statusdiv').hide();
 	
@@ -217,10 +232,3 @@ function addNew()
 {
 	window.open("/wtms/masters/waterRatesMaster/", "_self");
 }
-
-/*function overwritedonation(res)
-{
-	
-	document.forms[0].submit();
-}*/
-	

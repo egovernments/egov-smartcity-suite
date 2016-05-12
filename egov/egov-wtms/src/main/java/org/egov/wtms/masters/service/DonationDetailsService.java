@@ -47,6 +47,7 @@ import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.repository.DonationDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,7 +87,8 @@ public class DonationDetailsService {
     }
     
     public List<DonationDetails> findAll() {
-        return donationDetailsRepository.findAll();
+        return donationDetailsRepository.findAll(new Sort(Sort.Direction.DESC, "donationHeader.propertyType",
+                "donationHeader.category","donationHeader.usageType","donationHeader.minPipeSize"));
     }
 
     // findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize

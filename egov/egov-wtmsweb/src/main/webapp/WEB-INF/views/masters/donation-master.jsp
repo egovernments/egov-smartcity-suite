@@ -44,78 +44,50 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-    <%--  <form role="form" class="form-horizontal form-groups-bordered"> --%>
-    <form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="donationDetails" id="donationDetailsform"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
+ <form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="donationDetails" id="donationDetailsform"
+			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 <div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading">
-	</div>
+<div class="panel-heading"></div>
 	<div class="panel-body custom-form">
-<div class="form-group">
-    <label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.propertytype" /><span class="mandatory"></span></label>
+	<div class="form-group">
+    	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.propertytype" />:<span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="donationHeader.propertyType" data-first-option="false" id="propertyType"
 			cssClass="form-control" required="required" >
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${propertyType}" itemValue="id"
-				itemLabel="name" />
+			<form:option value=""><spring:message code="lbl.select" /></form:option>
+			<form:options items="${propertyType}" itemValue="id" itemLabel="name" />
 		</form:select>		
-		<form:errors path="donationHeader.propertyType" cssClass="add-margin error-msg" />					
+			<form:errors path="donationHeader.propertyType" cssClass="add-margin error-msg" />					
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.category" /><span class="mandatory"></span></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.category" />:<span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="donationHeader.category" data-first-option="false" id="connectionCategorie"
 			cssClass="form-control" required="required">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${categoryType}" itemValue="id"
-				itemLabel="name" />
+			<form:option value=""><spring:message code="lbl.select" /></form:option>
+			<form:options items="${categoryType}" itemValue="id" itemLabel="name" />
 		</form:select>
 		<form:errors path="donationHeader.category" cssClass="add-margin error-msg" />
 	</div>
 	
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.usagetype" /><span class="mandatory"></span></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.usagetype" />:<span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="donationHeader.usageType" data-first-option="false" id="usageType"
 			cssClass="form-control" required="required">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
+			<form:option value=""><spring:message code="lbl.select" /></form:option>
 			<form:options items="${usageType}" itemValue="id"
 				itemLabel="name" />
 		</form:select>
 		<form:errors path="donationHeader.usageType" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.hscpipesize.max.inches" /><span class="mandatory"></span></label>
-			<%-- <div class="col-sm-3 add-margin">
-		<form:select path="pipeSize" data-first-option="false" id="pipeSize"
-			cssClass="form-control" required="required" >
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${pipeSizes}" itemValue="id" 
-				itemLabel="code" />
-		</form:select>		
-		<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
-	</div> --%>
+			code="lbl.hscpipesize.max.inches" />:<span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="donationHeader.maxPipeSize" data-first-option="false" id="pipeSize"
 			cssClass="form-control" required="required" >
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${maxPipeSizeList}" itemValue="id" 
-				itemLabel="code" />
+			<form:option value=""><spring:message code="lbl.select" /></form:option>
+			<form:options items="${maxPipeSizeList}" itemValue="id" itemLabel="code" />
 		</form:select>		
 		<form:errors path="donationHeader.maxPipeSize" cssClass="add-margin error-msg" />					
 	</div>
@@ -123,7 +95,7 @@
 
 <div class="form-group">
 <label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.hscpipesize.min.inches" /><span class="mandatory"></span></label>
+			code="lbl.hscpipesize.min.inches" />:<span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="donationHeader.minPipeSize" data-first-option="false" id="minpipeSize"
 			cssClass="form-control" required="required" >
@@ -136,7 +108,7 @@
 		<form:errors path="donationHeader.minPipeSize" cssClass="add-margin error-msg" />					
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.donation.amount" /><span class="mandatory"></span></label> 
+			code="lbl.donation.amount" />:<span class="mandatory"></span></label> 
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="6" id="donationAmount" path="amount" />
 		<form:errors path="amount" cssClass="add-margin error-msg" />		
@@ -144,7 +116,7 @@
 </div>
 <div class="form-group">
 <label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.effective.fromdate" /><span class="mandatory"></span></label>
+								code="lbl.effective.fromdate" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input  path="fromDate"  
 								class="form-control datepicker" 

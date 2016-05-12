@@ -59,32 +59,32 @@
 	<div class="form-group" align ="center"> No Master Data</div>
  </c:when>
  <c:otherwise>
-      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="waterRatesTbl">
                   <thead>
 					<tr>
-						<th colspan="1" >
-							<div align="center"><spring:message code="lbl.watersourcetype" /> </div>
+						<th colspan="1" class="text-center">
+							<spring:message code="lbl.watersourcetype" />
 						</th>
-						<th colspan="1" >
-						   <div align="center"><spring:message code="lbl.usagetype" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.usagetype" /> 
 						</th>
-						<th colspan="1" >
-						   <div align="center"><spring:message code="lbl.hscpipesize.inches" /></div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.hscpipesize.inches" />
 						</th>
-						<th align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.monthlyrate" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.monthlyrate" /> 
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.effective.fromdate" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.effective.fromdate" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.effective.todate" /> </div>
+						<th colspan="1" class="text-center">
+						  <spring:message code="lbl.effective.todate" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.status"/></div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.status"/>
 						</th>
-						<th colspan="1" >
-						    <div align="center"><spring:message code="lbl.edit" /></div>
+						<th colspan="1" class="text-center">
+						    <spring:message code="lbl.edit" />
 						</th>
 					</tr>
 					</thead>
