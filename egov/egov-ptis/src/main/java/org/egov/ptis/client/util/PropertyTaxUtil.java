@@ -2038,12 +2038,8 @@ public class PropertyTaxUtil {
 
     /**
      * @ Description - Returns query that retrieves zone/ward/block/propertywise
-     * Arrear, Current Demand and Collection Details Final Query Form : select
-     * boundary,arrear,current from (select boundary,arrear,0 as collection
-     * group by boundary union select boundary,0 as arrear, collection group by
-     * boundary) group by boundary
-     *
-     * @param boundaryId
+     * Arrear, Current Demand and Collection Details 
+     * @param boundaryId, mode, courtCase, propertyTypes
      * @return
      */
     public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase,
@@ -2054,14 +2050,9 @@ public class PropertyTaxUtil {
         final String PROPERTY = "property";
 
         final StringBuffer queryStr = new StringBuffer("");
-        final StringBuffer unionQueryStr = new StringBuffer("");
-        String arrear_innerCommonQry0 = "", arrear_innerCommonQry1 = "", current_innerCommonQry0 = "", current_innerCommonQry1 = "";
-        String finalCommonQry = "", finalSelectQry = "", finalGrpQry = "", finalWhereQry = "", finalFrmQry = "";
-        String innerSelectQry0 = "", innerSelectQry1 = "", arrearGroupBy = "", whereQry = "", collGroupBy = "";
+        String commonFromQry = "", finalCommonQry = "", finalSelectQry = "", finalGrpQry = "", boundaryQry = "", whereQry = "", 
+        		propertyTypeIds = "", courtCaseTable = "", courtCaseQry = "";
         Long param = null;
-        String propertyTypeIds = "";
-        String courtCaseTable = "";
-        String courtCaseQry = "";
 
         if (propertyTypes != null && !propertyTypes.isEmpty()) {
             propertyTypeIds = propertyTypes.get(0);
@@ -2070,114 +2061,59 @@ public class PropertyTaxUtil {
             }
         }
 
-        if (courtCase) {
-            courtCaseTable = ",pt_court_cases_tbl pcc ";
-            courtCaseQry = " and pcc.i_asmtno = cast(pi.upicno AS numeric)";
-        } else {
-            courtCaseQry = " and not exists (select 1 from pt_court_cases_tbl pcc where CAST(pi.upicno AS NUMERIC) = pcc.i_asmtno )";
+        if(courtCase){
+            courtCaseTable =",egpt_courtcases cc ";
+            courtCaseQry = " and cc.assessmentno = pi.upicno";
+        } else{
+            courtCaseQry = " and not exists (select 1 from egpt_courtcases cc where pi.upicno = cc.assessmentno )";
         }
 
         if (boundaryId != -1 && boundaryId != null)
             param = boundaryId;
-        // To retreive Arrear Demand and Collection Details
-        arrear_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + courtCaseTable
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true and pi.isexempted = false "
-                + courtCaseQry
-                + "and im.start_date not between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
-                + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
+        
+        commonFromQry = " from egpt_mv_propertyinfo pi ";
+        if (!mode.equalsIgnoreCase(PROPERTY)) {
+        	commonFromQry = commonFromQry+", eg_boundary boundary ";
+        }
+        commonFromQry = commonFromQry+courtCaseTable+" where pi.isactive = true and pi.isexempted = false "+ courtCaseQry;
 
-        arrear_innerCommonQry1 = "sum(GeneralTax) as arrearGT, sum(LibCessTax) as arrearLC, sum(EduCessTax) as arrearEC,"
-                + "sum(UnauthPenaltyTax) as arrearUPT,sum(PenaltyFinesTax) as arrearPFT,sum(SewTax) as arrearST,"
-                + "sum(VacantLandTax) as arrearVLT,sum(PubSerChrgTax) as arrearPSCT,sum(GeneralTaxColl) as arrearGTColl, "
-                + "sum(LibCessTaxColl) as arrearLCColl, sum(EduCessTaxColl) as arrearECColl,sum(UnauthPenaltyTaxColl) as arrearUPTColl,"
-                + "sum(PenaltyFinesTaxColl) as arrearPFTColl,sum(SewTaxColl) as arrearSTColl,"
-                + "sum(VacantLandTaxColl) as arrearVLTColl,sum(PubSerChrgTaxColl) as arrearPSCTColl,"
-                + "0 as curGT, 0 as curLC, 0 as curEC,0 as curUPT,0 as curPFT,0 as curST,"
-                + "0 as curVLT,0 as curPSCT,0 as curGTColl,0 as curLCColl,0 as curECColl,0 as curUPTColl,"
-                + "0 as curPFTColl,0 as curSTColl, 0 as curVLTColl,0 as curPSCTColl from (";
-
-        // To retreive Current Demand and Collection Details
-        current_innerCommonQry0 = "idc.* from egpt_mv_inst_dem_coll idc, egpt_mv_propertyinfo pi,  eg_installment_master im "
-                + courtCaseTable
-                + "where idc.id_basic_property=pi.basicpropertyid and im.id=idc.id_installment and pi.isactive = true and pi.isexempted = false "
-                + courtCaseQry
-                + "and im.start_date between (select STARTINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE) "
-                + "and  (select ENDINGDATE from financialyear where now() between STARTINGDATE and ENDINGDATE)";
-
-        current_innerCommonQry1 = "0 as arrearGT, 0 as arrearLC, 0 as arrearEC,0 as arrearUPT,0 as arrearPFT,0 as arrearST,"
-                + "0 as arrearVLT,0 as arrearPSCT,0 as arrearGTColl,0 as arrearLCColl,0 as arrearECColl,0 as arrearUPTColl,"
-                + "0 as arrearPFTColl,0 as arrearSTColl, 0 as arrearVLTColl,0 as arrearPSCTColl,"
-                + "sum(GeneralTax) as curGT, sum(LibCessTax) as curLC, sum(EduCessTax) as curEC,"
-                + "sum(UnauthPenaltyTax) as curUPT,sum(PenaltyFinesTax) as curPFT,sum(SewTax) as curST,"
-                + "sum(VacantLandTax) as curVLT,sum(PubSerChrgTax) as curPSCT,sum(GeneralTaxColl) as curGTColl, "
-                + "sum(LibCessTaxColl) as curLCColl, sum(EduCessTaxColl) as curECColl,sum(UnauthPenaltyTaxColl) as curUPTColl,"
-                + "sum(PenaltyFinesTaxColl) as curPFTColl,sum(SewTaxColl) as curSTColl,"
-                + "sum(VacantLandTaxColl) as curVLTColl,sum(PubSerChrgTaxColl) as curPSCTColl from (";
-
-        // Final query that retreives both Arrear and Current details from the
-        // other two inner queries
-        finalCommonQry = "cast(sum(arrearGT) AS numeric) as \"dmnd_arrearPT\", cast(sum(arrearLC)  AS numeric) as \"dmnd_arrearLC\", cast(sum(arrearEC) AS numeric) as \"dmnd_arrearEC\","
-                + "cast(sum(arrearUPT) AS numeric) as \"dmnd_arrearUPT\",cast(sum(arrearPFT) AS numeric) as \"dmnd_arrearPFT\",cast(sum(arrearST) AS numeric) as \"dmnd_arrearST\","
-                + "cast(sum(arrearVLT) AS numeric) as \"dmnd_arrearVLT\",cast(sum(arrearPSCT) AS numeric) as \"dmnd_arrearPSCT\",cast(SUM(arrearGTColl) AS numeric)  AS \"clctn_arrearPT\", "
-                + "cast(sum(arrearLCColl) AS numeric) as \"clctn_arrearLC\", cast(sum(arrearECColl) AS numeric) as \"clctn_arrearEC\",cast(sum(arrearUPTColl) AS numeric) as \"clctn_arrearUPT\","
-                + "cast(sum(arrearPFTColl) AS numeric) as \"clctn_arrearPFT\",cast(sum(arrearSTColl) AS numeric) as \"clctn_arrearST\","
-                + "cast(sum(arrearVLTColl) AS numeric) as \"clctn_arrearVLT\",cast(sum(arrearPSCTColl) AS numeric) as \"clctn_arrearPSCT\","
-                + "cast(sum(curGT) AS numeric) as \"dmnd_currentPT\", cast(sum(curLC) AS numeric) as \"dmnd_currentLC\", cast(sum(curEC) AS numeric) as \"dmnd_currentEC\","
-                + "cast(sum(curUPT) AS numeric) as \"dmnd_currentUPT\",cast(sum(curPFT) AS numeric) as \"dmnd_currentPFT\",cast(sum(curST) AS numeric) as \"dmnd_currentST\","
-                + "cast(sum(curVLT) AS numeric) as \"dmnd_currentVLT\",CAST(sum(curPSCT) AS numeric) as \"dmnd_currentPSCT\",CAST(sum(curGTColl) AS numeric) as \"clctn_currentPT\", "
-                + "cast(sum(curLCColl) AS numeric) as \"clctn_currentLC\", cast(sum(curECColl) AS numeric) as \"clctn_currentEC\",cast(sum(curUPTColl) AS numeric) as \"clctn_currentUPT\","
-                + "cast(sum(curPFTColl) AS numeric) as \"clctn_currentPFT\",cast(sum(curSTColl) AS numeric) as \"clctn_currentST\","
-                + "cast(sum(curVLTColl) AS numeric) as \"clctn_currentVLT\",cast(sum(curPSCTColl) AS numeric) as \"clctn_currentPSCT\" from (";
-
+        finalCommonQry = "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
+        		+ " cast(sum(pi.pen_aggr_arrear_demand) AS numeric) as \"dmnd_arrearPFT\", cast(sum(pi.annualdemand) AS numeric) as \"dmnd_currentPT\", "
+        		+ " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"dmnd_currentPFT\","
+        		+ " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctn_arrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctn_arrearPFT\","
+        		+ " cast(sum(pi.annualcoll) AS numeric) as \"clctn_currentPT\","
+        		+ " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctn_currentPFT\"  ";
+                
         // Conditions to Retrieve data based on selected boundary types
         if (!mode.equalsIgnoreCase(PROPERTY)) {
             finalSelectQry = "select cast(id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
             finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
-            finalFrmQry = " )as dcbinfo,eg_boundary boundary ";
         }
-        if (mode.equalsIgnoreCase(WARDWISE)) {
-            innerSelectQry0 = "select distinct pi.wardid as ward,";
-            innerSelectQry1 = "select ward as ward,";
-            arrearGroupBy = ") as arrear group by ward ";
-            collGroupBy = ") as collection  group by ward ";
+       if (mode.equalsIgnoreCase(WARDWISE)) {
             if (param != 0)
-                whereQry = " and pi.WARDID = " + param;
-            if (propertyTypes != null && !propertyTypes.isEmpty())
-                whereQry = whereQry + " and pi.proptymaster in (" + propertyTypeIds + ") ";
-            finalWhereQry = " where dcbinfo.ward=boundary.id ";
+              whereQry = " and pi.WARDID = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+              whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = " and pi.wardid=boundary.id ";
         } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
-            innerSelectQry0 = "select distinct pi.blockid as block,";
-            innerSelectQry1 = "select block as block,";
-            arrearGroupBy = ") as arrear group by block ";
-            collGroupBy = ") as collection  group by block ";
             whereQry = " and pi.wardid = " + param;
-            if (propertyTypes != null && !propertyTypes.isEmpty())
-                whereQry = whereQry + " and pi.proptymaster in (" + propertyTypeIds + ") ";
-            finalWhereQry = " where dcbinfo.block=boundary.id ";
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = " and pi.blockid=boundary.id ";
         } else if (mode.equalsIgnoreCase(PROPERTY)) {
-            innerSelectQry0 = "select distinct pi.upicno as upicno, pi.houseno as doorno, pi.ownersname as ownername, ";
-            innerSelectQry1 = "select upicno as upicno,doorno as doorno,ownername as ownername, ";
-            arrearGroupBy = ") as arrear group by upicno,doorno,ownername ";
-            collGroupBy = ") as collection  group by upicno,doorno,ownername ";
-            whereQry = " and pi.blockid = " + param;
-            if (propertyTypes != null && !propertyTypes.isEmpty())
-                whereQry = whereQry + " and pi.proptymaster in (" + propertyTypeIds + ") ";
-            finalSelectQry = "select COALESCE(upicno,null,'',upicno) as \"assessmentNo\", doorno as \"houseNo\", ownername as \"ownerName\", ";
-            finalFrmQry = " )as dcbinfo ";
-            finalWhereQry = "";
-            finalGrpQry = " group by dcbinfo.upicno,dcbinfo.doorno,dcbinfo.ownername order by dcbinfo.upicno ";
+        	finalSelectQry = "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ";
+        	whereQry = " and pi.blockid = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = "";
+            finalGrpQry = " group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ";
         }
-        // Arrear Demand query union Current Demand query
-        unionQueryStr.append(innerSelectQry1).append(arrear_innerCommonQry1).append(innerSelectQry0)
-                .append(arrear_innerCommonQry0).append(whereQry).append(arrearGroupBy).append(" union ")
-                .append(innerSelectQry1).append(current_innerCommonQry1).append(innerSelectQry0)
-                .append(current_innerCommonQry0).append(whereQry).append(collGroupBy);
-        // Final Query : Retrieves arrear and current for the selected boundary.
-        queryStr.append(finalSelectQry).append(finalCommonQry).append(unionQueryStr).append(finalFrmQry)
-                .append(finalWhereQry).append(finalGrpQry);
 
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString());
+        // Final Query : Retrieves arrear and current data for the selected boundary.
+        queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
+               .append(boundaryQry).append(finalGrpQry);
+        
+        final SQLQuery query = persistenceService.getSession().createSQLQuery(queryStr.toString()); 
         return query;
     }
 
