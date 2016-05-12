@@ -61,6 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -144,6 +145,7 @@ public class ReportGenerationService {
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", propAddress);
             reportParams.put("doorno", doorno != null ? doorno[0] : "");
+            reportParams.put("usersignature", new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()));
             reportParams.put("applicationDate", formatter.format(connectionDetails.getApplicationDate()));
             reportInput = new ReportRequest(WaterTaxConstants.CONNECTION_WORK_ORDER, connectionDetails, reportParams);
         }
@@ -198,6 +200,7 @@ public class ReportGenerationService {
             reportParams.put("commissionerName", user != null && user.getUsername() != null ? user.getName() : ownerName);
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
+            reportParams.put("usersignature", (securityUtils.getCurrentUser()!=null ?new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null));
             user = securityUtils.getCurrentUser();
             reportParams.put("userId", user.getId());
             reportParams.put("workFlowAction", workFlowAction);
@@ -233,6 +236,7 @@ public class ReportGenerationService {
             reportParams.put("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
+            reportParams.put("usersignature", (securityUtils.getCurrentUser()!=null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null));
             reportParams.put("closeApprovalDate",
                     formatter.format(waterConnectionDetails.getCloseApprovalDate() != null ? waterConnectionDetails
                             .getCloseApprovalDate() : new Date()));
