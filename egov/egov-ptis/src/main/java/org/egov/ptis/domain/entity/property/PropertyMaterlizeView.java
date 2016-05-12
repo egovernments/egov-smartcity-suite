@@ -79,6 +79,8 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal aggrCurrFirstHalfPenalyColl; 
     private BigDecimal aggrCurrSecondHalfPenaly;
     private BigDecimal aggrCurrSecondHalfPenalyColl; 
+    private BigDecimal arrearDemand;
+    private BigDecimal arrearCollection; 
     private String gisRefNo;
     private Set<InstDmdCollMaterializeView> instDmdColl;
     private BigDecimal alv;
@@ -86,7 +88,8 @@ public class PropertyMaterlizeView implements Serializable {
     private Character source;
     private Set<FloorDetailsView> floorDetails;
     private String mobileNumber;
-    private boolean isActive;
+    private Boolean isActive;
+    private Boolean isUnderCourtCase;
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -390,5 +393,27 @@ public class PropertyMaterlizeView implements Serializable {
         this.aggrCurrSecondHalfPenalyColl = aggrCurrSecondHalfPenalyColl;
     }
 
-    
+    public BigDecimal getArrearDemand() {
+        return arrearDemand;
+    }
+
+    public void setArrearDemand(BigDecimal arrearDemand) {
+        this.arrearDemand = arrearDemand;
+    }
+
+    public BigDecimal getArrearCollection() {
+        return arrearCollection;
+    }
+
+    public void setArrearCollection(BigDecimal arrearCollection) {
+        this.arrearCollection = arrearCollection;
+    }
+
+    public boolean isUnderCourtCase() {
+        return isUnderCourtCase;
+    }
+
+    public void setUnderCourtCase(boolean isUnderCourtCase) {
+        this.isUnderCourtCase = isUnderCourtCase;
+    }
 }
