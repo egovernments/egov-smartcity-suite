@@ -227,6 +227,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String actionType;
     private String fileStoreIds;
     private String ulbCode;
+    private Map<String, Object> wfPropTaxDetailsMap;
 
     public RevisionPetitionAction() {
 
@@ -1553,6 +1554,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         viewPropertyAction.viewForm();
         objection.setBasicProperty(viewPropertyAction.getBasicProperty());
         viewMap = viewPropertyAction.getViewMap();
+        //Show revised tax details for RO and commissioner, along with existing taxes
+        if(objection.getEgwStatus()!=null && (objection.getEgwStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_INSPECTION_COMPLETED)
+        		|| objection.getEgwStatus().getCode().equalsIgnoreCase(PropertyTaxConstants.OBJECTION_INSPECTION_VERIFY)))
+        	wfPropTaxDetailsMap = propertyTaxCommonUtils.getTaxDetailsForWorkflowProperty(viewPropertyAction.getBasicProperty());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ObjectionAction | getPropertyView | End");
     }
@@ -1889,4 +1894,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
         this.historyMap = historyMap;
     }
+
+	public Map<String, Object> getWfPropTaxDetailsMap() {
+		return wfPropTaxDetailsMap;
+	}
 }

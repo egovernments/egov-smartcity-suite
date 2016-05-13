@@ -285,6 +285,19 @@
 			</td>
 		</tr>
 	</s:if>
+	<!-- Displaying tax details -->
+	<tr>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="taxdetailsheader"/></span>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5">
+			<%@ include file="../common/taxDetails.jsp"%>
+		</td>
+	</tr>
 </table>
 <script type="text/javascript">
 	function populatePropTypeCategory() {

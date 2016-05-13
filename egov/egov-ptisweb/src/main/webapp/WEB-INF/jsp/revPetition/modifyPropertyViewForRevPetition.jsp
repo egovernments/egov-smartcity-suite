@@ -267,6 +267,35 @@
 			</td>
 		</tr>
 	</s:if>
+	<!-- Displaying existing and revised tax details -->
+	<tr>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="taxdetailsheader"/></span>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5">
+			<%@ include file="../common/taxDetails.jsp"%>
+		</td>
+	</tr>
+	<s:if test="%{egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
+					&& (egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) || 
+						egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY))}">
+		<tr>
+			<td colspan="5">
+				<div class="headingsmallbg">
+					<span class="bold"><s:text name="revised.taxdetailsheader"/></span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="5">
+				<%@ include file="../common/wfPropertyTaxDetails.jsp"%>
+			</td>
+		</tr>
+	</s:if>
 	<s:if test="%{property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_OPEN_PLOT) || ((property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_STATE_GOVT) 
 		|| property.propertyDetail.propertyTypeMaster.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@PROPTYPE_CENTRAL_GOVT)) && property.propertyDetail.floorDetails.isEmpty())}">
 		<tr>
