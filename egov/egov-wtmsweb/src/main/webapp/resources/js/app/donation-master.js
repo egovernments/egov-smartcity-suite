@@ -146,7 +146,12 @@ $(document).ready(function(){
 						if (minimum > maximum){
 							bootbox.alert("Minimum PipeSize  should not be greater than the maximum PipeSize");
 							return false;
-						}else{
+						}
+						else if(minimum == maximum) {
+							bootbox.alert("Minimum PipeSize  should not be same as maximum PipeSize");
+							return false;
+					    }
+						else{
 								  if($('#effectiveDate').val() !=undefined)
 							     donationheadercombination();
 						}
@@ -158,17 +163,10 @@ $(document).ready(function(){
 			window.open("/wtms/masters/donationMaster/list", "_self");
 		 });
 	  
-	  $('#addnewid').click(function() {
-		  window.open("/wtms/masters/donationMaster/", "_self");
-			
-	  });
-	  
-	  $('#resetid').click(function() {
-		  document.forms[0].reset();
-		  window.open("/wtms/masters/donationMaster/", "_self");
-			
-	  });
-
+	  $("#resetid").click(function(){
+			$("#donationDetailsform")[0].reset();
+			window.open("/wtms/masters/donationMaster/", "_self");
+			});
 
      });
 
