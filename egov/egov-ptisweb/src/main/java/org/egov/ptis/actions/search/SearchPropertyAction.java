@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.search;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -71,9 +72,11 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
+import org.python.antlr.PythonParser.return_stmt_return;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -119,6 +122,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
         @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
+                @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp") })
@@ -316,6 +320,14 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             } else
                 mode = "commonSearch";
+        }
+        if (APPLICATION_TYPE_EDIT_COLLECTION.equals(applicationType)) {
+            if (!basicProperty.isEligible()) {
+                addActionError(getText("error.msg.editCollection.noteligible"));
+                return COMMON_FORM;
+            } else {
+                return APPLICATION_TYPE_EDIT_COLLECTION;
+            }
         }
         return applicationType;
 

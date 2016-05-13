@@ -37,58 +37,47 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.demand.dao;
 
-import org.egov.demand.model.EgDemandDetails;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+package org.egov.ptis.web.controller.transactions.editCollection;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
-@Repository(value = "egDemandDetailsDAO")
-@Transactional(readOnly = true)
-public class EgDemandDetailsHibDao implements EgDemandDetailsDao {
+import org.egov.ptis.bean.DemandDetail;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+/**
+ * 
+ * @author subhash
+ *
+ */
+public class DemandDetailBeansForm {
+    private List<DemandDetail> demandDetailBeans = new ArrayList<DemandDetail>();
+    private BasicProperty basicProperty;
+    private String remarks;
 
-    private Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
+    public List<DemandDetail> getDemandDetailBeans() {
+        return demandDetailBeans;
     }
 
-    @Override
-    public EgDemandDetails findById(Integer id, boolean lock) {
-        // TODO Auto-generated method stub
-        return null;
+    public void setDemandDetailBeans(List<DemandDetail> demandDetailBeans) {
+        this.demandDetailBeans = demandDetailBeans;
     }
 
-    @Override
-    public List<EgDemandDetails> findAll() {
-        // TODO Auto-generated method stub
-        return null;
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
     }
 
-    @Override
-    public EgDemandDetails create(EgDemandDetails egDemandDetails) {
-        getCurrentSession().saveOrUpdate(egDemandDetails);
-        getCurrentSession().flush();
-        return egDemandDetails;
+    public void setBasicProperty(BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
     }
 
-    @Override
-    public void delete(EgDemandDetails egDemandDetails) {
-        // TODO Auto-generated method stub
-
+    public String getRemarks() {
+        return remarks;
     }
 
-    @Transactional
-    @Override
-    public EgDemandDetails update(EgDemandDetails egDemandDetails) {
-        getCurrentSession().saveOrUpdate(egDemandDetails);
-        return egDemandDetails;
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
 }
