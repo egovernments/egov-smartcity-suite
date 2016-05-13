@@ -157,7 +157,6 @@ window.close();
 	</s:elseif>   
 	<s:if test="%{searchResult.fullListSize != 0 && mode == 'edit'}"> 
 	<div align="center">
-		<input type="button" name="VIEW" Class="btn btn-primary" value="View" id="VIEW"  onclick="return viewMilestoneTemplate();"/> 
 		<input type="button" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="return modifyMilestoneTemplate();" /> 
 		<input type="button" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>

@@ -77,7 +77,27 @@ function validateFormBeforeSubmit() {
             showMessage('milestonetemplateerror', message);
         	return false;
         }
-    return true;
+        
+        var stageOrderNo = document.getElementsByClassName("slnowk");
+        for(var i = 0; i < stageOrderNo.length; i++)
+        {
+           if(stageOrderNo.item(i).value == '') {
+           	var message = document.getElementById('stageOrderNo').value;
+            showMessage('milestonetemplateerror', message);
+        	   return false;
+           }
+        }
+        
+        var description = document.getElementsByClassName("selectmultilinewk");
+        for(var i = 0; i < description.length; i++)
+        {
+           if(description.item(i).value == '') {
+           	var message = document.getElementById('description').value;
+            showMessage('milestonetemplateerror', message);
+        	   return false;
+           }
+        }
+        return true;
 }
 
 function modifyMilestoneTemplate(){
