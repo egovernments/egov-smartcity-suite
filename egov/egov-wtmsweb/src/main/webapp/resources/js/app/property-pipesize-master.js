@@ -45,6 +45,7 @@ $(document).ready(function(){
 		"autoWidth": false,
 		"destroy":true,
 		/* Disable initial sort */
+		"paging":false,
         "aaSorting": [],
 		"oLanguage": {
 			"sInfo": ""

@@ -44,12 +44,13 @@ $(document).ready(function(){
 		"autoWidth": false,
 		"destroy":true,
 		/* Disable initial sort */
+		"paging":false,
         "aaSorting": [],
 		"oLanguage": {
 			"sInfo": ""
 		},
 		"columnDefs": [ {
-			"targets": 8,
+			"targets": 9,
 			"orderable": false
 		} ]
 	});
