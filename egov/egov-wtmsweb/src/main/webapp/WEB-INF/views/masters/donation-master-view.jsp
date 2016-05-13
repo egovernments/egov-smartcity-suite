@@ -72,10 +72,10 @@
 						   <spring:message code="lbl.usagetype" />
 						</th>
 						<th colspan="1" class="text-center">
-						   <spring:message code="lbl.hscpipesize.min.inches" />
+						   <spring:message code="lbl.hscpipesize.max.inches" />
 						</th>
 						<th colspan="1" class="text-center" >
-						   <spring:message code="lbl.hscpipesize.max.inches" />
+						   <spring:message code="lbl.hscpipesize.min.inches" />
 						</th>
 						<th colspan="1" class="text-center">
 						   <spring:message code="lbl.donation.amount" />
@@ -116,7 +116,7 @@
 								<div align="center"><c:out value="${donationDetails.donationHeader.minPipeSize.code}" /></div>
 							</td>
 							<td colspan="1" >
-								<div align="center"><c:out value="${donationDetails.amount}" /></div>
+								<div align="right"><c:out value="${donationDetails.amount}" /></div>
 							</td>
 							
 							<td colspan="1" >

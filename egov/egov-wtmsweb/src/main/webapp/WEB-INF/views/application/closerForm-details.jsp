@@ -50,6 +50,7 @@
 									</div>
 									
 								</div>
+								<input type="hidden" id="closeConnectionType" name="closeConnectionType" value="${closeConnectionType}"/>  
 					<div class="panel-body">
 					<div class="form-group">
 										<label class="col-sm-3 col-xs-12 control-label text-right"><spring:message  code="lbl.connectiontype"/>
@@ -73,22 +74,38 @@
 
 var mode =$('#mode').val();
 if(mode !='closeredit'){
-$(':radio:not(:checked)').attr('disabled', true);
+	closureConnectionType($('#closeConnectionType').val());
+	$("input[name=closeConnectionType]").prop("disabled", true);
 $('#closeconnectionreason').attr('disabled', true);
 }
 if(mode =='closereditForAE')
 	{
+	closureConnectionType($('#closeConnectionType').val());
 	$('#closeconnectionreason').attr('disabled', false);
-	$(':radio:not(:checked)').attr('disabled', false);
+	$("input[name=closeConnectionType]").prop("disabled", false);
 	}
 else
 {
+	closureConnectionType($('#closeConnectionType').val());
 	$('#closeconnectionreason').attr('disabled', false);
-	$(':radio:not(:checked)').attr('disabled', false);
+	$("input[name=closeConnectionType]").prop("disabled", false);
+	//$(':radio:not(:checked)').attr('disabled', false);
 }
 if(mode == "" ){
-	$(':radio:not(:checked)').attr('disabled', true);
+	closureConnectionType($('#closeConnectionType').val());
+	//$(':radio:not(:checked)').attr('disabled', true);
+	$("input[name=closeConnectionType]").prop("disabled", true);
 	$('#closeconnectionreason').attr('disabled', true);
 	}
+	
+	function closureConnectionType(conType)
+	{
+		if(conType == 'T'){
+		$("input[name=closeConnectionType][value='Temporary']").prop("checked", true)
+	}else{
+		$("input[name=closeConnectionType][value='Permanent']").prop("checked", true);
+	}
+     }
+	
 </script>
 

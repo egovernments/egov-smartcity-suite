@@ -190,7 +190,7 @@
         <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestone.jsp"/>
     </definition>
-    
+
     <definition name="milestoneTemplate-view" extends="base_layout">
         <put-attribute name="page-title" value="hdr.viewmilestonetemplate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/milestoneTemplate-view.jsp"/>
@@ -200,5 +200,20 @@
         <put-attribute name="page-title" value="title.new.milestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-success.jsp"/>
     </definition>
+
+    <definition name="viewMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestoneForView-header.jsp"/>
+    </definition>
     
+    <definition name="milestone-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-view.jsp"/>
+	</definition>
+
+	<definition name="trackMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchtrackmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchTrackMilestone-header.jsp"/>
+	</definition>
+
 </tiles-definitions>

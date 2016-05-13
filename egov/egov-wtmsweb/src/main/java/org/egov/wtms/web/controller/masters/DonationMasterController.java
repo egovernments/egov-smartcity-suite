@@ -196,7 +196,7 @@ public class DonationMasterController {
                 if (donationDetailsTemp != null)
                     break;
             }
-            if (donationDetailsTemp == null) {
+            if (donationDetailsTemp == null || !donationDetails.getDonationHeader().isActive()) {
                 donationHeader.setActive(donationheader.isActive());
                 donationHeader.setCategory(donationheader.getCategory());
                 donationHeader.setMaxPipeSize(donationheader.getMaxPipeSize());

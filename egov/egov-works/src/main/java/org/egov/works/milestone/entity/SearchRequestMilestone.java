@@ -52,6 +52,8 @@ public class SearchRequestMilestone {
     private Long subTypeOfWork;
     private String workOrderNumber;
     private String status;
+    private Date trackMilestoneFromDate;
+    private Date trackMilestoneToDate;
 
     public String getStatus() {
         return status;
@@ -115,5 +117,21 @@ public class SearchRequestMilestone {
 
     public void setSubTypeOfWork(final Long subTypeOfWork) {
         this.subTypeOfWork = subTypeOfWork;
+    }
+
+    public Date getTrackMilestoneFromDate() {
+        return trackMilestoneFromDate;
+    }
+
+    public void setTrackMilestoneFromDate(final Date trackMilestoneFromDate) {
+        this.trackMilestoneFromDate = trackMilestoneFromDate;
+    }
+
+    public Date getTrackMilestoneToDate() {
+        return trackMilestoneToDate;
+    }
+
+    public void setTrackMilestoneToDate(final Date trackMilestoneToDate) {
+        this.trackMilestoneToDate = trackMilestoneToDate;
     }
 }

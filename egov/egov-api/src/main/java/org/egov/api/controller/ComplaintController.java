@@ -447,6 +447,27 @@ public class ComplaintController extends ApiController {
     
     // --------------------------------------------------------------------------------//
     /**
+     * This will returns resolved and unresolved complaints count in the city.
+     *
+     * @param page
+     * @param pageSize
+     * @return Complaint
+     */
+
+    @RequestMapping(value = {
+            ApiUrl.COMPLAINT_RESOLVED_UNRESOLVED_COUNT }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getComplaintsTotalCount() {
+    	try {
+    		return getResponseHandler().success(complaintService.getComplaintsTotalCount());
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
+        }
+    }
+    
+    
+    // --------------------------------------------------------------------------------//
+    /**
      * This will returns complaints count by status of current user.
      *
      * @param page

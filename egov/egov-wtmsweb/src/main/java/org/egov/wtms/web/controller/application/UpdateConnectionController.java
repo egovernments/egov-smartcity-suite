@@ -240,6 +240,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         }
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("closeConnectionType", waterConnectionDetails.getCloseConnectionType());
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         return "newconnection-edit";
     }

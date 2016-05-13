@@ -196,7 +196,7 @@ function openLOA(workOrderId) {
 }
 
 function openMilestone(milestoneId) {
-	window.open("/egworks/milestone/view/" + milestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	window.open("/egworks/milestone/viewmilestone/" + milestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 $('#btntrackmilestone').click(function() {

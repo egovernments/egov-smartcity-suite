@@ -97,7 +97,6 @@ public class ViewMilestoneController {
                     throws ApplicationException {
         final Milestone milestone = milestoneService.getMilestoneById(Long.parseLong(id));
         model.addAttribute("milestone", milestone);
-        model.addAttribute("mode", "view");
         return "milestone-view";
     }
 

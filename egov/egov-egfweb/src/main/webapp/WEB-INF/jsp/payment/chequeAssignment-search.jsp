@@ -139,6 +139,8 @@
 			</div>
 		</div>
 		<s:hidden name="bankbranch" id="bankbranch" />
+		<s:hidden name="functionNonMandatory" id="functionNonMandatory" />
+		<s:hidden name="deptNonMandatory" id="deptNonMandatory" />
 	</s:form>
 	<script>
 		var date = '<s:date name="currentDate" format="dd/MM/yyyy"/>';

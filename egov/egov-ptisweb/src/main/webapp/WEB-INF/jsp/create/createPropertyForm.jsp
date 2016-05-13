@@ -49,7 +49,8 @@
 								id="upicNo" size="10" maxlength="10" onblur="validNumber(this);checkZero(this,'Assessment Number');validate10Digit(this,'Assessment Number')"></s:textfield></td>
 						<td class="greybox" width="25%">&nbsp;</td>
 						<td class="greybox" width="20%"></td>
-					</tr>
+	</tr>
+	<s:hidden name="updateUpicNo" id="updateUpicNo"></s:hidden>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>

@@ -206,6 +206,7 @@ public class ComplaintSearchController {
 
         searchResult = searchService.search(asList(Index.PGR.toString()), asList(IndexType.COMPLAINT.toString()),
                 searchRequest.searchQuery(), searchRequest.searchFilters(), Sort.NULL, Page.NULL);
+        
 
         return searchResult.getDocuments();
 
