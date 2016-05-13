@@ -72,28 +72,22 @@ var templateCode_typeahead = $('#templateCode').typeahead({
 
 function initializeDatePicker()
 {
-	
 	$('.datepicker').datepicker().off('changeDate');
-	
 	$(".scheduleEndDate").datepicker({
 		format: "dd/mm/yyyy",
 		autoclose:true
 	}).on('changeDate', function (ev) {
-		
 		$(this).datepicker('hide');
 		if(!validateScheduleEndDate())
 		{
 			$(this).val('');
 			console.log('failure!');
 		}
-	
 	});
-	
 	$('.scheduleStartDate').datepicker({
 		format: "dd/mm/yyyy",
 		autoclose:true
 	}).on('changeDate', function (ev) {
-		
 		$(this).datepicker('hide');
 		if(!validateScheduleStartDate())
 		{
@@ -101,30 +95,21 @@ function initializeDatePicker()
 			console.log('failure!');
 		}
 	});
-	
 	$('.datepicker').datepicker('update');
-	
 	try { $(".datepicker").inputmask(); }catch(e){}	
 }
 
 function validateScheduleStartDate()
 {
-	
 	var isValidationSuccess=true;
-	
 	var startDateCollection=[];
-	
 	$('.scheduleStartDate').each(function(i){
-		
 		var textbox=$(this);
-		
 		var currentDate=0;
-		
 		if($(this).val())
 		{
 			currentDate=$(this).data('datepicker').date;	
 		}
-		
 		if(i===0)
 		{
 			if(currentDate<workOrderDate)
@@ -140,7 +125,6 @@ function validateScheduleStartDate()
 			startDateCollection.push(currentDate);
 		}
 		else {
-			
 			var isExit=false;
 			$.each(startDateCollection, function(index, dateObj){
 				if(currentDate instanceof Date){
@@ -156,30 +140,22 @@ function validateScheduleStartDate()
 					startDateCollection.push(currentDate);
 				}
 			});
-			
 			if(isExit)
 			{
 				return false;
 			}
-			
 		}
-		
 	});
-	
 	return isValidationSuccess;
-	
 }
 
 function validateScheduleEndDate()
 {
 	var isSuccess=true;
 	$('.scheduleEndDate').each(function(i){
-		
 		var idx=$(this).data('idx');
-		
 		var scheduleStartDate=$('.scheduleStartDate[data-idx="'+ idx +'"]').data('datepicker').date;
 		var scheduleEndDate=$(this).data('datepicker').date;
-		
 		if(scheduleStartDate>scheduleEndDate)
 		{
 			isSuccess=false;
@@ -188,9 +164,7 @@ function validateScheduleEndDate()
 			});
 			return false;
 		}
-		
 	});
-	
 	return isSuccess;
 }
 
@@ -222,9 +196,7 @@ function addMilestone() {
 				nextIdx = $("#tblmilestone tbody tr").length;
 			else
 				nextIdx = $detailsRowCount++;
-
 			var isValid = 1;// for default have success value 0
-
 			// validate existing rows in table
 			$("#tblmilestone tbody tr").find('input, select, textarea').each(
 					function() {
@@ -277,7 +249,6 @@ function addMilestone() {
 			}).end().appendTo("#tblmilestone tbody");
 			generateSno();
 			initializeDatePicker();
-
 		}
 	} else {
 		  bootbox.alert('limit reached!');
@@ -311,12 +282,9 @@ function deleteMilestone(obj) {
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
 		var idx=parseInt($detailsRowCount);
-		
 		//regenerate index existing inputs in table row
 		$("#tblmilestone tbody tr").each(function() {
-		
 			hiddenElem=$(this).find("input:hidden");
-			
 			if(!$(hiddenElem).val())
 			{
 				$(this).find("input, errors, textarea").each(function() {
@@ -336,7 +304,6 @@ function deleteMilestone(obj) {
 		
 		generateSno();
 		calculatePercentageTotal();
-		
 		return true;
 	}	
 }
@@ -383,12 +350,10 @@ function addMilestoneDetails() {
 				nextIdx = $("#tblmilestone tbody tr").length;
 			else
 				nextIdx = $detailsRowCount++;
-
 			var isValid = 1;// for default have success value 0
 			if (isValid === 0) {
 				return false;
 			}
-			
 			// Generate all textboxes Id and name with new index
 			$("#milestoneRow").clone().find("input, errors, textarea").each(
 					function() {
@@ -417,14 +382,11 @@ function addMilestoneDetails() {
 									$(this).prop('selectedIndex', 0);
 								}
 							}
-							
 							$(this).removeAttr('disabled');
 							$(this).prop('checked', false);
 
 					}).end().appendTo("#tblmilestone tbody");
-		
 			        initializeDatePicker();
-
 		}
 	} else {
 		  bootbox.alert('limit reached!');
@@ -470,17 +432,21 @@ function openLetterOfAcceptance() {
 }
 
 $('#save').click(function() {
-	var totalPercentage = parseDouble($('#totalPercentage').html());
-	if (totalPercentage < 100) {
-		bootbox.alert("Sum of percentage of should be equal to 100 %.");
+	var totalPercentage = parseFloat($('#totalPercentage').html());
+	if (totalPercentage != 100) {
+		bootbox.alert("Sum of percentage of should be equal to 100 .");
 		return false;
 	}
-
 	if (validateScheduleStartDate()) {
 		return validateScheduleEndDate();
 	} else {
 		return false;
 	}
-
 	return true
 });
+
+function replacePercentageValue() {
+	var percentage = $('#percentage').val();
+	if (percentage == 0.0)
+		$('#percentage').val("");
+}

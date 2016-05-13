@@ -1,0 +1,9 @@
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='SaveMilestone' and contextroot = 'egworks'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='ViewMilestoneTemplateDetails' and contextroot = 'egworks'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='CreateMilestoneForm' and contextroot = 'egworks'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='AjaxSearchMilestoneTemplateCode' and contextroot = 'egworks'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='SearchMilestoneTemplateDetails' and contextroot = 'egworks'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='AjaxSearchMilestoneTemplate' and contextroot = 'egworks'));
+Insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='AddMilestoneTemplateActivity' and contextroot = 'egworks'));
+
+--rollback delete from eg_roleaction where roleid = (select id from eg_role where name = 'Works Administrator') and actionid in(select id from eg_action where name in('SaveMilestone','AddMilestoneTemplateActivity','ViewMilestoneTemplateDetails','CreateMilestoneForm','AjaxSearchMilestoneTemplateCode','SearchMilestoneTemplateDetails','AjaxSearchMilestoneTemplate') and contextroot = 'egworks');

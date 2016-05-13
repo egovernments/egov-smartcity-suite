@@ -45,8 +45,8 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-
-	callAjaxSearch();
+	if($('#searchRequestLetterOfAcceptance').valid())
+		callAjaxSearch();
 });
 
 function getFormData($form) {

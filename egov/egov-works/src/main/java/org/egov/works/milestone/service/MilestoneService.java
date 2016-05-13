@@ -61,6 +61,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class MilestoneService {
 
     @Autowired
@@ -126,12 +127,11 @@ public class MilestoneService {
     @Transactional
     public Milestone create(final Milestone milestone) throws IOException {
         if (milestone.getState() == null)
-            milestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+            milestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                     Milestone.MilestoneStatus.APPROVED.toString()));
         for (final MilestoneActivity activity : milestone.getActivities())
             activity.setMilestone(milestone);
         final Milestone newMilestone = milestoneRepository.save(milestone);
-
         return newMilestone;
     }
 }

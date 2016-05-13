@@ -46,6 +46,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.master.service.MilestoneTemplateActivityService;
 import org.egov.works.master.service.MilestoneTemplateService;
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.models.masters.MilestoneTemplateActivity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,13 +60,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/milestone")
-public class ViewMilestoneControlle {
+public class ViewMilestoneController {
 
     @Autowired
     private MilestoneTemplateService milestoneTemplateService;
 
     @Autowired
     private MilestoneTemplateActivityService milestoneTemplateActivityService;
+    
+    @Autowired
+    private MilestoneService milestoneService; 
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String viewMilestoneTemplate(@PathVariable final String id, final Model model,
@@ -84,6 +89,16 @@ public class ViewMilestoneControlle {
         final List<MilestoneTemplateActivity> milestoneTemplateActivities = milestoneTemplateActivityService
                 .getMilestoneTemplateActivityByMilestoneTemplate(Long.parseLong(id));
         return milestoneTemplateActivities;
+    }
+    
+    @RequestMapping(value = "/viewmilestone/{id}", method = RequestMethod.GET)
+    public String viewMilestone(@PathVariable final String id, final Model model,
+            final HttpServletRequest request)
+                    throws ApplicationException {
+        final Milestone milestone = milestoneService.getMilestoneById(Long.parseLong(id));
+        model.addAttribute("milestone", milestone);
+        model.addAttribute("mode", "view");
+        return "milestone-view";
     }
 
 }
