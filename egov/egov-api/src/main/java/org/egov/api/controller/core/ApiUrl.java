@@ -74,6 +74,8 @@ public class ApiUrl {
 	public final static String COMPLAINT_UPDATE_STATUS = "/complaint/{complaintNo}/updateStatus";
 	
 	public final static String COMPLAINT_HISTORY = "/complaint/{complaintNo}/complaintHistory";
+	
+	public final static String COMPLAINT_RESOLVED_UNRESOLVED_COUNT = "/complaint/count";
         
 
 	/**

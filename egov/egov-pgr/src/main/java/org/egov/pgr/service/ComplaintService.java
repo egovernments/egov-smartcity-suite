@@ -155,12 +155,15 @@ public class ComplaintService {
     final String[] pendingStatus = { "REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED" };
     final String[] completedStatus = { "COMPLETED", "WITHDRAWN", "CLOSED" };
     final String[] rejectedStatus = { "REJECTED" };
+    final String[] resolvedStatus = { "COMPLETED", "WITHDRAWN", "CLOSED", "REJECTED" };
     
     public final String COMPLAINT_ALL="ALL";
     public final String COMPLAINT_PENDING="PENDING";
     public final String COMPLAINT_COMPLETED="COMPLETED";
     public final String COMPLAINT_REJECTED="REJECTED";
     
+    public final String COMPLAINT_RESOLVED="RESOLVED";
+    public final String COMPLAINT_UNRESOLVED="UNRESOLVED";
     
     @Transactional
     public Complaint createComplaint(final Complaint complaint) throws ValidationException {
@@ -544,6 +547,24 @@ public class ComplaintService {
         complaintsCount.put(COMPLAINT_COMPLETED, (complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), completedStatus).intValue()));
         complaintsCount.put(COMPLAINT_REJECTED, (complaintRepository.getMyComplaintCountByStatus(securityUtils.getCurrentUser(), rejectedStatus).intValue()));
         return complaintsCount;
+    }
+    
+    public HashMap<String, Integer> getComplaintsTotalCount() {
+        HashMap<String, Integer> complaintsCount=new HashMap<String, Integer>();
+        complaintsCount.put(COMPLAINT_RESOLVED, (complaintRepository.getComplaintsTotalCountByStatus(resolvedStatus)).intValue());
+        complaintsCount.put(COMPLAINT_UNRESOLVED, (complaintRepository.getComplaintsTotalCountByStatus(pendingStatus)).intValue());
+        return complaintsCount;
+    }
+    
+    public Long getTotalRedressedComplaints()
+    {
+    	
+    	return complaintRepository.getComplaintsTotalCountByStatus(resolvedStatus);
+    }
+    
+    public Long getTotalPendingComplaints()
+    {
+    	return complaintRepository.getComplaintsTotalCountByStatus(pendingStatus);
     }
     
     
