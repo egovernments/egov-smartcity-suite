@@ -116,18 +116,17 @@ function callAjaxSearch() {
 					"data" : getFormData(jQuery('form'))
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');
-					$('td:eq(1)',row).html(index+1);
-					$('td:eq(2)', row).html(
+					$('td:eq(0)',row).html(index+1);
+					$('td:eq(1)', row).html(
 							'<a href="javascript:void(0);" onclick="openLineEstimate(\''
 									+ data.lineEstimateId + '\')">'
 									+ data.workIdentificationNumber + '</a>');
-					$('td:eq(5)', row).html(
+					$('td:eq(4)', row).html(
 							'<a href="javascript:void(0);" onclick="openLOA(\''
 									+ data.workOrderId + '\')">'
 									+ data.workOrderNumber + '</a>');
-					$('td:eq(6)',row).html(parseFloat(Math.round(data.agreementAmount * 100) / 100).toFixed(2));
-					$('td:eq(10)', row).html(
+					$('td:eq(5)',row).html(parseFloat(Math.round(data.agreementAmount * 100) / 100).toFixed(2));
+					$('td:eq(9)', row).html(
 							'<a href="javascript:void(0);" onclick="openMilestone(\''
 									+ data.id + '\')">View Milestone</a>');
 				},
@@ -142,23 +141,19 @@ function callAjaxSearch() {
 				columns : [ {
 					"data" : "",
 					"sClass" : "text-center",
-					"sWidth" : "10%"
+					"sWidth" : "3%"
 				}, {
 					"data" : "",
 					"sClass" : "text-center",
-					"sWidth" : "10%"
-				}, {
-					"data" : "",
-					"sClass" : "text-center",
-					"sWidth" : "10%"
+					"sWidth" : "15%"
 				}, {
 					"data" : "nameOfWork",
 					"sClass" : "text-center",
-					"sWidth" : "45%"
+					"sWidth" : "25%"
 				}, {
 					"data" : "department",
 					"sClass" : "text-center",
-					"sWidth" : "45%"
+					"sWidth" : "10%"
 				}, {
 					"data" : "",
 					"sClass" : "text-center",
@@ -170,11 +165,11 @@ function callAjaxSearch() {
 				}, {
 					"data" : "typeOfWork",
 					"sClass" : "text-center",
-					"sWidth" : "10%"
+					"sWidth" : "15%"
 				}, {
 					"data" : "subTypeOfWork",
 					"sClass" : "text-center",
-					"sWidth" : "10%"
+					"sWidth" : "5%"
 				}, {
 					"data" : "status",
 					"sClass" : "text-center",
@@ -198,13 +193,3 @@ function openLOA(workOrderId) {
 function openMilestone(milestoneId) {
 	window.open("/egworks/milestone/viewmilestone/" + milestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
-
-$('#btntrackmilestone').click(function() {
-	var milestoneId = $('input[name=selectCheckbox]:checked').val();
-	if(milestoneId == null) {
-		bootbox.alert("Please select a Milestone to Track");
-	} else {
-		
-	}
-	return false;
-});
