@@ -246,13 +246,12 @@
 																<td class="greybox"><s:text
 																		name="payment.voucherdate" /><span class="mandatory1">*</span></td>
 																<td class="greybox" colspan="2"><s:textfield
-																		name="voucherdate" id="voucherdate" maxlength="20"
-																		value="%{voucherdate}"
-																		onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-																	href="javascript:show_calendar('forms[0].voucherdate');"
-																	style="text-decoration: none">&nbsp;<img
-																		src="/egi/resources/erp2/images/calendaricon.gif"
-																		border="0" /></a>(dd/mm/yyyy)</td>
+																		id="voucherdate" name="voucherdate"
+																		value="%{voucherdate}" data-date-end-date="0d"
+																		onkeyup="DateFormat(this,this.value,event,false,'3')"
+																		placeholder="DD/MM/YYYY"
+																		class="form-control datepicker"
+																		data-inputmask="'mask': 'd/m/y'" /></td>
 															</tr>
 															<s:if test='%{billSubType.equalsIgnoreCase("TNEB")}'>
 																<tr>

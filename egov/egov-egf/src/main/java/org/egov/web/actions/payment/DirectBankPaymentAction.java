@@ -48,6 +48,7 @@ import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.dataservice.DatabaseConnectionException;
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -264,8 +265,18 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader, voucherHeader, billVhId, commonBean,
                         billDetailslist, subLedgerlist, workflowBean);
                 showMode = "create";
-                addActionMessage(getText("directbankpayment.transaction.success")
-                        + paymentheader.getVoucherheader().getVoucherNumber());
+                
+                if (paymentheader.getVoucherheader().getVouchermis().getBudgetaryAppnumber() == null)
+                {
+                    addActionMessage(getText("directbankpayment.transaction.success")
+                            + paymentheader.getVoucherheader().getVoucherNumber());
+                } else {
+                    addActionMessage(getText("directbankpayment.transaction.success")
+                            + paymentheader.getVoucherheader().getVoucherNumber()
+                            + " and "
+                            + getText("budget.recheck.sucessful", new String[] { paymentheader.getVoucherheader().getVouchermis()
+                                    .getBudgetaryAppnumber() }));
+                }
                 addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
                         .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
             } else
