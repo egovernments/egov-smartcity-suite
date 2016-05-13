@@ -150,9 +150,6 @@
 		<button type='button' class='btn btn-primary' id="createMilestone">
 			<spring:message code='lbl.createmilestone' />
 		</button>
-		<button type='button' class='btn btn-primary' id="trackMilestone">
-			<spring:message code='lbl.trackmilestone' />
-		</button>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a> <input
 			type="button" class="btn btn-default" value="Reset" id="button"

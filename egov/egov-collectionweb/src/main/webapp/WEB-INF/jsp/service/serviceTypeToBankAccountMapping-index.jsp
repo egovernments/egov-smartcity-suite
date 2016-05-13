@@ -217,6 +217,19 @@
 							onclick="javascript:window.close()" class="buttonsubmit" />
 					</div>
 				</s:if>
+				<s:else>
+					<s:if test="target=='searchresult'">
+					<table width="90%" border="0" align="center" cellpadding="0"
+						cellspacing="0" class="tablebottom">
+						<tr>
+							<div>&nbsp;</div>
+							<div class="subheadnew">
+								<s:text name="searchresult.norecord" />
+							</div>
+						</tr>
+					</table>
+					</s:if>
+				</s:else>
 			</div>
 		</s:push>
 	</s:form>

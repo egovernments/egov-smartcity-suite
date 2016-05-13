@@ -75,6 +75,7 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -805,6 +806,87 @@ public class ReportService {
             bcResult.setCummulative_total_CollectionInterestPercentage(bcResult.getCummulative_total_CollectionInterestPercentage().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         } 
 
+    }
+    
+    /**
+     * @ Description - Returns query that retrieves zone/ward/block/propertywise
+     * Arrear, Current Demand and Collection Details 
+     * @param boundaryId, mode, courtCase, propertyTypes
+     * @return
+     */
+    public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase,
+            final List<String> propertyTypes) {
+
+        final String WARDWISE = "ward";
+        final String BLOCKWISE = "block";
+        final String PROPERTY = "property";
+
+        final StringBuffer queryStr = new StringBuffer("");
+        String commonFromQry = "", finalCommonQry = "", finalSelectQry = "", finalGrpQry = "", boundaryQry = "", whereQry = "", 
+        		propertyTypeIds = "", courtCaseTable = "", courtCaseQry = "";
+        Long param = null;
+
+        if (propertyTypes != null && !propertyTypes.isEmpty()) {
+            propertyTypeIds = propertyTypes.get(0);
+            for (int i = 1; i < propertyTypes.size(); i++) {
+                propertyTypeIds += "," + propertyTypes.get(i);
+            }
+        }
+
+        if(courtCase){
+            courtCaseTable =",egpt_courtcases cc ";
+            courtCaseQry = " and cc.assessmentno = pi.upicno";
+        } else{
+            courtCaseQry = " and not exists (select 1 from egpt_courtcases cc where pi.upicno = cc.assessmentno )";
+        }
+
+        if (boundaryId != -1 && boundaryId != null)
+            param = boundaryId;
+        
+        commonFromQry = " from egpt_mv_propertyinfo pi ";
+        if (!mode.equalsIgnoreCase(PROPERTY)) {
+        	commonFromQry = commonFromQry+", eg_boundary boundary ";
+        }
+        commonFromQry = commonFromQry+courtCaseTable+" where pi.isactive = true and pi.isexempted = false "+ courtCaseQry;
+
+        finalCommonQry = "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
+        		+ " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmnd_arrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmnd_currentPT\", "
+        		+ " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"dmnd_currentPFT\","
+        		+ " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctn_arrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctn_arrearPFT\","
+        		+ " cast(COALESCE(sum(pi.annualcoll),0) AS numeric) as \"clctn_currentPT\","
+        		+ " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctn_currentPFT\"  ";
+                
+        // Conditions to Retrieve data based on selected boundary types
+        if (!mode.equalsIgnoreCase(PROPERTY)) {
+            finalSelectQry = "select cast(id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
+            finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
+        }
+       if (mode.equalsIgnoreCase(WARDWISE)) {
+            if (param != 0)
+              whereQry = " and pi.WARDID = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+              whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = " and pi.wardid=boundary.id ";
+        } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
+            whereQry = " and pi.wardid = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = " and pi.blockid=boundary.id ";
+        } else if (mode.equalsIgnoreCase(PROPERTY)) {
+        	finalSelectQry = "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ";
+        	whereQry = " and pi.blockid = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = "";
+            finalGrpQry = " group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ";
+        }
+
+        // Final Query : Retrieves arrear and current data for the selected boundary.
+        queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
+               .append(boundaryQry).append(finalGrpQry);
+        
+        final SQLQuery query = propPerServ.getSession().createSQLQuery(queryStr.toString()); 
+        return query;
     }
 
 }

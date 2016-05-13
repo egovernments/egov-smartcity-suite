@@ -593,7 +593,8 @@ public class LetterOfAcceptanceService {
     public String checkIfBillsCreated(final Long id) {
         String billNumbers = "";
         final WorkOrder workOrder = letterOfAcceptanceRepository.findById(id);
-        final List<ContractorBillRegister> bills = contractorBillRegisterRepository.findByWorkOrder(workOrder);
+        final List<ContractorBillRegister> bills = contractorBillRegisterRepository.findByWorkOrderAndBillstatusNot(workOrder,
+                ContractorBillRegister.BillStatus.CANCELLED.toString());
         if(bills == null || bills.isEmpty())
             return "";
         else {

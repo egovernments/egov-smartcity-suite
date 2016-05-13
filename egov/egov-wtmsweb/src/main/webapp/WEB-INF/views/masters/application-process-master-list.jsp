@@ -59,23 +59,23 @@
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="applicationTbl">
 					<thead>
 						<tr>
-							<th colspan="1"  width ="10">
-								<div align="center"><spring:message code="lbl.applicationtype" /> </div>
+							<th colspan="1"  width ="10" class="text-center">
+								<spring:message code="lbl.applicationtype" />
 							</th>
-							<th align="center" width="10">
-								<div align="center"><spring:message code="lbl.category" /> </div>
+							<th colspan="1" width="10" class="text-center">
+								<spring:message code="lbl.category" />
 							</th>
-							<th align="center" width="5">
-								<div align="center"><spring:message code="lbl.processing" /></div>
+							<th colspan="1" width="5" class="text-center">
+								<spring:message code="lbl.processing" />
 							</th>
-							<th  colspan="1" width ="25">
-								<div align="center"><spring:message code="lbl.status"/></div>
+							<th  colspan="1" width ="25" class="text-center">
+								<spring:message code="lbl.status"/>
 							</th>
-							<th align="center" width="8">
-								<div align="center"><spring:message code="lbl.edit" /></div>
+							<th colspan="1" width="8" class="text-center">
+								<spring:message code="lbl.edit" />
 							</th>
 						</tr>
 					</thead>

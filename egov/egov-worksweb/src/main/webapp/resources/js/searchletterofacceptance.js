@@ -45,8 +45,8 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-
-	callAjaxSearch();
+	if($('#searchRequestLetterOfAcceptance').valid())
+		callAjaxSearch();
 });
 
 function getFormData($form) {
@@ -245,3 +245,11 @@ function openLetterOfAcceptance(id) {
 	window.open("/egworks/letterofacceptance/view/" + id, '','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
+jQuery('#createMilestone').click(function(e) {
+	var estimateNumber = $('input[name=selectCheckbox]:checked').attr('data');
+	if(estimateNumber == null) {
+		bootbox.alert("");
+	}else {
+			window.location = "/egworks/milestone/newform?estimateNumber="+estimateNumber;
+		}
+});

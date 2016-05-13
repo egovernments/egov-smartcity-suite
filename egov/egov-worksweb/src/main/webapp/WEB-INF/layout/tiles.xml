@@ -181,4 +181,24 @@
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestone-header.jsp"/>
     </definition>
     
+    <definition name="newMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.new.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/newMilestone-form.jsp"/>
+    </definition>
+    
+    <definition name="milestoneTemplate-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestone.jsp"/>
+    </definition>
+    
+    <definition name="milestoneTemplate-view" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.viewmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/milestoneTemplate-view.jsp"/>
+    </definition>
+    
+    <definition name="milestone-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.new.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-success.jsp"/>
+    </definition>
+    
 </tiles-definitions>

@@ -81,7 +81,8 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
     Integer branchId;
     Long serviceCategory;
     Long serviceAccountId;
-    String  sourcePage;    
+    String  sourcePage;  
+    private String target;
     
     public ServiceTypeToBankAccountMappingAction() {
         addRelatedEntity("serviceDetails", ServiceDetails.class);
@@ -174,6 +175,7 @@ private List<Bank> getBankMappedToService()
             searchBankAccountListQuery.setParameter("serviceId", bankAccountServiceMap.getServiceDetails().getId());
         }
         bankAccountServices = searchBankAccountListQuery.list();
+        target = "searchresult";
         return INDEX;
     }
     
@@ -254,6 +256,14 @@ private List<Bank> getBankMappedToService()
 
 	public void setSourcePage(String sourcePage) {
 		this.sourcePage = sourcePage;
+	}
+
+	public String getTarget() {
+		return target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
 	}
 
 

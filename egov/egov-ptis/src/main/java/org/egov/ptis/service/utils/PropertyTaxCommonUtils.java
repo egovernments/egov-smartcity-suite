@@ -46,28 +46,58 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.Installment;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PropertyTaxCommonUtils {
-    
+
     @PersistenceContext
     private EntityManager entityManager;
-    
-    
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+
     /**
      * Gives the first half of the current financial year
      *
-     * @return Installment - the first half of the current financial year for PT module
+     * @return Installment - the first half of the current financial year for PT
+     *         module
      */
     public Installment getCurrentInstallment() {
-        final Query query = entityManager.unwrap(Session.class).createQuery("select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
-                + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
+        final Query query = entityManager
+                .unwrap(Session.class)
+                .createQuery(
+                        "select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName  and (cast(:currDate as date)) between finYear.startingDate and finYear.endingDate "
+                                + " and cast(installment.fromDate as date) >= cast(finYear.startingDate as date) and cast(installment.toDate as date) <= cast(finYear.endingDate as date) order by installment.fromDate asc ");
         query.setString("moduleName", PropertyTaxConstants.PTMODULENAME);
         query.setDate("currDate", new Date());
         List<Installment> installments = query.list();
         return installments.get(0);
+    }
+
+    /**
+     * Returns AppConfig Value for given key and module.Key needs to exact as in
+     * the Database,otherwise empty string will send
+     *
+     * @param key
+     *            - Key value for which AppConfig Value is required
+     * @param moduleName
+     *            - Value for the User Id
+     * @return String.
+     */
+    public String getAppConfigValue(final String key, final String moduleName) {
+        String value = "";
+        if (key != null && moduleName != null) {
+            final AppConfigValues appConfigValues = appConfigValuesService.getAppConfigValueByDate(moduleName, key,
+                    new Date());
+            if (appConfigValues != null)
+                value = appConfigValues.getValue();
+        }
+        return value;
     }
 
 }

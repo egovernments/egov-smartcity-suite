@@ -41,6 +41,7 @@ package org.egov.works.web.controller.milestone;
 
 import java.util.List;
 
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -48,6 +49,8 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
+import org.egov.works.models.masters.MilestoneTemplate;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -70,6 +73,9 @@ public class SearchMilestoneController {
 
     @Autowired
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+    
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
 
     @RequestMapping(value = "/search-form", method = RequestMethod.GET)
     public String showSearchMilestoneForm(
@@ -86,6 +92,27 @@ public class SearchMilestoneController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+    }
+    
+    @RequestMapping(value = "/searchmilestonetemplate", method = RequestMethod.GET)
+    public String showSearchMilestoneTemplate(
+            @ModelAttribute final MilestoneTemplate milestoneTemplate,
+            final Model model) throws ApplicationException {
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        return "milestoneTemplate-search";
+    }
+
+    @RequestMapping(value = "/searchtoview-form", method = RequestMethod.GET)
+    public String searchMilestoneForm(
+            @ModelAttribute final SearchRequestMilestone searchRequestMilestone,
+            final Model model) throws ApplicationException {
+        setDropDownValues(model);
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if (departments != null && !departments.isEmpty())
+            searchRequestMilestone.setDepartment(departments.get(0).getId());
+        model.addAttribute("searchRequestMilestone", searchRequestMilestone);
+        model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.WORKORDER));
+        return "viewMilestone-form";
     }
 
 }

@@ -109,7 +109,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js?${app_release_no}"></script>
 	
 	<script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	<SCRIPT type="text/javascript" src="/collection/js/jsCommonMethods.js"></SCRIPT>
+	<SCRIPT type="text/javascript" src="/collection/resources/js/jsCommonMethods.js"></SCRIPT>
 	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
 	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
 	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/element/element-min.js"></script>

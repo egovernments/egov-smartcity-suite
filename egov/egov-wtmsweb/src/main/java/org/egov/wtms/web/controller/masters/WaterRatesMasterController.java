@@ -140,8 +140,7 @@ public class WaterRatesMasterController {
     @RequestMapping(value = "/waterRatesMaster/list", method = GET)
     public String getWaterRatesMasterList(final Model model) {
 
-        final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService
-                .findAllByConnectionType(ConnectionType.NON_METERED);
+        final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService.findAll();
         model.addAttribute("waterRatesHeaderList", waterRatesHeaderList);
         return "waterRates-master-list";
 
@@ -180,10 +179,7 @@ public class WaterRatesMasterController {
             waterRatesHeaderTemp.setWaterSource(waterRatesHeader.getWaterSource());
             waterRatesHeaderTemp.setActive(waterRatesHeader.isActive());
             waterRatesHeader = updateWateRatesetails(waterRatesHeaderTemp, waterRatesHeader.getWaterRatesDetails());
-            redirectAttrs.addFlashAttribute("waterRatesHeader", waterRatesHeaderTemp);
-            model.addAttribute("message", "Monthly Rent for Non-Meter Master Data already exists .");
-            viewForm(model);
-            return "waterRates-master";
+            
         } else
             waterRatesHeader = buildWaterRateDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
         waterRatesHeaderService.updateWaterRatesHeader(waterRatesHeader);

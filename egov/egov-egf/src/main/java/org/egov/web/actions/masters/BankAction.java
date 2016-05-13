@@ -50,14 +50,18 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Bank;
 import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.services.masters.BankService;
+import org.egov.utils.Constants;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -84,6 +88,9 @@ public class BankAction extends BaseFormAction {
     private String term;
 
     private BankService bankService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Override
     @SkipValidation
@@ -182,6 +189,12 @@ public class BankAction extends BaseFormAction {
         bankAcTypesJson.deleteCharAt(bankAcTypesJson.lastIndexOf(";"));
         return bankAcTypesJson.toString();
     }
+    
+    public Boolean isAutoBankAccountGLCodeEnabled(){
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+               Constants.EGF, "auto_bankaccount_glcode").get(0);   
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
 
     public String getFundsJSON() {
         final List<Object[]> funds = persistenceService.findAllBy("SELECT id, name FROM Fund WHERE isactive=?", true);
@@ -194,7 +207,7 @@ public class BankAction extends BaseFormAction {
 
     public String getAccountTypesJSON() {
         final List<Object[]> accounttypes = persistenceService
-                .findAllBy("SELECT name,id FROM CChartOfAccounts WHERE glcode LIKE '450%' AND classification=2 AND  UPPER(name) LIKE '%BANK%' ORDER BY glcode");
+                .findAllBy("SELECT name,id FROM CChartOfAccounts WHERE glcode LIKE '4502%' AND classification=2 ORDER BY glcode");
         final StringBuilder accountdetailtypeJson = new StringBuilder("{\"\":\"\",");
         for (final Object[] accType : accounttypes) {
             accType[0] = org.egov.infra.utils.StringUtils.escapeJavaScript((String) accType[0]);

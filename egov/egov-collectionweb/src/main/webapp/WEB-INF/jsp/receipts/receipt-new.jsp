@@ -2014,12 +2014,12 @@ function showHideMandataryMark(obj){
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/resources/erp2/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="../../egi/images/delete.png" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="../../egi/resources/erp2/images/delete.png" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -2064,12 +2064,12 @@ function showHideMandataryMark(obj){
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="<egov:url path='../../../../egi/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="<egov:url path='../../../../egi/resources/erp2/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="<egov:url id="deletechequeimg" path='../../egi/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="<egov:url id="deletechequeimg" path='../../egi/resources/erp2/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -2118,7 +2118,7 @@ function showHideMandataryMark(obj){
 							    <td class="bluebox">
 							    	<s:textfield id="bankChallanDate" name="instrHeaderBank.transactionDate"  value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3');waterMarkTextOut('bankChallanDate','DD/MM/YYYY');" onblur="validateChallanDate(this);"/>
 							    	<a  id="calendarLink" href="javascript:show_calendar('forms[0].bankChallanDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-			      						<img src="/../../egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
+			      						<img src="/../../egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
 			      					</a>
 							    </td>
 						    </tr>

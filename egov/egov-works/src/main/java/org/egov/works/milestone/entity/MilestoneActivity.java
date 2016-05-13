@@ -54,13 +54,16 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 
 @Entity
 @Table(name = "EGW_MILESTONE_ACTIVITY")
 @Unique(id = "id", tableName = "EGW_MILESTONE_ACTIVITY")
 @SequenceGenerator(name = MilestoneActivity.SEQ_EGW_MILESTONE_ACTIVITY, sequenceName = MilestoneActivity.SEQ_EGW_MILESTONE_ACTIVITY, allocationSize = 1)
-public class MilestoneActivity {
+public class MilestoneActivity extends AbstractAuditable {
+
+    private static final long serialVersionUID = -5184291344172093252L;
 
     public static final String SEQ_EGW_MILESTONE_ACTIVITY = "SEQ_EGW_MILESTONE_ACTIVITY";
 
@@ -72,12 +75,12 @@ public class MilestoneActivity {
 
     @NotNull
     private double percentage;
-    
+
     private double stageOrderNo;
-    
+
     @Temporal(TemporalType.DATE)
     private Date scheduleStartDate;
-    
+
     @Temporal(TemporalType.DATE)
     private Date scheduleEndDate;
 
@@ -97,10 +100,12 @@ public class MilestoneActivity {
         this.milestone = milestone;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -108,12 +113,12 @@ public class MilestoneActivity {
     public void setDescription(final String description) {
         this.description = description;
     }
-    
+
     public double getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(double percentage) {
+    public void setPercentage(final double percentage) {
         this.percentage = percentage;
     }
 
@@ -121,7 +126,7 @@ public class MilestoneActivity {
         return stageOrderNo;
     }
 
-    public void setStageOrderNo(double stageOrderNo) {
+    public void setStageOrderNo(final double stageOrderNo) {
         this.stageOrderNo = stageOrderNo;
     }
 
@@ -129,7 +134,7 @@ public class MilestoneActivity {
         return scheduleStartDate;
     }
 
-    public void setScheduleStartDate(Date scheduleStartDate) {
+    public void setScheduleStartDate(final Date scheduleStartDate) {
         this.scheduleStartDate = scheduleStartDate;
     }
 
@@ -137,7 +142,7 @@ public class MilestoneActivity {
         return scheduleEndDate;
     }
 
-    public void setScheduleEndDate(Date scheduleEndDate) {
+    public void setScheduleEndDate(final Date scheduleEndDate) {
         this.scheduleEndDate = scheduleEndDate;
     }
 

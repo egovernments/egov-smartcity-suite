@@ -365,7 +365,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         else
             generatedGlcode = parent.getGlcode();
         if (glCode == null) {
-            populateGlcode(null);
+            populateGlcode(parent.getClassification());
             newGlcode = model.getGlcode();
         } else {
             newGlcode = String.valueOf(glCode + 1);

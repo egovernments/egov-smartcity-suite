@@ -40,6 +40,13 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.Calendar;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
@@ -58,12 +65,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.util.Calendar;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -146,30 +147,24 @@ public class DonationMasterController {
                         .getPropertyType(), donationDetails.getDonationHeader().getCategory(), donationDetails
                         .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize()
                         .getSizeInInch(), donationDetails.getDonationHeader().getMaxPipeSize().getSizeInInch());
-
-        final Calendar cal = Calendar.getInstance();
+        DonationDetails donationDetailsTempObj = null;
+        Calendar.getInstance();
         if (!donationHeaderTempList.isEmpty()) {
             for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
-                final DonationDetails donationDetailsTemp = donationDetailsService
-                        .findByDonationHeader(donationHeaderTemp);
-                cal.setTime(donationDetails.getFromDate());
-                cal.add(Calendar.DAY_OF_YEAR, -1);
-                donationDetailsTemp.setToDate(cal.getTime());
-                donationDetailsTemp.getDonationHeader().setActive(false);
-                donationHeaderService.updateDonationHeader(donationDetailsTemp.getDonationHeader());
+                donationDetailsTempObj = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(
+                        donationHeaderTemp, donationDetails.getFromDate(), donationDetails.getToDate());
+                if (donationDetailsTempObj != null)
+                    break;
             }
-            donationDetails.getDonationHeader().setActive(true);
-            cal.setTime(donationDetails.getFromDate());
-            cal.add(Calendar.DAY_OF_YEAR, 365);
-            donationDetails.setToDate(cal.getTime());
-            donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
-            donationDetailsService.createDonationDetails(donationDetails);
-            redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
-            model.addAttribute("message", "Donation Master Data updated successfully");
+            if (donationDetailsTempObj == null) {
+                donationDetails.getDonationHeader().setActive(true);
+                donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
+                donationDetailsService.createDonationDetails(donationDetails);
+                redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
+                model.addAttribute("message", "Donation Master Data created successfully");
+            }
         } else {
             donationDetails.getDonationHeader().setActive(true);
-            cal.add(Calendar.DATE, 365);
-            donationDetails.setToDate(cal.getTime());
             donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
             donationDetailsService.createDonationDetails(donationDetails);
             redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
@@ -192,30 +187,43 @@ public class DonationMasterController {
                         .getPropertyType(), donationDetails.getDonationHeader().getCategory(), donationDetails
                         .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize()
                         .getSizeInInch(), donationDetails.getDonationHeader().getMaxPipeSize().getSizeInInch());
-        final Calendar cal = Calendar.getInstance();
-        if (!donationHeaderTempList.isEmpty())
+        Calendar.getInstance();
+        DonationDetails donationDetailsTemp = null;
+        if (!donationHeaderTempList.isEmpty()) {
             for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
-                final DonationDetails donationDetailsTemp = donationDetailsService
-                        .findByDonationHeader(donationHeaderTemp);
-                if (donationDetailsTemp!=null){
-                cal.setTime(donationDetails.getFromDate());
-                cal.add(Calendar.DAY_OF_YEAR, -1);
-                donationDetailsTemp.setToDate(cal.getTime());
-                donationDetailsTemp.getDonationHeader().setActive(false);
-                donationHeaderService.updateDonationHeader(donationDetailsTemp.getDonationHeader());
-                }
+                donationDetailsTemp = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(
+                        donationHeaderTemp, donationDetails.getFromDate(), donationDetails.getToDate());
+                if (donationDetailsTemp != null)
+                    break;
             }
-        donationHeader.setActive(donationheader.isActive());
-        donationHeader.setCategory(donationheader.getCategory());
-        donationHeader.setMaxPipeSize(donationheader.getMaxPipeSize());
-        donationHeader.setMinPipeSize(donationheader.getMinPipeSize());
-        donationHeader.setPropertyType(donationheader.getPropertyType());
-        donationHeader.setUsageType(donationheader.getUsageType());
-        donationdetails.setAmount(donationDetails.getAmount());
-        donationdetails.setFromDate(donationDetails.getFromDate());
-        donationdetails.setDonationHeader(donationHeader);
-        donationHeaderService.createDonationHeader(donationdetails.getDonationHeader());
-        donationDetailsService.createDonationDetails(donationdetails);
+            if (donationDetailsTemp == null) {
+                donationHeader.setActive(donationheader.isActive());
+                donationHeader.setCategory(donationheader.getCategory());
+                donationHeader.setMaxPipeSize(donationheader.getMaxPipeSize());
+                donationHeader.setMinPipeSize(donationheader.getMinPipeSize());
+                donationHeader.setPropertyType(donationheader.getPropertyType());
+                donationHeader.setUsageType(donationheader.getUsageType());
+                donationdetails.setAmount(donationDetails.getAmount());
+                donationdetails.setFromDate(donationDetails.getFromDate());
+                donationdetails.setToDate(donationDetails.getToDate());
+                donationdetails.setDonationHeader(donationHeader);
+                donationHeaderService.createDonationHeader(donationdetails.getDonationHeader());
+                donationDetailsService.createDonationDetails(donationdetails);
+            }
+        } else {
+            donationHeader.setActive(donationheader.isActive());
+            donationHeader.setCategory(donationheader.getCategory());
+            donationHeader.setMaxPipeSize(donationheader.getMaxPipeSize());
+            donationHeader.setMinPipeSize(donationheader.getMinPipeSize());
+            donationHeader.setPropertyType(donationheader.getPropertyType());
+            donationHeader.setUsageType(donationheader.getUsageType());
+            donationdetails.setAmount(donationDetails.getAmount());
+            donationdetails.setFromDate(donationDetails.getFromDate());
+            donationdetails.setToDate(donationDetails.getToDate());
+            donationdetails.setDonationHeader(donationHeader);
+            donationHeaderService.createDonationHeader(donationdetails.getDonationHeader());
+            donationDetailsService.createDonationDetails(donationdetails);
+        }
         return getdonationMasterList(model);
     }
 

@@ -41,10 +41,14 @@ package org.egov.works.web.controller.milestone;
 
 import java.util.List;
 
+import org.egov.works.master.service.MilestoneTemplateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
+import org.egov.works.milestone.entity.SearchRequestMilestoneTemplate;
 import org.egov.works.milestone.service.MilestoneService;
+import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.web.adaptor.SearchMilestoneJsonAdaptor;
+import org.egov.works.web.adaptor.SearchMilestoneTemplateJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -52,6 +56,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -66,6 +71,12 @@ public class AjaxMilestoneController {
 
     @Autowired
     private SearchMilestoneJsonAdaptor searchMilestoneJsonAdaptor;
+    
+    @Autowired
+    private MilestoneTemplateService milestoneTemplateService;
+
+    @Autowired
+    private SearchMilestoneTemplateJsonAdaptor searchMilestoneTemplateJsonAdaptor;
 
     @RequestMapping(value = "/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchMilestones(final Model model,
@@ -83,4 +94,27 @@ public class AjaxMilestoneController {
         final String json = gson.toJson(object);
         return json;
     }
+    
+    @RequestMapping(value = "/ajaxmilestonetemplatecode-milestone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<MilestoneTemplate> findMilestoneTemplateCodeForMilestone(@RequestParam final String code) {
+        return milestoneTemplateService.findMilestoneTemplateCodeForMilestone(code);
+    }
+
+    @RequestMapping(value = "/ajaxsearchmilestonetemplate", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxMilestoneTemplateSearch(final Model model,
+            @ModelAttribute final SearchRequestMilestoneTemplate searchRequestMilestoneTemplate) {
+        final List<MilestoneTemplate> searchMilestoneTemplateList = milestoneTemplateService
+                .searchMilestoneTemplate(searchRequestMilestoneTemplate);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchMilestoneTemplateJson(searchMilestoneTemplateList))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toSearchMilestoneTemplateJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(MilestoneTemplate.class, searchMilestoneTemplateJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
 }

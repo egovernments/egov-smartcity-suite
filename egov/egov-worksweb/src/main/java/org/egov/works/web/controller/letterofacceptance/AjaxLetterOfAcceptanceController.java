@@ -263,8 +263,7 @@ public class AjaxLetterOfAcceptanceController {
         String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
         if(billNumbers.equals(""))
             return "";
-        else
-            message += billNumbers;
+        
         return message;
     }
 }

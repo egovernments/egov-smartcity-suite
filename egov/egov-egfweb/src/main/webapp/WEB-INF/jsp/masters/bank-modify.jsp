@@ -55,6 +55,7 @@
     var fundJson = "<s:property value='getFundsJSON()'/>";
     var accTypeJson = <s:property value='getAccountTypesJSON()' escape='false'/>;
     var bankAccTypeJson = "<s:property value='getBankAccountTypesJSON()'/>";
+    var autoBankGLCode =  "<s:property value='isAutoBankAccountGLCodeEnabled()'/>";
 	</script>
 <style>
 .EditTable td {
@@ -77,12 +78,10 @@
 		<jsp:include page="bank-form.jsp"></jsp:include>
 	</div>
 	<div class="buttonbottom">
-		<input type="submit" class="button"
-			value="Save Bank" id="saveButton" name="button"
-			onclick="validateFormAndSubmit();" /> 
-		<input type="button"
-			id="Close" value="Close" onclick="javascript:window.close()"
-			class="button" />
+		<input type="submit" class="button" value="Save Bank" id="saveButton"
+			name="button" onclick="validateFormAndSubmit();" /> <input
+			type="button" id="Close" value="Close"
+			onclick="javascript:window.close()" class="button" />
 	</div>
 	<script src="../resources/javascript/jquery/grid.locale-en.js"
 		type="text/javascript"></script>

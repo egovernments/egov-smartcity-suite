@@ -40,6 +40,7 @@
 package org.egov.works.workorderestimate.service;
 
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorderestimate.repository.WorkOrderEstimateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,12 @@ public class WorkOrderEstimateService {
     private WorkOrderEstimateRepository workOrderEstimateRepository;
 
     @Transactional
-    public WorkOrderEstimate getByWorkOrderId(final Long id) {
-        return workOrderEstimateRepository.findByWorkOrder_Id(id);
+    public WorkOrderEstimate getEstimateByWorkOrderAndEstimateAndStatus(final Long workOrderId, final Long estimateId) {
+        return workOrderEstimateRepository.findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(workOrderId, estimateId,
+                WorksConstants.APPROVED);
+    }
+    
+    public WorkOrderEstimate getWorkOrderEstimateById(final Long id) {
+        return workOrderEstimateRepository.findOne(id);
     }
 }

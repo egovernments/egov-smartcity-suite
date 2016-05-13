@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
-		<div class="panel-title" style="text-align:center;"><spring:message code="title.search.contractorbill" /></div>
+		<div class="panel-title" style="text-align:center;"><spring:message code="title.search.letterofacceptance" /></div>
 	</div>
 	<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.loa.conform" />' />
 	<input id="mileStonesCreatedMessage" type="hidden" value='<spring:message code="error.loa.milestone.created" />' />

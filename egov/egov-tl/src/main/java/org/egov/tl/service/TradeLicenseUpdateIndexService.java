@@ -128,7 +128,7 @@ public class TradeLicenseUpdateIndexService
                     applicationIndex.setConsumerCode(license.getLicenseNumber());
                 int noofDays = 0;
                 applicationIndex.setClosed(ClosureStatus.NO);
-                applicationIndex.setApproved(ApprovalStatus.UNKNOWN);
+                applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 Date endDate = null;
                 if (license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE)) {
                     final List<StateHistory> stateHistoryList = license.getStateHistory();
@@ -171,7 +171,7 @@ public class TradeLicenseUpdateIndexService
                 applicationIndexBuilder.mobileNumber(license.getLicensee().getMobilePhoneNumber().toString());
                 applicationIndexBuilder.aadharNumber(license.getLicensee().getUid());
                 applicationIndexBuilder.closed(ClosureStatus.NO);
-                applicationIndexBuilder.approved(ApprovalStatus.UNKNOWN);
+                applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
                 applicationIndex = applicationIndexBuilder.build();
                 if (license.getIsActive())
                     applicationIndexService.createApplicationIndex(applicationIndex);

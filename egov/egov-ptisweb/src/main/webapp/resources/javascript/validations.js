@@ -2998,3 +2998,11 @@ function validateRegDocNumber(obj,msg)
     obj.focus();
   }
 }
+
+function validate10Digit(obj,msg) {
+	var number = obj.value;
+	if(number != null && number.length < 10) {
+		bootbox.alert("Please Enter Valid 10 digit "+msg+"");
+	    obj.focus();
+	}
+}

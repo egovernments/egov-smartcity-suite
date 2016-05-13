@@ -226,9 +226,9 @@ public class PropertyExternalService {
 
     private void initiateBasicProperty(BasicPropertyStatus status) {
         basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
-        assessmentDetail.setStatus(basicProperty.isActive());
         final ErrorDetails errorDetails = new ErrorDetails();
         if (null != basicProperty) {
+            assessmentDetail.setStatus(basicProperty.isActive());
             if (status.equals(BasicPropertyStatus.ACTIVE)) {
                 if (basicProperty.isActive()) {
                     checkStatusValues(basicProperty, errorDetails);
@@ -1391,10 +1391,10 @@ public class PropertyExternalService {
             builtUpArea.setArea(floorDetials.getPlinthArea());
             builtUpArea.setBreadth(floorDetials.getPlinthBreadth());
             builtUpArea.setLength(floorDetials.getPlinthLength());
-            
+
             floor.setBuiltUpArea(builtUpArea);
             floor.setUnstructuredLand(floorDetials.getUnstructuredLand());
-            
+
             floorList.add(floor);
         }
         return floorList;

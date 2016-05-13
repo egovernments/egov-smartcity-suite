@@ -463,6 +463,7 @@ public class ContractorBillRegisterService {
         mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                 MBHeader.MeasurementBookStatus.CREATED.toString()));
         mbHeader.setEgBillregister(contractorBillRegister);
+        mbHeader.setWorkOrderEstimate(contractorBillRegister.getWorkOrderEstimate());
         mbHeaderService.create(mbHeader);
     }
 

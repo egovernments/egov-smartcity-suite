@@ -92,8 +92,7 @@ public class DCBReportResult {
     }
 
     public BigDecimal getDmnd_arrearPT() {
-        //return dmnd_arrearPT;
-        return dmnd_arrearPT.add(dmnd_arrearLC.add(dmnd_arrearEC).add(dmnd_arrearUPT));
+        return dmnd_arrearPT;
     }
 
     public void setDmnd_arrearPT(final BigDecimal dmnd_arrearPT) {
@@ -109,13 +108,11 @@ public class DCBReportResult {
     }
 
     public BigDecimal getDmnd_arrearTotal() {
-       // return getDmnd_arrearLC().add(getDmnd_arrearPT());
         return getDmnd_arrearPT().add(getDmnd_arrearPFT());
     }
 
     public BigDecimal getDmnd_currentPT() {
-        //return dmnd_currentPT;
-        return dmnd_currentPT.add(dmnd_currentLC.add(dmnd_currentEC).add(dmnd_currentUPT));
+        return dmnd_currentPT;
     }
 
     public void setDmnd_currentPT(final BigDecimal dmnd_currentPT) {
@@ -131,7 +128,6 @@ public class DCBReportResult {
     }
 
     public BigDecimal getDmnd_currentTotal() {
-        //return getDmnd_currentLC().add(getDmnd_currentPT());
         return getDmnd_currentPT().add(getDmnd_currentPFT());
     }
 
@@ -140,8 +136,7 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_arrearPT() {
-        //return clctn_arrearPT;
-        return clctn_arrearPT.add(clctn_arrearLC.add(clctn_arrearEC).add(clctn_arrearUPT));
+        return clctn_arrearPT;
     }
 
     public void setClctn_arrearPT(final BigDecimal clctn_arrearPT) {
@@ -157,13 +152,11 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_arrearTotal() {
-        //return getClctn_arrearLC().add(getClctn_arrearPFT().add(getClctn_arrearPT()));
         return getClctn_arrearPFT().add(getClctn_arrearPT());
     }
 
     public BigDecimal getClctn_currentPT() {
-        //return clctn_currentPT;
-        return clctn_currentPT.add(clctn_currentLC.add(clctn_currentEC).add(clctn_currentUPT));
+        return clctn_currentPT;
     }
 
     public void setClctn_currentPT(final BigDecimal clctn_currentPT) {
@@ -179,7 +172,6 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_currentTotal() {
-        //return getClctn_currentLC().add(getClctn_currentPFT().add(getClctn_currentPT()));
         return getClctn_currentPFT().add(getClctn_currentPT());
     }
 
@@ -423,19 +415,19 @@ public class DCBReportResult {
         this.boundaryId = boundaryId;
     }
 
-        public String getHouseNo() {
-                return houseNo; 
-        }
+    public String getHouseNo() {
+        return houseNo; 
+    }
 
-        public void setHouseNo(String houseNo) {
-                this.houseNo = houseNo;
-        }
+    public void setHouseNo(String houseNo) {
+    	this.houseNo = houseNo;
+    }
 
-        public String getOwnerName() {
-            return ownerName;
-        }
+    public String getOwnerName() {
+        return ownerName;
+    }
 
-        public void setOwnerName(String ownerName) {
-            this.ownerName = ownerName;
-        }
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
 }

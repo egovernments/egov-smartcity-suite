@@ -147,7 +147,7 @@ public class GenericComplaintAjaxController {
                 likePositionName, likePositionName, new Date()).stream().forEach(position -> {
                     positionUser.append("{\"name\":\"");
                     positionUser
-                            .append(position.getPosition().getName() + '-' + position.getUserName() + '-' + position.getCode());
+                            .append(position.getPosition().getName() + '-' + position.getName()+ '-' + position.getCode());
                     positionUser.append("\",\"id\":").append(position.getPosition().getId()).append("},");
                 });
         if (positionUser.lastIndexOf(",") != -1)

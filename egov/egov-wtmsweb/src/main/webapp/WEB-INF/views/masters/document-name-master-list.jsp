@@ -59,22 +59,20 @@
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="documentNameTbl">
 					<thead>
 						<tr>
-							<th colspan="1">
-								<div align="center">
+							<th colspan="1" class="text-center">
 									<spring:message code="lbl.applicationtype" />
-								</div>
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.document.name" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.document.name" />
 							</th>
-							<th align="center" colspan="1">
-								<div align="center"><spring:message code="lbl.mandatory"/></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.mandatory"/>
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.edit" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.edit" />
 							</th>
 						</tr>
 					</thead>

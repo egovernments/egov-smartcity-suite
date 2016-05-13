@@ -50,11 +50,13 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.Fund;
 import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.model.masters.AccountCodePurpose;
+import org.egov.utils.Constants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -101,12 +103,27 @@ public class BankAccountAction extends JQueryGridActionSupport {
         final HttpServletRequest request = ServletActionContext.getRequest();
         bankAccount.setBankbranch(bankBranch);
         try {
+            if(autoBankAccountGLCodeEnabled()){
+            if (!request.getParameter("accounttype").equalsIgnoreCase("")) {
+                newGLCode = prepareBankAccCode(request.getParameter("accounttype").split("#")[0], code);
+                coaID = postInChartOfAccounts(newGLCode, request.getParameter("accounttype").split("#")[0],
+                        request.getParameter("accountnumber"));
+                if (coaID != null && coaID.length() > 0) {
+                    final CChartOfAccounts chartofaccounts = (CChartOfAccounts) persistenceService.getSession().load(
+                            CChartOfAccounts.class, Long.parseLong(coaID));
+                    bankAccount.setChartofaccounts(chartofaccounts);
+                }
+            }
+            }
+            else
+            {
             if (!request.getParameter("glcode").equalsIgnoreCase("")) {
                 glCode = request.getParameter("glcode");
                 validateGlCode(glCode);
                 CChartOfAccounts COA = chartOfAccountsService.find("select coa from CChartOfAccounts coa where coa.glcode = ?",
                         glCode);
                 bankAccount.setChartofaccounts(COA);
+            }
             }
         } catch (final Exception e) {
             sendAJAXResponse(e.getMessage());
@@ -117,6 +134,53 @@ public class BankAccountAction extends JQueryGridActionSupport {
         bankAccountService.persist(bankAccount);
     }
 
+    public String prepareBankAccCode(final String accID, final String code)
+            throws Exception {
+        String glCode = "";
+        Long glcode;
+        Long tempCode = 0L;
+        glCode = (String) persistenceService
+                .find("select glcode from CChartOfAccounts where id=?) order by glcode desc",
+                        Long.parseLong(accID));
+        final String subminorvalue = EGovConfig.getProperty("egf_config.xml",
+                "subminorvalue", "", "AccountCode");
+        glCode = glCode.substring(0, Integer.parseInt(subminorvalue));
+        glCode = (String) persistenceService.find(
+                "select glcode from CChartOfAccounts where glcode like ? || '%' order by glcode desc", glCode);
+        final String zero = EGovConfig.getProperty("egf_config.xml", "zerofill", "",
+                "AccountCode");
+        if (glCode.length() == Integer.parseInt(code)) {
+            glcode = Long.parseLong(glCode);
+            tempCode = glcode + 1;
+        } else {
+            glCode = glCode + zero;
+            glcode = Long.parseLong(glCode);
+            tempCode = glcode + 1;
+        }
+        glCode = Long.toString(tempCode);
+        return glCode;
+    }
+    
+    public String postInChartOfAccounts(final String glCode, final String parentId,
+            final String accNumber) throws Exception {
+        final Bankbranch bankBranch = (Bankbranch) persistenceService.getSession().load(Bankbranch.class, bankBranchId);
+        int majorCodeLength = 0;
+        majorCodeLength = Integer.valueOf(getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
+        final CChartOfAccounts chart = new CChartOfAccounts();
+        chart.setGlcode(glCode);
+        chart.setName(bankBranch.getBank().getName() + " "
+                + bankBranch.getBranchname() + " "
+                + accNumber);
+        chart.setParentId(Long.parseLong(parentId));
+        chart.setType('A');
+        chart.setClassification(Long.parseLong("4"));
+        chart.setIsActiveForPosting(true);
+        chart.setMajorCode(chart.getGlcode().substring(0, majorCodeLength));
+        chartOfAccountsService.persist(chart);
+        return String.valueOf(chart.getId());
+    }
+
+    
     private void validateGlCode(String glCode) {
         CChartOfAccounts COA = chartOfAccountsService.find("select coa from CChartOfAccounts coa where coa.glcode = ?", glCode);
         Bankaccount account = null;
@@ -173,8 +237,8 @@ public class BankAccountAction extends JQueryGridActionSupport {
     private void populateBankAccountDetail(final Bankaccount bankAccount) {
         final HttpServletRequest request = ServletActionContext.getRequest();
         bankAccount.setAccountnumber(request.getParameter("accountnumber"));
-        /*bankAccount.setAccounttype(request.getParameter("accounttype").equalsIgnoreCase("") ? null : request.getParameter(
-                "accounttype").split("#")[1]);*/
+        bankAccount.setAccounttype(getAccountType(request.getParameter("glcode")));
+
         if (org.apache.commons.lang.StringUtils.isNotBlank(request.getParameter("fundname"))) {
             final Fund fund = (Fund) persistenceService.getSession().load(Fund.class,
                     Integer.valueOf(request.getParameter("fundname")));
@@ -189,6 +253,19 @@ public class BankAccountAction extends JQueryGridActionSupport {
         bankAccount.setPayTo(request.getParameter("payto"));
     }
 
+    public String getAccountType(String glCode) {
+        String name = (String) persistenceService
+                .find("select name from CChartOfAccounts where id=(select parentId from CChartOfAccounts where glcode = ?)",
+                        glCode);
+        return name;
+    }
+    
+    public Boolean autoBankAccountGLCodeEnabled(){
+        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+               Constants.EGF, "auto_bankaccount_glcode").get(0);   
+        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+    }
+    
     private void listAllBankBranchAccounts() {
         final List<Bankaccount> bankAccounts = getPagedResult(Bankaccount.class, "bankbranch.id", bankBranchId).getList();
         final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
@@ -200,7 +277,6 @@ public class BankAccountAction extends JQueryGridActionSupport {
                 jsonObject.put("id", bankaccount.getId());
                 jsonObject.put("accountnumber", bankaccount.getAccountnumber());
                 jsonObject.put("fundname", bankaccount.getFund().getName());
-                jsonObject.put("accounttype", bankaccount.getAccounttype());
                 jsonObject.put("narration", bankaccount.getNarration());
                 jsonObject.put("payto", bankaccount.getPayTo());
                 jsonObject.put("typename", bankaccount.getType() == null ? "" : bankaccount.getType().name());
@@ -209,6 +285,7 @@ public class BankAccountAction extends JQueryGridActionSupport {
                         .find("select glcode from CChartOfAccounts where id=(select chartofaccounts.id from Bankaccount where accountnumber = ?)",
                                 bankaccount.getAccountnumber());
                 jsonObject.put("glcode", glCode);
+                jsonObject.put("accounttype", getAccountType(glCode));
                 jsonObjects.add(jsonObject);
             } catch (final JSONException e) {
                 sendAJAXResponse("error");

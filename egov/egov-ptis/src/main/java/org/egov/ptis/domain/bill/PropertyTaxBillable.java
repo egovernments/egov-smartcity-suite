@@ -39,6 +39,22 @@
  */
 package org.egov.ptis.domain.bill;
 
+import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -58,6 +74,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.service.PenaltyCalculationService;
+import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -65,31 +82,13 @@ import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 /**
  * @author satyam
@@ -126,6 +125,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private PenaltyCalculationService penaltyCalculationService;
     @Autowired
     private InstallmentDao installmentDao;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtil;
+    @Autowired
+    private FinancialUtil financialUtil;
 
     private Boolean isCallbackForApportion = Boolean.TRUE;
     private LPPenaltyCalcType penaltyCalcType = SIMPLE;
@@ -317,17 +320,17 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
+        return financialUtil.getFunctionaryCode();
     }
 
     @Override
     public String getFundCode() {
-        return DEFAULT_FUND_CODE;
+        return financialUtil.getFundCode();
     }
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUND_SRC_CODE;
+        return financialUtil.getFundSourceCode();
     }
 
     @Override
@@ -377,7 +380,8 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public BigDecimal getLPPPercentage() {
-        return new BigDecimal(ptUtils.getAppConfigValue("LATE_PAYPENALTY_PERC", PropertyTaxConstants.PTMODULENAME));
+        return new BigDecimal(propertyTaxCommonUtil.getAppConfigValue("LATE_PAYPENALTY_PERC",
+                PropertyTaxConstants.PTMODULENAME));
     }
 
     @Override
@@ -490,7 +494,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                             penaltyEffectiveDate = getPenaltyEffectiveDate(installment, assessmentEffecInstallment,
                                     basicProperty.getAssessmentdate(), currentInstall);
                         }
-                        if (penaltyEffectiveDate!=null && penaltyEffectiveDate.before(new Date())) {
+                        if (penaltyEffectiveDate.before(new Date())) {
                             penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
                         }
                     } else
@@ -546,11 +550,12 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
              * months there is no peanlty from 4th month onwards penalty
              * effective from 4th month of the installment
              */
-            if (installment.equals(curInstallment) || installment.getFromDate().after(curInstallment.getToDate())) {
+            if (installment.equals(curInstallment)) {
                 final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(installment.getFromDate(), new Date());
                 if (noOfMonths > 3) {
                     penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
-                }
+                } else
+                    penaltyEffDate = new Date();
             } else {
                 penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
             }

@@ -39,6 +39,13 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.NewConnectionService;
@@ -57,6 +64,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
+import org.egov.wtms.masters.service.DonationDetailsService;
 import org.egov.wtms.masters.service.DonationHeaderService;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.UsageTypeService;
@@ -72,14 +80,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.JsonObject;
-
-import javax.servlet.http.HttpServletResponse;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Controller
 public class AjaxConnectionController {
@@ -113,6 +113,9 @@ public class AjaxConnectionController {
 
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
+
+    @Autowired
+    private DonationDetailsService donationDetailsService;
 
     @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
@@ -165,8 +168,8 @@ public class AjaxConnectionController {
             @RequestParam final String requestConsumerCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(requestConsumerCode);
-        final Boolean enteredMonthReadingExist = connectionDemandService
-                .meterEntryAllReadyExistForCurrentMonth(waterConnectionDetails, givenDate);
+        final Boolean enteredMonthReadingExist = connectionDemandService.meterEntryAllReadyExistForCurrentMonth(
+                waterConnectionDetails, givenDate);
         return enteredMonthReadingExist;
     }
 
@@ -186,18 +189,35 @@ public class AjaxConnectionController {
     }
 
     @RequestMapping(value = "/ajax-donationheadercombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
+    public @ResponseBody String getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
             @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
-            @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize) {
+            @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize,
+            @RequestParam final Date fromDate, @RequestParam final Date toDate, @RequestParam final Boolean activeid) {
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
         final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
         final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
         final List<DonationHeader> donationHeaderTempList = donationHeaderService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
                         minPipesizeObj.getSizeInInch(), maxPipesizeObj.getSizeInInch());
-        if (donationHeaderTempList.isEmpty())
-            return 0;
-        else
-            return 1;
+        DonationDetails donationDetails = null;
+        if (!donationHeaderTempList.isEmpty())
+            for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
+                donationDetails = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(donationHeaderTemp,
+                        fromDate, toDate);
+                if (donationDetails != null)
+                    break;
+            }
+        if (donationDetails == null)
+            return "";
+        else if (donationDetails != null && donationDetails.getDonationHeader().isActive() == activeid) {
+            final JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("maxPipeSize", donationDetails.getDonationHeader().getMaxPipeSize().getCode());
+            jsonObj.addProperty("minPipeSize", donationDetails.getDonationHeader().getMinPipeSize().getCode());
+            jsonObj.addProperty("fromDate", dateformat.format(donationDetails.getFromDate()).toString());
+            jsonObj.addProperty("toDate", dateformat.format(donationDetails.getToDate()).toString());
+            return jsonObj.toString();
+        } else
+            return "";
     }
 
     @RequestMapping(value = "/ajax-minimumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -213,36 +233,37 @@ public class AjaxConnectionController {
     }
 
     @RequestMapping(value = "/ajax-WaterRatescombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String geWaterRatesByAllCombinatons(@ModelAttribute("waterRatesHeader") @RequestParam final ConnectionType categoryType, 
+    public @ResponseBody String geWaterRatesByAllCombinatons(
+            @ModelAttribute("waterRatesHeader") @RequestParam final ConnectionType categoryType,
             @RequestParam final WaterSource waterSource, @RequestParam final UsageType usageType,
-            @RequestParam final PipeSize pipeSize  , @RequestParam final Date fromDate , @RequestParam final Date toDate) {
-        SimpleDateFormat dateformat =  new SimpleDateFormat("dd-MM-yyyy");
+            @RequestParam final PipeSize pipeSize, @RequestParam final Date fromDate, @RequestParam final Date toDate,
+            @RequestParam final Boolean activeid) {
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
         final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService
                 .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource,
                         pipeSize);
         WaterRatesDetails waterRatesDetails = null;
         if (!waterRatesHeaderList.isEmpty())
-        {
             for (final WaterRatesHeader waterRatesHeaderTemp : waterRatesHeaderList) {
-                waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(waterRatesHeaderTemp,fromDate, toDate);
-                if (waterRatesDetails != null )
+                waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(
+                        waterRatesHeaderTemp, fromDate, toDate);
+                if (waterRatesDetails != null)
                     break;
-                }
-        }
+            }
         if (waterRatesDetails == null)
             return "";
-        else{
-            JsonObject jsonObj=new JsonObject();
+        else if (waterRatesDetails != null && waterRatesDetails.getWaterRatesHeader().isActive() == activeid) {
+            final JsonObject jsonObj = new JsonObject();
             jsonObj.addProperty("fromDate", dateformat.format(waterRatesDetails.getFromDate()).toString());
             jsonObj.addProperty("toDate", dateformat.format(waterRatesDetails.getToDate()).toString());
             return jsonObj.toString();
-        }
+        } else
+            return "";
     }
 
     @RequestMapping(value = "/ajax-getapplicationprocesstime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody double getApplicationProcessTime(@RequestParam final Long applicationType,
             @RequestParam final Long categoryType) {
-
         ApplicationProcessTime applicationprocessTime = new ApplicationProcessTime();
         applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(
                 applicationTypeService.findBy(applicationType), connectionCategoryService.findOne(categoryType));

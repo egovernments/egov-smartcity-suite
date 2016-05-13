@@ -39,12 +39,19 @@
  */
 package org.egov.works.master.service;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.works.master.repository.MilestoneTemplateRepository;
+import org.egov.works.milestone.entity.SearchRequestMilestoneTemplate;
 import org.egov.works.models.masters.MilestoneTemplate;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,4 +91,26 @@ public class MilestoneTemplateService {
     public MilestoneTemplate getMilestoneTemplateByCode(final String code) {
         return milestoneTemplateRepository.findByCodeIgnoreCase(code);
     }
+
+    public List<MilestoneTemplate> findMilestoneTemplateCodeForMilestone(final String code) {
+        return milestoneTemplateRepository.findByCodeContainingIgnoreCase(code);
+    }
+
+    public List<MilestoneTemplate> searchMilestoneTemplate(final SearchRequestMilestoneTemplate searchRequestMilestoneTemplate) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(MilestoneTemplate.class);
+        if (searchRequestMilestoneTemplate != null) {
+            if (searchRequestMilestoneTemplate.getName() != null)
+                criteria.add(Restrictions.ilike("name", searchRequestMilestoneTemplate.getName(), MatchMode.ANYWHERE));
+            if (searchRequestMilestoneTemplate.getDescription() != null)
+                criteria.add(Restrictions.ilike("description", searchRequestMilestoneTemplate.getDescription(),
+                        MatchMode.ANYWHERE));
+            if (searchRequestMilestoneTemplate.getTypeOfWork() != null)
+                criteria.add(Restrictions.eq("typeOfWork.id", searchRequestMilestoneTemplate.getTypeOfWork()));
+            if (searchRequestMilestoneTemplate.getSubTypeOfWork() != null)
+                criteria.add(Restrictions.eq("subTypeOfWork.id", searchRequestMilestoneTemplate.getSubTypeOfWork()));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
 }
