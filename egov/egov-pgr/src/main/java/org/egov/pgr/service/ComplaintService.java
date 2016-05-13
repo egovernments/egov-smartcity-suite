@@ -162,8 +162,9 @@ public class ComplaintService {
     public final String COMPLAINT_COMPLETED="COMPLETED";
     public final String COMPLAINT_REJECTED="REJECTED";
     
-    public final String COMPLAINT_RESOLVED="RESOLVED";
-    public final String COMPLAINT_UNRESOLVED="UNRESOLVED";
+    public final String COMPLAINTS_FILED="FILED";
+    public final String COMPLAINTS_RESOLVED="RESOLVED";
+    public final String COMPLAINTS_UNRESOLVED="UNRESOLVED";
     
     @Transactional
     public Complaint createComplaint(final Complaint complaint) throws ValidationException {
@@ -551,21 +552,10 @@ public class ComplaintService {
     
     public HashMap<String, Integer> getComplaintsTotalCount() {
         HashMap<String, Integer> complaintsCount=new HashMap<String, Integer>();
-        complaintsCount.put(COMPLAINT_RESOLVED, (complaintRepository.getComplaintsTotalCountByStatus(resolvedStatus)).intValue());
-        complaintsCount.put(COMPLAINT_UNRESOLVED, (complaintRepository.getComplaintsTotalCountByStatus(pendingStatus)).intValue());
+        complaintsCount.put(COMPLAINTS_FILED, (complaintRepository.getTotalComplaintsCount()).intValue());
+        complaintsCount.put(COMPLAINTS_RESOLVED, (complaintRepository.getComplaintsTotalCountByStatus(resolvedStatus)).intValue());
+        complaintsCount.put(COMPLAINTS_UNRESOLVED, (complaintRepository.getComplaintsTotalCountByStatus(pendingStatus)).intValue());
         return complaintsCount;
     }
-    
-    public Long getTotalRedressedComplaints()
-    {
-    	
-    	return complaintRepository.getComplaintsTotalCountByStatus(resolvedStatus);
-    }
-    
-    public Long getTotalPendingComplaints()
-    {
-    	return complaintRepository.getComplaintsTotalCountByStatus(pendingStatus);
-    }
-    
     
 }

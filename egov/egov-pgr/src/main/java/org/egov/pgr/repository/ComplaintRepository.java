@@ -65,6 +65,9 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     @Query("select count(*) from Complaint complaint where status.name in (:statuses)")
     Long getComplaintsTotalCountByStatus(@Param("statuses") String[] statuses);
     
+    @Query("select count(*) from Complaint")
+    Long getTotalComplaintsCount();
+    
     @Query("select count(*) from Complaint complaint where createdBy =:createdBy and status.name in (:statuses)")
     Long getMyComplaintCountByStatus(@Param("createdBy") User createdBy, @Param("statuses") String[] statuses);
     
