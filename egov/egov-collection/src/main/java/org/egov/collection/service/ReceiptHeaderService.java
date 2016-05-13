@@ -1098,12 +1098,15 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 }
             }
         }
+        List<ReceiptHeader> bankRemitList = new ArrayList<ReceiptHeader>();
         for (final ReceiptHeader receiptHeader : bankRemittanceList) {
             receiptHeader.setStatus(receiptStatusRemitted);
+            if(!bankRemitList.contains(receiptHeader))
+                bankRemitList.add(receiptHeader);
             super.update(receiptHeader);
             getSession().flush();
         }
-        return bankRemittanceList;
+        return bankRemitList;
     }
 
     private List<ReceiptHeader> setVoucherNumber(final List<ReceiptHeader> receiptHeaders,
