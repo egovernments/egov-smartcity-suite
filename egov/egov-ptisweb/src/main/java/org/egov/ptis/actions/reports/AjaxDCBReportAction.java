@@ -49,7 +49,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.domain.service.report.ReportService;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,7 @@ public class AjaxDCBReportAction extends BaseFormAction {
     public static final String BLOCKWISE = "block";
     public static final String PROPERTY = "property";
     @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
+    private ReportService reportService;
     private String propTypes;
     private Boolean courtCase;
 
@@ -128,7 +128,7 @@ public class AjaxDCBReportAction extends BaseFormAction {
         //To conver multi selected propertyTypes values(json stringify) into list
         List<String> propertyType=new Gson().fromJson(propTypes, new TypeToken<ArrayList<String>>() { 
         }.getType());
-        final SQLQuery query = propertyTaxUtil.prepareQueryForDCBReport(boundaryId, mode,courtCase,propertyType);
+        final SQLQuery query = reportService.prepareQueryForDCBReport(boundaryId, mode,courtCase,propertyType);
         query.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
         return query; 
     }
