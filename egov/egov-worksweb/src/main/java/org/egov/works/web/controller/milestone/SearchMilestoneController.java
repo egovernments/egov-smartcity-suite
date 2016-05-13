@@ -73,7 +73,7 @@ public class SearchMilestoneController {
 
     @Autowired
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
 
@@ -93,7 +93,7 @@ public class SearchMilestoneController {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
     }
-    
+
     @RequestMapping(value = "/searchmilestonetemplate", method = RequestMethod.GET)
     public String showSearchMilestoneTemplate(
             @ModelAttribute final MilestoneTemplate milestoneTemplate,
@@ -111,8 +111,21 @@ public class SearchMilestoneController {
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestMilestone", searchRequestMilestone);
-        model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.WORKORDER));
+        model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MILESTONE_MODULE_KEY));
         return "viewMilestone-form";
+    }
+
+    @RequestMapping(value = "/searchtracked-form", method = RequestMethod.GET)
+    public String searchTrackedMilestoneForm(
+            @ModelAttribute final SearchRequestMilestone searchRequestMilestone,
+            final Model model) throws ApplicationException {
+        setDropDownValues(model);
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if (departments != null && !departments.isEmpty())
+            searchRequestMilestone.setDepartment(departments.get(0).getId());
+        model.addAttribute("searchRequestMilestone", searchRequestMilestone);
+        model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MILESTONE_MODULE_KEY));
+        return "trackMilestone-form";
     }
 
 }
