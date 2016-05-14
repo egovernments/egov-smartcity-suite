@@ -61,8 +61,8 @@ function onSubmit(obj){
 		            <th class="bluebgheadtd" width="18%" style="display:none">ID</th>  
 					<th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.serviceCategoryName"/></th>
 					<th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.servicCategoryeCode"/></th>
+				    <th class="bluebgheadtd" width="15%"><s:text name="masters.serviceCategory.serviceCategoryeEnabled" /></th>
 					<th class="bluebgheadtd" width="15%"><s:text name="masters.edit"/></th>
-
 				</tr>  
 				<s:iterator var="p" value="serviceCategoryList">  
 	            <tr>  
@@ -87,6 +87,17 @@ function onSubmit(obj){
 					</td>
 					</div>
 					</s:if>
+
+					<td class="blueborderfortd">
+						<div align="center">
+							<s:if test="isActive">
+								<s:text name="text.yes"></s:text>
+							</s:if>
+							<s:else>
+								<s:text name="text.no"></s:text>
+							</s:else>
+						</div>
+					</td>
 
 					<s:else>
 					<td class="blueborderfortd">							
