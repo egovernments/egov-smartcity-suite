@@ -84,7 +84,7 @@ body {
 		<p class="text-center">
 			<s:if test="%{model.id!=null && mode != 'view'}">
 				<s:submit type="submit" cssClass="btn btn-primary" value="Modify"
-					id="saveButton" name="button" method="save" />&nbsp;
+					id="modifyButton" name="button" method="save" onclick="return validateContractorFormAndSubmit();" />&nbsp;
 		</s:if>
 			<s:if test="%{model.id==null}">
 				<s:submit type="submit" cssClass="btn btn-primary" value="Save"
