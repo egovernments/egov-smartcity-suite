@@ -41,6 +41,9 @@ package org.egov.wtms.masters.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -57,6 +60,8 @@ import javax.validation.constraints.NotNull;
 @Unique(id = "id", tableName = "egwtr_water_source", columnName = { "code", "watersourcetype" }, fields = { "code",
         "waterSourceType" }, enableDfltMsg = true)
 @SequenceGenerator(name = WaterSource.SEQ_WATERSOURCE, sequenceName = WaterSource.SEQ_WATERSOURCE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class WaterSource extends AbstractAuditable {
 
     private static final long serialVersionUID = -9098047364434545993L;
@@ -69,16 +74,20 @@ public class WaterSource extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 1, max = 25)
+    @Audited
     private String code;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 100)
+    @Audited
     private String waterSourceType;
 
     @SafeHtml
+    @Audited
     private String description;
-
+    
+    @Audited
     private boolean active;
 
     @Override
