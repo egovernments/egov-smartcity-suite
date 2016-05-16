@@ -1671,7 +1671,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
             if (surrender == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("Exception while surrender Cheque ",
-                        "Please select the atleast one Cheque for Surrendering ")));
+                        "Please select atleast one Cheque for Surrendering ")));
             final List<InstrumentHeader> suurenderChequelist = new ArrayList<InstrumentHeader>();
             final List<String> chequeNoList = new ArrayList<String>();
             final List<String> serialNoList = new ArrayList<String>();

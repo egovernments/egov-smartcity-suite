@@ -125,7 +125,7 @@
 					<td class="greybox"><s:date name="validfrom" id="validfromId"
 							format="dd/MM/yyyy" />
 						<s:textfield id="validfromId" name="validfrom"
-							value="%{validfrom}"
+							value="%{validfromId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>
@@ -133,7 +133,7 @@
 					<td class="greybox"><s:text name="scheme.endDate" /></td>
 					<td class="greybox"><s:date name="validto" id="validtoId"
 							format="dd/MM/yyyy" /> <s:textfield id="validtoId"
-							name="validto" value="%{validto}"
+							name="validto" value="%{validtoId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>
