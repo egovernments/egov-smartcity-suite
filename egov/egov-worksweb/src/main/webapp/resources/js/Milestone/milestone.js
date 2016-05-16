@@ -116,7 +116,7 @@ function validateScheduleStartDate()
 			{
 				isValidationSuccess=false;
 
-				bootbox.alert("Scheduled start date cannot be less than the workorder date", function(){ 
+				bootbox.alert("Scheduled start date cannot be less than the LOA created date", function(){ 
 					setTimeout(function(){ textbox.focus(); }, 400);
 				});
 				
@@ -171,16 +171,17 @@ function validateScheduleEndDate()
 var workOrderDate=new Date($('#workOrderDate').val());
 initializeDatePicker();
 
-function validatePercentag() {
+function validatePercentage() {
 	$( "input[name$='percentage']" ).on("keyup", function(){
 	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
 	        val = this.value;
+	    
 	    if(!valid){
+	        console.log("Invalid input!");
 	        this.value = val.substring(0, val.length - 1);
 	    }
 	});
 }
-
 function daydiff(first, second) { 
 	var diffDays=Math.round((second-first)/(1000*60*60*24));
 	return (diffDays<0?(diffDays)+'d':'+'+diffDays+'d');
@@ -394,22 +395,20 @@ function addMilestoneDetails() {
 }
 
 jQuery('#submitMilestoneDetails').click(function(e) {
+	$(".readonlyfields").prop("readonly", true);
+	var templateCode = $('#templateCode').val();
 	var milestoneId = $('#milestoneTemplateId').val();
-	if(milestoneId == null)
+	if(templateCode == '')
 		bootbox.alert("Please Enter Template Code");
 	else{
-		
-		console.log('button click eve!');
-		
 		$.ajax({
 			url: "/egworks/milestone/setmilestonetemplateactivities/"+milestoneId,
 			type: "GET",
 			dataType: "json",
 			success: function (milestoneTemplateActivities) {
 				$.each(milestoneTemplateActivities, function(index,milestoneTemplateActivity){
-					if(index!=0){
+					if(index!=0)
 						addMilestoneDetails();
-					}
 					var stageOrderNo = document.getElementsByName('activities['+index+'].stageOrderNo');
 					$(stageOrderNo).val(milestoneTemplateActivity.stageOrderNo);
 					var description = document.getElementsByName('activities['+index+'].description');
@@ -432,6 +431,7 @@ function openLetterOfAcceptance() {
 }
 
 $('#save').click(function() {
+	if($('#milestone').valid()){
 	var totalPercentage = parseFloat($('#totalPercentage').html());
 	if (totalPercentage != 100) {
 		bootbox.alert("Sum of percentage of should be equal to 100 .");
@@ -442,7 +442,9 @@ $('#save').click(function() {
 	} else {
 		return false;
 	}
-	return true
+	return true;
+	}
+	return false;
 });
 
 function replacePercentageValue() {

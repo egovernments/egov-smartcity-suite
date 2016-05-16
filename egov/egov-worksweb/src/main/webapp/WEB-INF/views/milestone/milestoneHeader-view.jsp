@@ -48,6 +48,9 @@
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
+			<div class="panel-heading">
+				<div class="panel-title"><spring:message code="lbl.header" /></div>
+			</div>
 			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
@@ -119,7 +122,7 @@
 						<spring:message code="lbl.loanumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<a onclick="openLetterOfAcceptance();"><c:out default="N/A"
+						<a style="cursor:pointer;" onclick="openLetterOfAcceptance();"><c:out default="N/A"
 								value="${workOrder.workOrderNumber}"></c:out></a> <input
 							type="hidden" value="${workOrder.id}" name="workOrderId" />
 					</div>
@@ -146,7 +149,7 @@
 						<spring:message code="lbl.contractor" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrder.contractor.name}"></c:out>
+						<c:out default="N/A" value="${workOrder.contractor.code} - ${workOrder.contractor.name}"></c:out>
 					</div>
 				</div>
 			</div>

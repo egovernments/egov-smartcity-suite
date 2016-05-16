@@ -143,6 +143,7 @@ $('#typeofwork').blur(function(){
 	});
 
 jQuery('#milestoneDetails').click(function(e) {
+	window.opener.$(".readonlyfields").prop("readonly", true);
 	var milestoneId = $('input[name=selectCheckbox]:checked').val();
 	if(milestoneId == null)
 		bootbox.alert("Please select Atleast One Milestone Template");
@@ -161,6 +162,7 @@ jQuery('#milestoneDetails').click(function(e) {
 					$(description).val(milestoneTemplateActivity.description);
 					var percentage = window.opener.document.getElementsByName('activities['+index+'].percentage');
 					$(percentage).val(milestoneTemplateActivity.percentage);
+					window.opener.calculatePercentageTotal();
 				});
 				window.close();
 			}, 
@@ -168,5 +170,6 @@ jQuery('#milestoneDetails').click(function(e) {
 				console.log("failed");
 			}
 		});
+		
 	}
 });
