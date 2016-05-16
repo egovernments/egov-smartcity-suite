@@ -62,7 +62,7 @@
     <input type="hidden" value="<s:text name='milestonetemplate.code.not.null' />" id='templateCode'>
     <input type="hidden" value="<s:text name='milestonetemplate.name.not.null' />" id='templateName'>
     <input type="hidden" value="<s:text name='milestonetemplate.description.not.null' />" id='templateDesc'>
-    <input type="hidden" value="<s:text name='milestonetemplate.workType.not.null' />" id='selectTypeOfWork'>
+    <input type="hidden" value="<s:text name='milestone.template.search.workType.error' />" id='selectTypeOfWork'>
     <input type="hidden" value="<s:text name='milestonetemplate.stagedesciption.not.null' />" id='description'>
     <input type="hidden" value="<s:text name='milestonetemplate.stageorderno.not.null' />" id='stageOrderNo'>
     <s:if test="%{hasActionMessages()}">
