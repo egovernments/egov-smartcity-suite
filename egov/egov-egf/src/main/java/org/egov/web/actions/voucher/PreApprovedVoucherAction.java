@@ -88,7 +88,6 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -742,8 +741,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         return preApprovedVoucherList;
     }
 
-    public void setSequenceGenerator(final SequenceGenerator sequenceGenerator) {
-    }
+  
 
     @Override
     public void validate()

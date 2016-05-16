@@ -384,12 +384,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return userId;
     }
 
-    private void discardSequenceNumber() {
-        if (Constants.RE.equalsIgnoreCase(beRe))
-            budgetReAppropriationService.getSequenceGenerator().discardNumber("BUDGET-REAPPROPRIATION-RE");
-        else
-            budgetReAppropriationService.getSequenceGenerator().discardNumber("BUDGET-REAPPROPRIATION-BE");
-    }
+  
 
     protected BudgetReAppropriationMisc createBudgetReAppropriationMisc(final String actionName) {
         final Budget budget = new Budget();

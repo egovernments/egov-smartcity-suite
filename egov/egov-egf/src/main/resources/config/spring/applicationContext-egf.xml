@@ -99,7 +99,6 @@
 		scope="prototype">
 		<constructor-arg index="0"
 			value="org.egov.model.budget.BudgetReAppropriation" />
-		<property name="sequenceGenerator" ref="sequenceGenerator" />
 		<property name="budgetDetailService" ref="budgetDetailService" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 	</bean>

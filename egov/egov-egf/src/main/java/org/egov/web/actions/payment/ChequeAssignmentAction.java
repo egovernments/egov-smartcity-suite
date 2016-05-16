@@ -90,7 +90,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.ChequeAssignment;
@@ -114,7 +113,7 @@ import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
+import com.opensymphony.xwork2.validator.annotations.Validation;
 @ParentPackage("egov")
 @Results({
         @Result(name = "search", location = "chequeAssignment-search.jsp"),
@@ -165,7 +164,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Date chequeDt;
     private boolean chequeNoGenerationAuto;
     private boolean rtgsNoGenerationAuto;
-    private SequenceGenerator sequenceGenerator;
     @Autowired
     @Qualifier("chequeAssignmentHelper")
     private ChequeAssignmentHelper chequeAssignmentHelper;
@@ -1268,10 +1266,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         } catch (final SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating Application Number", e);
         }
-        /*
-         * String seqNo = sequenceGenerator.getNextNumber(SEQ_RTGS_ReferenceNumber, 1L).getFormattedNumber(); seqNo =
-         * ackNumberFormat.format(Integer.parseInt(seqNo)); return seqNo;
-         */
+        
     }
 
     @ValidationErrorPage(value = "searchpensionpayment")
@@ -2439,15 +2434,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     public void setRtgsSeceltedAccMap(final Map<String, Boolean> rtgsSeceltedAccMap) {
         this.rtgsSeceltedAccMap = rtgsSeceltedAccMap;
     }
-
-    public SequenceGenerator getSequenceGenerator() {
-        return sequenceGenerator;
-    }
-
-    public void setSequenceGenerator(final SequenceGenerator sequenceGenerator) {
-        this.sequenceGenerator = sequenceGenerator;
-    }
-
+ 
+ 
     public List<InstrumentHeader> getInstVoucherDisplayList() {
         return instVoucherDisplayList;
     }
