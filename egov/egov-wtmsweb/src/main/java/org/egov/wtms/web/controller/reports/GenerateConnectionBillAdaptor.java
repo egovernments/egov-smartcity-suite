@@ -43,7 +43,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.wtms.application.service.GenerateConnectionBill;
+
+import org.egov.wtms.application.entity.GenerateConnectionBill;
 
 import java.lang.reflect.Type;
 

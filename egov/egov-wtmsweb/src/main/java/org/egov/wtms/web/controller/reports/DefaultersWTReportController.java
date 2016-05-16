@@ -41,15 +41,16 @@ package org.egov.wtms.web.controller.reports;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.wtms.application.entity.DailyWTCollectionReport;
+import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
-import org.egov.wtms.application.service.DailyWTCollectionReport;
-import org.egov.wtms.application.service.DefaultersReport;
 import org.egov.wtms.application.service.DefaultersWTReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
@@ -67,6 +68,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;

@@ -70,7 +70,7 @@ import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
-import org.egov.wtms.application.service.DailyWTCollectionReportSearch;
+import org.egov.wtms.application.entity.DailyWTCollectionReportSearch;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

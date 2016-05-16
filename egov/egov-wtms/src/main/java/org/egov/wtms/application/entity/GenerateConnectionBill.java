@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.application.service;
+package org.egov.wtms.application.entity;
 
 public class GenerateConnectionBill {
 

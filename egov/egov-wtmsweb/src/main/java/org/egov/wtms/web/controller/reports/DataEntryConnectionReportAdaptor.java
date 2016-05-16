@@ -42,7 +42,7 @@ package org.egov.wtms.web.controller.reports;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
-import org.egov.wtms.application.service.DataEntryConnectionReport;
+import org.egov.wtms.application.entity.DataEntryConnectionReport;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

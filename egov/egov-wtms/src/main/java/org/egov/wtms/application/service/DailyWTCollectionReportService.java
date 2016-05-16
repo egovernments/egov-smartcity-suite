@@ -51,6 +51,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.InstrumentService;
+import org.egov.wtms.application.entity.DailyWTCollectionReport;
+import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -65,6 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
