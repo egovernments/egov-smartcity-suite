@@ -45,7 +45,7 @@ import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
 import org.egov.works.reports.service.WorkProgressRegisterService;
-import org.egov.works.web.adaptor.EstimateAbstractReportByDepartmentWiseJsonAdaptor;
+import org.egov.works.web.adaptor.EstimateAbstractReportJsonAdaptor;
 import org.egov.works.web.adaptor.WorkProgressRegisterJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -71,7 +71,7 @@ public class AjaxReportController {
     private WorkProgressRegisterJsonAdaptor workProgressRegisterJsonAdaptor;
 
     @Autowired
-    private EstimateAbstractReportByDepartmentWiseJsonAdaptor estimateAbstractReportByDepartmentWiseJsonAdaptor;
+    private EstimateAbstractReportJsonAdaptor estimateAbstractReportJsonAdaptor;
 
     @RequestMapping(value = "/ajax-wincodestosearchworkprogressregister", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> getChildBoundariesById(@RequestParam final String code) {
@@ -101,15 +101,26 @@ public class AjaxReportController {
         final List<EstimateAbstractReport> estimateAbstractReportByDepartmentWise = workProgressRegisterService
                 .searchEstimateAbstractReportByDepartmentWise(estimateAbstractReport);
         final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchEstimateAbstractReportByDepartmenJson(estimateAbstractReportByDepartmentWise))
+                .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByDepartmentWise))
                 .append("}").toString();
         return result;
     }
 
-    public Object toSearchEstimateAbstractReportByDepartmenJson(final Object object) {
+    @RequestMapping(value = "/ajax-estimateabstractreportbytypeofworkwise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String showSearchEstimateAbstractReportByTypeOfWork(final Model model,
+            @ModelAttribute final EstimateAbstractReport estimateAbstractReport) {
+        final List<EstimateAbstractReport> estimateAbstractReportByDepartmentWise = workProgressRegisterService
+                .searchEstimateAbstractReportByTypeOfWorkWise(estimateAbstractReport);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByDepartmentWise))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toSearchEstimateAbstractReportJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(EstimateAbstractReport.class,
-                estimateAbstractReportByDepartmentWiseJsonAdaptor).create();
+                estimateAbstractReportJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }

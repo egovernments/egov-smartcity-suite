@@ -55,6 +55,8 @@ public class EstimateAbstractReport {
     private String beneficiary;
     private boolean spillOverFlag;
     private Long currentFinancialYearId;
+    private Long typeOfWork;
+    private Long subTypeOfWork;
 
     private String departmentName;
     private Long lineEstimates;
@@ -68,7 +70,8 @@ public class EstimateAbstractReport {
     private Long billsCreated;
     private String BillValueInCrores;
     private Date createdDate;
-
+    private String typeOfWorkName;
+    
     public Long getFinancialYear() {
         return financialYear;
     }
@@ -260,5 +263,31 @@ public class EstimateAbstractReport {
     public void setCurrentFinancialYearId(Long currentFinancialYearId) {
         this.currentFinancialYearId = currentFinancialYearId;
     }
+
+    public Long getTypeOfWork() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(Long typeOfWork) {
+        this.typeOfWork = typeOfWork;
+    }
+
+    public Long getSubTypeOfWork() {
+        return subTypeOfWork;
+    }
+
+    public void setSubTypeOfWork(Long subTypeOfWork) {
+        this.subTypeOfWork = subTypeOfWork;
+    }
+
+    public String getTypeOfWorkName() {
+        return typeOfWorkName;
+    }
+
+    public void setTypeOfWorkName(String typeOfWorkName) {
+        this.typeOfWorkName = typeOfWorkName;
+    }
+    
+    
 
 }

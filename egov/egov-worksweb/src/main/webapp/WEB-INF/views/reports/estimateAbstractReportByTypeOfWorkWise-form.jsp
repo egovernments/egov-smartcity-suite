@@ -38,46 +38,41 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="table-header text-left">
-		<spring:message code="lbl.title.search.estimateabstractreportbydepartmentwise" /></div>
-	<div id="searchCriteria" class="text-center"></div>
-	<div id="dataRun" class="text-center"></div>
-	<div class="form-group report-table-container" style="overflow:auto">
-		<table class="table table-bordered table-responsive table-hover multiheadertbl"
-			id="resultTable">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.department" /></th>
-					<th><spring:message code="lbl.lineestimate" /></th>
-					<th><spring:message code="lbl.adminsanctionedestimates" /></th>
-					<th><spring:message code="lbl.adminsanctionedamountincrores" /></th>
-					<th><spring:message code="lbl.technicalsanctionedestimates" /></th>
-					<th><spring:message code="lbl.loacreated" /></th>
-					<th><spring:message code="lbl.agreementvalueincrores" /></th>
-					<th><spring:message code="lbl.workinprogress" /></th>
-					<th><spring:message code="lbl.workcompleted" /></th>
-					<th><spring:message code="lbl.billscreated" /></th>
-					<th><spring:message code="lbl.billvalueincrores" /></th>
-				</tr>
-			</thead>
-			<tbody class="no-pointer">
-			</tbody>
-		</table>
-	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<button style="display: none;" type='button' class='btn btn-primary' id="btndownloadpdf">
-				<spring:message code='lbl.download.pdf' />
-			</button>
-			<button style="display: none;" type='button' class='btn btn-primary' id="btndownloadexcel">
-				<spring:message code='lbl.download.excel' />
-			</button> 
-			<a href='javascript:void(0)' class='btn btn-default'
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+		<form:form name="estimateAbstractReportByTypeOfWorkWise" role="form" action="" modelAttribute="estimateAbstractReport" id="estimateAbstractReportByTypeOfWorkWise" class="form-horizontal form-groups-bordered" >
+			<div class="row">
+				<div class="col-md-12">
+					<jsp:include page="estimateAbstractReportByTypeOfWorkWise-header.jsp"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lbl.search' />
+					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div>
-</div>
+				</div>
+			</div>
+		</form:form>  
+
+<jsp:include page="estimateAbstractReportByTypeOfWorkWise-search.jsp"/>
+<script>
+	window.onload=onLoad ;
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+	function onLoad(){
+		var selectedFYId = $("#financialYear").val();
+		getFinancialYearDatesByFYId(selectedFYId);
+	}
+</script>
+<script src="<c:url value='/resources/js/reports/estimateAbstractReportByTypeOfWorkWiseHelper.js?rnd=${app_release_no}'/>"></script>

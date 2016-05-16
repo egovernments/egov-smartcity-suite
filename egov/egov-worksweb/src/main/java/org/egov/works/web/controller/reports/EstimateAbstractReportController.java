@@ -42,6 +42,7 @@ package org.egov.works.web.controller.reports;
 import java.util.Collections;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.service.FinancialYearService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -72,6 +73,9 @@ public class EstimateAbstractReportController {
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
+    
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
     @RequestMapping(value = "/departmentwise-searchform", method = RequestMethod.GET)
     public String departmentWiseShowSearchForm(
@@ -84,6 +88,18 @@ public class EstimateAbstractReportController {
         model.addAttribute("estimateAbstractReport", estimateAbstractReport);
         return "estimateAbstractReportByDepartmentWise-search";
     }
+    
+    @RequestMapping(value = "/typeofworkwise-searchform", method = RequestMethod.GET)
+    public String typeOfWorkWiseShowSearchForm(
+            @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
+            final Model model) throws ApplicationException {
+        setDropDownValues(model);
+        CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
+        estimateAbstractReport.setFinancialYear(currentFinancialYear.getId());
+        estimateAbstractReport.setCurrentFinancialYearId(currentFinancialYear.getId());
+        model.addAttribute("estimateAbstractReport", estimateAbstractReport);
+        return "estimateAbstractReportByTypeOfWorkWise-search";
+    }
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("financialyears", financialYearService.findAll());
@@ -94,5 +110,6 @@ public class EstimateAbstractReportController {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
     }
 }

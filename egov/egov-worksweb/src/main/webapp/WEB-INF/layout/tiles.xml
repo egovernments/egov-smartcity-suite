@@ -221,4 +221,9 @@
         <put-attribute name="body" value="/WEB-INF/views/reports/estimateAbstractReportByDepartmentWise-form.jsp"/>
     </definition>
 
+	<definition name="estimateAbstractReportByTypeOfWorkWise-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search.estimateabstractreportbytypeofworkwise" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/estimateAbstractReportByTypeOfWorkWise-form.jsp"/>
+    </definition>
+
 </tiles-definitions>

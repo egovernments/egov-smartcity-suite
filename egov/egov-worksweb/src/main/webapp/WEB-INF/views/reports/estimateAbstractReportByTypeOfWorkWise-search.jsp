@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row display-hide report-section">
 	<div class="table-header text-left">
-		<spring:message code="lbl.title.search.estimateabstractreportbydepartmentwise" /></div>
+		<spring:message code="lbl.title.search.estimateabstractreportbytypeofworkwise" /></div>
 	<div id="searchCriteria" class="text-center"></div>
 	<div id="dataRun" class="text-center"></div>
 	<div class="form-group report-table-container" style="overflow:auto">
@@ -51,6 +51,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.lineestimate" /></th>
 					<th><spring:message code="lbl.adminsanctionedestimates" /></th>

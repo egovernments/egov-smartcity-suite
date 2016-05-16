@@ -282,13 +282,18 @@ public class WorksConstants {
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
 
     public static final String CONTRACTOR_NETPAYABLE_PURPOSE = "Creditors-Contractor Payable";
+
     public static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
 
     public static final String HEADING_WORK_PROGRESS_REGISTER_REPORT = "Work Progress Register Report";
 
+    public static final String HEADING_ESTIMATE_ABSTRACT_REPORT_BY_DEPARTMENT_WISE = "Estimate Abstract Report By Department Wise";
+    
+    public static final String HEADING_ESTIMATE_ABSTRACT_REPORT_BY_TYPE_OF_WORK_WISE = "Estimate Abstract Report By Type Of Work Wise";
+
     public static final String HEADING_ESTIMATE_APPROPRIATION_REGISTER_REPORT = "Estimate Appropriation Register Report";
 
     public static final String SLUM_WORK = "SLUM_WORK";
-    
+
     public static final String NON_SLUM_WORK = "NON_SLUM_WORK";
 }

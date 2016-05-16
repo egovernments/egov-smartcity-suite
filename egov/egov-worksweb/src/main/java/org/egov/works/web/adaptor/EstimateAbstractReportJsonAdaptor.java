@@ -55,7 +55,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 @Component
-public class EstimateAbstractReportByDepartmentWiseJsonAdaptor implements JsonSerializer<EstimateAbstractReport> {
+public class EstimateAbstractReportJsonAdaptor implements JsonSerializer<EstimateAbstractReport> {
     final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
     @Autowired
@@ -70,6 +70,11 @@ public class EstimateAbstractReportByDepartmentWiseJsonAdaptor implements JsonSe
                 jsonObject.addProperty("departmentName", estimateAbstractReport.getDepartmentName());
             else
                 jsonObject.addProperty("departmentName", "");
+
+            if (estimateAbstractReport.getTypeOfWorkName() != null)
+                jsonObject.addProperty("typeOfWorkName", estimateAbstractReport.getTypeOfWorkName());
+            else
+                jsonObject.addProperty("typeOfWorkName", "");
 
             if (estimateAbstractReport.getLineEstimates() != null)
                 jsonObject.addProperty("lineEstimates", estimateAbstractReport.getLineEstimates());

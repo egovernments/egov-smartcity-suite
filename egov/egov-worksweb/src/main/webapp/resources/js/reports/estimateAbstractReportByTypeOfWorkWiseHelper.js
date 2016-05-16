@@ -38,6 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $createdDate="";
+$subTypeOfWorkId = 0;
 jQuery('#btnsearch').click(function(e) {
 	$('#btndownloadpdf').hide();
 	$('#btndownloadexcel').hide();
@@ -62,9 +63,9 @@ jQuery('#btnsearch').click(function(e) {
 	var spillOver = document.getElementById("spillOverFlag");
     var spillOverFlag = spillOver.checked ? true : false;
     
-	var queryParameters = "Estimate Abstract Report By Department Wise ";
+	var queryParameters = "Estimate Abstract Report By Type Of Work Wise ";
 	if(spillOverFlag)
-		queryParameters = "Estimate Abstract Report By Department Wise for Spill Over Line Estimates ";
+		queryParameters = "Estimate Abstract Report By Type Of Work Wise for Spill Over Line Estimates ";
 	
 	if(adminSanctionFromDate != "" && adminSanctionToDate != "") {
 		queryParameters += "Date Range : " + $('#adminSanctionFromDate').val() + " - " + $('#adminSanctionToDate').val() + ", ";
@@ -75,6 +76,15 @@ jQuery('#btnsearch').click(function(e) {
     if(adminSanctionToDate != "" && adminSanctionFromDate == "") {
         queryParameters += "Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
     }
+    
+    if($('#typeOfWork').val() != "") {
+        queryParameters += "Type Of Work : " + $('#typeOfWork').find(":selected").text() + ", ";
+    }
+    
+    if($('#subTypeOfWork').val() != "") {
+        queryParameters += "Sub Type Of Work : " + $('#subTypeOfWork').find(":selected").text() + ", ";
+    }
+    
     if($('#department').val() != "") {
         queryParameters += "Department : " + $('#department').find(":selected").text() + ", ";
     }
@@ -114,6 +124,8 @@ jQuery('#btnsearch').click(function(e) {
 $('#btndownloadpdf').click(function() {
 	var adminSanctionFromDate = $('#adminSanctionFromDate').val();
 	var adminSanctionToDate = $('#adminSanctionToDate').val();
+	var typeOfWork = $('#typeOfWork').val();
+	var subTypeOfWork = $('#subTypeOfWork').val();
 	var department = $('#department').val();
 	var scheme = $('#scheme').val();
 	var subScheme = $('#subScheme').val();
@@ -125,10 +137,14 @@ $('#btndownloadpdf').click(function() {
 	
 	var spillOverFlag = spillOver.checked ? true : false;
 
-	window.open("/egworks/reports/estimateabstractreportbydepartmentwise/pdf?adminSanctionFromDate="
+	window.open("/egworks/reports/estimateabstractreportbytypeofworkwise/pdf?adminSanctionFromDate="
 			+ adminSanctionFromDate
 			+ "&adminSanctionToDate="
 			+ adminSanctionToDate
+			+ "&typeOfWork="
+			+ typeOfWork
+			+ "&subTypeOfWork="
+			+ subTypeOfWork
 			+ "&department="
 			+ department
 			+ "&scheme="
@@ -150,6 +166,8 @@ $('#btndownloadpdf').click(function() {
 $('#btndownloadexcel').click(function() {
 	var adminSanctionFromDate = $('#adminSanctionFromDate').val();
 	var adminSanctionToDate = $('#adminSanctionToDate').val();
+	var typeOfWork = $('#typeOfWork').val();
+	var subTypeOfWork = $('#subTypeOfWork').val();
 	var department = $('#department').val();
 	var scheme = $('#scheme').val();
 	var subScheme = $('#subScheme').val();
@@ -161,10 +179,14 @@ $('#btndownloadexcel').click(function() {
 	
 	var spillOverFlag = spillOver.checked ? true : false;
 
-	window.open("/egworks/reports/estimateabstractreportbydepartmentwise/pdf?adminSanctionFromDate="
+	window.open("/egworks/reports/estimateabstractreportbytypeofworkwise/pdf?adminSanctionFromDate="
 			+ adminSanctionFromDate
 			+ "&adminSanctionToDate="
 			+ adminSanctionToDate
+			+ "&typeOfWork="
+			+ typeOfWork
+			+ "&subTypeOfWork="
+			+ subTypeOfWork
 			+ "&department="
 			+ department
 			+ "&scheme="
@@ -203,7 +225,7 @@ function callAjaxSearch() {
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/egworks/reports/ajax-estimateabstractreportbydepartmentwise",      
+					url : "/egworks/reports/ajax-estimateabstractreportbytypeofworkwise",      
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
@@ -220,6 +242,7 @@ function callAjaxSearch() {
 					$('#btndownloadpdf').show();
 					$('#btndownloadexcel').show();
 					$('td:eq(0)',row).html(index+1);
+					var department = $("#department").val();
 					$("#adminSanctionFromDate").attr('disabled', 'disabled');
 					var currentFYId = $("#currentFinancialYearId").val();
 					var selectedFYId = $("#financialYear").val();
@@ -228,6 +251,12 @@ function callAjaxSearch() {
 				        }else{
 				        	 $("#adminSanctionToDate").attr('disabled', 'disabled');
 				        }
+					if(department==""){
+						var table = $('#resultTable').DataTable();
+						var deptColumn = table.column(4); 
+						deptColumn.visable = false;
+						
+					}
 					if(index == 0) {
 						$createdDate = data.createdDate;
 						var dataRunmTime = "The information in this report is not real time, it provides information of the transactions that happened till " + $createdDate;
@@ -239,6 +268,7 @@ function callAjaxSearch() {
 				aaSorting: [],				
 				columns : [ { 
 					"data" : "", "sClass" : "text-center"} ,{ 
+					"data" : "typeOfWorkName", "sClass" : "text-left"} ,{
 					"data" : "departmentName", "sClass" : "text-left"} ,{
 					"data" : "lineEstimates", "sClass" : "text-left"} ,{
 					"data" : "adminSanctionedEstimates", "sClass" : "text-left"} ,{ 
@@ -362,6 +392,38 @@ function replaceBeneficiaryChar() {
 	   var $this = $(this);
 	   $this.text($this.text().replace(/_/g, '/'));
 	});
-	
-
 }
+$(document).ready(function(){
+	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
+	$('#typeOfWork').change(function(){
+		 if ($('#typeOfWork').val() === '') {
+			   $('#subTypeOfWork').empty();
+			   $('#subTypeOfWork').append($('<option>').text('Select from below').attr('value', ''));
+				return;
+				} else {
+				$.ajax({
+					type: "GET",
+					url: "/egworks/lineestimate/getsubtypeofwork",
+					cache: true,
+					dataType: "json",
+					data:{'id' : $('#typeOfWork').val()}
+				}).done(function(value) {
+					console.log(value);
+					$('#subTypeOfWork').empty();
+					$('#subTypeOfWork').append($("<option value=''>Select from below</option>"));
+					$.each(value, function(index, val) {
+					var selected="";
+						if($subTypeOfWorkId)
+						{
+							if($subTypeOfWorkId==val.id)
+							{
+								selected="selected";
+							}
+						}
+					     $('#subTypeOfWork').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+					});
+				});
+		}
+	})
+		
+});
