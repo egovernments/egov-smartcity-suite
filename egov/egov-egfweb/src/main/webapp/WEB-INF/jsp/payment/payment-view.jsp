@@ -65,6 +65,7 @@ function fetchDeptId() {
 			document.getElementById('departmentid').value = id;
 			//document.getElementById('departmentid').disabled=true;
 		} else if(did != null && did != '-1' && did != '' ) {
+			if(document.getElementById('departmentid')!=null)
 			document.getElementById('departmentid').value = did;
 			//document.getElementById('departmentid').disabled=true;
 		}
@@ -84,7 +85,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 
 </head>
 
-<body onload="refreshInbox()">
+<body >
 	<br>
 	<s:form action="payment" theme="simple">
 		<s:push value="model">
