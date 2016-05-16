@@ -269,7 +269,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/ajaxBankRemittance-bankAccountByBankBranch")
     public String bankAccountByBankBranch() {
-        bankAccountArrayList = bankaccountHibernateDAO.getBankAccountByBankBranch(branchId);
+        bankAccountArrayList = bankaccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(branchId);
         return BANKACCOUNTLIST;
     }
 
