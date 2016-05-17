@@ -91,7 +91,7 @@ public class TrackMilestone extends StateAware {
     @GeneratedValue(generator = SEQ_EGW_TRACK_MILESTONE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private BigDecimal total;
+    private BigDecimal totalPercentage;
 
     private boolean projectCompleted;
 
@@ -125,12 +125,12 @@ public class TrackMilestone extends StateAware {
         this.id = id;
     }
 
-    public BigDecimal getTotal() {
-        return total;
+    public BigDecimal getTotalPercentage() {
+        return totalPercentage;
     }
 
-    public void setTotal(final BigDecimal total) {
-        this.total = total;
+    public void setTotalPercentage(BigDecimal totalPercentage) {
+        this.totalPercentage = totalPercentage;
     }
 
     public Date getApprovedDate() {

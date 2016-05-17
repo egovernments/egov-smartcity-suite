@@ -49,10 +49,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class WorkOrderEstimateService {
-    @Autowired
-    private WorkOrderEstimateRepository workOrderEstimateRepository;
 
-    @Transactional
+    private final WorkOrderEstimateRepository workOrderEstimateRepository;
+    
+    @Autowired
+    public WorkOrderEstimateService(final WorkOrderEstimateRepository workOrderEstimateRepository) {
+        this.workOrderEstimateRepository = workOrderEstimateRepository;
+    }
+
     public WorkOrderEstimate getEstimateByWorkOrderAndEstimateAndStatus(final Long workOrderId, final Long estimateId) {
         return workOrderEstimateRepository.findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(workOrderId, estimateId,
                 WorksConstants.APPROVED);

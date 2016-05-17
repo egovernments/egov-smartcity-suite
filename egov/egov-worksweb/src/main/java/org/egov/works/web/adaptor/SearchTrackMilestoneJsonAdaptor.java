@@ -108,7 +108,7 @@ public class SearchTrackMilestoneJsonAdaptor implements JsonSerializer<TrackMile
                 jsonObject.addProperty("status", "");
 
             jsonObject.addProperty("id", trackMilestone.getMilestone().getId());
-            jsonObject.addProperty("total", trackMilestone.getTotal());
+            jsonObject.addProperty("total", trackMilestone.getTotalPercentage());
 
         }
         return jsonObject;

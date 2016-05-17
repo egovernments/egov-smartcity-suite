@@ -38,39 +38,29 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
-		<spring:message code="trackmilestone.search.result" />
-	</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
-			id="resultTable">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.selectonly" /></th>
-					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.wincode" /></th>
-					<th><spring:message code="lbl.nameofwork" /></th>
-					<th><spring:message code="lbl.department" /></th>
-					<th><spring:message code="lbl.loanumber" /></th>
-					<th><spring:message code="lbl.agreement.amount" /></th>
-					<th><spring:message code="lbl.typeofwork" /></th>
-					<th><spring:message code="lbl.subtypeofwork" /></th>
-					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.view" /></th>
-				</tr>
-			</thead>
-		</table>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<form name="trackMilestoneForm" id="trackMilestoneForm" role="form" action="" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+	<div class="row">
+		<div class="col-md-12">
+			<jsp:include page="milestoneHeader-view.jsp" />
+			<jsp:include page="milestoneDetails.jsp" />
+		</div>
 	</div>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type='button' class='btn btn-primary' id="btntrackmilestone">
-				<spring:message code='lbl.trackmilestone' />
+			<button type="button" name="submit" id="save"
+				class="btn btn-primary" value="Save">
+				<spring:message code="lbl.save" />
 			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
 		</div>
 	</div>
-</div>
+</form>  
+<script src="<c:url value='/resources/js/milestone/trackmilestone.js?rnd=${app_release_no}'/>"></script>

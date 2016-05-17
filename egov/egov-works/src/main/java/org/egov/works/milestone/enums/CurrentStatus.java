@@ -37,20 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.milestone.repository;
 
-import java.util.List;
+package org.egov.works.milestone.enums;
 
-import org.egov.works.milestone.entity.TrackMilestone;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.apache.commons.lang.StringUtils;
 
-@Repository
-public interface TrackMilestoneRepository extends JpaRepository<TrackMilestone, Long> {
+public enum CurrentStatus {
 
-    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(tm.milestone.workOrderEstimate.workOrder.estimateNumber) from TrackMilestone as tm where led.estimateNumber = tm.milestone.workOrderEstimate.workOrder.estimateNumber and tm.status.code = :status)")
-    List<String> findWorkIdentificationNumbersTrackMilestone(@Param("code") String code, @Param("status") String status);
+    NOT_YET_STARTED, IN_PROGRESS, COMPLETED;
 
+    @Override
+    public String toString() {
+        return StringUtils.replace(name(), "_", " ");
+    }
 }

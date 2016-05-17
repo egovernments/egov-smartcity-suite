@@ -42,9 +42,7 @@ package org.egov.works.milestone.entity;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -107,12 +105,13 @@ public class Milestone extends StateAware implements Comparable {
     @JoinColumn(name = "workOrderEstimate", nullable = false)
     private WorkOrderEstimate workOrderEstimate;
 
+    @OrderBy("id")
     @OneToMany(mappedBy = "milestone", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MilestoneActivity.class)
     private final List<MilestoneActivity> activities = new ArrayList<MilestoneActivity>(0);
 
     @OrderBy("id")
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "milestone", targetEntity = TrackMilestone.class)
-    private Set<TrackMilestone> trackMilestone = new HashSet<TrackMilestone>(0);
+    private List<TrackMilestone> trackMilestone = new ArrayList<TrackMilestone>(0);
 
     private transient String ownerName;
 
@@ -165,11 +164,11 @@ public class Milestone extends StateAware implements Comparable {
         return 0;
     }
 
-    public Set<TrackMilestone> getTrackMilestone() {
+    public List<TrackMilestone> getTrackMilestone() {
         return trackMilestone;
     }
 
-    public void setTrackMilestone(final Set<TrackMilestone> trackMilestone) {
+    public void setTrackMilestone(final List<TrackMilestone> trackMilestone) {
         this.trackMilestone = trackMilestone;
     }
 

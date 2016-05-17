@@ -44,7 +44,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.repository.TrackMilestoneRepository;
@@ -62,12 +61,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TrackMilestoneService {
     
-    
     @PersistenceContext
     private EntityManager entityManager;
     
+    private final TrackMilestoneRepository trackMilestoneRepository;
+    
     @Autowired
-    private TrackMilestoneRepository trackMilestoneRepository; 
+    public TrackMilestoneService(final TrackMilestoneRepository trackMilestoneRepository) {
+        this.trackMilestoneRepository = trackMilestoneRepository;
+    }
     
     public List<TrackMilestone> searchTrackMilestone(final SearchRequestMilestone searchRequestMilestone) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(TrackMilestone.class)
@@ -108,9 +110,13 @@ public class TrackMilestoneService {
     
     public List<String> findWorkIdentificationNumbersTrackMileston(final String code) {
         final List<String> workIdNumbers = trackMilestoneRepository
-                .findWorkIdentificationNumbersTrackMileston("%" + code + "%",
+                .findWorkIdentificationNumbersTrackMilestone("%" + code + "%",
                         WorksConstants.APPROVED.toString());
         return workIdNumbers;
     }
 
+    @Transactional
+    public TrackMilestone save(TrackMilestone trackMilestone) {
+        return trackMilestoneRepository.save(trackMilestone);
+    }
 }

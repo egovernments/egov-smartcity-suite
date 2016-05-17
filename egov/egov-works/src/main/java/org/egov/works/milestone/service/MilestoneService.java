@@ -40,16 +40,19 @@
 package org.egov.works.milestone.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.milestone.repository.MilestoneRepository;
 import org.egov.works.utils.WorksConstants;
 import org.elasticsearch.common.joda.time.DateTime;
@@ -72,11 +75,15 @@ public class MilestoneService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
+
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     public List<Milestone> getMilestoneByWorkOrderEstimateId(final Long id) {
         return milestoneRepository.findByWorkOrderEstimate_Id(id);
@@ -131,11 +138,37 @@ public class MilestoneService {
     @Transactional
     public Milestone create(final Milestone milestone) throws IOException {
         if (milestone.getState() == null)
-            milestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
+            milestone.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                     Milestone.MilestoneStatus.APPROVED.toString()));
         for (final MilestoneActivity activity : milestone.getActivities())
             activity.setMilestone(milestone);
         final Milestone newMilestone = milestoneRepository.save(milestone);
         return newMilestone;
+    }
+
+    @Transactional
+    public Milestone update(final Milestone milestone) {
+        for (final TrackMilestone tm : milestone.getTrackMilestone()) {
+            tm.setMilestone(milestone);
+            tm.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.TRACK_MILESTONE_MODULE_KEY,
+                    Milestone.MilestoneStatus.APPROVED.toString()));
+            if (tm.getApprovedDate() == null)
+                tm.setApprovedDate(new Date());
+            Integer count = 0;
+            double totalPercentage = 0;
+            for (final TrackMilestoneActivity tma : tm.getActivities()) {
+                tma.setMilestoneActivity(milestone.getActivities().get(count));
+                tma.setTrackMilestone(tm);
+                totalPercentage += milestone.getActivities().get(count).getPercentage() / 100 * tma.getCompletedPercentage();
+                count++;
+            }
+            tm.setTotalPercentage(BigDecimal.valueOf(totalPercentage));
+            if (totalPercentage == 100)
+                tm.setProjectCompleted(true);
+            else
+                tm.setProjectCompleted(false);
+            trackMilestoneService.save(tm);
+        }
+        return milestoneRepository.save(milestone);
     }
 }

@@ -411,7 +411,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 workProgress.setWorkOrderDate(DateUtils.getFormattedDate(workOrder.getWorkOrderDate(), dateFormat));
                 if (trackMilestone != null && "APPROVED".equalsIgnoreCase(trackMilestone.getStatus().getCode())) {
                     workProgress.setTrackMilestoneActivities(trackMilestone.getActivities());
-                    workProgress.setCompletedPercentage(trackMilestone.getTotal());
+                    workProgress.setCompletedPercentage(trackMilestone.getTotalPercentage());
                 } else if (milestone != null && "APPROVED".equalsIgnoreCase(milestone.getStatus().getCode())) {
                     final List<TrackMilestoneActivity> trackList = new LinkedList<TrackMilestoneActivity>();
                     for (final MilestoneActivity milestoneActivity : milestone.getActivities()) {

@@ -226,4 +226,9 @@
         <put-attribute name="body" value="/WEB-INF/views/reports/estimateAbstractReportByTypeOfWorkWise-form.jsp"/>
     </definition>
 
+    <definition name="trackMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.trackmilestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>
