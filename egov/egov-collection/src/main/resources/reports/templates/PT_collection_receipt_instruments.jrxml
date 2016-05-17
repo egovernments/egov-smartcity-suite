@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-05-17T15:25:19 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt_instruments" language="groovy" pageWidth="200" pageHeight="802" columnWidth="200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="38993dc9-3850-45d9-bf7e-36770fea0cb0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="org.egov.collection.constants.*"/>
+	<parameter name="TOTAL_AMOUNT" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[BigDecimal.valueOf(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="instrumentNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[instrumentNumber]]></fieldDescription>
+	</field>
+	<field name="instrumentDate" class="java.util.Date">
+		<fieldDescription><![CDATA[instrumentDate]]></fieldDescription>
+	</field>
+	<field name="instrumentAmount" class="java.lang.Double">
+		<fieldDescription><![CDATA[instrumentAmount]]></fieldDescription>
+	</field>
+	<field name="instrumentType" class="java.lang.String">
+		<fieldDescription><![CDATA[instrumentType]]></fieldDescription>
+	</field>
+	<field name="bankName" class="java.lang.String">
+		<fieldDescription><![CDATA[Bank Name of the instrument]]></fieldDescription>
+	</field>
+	<field name="bankBranchName" class="java.lang.String">
+		<fieldDescription><![CDATA[Bank Branch Name of the instrument]]></fieldDescription>
+	</field>
+	<field name="transactionNumber" class="java.lang.String"/>
+	<field name="transactionDate" class="java.util.Date"/>
+	<field name="bankAccountNumber" class="java.lang.String"/>
+	<variable name="branchname" class="java.lang.String">
+		<variableExpression><![CDATA[$F{bankBranchName}.equals(null)?"":$F{bankBranchName}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="105" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="39" height="45" uuid="3ae1dd16-52c7-45bd-80fc-454a765e2869">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Mode]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="98" y="0" width="101" height="45" uuid="93638e31-cf7a-43c7-bd3c-2968330024e7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Bank Name & Branch]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="0" y="45" width="39" height="60" uuid="d218538b-5885-4e54-992e-f76565296e91"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{instrumentType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="39" y="45" width="59" height="60" uuid="6afe92cc-b512-4e95-bd90-c303ae4d9871"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque No:\n" + $F{instrumentNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "D.D. No:\n" + $F{instrumentNumber}  + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_ONLINE ? "Transaction No:\n" + $F{transactionNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):"NA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="98" y="45" width="101" height="60" isPrintWhenDetailOverflows="true" uuid="8c8a7296-0eaa-44aa-bd50-a0b112775d1c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bankName} == null ? "NA" :$F{bankBranchName} == null ? $F{bankName} :$F{bankName} + ", "+$F{bankBranchName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="39" y="0" width="59" height="45" uuid="e34aaf8e-7e54-40ca-87f6-928937d0ff7a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Chq/DD/\nTxn No. & Date"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
