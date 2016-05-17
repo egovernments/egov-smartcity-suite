@@ -160,10 +160,17 @@ public interface BillReceiptInfo {
     public abstract Boolean getLegacy();
 
     /**
-     *
      * @return Any additional information to be printed in receipt
      */
     public abstract String getAdditionalInfo();
 
+    /**
+     * @return receipt created at source
+     */
     public abstract String getSource();
+
+    /**
+     * @return receipt instrument type
+     */
+    public abstract String getReceiptInstrumentType();
 }

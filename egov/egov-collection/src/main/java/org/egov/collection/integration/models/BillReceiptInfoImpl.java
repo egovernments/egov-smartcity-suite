@@ -427,7 +427,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         Boolean legacy = Boolean.FALSE;
         for (final ReceiptAccountInfo receiptAccountInfo : getAccountDetails())
             if (receiptAccountInfo.getDescription() != null && !"".equals(receiptAccountInfo.getDescription())
-            && (!receiptAccountInfo.getDescription().contains("#") ||
+                    && (!receiptAccountInfo.getDescription().contains("#") ||
                     receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE))) {
                 legacy = Boolean.TRUE;
                 break;
@@ -449,4 +449,16 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         return receiptHeader.getSource() == null ? "" : receiptHeader.getSource();
     }
 
+    @Override
+    public String getReceiptInstrumentType() {
+        String instrumentType = "";
+        for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
+            if (instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) ||
+                    instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+                instrumentType = CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD;
+                break;
+            } else
+                instrumentType = instrumentInfo.getInstrumentType();
+        return instrumentType;
+    }
 }
