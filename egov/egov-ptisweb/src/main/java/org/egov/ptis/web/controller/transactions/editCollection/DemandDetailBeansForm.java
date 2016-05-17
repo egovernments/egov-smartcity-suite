@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.ptis.bean.DemandDetail;
-import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 
 /**
  * 
@@ -53,7 +53,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
  */
 public class DemandDetailBeansForm {
     private List<DemandDetail> demandDetailBeans = new ArrayList<DemandDetail>();
-    private BasicProperty basicProperty;
+    private BasicPropertyImpl basicProperty;
     private String remarks;
 
     public List<DemandDetail> getDemandDetailBeans() {
@@ -64,11 +64,11 @@ public class DemandDetailBeansForm {
         this.demandDetailBeans = demandDetailBeans;
     }
 
-    public BasicProperty getBasicProperty() {
+    public BasicPropertyImpl getBasicProperty() {
         return basicProperty;
     }
 
-    public void setBasicProperty(BasicProperty basicProperty) {
+    public void setBasicProperty(BasicPropertyImpl basicProperty) {
         this.basicProperty = basicProperty;
     }
 

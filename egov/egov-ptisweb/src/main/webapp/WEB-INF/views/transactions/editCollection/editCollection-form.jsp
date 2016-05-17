@@ -56,7 +56,7 @@ body {
 			jQuery('#EditCollection')[0].action = '/ptis/editCollection/update';
 			jQuery('#EditCollection')[0].method = 'post';
 		} else if (obj.value == "reset") {
-			window.location.href = '/ptis/editCollection/editForm/'+${assessmentNo};
+			window.location.href = '/ptis/editCollection/editForm/'+${basicProperty.upicNo};
 		}
 	}
 </script>
@@ -78,6 +78,7 @@ body {
 					</tr>
 				</thead>
 				<tbody>
+					<form:hidden path="basicProperty.upicNo" />
 					<c:forEach var="demandDetailBean" items="${demandDetailBeans}"
 							varStatus="demandInfoStatus">
 							<tr>
