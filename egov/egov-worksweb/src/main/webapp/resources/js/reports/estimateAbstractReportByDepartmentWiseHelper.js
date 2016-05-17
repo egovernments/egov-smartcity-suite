@@ -198,14 +198,17 @@ function getFormData($form){
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");		
 	jQuery('.report-section').removeClass('display-hide');
-	 $("#adminSanctionFromDate").removeAttr("disabled");
+	$("#adminSanctionFromDate").removeAttr("disabled");
 	 $("#adminSanctionToDate").removeAttr("disabled");
+	 var postData = getFormData(jQuery('form'));
+	 $("#adminSanctionFromDate").attr('disabled', 'disabled');
+	 $("#adminSanctionToDate").attr('disabled', 'disabled');
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
 					url : "/egworks/reports/ajax-estimateabstractreportbydepartmentwise",      
 					type: "POST",
-					"data":  getFormData(jQuery('form'))
+					"data":  postData
 				},
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,

@@ -222,12 +222,15 @@ function callAjaxSearch() {
 	jQuery('.report-section').removeClass('display-hide');
 	 $("#adminSanctionFromDate").removeAttr("disabled");
 	 $("#adminSanctionToDate").removeAttr("disabled");
+	 var postData = getFormData(jQuery('form'));
+	 $("#adminSanctionFromDate").attr('disabled', 'disabled');
+	 $("#adminSanctionToDate").attr('disabled', 'disabled');
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
 					url : "/egworks/reports/ajax-estimateabstractreportbytypeofworkwise",      
 					type: "POST",
-					"data":  getFormData(jQuery('form'))
+					"data":  postData
 				},
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
@@ -242,21 +245,7 @@ function callAjaxSearch() {
 					$('#btndownloadpdf').show();
 					$('#btndownloadexcel').show();
 					$('td:eq(0)',row).html(index+1);
-					var department = $("#department").val();
-					$("#adminSanctionFromDate").attr('disabled', 'disabled');
-					var currentFYId = $("#currentFinancialYearId").val();
-					var selectedFYId = $("#financialYear").val();
-					  if(currentFYId!= null && currentFYId!="" && selectedFYId == currentFYId ){
-						  $("#adminSanctionToDate").removeAttr("disabled");
-				        }else{
-				        	 $("#adminSanctionToDate").attr('disabled', 'disabled');
-				        }
-					if(department==""){
-						var table = $('#resultTable').DataTable();
-						var deptColumn = table.column(4); 
-						deptColumn.visable = false;
-						
-					}
+					disableDateFields();
 					if(index == 0) {
 						$createdDate = data.createdDate;
 						var dataRunmTime = "The information in this report is not real time, it provides information of the transactions that happened till " + $createdDate;
@@ -281,9 +270,27 @@ function callAjaxSearch() {
 					"data" : "billsCreatedCount", "sClass" : "text-left"} ,{
 					"data" : "billValueInCrores", "sClass" : "text-left"}]				
 				});
+		
+		//show/hide department
+		var department = $("#department").val();
+
+		if(department==""){
+			var oTable = $('#resultTable').DataTable();
+			oTable.column(2).visible(false);
+		}
+		
 }
 
-
+function disableDateFields(){
+	$("#adminSanctionFromDate").attr('disabled', 'disabled');
+	var currentFYId = $("#currentFinancialYearId").val();
+	var selectedFYId = $("#financialYear").val();
+	  if(currentFYId!= null && currentFYId!="" && selectedFYId == currentFYId ){
+		  $("#adminSanctionToDate").removeAttr("disabled");
+        }else{
+        	 $("#adminSanctionToDate").attr('disabled', 'disabled');
+        }
+}
 function disableSlumFields() {
 	var slum = document.getElementById("slum");
 	var slumfields = document.getElementById("slumfields");
@@ -424,6 +431,7 @@ $(document).ready(function(){
 					});
 				});
 		}
-	})
+	});
+	
 		
 });
