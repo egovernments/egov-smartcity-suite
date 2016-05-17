@@ -54,18 +54,18 @@ import org.egov.works.web.adaptor.SearchMilestoneTemplateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchTrackMilestoneJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@Controller
+@RestController
 @RequestMapping(value = "/milestone")
 public class AjaxMilestoneController {
 
@@ -88,8 +88,7 @@ public class AjaxMilestoneController {
     private SearchTrackMilestoneJsonAdaptor searchTrackMilestoneJsonAdaptor;
 
     @RequestMapping(value = "/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchMilestones(final Model model,
-            @ModelAttribute final SearchRequestMilestone searchRequestMilestone) {
+    public @ResponseBody String searchMilestones(@ModelAttribute final SearchRequestMilestone searchRequestMilestone) {
         final List<Milestone> searchMilestoneList = milestoneService
                 .searchMilestone(searchRequestMilestone);
         final String result = new StringBuilder("{ \"data\":").append(toSearchMilestone(searchMilestoneList))
@@ -147,5 +146,4 @@ public class AjaxMilestoneController {
     public @ResponseBody List<String> findWorkIdNumbersToCancelLOA(@RequestParam final String code) {
         return trackMilestoneService.findWorkIdentificationNumbersTrackMileston(code);
     }
-
 }
