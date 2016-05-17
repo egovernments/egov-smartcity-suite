@@ -54,7 +54,6 @@ import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 @Entity
 @Table(name = "egwtr_property_category")
@@ -81,7 +80,7 @@ public class PropertyCategory extends AbstractAuditable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "propertytype")
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @Audited
     private PropertyType propertyType;
 
     @Audited
