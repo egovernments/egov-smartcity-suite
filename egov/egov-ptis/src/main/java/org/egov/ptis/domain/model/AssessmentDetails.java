@@ -66,6 +66,7 @@ public class AssessmentDetails implements Serializable {
     private double latitude;
     private double longitude;
     private boolean status;
+    private boolean exempted;
 
     public String getPropertyID() {
         return propertyID;
@@ -149,7 +150,8 @@ public class AssessmentDetails implements Serializable {
 
     @Override
     public String toString() {
-        return "AssessmentDetails [propertyID=" + propertyID + ", ownerNames=" + ownerNames + ", boundaryDetails="
+        return "AssessmentDetails [propertyID=" + propertyID + ", isexempted=" + exempted + ", ownerNames=" + ownerNames
+                + ", boundaryDetails="
                 + boundaryDetails + ", propertyAddress=" + propertyAddress + ", propertyDetails=" + propertyDetails
                 + ", errorDetails=" + errorDetails + "]";
     }
@@ -178,4 +180,12 @@ public class AssessmentDetails implements Serializable {
         this.status = status;
     }
 
+    public boolean isExempted() {
+        return exempted;
+    }
+
+    public void setExempted(boolean exempted) {
+        this.exempted = exempted;
+    }
+    
 }
