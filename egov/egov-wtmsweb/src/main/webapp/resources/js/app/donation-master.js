@@ -144,11 +144,11 @@ $(document).ready(function(){
 					var maximum = getMaximumPipeSizeInInch();
 					if( (minimum > 0) && (maximum  > 0) ){
 						if (minimum > maximum){
-							bootbox.alert("Minimum PipeSize  should not be greater than the maximum PipeSize");
+							bootbox.alert("Minimum PipeSize should not be greater than the maximum PipeSize");
 							return false;
 						}
 						else if(minimum == maximum) {
-							bootbox.alert("Minimum PipeSize  should not be same as maximum PipeSize");
+							bootbox.alert("Minimum PipeSize should not be same as maximum PipeSize");
 							return false;
 					    }
 						else{
@@ -177,7 +177,7 @@ function validRange(start, end) {
     // Check the date range, 86400000 is the number of milliseconds in one day
     var difference = (endDate - startDate) / (86400000 * 7);
     if (difference < 0) {
-    	bootbox.alert("From date  should not be greater than the To Date.");
+    	bootbox.alert("From date should not be greater than the To Date.");
 		$('#end_date').val('');
 		return false;
 		} else {
