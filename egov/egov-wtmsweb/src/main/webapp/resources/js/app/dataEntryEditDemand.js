@@ -113,13 +113,26 @@ $(document).ready(function(e){
 			$("#dcbOnlinePaymentTable tr.item").each(function() {
 				i++;
 			  $this = $(this);
-			  var actamount = $this.find("#actualAmount").val();
-			  var actcollection = $this.find("#actualCollection").val();
+			  var actamount = parseInt($this.find("#actualAmount").val());
+			  var actcollection = parseInt($this.find("#actualCollection").val());
+			  var installment = $this.find("#installment").val();
+			  $actualtextbox=$this.find("#actualAmount");
+			  
+			  if($actualtextbox.data('old-value'))
+			  {
+				  var oldVal=parseInt($actualtextbox.data('old-value')); 
+				  if(actamount<oldVal)
+				  {
+					  bootbox.alert('Demand entered for installment '+installment +' is less than already existing demand');
+					  e.preventDefault();
+					  return false;
+				  }
+			  }
 			  
 			  if(actamount == 0 && actcollection == 0){
 				  j++;
 			  }
-			  if(parseInt(actcollection) > parseInt(actamount)){
+			  if(actcollection > actamount){
 				  bootbox.alert('Collection should not be greater than actual amount');
 				  e.preventDefault();
 				  return false;
@@ -131,6 +144,7 @@ $(document).ready(function(e){
 				  e.preventDefault();
 				  return false;
 			  }
+			
 		});
 	 
 	 
