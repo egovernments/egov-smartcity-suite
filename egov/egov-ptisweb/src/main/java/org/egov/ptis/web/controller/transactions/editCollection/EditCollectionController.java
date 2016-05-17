@@ -49,8 +49,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.EgDemandDetailsDao;
