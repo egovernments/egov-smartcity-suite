@@ -37,24 +37,22 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.application.service;
+package org.egov.wtms.application.entity;
+
+import static org.egov.search.domain.Filter.rangeFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-
 public class DailyWTCollectionReportSearch {
-
+    private static final Logger logger = Logger.getLogger(DailyWTCollectionReportSearch.class);
     private String fromDate;
     private String toDate;
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -65,22 +63,16 @@ public class DailyWTCollectionReportSearch {
     private String revenueWard;
     private String searchText;
     private String ulbName;
-   
+
     private String status;
 
     public List<String> getConsumerCode() {
-		return consumerCode;
-	}
+        return consumerCode;
+    }
 
-	public void setConsumerCode(List<String> consumerCode) {
-		this.consumerCode = consumerCode;
-	}
-
-	
-
-    
-
-    private static final Logger logger = Logger.getLogger(DailyWTCollectionReportSearch.class);
+    public void setConsumerCode(final List<String> consumerCode) {
+        this.consumerCode = consumerCode;
+    }
 
     public void setFromDate(final String fromDate) {
         if (null != fromDate)
@@ -116,7 +108,7 @@ public class DailyWTCollectionReportSearch {
         return collectionMode;
     }
 
-    public void setCollectionMode(String collectionMode) {
+    public void setCollectionMode(final String collectionMode) {
         this.collectionMode = collectionMode;
     }
 
@@ -124,7 +116,7 @@ public class DailyWTCollectionReportSearch {
         return collectionOperator;
     }
 
-    public void setCollectionOperator(String collectionOperator) {
+    public void setCollectionOperator(final String collectionOperator) {
         this.collectionOperator = collectionOperator;
     }
 
@@ -132,7 +124,7 @@ public class DailyWTCollectionReportSearch {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -140,7 +132,7 @@ public class DailyWTCollectionReportSearch {
         return revenueWard;
     }
 
-    public void setRevenueWard(String revenueWard) {
+    public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
     }
 
@@ -148,16 +140,15 @@ public class DailyWTCollectionReportSearch {
         return searchText;
     }
 
-    public void setSearchText(String searchText) {
+    public void setSearchText(final String searchText) {
         this.searchText = searchText;
     }
 
-    
     public String getUlbName() {
         return ulbName;
     }
 
-    public void setUlbName(String ulbName) {
+    public void setUlbName(final String ulbName) {
         this.ulbName = ulbName;
     }
 
@@ -169,7 +160,7 @@ public class DailyWTCollectionReportSearch {
         andFilters.add(termsStringFilter("clauses.billingservice", "Water Tax"));
         andFilters.add(termsStringFilter("clauses.status", status));
         if (!consumerCode.isEmpty()) {
-            String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
+            final String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
             andFilters.add(termsStringFilter("common.consumercode", consumerCodes));
         }
         andFilters.add(rangeFilter("searchable.receiptdate", fromDate, toDate));
@@ -183,7 +174,7 @@ public class DailyWTCollectionReportSearch {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
         andFilters.add(termsStringFilter("clauses.ward", revenueWard));
-       return Filters.withAndFilters(andFilters);
+        return Filters.withAndFilters(andFilters);
     }
 
     public String searchQuery() {

@@ -96,7 +96,7 @@
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textarea name="description" cols="35" cssClass="form-control"
-					maxlength="1024" id="description"
+					maxlength="1024" id="templateDescription"
 					onkeyup="return ismaxlength(this)" value="%{description}" />
 			</div>
 		</div>
@@ -111,7 +111,7 @@
 					name="typeOfWork" id="typeOfWork" cssClass="form-control"
 					list="dropdownData.parentCategoryList" listKey="id"
 					listValue="description" value="%{typeOfWork.id}"
-					onChange="setupSubTypes(this);" />
+					onChange="setupSubTypes(this);"/>
 				<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']"
 					dropdownId='subType'
 					url='estimate/ajaxEstimate-subcategories.action'
@@ -123,7 +123,7 @@
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1"
 					headerValue="%{getText('estimate.default.select')}"
-					name="subTypeOfWork" value="%{subType.id}" id="subType"
+					name="subTypeOfWork" value="%{subTypeOfWork.id}" id="subType"
 					cssClass="form-control" list="dropdownData.categoryList"
 					listKey="id" listValue="description" />
 			</div>

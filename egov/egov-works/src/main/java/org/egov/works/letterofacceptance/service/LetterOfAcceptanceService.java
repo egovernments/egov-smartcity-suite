@@ -421,10 +421,10 @@ public class LetterOfAcceptanceService {
             queryStr.append(" and upper(wo.workOrderNumber) = :workOrderNumber");
 
         if (searchRequestLetterOfAcceptance.getTypeOfWork() != null)
-            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.typeOfWork = :typeOfWork)");
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.typeOfWork.id = :typeOfWork)");
 
         if (searchRequestLetterOfAcceptance.getSubTypeOfWork() != null)
-            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.subTypeOfWork = subTypeOfWork)");
+            queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.subTypeOfWork.id = :subTypeOfWork)");
         
         if (searchRequestLetterOfAcceptance.getAdminSanctionFromDate() != null)
             queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.adminSanctionDate >= :adminSanctionFromDate)");

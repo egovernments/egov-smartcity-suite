@@ -67,7 +67,7 @@ function validateFormBeforeSubmit() {
             return false;
 
         }
-        if (document.getElementById("description").value == '') {
+        if (document.getElementById("templateDescription").value == '') {
         	var message = document.getElementById('templateDesc').value;
             showMessage('milestonetemplateerror', message);
             return false;
@@ -120,4 +120,30 @@ function viewMilestoneTemplate(){
     } else{
 	window.open("milestoneTemplate-edit.action?mode=view&id="+id+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
     }
+}
+
+function ready() {
+	$('#typeOfWork').trigger('blur');
+	alert("triggered!!!");
+}
+function ready() {
+$('#typeOfWork').blur(function(){
+	 if ($('#typeOfWork').val() === '') {
+		   $('#subTypeOfWork').empty();
+		   $('#subTypeOfWork').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+			$.each(value, function(index, val) {
+					var selected="";
+					if($subTypeOfWorkId)
+					{
+						if($subTypeOfWorkId==val.id)
+						{
+							selected="selected";
+						}
+					}
+				     $('#subTypeOfWork').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+				});
+		}
+	});
 }

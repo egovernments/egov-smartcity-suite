@@ -119,7 +119,7 @@ public class BankBranchHibernateDAO {
 
         Query createQuery = getCurrentSession()
                 .createQuery(
-                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS') and bb.bank.id=:bankId and bb.isactive=true")
+                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','RECEIPTS') and bb.bank.id=:bankId and bb.isactive=true")
                 .setInteger("bankId", bankId);
         if (bankId != null) {
             List<Bankbranch> list = (List<Bankbranch>) createQuery.list();

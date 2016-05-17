@@ -58,13 +58,15 @@
 </tr>
 	<td align="center"><table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablebottom">
 		<tr>
+			<th class="bluebgheadtd" width="5%"> <s:text name="service.slNo.table.header"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptnumber"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptdate"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.servicename"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.remittance.vouchernum"/></th>
 		</tr>
-		<s:iterator value="%{voucherHeaderValues}"> 
+		<s:iterator value="%{voucherHeaderValues}" status="s"> 
 		<tr>
+			<td width="5%"  class="blueborderfortd" align="center"> <s:property value="#s.index+1" />  </td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{receiptnumber}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:date name="receiptDate" var="cdFormat" format="dd/MM/yyyy"/><s:property value="%{cdFormat}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{service.name}" /></div></td>

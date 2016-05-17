@@ -513,7 +513,7 @@ function onSubmit()
 }
 </script>
 </head>
-<body onload="load();">
+<body >
 	<s:form action="contingentBill" theme="css_xhtml" name="cbill" id = "cbill">
 		<s:token />
 		<s:push value="model">

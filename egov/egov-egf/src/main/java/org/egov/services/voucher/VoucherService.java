@@ -39,10 +39,21 @@
  */
 package org.egov.services.voucher;
 
-import com.exilant.GLEngine.Transaxtion;
-import com.exilant.GLEngine.TransaxtionParameter;
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
@@ -78,6 +89,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
@@ -86,7 +98,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBilldetails;
@@ -109,19 +120,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.script.ScriptContext;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.exilant.GLEngine.Transaxtion;
+import com.exilant.GLEngine.TransaxtionParameter;
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 
 @Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long>
@@ -160,7 +162,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     public static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
     @Autowired
-    private SequenceGenerator sequenceGenerator;
+    private ApplicationSequenceNumberGenerator sequenceGenerator;
     @Autowired
     @Qualifier("financialYearDAO")
     private FinancialYearHibernateDAO financialYearDAO;
@@ -1322,7 +1324,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
     }
 
-    public void setSequenceGenerator(final SequenceGenerator sequenceGenerator) {
+    public void setSequenceGenerator(final ApplicationSequenceNumberGenerator sequenceGenerator) {
         this.sequenceGenerator = sequenceGenerator;
     }
 

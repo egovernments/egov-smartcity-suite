@@ -42,8 +42,16 @@
  */
 package org.egov.utils;
 
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.common.TaskFailedException;
+import java.io.Serializable;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
@@ -56,26 +64,19 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.service.EisUtilService;
 import org.hibernate.Query;
-import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.script.ScriptContext;
-import java.io.Serializable;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
 
 /**
  * @author msahoo
@@ -97,12 +98,15 @@ public class VoucherHelper {
     
     @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
-
+    
     @Autowired
     private DBSequenceGenerator dbSequenceGenerator;
 
     @Autowired
     private SequenceNumberGenerator sequenceNumberGenerator;
+
+   @Autowired
+   ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
     @SuppressWarnings("unchecked")
     public PersistenceService getPersistenceService() {
@@ -227,9 +231,9 @@ public class VoucherHelper {
      */
     public static String sequenceNameFor(final String voucherType, final String fiscalPeriodName) {
         return new StringBuilder()
-        .append(DatabaseSequence.SEQUENCE_NAME_PREFIX)
-        .append(DatabaseSequence.replaceBadChars(voucherType))
-        .append(DatabaseSequence.WORD_SEPARATOR_FOR_NAME)
+        .append(ApplicationSequenceNumberGenerator.SEQUENCE_NAME_PREFIX)
+        .append(ApplicationSequenceNumberGenerator.replaceBadChars(voucherType))
+        .append(ApplicationSequenceNumberGenerator.WORD_SEPARATOR_FOR_NAME)
         .append(fiscalPeriodName)
         .toString();
     }
@@ -265,11 +269,7 @@ public class VoucherHelper {
         Serializable sequenceNumber;
         String sequenceName;
         sequenceName = sequenceNameFor(vouType, fc.get(0).toString());
-        try {
-            sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-        } catch (final SQLGrammarException e) {
-            sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-        }
+        sequenceNumber=   applicationSequenceNumberGenerator.getNextSequence(sequenceName);
         return sequenceNumber.toString();
 
     }

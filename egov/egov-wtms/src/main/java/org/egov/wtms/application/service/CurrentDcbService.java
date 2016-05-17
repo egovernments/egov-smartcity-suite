@@ -40,6 +40,7 @@
 package org.egov.wtms.application.service;
 
 import org.egov.dcb.bean.DCBDisplayInfo;
+import org.egov.wtms.application.entity.WaterChargesReceiptInfo;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -49,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;

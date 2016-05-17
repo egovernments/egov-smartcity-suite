@@ -44,6 +44,7 @@ package org.egov.web.actions.bill;
 
 import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -60,6 +61,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.NumberToWord;
@@ -85,6 +87,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.script.ScriptContext;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,6 +147,8 @@ public class ContingentBillAction extends BaseBillAction {
     private PersistenceService persistenceService;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+    @Autowired
+    private ApplicationSequenceNumberGenerator sequenceGenerator;
 
     @Override
     public StateAware getModel() {

@@ -39,11 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,11 +47,22 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
 @Table(name = "egwtr_category")
+
 @Unique(id = "id", tableName = "egwtr_category", columnName = { "code", "name" }, fields = { "code",
         "name" }, enableDfltMsg = true)
 @SequenceGenerator(name = ConnectionCategory.SEQ_CATEGORY, sequenceName = ConnectionCategory.SEQ_CATEGORY, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class ConnectionCategory extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
@@ -69,16 +75,19 @@ public class ConnectionCategory extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 1, max = 25)
+    @Audited
     private String code;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
+    @Audited
     private String name;
 
     @SafeHtml
     private String description;
 
+    @Audited
     private boolean active;
 
     @Override
@@ -122,5 +131,4 @@ public class ConnectionCategory extends AbstractAuditable {
     public void setActive(final boolean active) {
         this.active = active;
     }
-
 }

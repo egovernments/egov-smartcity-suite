@@ -50,7 +50,7 @@ public interface MilestoneTemplateActivityRepository extends JpaRepository<Miles
 
     MilestoneTemplateActivity findById(final Long id);
 
-    List<MilestoneTemplateActivity> findByMilestoneTemplate_Id(final Long id);
+    List<MilestoneTemplateActivity> findByMilestoneTemplate_IdOrderById(final Long id);
 
     List<MilestoneTemplateActivity> findByMilestoneTemplate_Code(final String code);
 

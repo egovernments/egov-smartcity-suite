@@ -56,4 +56,8 @@ public class NatureOfWorkService {
     public List<NatureOfWork> findAll() {
         return natureOfWorkRepository.findAll();
     }
+
+    public NatureOfWork findById(Long id) {
+        return natureOfWorkRepository.findOne(id);
+    }
 }

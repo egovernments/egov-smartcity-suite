@@ -41,6 +41,9 @@ package org.egov.wtms.masters.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -57,6 +60,8 @@ import javax.validation.constraints.NotNull;
 @Unique(id = "id", tableName = "egwtr_pipesize", columnName = { "code", "sizeInMilimeter" }, fields = { "code",
         "sizeInMilimeter" }, enableDfltMsg = true)
 @SequenceGenerator(name = PipeSize.SEQ_PIPESIZE, sequenceName = PipeSize.SEQ_PIPESIZE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class PipeSize extends AbstractAuditable {
 
     private static final long serialVersionUID = 1654115511608940161L;
@@ -69,14 +74,17 @@ public class PipeSize extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 1, max = 25)
+    @Audited
     private String code = "";
 
     @NotNull
     private double sizeInInch;
 
     @NotNull
+    @Audited
     private double sizeInMilimeter;
 
+    @Audited
     private boolean active;
 
     @Override

@@ -155,7 +155,7 @@ public class SubSchemeAction extends BaseFormAction {
         addActionMessage(getText("subscheme.saved.successfully"));
         showMode = "new";
         egovMasterDataCaching.removeFromCache(" egi-subscheme");
-        return NEW;
+        return VIEW;
     }
 
     @Action(value = "/masters/subScheme-edit")
@@ -184,7 +184,7 @@ public class SubSchemeAction extends BaseFormAction {
         addActionMessage(getText("subscheme.modified.successfully"));
         showMode = "";
         egovMasterDataCaching.removeFromCache("egi-subscheme");
-        return NEW;
+        return VIEW;
     }
 
     @SkipValidation
@@ -237,6 +237,7 @@ public class SubSchemeAction extends BaseFormAction {
     @Action(value = "/masters/subScheme-viewSubScheme")
     public String viewSubScheme() {
         subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
+        showMode = "view";
         return VIEW;
     }
 

@@ -86,8 +86,14 @@
     }     
 
     function resetForm(){
-    	document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-newForm.action';
-    	document.schemeForm.submit();
+    	document.getElementById('code').value="";
+    	document.getElementById('name').value="";
+    	document.getElementById('fundId').value="";
+    	document.getElementById('isactive').value="";
+    	document.getElementById('validfromId').value="";
+    	document.getElementById('validtoId').value="";
+    	document.getElementById('description').value="";
+    	
     }    
 	function validateDate(date)
 	{
@@ -204,8 +210,8 @@
 						<td><input type="submit" class="buttonsubmit" value="Save"
 							id="saveButton" name="button"
 							onclick="return validateFormAndSubmit();" />&nbsp;</td>
-						<td><input type="submit" class="button" value="Reset"
-							id="resetButton" name="button" onclick="resetForm();" />&nbsp;</td>
+						<td><input type="reset" class="button" value="Reset"
+							 name="button" onclick="return resetForm();" />&nbsp;</td>
 						<td><input type="button" id="Close" value="Close"
 							onclick="javascript:window.close()" class="button" />&nbsp;</td>
 					</s:if>

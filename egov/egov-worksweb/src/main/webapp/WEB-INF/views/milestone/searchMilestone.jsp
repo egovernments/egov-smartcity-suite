@@ -70,7 +70,7 @@
 		</div>
 		</div>
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" /></span></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatename" /></span></label>
 		<div class="col-sm-3 add-margin">
 			<form:input name="name" path="name" id="name" value="${name}" class="form-control" maxlength="124"></form:input>
 			<form:errors path="name" cssClass="add-margin error-msg" />

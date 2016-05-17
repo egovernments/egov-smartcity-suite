@@ -43,7 +43,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.wtms.application.service.DefaultersReport;
+
+import org.egov.wtms.application.entity.DefaultersReport;
 
 import java.lang.reflect.Type;
 

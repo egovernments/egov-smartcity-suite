@@ -56,7 +56,7 @@
 					<th><spring:message code="lbl.stageordernumber" /></th>
 					<th><spring:message code="lbl.stagedescription" /><span
 						class="mandatory"></span></th>
-					<th><spring:message code="lbl.percentage" /><span
+					<th><spring:message code="lbl.stagepercentage" /><span
 						class="mandatory"></span></th>
 					<th><spring:message code="lbl.schedulestartdate" /><span
 						class="mandatory"></span></th>
@@ -72,25 +72,25 @@
 							<td><form:input path="activities[0].stageOrderNo"
 									id="stageOrderNo" name="activities[0].stageOrderNo" value="1"
 									data-errormsg="Stage Order Number is mandatory!" data-idx="0"
-									data-optional="0" class="form-control table-input stageOrderNo"
-									required="required" readonly="true" /> <form:errors
+									data-optional="0" class="form-control table-input stageOrderNo readonlyfields"
+									required="required" /> <form:errors
 									path="activities[0].stageOrderNo"
 									cssClass="add-margin error-msg" /></td>
 							<td><form:input path="activities[0].description"
 									name="activities[0].description" id="description" value=""
 									data-errormsg="Stage Description is mandatory!" data-idx="0"
-									data-optional="0" class="form-control table-input"
+									data-optional="0" class="form-control table-input description readonlyfields"
 									required="required" /> <form:errors
 									path="activities[0].description"
 									cssClass="add-margin error-msg" /></td>
 							<td><form:input path="activities[0].percentage"
 									name="activities[0].percentage" id="percentage" value=""
 									data-errormsg="Percentage is mandatory!" data-idx="0"
-									data-optional=""
-									class="form-control table-input text-right percentage"
-									onkeyup="calculatePercentageTotal();"
+									data-optional="0"
+									class="form-control table-input text-right percentage readonlyfields"
+									onkeyup="validatePercentage();"
 									onblur="calculatePercentageTotal();"
-									onchange="calculatePercentageTotal();" required="required" />
+									onchange="calculatePercentageTotal();" required="required"  />
 								<form:errors path="activities[0].percentage"
 									cssClass="add-margin error-msg" /></td>
 							<td><form:input path="activities[0].scheduleStartDate"
@@ -99,7 +99,7 @@
 									data-optional="0"
 									class="form-control datepicker scheduleStartDate"
 									maxlength="10" data-date-format="dd/mm/yyyy"
-									data-inputmask="'mask': 'd/m/y'" /> <form:errors
+									data-inputmask="'mask': 'd/m/y'" required="required" /> <form:errors
 									path="activities[0].scheduleStartDate"
 									cssClass="add-margin error-msg" /></td>
 							<td><form:input path="activities[0].scheduleEndDate"
@@ -108,9 +108,9 @@
 									data-errormsg="Schedule End Date is mandatory!" data-idx="0"
 									data-optional="0"
 									class="form-control datepicker scheduleEndDate" maxlength="10"
-									data-inputmask="'mask': 'd/m/y'" /> <form:errors
+									data-inputmask="'mask': 'd/m/y'" required="required" /> <form:errors
 									path="activities[0].scheduleEndDate"
-									cssClass="add-margin error-msg" /></td>
+									cssClass="add-margin error-msg"  /></td>
 							<td><span class="add-padding"
 								onclick="deleteMilestone(this);"><i class="fa fa-trash"
 									data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
@@ -119,13 +119,13 @@
 					</c:when>
 					<c:otherwise>
 						<c:forEach items="${milestone.getActivities()}"
-							var="milestoneDtls" varStatus="item">
+							var="activities" varStatus="item">
 							<tr id="milestoneRow">
 								<form:input path="activities[${item.index}].stageOrderNo"
 									id="stageOrderNo" name="activities[${item.index}].stageOrderNo"
 									value="1" data-errormsg="Stage Order Number is mandatory!"
-									data-idx="0" data-optional="0" class="form-control table-input"
-									maxlength="1024" required="required" readonly="true"/>
+									data-idx="0" data-optional="0" class="form-control table-input readonlyfields"
+									maxlength="1024" required="required" />
 								<form:errors path="activities[${item.index}].stageOrderNo"
 									cssClass="add-margin error-msg" />
 								</td>
@@ -134,8 +134,8 @@
 										name="activities[${item.index}].description" id="description"
 										value="" data-errormsg="Description is mandatory!"
 										data-pattern="decimalvalue" data-idx="0" data-optional="0"
-										class="form-control table-input text-right description"
-										onkeyup="calculateEstimatedAmountTotal();" required="required" />
+										class="form-control table-input text-right description readonlyfields"
+										onkeyup="calculateEstimatedAmountTotal();"  required="required" />
 									<form:errors path="activities[${item.index}].description"
 										cssClass="add-margin error-msg" /></td>
 								<td><form:input path="activities[${item.index}].percentage"
@@ -143,8 +143,8 @@
 										value="${activities.percentage}" onkeypress=""
 										data-errormsg="Percentage is mandatory!"
 										data-pattern="decimalvalue" data-idx="0" data-optional="0"
-										class="form-control table-input text-right percentage"
-										onkeyup="validatePercentag();" required="required" /> <form:errors
+										class="form-control table-input text-right percentage readonlyfields"
+										onkeyup="validatePercentage();" required="required" /> <form:errors
 										path="activities[${item.index}].percentage"
 										cssClass="add-margin error-msg" /></td>
 								<td><form:input

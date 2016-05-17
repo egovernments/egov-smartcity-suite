@@ -53,7 +53,7 @@ public class MilestoneTemplateActivityService {
     private MilestoneTemplateActivityRepository milestoneTemplateActivityRepository;
 
     public List<MilestoneTemplateActivity> getMilestoneTemplateActivityByMilestoneTemplate(final Long id) {
-        return milestoneTemplateActivityRepository.findByMilestoneTemplate_Id(id);
+        return milestoneTemplateActivityRepository.findByMilestoneTemplate_IdOrderById(id);
     }
 
     public List<MilestoneTemplateActivity> getMilestoneTemplateActivityByMilestoneTemplateCode(final String code) {

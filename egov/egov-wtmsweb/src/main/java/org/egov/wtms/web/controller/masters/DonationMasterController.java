@@ -40,8 +40,6 @@
 
 package org.egov.wtms.web.controller.masters;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 import java.util.Calendar;
 import java.util.List;
 
@@ -88,7 +86,6 @@ public class DonationMasterController {
     @Autowired
     private final PipeSizeService pipeSizeService;
 
-    public static final String CONTENTTYPE_JSON = "application/json";
 
     @Autowired
     public DonationMasterController(final PropertyTypeService propertyTypeService,
@@ -101,7 +98,7 @@ public class DonationMasterController {
         this.donationHeaderService = donationHeaderService;
     }
 
-    @RequestMapping(value = "/donationMaster", method = GET)
+    @RequestMapping(value = "/donationMaster", method = RequestMethod.GET)
     public String viewForm(final Model model) {
         final DonationDetails donationDetails = new DonationDetails();
         model.addAttribute("donationDetails", donationDetails);
@@ -113,7 +110,7 @@ public class DonationMasterController {
         return "donation-master";
     }
 
-    @RequestMapping(value = "/donationMaster/list", method = GET)
+    @RequestMapping(value = "/donationMaster/list", method = RequestMethod.GET)
     public String getdonationMasterList(final Model model) {
 
         final List<DonationDetails> donationDetailsList = donationDetailsService.findAll();
@@ -122,9 +119,9 @@ public class DonationMasterController {
 
     }
 
-    @RequestMapping(value = "/donationMaster/{donationid}", method = GET)
-    public String getWaterRatesMasterData(final Model model, @PathVariable final Long donationid) {
-        final DonationDetails donationDetails = donationDetailsService.findBy(donationid);
+    @RequestMapping(value = "/donationMaster/{donationDetailsId}", method = RequestMethod.GET)
+    public String getWaterRatesMasterData(final Model model, @PathVariable final Long donationDetailsId) {
+        final DonationDetails donationDetails = donationDetailsService.findBy(donationDetailsId);
         model.addAttribute("donationDetails", donationDetails);
         model.addAttribute("typeOfConnection", WaterTaxConstants.DONATIONMASTER);
         model.addAttribute("categoryType", connectionCategoryService.getAllActiveConnectionCategory());
@@ -173,14 +170,14 @@ public class DonationMasterController {
         return getdonationMasterList(model);
     }
 
-    @RequestMapping(value = "/donationMaster/{donationid}", method = RequestMethod.POST)
+    @RequestMapping(value = "/donationMaster/{donationDetailsId}", method = RequestMethod.POST)
     public String editDonationMasterData(@Valid @ModelAttribute final DonationDetails donationDetails,
-            @PathVariable final Long donationid, final RedirectAttributes redirectAttrs, final Model model,
+            @PathVariable final Long donationDetailsId, final RedirectAttributes redirectAttrs, final Model model,
             final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "donation-master";
         final DonationHeader donationheader = donationDetails.getDonationHeader();
-        final DonationDetails donationdetails = donationDetailsService.findBy(donationid);
+        final DonationDetails donationdetails = donationDetailsService.findBy(donationDetailsId);
         final DonationHeader donationHeader = donationdetails.getDonationHeader();
         final List<DonationHeader> donationHeaderTempList = donationHeaderService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(donationDetails.getDonationHeader()
@@ -196,21 +193,13 @@ public class DonationMasterController {
                 if (donationDetailsTemp != null)
                     break;
             }
-            if (donationDetailsTemp == null || !donationDetails.getDonationHeader().isActive()) {
-                donationHeader.setActive(donationheader.isActive());
-                donationHeader.setCategory(donationheader.getCategory());
-                donationHeader.setMaxPipeSize(donationheader.getMaxPipeSize());
-                donationHeader.setMinPipeSize(donationheader.getMinPipeSize());
-                donationHeader.setPropertyType(donationheader.getPropertyType());
-                donationHeader.setUsageType(donationheader.getUsageType());
-                donationdetails.setAmount(donationDetails.getAmount());
-                donationdetails.setFromDate(donationDetails.getFromDate());
-                donationdetails.setToDate(donationDetails.getToDate());
-                donationdetails.setDonationHeader(donationHeader);
-                donationHeaderService.createDonationHeader(donationdetails.getDonationHeader());
-                donationDetailsService.createDonationDetails(donationdetails);
+            if (donationDetailsTemp == null ) {
+                donationDetails.getDonationHeader().setActive(true);
+                donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
+                donationDetailsService.createDonationDetails(donationDetails);
             }
-        } else {
+        } 
+        if (donationHeaderTempList.isEmpty() || !donationDetails.getDonationHeader().isActive()) {
             donationHeader.setActive(donationheader.isActive());
             donationHeader.setCategory(donationheader.getCategory());
             donationHeader.setMaxPipeSize(donationheader.getMaxPipeSize());

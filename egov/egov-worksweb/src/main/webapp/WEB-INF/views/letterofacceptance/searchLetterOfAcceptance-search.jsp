@@ -49,7 +49,7 @@
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title" style="text-align: center;">
-				<spring:message code="hdr.estimate" />
+				<spring:message code="title.search.letterofacceptance" />
 			</div>
 		</div>
  		<div class="panel-body">
@@ -72,7 +72,7 @@
 			</div>
 			<input type="hidden" id="mode" name="mode" value="${mode}" />
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimateno" /></label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number"/>
 				</div>
@@ -118,7 +118,9 @@
 				<spring:message code='lbl.search' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+				onclick='self.close()'><spring:message code='lbl.close' /></a> 
+				<input type="button" class="btn btn-default" value="Reset"
+				id="button" name="Reset" onclick="this.form.reset();">
 		</div>
 	</div>
 </form:form>
@@ -136,7 +138,7 @@
 					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
-					<th><spring:message code="lbl.lineestimatedate" /></th>
+					<th><spring:message code="lbl.estimate.date" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.workidentificationnumber" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
@@ -151,9 +153,7 @@
 			<spring:message code='lbl.createmilestone' />
 		</button>
 		<a href='javascript:void(0)' class='btn btn-default'
-			onclick='self.close()'><spring:message code='lbl.close' /></a> <input
-			type="button" class="btn btn-default" value="Reset" id="button"
-			name="Reset" onclick="this.form.reset();">
+				onclick='self.close()'><spring:message code='lbl.close' /></a> 
 	</div>
 </div>
 
