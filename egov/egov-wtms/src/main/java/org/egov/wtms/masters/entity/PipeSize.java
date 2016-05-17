@@ -75,7 +75,7 @@ public class PipeSize extends AbstractAuditable {
     @SafeHtml
     @Length(min = 1, max = 25)
     @Audited
-    private String code = "";
+    private String code;
 
     @NotNull
     private double sizeInInch;

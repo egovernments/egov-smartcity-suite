@@ -40,12 +40,14 @@
 package org.egov.works.web.controller.lineestimate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.DesignationService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -174,6 +176,25 @@ public class CreateSpillOverLineEstimateController {
             model.addAttribute("designation", request.getParameter("designation"));
             return "spillOverLineEstimate-form";
         } else {
+            if (lineEstimate.getBudgetHead() != null) {
+                Boolean check = false;
+                List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+                accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
+                for (CChartOfAccountDetail detail : accountDetails) {
+                    if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase("PROJECTCODE"))
+                        check = true;
+                }
+                if (!check) {
+                    setDropDownValues(model);
+                    model.addAttribute("mode", null);
+                    model.addAttribute("designation", request.getParameter("designation"));
+                    
+                    model.addAttribute("errorMessage", "The COA used is not a control code for project code sub-ledger. Kindly do the mapping from modify detailed code screen and then proceed for creating line estimate");
+
+                    return "spillOverLineEstimate-form";
+                }
+
+            }
             final LineEstimate newLineEstimate = lineEstimateService.createSpillOver(lineEstimate, files);
             return "redirect:/lineestimate/spillover-lineestimate-success?lineEstimateNumber="
                     + newLineEstimate.getLineEstimateNumber();

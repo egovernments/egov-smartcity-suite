@@ -47,6 +47,9 @@
 			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
 			<form:hidden path="" name="lineEstimateId" id="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+			 <c:if test="${not empty errorMessage}">
+                    <div class="error-msg">${errorMessage}</div>
+             </c:if>
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>

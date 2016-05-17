@@ -39,6 +39,18 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -78,17 +90,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -155,11 +156,11 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
-            final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request,
-            @RequestParam String workFlowAction, final BindingResult resultBinder)
-                    throws ApplicationException, IOException {
+    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final BindingResult resultBinder,
+            final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
+            @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
+            @RequestParam String workFlowAction)
+            throws ApplicationException, IOException {
         setDropDownValues(model);
 
         if (errors.hasErrors()) {
@@ -171,6 +172,27 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
             return "newLineEstimate-form";
         } else {
+            if (lineEstimate.getBudgetHead() != null) {
+                Boolean check = false;
+                List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+                accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
+                for (CChartOfAccountDetail detail : accountDetails) {
+                    if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase("PROJECTCODE"))
+                        check = true;
+                }
+                if (!check) {
+                    model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
+
+                    prepareWorkflow(model, lineEstimate, new WorkflowContainer());
+
+                    model.addAttribute("mode", null);
+                    model.addAttribute("errorMessage", "The COA used is not a control code for project code sub-ledger. Kindly do the mapping from modify detailed code screen and then proceed for creating line estimate");
+
+                    return "newLineEstimate-form";
+                }
+
+            }
+
             if (lineEstimate.getState() == null)
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CREATED.toString()));
@@ -304,9 +326,11 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                 final LineEstimateAppropriation lea = lineEstimateAppropriationService
                         .findLatestByLineEstimateDetails_EstimateNumber(led.getEstimateNumber());
-                final String tempMessage = messageSource.getMessage("msg.lineestimatedetails.budgetsanction.success",
-                        new String[] { count.toString(), led.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() },
-                        null);
+                final String tempMessage = messageSource
+                        .getMessage("msg.lineestimatedetails.budgetsanction.success",
+                                new String[] { count.toString(), led.getEstimateNumber(),
+                                        lea.getBudgetUsage().getAppropriationnumber() },
+                                null);
                 basMessages.add(tempMessage);
                 count++;
             }

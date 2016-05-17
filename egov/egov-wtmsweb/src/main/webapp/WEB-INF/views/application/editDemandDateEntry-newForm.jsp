@@ -93,7 +93,7 @@
 												<td class="blueborderfortd"><form:input type="text" path=""
 														class="form-control read-only" value="${var1.installment}"
 														name="demandDetailBeanList[${counter.index}].installment"
-														id="demandDetailBeanList[${counter.index}].installment"
+														id="installment"
 														required="required" 
 														/>
 													</td>
@@ -113,31 +113,14 @@
 														/>
 														
 												</td>
-													<td class="blueborderfortd">
-													<c:choose>
-														  <c:when test="${demandDetailBeanList[counter.index].actualAmount gt 0}">
-														    <form:input type="text" path=""
-															class="form-control read-only" value="${var1.actualAmount}"
-															name="demandDetailBeanList[${counter.index}].actualAmount"
-															id="actualAmount"  maxlength="7"  onblur=" return calculateAmount(this)"
-
-															/>
-														  </c:when>
-														  
-														  <c:otherwise>
-														    
-														    <form:input type="text" path=""
+													<td class="blueborderfortd"><form:input type="text" path=""
 														class="form-control is_valid_number" value="${var1.actualAmount}"
 														name="demandDetailBeanList[${counter.index}].actualAmount"
+														data-old-value="${var1.actualAmount}"
 														id="actualAmount"
 														maxlength="7"
 														required="required"  onblur="return calculateAmount(this);"
-														/>
-															
-														  </c:otherwise>
-														</c:choose>
-													
-														</td>
+														/></td>
 														<td class="blueborderfortd">
 														
 														<c:choose>

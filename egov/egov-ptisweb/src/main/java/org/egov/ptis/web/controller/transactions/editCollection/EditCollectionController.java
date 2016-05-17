@@ -57,7 +57,7 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.bean.DemandDetail;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -90,7 +90,7 @@ public class EditCollectionController {
     @Autowired
     @Qualifier("persistenceService")
     protected PersistenceService persistenceService;
-    private BasicProperty basicProperty;
+    private BasicPropertyImpl basicProperty;
     @Autowired
     private InstallmentHibDao installmentDao;
     private static final String QUERY_DEMAND_DETAILS = "select dd from Ptdemand ptd "
@@ -103,7 +103,7 @@ public class EditCollectionController {
     public String form(@ModelAttribute("demandDetailBeansForm") DemandDetailBeansForm demandDetailBeansForm,
             @PathVariable final String assessmentNo, Model model) {
         List<DemandDetail> demandDetailBeans = new ArrayList<DemandDetail>();
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         List<EgDemandDetails> demandDetails = persistenceService.findAllBy(QUERY_DEMAND_DETAILS, basicProperty,
                 propertyTaxCommonUtils.getCurrentInstallment(), propertyTaxCommonUtils.getCurrentInstallment().getFinYearRange());
         if (!demandDetails.isEmpty()) {
@@ -128,6 +128,7 @@ public class EditCollectionController {
         demandDetailBeansForm.setBasicProperty(basicProperty);
         model.addAttribute("demandDetailBeans", demandDetailBeans);
         model.addAttribute("property", basicProperty.getActiveProperty());
+        model.addAttribute("basicProperty", basicProperty);
         return EDIT_COLLECTION_FORM;
     }
 
@@ -136,10 +137,11 @@ public class EditCollectionController {
     public String update(@ModelAttribute("demandDetailBeansForm") DemandDetailBeansForm demandDetailBeansForm,
             BindingResult errors, Model model) {
         errors = validate(demandDetailBeansForm, errors);
+        basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(basicProperty.getUpicNo());
         if (errors.hasErrors()) {
             model.addAttribute("demandDetailBeans", demandDetailBeansForm.getDemandDetailBeans());
             model.addAttribute("property", basicProperty.getActiveProperty());
-            model.addAttribute("assessmentNo", basicProperty.getUpicNo());
+            model.addAttribute("basicProperty", basicProperty);
             return EDIT_COLLECTION_FORM;
         }
         Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
@@ -240,6 +242,10 @@ public class EditCollectionController {
 
         if (editingCollection && StringUtils.isBlank(demandDetailBeansForm.getRemarks())) {
             errors.rejectValue("remarks", "mandatory.remarks");
+        }
+        
+        if (!editingCollection) {
+            errors.rejectValue("remarks", "error.collection.notmodified");
         }
         return errors;
     }

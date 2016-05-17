@@ -47,7 +47,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -426,8 +425,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public Map<Installment, PenaltyAndRebate> getCalculatedPenalty() {
 
         final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
-        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(basicProperty.getAssessmentdate(), new Date()) - 1;
-        setIsNagarPanchayat(propertyTaxUtil.checkIsNagarPanchayat());
 
         final EgDemand currentDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
 
@@ -436,16 +433,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
         final Map<Installment, BigDecimal> instWiseDmdMap = installmentDemandAndCollection.get("DEMAND");
         final Map<Installment, BigDecimal> instWiseAmtCollMap = installmentDemandAndCollection.get("COLLECTION");
-
-        /**
-         * Not calculating penalty if collection is happening within two months
-         * from the assessment date
-         */
-        // To be replaced with (noOfMonths <= 3) end of this financial year
-        if (!isNagarPanchayat && noOfMonths <= 3) {
-            calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, instWiseAmtCollMap);
-            return installmentPenaltyAndRebate;
-        }
 
         boolean thereIsBalance = false;
 
@@ -456,26 +443,13 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
         if (getLevyPenalty()) {
 
-            /*
-             * installmentWisePenaltyDemandDetail =
-             * penaltyCalculationService.getInstallmentWisePenaltyDemandDetails(
-             * getBasicProperty().getProperty(), currentDemand);
-             */
-            final Installment currentInstall = currentDemand.getEgInstallmentMaster();
             installmentWisePenaltyDemandDetail = penaltyCalculationService.getInstallmentWisePenaltyDemandDetails(
                     getBasicProperty().getProperty(), currentDemand);
 
             PenaltyAndRebate penaltyAndRebate = null;
             EgDemandDetails existingPenaltyDemandDetail = null;
-            // Returns the installment in which the assessment date falls
-            final Installment assessmentEffecInstallment = installmentDao.getInsatllmentByModuleForGivenDate(
-                    getModule(), basicProperty.getAssessmentdate());
-            DateTime nagarPanchayatPenDate = DateTime.now().withDate(2016, 1, 1);
-            final Installment nagarPanchayatPenEndInstallment = installmentDao.getInsatllmentByModuleForGivenDate(
-                    getModule(), nagarPanchayatPenDate.toDate());
 
             for (final Map.Entry<Installment, BigDecimal> mapEntry : instWiseDmdMap.entrySet()) {
-
                 installment = mapEntry.getKey();
                 tax = mapEntry.getValue();
                 collection = instWiseAmtCollMap.get(installment);
@@ -484,22 +458,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                 existingPenaltyDemandDetail = installmentWisePenaltyDemandDetail.get(installment);
                 thereIsBalance = balance.compareTo(BigDecimal.ZERO) == 1;
 
-                if (thereIsBalance) {
+                if (thereIsBalance && existingPenaltyDemandDetail != null) {
                     penaltyAndRebate = new PenaltyAndRebate();
-                    Date penaltyEffectiveDate = null;
-                    if (existingPenaltyDemandDetail == null) {
-                        if (isNagarPanchayat && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {
-                            penaltyEffectiveDate = nagarPanchayatPenDate.toDate();
-                        } else {
-                            penaltyEffectiveDate = getPenaltyEffectiveDate(installment, assessmentEffecInstallment,
-                                    basicProperty.getAssessmentdate(), currentInstall);
-                        }
-                        if (penaltyEffectiveDate.before(new Date())) {
-                            penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
-                        }
-                    } else
-                        penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
-                                existingPenaltyDemandDetail.getAmtCollected()));
+                    penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
+                            existingPenaltyDemandDetail.getAmtCollected()));
                     installmentPenaltyAndRebate.put(installment, penaltyAndRebate);
                 }
             }
@@ -531,44 +493,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                 }
             }
         }
-    }
-
-    private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
-            final Date assmentDate, final Installment curInstallment) {
-        Date penaltyEffDate = null;
-        /**
-         * If assessment date falls in the current installment then penalty
-         * calculation will be effective from three months after the assessment
-         * date
-         */
-        if (null != assessmentEffecInstallment && assessmentEffecInstallment.equals(curInstallment)) {
-            penaltyEffDate = penalyDateWithThreeMonths(assmentDate);
-        } else {
-            /*
-             * For all the passed installment penalty starts from 4th month of
-             * the respective installment. If its a current installment, first 3
-             * months there is no peanlty from 4th month onwards penalty
-             * effective from 4th month of the installment
-             */
-            if (installment.equals(curInstallment)) {
-                final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(installment.getFromDate(), new Date());
-                if (noOfMonths > 3) {
-                    penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
-                } else
-                    penaltyEffDate = new Date();
-            } else {
-                penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
-            }
-        }
-        return penaltyEffDate;
-    }
-
-    private Date penalyDateWithThreeMonths(final Date date) {
-        final Calendar penalyDate = Calendar.getInstance();
-        penalyDate.setTime(date);
-        penalyDate.add(Calendar.MONTH, 3);
-        penalyDate.set(Calendar.DAY_OF_MONTH, 1);
-        return penalyDate.getTime();
     }
 
     @Override
