@@ -58,8 +58,6 @@
 <link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}" TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"> </script>
-<script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 
 
@@ -492,6 +490,7 @@ return true;
 
 
 function printPreview(){
+	
 	document.forms[0].action='../bill/expenseBillPrint-print.action?id=<s:property value="billRegisterId"/>';
 	document.forms[0].submit();
 }
@@ -511,6 +510,7 @@ function onSubmit()
 			
 		
 }
+
 </script>
 </head>
 <body >
@@ -724,6 +724,7 @@ if(null != document.getElementById("print")){
 	document.getElementById("print").disabled=false;
 }
 
+if(document.getElementById("apporoverSelection")!=null)
 document.getElementById("apporoverSelection").style.display="block";
 
 //set the approver department to primary assignment department
@@ -767,6 +768,8 @@ if(document.getElementById("Approve"))
 	document.getElementById("Approve").disabled=false;	
 if(document.getElementById("button2"))
 	document.getElementById("button2").disabled=false;		
+if(document.getElementById("print"))
+	document.getElementById("print").disabled=false;
 	  	
 </script>
 

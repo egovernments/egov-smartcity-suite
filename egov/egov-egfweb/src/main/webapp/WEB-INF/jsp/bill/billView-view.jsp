@@ -47,8 +47,8 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript">
-		var path="${pageContext.request.contextPath}";
-	</script>
+	var path = "${pageContext.request.contextPath}";
+</script>
 <style type="text/css">
 @media print {
 	input#button1 {
@@ -74,16 +74,19 @@
 	}
 }
 </style>
+
+
 </head>
 <body>
 	<s:form action="billView" theme="simple">
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 
 		<div class="formmainbox">
 			<div class="subheadnew">
 				<s:property value="expendituretype" />
-				&nbsp
+
 				<s:text name="bill.view" />
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -116,7 +119,7 @@
 			</table>
 			<br />
 			<div align="center">
-				<table border="1" width="100%" cellspacing="0">
+				<table width="100%" cellspacing="0" cellpadding="0">
 					<tr>
 						<th colspan="5"><div class="subheadsmallnew">
 								<s:text name="bill.accountdetails" />
@@ -136,16 +139,18 @@
 					</tr>
 					<s:iterator var="p" value="%{billDetailsList}" status="s">
 						<tr>
-							<td width="17%" class="bluebox"><s:property value="function" /></td>
-							<td width="17%" class="bluebox"><s:property value="glcode" /></td>
-							<td width="19%" class="bluebox"><s:property
+							<td width="17%" class="text-center bluebox setborder"><s:property
+									value="function" /></td>
+							<td width="17%" class="text-center bluebox setborder"><s:property
+									value="glcode" /></td>
+							<td width="19%" class="text-center bluebox setborder"><s:property
 									value="accountHead" /></td>
-							<td width="17%" class="bluebox" style="text-align: right"><s:text
-									name="format.number">
+							<td width="17%" class="text-center bluebox setborder"
+								style="text-align: right"><s:text name="format.number">
 									<s:param value="%{debitAmount}" />
 								</s:text></td>
-							<td width="16%" class="bluebox" style="text-align: right"><s:text
-									name="format.number">
+							<td width="16%" class="text-center bluebox setborder"
+								style="text-align: right"><s:text name="format.number">
 									<s:param value="%{creditAmount}" />
 								</s:text></td>
 							<c:set var="db" value="${db+debitAmount}" />
@@ -153,12 +158,15 @@
 						</tr>
 					</s:iterator>
 					<tr>
-						<td class="greybox" style="text-align: right" colspan="3" />Total
+						<td class="text-center bluebox setborder"
+							style="text-align: right" colspan="3" />Total
 						</td>
-						<td class="greybox" style="text-align: right"><fmt:formatNumber
-								value="${db}" pattern="#0.00" /></td>
-						<td class="greybox" style="text-align: right"><fmt:formatNumber
-								value="${cr}" pattern="#0.00" /></td>
+						<td class="text-center bluebox setborder"
+							style="text-align: right"><fmt:formatNumber value="${db}"
+								pattern="#0.00" /></td>
+						<td class="text-center bluebox setborder"
+							style="text-align: right"><fmt:formatNumber value="${cr}"
+								pattern="#0.00" /></td>
 					</tr>
 				</table>
 			</div>
@@ -186,14 +194,14 @@
 						</tr>
 						<s:iterator var="p" value="%{subledgerList}" status="s">
 							<tr>
-								<td width="17%" class="bluebox"><s:property
+								<td width="17%" class="text-center bluebox setborder"><s:property
 										value="function" /></td>
-								<td width="17%" class="bluebox"><s:property value="glcode" /></td>
-								<td width="19%" class="bluebox"><s:property
+								<td width="17%" class="text-center bluebox setborder"><s:property value="glcode" /></td>
+								<td width="19%" class="text-center bluebox setborder"><s:property
 										value="detailname" /></td>
-								<td width="19%" class="bluebox"><s:property
+								<td width="19%" class="text-center bluebox setborder"><s:property
 										value="detailkey" /></td>
-								<td width="16%" class="bluebox" style="text-align: right"><s:text
+								<td width="16%" class="text-center bluebox setborder" style="text-align: right"><s:text
 										name="format.number">
 										<s:param value="%{amount}" />
 									</s:text></td>
@@ -205,9 +213,9 @@
 		</div>
 		<div class="buttonbottom">
 			<input name="button" type="button" class="buttonsubmit" id="button1"
-				value="Print" onclick="window.print()" />&nbsp; <input type="button"
-				id="Close" value="Close" onclick="javascript:window.close()"
-				class="button" />&nbsp;
+				value="Print" onclick="window.print()" />&nbsp; <input
+				type="button" id="Close" value="Close"
+				onclick="javascript:window.close()" class="button" />&nbsp;
 		</div>
 	</s:form>
 </body>
