@@ -40,6 +40,7 @@
 package org.egov.works.milestone.service;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -51,6 +52,7 @@ import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.repository.MilestoneRepository;
 import org.egov.works.utils.WorksConstants;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -95,8 +97,10 @@ public class MilestoneService {
                 criteria.add(Restrictions.eq("le.executingDepartment.id", searchRequestMilestone.getDepartment()));
             if (searchRequestMilestone.getMilestoneFromDate() != null)
                 criteria.add(Restrictions.ge("createdDate", searchRequestMilestone.getMilestoneFromDate()));
-            if (searchRequestMilestone.getMilestoneToDate() != null)
-                criteria.add(Restrictions.le("createdDate", searchRequestMilestone.getMilestoneToDate()));
+            if (searchRequestMilestone.getMilestoneToDate() != null) {
+                DateTime dateTime = new DateTime(searchRequestMilestone.getMilestoneToDate().getTime()).plusDays(1);
+                criteria.add(Restrictions.le("createdDate", dateTime.toDate()));
+            }
             if (searchRequestMilestone.getStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestMilestone.getStatus()));
             if (searchRequestMilestone.getSubTypeOfWork() != null)
