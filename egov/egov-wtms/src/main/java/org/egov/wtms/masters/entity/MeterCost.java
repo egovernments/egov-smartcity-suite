@@ -52,6 +52,9 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -59,6 +62,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "egwtr_metercost")
 @CompositeUnique(fields = { "pipeSize", "meterMake" }, enableDfltMsg = true, message = "{metercost.validity.exist}")
 @SequenceGenerator(name = MeterCost.SEQ_METERCOST, sequenceName = MeterCost.SEQ_METERCOST, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class MeterCost extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
@@ -71,17 +76,21 @@ public class MeterCost extends AbstractAuditable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "pipesize")
+    @Audited
     private PipeSize pipeSize;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
+    @Audited
     private String meterMake;
 
     @NotNull
     @Min(value = 1)
+    @Audited
     private double amount;
 
+    @Audited
     private boolean active;
 
     @Override
