@@ -39,9 +39,10 @@
  */
 package org.egov.wtms.masters.entity;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,11 +54,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "egwtr_donation_details")
 @SequenceGenerator(name = DonationDetails.SEQ_DONATIONDETAILS, sequenceName = DonationDetails.SEQ_DONATIONDETAILS, allocationSize = 1)
+@EntityListeners(AuditingEntityListener.class)
 public class DonationDetails extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 8604331107634946265L;
@@ -70,17 +75,21 @@ public class DonationDetails extends AbstractPersistable<Long> {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "donationheader", nullable = false)
+    @Audited
     private DonationHeader donationHeader;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
+    @Audited
     private Date fromDate;
 
     @Temporal(value = TemporalType.DATE)
+    @Audited
     private Date toDate;
 
     @NotNull
     @Min(value = 1)
+    @Audited
     private double amount;
 
     @Override
