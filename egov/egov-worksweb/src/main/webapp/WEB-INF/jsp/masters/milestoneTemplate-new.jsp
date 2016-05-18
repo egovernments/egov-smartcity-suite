@@ -63,8 +63,10 @@
     <input type="hidden" value="<s:text name='milestonetemplate.name.not.null' />" id='templateName'>
     <input type="hidden" value="<s:text name='milestonetemplate.description.not.null' />" id='templateDesc'>
     <input type="hidden" value="<s:text name='milestone.template.search.workType.error' />" id='selectTypeOfWork'>
-    <input type="hidden" value="<s:text name='milestonetemplate.stagedesciption.not.null' />" id='description'>
-    <input type="hidden" value="<s:text name='milestonetemplate.stageorderno.not.null' />" id='stageOrderNo'>
+    <input type="hidden" value="<s:text name='milestoneTemplateActivity.desc.null' />" id='description'>
+    <input type="hidden" value="<s:text name='milestoneTemplateActivity.stageOrderNo.null' />" id='stageOrderNo'>
+    <input type="hidden" value="<s:text name='milestoneTemplateActivity.percentage.null' />" id='tempPercentage'>
+    <input type="hidden" value="<s:text name='milestone.activity.total.percentage' />" id='validateTotalPercentage'>
     <s:if test="%{hasActionMessages()}">
         <div class="messagestyle">
         	<s:property value="%{code}"/> &nbsp; <s:actionmessage theme="simple"/>
