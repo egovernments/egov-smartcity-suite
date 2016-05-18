@@ -40,6 +40,8 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+
 <!DOCTYPE html>
 <html class="no-js" oncontextmenu="return false;">
 	<head>
@@ -134,19 +136,19 @@
 						
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace active" data-toggle="tooltip" title="Worklist" data-work="worklist">
-								<i class="fa fa-list"></i>
+								<i class="fa fa-list fa-fw"></i>
 							</a>
 						</li>
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Drafts" data-work="drafts">
-								<i class="fa fa-pencil"></i>
+								<i class="fa fa-pencil fa-fw"></i>
 							</a>
 							
 						</li>
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Notifications" data-work="notifications">
 
-								<i class="fa fa-bell"></i>
+								<i class="fa fa-bell fa-fw"></i>
 							</a>
 							
 						</li>
@@ -306,7 +308,8 @@
 			<footer class="clearfix simple">
 				<div class="constrain">
 					<div id="legal">
-						<span class="copyright">Copyright <span><i class="fa fa-copyright"></i></span> 2015 <a href="http://www.egovernments.org" target="_blank"> eGovernments Foundation.<sup>&reg;</sup></a></span>
+						<c:set var="now" value="<%=new org.joda.time.DateTime()%>" />
+						<span class="copyright">Copyright <span><i class="fa fa-copyright"></i></span> <joda:format value="${now}" pattern="yyyy" /> <a href="http://www.egovernments.org" target="_blank"> eGovernments Foundation.<sup>&reg;</sup></a></span>
 						<span class="version">eGov ERP - ${app_version}_${app_buildno}<c:if test="${not empty app_core_build_no}"> @ Core - ${app_core_build_no}</c:if></span>
 					</div>
 				</div>
