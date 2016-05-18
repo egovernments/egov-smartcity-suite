@@ -38,9 +38,6 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-23T20:23:59 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReconnacknowlgementNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9770880-71cf-4aae-a82f-c57adc04545e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -48,6 +45,7 @@
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="usersignature" class="java.lang.Object"/>
 	<parameter name="district" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="applicantName" class="java.lang.String"/>
@@ -122,7 +120,7 @@
 			</textField>
 			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
 				<reportElement x="322" y="193" width="193" height="50" uuid="f749260e-b285-4077-b8bc-e41b87cbb057"/>
-				<imageExpression><![CDATA[($P{workFlowAction} == "Sign") ? ReportUtil.getUserSignature($P{userId}) : null]]></imageExpression>
+				<imageExpression><![CDATA[$P{usersignature}]]></imageExpression>
 			</image>
 		</band>
 	</title>
