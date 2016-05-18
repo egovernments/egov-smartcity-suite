@@ -71,4 +71,6 @@ public class Constants {
     public static final String SIGNED_NUMBER = "^(\\-)?\\d*$";
     public static final String ALPHABETS_WITHMIXEDCHAR = "[A-Z-_ ]+";
     public static final String ALLTYPESOFALPHABETS_WITHMIXEDCHAR = "[A-Za-z-_ ]+";
+    public static final String ALPHANUMERICWITHSPECIALCHAR = "[0-9a-zA-Z-& :,/.()@]+";
+    
 }
