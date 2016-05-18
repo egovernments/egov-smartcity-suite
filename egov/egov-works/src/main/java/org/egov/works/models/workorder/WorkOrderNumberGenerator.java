@@ -47,7 +47,7 @@ import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 

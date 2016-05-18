@@ -42,6 +42,7 @@ package org.egov.works.models.estimate;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.infstr.models.BaseModel;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.masters.DepositCode;
 
 import java.math.BigDecimal;

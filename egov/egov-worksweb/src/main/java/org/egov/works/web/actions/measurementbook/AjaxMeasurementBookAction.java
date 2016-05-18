@@ -52,7 +52,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.PersonalInformationService;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderActivity;

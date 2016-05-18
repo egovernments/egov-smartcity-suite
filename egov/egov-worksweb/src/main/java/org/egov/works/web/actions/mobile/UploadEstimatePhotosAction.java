@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.estimate.EstimatePhotographs;
 import org.egov.works.services.AbstractEstimateService;
 

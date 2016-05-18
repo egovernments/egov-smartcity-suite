@@ -37,9 +37,10 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
+package org.egov.works.abstractestimate.entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -49,30 +50,26 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.egov.asset.model.Asset;
+import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.exception.ValidationError;
 
 @Entity
-@Table(name = "EGW_ESTIMATE_ASSETS")
-@NamedQueries({
-        @NamedQuery(name = AssetsForEstimate.ASSETS_FOR_PROJECTCODE, query = "from AssetsForEstimate as ae where ae.abstractEstimate.projectCode.id=? order by ae.asset.code") })
-@SequenceGenerator(name = AssetsForEstimate.SEQ_EGW_ESTIMATEASSETS, sequenceName = AssetsForEstimate.SEQ_EGW_ESTIMATEASSETS, allocationSize = 1)
-public class AssetsForEstimate extends AbstractAuditable {
+@Table(name = "EGW_MULTIYEAR_ESTIMATE")
+@SequenceGenerator(name = MultiYearEstimate.SEQ_EGW_MULTIYEARESTIMATE, sequenceName = MultiYearEstimate.SEQ_EGW_MULTIYEARESTIMATE, allocationSize = 1)
+public class MultiYearEstimate extends AbstractAuditable {
 
-    private static final long serialVersionUID = 9142163850560908966L;
+    private static final long serialVersionUID = 1117104354989747533L;
 
-    public static final String SEQ_EGW_ESTIMATEASSETS = "SEQ_EGW_ESTIMATE_ASSETS";
-    public static final String ASSETS_FOR_PROJECTCODE = "ASSETS_FOR_PROJECTCODE";
+    public static final String SEQ_EGW_MULTIYEARESTIMATE = "SEQ_EGW_MULTIYEAR_ESTIMATE";
 
     @Id
-    @GeneratedValue(generator = SEQ_EGW_ESTIMATEASSETS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGW_MULTIYEARESTIMATE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
@@ -82,10 +79,14 @@ public class AssetsForEstimate extends AbstractAuditable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "asset")
-    private Asset asset;
+    @JoinColumn(name = "financialYear")
+    private CFinancialYear financialYear;
 
-    public AssetsForEstimate() {
+    @NotNull
+    @Min(value = 0, message = "multiYeareEstimate.percentage.not.negative")
+    private double percentage;
+
+    public MultiYearEstimate() {
     }
 
     @Override
@@ -106,15 +107,29 @@ public class AssetsForEstimate extends AbstractAuditable {
         this.abstractEstimate = abstractEstimate;
     }
 
-    public Asset getAsset() {
-        return asset;
+    public CFinancialYear getFinancialYear() {
+        return financialYear;
     }
 
-    public void setAsset(final Asset asset) {
-        this.asset = asset;
+    public void setFinancialYear(final CFinancialYear financialYear) {
+        this.financialYear = financialYear;
+    }
+
+    public double getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(final double percentage) {
+        this.percentage = percentage;
     }
 
     public List<ValidationError> validate() {
+        if (percentage < 0.0)
+            return Arrays.asList(new ValidationError("percentage",
+                    "multiYeareEstimate.percentage.percentage_greater_than_0"));
+        if (percentage > 100.0)
+            return Arrays.asList(new ValidationError("percentage",
+                    "multiYeareEstimate.percentage.percentage_less_than_100"));
         return new ArrayList<ValidationError>();
     }
 }

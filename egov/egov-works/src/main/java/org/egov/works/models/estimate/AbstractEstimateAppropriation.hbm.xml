@@ -50,7 +50,7 @@
 			</generator>
 		</id> 
 			
-		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" fetch="select"/>
+		<many-to-one name="abstractEstimate" class="org.egov.works.abstractestimate.entity.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" fetch="select"/>
 		<many-to-one name="budgetUsage" class="org.egov.model.budget.BudgetUsage" column="BUDGETUSAGE_ID" fetch="select"/>
 		<many-to-one name="depositWorksUsage" class="org.egov.works.models.estimate.DepositWorksUsage" column="DEPOSITWORKSUSAGE_ID" fetch="select"/>
 		<property name="balanceAvailable" column="BALANCEAVAILABLE" type="big_decimal" not-null="true"/>

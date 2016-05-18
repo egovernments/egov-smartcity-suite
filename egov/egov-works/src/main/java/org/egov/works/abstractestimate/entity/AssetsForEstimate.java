@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
+package org.egov.works.abstractestimate.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,43 +49,43 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.egov.commons.Fundsource;
+import org.egov.asset.model.Asset;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.exception.ValidationError;
 
 @Entity
-@Table(name = "EGW_ESTIMATE_FINANCINGSOURCE")
-@SequenceGenerator(name = FinancingSource.SEQ_EGW_ESTIMATEFINANCINGSOURCE, sequenceName = FinancingSource.SEQ_EGW_ESTIMATEFINANCINGSOURCE, allocationSize = 1)
-public class FinancingSource extends AbstractAuditable {
+@Table(name = "EGW_ESTIMATE_ASSETS")
+@NamedQueries({
+        @NamedQuery(name = AssetsForEstimate.ASSETS_FOR_PROJECTCODE, query = "from AssetsForEstimate as ae where ae.abstractEstimate.projectCode.id=? order by ae.asset.code") })
+@SequenceGenerator(name = AssetsForEstimate.SEQ_EGW_ESTIMATEASSETS, sequenceName = AssetsForEstimate.SEQ_EGW_ESTIMATEASSETS, allocationSize = 1)
+public class AssetsForEstimate extends AbstractAuditable {
 
-    private static final long serialVersionUID = -2860972695192985495L;
+    private static final long serialVersionUID = 9142163850560908966L;
 
-    public static final String SEQ_EGW_ESTIMATEFINANCINGSOURCE = "SEQ_EGW_ESTIMATE_FINANCINGSOURCE";
+    public static final String SEQ_EGW_ESTIMATEASSETS = "SEQ_EGW_ESTIMATE_ASSETS";
+    public static final String ASSETS_FOR_PROJECTCODE = "ASSETS_FOR_PROJECTCODE";
 
     @Id
-    @GeneratedValue(generator = SEQ_EGW_ESTIMATEFINANCINGSOURCE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGW_ESTIMATEASSETS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
-    @Min(value = 0, message = "financingsource.percentage.not.negative")
-    private double percentage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractEstimate")
+    private AbstractEstimate abstractEstimate;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fundSource")
-    private Fundsource fundSource;
+    @JoinColumn(name = "asset")
+    private Asset asset;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "financialDetail")
-    private FinancialDetail financialDetail;
-
-    public FinancingSource() {
+    public AssetsForEstimate() {
     }
 
     @Override
@@ -98,38 +98,23 @@ public class FinancingSource extends AbstractAuditable {
         this.id = id;
     }
 
-    public double getPercentage() {
-        return percentage;
+    public AbstractEstimate getAbstractEstimate() {
+        return abstractEstimate;
     }
 
-    public void setPercentage(final double percentage) {
-        this.percentage = percentage;
+    public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
+        this.abstractEstimate = abstractEstimate;
     }
 
-    public Fundsource getFundSource() {
-        return fundSource;
+    public Asset getAsset() {
+        return asset;
     }
 
-    public void setFundSource(final Fundsource fundSource) {
-        this.fundSource = fundSource;
-    }
-
-    public FinancialDetail getFinancialDetail() {
-        return financialDetail;
-    }
-
-    public void setFinancialDetail(final FinancialDetail financialDetail) {
-        this.financialDetail = financialDetail;
+    public void setAsset(final Asset asset) {
+        this.asset = asset;
     }
 
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-
-        if (fundSource == null || fundSource.getCode() == null)
-            validationErrors.add(new ValidationError("invalidpercentage", "financingsource.fundsource.null"));
-
-        if (percentage <= 0.0 || percentage > 100)
-            validationErrors.add(new ValidationError("invalidpercentage", "financingsource.invalid.percentage"));
-        return validationErrors;
+        return new ArrayList<ValidationError>();
     }
 }

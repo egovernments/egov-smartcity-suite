@@ -59,7 +59,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.pims.model.PersonalInformation;
-import org.egov.works.models.estimate.Activity;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.models.workflow.WorkFlow;
 
 public class TenderResponse extends WorkFlow {

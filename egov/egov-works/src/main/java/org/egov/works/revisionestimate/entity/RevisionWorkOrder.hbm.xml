@@ -38,11 +38,10 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!DOCTYPE hibernate-mapping PUBLIC
-   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="org.egov.works.models.revisionEstimate">  
+<hibernate-mapping package="org.egov.works.revisionestimate.entity">  
 	<joined-subclass name="RevisionWorkOrder" table="egw_revision_workOrder"
 		extends="org.egov.works.models.workorder.WorkOrder">
 		<key column="ID" />		

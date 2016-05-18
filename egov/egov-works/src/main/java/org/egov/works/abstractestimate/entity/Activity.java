@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
+package org.egov.works.abstractestimate.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.works.models.masters.ScheduleOfRate;
-import org.egov.works.models.revisionEstimate.RevisionType;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 
 @Entity
 @Table(name = "EGW_ESTIMATE_ACTIVITY")

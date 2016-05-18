@@ -44,9 +44,9 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate"/>
+	<field name="abstractEstimate" class="org.egov.works.abstractestimate.entity.AbstractEstimate"/>
 	<field name="schedule" class="org.egov.works.models.masters.ScheduleOfRate"/>
-	<field name="nonSor" class="org.egov.works.models.estimate.NonSor"/>
+	<field name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="uom" class="org.egov.common.entity.UOM"/>
 	<field name="rate" class="org.egov.infra.persistence.entity.component.Money"/>

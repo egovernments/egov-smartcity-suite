@@ -39,8 +39,8 @@
  */
 package org.egov.works.services;
 
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.revisionEstimate.RevisionAbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 
 public interface RevisionEstimateService extends BaseService<RevisionAbstractEstimate, Long> {
 

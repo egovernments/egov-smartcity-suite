@@ -75,7 +75,7 @@
 		 
         <set name="estimates" cascade="all,delete-orphan" inverse="true" table = "EGW_ABSTRACTESTIMATE">
             <key column="PROJECTCODE_ID" />
-            <one-to-many class="org.egov.works.models.estimate.AbstractEstimate" />  
+            <one-to-many class="org.egov.works.abstractestimate.entity.AbstractEstimate" />  
         </set>
           		
    		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />

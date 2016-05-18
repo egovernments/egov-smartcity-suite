@@ -37,13 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.revisionEstimate;
+package org.egov.works.revisionestimate.entity;
 
 import org.egov.works.models.workorder.WorkOrder;
 
 public class RevisionWorkOrder extends WorkOrder {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6435969238603453193L;
 
     @Override
     public String getStateDetails() {

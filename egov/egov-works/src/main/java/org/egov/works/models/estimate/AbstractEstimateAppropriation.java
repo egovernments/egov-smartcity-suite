@@ -41,6 +41,7 @@ package org.egov.works.models.estimate;
 
 import org.egov.infstr.models.BaseModel;
 import org.egov.model.budget.BudgetUsage;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 
 import java.math.BigDecimal;
 

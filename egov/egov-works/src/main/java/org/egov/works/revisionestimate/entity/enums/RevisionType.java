@@ -37,56 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.revisionEstimate;
+package org.egov.works.revisionestimate.entity.enums;
 
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.Activity;
+public enum RevisionType {
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-public class RevisionAbstractEstimate extends AbstractEstimate {
-
-    private static final long serialVersionUID = 1L;
-    private List<String> revisionEstActions = new ArrayList<String>();
-    private String additionalRule;
-    private BigDecimal amountRule;
-
-    @Override
-    public String getStateDetails() {
-        return "Revision Estimate : " + getEstimateNumber();
-    }
-
-    public List<String> getRevisionEstActions() {
-        return revisionEstActions;
-    }
-
-    public void setRevisionEstActions(final List<String> revisionEstActions) {
-        this.revisionEstActions = revisionEstActions;
-    }
-
-    public void deleteNonSORActivities() {
-        if (getActivities() != null && getActivities().size() > 0)
-            for (final Activity estActivity : getActivities())
-                if (estActivity.getNonSor() != null)
-                    estActivity.setNonSor(null);
-    }
-
-    public String getAdditionalRule() {
-        return additionalRule;
-    }
-
-    public BigDecimal getAmountRule() {
-        return amountRule;
-    }
-
-    public void setAdditionalRule(final String additionalRule) {
-        this.additionalRule = additionalRule;
-    }
-
-    public void setAmountRule(final BigDecimal amountRule) {
-        this.amountRule = amountRule;
-    }
-
+    NON_TENDERED_ITEM, LUMP_SUM_ITEM, ADDITIONAL_QUANTITY, REDUCED_QUANTITY
 }

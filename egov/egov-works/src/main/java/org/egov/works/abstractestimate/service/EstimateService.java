@@ -44,12 +44,12 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
+import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.FinancialDetail;
-import org.egov.works.models.estimate.MultiYearEstimate;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -46,10 +46,10 @@ import org.egov.commons.Fund;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.models.estimate.BudgetFolioDetail;
 import org.egov.works.models.estimate.DepositWorksUsage;
-import org.egov.works.models.estimate.FinancialDetail;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.DepositWorksUsageService;
 

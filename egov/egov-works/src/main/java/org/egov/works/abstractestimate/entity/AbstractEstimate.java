@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
+package org.egov.works.abstractestimate.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -54,6 +54,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -83,16 +85,19 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.models.estimate.AbstractEstimateAppropriation;
+import org.egov.works.models.estimate.EstimatePhotographs;
+import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.NatureOfWork;
-import org.egov.works.models.revisionEstimate.RevisionType;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_ABSTRACTESTIMATE")
+@Inheritance(strategy = InheritanceType.JOINED) 
 @NamedQueries({
         @NamedQuery(name = AbstractEstimate.ABSTRACTESTIMATELIST_BY_ID, query = "from AbstractEstimate ab where ab.id in(:param_0)"),
         @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID, query = "from AbstractEstimate ae where ae.parent.id=? and ae.egwStatus.code='APPROVED' order by ae.id"),

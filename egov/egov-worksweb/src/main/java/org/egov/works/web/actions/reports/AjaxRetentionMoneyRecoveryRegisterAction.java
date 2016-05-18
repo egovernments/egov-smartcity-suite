@@ -42,8 +42,8 @@ package org.egov.works.web.actions.reports;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.models.estimate.AbstractEstimate;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

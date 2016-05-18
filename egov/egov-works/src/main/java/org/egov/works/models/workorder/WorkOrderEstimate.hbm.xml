@@ -51,7 +51,7 @@
 			</generator>
 		</id>
 		<many-to-one name="workOrder" column="WORKORDER_ID" not-null="true" insert="false" update="false" fetch="select"/>
-		<many-to-one name="estimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" fetch="join"/>
+		<many-to-one name="estimate" class="org.egov.works.abstractestimate.entity.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" fetch="join"/>
 		<property name="workCompletionDate" column="WORK_COMPLETION_DATE" />
 		<property name="estimateWOAmount" column="ESTIMATE_WO_AMOUNT" not-null="true" />	
 		
