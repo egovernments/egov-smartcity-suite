@@ -43,29 +43,50 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.exception.ValidationError;
 
+@Entity
+@Table(name = "EGW_MULTIYEAR_ESTIMATE")
+@SequenceGenerator(name = MultiYearEstimate.SEQ_EGW_MULTIYEARESTIMATE, sequenceName = MultiYearEstimate.SEQ_EGW_MULTIYEARESTIMATE, allocationSize = 1)
 public class MultiYearEstimate extends AbstractAuditable {
 
-    private static final long serialVersionUID = -7118385910723277266L;
+    private static final long serialVersionUID = 1117104354989747533L;
+
+    public static final String SEQ_EGW_MULTIYEARESTIMATE = "SEQ_EGW_MULTIYEAR_ESTIMATE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_MULTIYEARESTIMATE, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractEstimate")
     private AbstractEstimate abstractEstimate;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "financialYear")
     private CFinancialYear financialYear;
+
+    @NotNull
     @Min(value = 0, message = "multiYeareEstimate.percentage.not.negative")
     private double percentage;
 
     public MultiYearEstimate() {
-    }
-
-    public MultiYearEstimate(final AbstractEstimate abstractEstimate, final CFinancialYear financialYear,
-            final double percentage) {
-        this.abstractEstimate = abstractEstimate;
-        this.financialYear = financialYear;
-        this.percentage = percentage;
     }
 
     @Override

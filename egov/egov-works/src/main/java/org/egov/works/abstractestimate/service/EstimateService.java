@@ -44,7 +44,6 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.persistence.entity.component.Money;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -109,8 +108,8 @@ public class EstimateService {
         abstractEstimate.setParentCategory(lineEstimateDetails.getLineEstimate().getTypeOfWork());
         abstractEstimate.setCategory(lineEstimateDetails.getLineEstimate().getSubTypeOfWork());
         abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
-        abstractEstimate.setWorkValue(new Money(lineEstimateDetails.getActualEstimateAmount().doubleValue()));
-        abstractEstimate.setEstimateValue(new Money(lineEstimateDetails.getActualEstimateAmount().doubleValue()));
+        abstractEstimate.setWorkValue(lineEstimateDetails.getActualEstimateAmount().doubleValue());
+        abstractEstimate.setEstimateValue(lineEstimateDetails.getActualEstimateAmount());
         abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()));
         abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
@@ -151,9 +150,9 @@ public class EstimateService {
         }
         estimateTechnicalSanction.setTechnicalSanctionNumber(stringBuilder.toString());
         estimateTechnicalSanction
-        .setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
+                .setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
         estimateTechnicalSanction
-        .setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionBy());
+                .setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionBy());
 
         // TODO: move to cascade save with AbstractEstimate object once AbstractEstimate entity converted to JPA
         return estimateTechnicalSanctionService.save(estimateTechnicalSanction);

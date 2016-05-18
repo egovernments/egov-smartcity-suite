@@ -39,72 +39,112 @@
  */
 package org.egov.works.models.estimate;
 
-import org.egov.common.entity.UOM;
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infra.persistence.validator.annotation.GreaterThan;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.masters.ScheduleOfRate;
-import org.egov.works.models.revisionEstimate.RevisionType;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Activity extends BaseModel {
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-    private static final long serialVersionUID = 1276738003131328718L;
+import org.egov.common.entity.UOM;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.validator.annotation.GreaterThan;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.models.revisionEstimate.RevisionType;
 
+@Entity
+@Table(name = "EGW_ESTIMATE_ACTIVITY")
+@SequenceGenerator(name = Activity.SEQ_EGW_ESTIMATEACTIVITY, sequenceName = Activity.SEQ_EGW_ESTIMATEACTIVITY, allocationSize = 1)
+public class Activity extends AbstractAuditable {
+
+    private static final long serialVersionUID = 8113772958762752328L;
+
+    public static final String SEQ_EGW_ESTIMATEACTIVITY = "SEQ_EGW_ESTIMATE_ACTIVITY";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_ESTIMATEACTIVITY, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractEstimate")
     private AbstractEstimate abstractEstimate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scheduleofrate")
     private ScheduleOfRate schedule;
 
     @Valid
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "nonSor")
     private NonSor nonSor;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uom")
     private UOM uom;
 
-    @Required(message = "activity.rate.not.null")
-    private Money rate = new Money(0.0);
+    @NotNull(message = "activity.rate.not.null")
+    @Column(name = "unitrate")
+    private double rate = 0.0;
 
-    private Money sorRate = new Money(0.0);
+    private double sorRate = 0.0;
 
-    @Required(message = "activity.quantity.not.null")
+    @NotNull(message = "activity.quantity.not.null")
     @GreaterThan(value = 0, message = "activity.quantity.non.negative")
     private double quantity;
 
     @Min(value = 0, message = "activity.servicetax.non.negative")
     private double serviceTaxPerc;
 
-    private double amt;
-
-    private Integer srlNo;
-
+    @Enumerated(EnumType.STRING)
     private RevisionType revisionType;
 
-    private Money sORCurrentRate = new Money(0.0);
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent")
     private Activity parent;
 
+    @Transient
+    private Money sORCurrentRate = new Money(0.0);
+
+    @Transient
+    private double amt;
+
+    @Transient
+    private Integer srlNo;
+
+    @Transient
     private String signValue;
 
     public Activity() {
-    };
+    }
 
-    public Activity(final AbstractEstimate abstractEstimate, final ScheduleOfRate schedule, final Money rate,
-            final Double quantity,
-            final Double serviceTaxPerc, final NonSor nonSor) {
-        super();
-        this.abstractEstimate = abstractEstimate;
-        this.schedule = schedule;
-        this.nonSor = nonSor;
-        this.rate = rate;
-        this.quantity = quantity;
-        this.serviceTaxPerc = serviceTaxPerc;
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public AbstractEstimate getAbstractEstimate() {
@@ -131,37 +171,37 @@ public class Activity extends BaseModel {
         this.nonSor = nonSor;
     }
 
-    public Money getRate() {
+    public double getRate() {
         return rate;
     }
 
-    public void setRate(final Money rate) {
+    public void setRate(final double rate) {
         this.rate = rate;
     }
 
-    public Double getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final Double quantity) {
+    public void setQuantity(final double quantity) {
         this.quantity = quantity;
     }
 
-    public Double getServiceTaxPerc() {
+    public double getServiceTaxPerc() {
         return serviceTaxPerc;
     }
 
-    public void setServiceTaxPerc(final Double serviceTaxPerc) {
+    public void setServiceTaxPerc(final double serviceTaxPerc) {
         this.serviceTaxPerc = serviceTaxPerc;
     }
 
     public Money getAmount() {
-        final double amt = rate.getValue() * quantity;
+        final double amt = rate * quantity;
         return new Money(amt);
     }
 
     public Money getTaxAmount() {
-        return new Money(rate.getValue() * quantity * serviceTaxPerc / 100.0);
+        return new Money(rate * quantity * serviceTaxPerc / 100.0);
     }
 
     public Money getAmountIncludingTax() {
@@ -204,7 +244,7 @@ public class Activity extends BaseModel {
                 && schedule != null) {
             final double masterRate = getSORRateForDate(asOnDate) == null ? Double.valueOf(0)
                     : getSORRateForDate(asOnDate).getValue();
-            final double unitRate = rate == null ? Double.valueOf(0) : rate.getValue();
+            final double unitRate = rate;
             if (unitRate > 0 && masterRate > 0)
                 return unitRate / masterRate;
             else
@@ -228,7 +268,7 @@ public class Activity extends BaseModel {
             return Double.valueOf(1);
         else {
             final double masterRate = getSORCurrentRate() == null ? Double.valueOf(0) : getSORCurrentRate().getValue();
-            final double unitRate = rate == null ? Double.valueOf(0) : rate.getValue();
+            final double unitRate = rate;
             if (unitRate > 0 && masterRate > 0)
                 return unitRate / masterRate;
             else
@@ -236,10 +276,9 @@ public class Activity extends BaseModel {
         }
     }
 
-    @Override
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (rate.getValue() <= 0.0)
+        if (rate <= 0.0)
             validationErrors.add(new ValidationError("activity.rate.not.null", "activity.rate.not.null"));
         if (nonSor != null && (nonSor.getUom() == null || nonSor.getUom().getId() == null || nonSor.getUom().getId() == 0))
             validationErrors.add(new ValidationError("activity.nonsor.invalid", "activity.nonsor.invalid"));
@@ -294,11 +333,11 @@ public class Activity extends BaseModel {
         this.signValue = signValue;
     }
 
-    public Money getSorRate() {
+    public double getSorRate() {
         return sorRate;
     }
 
-    public void setSorRate(final Money sorRate) {
+    public void setSorRate(final double sorRate) {
         this.sorRate = sorRate;
     }
 

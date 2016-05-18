@@ -39,18 +39,56 @@
  */
 package org.egov.works.models.estimate;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.common.entity.UOM;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.StringUtils;
-import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.SafeHtml;
 
-public class NonSor extends BaseModel {
+@Entity
+@Table(name = "EGW_NONSOR")
+@SequenceGenerator(name = NonSor.SEQ_EGW_NONSOR, sequenceName = NonSor.SEQ_EGW_NONSOR, allocationSize = 1)
+public class NonSor extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3303219241315381108L;
+    private static final long serialVersionUID = -2421682889450100305L;
+
+    public static final String SEQ_EGW_NONSOR = "SEQ_EGW_NONSOR";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_NONSOR, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @SafeHtml
     private String description;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uom")
     private UOM uom;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     @NotEmpty(message = "nonsor.desc.empty")
     @Length(max = 4000, message = "masters.description.length")

@@ -39,16 +39,12 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.HeaderFooter;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
@@ -77,11 +73,16 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.AbstractPDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 
 public class EstimatePDFGenerator extends AbstractPDFGenerator {
     private static final Logger logger = Logger.getLogger(EstimatePDFGenerator.class);
@@ -198,10 +199,12 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
              * document.add(spacer()); document.add(approvaldetailsTable); }
              */
 
+            final String appropriationNumber = abstractEstimateService.getLatestEstimateAppropriationNumber(estimate);
+
             if (isSkipBudgetCheck()) {
-                final PdfPTable depositWorksAppropriationTable = createDepositAppropriationTable(estimate);
+                final PdfPTable depositWorksAppropriationTable = createDepositAppropriationTable(estimate, appropriationNumber);
                 if (depositWorksAppropriationTable.getRows().size() != 1)
-                    if (estimate.getBudgetApprNo() != null) {
+                    if (appropriationNumber != null) {
                         document.newPage();
                         document.add(spacer());
                         document.add(makePara("Deposit Code Appropriation Details"));
@@ -209,10 +212,10 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                         document.add(depositWorksAppropriationTable);
                     }
             } else {
-                final PdfPTable BudgetaryAppropriationTable = createBudgetaryAppropriationTable(estimate);
+                final PdfPTable BudgetaryAppropriationTable = createBudgetaryAppropriationTable(estimate, appropriationNumber);
                 final String estimateNumber = estimate.getEstimateNumber();
                 if (BudgetaryAppropriationTable.getRows().size() != 1)
-                    if (getBudgetDetailUsage(estimateNumber).size() != 0 && estimate.getBudgetApprNo() != null) {
+                    if (getBudgetDetailUsage(estimateNumber).size() != 0 && appropriationNumber != null) {
                         document.newPage();
                         document.add(spacer());
                         document.add(makePara("Budgetary Appropriation"));
@@ -362,7 +365,8 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
      * Amount Appropriated so far= totalUtilizedAmt- estimate amt 8 Balance on hand = Amount Appropriated so far - estimat amt 9
      * Amount of the Estimate = estimate amt 10 Balance after Appropriation of this estimate =balOnHand - ESTIMATE AMT
      */
-    private PdfPTable createDepositAppropriationTable(final AbstractEstimate estimate) throws DocumentException,
+    private PdfPTable createDepositAppropriationTable(final AbstractEstimate estimate, final String appropriationNumber)
+            throws DocumentException,
             ApplicationException, ValidationException {
         int isReject = -1;
         depositWorksUsageService = abstractEstimateService.getDepositWorksUsageService();
@@ -382,12 +386,11 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         depositWorksAppropriationTable.setWidthPercentage(100);
         depositWorksAppropriationTable.setWidths(new float[] { 2f, 8f });
 
-        if (estimate.getBudgetRejectionNo() != null) {
-            final String budgetRejectionNo = estimate.getBudgetRejectionNo();
-            isReject = budgetRejectionNo.indexOf(estimate.getBudgetApprNo());
-        }
+        if (appropriationNumber != null)
+            if (appropriationNumber.toUpperCase().contains("BC"))
+                isReject = 1;
 
-        if (estimate.getBudgetApprNo() != null && estimate.getTotalAmount() != null && isReject == -1) {
+        if (appropriationNumber != null && estimate.getTotalAmount() != null && isReject == -1) {
             addRow(depositWorksAppropriationTable, true, centerPara("Deposit Code"), centerPara(estimate
                     .getDepositCode().getCode()));
             addRow(depositWorksAppropriationTable, true, centerPara("Account Code"), centerPara(estimate
@@ -449,7 +452,8 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
      * Appropriated= oneFifthTimesTotGrant-balOnHand 7 Amount of the Estimate = estimate amt 8 Balance after Appropriation
      * =balOnHand - ESTIMATE AMT
      */
-    private PdfPTable createBudgetaryAppropriationTable(final AbstractEstimate estimate) throws DocumentException,
+    private PdfPTable createBudgetaryAppropriationTable(final AbstractEstimate estimate, final String appropriationNumber)
+            throws DocumentException,
             ApplicationException, ValidationException {
         int isReject = -1;
         final List<FinancialDetail> financialdetails = estimate.getFinancialDetails();
@@ -468,13 +472,11 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
         final PdfPTable BudgetaryAppropriationTable = new PdfPTable(1);
         BudgetaryAppropriationTable.setWidthPercentage(100);
         BudgetaryAppropriationTable.setWidths(new float[] { 8f });
+        if (appropriationNumber != null)
+            if (appropriationNumber.toUpperCase().contains("BC"))
+                isReject = 1;
 
-        if (estimate.getBudgetRejectionNo() != null) {
-            final String budgetRejectionNo = estimate.getBudgetRejectionNo();
-            isReject = budgetRejectionNo.indexOf(estimate.getBudgetApprNo());
-        }
-
-        if (estimate.getBudgetApprNo() != null && estimate.getTotalAmount() != null && isReject == -1)
+        if (appropriationNumber != null && estimate.getTotalAmount() != null && isReject == -1)
             for (final FinancialDetail financialDetail : financialdetails)
                 if (financialDetail.getBudgetGroup() != null) {
                     addRow(BudgetaryAppropriationTable, true, centerPara("Budget Head"), centerPara(financialDetail

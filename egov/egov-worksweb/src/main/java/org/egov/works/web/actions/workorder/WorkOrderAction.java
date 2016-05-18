@@ -39,7 +39,24 @@
  */
 package org.egov.works.web.actions.workorder;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -102,23 +119,7 @@ import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
 
 @ParentPackage("egov")
 @Results(value = {
@@ -979,7 +980,7 @@ public class WorkOrderAction extends BaseFormAction {
             estimateInfo.setWorkName(woe.getEstimate().getName());
             estimateInfo.setWorkDescription(woe.getEstimate().getDescription());
             if (StringUtils.isNotBlank(tenderType) && tenderType.equalsIgnoreCase(WorksConstants.PERC_TENDER)) {
-                final Double estimateAmt = woe.getEstimate().getWorkValue().getValue();
+                final Double estimateAmt = woe.getEstimate().getWorkValue();
                 woEstimateAmount = estimateAmt + estimateAmt * (Double) obj[0] / 100;
             } else
                 for (final WorkOrderActivity woa : woe.getWorkOrderActivities())

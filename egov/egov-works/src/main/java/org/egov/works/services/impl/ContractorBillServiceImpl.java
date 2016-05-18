@@ -40,6 +40,19 @@
 
 package org.egov.works.services.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -81,19 +94,6 @@ import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long> implements
         ContractorBillService {
@@ -552,7 +552,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * public BigDecimal getBudgetedAmtForYear(Long workOrderId,Date asOnDate) throws ValidationException { BigDecimal val =
      * BigDecimal.ZERO; Map<String,Object> searchMap = new HashMap<String, Object>(); WorkOrder wo
      * =workOrderService.findById(workOrderId, false); List<FinancialDetail> fdList=new ArrayList<FinancialDetail>();
-     * List<FinancialDetail> fdList = financialDetailService .findAllByNamedQuery("getFinancialDetailByEstimateId",
+     * List<FinancialDetail> fdList = financialDetailService .findAllByNamedQuery("FINANCIALDETAILS_BY_ESTIMATEID",
      * wo.getAbstractEstimate().getId()); String finyearId = commonsService.getFinancialYearId
      * (DateUtils.getFormattedDate(asOnDate,"dd-MMM-yyyy")); searchMap.put("financialyearid", Long.valueOf(finyearId));
      * if(fdList!=null && !fdList.isEmpty()){ if(fdList.get(0).getFunction()!=null && fdList.get(0).getFunction().getId()!=null)
@@ -1200,7 +1200,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
 
             if (woa.getActivity().getSchedule() == null) {
                 workCompletionDetailInfo.setTenderAmount(woa.getActivity().getQuantity()
-                        * woa.getActivity().getRate().getValue());
+                        * woa.getActivity().getRate());
                 workCompletionDetailInfo.setExecutionAmount(executionRate * Double.parseDouble(object[1].toString()));
             } else {
 

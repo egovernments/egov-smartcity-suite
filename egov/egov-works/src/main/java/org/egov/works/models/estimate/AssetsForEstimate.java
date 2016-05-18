@@ -39,21 +39,63 @@
  */
 package org.egov.works.models.estimate;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.egov.asset.model.Asset;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.exception.ValidationError;
 
-public class AssetsForEstimate extends BaseModel {
+@Entity
+@Table(name = "EGW_ESTIMATE_ASSETS")
+@NamedQueries({
+        @NamedQuery(name = AssetsForEstimate.ASSETS_FOR_PROJECTCODE, query = "from AssetsForEstimate as ae where ae.abstractEstimate.projectCode.id=? order by ae.asset.code") })
+@SequenceGenerator(name = AssetsForEstimate.SEQ_EGW_ESTIMATEASSETS, sequenceName = AssetsForEstimate.SEQ_EGW_ESTIMATEASSETS, allocationSize = 1)
+public class AssetsForEstimate extends AbstractAuditable {
 
-    private static final long serialVersionUID = 2855371127227183997L;
+    private static final long serialVersionUID = 9142163850560908966L;
+
+    public static final String SEQ_EGW_ESTIMATEASSETS = "SEQ_EGW_ESTIMATE_ASSETS";
+    public static final String ASSETS_FOR_PROJECTCODE = "ASSETS_FOR_PROJECTCODE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_ESTIMATEASSETS, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractEstimate")
     private AbstractEstimate abstractEstimate;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset")
     private Asset asset;
 
     public AssetsForEstimate() {
     }
 
-    public AssetsForEstimate(final AbstractEstimate abstractEstimate, final Asset asset) {
-        this.abstractEstimate = abstractEstimate;
-        this.asset = asset;
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public AbstractEstimate getAbstractEstimate() {
@@ -70,5 +112,9 @@ public class AssetsForEstimate extends BaseModel {
 
     public void setAsset(final Asset asset) {
         this.asset = asset;
+    }
+
+    public List<ValidationError> validate() {
+        return new ArrayList<ValidationError>();
     }
 }

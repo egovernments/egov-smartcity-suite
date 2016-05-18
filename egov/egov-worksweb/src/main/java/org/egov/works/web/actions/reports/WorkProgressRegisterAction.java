@@ -308,7 +308,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 workProgress.setNameOfWork(estimate.getName());
                 workProgress.setTypeOfWork(estimate.getParentCategory().getDescription());
                 workProgress.setEstimateDate(DateUtils.getFormattedDate(estimate.getEstimateDate(), dateFormat));
-                workProgress.setEstimateAmt(new BigDecimal(estimate.getWorkValue().getValue()));
+                workProgress.setEstimateAmt(new BigDecimal(estimate.getWorkValue()));
                 final Date techSanctionDate = getTechSanctionDate(estimate);
                 if (techSanctionDate != null)
                     workProgress.setTechSanctionDate(DateUtils.getFormattedDate(techSanctionDate, dateFormat));

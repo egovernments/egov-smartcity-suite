@@ -39,6 +39,14 @@
  */
 package org.egov.works.services.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -64,14 +72,6 @@ import org.egov.works.services.WorkOrderService;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> implements WorkOrderService {
     private static final Logger logger = Logger.getLogger(WorkOrderServiceImpl.class);
@@ -1044,7 +1044,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
             estlineItem.setCode("");
             estlineItem.setSummary("");
             estlineItem.setDescription(act.getActivity().getNonSor().getDescription());
-            estlineItem.setRate(act.getActivity().getRate().getValue());
+            estlineItem.setRate(act.getActivity().getRate());
             estlineItem.setAmt(act.getActivity().getQuantity() * estlineItem.getRate());
         } else {
             estlineItem.setCode(act.getActivity().getSchedule().getCode());

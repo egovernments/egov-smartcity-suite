@@ -40,9 +40,22 @@
 package org.egov.works.models.estimate;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -56,38 +69,64 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.model.budget.BudgetGroup;
 
+@Entity
+@Table(name = "EGW_ESTIMATE_FINANCIALDETAIL")
+@NamedQueries({
+        @NamedQuery(name = FinancialDetail.FINANCIALDETAILS_BY_ESTIMATEID, query = "from FinancialDetail fd where fd.abstractEstimate.id = ?") })
+@SequenceGenerator(name = FinancialDetail.SEQ_EGW_ESTIMATEFINANCIALDETAIL, sequenceName = FinancialDetail.SEQ_EGW_ESTIMATEFINANCIALDETAIL, allocationSize = 1)
 public class FinancialDetail extends AbstractAuditable {
 
-    private static final long serialVersionUID = 9007144591203838584L;
+    private static final long serialVersionUID = 3577937589290853091L;
 
+    public static final String SEQ_EGW_ESTIMATEFINANCIALDETAIL = "SEQ_EGW_ESTIMATE_FINANCIALDETAIL";
+    public static final String FINANCIALDETAILS_BY_ESTIMATEID = "FINANCIALDETAILS_BY_ESTIMATEID";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_ESTIMATEFINANCIALDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractEstimate")
     private AbstractEstimate abstractEstimate;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fund")
     private Fund fund;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "function")
     private CFunction function;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "functionary")
     private Functionary functionary;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scheme")
     private Scheme scheme;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subScheme")
     private SubScheme subScheme;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "budgetGroup")
     private BudgetGroup budgetGroup;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coa")
     private CChartOfAccounts coa;
+
     private transient String apprYear;// values will be previous or running
 
     @Valid
-    private List<FinancingSource> financingSources = new LinkedList<FinancingSource>();
+    @OrderBy("id")
+    @OneToMany(mappedBy = "financialDetail", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = FinancingSource.class)
+    private List<FinancingSource> financingSources = new ArrayList<FinancingSource>(0);
 
     public FinancialDetail() {
-    }
-
-    public FinancialDetail(final AbstractEstimate estimate, final Fund fund, final BudgetGroup budgetGroup) {
-        abstractEstimate = estimate;
-        this.fund = fund;
-        this.budgetGroup = budgetGroup;
-    }
-
-    // for testing
-    public FinancialDetail(final Fund fund, final CFunction function, final Functionary functionary) {
-        this.function = function;
-        this.fund = fund;
-        this.functionary = functionary;
     }
 
     @Override

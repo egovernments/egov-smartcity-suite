@@ -40,16 +40,33 @@
 package org.egov.works.models.estimate;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -66,18 +83,27 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.revisionEstimate.RevisionType;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
+@Entity
+@Table(name = "EGW_ABSTRACTESTIMATE")
+@NamedQueries({
+        @NamedQuery(name = AbstractEstimate.ABSTRACTESTIMATELIST_BY_ID, query = "from AbstractEstimate ab where ab.id in(:param_0)"),
+        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID, query = "from AbstractEstimate ae where ae.parent.id=? and ae.egwStatus.code='APPROVED' order by ae.id"),
+        @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID_WOID, query = "from AbstractEstimate ae where ae.parent.id=? and ae.egwStatus.code='APPROVED' order by ae.id") })
+@SequenceGenerator(name = AbstractEstimate.SEQ_EGW_ABSTRACTESTIMATE, sequenceName = AbstractEstimate.SEQ_EGW_ABSTRACTESTIMATE, allocationSize = 1)
 public class AbstractEstimate extends StateAware implements Auditable {
 
     private static final long serialVersionUID = 5010991868891221454L;
 
     public enum EstimateStatus {
-        CREATED, TECH_SANCTION_CHECKED, TECH_SANCTIONED, BUDGETARY_APPR_CHECKED, BUDGETARY_APPROPRIATION_DONE, ADMIN_CHECKED, ADMIN_SANCTIONED, REJECTED, CANCELLED, COMP_CERTIFICATE, APPROVED
+        CREATED, TECH_SANCTION_CHECKED, TECH_SANCTIONED, BUDGETARY_APPR_CHECKED, BUDGETARY_APPROPRIATION_DONE, ADMIN_CHECKED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED
     }
 
     public enum Actions {
@@ -89,85 +115,145 @@ public class AbstractEstimate extends StateAware implements Auditable {
         }
     }
 
+    public static final String SEQ_EGW_ABSTRACTESTIMATE = "SEQ_EGW_ABSTRACTESTIMATE";
+    public static final String ABSTRACTESTIMATELIST_BY_ID = "ABSTRACTESTIMATELIST_BY_ID";
+    public static final String REVISION_ESTIMATES_BY_ESTID = "REVISION_ESTIMATES_BY_ESTID";
+    public static final String REVISION_ESTIMATES_BY_ESTID_WOID = "REVISION_ESTIMATES_BY_ESTID_WOID";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_ABSTRACTESTIMATE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private Boundary ward;
+    @NotNull
+    @SafeHtml
+    @Length(max = 256)
+    private String estimateNumber;
 
-    private String name;
-
+    @NotNull
+    @Temporal(value = TemporalType.DATE)
     private Date estimateDate;
 
+    @NotNull
+    @SafeHtml
+    @Length(max = 1024)
+    @Column(name = "nameofwork")
+    private String name;
+
+    @NotNull
+    @SafeHtml
+    @Length(max = 1024)
     private String description;
 
-    private String location;
-
-    private NatureOfWork natureOfWork;
-
-    private EgwTypeOfWork category;
-    private EgwTypeOfWork parentCategory;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userdepartment")
     private Department userDepartment;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "executingdepartment")
     private Department executingDepartment;
 
-    private BigDecimal budgetAvailable = new BigDecimal("0.0");
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "jurisdiction", nullable = false)
+    private Boundary ward;
 
-    private Money workValue;
-    private Money estimateValue;
-    private String estimateNumber;
-    private ProjectCode projectCode;
-    private String budgetApprNo;
-
-    private String positionAndUserName;
-
-    private Fundsource fundSource;
-
-    private Integer approverUserId;
-    private DepositCode depositCode;
-    private String budgetRejectionNo;
-    private EgwStatus egwStatus;
-
-    private AbstractEstimate parent;
-    private Date approvedDate;
-    private String isCopiedEst = "N";
+    @SafeHtml
+    @Length(max = 250)
+    private String location;
 
     private BigDecimal latitude;
+
     private BigDecimal longitude;
 
-    private Date budgetApprDate;
+    @NotNull(message = "estimate.worktype.null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "natureofwork", nullable = false)
+    private NatureOfWork natureOfWork;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "typeofwork", nullable = false)
+    private EgwTypeOfWork parentCategory;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subtypeofwork")
+    private EgwTypeOfWork category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fundsource")
+    private Fundsource fundSource;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", nullable = false)
+    private EgwStatus egwStatus;
+
+    private double workValue;
+
+    private BigDecimal estimateValue;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "projectcode")
+    private ProjectCode projectCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "despositcode")
+    private DepositCode depositCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent")
+    private AbstractEstimate parent;
+
+    @Temporal(value = TemporalType.DATE)
+    @Column(name = "approveddate")
+    private Date approvedDate;
+
+    private boolean copiedEstimate = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lineEstimateDetails")
     private LineEstimateDetails lineEstimateDetails;
 
-    @Valid
-    private List<OverheadValue> overheadValues = new LinkedList<OverheadValue>();
+    @Transient
+    private String positionAndUserName;
+
+    @Transient
+    private Integer approverUserId;
 
     @Valid
-    private List<AssetsForEstimate> assetValues = new LinkedList<AssetsForEstimate>();
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = OverheadValue.class)
+    private List<OverheadValue> overheadValues = new ArrayList<OverheadValue>(0);
 
     @Valid
-    private List<Activity> activities = new LinkedList<Activity>();
-    @Valid
-    private List<MultiYearEstimate> multiYearEstimates = new LinkedList<MultiYearEstimate>();
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssetsForEstimate.class)
+    private List<AssetsForEstimate> assetValues = new ArrayList<AssetsForEstimate>(0);
 
+    @Valid
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Activity.class)
+    private List<Activity> activities = new ArrayList<Activity>(0);
+
+    @Valid
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MultiYearEstimate.class)
+    private List<MultiYearEstimate> multiYearEstimates = new ArrayList<MultiYearEstimate>(0);
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AbstractEstimateAppropriation.class)
     private Set<AbstractEstimateAppropriation> abstractEstimateAppropriations = new HashSet<AbstractEstimateAppropriation>();
 
-    private List<FinancialDetail> financialDetails = new LinkedList<FinancialDetail>();
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = FinancialDetail.class)
+    private List<FinancialDetail> financialDetails = new ArrayList<FinancialDetail>(0);
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "estimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
     private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
 
-    /*
-     * @OrderBy("id")
-     * @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true,
-     * targetEntity = EstimateTechnicalSanction.class) private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new
-     * ArrayList<EstimateTechnicalSanction>(0);
-     */
-
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
-    }
-
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
-    }
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateTechnicalSanction.class)
+    private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new ArrayList<EstimateTechnicalSanction>(0);
 
     @Required(message = "estimate.name.null")
     @Length(max = 1024, message = "estimate.name.length")
@@ -233,7 +319,6 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.category = category;
     }
 
-    // @Required(message = "estimate.userDept.null")
     public Department getUserDepartment() {
         return userDepartment;
     }
@@ -260,7 +345,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.ward = ward;
     }
 
-    public Money getWorkValue() {
+    public double getWorkValue() {
         double amt = 0;
         if (!activities.isEmpty()) {
             for (final Activity activity : activities)
@@ -268,7 +353,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
                     amt -= activity.getAmount().getValue();
                 else
                     amt += activity.getAmount().getValue();
-            workValue = new Money(amt);
+            workValue = amt;
         }
         return workValue;
     }
@@ -280,13 +365,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
      * activities ( both SOR and Non SOR combined)
      */
     public Money getWorkValueIncludingTaxes() {
-        double amt = 0;
-        for (final Activity activity : activities)
-            if (activity.getRevisionType() != null && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
-                amt = amt - (activity.getAmount().getValue() + activity.getTaxAmount().getValue());
-            else
-                amt += activity.getAmount().getValue() + activity.getTaxAmount().getValue();
-        return new Money(amt);
+        return new Money(getWorkValue() + getTotalTax().getValue());
     }
 
     public Money getTotalTax() {
@@ -299,7 +378,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return new Money(amt);
     }
 
-    public void setWorkValue(final Money workValue) {
+    public void setWorkValue(final double workValue) {
         this.workValue = workValue;
     }
 
@@ -340,10 +419,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     }
 
     public Money getTotalAmount() {
-        double totalAmt = getWorkValue().getValue();
-        for (final OverheadValue oh : overheadValues)
-            totalAmt += oh.getAmount().getValue();
-        return new Money(Math.round(totalAmt));
+        return new Money(estimateValue.doubleValue());
     }
 
     public List<Activity> getActivities() {
@@ -358,92 +434,8 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.projectCode = projectCode;
     }
 
-    public String getBudgetApprNo() {
-        return budgetApprNo;
-    }
-
-    public void setBudgetApprNo(final String budgetApprNo) {
-        this.budgetApprNo = budgetApprNo;
-    }
-
     public Collection<Activity> getSORActivities() {
         return CollectionUtils.select(activities, activity -> ((Activity) activity).getSchedule() != null);
-    }
-
-    private String totalSOREstimatedAmt;
-    private String totalSORServiceTaxPerc;
-    private String totalSORServiceTaxAmt;
-    private String totalSORAmtInclTax;
-
-    public Collection<Activity> getWorkOrderSORActivities() {
-        final Collection<Activity> sorActivities = CollectionUtils.select(activities,
-                activity -> ((Activity) activity).getSchedule() != null);
-
-        final NumberFormat nf = NumberFormat.getInstance();
-        nf.setGroupingUsed(false);
-        nf.setMaximumFractionDigits(2);
-        nf.setMinimumFractionDigits(2);
-        double totalSOREstimatedAmt = 0;
-        double totalSORServiceTaxPerc = 0;
-        double totalSORServiceTaxAmt = 0;
-        double totalSORAmtInclTax = 0;
-        for (final Activity activity : sorActivities) {
-            activity.getRate().setValue(Double.valueOf(nf.format(Math.round(activity.getRate().getValue()))));
-            activity.getAmount().setValue(Double.valueOf(nf.format(Math.round(activity.getAmount().getValue()))));
-            activity.getTaxAmount().setValue(Double.valueOf(nf.format(Math.round(activity.getTaxAmount().getValue()))));
-            activity.getAmountIncludingTax().setValue(
-                    Double.valueOf(nf.format(Math.round(activity.getAmountIncludingTax().getValue()))));
-
-            totalSOREstimatedAmt += activity.getAmount().getValue();
-            totalSORServiceTaxPerc += activity.getServiceTaxPerc();
-            totalSORServiceTaxAmt += activity.getTaxAmount().getValue();
-            totalSORAmtInclTax += activity.getAmountIncludingTax().getValue();
-        }
-
-        setTotalSOREstimatedAmt(nf.format(totalSOREstimatedAmt));
-        setTotalSORServiceTaxPerc(nf.format(totalSORServiceTaxPerc));
-        setTotalSORServiceTaxAmt(nf.format(totalSORServiceTaxAmt));
-        setTotalSORAmtInclTax(nf.format(totalSORAmtInclTax));
-        return sorActivities;
-    }
-
-    private String totalNonSOREstimatedAmt;
-    private String totalNonSORServiceTaxPerc;
-    private String totalNonSORServiceTaxAmt;
-    private String totalNonSORAmtInclTax;
-
-    public Collection<Activity> getWorkOrderNonSORActivities() {
-        final Collection<Activity> nonsorActivities = CollectionUtils.select(activities,
-                activity -> ((Activity) activity).getNonSor() != null);
-
-        final NumberFormat nf = NumberFormat.getInstance();
-        nf.setGroupingUsed(false);
-        nf.setMaximumFractionDigits(2);
-        nf.setMinimumFractionDigits(2);
-
-        double totalNonSOREstimatedAmt = 0;
-        double totalNonSORServiceTaxPerc = 0;
-        double totalNonSORServiceTaxAmt = 0;
-        double totalNonSORAmtInclTax = 0;
-
-        for (final Activity activity : nonsorActivities) {
-            activity.getRate().setValue(Double.valueOf(nf.format(Math.round(activity.getRate().getValue()))));
-            activity.getAmount().setValue(Double.valueOf(nf.format(Math.round(activity.getAmount().getValue()))));
-            activity.getTaxAmount().setValue(Double.valueOf(nf.format(Math.round(activity.getTaxAmount().getValue()))));
-            activity.getAmountIncludingTax().setValue(
-                    Double.valueOf(nf.format(Math.round(activity.getAmountIncludingTax().getValue()))));
-
-            totalNonSOREstimatedAmt += activity.getAmount().getValue();
-            totalNonSORServiceTaxPerc += activity.getServiceTaxPerc();
-            totalNonSORServiceTaxAmt += activity.getTaxAmount().getValue();
-            totalNonSORAmtInclTax += activity.getAmountIncludingTax().getValue();
-        }
-
-        setTotalNonSOREstimatedAmt(nf.format(totalNonSOREstimatedAmt));
-        setTotalNonSORServiceTaxPerc(nf.format(totalNonSORServiceTaxPerc));
-        setTotalNonSORServiceTaxAmt(nf.format(totalNonSORServiceTaxAmt));
-        setTotalNonSORAmtInclTax(nf.format(totalNonSORAmtInclTax));
-        return nonsorActivities;
     }
 
     public Collection<Activity> getNonSORActivities() {
@@ -567,70 +559,6 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return "Abstract Estimate : " + getEstimateNumber();
     }
 
-    public String getTotalSOREstimatedAmt() {
-        return totalSOREstimatedAmt;
-    }
-
-    public void setTotalSOREstimatedAmt(final String totalSOREstimatedAmt) {
-        this.totalSOREstimatedAmt = totalSOREstimatedAmt;
-    }
-
-    public String getTotalSORServiceTaxPerc() {
-        return totalSORServiceTaxPerc;
-    }
-
-    public void setTotalSORServiceTaxPerc(final String totalSORServiceTaxPerc) {
-        this.totalSORServiceTaxPerc = totalSORServiceTaxPerc;
-    }
-
-    public String getTotalSORServiceTaxAmt() {
-        return totalSORServiceTaxAmt;
-    }
-
-    public void setTotalSORServiceTaxAmt(final String totalSORServiceTaxAmt) {
-        this.totalSORServiceTaxAmt = totalSORServiceTaxAmt;
-    }
-
-    public String getTotalSORAmtInclTax() {
-        return totalSORAmtInclTax;
-    }
-
-    public void setTotalSORAmtInclTax(final String totalSORAmtInclTax) {
-        this.totalSORAmtInclTax = totalSORAmtInclTax;
-    }
-
-    public String getTotalNonSOREstimatedAmt() {
-        return totalNonSOREstimatedAmt;
-    }
-
-    public void setTotalNonSOREstimatedAmt(final String totalNonSOREstimatedAmt) {
-        this.totalNonSOREstimatedAmt = totalNonSOREstimatedAmt;
-    }
-
-    public String getTotalNonSORServiceTaxPerc() {
-        return totalNonSORServiceTaxPerc;
-    }
-
-    public void setTotalNonSORServiceTaxPerc(final String totalNonSORServiceTaxPerc) {
-        this.totalNonSORServiceTaxPerc = totalNonSORServiceTaxPerc;
-    }
-
-    public String getTotalNonSORServiceTaxAmt() {
-        return totalNonSORServiceTaxAmt;
-    }
-
-    public void setTotalNonSORServiceTaxAmt(final String totalNonSORServiceTaxAmt) {
-        this.totalNonSORServiceTaxAmt = totalNonSORServiceTaxAmt;
-    }
-
-    public String getTotalNonSORAmtInclTax() {
-        return totalNonSORAmtInclTax;
-    }
-
-    public void setTotalNonSORAmtInclTax(final String totalNonSORAmtInclTax) {
-        this.totalNonSORAmtInclTax = totalNonSORAmtInclTax;
-    }
-
     // @Required(message = "estimate.fund.null")
     public Fundsource getFundSource() {
         return fundSource;
@@ -654,22 +582,6 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setPositionAndUserName(final String positionAndUserName) {
         this.positionAndUserName = positionAndUserName;
-    }
-
-    public BigDecimal getBudgetAvailable() {
-        return budgetAvailable;
-    }
-
-    public void setBudgetAvailable(final BigDecimal budgetAvailable) {
-        this.budgetAvailable = budgetAvailable;
-    }
-
-    public String getBudgetRejectionNo() {
-        return budgetRejectionNo;
-    }
-
-    public void setBudgetRejectionNo(final String budgetRejectionNo) {
-        this.budgetRejectionNo = budgetRejectionNo;
     }
 
     public DepositCode getDepositCode() {
@@ -715,14 +627,6 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.approvedDate = approvedDate;
     }
 
-    public String getIsCopiedEst() {
-        return isCopiedEst;
-    }
-
-    public void setIsCopiedEst(final String isCopiedEst) {
-        this.isCopiedEst = isCopiedEst;
-    }
-
     public List<EstimatePhotographs> getEstimatePhotographsList() {
         return estimatePhotographsList;
     }
@@ -752,19 +656,11 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return "AbstractEstimate ( Id : " + getId() + "Estimate No: " + estimateNumber + ")";
     }
 
-    public Date getBudgetApprDate() {
-        return budgetApprDate;
-    }
-
-    public void setBudgetApprDate(final Date budgetApprDate) {
-        this.budgetApprDate = budgetApprDate;
-    }
-
-    public Money getEstimateValue() {
+    public BigDecimal getEstimateValue() {
         return estimateValue;
     }
 
-    public void setEstimateValue(final Money estimateValue) {
+    public void setEstimateValue(final BigDecimal estimateValue) {
         this.estimateValue = estimateValue;
     }
 
@@ -786,10 +682,28 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.lineEstimateDetails = lineEstimateDetails;
     }
 
-    /*
-     * public List<EstimateTechnicalSanction> getEstimateTechnicalSanctions() { return estimateTechnicalSanctions; } public void
-     * setEstimateTechnicalSanctions(List<EstimateTechnicalSanction> estimateTechnicalSanctions) { this.estimateTechnicalSanctions
-     * = estimateTechnicalSanctions; } public void addEstimateTechnicalSanction(final EstimateTechnicalSanction
-     * estimateTechnicalSanction) { estimateTechnicalSanctions.add(estimateTechnicalSanction); }
-     */
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
+
+    public void setEgwStatus(final EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
+
+    public boolean isCopiedEstimate() {
+        return copiedEstimate;
+    }
+
+    public void setCopiedEstimate(final boolean copiedEstimate) {
+        this.copiedEstimate = copiedEstimate;
+    }
+
+    public List<EstimateTechnicalSanction> getEstimateTechnicalSanctions() {
+        return estimateTechnicalSanctions;
+    }
+
+    public void setEstimateTechnicalSanctions(final List<EstimateTechnicalSanction> estimateTechnicalSanctions) {
+        this.estimateTechnicalSanctions = estimateTechnicalSanctions;
+    }
+
 }

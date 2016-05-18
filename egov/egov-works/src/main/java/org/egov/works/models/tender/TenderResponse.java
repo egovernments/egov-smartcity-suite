@@ -39,17 +39,6 @@
  */
 package org.egov.works.models.tender;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.pims.model.PersonalInformation;
-import org.egov.works.models.estimate.Activity;
-import org.egov.works.models.workflow.WorkFlow;
-
-import javax.validation.Valid;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +49,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.validation.Valid;
+
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.pims.model.PersonalInformation;
+import org.egov.works.models.estimate.Activity;
+import org.egov.works.models.workflow.WorkFlow;
 
 public class TenderResponse extends WorkFlow {
 
@@ -325,7 +326,7 @@ public class TenderResponse extends WorkFlow {
                     if (DateUtils.compareDates(tra.getActivity().getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
                         preEstlineItem.setRate(tra.getActivity().getSORCurrentRate().getValue());
-                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * tra.getActivity().getRate().getValue());
+                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * tra.getActivity().getRate());
                         preEstlineItem.setActivity(tra.getActivity());
                         if (tra.getActivity().getSchedule()
                                 .hasValidMarketRateFor(tra.getActivity().getAbstractEstimate().getEstimateDate()))
@@ -366,7 +367,7 @@ public class TenderResponse extends WorkFlow {
             estlineItem.setCode("");
             estlineItem.setSummary("");
             estlineItem.setDescription(act.getNonSor().getDescription());
-            estlineItem.setRate(act.getRate().getValue());
+            estlineItem.setRate(act.getRate());
             estlineItem.setMarketRate(act.getAmount().getValue());
         } else {
             estlineItem.setCode(act.getSchedule().getCode());
@@ -379,7 +380,7 @@ public class TenderResponse extends WorkFlow {
             estlineItem.setSummary(act.getSchedule().getSummary());
         }
         estlineItem.setActivity(act);
-        estlineItem.setAmt(act.getQuantity() * act.getRate().getValue());
+        estlineItem.setAmt(act.getQuantity() * act.getRate());
         estlineItem.setEstimateDate(act.getAbstractEstimate().getEstimateDate());
         estlineItem.setQuantity(act.getQuantity());
         estlineItem.setUom(act.getUom().getUom());

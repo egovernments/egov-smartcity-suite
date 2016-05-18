@@ -39,21 +39,66 @@
  */
 package org.egov.works.models.estimate;
 
-import org.egov.infra.persistence.entity.component.Money;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
 import org.joda.time.LocalDate;
 
-import java.util.Date;
+@Entity
+@Table(name = "EGW_ESTIMATE_OVERHEADS")
+@SequenceGenerator(name = OverheadValue.SEQ_EGW_ESTIMATEOVERHEADS, sequenceName = OverheadValue.SEQ_EGW_ESTIMATEOVERHEADS, allocationSize = 1)
+public class OverheadValue extends AbstractAuditable {
 
-public class OverheadValue extends BaseModel {
+    private static final long serialVersionUID = 5585187999492385271L;
 
-    private static final long serialVersionUID = -2562352896664615339L;
+    public static final String SEQ_EGW_ESTIMATEOVERHEADS = "SEQ_EGW_ESTIMATE_OVERHEADS";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_ESTIMATEOVERHEADS, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "overhead")
     private Overhead overhead;
-    private Money amount;
+
+    @NotNull
+    private double amount;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractEstimate")
     private AbstractEstimate abstractEstimate;
+
+    public OverheadValue() {
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public AbstractEstimate getAbstractEstimate() {
         return abstractEstimate;
@@ -61,15 +106,6 @@ public class OverheadValue extends BaseModel {
 
     public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
         this.abstractEstimate = abstractEstimate;
-    }
-
-    public OverheadValue() {
-    }
-
-    public OverheadValue(final Money amount, final Overhead overhead) {
-        super();
-        this.amount = amount;
-        this.overhead = overhead;
     }
 
     public Overhead getOverhead() {
@@ -80,11 +116,11 @@ public class OverheadValue extends BaseModel {
         this.overhead = overhead;
     }
 
-    public Money getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(final Money amount) {
+    public void setAmount(final double amount) {
         this.amount = amount;
     }
 
@@ -105,6 +141,10 @@ public class OverheadValue extends BaseModel {
             return start.compareTo(date) <= 0;
         else
             return start.compareTo(date) <= 0 && end.compareTo(date) >= 0;
+    }
+
+    public List<ValidationError> validate() {
+        return new ArrayList<ValidationError>();
     }
 
 }

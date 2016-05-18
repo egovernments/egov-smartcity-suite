@@ -39,6 +39,19 @@
  */
 package org.egov.works.models.tender;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
@@ -54,18 +67,6 @@ import org.egov.works.models.estimate.Activity;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class WorksPackage extends StateAware implements Auditable {
 
@@ -245,7 +246,7 @@ public class WorksPackage extends StateAware implements Auditable {
                     if (DateUtils.compareDates(act.getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
                         preEstlineItem.setRate(act.getSORCurrentRate().getValue());
-                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate().getValue());
+                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate());
                         preEstlineItem.setActivity(act);
                         if (act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate()))
                             preEstlineItem.setMarketRate(preEstlineItem.getQuantity()
@@ -281,7 +282,7 @@ public class WorksPackage extends StateAware implements Auditable {
             estlineItem.setCode("");
             estlineItem.setSummary("");
             estlineItem.setDescription(act.getNonSor().getDescription());
-            estlineItem.setRate(act.getRate().getValue());
+            estlineItem.setRate(act.getRate());
             estlineItem.setMarketRate(act.getAmount().getValue());
         } else {
             estlineItem.setCode(act.getSchedule().getCode());
@@ -295,7 +296,7 @@ public class WorksPackage extends StateAware implements Auditable {
         }
 
         estlineItem.setActivity(act);
-        estlineItem.setAmt(act.getQuantity() * act.getRate().getValue());
+        estlineItem.setAmt(act.getQuantity() * act.getRate());
         estlineItem.setEstimateDate(act.getAbstractEstimate().getEstimateDate());
         estlineItem.setQuantity(act.getQuantity());
         estlineItem.setUom(act.getUom().getUom());

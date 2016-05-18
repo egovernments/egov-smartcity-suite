@@ -590,13 +590,13 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         populateOverheads();
         populateAssets();
         populateMultiYearEstimates();
-
+        abstractEstimate.setWorkValue(abstractEstimate.getWorkValue());
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         populateOverheadsList(ajaxEstimateAction, abstractEstimate.getEstimateDate() != null);
 
         if (!(SAVE_ACTION.equals(actionName) || CANCEL_ACTION.equals(actionName) || REJECT_ACTION.equals(actionName))
-                && abstractEstimate.getWorkValue().getValue() <= 0.0) {
+                && abstractEstimate.getWorkValue() <= 0.0) {
             errorCode = "estimate.workvalue.null";
             throw new ValidationException(Arrays.asList(new ValidationError("estimate.workvalue.null",
                     "estimate.workvalue.null")));
@@ -629,8 +629,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                 // on update of estimate for child objects
                 activity.getNonSor().setCreatedBy(worksService.getCurrentLoggedInUser());
                 activity.getNonSor().setCreatedDate(new Date());
-                activity.getNonSor().setModifiedBy(worksService.getCurrentLoggedInUser());
-                activity.getNonSor().setModifiedDate(new Date());
+                activity.getNonSor().setLastModifiedBy(worksService.getCurrentLoggedInUser());
+                activity.getNonSor().setLastModifiedDate(new Date());
                 abstractEstimate.addActivity(activity);
             }
     }
@@ -641,8 +641,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             // update of estimate for child objects
             activity.setCreatedBy(worksService.getCurrentLoggedInUser());
             activity.setCreatedDate(new Date());
-            activity.setModifiedBy(worksService.getCurrentLoggedInUser());
-            activity.setModifiedDate(new Date());
+            activity.setLastModifiedBy(worksService.getCurrentLoggedInUser());
+            activity.setLastModifiedDate(new Date());
             activity.setAbstractEstimate(abstractEstimate);
         }
     }
@@ -657,8 +657,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                 // on update of estimate for child objects
                 overheadValue.setCreatedBy(worksService.getCurrentLoggedInUser());
                 overheadValue.setCreatedDate(new Date());
-                overheadValue.setModifiedBy(worksService.getCurrentLoggedInUser());
-                overheadValue.setModifiedDate(new Date());
+                overheadValue.setLastModifiedBy(worksService.getCurrentLoggedInUser());
+                overheadValue.setLastModifiedDate(new Date());
                 abstractEstimate.addOverheadValue(overheadValue);
             }
     }
@@ -700,8 +700,8 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                     // triggered on update of estimate for child objects
                     assetValue.setCreatedBy(worksService.getCurrentLoggedInUser());
                     assetValue.setCreatedDate(new Date());
-                    assetValue.setModifiedBy(worksService.getCurrentLoggedInUser());
-                    assetValue.setModifiedDate(new Date());
+                    assetValue.setLastModifiedBy(worksService.getCurrentLoggedInUser());
+                    assetValue.setLastModifiedDate(new Date());
                     abstractEstimate.addAssetValue(assetValue);
                 }
             }
@@ -790,9 +790,6 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
             cancellationReason.concat(". ").concat(getText("estimate.cancel.cancelledby")).concat(": ")
                     .concat(empName);
 
-        // Generate Budget Rejection no here
-        abstractEstimate.setBudgetRejectionNo("BC/" + abstractEstimate.getBudgetApprNo());
-
         // suffix /C for estimate number
         final String newEstNo = abstractEstimate.getEstimateNumber() + "/C";
         abstractEstimate.setEstimateNumber(newEstNo);
@@ -801,13 +798,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         if (isSkipBudgetCheck())
             abstractEstimateService
                     .releaseDepositWorksAmountOnReject(abstractEstimate.getFinancialDetails().get(0));
-        else {
+        else
             // If it is Budget work then release latest budget consumed
             abstractEstimateService.releaseBudgetOnReject(abstractEstimate.getFinancialDetails().get(0));
-            abstractEstimate.setBudgetAvailable(abstractEstimateService
-                    .getBudgetAvailable(abstractEstimate, abstractEstimateService
-                            .getLatestApprYearEndDate(abstractEstimate.getFinancialDetails().get(0))));
-        }
         // Make corresponding project code as inactive
         abstractEstimate.getProjectCode().setActive(false);
 
