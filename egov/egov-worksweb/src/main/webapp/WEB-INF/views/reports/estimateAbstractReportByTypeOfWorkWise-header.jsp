@@ -58,10 +58,10 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="department" data-first-option="false" id="department" class="form-control">
-					<form:option value=""><spring:message code="lbl.select" /></form:option>
-					<form:options items="${departments}" itemValue="id" itemLabel="name" />
-				</form:select>
+			<input type="hidden" id="departmentSelected" />
+				<form:select path="departments" multiple="true" id="departmentsSelect" cssClass="form-control" cssErrorClass="form-control error">
+               	   <form:options items="${departments}" itemValue="id" itemLabel="name"/>
+             	</form:select>
 				<form:errors path="department" cssClass="add-margin error-msg" />
 			</div>
 		</div>
@@ -86,12 +86,12 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.lineestimateadminsanctionfromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'"  disabled="true"/>
 				<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctiontodate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimateadminsanctiontodate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionToDate" class="form-control datepicker"	id="adminSanctionToDate" disabled="true" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
@@ -167,7 +167,7 @@
 				</form:select>
 				<form:errors path="natureOfWork" cssClass="add-margin error-msg" /> 
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.spilloverworks" /></label>
 			<div class="col-sm-3 add-margin">
 			<form:checkbox path="spillOverFlag" id="spillOverFlag" />
 			<form:hidden path="currentFinancialYearId" id = "currentFinancialYearId" />

@@ -66,12 +66,12 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.lineestimateadminsanctionfromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'"  disabled="true"/>
 				<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctiontodate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimateadminsanctiontodate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="adminSanctionToDate" class="form-control datepicker"	id="adminSanctionToDate" disabled="true" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
@@ -147,7 +147,7 @@
 				</form:select>
 				<form:errors path="natureOfWork" cssClass="add-margin error-msg" /> 
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.spilloverworks" /></label>
 			<div class="col-sm-3 add-margin">
 			<form:checkbox path="spillOverFlag" id="spillOverFlag" />
 			<form:hidden path="currentFinancialYearId" id = "currentFinancialYearId" />

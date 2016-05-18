@@ -39,8 +39,11 @@
  */
 package org.egov.works.reports.entity;
 
-import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.egov.infra.admin.master.entity.Department;
 
 public class EstimateAbstractReport {
     private Long financialYear;
@@ -71,6 +74,8 @@ public class EstimateAbstractReport {
     private String BillValueInCrores;
     private Date createdDate;
     private String typeOfWorkName;
+    private String subTypeOfWorkName;
+    private Set<Department> departments = new HashSet<>();
     
     public Long getFinancialYear() {
         return financialYear;
@@ -287,7 +292,22 @@ public class EstimateAbstractReport {
     public void setTypeOfWorkName(String typeOfWorkName) {
         this.typeOfWorkName = typeOfWorkName;
     }
-    
-    
+
+    public Set<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(Set<Department> departments) {
+        this.departments = departments;
+    }
+
+    public String getSubTypeOfWorkName() {
+        return subTypeOfWorkName;
+    }
+
+    public void setSubTypeOfWorkName(String subTypeOfWorkName) {
+        this.subTypeOfWorkName = subTypeOfWorkName;
+    }
+
 
 }

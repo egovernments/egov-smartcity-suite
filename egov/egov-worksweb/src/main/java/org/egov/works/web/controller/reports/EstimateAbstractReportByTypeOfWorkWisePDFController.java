@@ -48,11 +48,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -123,7 +125,7 @@ public class EstimateAbstractReportByTypeOfWorkWisePDFController {
             @RequestParam("adminSanctionToDate") final Date adminSanctionToDate,
             @RequestParam("typeOfWork") final Long typeOfWork,
             @RequestParam("subTypeOfWork") final Long subTypeOfWork,
-            @RequestParam("department") final Long department,
+            @RequestParam("departments") final Set<Department> departments,
             @RequestParam("scheme") final Integer scheme,
             @RequestParam("subScheme") final Integer subScheme,
             @RequestParam("workCategory") final String workCategory,
@@ -139,7 +141,7 @@ public class EstimateAbstractReportByTypeOfWorkWisePDFController {
         searchRequest.setAdminSanctionToDate(adminSanctionToDate);
         searchRequest.setTypeOfWork(typeOfWork);
         searchRequest.setSubTypeOfWork(subTypeOfWork);
-        searchRequest.setDepartment(department);
+        searchRequest.setDepartments(departments);
         searchRequest.setScheme(scheme);
         searchRequest.setSubScheme(subScheme);
         searchRequest.setWorkCategory(workCategory);
@@ -155,8 +157,7 @@ public class EstimateAbstractReportByTypeOfWorkWisePDFController {
         if (spillOverFlag)
             queryParameters = "Estimate Abstract Report By Type Of Work Wise for Spill Over Line Estimates ";
         if (adminSanctionFromDate != null
-                || adminSanctionToDate != null
-                || department != null)
+                || adminSanctionToDate != null)
             queryParameters += "for ";
 
         if (adminSanctionFromDate != null && adminSanctionToDate != null)
@@ -173,8 +174,14 @@ public class EstimateAbstractReportByTypeOfWorkWisePDFController {
         if (subTypeOfWork != null)
             queryParameters += "Sub Type Of Work : " + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getCode() + ", ";
 
-        if (department != null)
-            queryParameters += "Department : " + departmentService.getDepartmentById(department).getName() + ", ";
+        if (departments != null && !departments.toString().equalsIgnoreCase("[null]")) {
+            String departmentNames = "";
+            for (Department dept : departments) {
+                departmentNames = departmentNames + dept.getName() + ",";
+            }
+            departmentNames = departmentNames.substring(0, departmentNames.length() - 1);
+            queryParameters += "Departments : " + departmentNames + ", ";
+        }
 
         if (scheme != null)
             queryParameters += "Scheme : " + schemeService.findById(scheme, false).getName() + ", ";
@@ -203,12 +210,12 @@ public class EstimateAbstractReportByTypeOfWorkWisePDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReport(estimateAbstractReports, request, session, contentType, department);
+        return generateReport(estimateAbstractReports, request, session, contentType, departments);
     }
 
     private ResponseEntity<byte[]> generateReport(final List<EstimateAbstractReport> estimateAbstractReports,
             final HttpServletRequest request,
-            final HttpSession session, final String contentType, final Long department) {
+            final HttpSession session, final String contentType, final Set<Department> departments) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
@@ -225,6 +232,11 @@ public class EstimateAbstractReportByTypeOfWorkWisePDFController {
 
                 if (eadwr.getTypeOfWorkName() != null)
                     pdf.setTypeOfWorkName(eadwr.getTypeOfWorkName());
+                else
+                    pdf.setTypeOfWorkName("");
+
+                if (eadwr.getSubTypeOfWorkName() != null)
+                    pdf.setSubTypeOfWorkName(eadwr.getSubTypeOfWorkName());
                 else
                     pdf.setTypeOfWorkName("");
 
@@ -289,7 +301,7 @@ public class EstimateAbstractReportByTypeOfWorkWisePDFController {
         reportParams.put("heading", WorksConstants.HEADING_ESTIMATE_ABSTRACT_REPORT_BY_TYPE_OF_WORK_WISE);
         reportParams.put("reportRunDate", formatter.format(new Date()));
         reportParams.put("dataRunDate", dataRunDate);
-        if (department != null)
+        if (departments != null && !departments.toString().equalsIgnoreCase("[null]"))
             reportInput = new ReportRequest(ESTIMATEABSTRACTREPORTBYTYPEOFWORKWISEWITHDEPTPDF, estimateAbstractReportPdfList,
                     reportParams);
         else

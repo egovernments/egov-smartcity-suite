@@ -47,6 +47,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.utils.Constants;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
@@ -159,9 +160,10 @@ public class WorkProgressRegisterService {
             final EstimateAbstractReport estimateAbstractReport) {
 
         Query query = null;
-        if (estimateAbstractReport.getDepartment() != null)
+        if (estimateAbstractReport.getDepartments() != null && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]"))
             query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
+                    .addScalar("subTypeOfWorkName", StringType.INSTANCE)
                     .addScalar("departmentName", StringType.INSTANCE)
                     .addScalar("lineEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
@@ -177,6 +179,7 @@ public class WorkProgressRegisterService {
         else
             query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
+                    .addScalar("subTypeOfWorkName", StringType.INSTANCE)
                     .addScalar("lineEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
@@ -396,7 +399,7 @@ public class WorkProgressRegisterService {
         StringBuilder groupByQuery = new StringBuilder();
         StringBuilder mainSelectQuery = new StringBuilder();
         StringBuilder mainGroupByQuery = new StringBuilder();
-        
+
         if (estimateAbstractReport != null) {
             if (estimateAbstractReport.isSpillOverFlag()) {
 
@@ -412,7 +415,7 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
 
             }
-            
+
             if (estimateAbstractReport.getTypeOfWork() != null) {
                 filterConditions.append(" AND details.typeofwork = " + estimateAbstractReport.getTypeOfWork());
             }
@@ -420,27 +423,36 @@ public class WorkProgressRegisterService {
             if (estimateAbstractReport.getSubTypeOfWork() != null) {
                 filterConditions.append(" AND details.subtypeofwork = " + estimateAbstractReport.getSubTypeOfWork());
             }
-            
-            if (estimateAbstractReport.getDepartment() != null) {
-                
-                filterConditions.append(" AND details.department = " + estimateAbstractReport.getDepartment());
-                
+
+            if (estimateAbstractReport.getDepartments() != null
+                    && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
+                String departmentIds = "";
+                for (Department dept : estimateAbstractReport.getDepartments()) {
+                    departmentIds = departmentIds + dept.getId() + ",";
+                }
+                departmentIds = departmentIds.substring(0, departmentIds.length() - 1);
+                filterConditions.append(" AND details.department in ( " + departmentIds +") ");
+
                 selectQuery.append(" SELECT details.typeOfWorkName       AS typeOfWorkName,  ");
+                selectQuery.append(" details.subTypeOfWorkName         AS subTypeOfWorkName,  ");
                 selectQuery.append(" details.departmentName         AS departmentName,  ");
-                
+
                 mainSelectQuery.append(" SELECT typeOfWorkName       AS typeOfWorkName,  ");
+                mainSelectQuery.append(" subTypeOfWorkName         AS subTypeOfWorkName,  ");
                 mainSelectQuery.append(" departmentName         AS departmentName,  ");
-                
-                groupByQuery.append(" GROUP BY details.typeOfWorkName,details.departmentName ");
-                mainGroupByQuery.append(" GROUP BY typeofworkname,departmentname ");
-            }else{
+
+                groupByQuery.append(" GROUP BY details.typeOfWorkName,details.subTypeOfWorkName,details.departmentName ");
+                mainGroupByQuery.append(" GROUP BY typeofworkname,subtypeofworkname,departmentname ");
+            } else {
                 selectQuery.append(" SELECT details.typeOfWorkName       AS typeOfWorkName,  ");
-                
+                selectQuery.append(" details.subTypeOfWorkName         AS subTypeOfWorkName,  ");
+
                 mainSelectQuery.append(" SELECT typeOfWorkName       AS typeOfWorkName,  ");
-                
-                groupByQuery.append(" GROUP BY details.typeOfWorkName ");
-                
-                mainGroupByQuery.append(" GROUP BY typeofworkname ");
+                mainSelectQuery.append(" subTypeOfWorkName         AS subTypeOfWorkName,  ");
+
+                groupByQuery.append(" GROUP BY details.typeOfWorkName,details.subTypeOfWorkName ");
+
+                mainGroupByQuery.append(" GROUP BY typeofworkname,subtypeofworkname ");
             }
 
             if (estimateAbstractReport.getAdminSanctionFromDate() != null) {

@@ -241,7 +241,7 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-					"data" : "", "sClass" : "text-center"} ,{ 
+					/*"data" : "", "sClass" : "text-center"} ,{ */
 					"data" : "departmentName", "sClass" : "text-left"} ,{
 					"data" : "lineEstimates", "sClass" : "text-left"} ,{
 					"data" : "adminSanctionedEstimates", "sClass" : "text-left"} ,{ 

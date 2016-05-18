@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.lineestimate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -146,7 +147,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     @RequestMapping(value = "/update/{lineEstimateId}", method = RequestMethod.GET)
     public String updateLineEstimate(final Model model, @PathVariable final String lineEstimateId,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString()))
             setDropDownValues(model);
@@ -157,7 +158,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     @RequestMapping(value = "/view/{lineEstimateId}", method = RequestMethod.GET)
     public String viewLineEstimate(final Model model, @PathVariable final String lineEstimateId,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final LineEstimate lineEstimate = getLineEstimate(lineEstimateId);
 
         final String responsePage = loadViewData(model, request, lineEstimate);
@@ -173,11 +174,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     public String update(@Valid @ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam final String removedLineEstimateDetailsIds, @RequestParam("file") final MultipartFile[] files)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
 
         String mode = "";
         String workFlowAction = "";
         LineEstimate newLineEstimate = null;
+
+        validateBudgetHead(lineEstimate, errors);
 
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
@@ -268,20 +271,41 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         }
     }
 
+    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+        if (lineEstimate.getBudgetHead() != null) {
+            Boolean check = false;
+            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
+            for (CChartOfAccountDetail detail : accountDetails) {
+                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                    check = true;
+            }
+            if (!check) {
+                errors.reject("error.budgethead.validate", "error.budgethead.validate");
+            }
+
+        }
+
+    }
+
     private void validateBudgetAmount(final LineEstimate lineEstimate, final BindingResult errors) {
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
 
         try {
-            final BigDecimal budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
-                    lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
-                    Integer.parseInt(lineEstimate
-                            .getExecutingDepartment().getId().toString()),
-                    lineEstimate.getFunction().getId(), null,
-                    lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId().toString()),
-                    lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId().toString()),
-                    null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
-                            .getId().toString()));
+            final BigDecimal budgetAvailable = budgetDetailsDAO
+                    .getPlanningBudgetAvailable(
+                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                            Integer.parseInt(lineEstimate
+                                    .getExecutingDepartment().getId().toString()),
+                            lineEstimate.getFunction().getId(),
+                            null,
+                            lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId()
+                                    .toString()),
+                            lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId()
+                                    .toString()),
+                            null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
+                                    .getId().toString()));
 
             BigDecimal totalEstimateAmount = BigDecimal.ZERO;
 

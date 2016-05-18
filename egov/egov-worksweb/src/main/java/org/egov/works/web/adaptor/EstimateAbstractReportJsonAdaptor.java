@@ -76,6 +76,12 @@ public class EstimateAbstractReportJsonAdaptor implements JsonSerializer<Estimat
             else
                 jsonObject.addProperty("typeOfWorkName", "");
 
+            if (estimateAbstractReport.getSubTypeOfWorkName() != null)
+                jsonObject.addProperty("subTypeOfWorkName", estimateAbstractReport.getSubTypeOfWorkName());
+            else
+                jsonObject.addProperty("subTypeOfWorkName", "");
+
+            
             if (estimateAbstractReport.getLineEstimates() != null)
                 jsonObject.addProperty("lineEstimates", estimateAbstractReport.getLineEstimates());
             else

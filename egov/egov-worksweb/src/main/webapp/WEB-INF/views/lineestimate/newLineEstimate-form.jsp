@@ -49,9 +49,7 @@
 					<spring:message code="lineestimate.create.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
 				</div>
 			</c:if>
-			 <c:if test="${not empty errorMessage}">
-                    <div class="error-msg">${errorMessage}</div>
-             </c:if>
+		
 		<form:form name="lineEstimateForm" role="form" action="create" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<div class="row">

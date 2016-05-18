@@ -96,8 +96,8 @@ public class AjaxReportController {
     }
 
     @RequestMapping(value = "/ajax-estimateabstractreportbydepartmentwise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showSearchEstimateAbstractReportByDepartment(final Model model,
-            @ModelAttribute final EstimateAbstractReport estimateAbstractReport) {
+    public @ResponseBody String showSearchEstimateAbstractReportByDepartment(
+            @ModelAttribute final EstimateAbstractReport estimateAbstractReport, final Model model) {
         final List<EstimateAbstractReport> estimateAbstractReportByDepartmentWise = workProgressRegisterService
                 .searchEstimateAbstractReportByDepartmentWise(estimateAbstractReport);
         final String result = new StringBuilder("{ \"data\":")
