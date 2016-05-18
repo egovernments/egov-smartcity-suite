@@ -223,7 +223,7 @@ public class EditDemandAction extends BaseFormAction {
         DateFormat dateFormat = new SimpleDateFormat(PropertyTaxConstants.DATE_FORMAT_DDMMYYY);
         try {
             allInstallments = propertyTaxUtil
-                    .getInstallmentListByStartDateToCurrFinYear(dateFormat.parse("01/04/1963"));
+                    .getInstallmentListByStartDateToCurrFinYearDesc(dateFormat.parse("01/04/1963"));
         } catch (ParseException e) {
             throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
         }
@@ -321,7 +321,7 @@ public class EditDemandAction extends BaseFormAction {
         List<Installment> installmentsInOrder = null;
         if (!newInstallments.isEmpty()) {
             installmentsInOrder = propertyTaxUtil
-                    .getInstallmentListByStartDateToCurrFinYear((new ArrayList<Installment>(newInstallments).get(0))
+                    .getInstallmentListByStartDateToCurrFinYearDesc((new ArrayList<Installment>(newInstallments).get(0))
                             .getFromDate());
 
             if (newInstallments.size() != installmentsInOrder.size()) {

@@ -399,6 +399,7 @@ public interface PropertyTaxConstants {
     public static final String QUERY_PROPERTIES_FOR_PENALTY_CALCULATION = "propertiesForPenaltyCalculation";
     public static final String QUERY_DEMAND_BILL_STATUS = "demandBillstatus";
     public static final String QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR = "INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR";
+    public static final String QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC = "INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC";
 
     // Base Rents
     public static final BigDecimal BASERENT_FROM_APRIL2008_BUILDINGS = new BigDecimal("10");

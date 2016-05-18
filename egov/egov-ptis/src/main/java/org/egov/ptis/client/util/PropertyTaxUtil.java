@@ -84,6 +84,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDET
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEPARTMENTS_BY_DEPTCODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSION_VAR_LOGIN_USER_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_MIGRATED;
@@ -208,7 +209,6 @@ import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
@@ -310,6 +310,11 @@ public class PropertyTaxUtil {
                 PTMODULENAME, startDate);
     }
 
+    public List<Installment> getInstallmentListByStartDateToCurrFinYearDesc(final Date startDate) {
+        return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC, PTMODULENAME,
+                PTMODULENAME, startDate);
+    }
+    
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReasonCode,
             final Installment installment) {
         return (EgDemandReason) persistenceService.findByNamedQuery(QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID,
