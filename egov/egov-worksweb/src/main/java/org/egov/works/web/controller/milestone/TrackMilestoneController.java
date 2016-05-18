@@ -55,7 +55,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
-import org.egov.works.milestone.enums.MilestoneActivityStatus;
+import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.web.adaptor.TrackMilestoneJsonAdaptor;
 import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
@@ -130,7 +130,7 @@ public class TrackMilestoneController {
     public @ResponseBody String create(@ModelAttribute("milestone") final Milestone milestone,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response)
-            throws ApplicationException, IOException {
+                    throws ApplicationException, IOException {
 
         final JsonObject jsonObject = new JsonObject();
         validateTrackMilestone(milestone, jsonObject);

@@ -231,4 +231,9 @@
         <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-form.jsp"/>
     </definition>
     
+    <definition name="milestonecancel-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.milestone.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestoneToCancel-header.jsp"/>
+    </definition>
+    
 </tiles-definitions>

@@ -49,7 +49,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
-import org.egov.works.milestone.enums.MilestoneActivityStatus;
+import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
 import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;

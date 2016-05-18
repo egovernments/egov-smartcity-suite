@@ -37,57 +37,58 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.controller.reports;
+package org.egov.works.web.controller.milestone;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
-import org.egov.works.reports.entity.WorkProgressRegister;
-import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
-import org.egov.works.reports.service.WorkProgressRegisterService;
-import org.egov.works.web.adaptor.WorkProgressRegisterJsonAdaptor;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.milestone.entity.SearchRequestMilestone;
+import org.egov.works.milestone.service.MilestoneService;
+import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 @Controller
-@RequestMapping("/reports")
-public class AjaxReportController {
+@RequestMapping(value = "/milestone")
+public class CancelMilestoneController extends GenericWorkFlowController {
 
     @Autowired
-    private WorkProgressRegisterService workProgressRegisterService;
+    private MilestoneService milestoneService;
 
     @Autowired
-    private WorkProgressRegisterJsonAdaptor workProgressRegisterJsonAdaptor;
+    private ResourceBundleMessageSource messageSource;
 
-    @RequestMapping(value = "/ajax-wincodestosearchworkprogressregister", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> getChildBoundariesById(@RequestParam final String code) {
-        return workProgressRegisterService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(code);
+    @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
+    public String showSearchMilestoneForm(
+            @ModelAttribute final SearchRequestMilestone searchRequestMilestone,
+            final Model model) throws ApplicationException {
+        model.addAttribute("searchRequestMilestone", searchRequestMilestone);
+        return "milestonecancel-form";
     }
 
-    @RequestMapping(value = "/ajax-workprogressregister", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showSearchWorkProgressRegister(final Model model,
-            @ModelAttribute final WorkProgressRegisterSearchRequest workProgressRegisterSearchRequest) {
-        final List<WorkProgressRegister> workProgressRegisters = workProgressRegisterService
-                .searchWorkProgressRegister(workProgressRegisterSearchRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchContractorBillJson(workProgressRegisters))
-                .append("}").toString();
-        return result;
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    public String cancelMilestone(final HttpServletRequest request,
+            final Model model) throws ApplicationException {
+        final Long milestoneId = Long.parseLong(request.getParameter("id"));
+        final String cancellationReason = request.getParameter("cancellationReason");
+        final String cancellationRemarks = request.getParameter("cancellationRemarks");
+        Milestone milestone = milestoneService.getMilestoneById(milestoneId);
+        milestone.setCancellationReason(cancellationReason);
+        milestone.setCancellationRemarks(cancellationRemarks);
+        
+        milestone = milestoneService.cancel(milestone);
+        
+        model.addAttribute("message", messageSource.getMessage("msg.milestone.cancel.success",
+                new String[] {milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber()}, null));
+        return "milestone-success";
     }
-
-    public Object toSearchContractorBillJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkProgressRegister.class, workProgressRegisterJsonAdaptor).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-
 }

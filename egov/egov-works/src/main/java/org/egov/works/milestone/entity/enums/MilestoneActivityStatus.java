@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.works.milestone.enums;
+package org.egov.works.milestone.entity.enums;
 
 import org.apache.commons.lang.StringUtils;
 

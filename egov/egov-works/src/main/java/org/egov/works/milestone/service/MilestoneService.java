@@ -105,7 +105,7 @@ public class MilestoneService {
             if (searchRequestMilestone.getMilestoneFromDate() != null)
                 criteria.add(Restrictions.ge("createdDate", searchRequestMilestone.getMilestoneFromDate()));
             if (searchRequestMilestone.getMilestoneToDate() != null) {
-                DateTime dateTime = new DateTime(searchRequestMilestone.getMilestoneToDate().getTime()).plusDays(1);
+                final DateTime dateTime = new DateTime(searchRequestMilestone.getMilestoneToDate().getTime()).plusDays(1);
                 criteria.add(Restrictions.le("createdDate", dateTime.toDate()));
             }
             if (searchRequestMilestone.getStatus() != null)
@@ -170,5 +170,47 @@ public class MilestoneService {
             trackMilestoneService.save(tm);
         }
         return milestoneRepository.save(milestone);
+    }
+
+    public List<String> findLoaNumbersToCancelMilestone(final String code) {
+        final List<String> loaNumbers = milestoneRepository
+                .findLoaNumbersToCancelMilestone("%" + code + "%",
+                        WorksConstants.APPROVED.toString());
+        return loaNumbers;
+    }
+
+    @Transactional
+    public Milestone cancel(final Milestone milestone) {
+        milestone.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
+                WorksConstants.CANCELLED_STATUS));
+        for (final TrackMilestone tm : milestone.getTrackMilestone())
+            tm.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.TRACK_MILESTONE_MODULE_KEY,
+                    WorksConstants.CANCELLED_STATUS));
+        return milestoneRepository.save(milestone);
+    }
+
+    public List<Milestone> searchMilestonesToCancel(final SearchRequestMilestone searchRequestMilestone) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Milestone.class)
+                .createAlias("workOrderEstimate", "woe")
+                .createAlias("woe.estimate", "estimate")
+                .createAlias("estimate.lineEstimateDetails", "led")
+                .createAlias("status", "status")
+                .createAlias("woe.workOrder", "wo")
+                .createAlias("wo.contractor", "contractor")
+                .createAlias("led.projectCode", "projectCode");
+
+        if (searchRequestMilestone != null) {
+            if (searchRequestMilestone.getWorkIdentificationNumber() != null)
+                criteria.add(Restrictions.ilike("projectCode.code", searchRequestMilestone.getWorkIdentificationNumber(),
+                        MatchMode.ANYWHERE));
+            if (searchRequestMilestone.getStatus() != null)
+                criteria.add(Restrictions.eq("status.code", searchRequestMilestone.getStatus()));
+            if (searchRequestMilestone.getWorkOrderNumber() != null)
+                criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber()));
+            if (searchRequestMilestone.getContractor() != null)
+                criteria.add(Restrictions.eq("contractor.name", searchRequestMilestone.getContractor()));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 }

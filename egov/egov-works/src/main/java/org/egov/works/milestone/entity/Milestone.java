@@ -118,6 +118,10 @@ public class Milestone extends StateAware implements Comparable {
     @Transient
     private String approvalComent;
 
+    private String cancellationReason;
+
+    private String cancellationRemarks;
+
     @Override
     public Long getId() {
         return id;
@@ -207,6 +211,22 @@ public class Milestone extends StateAware implements Comparable {
 
     public void setDocumentNumber(final Long documentNumber) {
         this.documentNumber = documentNumber;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(final String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+
+    public String getCancellationRemarks() {
+        return cancellationRemarks;
+    }
+
+    public void setCancellationRemarks(final String cancellationRemarks) {
+        this.cancellationRemarks = cancellationRemarks;
     }
 
 }

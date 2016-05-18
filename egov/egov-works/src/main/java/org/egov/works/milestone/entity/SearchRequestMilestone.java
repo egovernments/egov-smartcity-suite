@@ -54,6 +54,7 @@ public class SearchRequestMilestone {
     private String status;
     private Date trackMilestoneFromDate;
     private Date trackMilestoneToDate;
+    private String contractor;
 
     public String getStatus() {
         return status;
@@ -133,5 +134,13 @@ public class SearchRequestMilestone {
 
     public void setTrackMilestoneToDate(final Date trackMilestoneToDate) {
         this.trackMilestoneToDate = trackMilestoneToDate;
+    }
+
+    public String getContractor() {
+        return contractor;
+    }
+
+    public void setContractor(final String contractor) {
+        this.contractor = contractor;
     }
 }
