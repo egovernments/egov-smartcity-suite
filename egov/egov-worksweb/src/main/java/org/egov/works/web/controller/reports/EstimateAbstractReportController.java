@@ -73,7 +73,7 @@ public class EstimateAbstractReportController {
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
-    
+
     @Autowired
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
@@ -88,7 +88,7 @@ public class EstimateAbstractReportController {
         model.addAttribute("estimateAbstractReport", estimateAbstractReport);
         return "estimateAbstractReportByDepartmentWise-search";
     }
-    
+
     @RequestMapping(value = "/typeofworkwise-searchform", method = RequestMethod.GET)
     public String typeOfWorkWiseShowSearchForm(
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
@@ -107,7 +107,6 @@ public class EstimateAbstractReportController {
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("subSchemes", Collections.emptyList());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
-        model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());

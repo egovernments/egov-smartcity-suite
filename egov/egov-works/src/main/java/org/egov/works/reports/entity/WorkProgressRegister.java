@@ -184,7 +184,7 @@ public class WorkProgressRegister extends AbstractAuditable {
     private String billtype;
 
     private BigDecimal billamount;
-    
+
     private BigDecimal totalBillAmount;
 
     private BigDecimal totalBillPaidSoFar;
@@ -200,36 +200,42 @@ public class WorkProgressRegister extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scheme")
     private Scheme scheme;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subScheme")
     private SubScheme subScheme;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "natureOfWork")
     private NatureOfWork natureOfWork;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leid")
     private LineEstimate lineEstimate;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ledid")
     private LineEstimateDetails lineEstimateDetails;
-    
-    @Length(max=50)
-    private String leStatus;
-    
-    @Length(max=50)
+
+    @Length(max = 50)
+    private String lineEstimateStatus;
+
+    @Length(max = 50)
     private String departmentName;
-    
-    @Length(max=50)
+
+    @Length(max = 50)
     private String woStatusCode;
-    
+
     private boolean workOrderCreated;
-    
+
     private boolean workCompleted;
-    
+
+    @Length(max = 50)
+    private String typeOfWorkName;
+
+    @Length(max = 50)
+    private String subTypeOfWorkName;
+
     @Override
     protected void setId(final Long id) {
         this.id = id;
@@ -552,14 +558,6 @@ public class WorkProgressRegister extends AbstractAuditable {
         this.lineEstimateDetails = lineEstimateDetails;
     }
 
-    public String getLeStatus() {
-        return leStatus;
-    }
-
-    public void setLeStatus(String leStatus) {
-        this.leStatus = leStatus;
-    }
-
     public String getDepartmentName() {
         return departmentName;
     }
@@ -591,6 +589,29 @@ public class WorkProgressRegister extends AbstractAuditable {
     public void setWorkCompleted(boolean workCompleted) {
         this.workCompleted = workCompleted;
     }
-    
-    
+
+    public String getTypeOfWorkName() {
+        return typeOfWorkName;
+    }
+
+    public void setTypeOfWorkName(String typeOfWorkName) {
+        this.typeOfWorkName = typeOfWorkName;
+    }
+
+    public String getSubTypeOfWorkName() {
+        return subTypeOfWorkName;
+    }
+
+    public void setSubTypeOfWorkName(String subTypeOfWorkName) {
+        this.subTypeOfWorkName = subTypeOfWorkName;
+    }
+
+    public String getLineEstimateStatus() {
+        return lineEstimateStatus;
+    }
+
+    public void setLineEstimateStatus(String lineEstimateStatus) {
+        this.lineEstimateStatus = lineEstimateStatus;
+    }
+
 }

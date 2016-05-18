@@ -62,17 +62,4 @@
 		</form:form>  
 
 <jsp:include page="estimateAbstractReportByTypeOfWorkWise-search.jsp"/>
-<script>
-	window.onload=onLoad ;
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-	function onLoad(){
-		var selectedFYId = $("#financialYear").val();
-		getFinancialYearDatesByFYId(selectedFYId);
-	}
-</script>
 <script src="<c:url value='/resources/js/reports/estimateAbstractReportByTypeOfWorkWiseHelper.js?rnd=${app_release_no}'/>"></script>

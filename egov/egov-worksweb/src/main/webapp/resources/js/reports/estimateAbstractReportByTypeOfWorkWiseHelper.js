@@ -71,10 +71,10 @@ jQuery('#btnsearch').click(function(e) {
 		queryParameters += "Date Range : " + $('#adminSanctionFromDate').val() + " - " + $('#adminSanctionToDate').val() + ", ";
 	}
     if(adminSanctionFromDate != "" && adminSanctionToDate == "") {
-        queryParameters += "Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
+        queryParameters += "Line Estimate Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
     }
     if(adminSanctionToDate != "" && adminSanctionFromDate == "") {
-        queryParameters += "Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
+        queryParameters += "Line Estimate Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
     }
     
     if($('#typeOfWork').val() != "") {
@@ -102,15 +102,15 @@ jQuery('#btnsearch').click(function(e) {
     }
     
     if($('#subScheme').val() != "") {
-        queryParameters += "SubScheme : " + $('#subScheme').find(":selected").text() + ", ";
+        queryParameters += "Sub Scheme : " + $('#subScheme').find(":selected").text() + ", ";
     }
     
     if($("input[name=workCategory]").is(":checked") ) {
-        queryParameters += "WorkCategory : " + $("input[name=workCategory]:checked").val() + ", ";
+        queryParameters += "Work Category : " + $("input[name=workCategory]:checked").val() + ", ";
     }
     
     if($('#typeOfSlum').val() != "") {
-        queryParameters += "TypeOfSlum : " + $('#typeOfSlum').val() + ", ";
+        queryParameters += "Type Of Slum : " + $('#typeOfSlum').val() + ", ";
     }
     
     if($('#beneficiary').val() != "") {
@@ -118,7 +118,7 @@ jQuery('#btnsearch').click(function(e) {
     }
     
     if($('#natureOfWork').val() != "") {
-        queryParameters += "NatureOfWork : " + $('#natureOfWork').find(":selected").text() + ", ";
+        queryParameters += "Nature Of Work : " + $('#natureOfWork').find(":selected").text() + ", ";
     }
     
     
@@ -148,7 +148,7 @@ $('#btndownloadpdf').click(function() {
 	if(departments == null)
 		departments = 0;
 	//TO-DO : Need to change to ajax submit
-	var url = "/egworks/reports/estimateabstractreportbytypeofworkwise/pdf?adminSanctionFromDate="
+	var url = "/egworks/reports/estimateabstractreport/typeofworkwise/pdf?adminSanctionFromDate="
 	+ adminSanctionFromDate
 	+ "&adminSanctionToDate="
 	+ adminSanctionToDate
@@ -194,7 +194,7 @@ $('#btndownloadexcel').click(function() {
 	if(departments == null)
 		departments = 0;
 	//TO-DO : Need to change to ajax submit
-	var url = "/egworks/reports/estimateabstractreportbytypeofworkwise/pdf?adminSanctionFromDate="
+	var url = "/egworks/reports/estimateabstractreport/typeofworkwise/pdf?adminSanctionFromDate="
 	+ adminSanctionFromDate
 	+ "&adminSanctionToDate="
 	+ adminSanctionToDate
@@ -423,6 +423,16 @@ function replaceBeneficiaryChar() {
 	});
 }
 $(document).ready(function(){
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+	
+	var selectedFYId = $("#financialYear").val();
+	getFinancialYearDatesByFYId(selectedFYId);
+	
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$('#typeOfWork').change(function(){
 		 if ($('#typeOfWork').val() === '') {

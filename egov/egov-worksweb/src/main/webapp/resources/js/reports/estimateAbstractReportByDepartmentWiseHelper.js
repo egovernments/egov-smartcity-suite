@@ -70,10 +70,10 @@ jQuery('#btnsearch').click(function(e) {
 		queryParameters += "Date Range : " + $('#adminSanctionFromDate').val() + " - " + $('#adminSanctionToDate').val() + ", ";
 	}
     if(adminSanctionFromDate != "" && adminSanctionToDate == "") {
-        queryParameters += "Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
+        queryParameters += "Line Estimate Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
     }
     if(adminSanctionToDate != "" && adminSanctionFromDate == "") {
-        queryParameters += "Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
+        queryParameters += "Line Estimate Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
     }
     if($('#department').val() != "") {
         queryParameters += "Department : " + $('#department').find(":selected").text() + ", ";
@@ -84,15 +84,15 @@ jQuery('#btnsearch').click(function(e) {
     }
     
     if($('#subScheme').val() != "") {
-        queryParameters += "SubScheme : " + $('#subScheme').find(":selected").text() + ", ";
+        queryParameters += "Sub Scheme : " + $('#subScheme').find(":selected").text() + ", ";
     }
     
     if($("input[name=workCategory]").is(":checked") ) {
-        queryParameters += "WorkCategory : " + $("input[name=workCategory]:checked").val() + ", ";
+        queryParameters += "Work Category : " + $("input[name=workCategory]:checked").val() + ", ";
     }
     
     if($('#typeOfSlum').val() != "") {
-        queryParameters += "TypeOfSlum : " + $('#typeOfSlum').val() + ", ";
+        queryParameters += "Type Of Slum : " + $('#typeOfSlum').val() + ", ";
     }
     
     if($('#beneficiary').val() != "") {
@@ -100,7 +100,7 @@ jQuery('#btnsearch').click(function(e) {
     }
     
     if($('#natureOfWork').val() != "") {
-        queryParameters += "NatureOfWork : " + $('#natureOfWork').find(":selected").text() + ", ";
+        queryParameters += "Nature Of Work : " + $('#natureOfWork').find(":selected").text() + ", ";
     }
     
     
@@ -125,7 +125,7 @@ $('#btndownloadpdf').click(function() {
 	
 	var spillOverFlag = spillOver.checked ? true : false;
 
-	window.open("/egworks/reports/estimateabstractreportbydepartmentwise/pdf?adminSanctionFromDate="
+	window.open("/egworks/reports/estimateabstractreport/departmentwise/pdf?adminSanctionFromDate="
 			+ adminSanctionFromDate
 			+ "&adminSanctionToDate="
 			+ adminSanctionToDate
@@ -161,7 +161,7 @@ $('#btndownloadexcel').click(function() {
 	
 	var spillOverFlag = spillOver.checked ? true : false;
 
-	window.open("/egworks/reports/estimateabstractreportbydepartmentwise/pdf?adminSanctionFromDate="
+	window.open("/egworks/reports/estimateabstractreport/departmentwise/pdf?adminSanctionFromDate="
 			+ adminSanctionFromDate
 			+ "&adminSanctionToDate="
 			+ adminSanctionToDate
@@ -222,7 +222,7 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('#btndownloadpdf').show();
 					$('#btndownloadexcel').show();
-					$('td:eq(0)',row).html(index+1);
+					/*$('td:eq(0)',row).html(index+1);*/
 					$("#adminSanctionFromDate").attr('disabled', 'disabled');
 					var currentFYId = $("#currentFinancialYearId").val();
 					var selectedFYId = $("#financialYear").val();
@@ -368,3 +368,14 @@ function replaceBeneficiaryChar() {
 	
 
 }
+
+$(document).ready(function(){
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+	var selectedFYId = $("#financialYear").val();
+	getFinancialYearDatesByFYId(selectedFYId);
+});
