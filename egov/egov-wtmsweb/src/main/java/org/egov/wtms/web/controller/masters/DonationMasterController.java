@@ -86,7 +86,6 @@ public class DonationMasterController {
     @Autowired
     private final PipeSizeService pipeSizeService;
 
-
     @Autowired
     public DonationMasterController(final PropertyTypeService propertyTypeService,
             final ConnectionCategoryService connectionCategoryService, final UsageTypeService usageTypeService,
@@ -140,10 +139,12 @@ public class DonationMasterController {
         if (resultBinder.hasErrors())
             return "donation-master";
         final List<DonationHeader> donationHeaderTempList = donationHeaderService
-                .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(donationDetails.getDonationHeader()
-                        .getPropertyType(), donationDetails.getDonationHeader().getCategory(), donationDetails
-                        .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize()
-                        .getSizeInInch(), donationDetails.getDonationHeader().getMaxPipeSize().getSizeInInch());
+                .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(
+                        donationDetails.getDonationHeader().getPropertyType(),
+                        donationDetails.getDonationHeader().getCategory(),
+                        donationDetails.getDonationHeader().getUsageType(),
+                        donationDetails.getDonationHeader().getMinPipeSize().getSizeInInch(),
+                        donationDetails.getDonationHeader().getMaxPipeSize().getSizeInInch());
         DonationDetails donationDetailsTempObj = null;
         Calendar.getInstance();
         if (!donationHeaderTempList.isEmpty()) {
@@ -155,15 +156,15 @@ public class DonationMasterController {
             }
             if (donationDetailsTempObj == null) {
                 donationDetails.getDonationHeader().setActive(true);
-                donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
-                donationDetailsService.createDonationDetails(donationDetails);
+                donationHeaderService.persistsDonationHeader(donationDetails.getDonationHeader());
+                donationDetailsService.persistsDonationDetails(donationDetails);
                 redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
                 model.addAttribute("message", "Donation Master Data created successfully");
             }
         } else {
             donationDetails.getDonationHeader().setActive(true);
-            donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
-            donationDetailsService.createDonationDetails(donationDetails);
+            donationHeaderService.persistsDonationHeader(donationDetails.getDonationHeader());
+            donationDetailsService.persistsDonationDetails(donationDetails);
             redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
             model.addAttribute("message", "Donation Master Data created successfully");
         }
@@ -180,10 +181,12 @@ public class DonationMasterController {
         final DonationDetails donationdetails = donationDetailsService.findBy(donationDetailsId);
         final DonationHeader donationHeader = donationdetails.getDonationHeader();
         final List<DonationHeader> donationHeaderTempList = donationHeaderService
-                .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(donationDetails.getDonationHeader()
-                        .getPropertyType(), donationDetails.getDonationHeader().getCategory(), donationDetails
-                        .getDonationHeader().getUsageType(), donationDetails.getDonationHeader().getMinPipeSize()
-                        .getSizeInInch(), donationDetails.getDonationHeader().getMaxPipeSize().getSizeInInch());
+                .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(
+                        donationDetails.getDonationHeader().getPropertyType(),
+                        donationDetails.getDonationHeader().getCategory(),
+                        donationDetails.getDonationHeader().getUsageType(),
+                        donationDetails.getDonationHeader().getMinPipeSize().getSizeInInch(),
+                        donationDetails.getDonationHeader().getMaxPipeSize().getSizeInInch());
         Calendar.getInstance();
         DonationDetails donationDetailsTemp = null;
         if (!donationHeaderTempList.isEmpty()) {
@@ -193,12 +196,12 @@ public class DonationMasterController {
                 if (donationDetailsTemp != null)
                     break;
             }
-            if (donationDetailsTemp == null ) {
+            if (donationDetailsTemp == null) {
                 donationDetails.getDonationHeader().setActive(true);
-                donationHeaderService.createDonationHeader(donationDetails.getDonationHeader());
-                donationDetailsService.createDonationDetails(donationDetails);
+                donationHeaderService.persistsDonationHeader(donationDetails.getDonationHeader());
+                donationDetailsService.persistsDonationDetails(donationDetails);
             }
-        } 
+        }
         if (donationHeaderTempList.isEmpty() || !donationDetails.getDonationHeader().isActive()) {
             donationHeader.setActive(donationheader.isActive());
             donationHeader.setCategory(donationheader.getCategory());
@@ -210,8 +213,8 @@ public class DonationMasterController {
             donationdetails.setFromDate(donationDetails.getFromDate());
             donationdetails.setToDate(donationDetails.getToDate());
             donationdetails.setDonationHeader(donationHeader);
-            donationHeaderService.createDonationHeader(donationdetails.getDonationHeader());
-            donationDetailsService.createDonationDetails(donationdetails);
+            donationHeaderService.persistsDonationHeader(donationdetails.getDonationHeader());
+            donationDetailsService.persistsDonationDetails(donationdetails);
         }
         return getdonationMasterList(model);
     }

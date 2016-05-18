@@ -70,13 +70,8 @@ public class DonationDetailsService {
     }
 
     @Transactional
-    public DonationDetails createDonationDetails(final DonationDetails donationDetails) {
+    public DonationDetails persistsDonationDetails(final DonationDetails donationDetails) {
         return donationDetailsRepository.save(donationDetails);
-    }
-
-    @Transactional
-    public void updateDonationDetails(final DonationDetails donationDetails) {
-        donationDetailsRepository.save(donationDetails);
     }
 
     public DonationDetails load(final Long id) {

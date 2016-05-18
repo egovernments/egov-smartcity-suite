@@ -116,7 +116,7 @@
 								<div align="center"><c:out value="${donationDetails.donationHeader.minPipeSize.code}" /></div>
 							</td>
 							<td colspan="1" >
-								<div align="right"><c:out value="${donationDetails.amount}" /></div>
+								<div align="center"><c:out value="${donationDetails.amount}" /></div>
 							</td>
 							
 							<td colspan="1" >
