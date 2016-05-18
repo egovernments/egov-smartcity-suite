@@ -733,7 +733,7 @@ public class CollectionsUtil {
         collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader
                 .getOnlinePayment().getService().getName() : "");
         collectionIndexBuilder.consumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
-        collectionIndexBuilder.receiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getUsername()
+        collectionIndexBuilder.receiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName()
                 : "");
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
