@@ -63,10 +63,10 @@ function openSource(){
 	if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
 		bootbox.alert('Source is not available');
 	else{
-		if("<s:property value='%{voucherHeader.moduleId}' escape='false'/>"!="")
-			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>' ;
-		else
+		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>".indexOf('EGF') > -1)
 			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>'+ '&showMode=view';
+		else
+			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>';
 		window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
 
 	}   
