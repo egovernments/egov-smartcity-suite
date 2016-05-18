@@ -537,12 +537,12 @@ public class WaterTaxUtils {
     }
 
     public Boolean isDigitalSignatureEnabled() {
-        final Boolean digiSign = false;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDIGITALSIGNATURE);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
-        return digiSign;
+        else
+            return false;
     }
 
 }
