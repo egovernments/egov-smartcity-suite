@@ -55,7 +55,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
-import org.egov.works.milestone.enums.CurrentStatus;
+import org.egov.works.milestone.enums.MilestoneActivityStatus;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.web.adaptor.TrackMilestoneJsonAdaptor;
 import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
@@ -152,19 +152,19 @@ public class TrackMilestoneController {
             Integer count = 0;
             boolean flag = false;
             for (final TrackMilestoneActivity tma : tm.getActivities()) {
-                if (tma.getStatus().equals(CurrentStatus.NOT_YET_STARTED.name()) && tma.getCompletedPercentage() != 0) {
+                if (tma.getStatus().equals(MilestoneActivityStatus.NOT_YET_STARTED.name()) && tma.getCompletedPercentage() != 0) {
                     jsonObject.addProperty("completedPercentage_" + count,
                             messageSource.getMessage("error.trackmilestone.notyetstarted.percentage.zero",
                                     new String[] {}, null));
                     flag = true;
                 }
-                if (tma.getStatus().equals(CurrentStatus.COMPLETED.name()) && tma.getCompletedPercentage() != 100) {
+                if (tma.getStatus().equals(MilestoneActivityStatus.COMPLETED.name()) && tma.getCompletedPercentage() != 100) {
                     jsonObject.addProperty("completedPercentage_" + count,
                             messageSource.getMessage("error.trackmilestone.completed.percentage.hundred",
                                     new String[] {}, null));
                     flag = true;
                 }
-                if (tma.getStatus().equals(CurrentStatus.COMPLETED.name()) && tma.getCompletionDate() == null) {
+                if (tma.getStatus().equals(MilestoneActivityStatus.COMPLETED.name()) && tma.getCompletionDate() == null) {
                     jsonObject.addProperty("completionDate_" + count,
                             messageSource.getMessage("error.trackmilestone.completed.completiondate.mandatory",
                                     new String[] {}, null));

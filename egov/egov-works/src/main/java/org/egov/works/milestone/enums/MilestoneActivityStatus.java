@@ -42,7 +42,7 @@ package org.egov.works.milestone.enums;
 
 import org.apache.commons.lang.StringUtils;
 
-public enum CurrentStatus {
+public enum MilestoneActivityStatus {
 
     NOT_YET_STARTED, IN_PROGRESS, COMPLETED;
 
