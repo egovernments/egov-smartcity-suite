@@ -39,6 +39,9 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.repository.UsageTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +51,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -113,7 +113,7 @@ public class UsageTypeService {
     }
 
     public List<UsageType> getActiveUsageTypes() {
-        return usageTypeRepository.findByActiveTrueOrderByIdAsc();
+        return usageTypeRepository.findByActiveTrueOrderByNameAsc();
     }
 
     public List<UsageType> getAllActiveUsageTypesByPropertyType(final Long propertyType) {
@@ -129,7 +129,7 @@ public class UsageTypeService {
     }
 
     public List<UsageType> getUsageTypeListForRest() {
-        final List<UsageType> usageTypeList = usageTypeRepository.findByActiveTrueOrderByIdAsc();
+        final List<UsageType> usageTypeList = usageTypeRepository.findByActiveTrueOrderByNameAsc();
         final List<UsageType> prepareListForRest = new ArrayList<UsageType>(0);
 
         for (final UsageType usageType : usageTypeList) {
