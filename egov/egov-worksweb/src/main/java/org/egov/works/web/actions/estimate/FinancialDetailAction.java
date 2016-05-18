@@ -357,9 +357,9 @@ public class FinancialDetailAction extends BaseFormAction {
             abstractEstimate.setDepositCode(depositCodeService.findById(depositCodeId, false));
 
         if (getMaxFinancingSource(financingSourceList).getFundSource() != null
-                && fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId()) != null)
+                && fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId().intValue()) != null)
             abstractEstimate.setFundSource(fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList)
-                    .getFundSource().getId()));
+                    .getFundSource().getId().intValue()));
 
         abstractEstimate = abstractEstimateService.persistFinancialDetail(financialDetail, abstractEstimate);
         // to lazy load the financial detail id.

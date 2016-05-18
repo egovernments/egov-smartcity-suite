@@ -37,67 +37,38 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.commons.dao;
+package org.egov.egf.web.adaptor;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.lang.reflect.Type;
 
 import org.egov.commons.Fundsource;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public class FundSourceHibernateDAO {
-    @Transactional
-    public Fundsource update(final Fundsource entity) {
-        getCurrentSession().update(entity);
-        return entity;
-    }
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    @Transactional
-    public Fundsource create(final Fundsource entity) {
-        getCurrentSession().persist(entity);
-        return entity;
-    }
+public class FundsourceJsonAdaptor implements JsonSerializer<Fundsource> {
+    @Override
+    public JsonElement serialize(final Fundsource fundsource, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (fundsource != null) {
+            if (fundsource.getName() != null)
+                jsonObject.addProperty("code", fundsource.getCode());
+            else
+                jsonObject.addProperty("code", "");
 
-    @Transactional
-    public void delete(Fundsource entity) {
-        getCurrentSession().delete(entity);
-    }
+            if (fundsource.getName() != null)
+                jsonObject.addProperty("name", fundsource.getName());
+            else
+                jsonObject.addProperty("name", "");
 
-    public Fundsource findById(Number id, boolean lock) {
-        return (Fundsource) getCurrentSession().load(Fundsource.class, id);
-    }
-
-    public List<Fundsource> findAll() {
-        return (List<Fundsource>) getCurrentSession().createCriteria(Fundsource.class).list();
-    }
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
-  
-
-    public Fundsource fundsourceById(final Integer id) {
-        return (Fundsource) getCurrentSession().get(Fundsource.class, id.intValue());
-    }
-
-    public List<Fundsource> findAllActiveIsLeafFundSources() {
-        return getCurrentSession().createQuery("from org.egov.commons.Fundsource where isactive = true  order by name")
-                .list();
-    }
-
-    public Fundsource getFundSourceByCode(final String code) {
-        final Query query = getCurrentSession().createQuery("from Fundsource f where f.code=:code");
-        query.setString("code", code);
-        return (Fundsource) query.uniqueResult();
+            if (fundsource.getIsactive() != null)
+                jsonObject.addProperty("isactive", fundsource.getIsactive());
+            else
+                jsonObject.addProperty("isactive", "");
+            jsonObject.addProperty("id", fundsource.getId());
+        }
+        return jsonObject;
     }
 }

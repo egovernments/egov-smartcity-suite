@@ -131,7 +131,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("functionaryList", persistenceService.findAllBy(" from Functionary where isactive=true order by name"));
         addDropdownData("fundsourceList",
-                persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
+                persistenceService.findAllBy(" from Fundsource where isactive=true order by name"));
         addDropdownData("fieldList", persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");

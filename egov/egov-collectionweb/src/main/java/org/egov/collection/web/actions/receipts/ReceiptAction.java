@@ -454,7 +454,7 @@ public class ReceiptAction extends BaseFormAction {
 
         Fundsource fundSource = null;
         if (receiptMisc.getFundsource() != null && receiptMisc.getFundsource().getId() != null)
-            fundSource = fundSourceDAO.fundsourceById(receiptMisc.getFundsource().getId());
+            fundSource = fundSourceDAO.fundsourceById(receiptMisc.getFundsource().getId().intValue());
         final Department dept = (Department) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_DEPARTMENT_BY_ID, Long.valueOf(deptId));
 

@@ -107,7 +107,7 @@ public class JournalBookReportAction extends BaseFormAction {
         addDropdownData("fundList",
                 persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("fundsourceList",
-                persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
+                persistenceService.findAllBy(" from Fundsource where isactive=true order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("functionList", masterDataCache.get("egi-function"));
 

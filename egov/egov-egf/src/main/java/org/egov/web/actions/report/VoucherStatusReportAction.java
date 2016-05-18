@@ -193,7 +193,7 @@ public class VoucherStatusReportAction extends BaseFormAction
             addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         if (headerFields.contains("fundsource"))
             addDropdownData("fundsourceList",
-                    persistenceService.findAllBy(" from Fundsource where isactive=true and isnotleaf=false order by name"));
+                    persistenceService.findAllBy(" from Fundsource where isactive=true order by name"));
         if (headerFields.contains("field"))
             addDropdownData("fieldList",
                     persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
