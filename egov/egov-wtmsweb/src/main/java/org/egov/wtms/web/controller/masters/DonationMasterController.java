@@ -156,15 +156,15 @@ public class DonationMasterController {
             }
             if (donationDetailsTempObj == null) {
                 donationDetails.getDonationHeader().setActive(true);
-                donationHeaderService.persistsDonationHeader(donationDetails.getDonationHeader());
-                donationDetailsService.persistsDonationDetails(donationDetails);
+                donationHeaderService.persistDonationHeader(donationDetails.getDonationHeader());
+                donationDetailsService.persistDonationDetails(donationDetails);
                 redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
                 model.addAttribute("message", "Donation Master Data created successfully");
             }
         } else {
             donationDetails.getDonationHeader().setActive(true);
-            donationHeaderService.persistsDonationHeader(donationDetails.getDonationHeader());
-            donationDetailsService.persistsDonationDetails(donationDetails);
+            donationHeaderService.persistDonationHeader(donationDetails.getDonationHeader());
+            donationDetailsService.persistDonationDetails(donationDetails);
             redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
             model.addAttribute("message", "Donation Master Data created successfully");
         }
@@ -198,8 +198,8 @@ public class DonationMasterController {
             }
             if (donationDetailsTemp == null) {
                 donationDetails.getDonationHeader().setActive(true);
-                donationHeaderService.persistsDonationHeader(donationDetails.getDonationHeader());
-                donationDetailsService.persistsDonationDetails(donationDetails);
+                donationHeaderService.persistDonationHeader(donationDetails.getDonationHeader());
+                donationDetailsService.persistDonationDetails(donationDetails);
             }
         }
         if (donationHeaderTempList.isEmpty() || !donationDetails.getDonationHeader().isActive()) {
@@ -213,8 +213,8 @@ public class DonationMasterController {
             donationdetails.setFromDate(donationDetails.getFromDate());
             donationdetails.setToDate(donationDetails.getToDate());
             donationdetails.setDonationHeader(donationHeader);
-            donationHeaderService.persistsDonationHeader(donationdetails.getDonationHeader());
-            donationDetailsService.persistsDonationDetails(donationdetails);
+            donationHeaderService.persistDonationHeader(donationdetails.getDonationHeader());
+            donationDetailsService.persistDonationDetails(donationdetails);
         }
         return getdonationMasterList(model);
     }

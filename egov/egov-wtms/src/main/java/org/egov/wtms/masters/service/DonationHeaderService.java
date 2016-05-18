@@ -66,7 +66,7 @@ public class DonationHeaderService {
     }
 
     @Transactional
-    public DonationHeader persistsDonationHeader(final DonationHeader donationHeader) {
+    public DonationHeader persistDonationHeader(final DonationHeader donationHeader) {
         return donationHeaderRepository.save(donationHeader);
     }
 

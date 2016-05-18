@@ -70,7 +70,7 @@ public class DonationDetailsService {
     }
 
     @Transactional
-    public DonationDetails persistsDonationDetails(final DonationDetails donationDetails) {
+    public DonationDetails persistDonationDetails(final DonationDetails donationDetails) {
         return donationDetailsRepository.save(donationDetails);
     }
 
