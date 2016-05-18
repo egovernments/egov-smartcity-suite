@@ -422,7 +422,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                                     .equals(WaterTaxConstants.RECONNECTIONCONNECTION))
                         return "redirect:/application/ReconnacknowlgementNotice?pathVar="
                                 + waterConnectionDetails.getApplicationNumber();
-                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)) { // Sign
+                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) && waterTaxUtils.isDigitalSignatureEnabled()) { // Sign
                         WaterConnectionDetails upadtedWaterConnectionDetails = null;
                         if (waterConnectionDetails.getApplicationType().getCode()
                                 .equals(WaterTaxConstants.NEWCONNECTION)

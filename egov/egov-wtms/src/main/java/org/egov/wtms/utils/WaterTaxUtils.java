@@ -39,6 +39,16 @@
  */
 package org.egov.wtms.utils;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -81,16 +91,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
 @Service
 public class WaterTaxUtils {
@@ -283,7 +283,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
+                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
         return smsMsg;
     }
 
@@ -535,4 +535,14 @@ public class WaterTaxUtils {
             citizenrole = Boolean.TRUE;
         return citizenrole;
     }
+
+    public Boolean isDigitalSignatureEnabled() {
+        final Boolean digiSign = false;
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDIGITALSIGNATURE);
+        if (null != appConfigValue && !appConfigValue.isEmpty())
+            return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
+        return digiSign;
+    }
+
 }
