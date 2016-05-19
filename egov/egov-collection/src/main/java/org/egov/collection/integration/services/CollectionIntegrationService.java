@@ -39,6 +39,7 @@
  */
 package org.egov.collection.integration.services;
 
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
@@ -169,5 +170,6 @@ public interface CollectionIntegrationService {
     
     public String cancelReceipt(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
-    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest);  
+    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest); 
+    public List<ReceiptDetail> getReceiptDetListByReceiptNumber( String receeiptNumber );
 }

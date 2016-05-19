@@ -601,5 +601,12 @@ CollectionIntegrationService {
 
         return statusMessage;
     }
+    @Override
+    public List<ReceiptDetail> getReceiptDetListByReceiptNumber(final String receeiptNumber ) {
+        final List<ReceiptDetail> receiptDetList = persistenceService.findAllByNamedQuery(
+                CollectionConstants.QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER, receeiptNumber);
+       
+            return receiptDetList;
+        }
 
 }

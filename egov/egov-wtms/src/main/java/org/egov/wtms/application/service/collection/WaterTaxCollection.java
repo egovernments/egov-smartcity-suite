@@ -61,7 +61,7 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
-import org.egov.collection.utils.CollectionCommon;
+import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -122,13 +122,14 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Autowired
     private ConnectionBillService connectionBillService;
+    
+    @Autowired
+    private CollectionIntegrationService collectionService;
 
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
     private  FinancialYearDAO financialYearDAO;
-    @Autowired
-    private CollectionCommon collectionCommon;
 
     @Autowired
     private FunctionHibernateDAO functionDAO;
@@ -502,7 +503,7 @@ public class WaterTaxCollection extends TaxCollection {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final BigDecimal amounttobeCalc = egBill.getTotalAmount().subtract(egBill.getTotalCollectedAmount());
-        final List<ReceiptDetail> reciptDetailList = collectionCommon.getReceiptDetListByReceiptNumber(billReceiptInfo.getReceiptNum());
+        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetListByReceiptNumber(billReceiptInfo.getReceiptNum());
        
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
             if (billDet.getOrderNo() == 1) {
@@ -543,7 +544,7 @@ public class WaterTaxCollection extends TaxCollection {
         BigDecimal arrearAmount = BigDecimal.ZERO;
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(egBill.getEgDemand());
-        final List<ReceiptDetail> reciptDetailList = collectionCommon.getReceiptDetListByReceiptNumber(billReceiptInfo.getReceiptNum());
+        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetListByReceiptNumber(billReceiptInfo.getReceiptNum());
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
             	final String[] desc = rcptAccInfo.getDescription().split("-", 2);
