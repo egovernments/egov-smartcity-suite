@@ -44,10 +44,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-
-<script type="text/javascript"
-	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-
 <html>
 <head>
 <title><spring:message code="title.collect.Advtax.view" /></title>

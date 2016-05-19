@@ -45,9 +45,6 @@
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
-<script type="text/javascript"
-	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-
 <div class="row">
 	<div class="col-md-12">
 		<form:form id="scheduleOfRateform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="rate" commandName="rate">

@@ -46,8 +46,6 @@
 	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
 <script type="text/javascript"
-	src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
-<script type="text/javascript"
 	src="<c:url value='/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 <script>
 	function deleteRow(obj) {
