@@ -38,26 +38,28 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ tag body-content="empty"  isELIgnored="false" pageEncoding="UTF-8" description="To show Bread Crumb for each and every Screen" %>
-<%@tag import="org.egov.infstr.services.SessionFactory"%>
-<%@tag import="org.egov.lib.rrbac.dao.ActionHibernateDAO" %>
-<%@tag import="org.egov.lib.rrbac.model.Action"%>
-<%@tag import="java.util.Date"%>
-<%
-
-String applicationName = "Dashboard";
-
-%>
-<%="<div class=\"commontopyellowbg\">"%><%=applicationName == null ? "" : applicationName%><%="</div>"%>
-<%="<div class=\"commontopbluebg\"><div class=\"commontopdate\">Today is: <span class=\"bold\" style=\"color:black\">"%>
-<%=new java.text.SimpleDateFormat("dd/MM/yyyy").format(new Date())%>
-<%="</span></div>Welcome <span class=\"bold\" style=\"color:#cccccc\">"%>
-<%=session.getAttribute("com.egov.user.LoginUserName")%><%="</span></div>"%>
-<%="<div class=\"commontopbreadc\" id=\"breadcrumb\">"%>&nbsp;<!--%=breadCrumb%> --><%="</div>"%>
-<!--  script>
-	if (document.getElementById('breadcrumb').innerHTML == '') {
-		document.getElementById('breadcrumb').innerHTML = '<%=session.getAttribute(request.getContextPath()) == null ? "" : session.getAttribute(request.getContextPath())%>'+  " > "+document.title;
-	}
-</script -->
-	
- 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.lineestimate.search" /></div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-responsive table-hover multiheadertbl"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.select" /></th>
+					<th><spring:message code="lbl.department" /></th>
+					<th><spring:message code="lbl.lineestimatenumber" /></th>
+					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.workidentificationnumber" /></th>
+					<th><spring:message code="lbl.administrativesanctionedamt" /></th>
+					<th><spring:message code="lbl.createdby" /></th>
+				</tr>
+			</thead>
+			<tbody class="no-pointer">
+			</tbody>
+		</table>
+	</div>
+</div>
+<jsp:include page="../common/commonCancel-form.jsp"/>

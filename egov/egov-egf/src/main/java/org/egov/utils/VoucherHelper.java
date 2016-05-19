@@ -84,6 +84,7 @@ import com.exilant.exility.common.TaskFailedException;
  */
 public class VoucherHelper {
     private static final Logger LOGGER = Logger.getLogger(VoucherHelper.class);
+    public static final String DEFAULT_SEQUENCE_PREFIX = "SQ";
     @SuppressWarnings("unchecked")
     private PersistenceService persistenceService;
     private EisCommonService eisCommonService;
@@ -231,8 +232,8 @@ public class VoucherHelper {
      */
     public static String sequenceNameFor(final String voucherType, final String fiscalPeriodName) {
         return new StringBuilder()
-        .append(ApplicationSequenceNumberGenerator.SEQUENCE_NAME_PREFIX)
-        .append(ApplicationSequenceNumberGenerator.replaceBadChars(voucherType))
+        .append(DEFAULT_SEQUENCE_PREFIX)
+        .append(voucherType)
         .append(ApplicationSequenceNumberGenerator.WORD_SEPARATOR_FOR_NAME)
         .append(fiscalPeriodName)
         .toString();

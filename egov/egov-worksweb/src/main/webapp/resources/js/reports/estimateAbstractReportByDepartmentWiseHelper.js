@@ -53,7 +53,7 @@ jQuery('#btnsearch').click(function(e) {
 	if(adminSanctionToDate != '' && adminSanctionFromDate != '') {
 		if(adminSanctionFromDate > adminSanctionToDate) {
 			flag = false;
-			bootbox.alert('Admin Sanction To Date should be greater than Admin Sanction From Date');
+			bootbox.alert('Line Estimate Admin Sanction To Date should be greater than Line Estimate Admin Sanction From Date');
 		}
 	}
 	if(flag && $('form').valid())
@@ -62,9 +62,9 @@ jQuery('#btnsearch').click(function(e) {
 	var spillOver = document.getElementById("spillOverFlag");
     var spillOverFlag = spillOver.checked ? true : false;
     
-	var queryParameters = "Estimate Abstract Report By Department Wise ";
+	var queryParameters = "Estimate Abstract Report By Department  ";
 	if(spillOverFlag)
-		queryParameters = "Estimate Abstract Report By Department Wise for Spill Over Line Estimates ";
+		queryParameters = "Estimate Abstract Report By Department for Spill Over Line Estimates ";
 	
 	if(adminSanctionFromDate != "" && adminSanctionToDate != "") {
 		queryParameters += "Date Range : " + $('#adminSanctionFromDate').val() + " - " + $('#adminSanctionToDate').val() + ", ";
@@ -88,11 +88,11 @@ jQuery('#btnsearch').click(function(e) {
     }
     
     if($("input[name=workCategory]").is(":checked") ) {
-        queryParameters += "Work Category : " + $("input[name=workCategory]:checked").val() + ", ";
+        queryParameters += "Work Category : " + $("input[name=workCategory]:checked").val().replace('_',' ').replace('_',' ') + ", ";
     }
     
     if($('#typeOfSlum').val() != "") {
-        queryParameters += "Type Of Slum : " + $('#typeOfSlum').val() + ", ";
+        queryParameters += "Type Of Slum : " + $('#typeOfSlum').val().replace('_',' ') + ", ";
     }
     
     if($('#beneficiary').val() != "") {
@@ -242,17 +242,17 @@ function callAjaxSearch() {
 				aaSorting: [],				
 				columns : [ { 
 					/*"data" : "", "sClass" : "text-center"} ,{ */
-					"data" : "departmentName", "sClass" : "text-left"} ,{
-					"data" : "lineEstimates", "sClass" : "text-left"} ,{
-					"data" : "adminSanctionedEstimates", "sClass" : "text-left"} ,{ 
-					"data" : "adminSanctionedAmountInCrores", "sClass" : "text-left"} ,{
-					"data" : "technicalSanctionedEstimates", "sClass" : "text-left"} ,{
-					"data" : "loaCreated", "sClass" : "text-left"} ,{
-					"data" : "agreementValueInCrores", "sClass" : "text-left"} ,{
-					"data" : "workInProgress", "sClass" : "text-left"} ,{ 
-					"data" : "workCompletedCount", "sClass" : "text-left"} ,{
-					"data" : "billsCreatedCount", "sClass" : "text-left"} ,{
-					"data" : "billValueInCrores", "sClass" : "text-left"}]				
+					"data" : "departmentName", "sClass" : "text-center"} ,{
+					"data" : "lineEstimates", "sClass" : "text-right"} ,{
+					"data" : "adminSanctionedEstimates", "sClass" : "text-right"} ,{ 
+					"data" : "adminSanctionedAmountInCrores", "sClass" : "text-right"} ,{
+					"data" : "technicalSanctionedEstimates", "sClass" : "text-right"} ,{
+					"data" : "loaCreated", "sClass" : "text-right"} ,{
+					"data" : "agreementValueInCrores", "sClass" : "text-right"} ,{
+					"data" : "workInProgress", "sClass" : "text-right"} ,{ 
+					"data" : "workCompleted", "sClass" : "text-right"} ,{
+					"data" : "billsCreated", "sClass" : "text-right"} ,{
+					"data" : "billValueInCrores", "sClass" : "text-right"}]				
 				});
 }
 

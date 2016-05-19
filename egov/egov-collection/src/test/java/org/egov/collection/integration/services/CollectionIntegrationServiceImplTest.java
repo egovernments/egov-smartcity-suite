@@ -78,7 +78,6 @@ public class CollectionIntegrationServiceImplTest { /*extends
 
 		// Create the collection integration service
 		collectionIntegrationService = new CollectionIntegrationServiceImpl();
-		collectionIntegrationService.setSessionFactory(egovSessionFactory);
 
 		objectFactory = new CollectionObjectFactory(session,genericService);
 		user=objectFactory.createUser("testUser");
@@ -153,7 +152,6 @@ public class CollectionIntegrationServiceImplTest { /*extends
 			}
 		};
 		receiptService.setType(ReceiptPayeeDetails.class);
-		receiptService.setSessionFactory(egovSessionFactory);
 		receiptService.setFinancialsUtil(finUtil);
 		
 		collectionCommon = new CollectionCommon();
@@ -184,17 +182,14 @@ public class CollectionIntegrationServiceImplTest { /*extends
 			}
 		};
 		receiptHeaderService.setType(ReceiptHeader.class);
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
 		receiptHeaderService.setCollectionsUtil(collectionsUtil);
 		receiptHeaderService.setFinancialsUtil(finUtil);
 		//receiptHeaderService.setReceiptWorkflowService(receiptWorkflowServiceMock);
 		
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		collectionsNumberGenerator=new CollectionsNumberGenerator();
 		collectionsNumberGenerator.setScriptExecutionService(scriptExecutionService);
-		sequenceGenerator = new SequenceNumberGenerator(egovSessionFactory);
 		collectionsNumberGenerator.setSequenceGenerator(sequenceGenerator);
 		collectionsNumberGenerator.setCollectionsUtil(collectionsUtil);
 		

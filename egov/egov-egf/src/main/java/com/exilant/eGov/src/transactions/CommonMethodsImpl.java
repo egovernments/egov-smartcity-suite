@@ -634,7 +634,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			// ---
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(" In CommonMethodsImpl :getTxnNumber method ");
-			// persistenceService.setSessionFactory(new SessionFactory());
 			//persistenceService.setType(CFiscalPeriod.class);
 			final CFiscalPeriod fiscalPeriodObj = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",
 					Long.parseLong(fiscalPeriod));
@@ -796,7 +795,6 @@ public class CommonMethodsImpl implements CommonMethodsI {
 			// ---
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(" In CommonMethodsImpl :getTxnNumber method ");
-			// persistenceService.setSessionFactory(new SessionFactory());
 			//persistenceService.setType(CFiscalPeriod.class);
 			final CFiscalPeriod fiscalPeriodObj = (CFiscalPeriod) persistenceService.find("from CFiscalPeriod where id=?",
 					Long.parseLong(fiscalPeriod));

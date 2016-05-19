@@ -75,8 +75,6 @@ import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.Number;
-import org.egov.infstr.utils.Sequence;
 import org.egov.model.instrument.InstrumentAccountCodes;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentOtherDetails;
@@ -1799,16 +1797,6 @@ public class CollectionObjectFactory {
 		
 
 		return challan;
-	}
-	
-	public Sequence createSequenceNo(String obj,Long value){
-		Number number = new Number();
-		number.setNumber(value);
-		number.setFormattedNumber(Long.toString(number.getNumber()));
-        number.setObjectType(obj);
-        session.save(number);
-		
-        return new Sequence(number.getObjectType(), number.getNumber(),number.getFormattedNumber());
 	}
 	
 	public ServiceDetails createUnsavedChallanServiceDetails() {

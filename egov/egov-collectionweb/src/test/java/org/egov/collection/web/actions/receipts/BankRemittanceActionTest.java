@@ -99,7 +99,6 @@ private @Autowired AppConfigValuesDAO appConfigValuesDAO;
 		
 		receiptService = new ReceiptHeaderService();
 		receiptService.setType(ReceiptHeader.class);
-		receiptService.setSessionFactory(egovSessionFactory);
 		receiptService.setFinancialsUtil(financialsUtil);
 		receiptService.setCommonsManager(commonsManager);
 		receiptService.setPersistenceService(service);

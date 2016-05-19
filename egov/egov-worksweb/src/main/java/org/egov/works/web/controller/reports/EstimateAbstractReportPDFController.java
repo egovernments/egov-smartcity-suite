@@ -376,11 +376,11 @@ public class EstimateAbstractReportPDFController {
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
         if (workCategory != null && !workCategory.equalsIgnoreCase("undefined")) {
-            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory + ", ";
+            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_',' ') + ", ";
         }
 
         if (typeOfSlum != null) {
-            queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum + ", ";
+            queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum.replace('_',' ') + ", ";
         }
 
         if (beneficiary != null) {
@@ -499,9 +499,11 @@ public class EstimateAbstractReportPDFController {
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
+            reportInput.setReportFormat(FileFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.pdf");
         } else {
+            reportInput.setReportFormat(FileFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.xls");
         }

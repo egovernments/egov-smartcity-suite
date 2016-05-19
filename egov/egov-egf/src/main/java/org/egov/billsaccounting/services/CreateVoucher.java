@@ -295,13 +295,11 @@ public class CreateVoucher {
 			// generalLedgerService = new PersistenceService<CGeneralLedger,
 			// Long>();
 			// generalLedgerService.setType(CGeneralLedger.class);
-			// generalLedgerService.setSessionFactory(new SessionFactory());
 
 			// generalLedgerDetailService = new
 			// PersistenceService<CGeneralLedgerDetail, Long>();
 			// generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
 			// generalLedgerDetailService.setSessionFactory(new
-			// SessionFactory());
 
 		} catch (final Exception e) {
 			LOGGER.error("Exception in CreateVoucher", e);
@@ -903,7 +901,6 @@ public class CreateVoucher {
 			 * )) { // ReceiptVoucher rv=new ReceiptVoucher();
 			 * PersistenceService<ReceiptVoucher, Long> persistenceService = new
 			 * PersistenceService<ReceiptVoucher, Long>();
-			 * persistenceService.setSessionFactory(new SessionFactory());
 			 * //persistenceService.setType(ReceiptVoucher.class);
 			 * rv.setId(voucherheader.getId());
 			 * rv.setVoucherHeader(voucherheader);
@@ -2451,7 +2448,6 @@ public class CreateVoucher {
 	}
 
 	public Functionary getFunctionaryByCode(final BigDecimal code) {
-		// functionarySer.setSessionFactory(new SessionFactory());
 		// functionarySer.setType(Functionary.class);
 		final Functionary functionary = (Functionary) persistenceService.find(
 				"from Functionary where code=?", code);

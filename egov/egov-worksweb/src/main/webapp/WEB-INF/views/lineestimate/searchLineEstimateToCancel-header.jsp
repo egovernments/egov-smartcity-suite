@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,45 +36,38 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE form-validation PUBLIC
-"-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
-"http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
-<form-validation>   
-<formset>
-<form name = "pIMSForm" >
-	  <field property= "firstName" depends = "mask">
-	  	<arg0 key ="employeefirstname" resource="false"/>
-	  	<var>
-	  		<var-name>mask</var-name>
-	  		<var-value>^[a-zA-Z0-9]*$</var-value>
-	  	</var>
-	  </field>
-  	<field property= "middleName" depends="mask">
-  		<arg0 key = "middlename" resource="false"/>
-  		<var>
-  			<var-name>mask</var-name>
-  			<var-value>^[a-zA-Z0-9]*$</var-value>
-  		</var>
-  	</field>
-  	<field property = " lastName" depends= "mask">
-  		<arg0 key = "lastname" resource = "false"/>
-  		<var>
-  			<var-name>mask</var-name>
-  			<var-value>^[a-zA-Z0-9]*$</var-value>
-  		</var>
-  
-  	</field>
-  	<field property ="panNumber" depends="maxlength">
-  	<arg0 key="panNumber"  resource="false" />
-		<arg1 name="minlength" key="${var:maxlength}" resource="false"/>
-		<var>
-		<var-name>maxlength</var-name>
-		<var-value>12</var-value>
-	</var>
-	</field>
-  </form>  
-</formset>
+  --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<input type="hidden" value="<spring:message code='error.lineestimate.required' />" id='selectLineEstimate'>
+		<form:form name="SearchRequest" role="form" action="" modelAttribute="lineEstimateSearchRequest" id="lineEstimateSearchRequest" class="form-horizontal form-groups-bordered">
+			<div class="row">
+				<div class="col-md-12">
+					<jsp:include page="searchLineEstimateToCancel-form.jsp"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lbl.search' />
+					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
+				</div>
+			</div>
+		</form:form>  
+	<jsp:include page="searchLineEstimateToCancel-searchResult.jsp"/>
 
-</form-validation>
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>
+<script src="<c:url value='/resources/js/searchlineestimatetocancel.js?rnd=${app_release_no}'/>"></script>

@@ -81,17 +81,13 @@ public class EstimateAbstractReportJsonAdaptor implements JsonSerializer<Estimat
             else
                 jsonObject.addProperty("subTypeOfWorkName", "");
 
-            
             if (estimateAbstractReport.getLineEstimates() != null)
                 jsonObject.addProperty("lineEstimates", estimateAbstractReport.getLineEstimates());
             else
                 jsonObject.addProperty("lineEstimates", "");
 
             if (estimateAbstractReport.getAdminSanctionedEstimates() != null)
-                jsonObject.addProperty(
-                        "adminSanctionedEstimates",
-                        new BigDecimal(estimateAbstractReport.getAdminSanctionedEstimates()).setScale(2,
-                                BigDecimal.ROUND_HALF_EVEN).toString());
+                jsonObject.addProperty("adminSanctionedEstimates", estimateAbstractReport.getAdminSanctionedEstimates());
             else
                 jsonObject.addProperty("adminSanctionedEstimates", "");
 

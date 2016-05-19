@@ -628,4 +628,9 @@ public class LetterOfAcceptanceService {
         workOrder.setStatus(WorksConstants.CANCELLED.toString());
         return letterOfAcceptanceRepository.save(workOrder);
     }
+    
+    public List<WorkOrder> findWorkOrderByEstimateNumberAndEgwStatus(final String estimateNumber) {
+        return letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeEquals(estimateNumber, WorksConstants.APPROVED);
+    }
+    
 }

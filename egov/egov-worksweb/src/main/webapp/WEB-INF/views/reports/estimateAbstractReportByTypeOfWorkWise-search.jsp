@@ -41,11 +41,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row display-hide report-section">
-	<div class="table-header text-left">
-		<spring:message code="lbl.title.search.estimateabstractreportbytypeofworkwise" /></div>
 	<div id="searchCriteria" class="text-center"></div>
 	<div id="dataRun" class="text-center"></div>
-	<div class="form-group report-table-container" style="overflow:auto">
+	<div class="form-group report-table-container" >
 		<table class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

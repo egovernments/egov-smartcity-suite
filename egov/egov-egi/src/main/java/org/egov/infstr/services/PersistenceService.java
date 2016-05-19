@@ -85,7 +85,6 @@ import java.util.Set;
 public class PersistenceService<T, ID extends Serializable> {
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceService.class);
     private static final String DEFAULT_FIELD = "_hibernate_class";
-    protected org.hibernate.SessionFactory sessionFactory;
     protected Class<T> type;
 
     @Autowired
@@ -240,10 +239,6 @@ public class PersistenceService<T, ID extends Serializable> {
     public T merge(final T model) {
         validate(model);
         return (T) getSession().merge(model);
-    }
-
-    public void setSessionFactory(final org.hibernate.SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
     }
 
     @Transactional
