@@ -143,11 +143,10 @@
 					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
 
 <div class="form-group text-center" >
-						<%-- <form:button type="button" class="btn btn-primary" id="buttonid"><spring:message code="lbl.submit"/></form:button> --%>
 						<form:button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></form:button>
 						<form:button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew"/></form:button>
 						<form:button type="button" class="btn btn-primary" id="listid"><spring:message code="lbl.list"/></form:button>
-						<form:button type="button" class="btn btn-primary"  id="resetid" ><spring:message code="lbl.reset"/></form:button>
+						<form:button type="button" class="btn btn-default"  id="resetid" ><spring:message code="lbl.reset"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>
 					</div>

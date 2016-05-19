@@ -86,15 +86,6 @@
 			
 	</div>
 	</c:forEach>
-	<%-- <c:forEach items="${waterRatesHeader.waterRatesDetails}" var="var1" varStatus="counter">
-	
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.monthlyrate" />:<span class="mandatory"></span></label> 	
-			<div class="col-sm-3 add-margin">
-				<input type="text" class="form-control patternvalidation" data-pattern="number"  name="waterRatesDetails[${counter.index}].monthlyRate" 
-					id="monthlyrate"  required="required"  id="donationAmount" value =<c:out value="${var1.monthlyRate}" />></input>
-			</div>
-
-</c:forEach> --%>
 </div>
 <div class="form-group">
 <c:forEach items="${waterRatesHeader.waterRatesDetails}" var="var1" varStatus="counter">

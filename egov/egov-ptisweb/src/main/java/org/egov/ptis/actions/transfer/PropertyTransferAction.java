@@ -118,6 +118,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -189,6 +190,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Autowired
     private NoticeService noticeService;
 
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
     // Model and View data
     private Long mutationId;
     private String assessmentNo;
@@ -226,6 +230,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Map<String, String> guardianRelationMap;
     private List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
     private String actionType;
+    private boolean digitalSignEnabled;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -540,6 +545,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
             setGuardianRelationMap(GUARDIAN_RELATION);
         }
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
     }
 
     @Override
@@ -1029,6 +1035,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setEnableApproverDetails(boolean enableApproverDetails) {
         this.enableApproverDetails = enableApproverDetails;
+    }
+
+    public boolean isDigitalSignEnabled() {
+        return digitalSignEnabled;
+    }
+
+    public void setDigitalSignEnabled(boolean digitalSignEnabled) {
+        this.digitalSignEnabled = digitalSignEnabled;
     }
 
 }

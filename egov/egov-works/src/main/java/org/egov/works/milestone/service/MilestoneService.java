@@ -40,17 +40,22 @@
 package org.egov.works.milestone.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.milestone.repository.MilestoneRepository;
 import org.egov.works.utils.WorksConstants;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -70,11 +75,15 @@ public class MilestoneService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
+
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     public List<Milestone> getMilestoneByWorkOrderEstimateId(final Long id) {
         return milestoneRepository.findByWorkOrderEstimate_Id(id);
@@ -95,8 +104,10 @@ public class MilestoneService {
                 criteria.add(Restrictions.eq("le.executingDepartment.id", searchRequestMilestone.getDepartment()));
             if (searchRequestMilestone.getMilestoneFromDate() != null)
                 criteria.add(Restrictions.ge("createdDate", searchRequestMilestone.getMilestoneFromDate()));
-            if (searchRequestMilestone.getMilestoneToDate() != null)
-                criteria.add(Restrictions.le("createdDate", searchRequestMilestone.getMilestoneToDate()));
+            if (searchRequestMilestone.getMilestoneToDate() != null) {
+                final DateTime dateTime = new DateTime(searchRequestMilestone.getMilestoneToDate().getTime()).plusDays(1);
+                criteria.add(Restrictions.le("createdDate", dateTime.toDate()));
+            }
             if (searchRequestMilestone.getStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestMilestone.getStatus()));
             if (searchRequestMilestone.getSubTypeOfWork() != null)
@@ -127,11 +138,79 @@ public class MilestoneService {
     @Transactional
     public Milestone create(final Milestone milestone) throws IOException {
         if (milestone.getState() == null)
-            milestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
+            milestone.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                     Milestone.MilestoneStatus.APPROVED.toString()));
         for (final MilestoneActivity activity : milestone.getActivities())
             activity.setMilestone(milestone);
         final Milestone newMilestone = milestoneRepository.save(milestone);
         return newMilestone;
+    }
+
+    @Transactional
+    public Milestone update(final Milestone milestone) {
+        for (final TrackMilestone tm : milestone.getTrackMilestone()) {
+            tm.setMilestone(milestone);
+            tm.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.TRACK_MILESTONE_MODULE_KEY,
+                    Milestone.MilestoneStatus.APPROVED.toString()));
+            if (tm.getApprovedDate() == null)
+                tm.setApprovedDate(new Date());
+            Integer count = 0;
+            double totalPercentage = 0;
+            for (final TrackMilestoneActivity tma : tm.getActivities()) {
+                tma.setMilestoneActivity(milestone.getActivities().get(count));
+                tma.setTrackMilestone(tm);
+                totalPercentage += milestone.getActivities().get(count).getPercentage() / 100 * tma.getCompletedPercentage();
+                count++;
+            }
+            tm.setTotalPercentage(BigDecimal.valueOf(totalPercentage));
+            if (totalPercentage == 100)
+                tm.setProjectCompleted(true);
+            else
+                tm.setProjectCompleted(false);
+            trackMilestoneService.save(tm);
+        }
+        return milestoneRepository.save(milestone);
+    }
+
+    public List<String> findLoaNumbersToCancelMilestone(final String code) {
+        final List<String> loaNumbers = milestoneRepository
+                .findLoaNumbersToCancelMilestone("%" + code + "%",
+                        WorksConstants.APPROVED.toString());
+        return loaNumbers;
+    }
+
+    @Transactional
+    public Milestone cancel(final Milestone milestone) {
+        milestone.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
+                WorksConstants.CANCELLED_STATUS));
+        for (final TrackMilestone tm : milestone.getTrackMilestone())
+            tm.setStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(WorksConstants.TRACK_MILESTONE_MODULE_KEY,
+                    WorksConstants.CANCELLED_STATUS));
+        return milestoneRepository.save(milestone);
+    }
+
+    public List<Milestone> searchMilestonesToCancel(final SearchRequestMilestone searchRequestMilestone) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Milestone.class)
+                .createAlias("workOrderEstimate", "woe")
+                .createAlias("woe.estimate", "estimate")
+                .createAlias("estimate.lineEstimateDetails", "led")
+                .createAlias("status", "status")
+                .createAlias("woe.workOrder", "wo")
+                .createAlias("wo.contractor", "contractor")
+                .createAlias("led.projectCode", "projectCode");
+
+        if (searchRequestMilestone != null) {
+            if (searchRequestMilestone.getWorkIdentificationNumber() != null)
+                criteria.add(Restrictions.ilike("projectCode.code", searchRequestMilestone.getWorkIdentificationNumber(),
+                        MatchMode.ANYWHERE));
+            if (searchRequestMilestone.getStatus() != null)
+                criteria.add(Restrictions.eq("status.code", searchRequestMilestone.getStatus()));
+            if (searchRequestMilestone.getWorkOrderNumber() != null)
+                criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber()));
+            if (searchRequestMilestone.getContractor() != null)
+                criteria.add(Restrictions.eq("contractor.name", searchRequestMilestone.getContractor()));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 }

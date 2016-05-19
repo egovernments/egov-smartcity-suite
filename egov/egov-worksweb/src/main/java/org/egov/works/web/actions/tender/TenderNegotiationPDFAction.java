@@ -46,7 +46,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.services.TenderResponseService;
 import org.egov.works.services.WorksService;

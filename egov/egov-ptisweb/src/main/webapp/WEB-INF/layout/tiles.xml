@@ -302,4 +302,8 @@
     	<put-attribute name="page-title" value="lbl.editCollection.ack" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/transactions/editCollection/editCollection-ack.jsp"/>
     </definition>
+    <definition name="editCollection-error" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.editCollection.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editCollection/editCollection-error.jsp"/>
+    </definition>
 </tiles-definitions> 

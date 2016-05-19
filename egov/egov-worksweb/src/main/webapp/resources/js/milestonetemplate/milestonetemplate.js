@@ -97,6 +97,23 @@ function validateFormBeforeSubmit() {
         	   return false;
            }
         }
+        
+        var percentage = document.getElementsByClassName("selectamountwk");
+        for(var i = 0; i < percentage.length; i++){
+           if(percentage.item(i).value == '') {
+           	var message = document.getElementById('tempPercentage').value;
+            showMessage('milestonetemplateerror', message);
+        	   return false;
+           }
+        }
+        
+        var totalValue = document.getElementById('totalValue').innerHTML;
+        if(totalValue != 100){
+        	var message = document.getElementById('validateTotalPercentage').value;
+        	showMessage('milestonetemplateerror', message);
+        	return false;
+        }
+        	
         return true;
 }
 
@@ -120,30 +137,4 @@ function viewMilestoneTemplate(){
     } else{
 	window.open("milestoneTemplate-edit.action?mode=view&id="+id+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
     }
-}
-
-function ready() {
-	$('#typeOfWork').trigger('blur');
-	alert("triggered!!!");
-}
-function ready() {
-$('#typeOfWork').blur(function(){
-	 if ($('#typeOfWork').val() === '') {
-		   $('#subTypeOfWork').empty();
-		   $('#subTypeOfWork').append($('<option>').text('Select from below').attr('value', ''));
-			return;
-			} else {
-			$.each(value, function(index, val) {
-					var selected="";
-					if($subTypeOfWorkId)
-					{
-						if($subTypeOfWorkId==val.id)
-						{
-							selected="selected";
-						}
-					}
-				     $('#subTypeOfWork').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
-				});
-		}
-	});
 }

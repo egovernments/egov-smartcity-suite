@@ -1,0 +1,1 @@
+update egpgr_complaintstatus_mapping set show_status_id=(select id from egpgr_complaintstatus where name='REOPENED') where role_id=(select id from eg_role where name='Grievance Officer') and current_status_id=(select id from egpgr_complaintstatus where name='COMPLETED') and show_status_id=(select id from egpgr_complaintstatus where name='COMPLETED');

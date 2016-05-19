@@ -71,10 +71,10 @@ jQuery('#btnsearch').click(function(e) {
 		queryParameters += "Date Range : " + $('#adminSanctionFromDate').val() + " - " + $('#adminSanctionToDate').val() + ", ";
 	}
     if(adminSanctionFromDate != "" && adminSanctionToDate == "") {
-        queryParameters += "Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
+        queryParameters += "Line Estimate Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
     }
     if(adminSanctionToDate != "" && adminSanctionFromDate == "") {
-        queryParameters += "Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
+        queryParameters += "Line Estimate Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
     }
     
     if($('#typeOfWork').val() != "") {
@@ -85,8 +85,16 @@ jQuery('#btnsearch').click(function(e) {
         queryParameters += "Sub Type Of Work : " + $('#subTypeOfWork').find(":selected").text() + ", ";
     }
     
-    if($('#department').val() != "") {
-        queryParameters += "Department : " + $('#department').find(":selected").text() + ", ";
+    if($('#departmentsSelect').val() != null) {
+    	var departmentNames= "";
+    	$("#departmentsSelect option:selected").each(function () {
+    		   var $this = $(this);
+    		   if ($this.length) {
+    			   departmentNames = departmentNames + $this.text() + ",";
+    		   }
+    		});
+    	departmentNames = departmentNames.substring(0, departmentNames.length - 1);
+        queryParameters += "Departments : " + departmentNames + ", ";
     }
     
     if($('#scheme').val() != "") {
@@ -94,15 +102,15 @@ jQuery('#btnsearch').click(function(e) {
     }
     
     if($('#subScheme').val() != "") {
-        queryParameters += "SubScheme : " + $('#subScheme').find(":selected").text() + ", ";
+        queryParameters += "Sub Scheme : " + $('#subScheme').find(":selected").text() + ", ";
     }
     
     if($("input[name=workCategory]").is(":checked") ) {
-        queryParameters += "WorkCategory : " + $("input[name=workCategory]:checked").val() + ", ";
+        queryParameters += "Work Category : " + $("input[name=workCategory]:checked").val() + ", ";
     }
     
     if($('#typeOfSlum').val() != "") {
-        queryParameters += "TypeOfSlum : " + $('#typeOfSlum').val() + ", ";
+        queryParameters += "Type Of Slum : " + $('#typeOfSlum').val() + ", ";
     }
     
     if($('#beneficiary').val() != "") {
@@ -110,7 +118,7 @@ jQuery('#btnsearch').click(function(e) {
     }
     
     if($('#natureOfWork').val() != "") {
-        queryParameters += "NatureOfWork : " + $('#natureOfWork').find(":selected").text() + ", ";
+        queryParameters += "Nature Of Work : " + $('#natureOfWork').find(":selected").text() + ", ";
     }
     
     
@@ -126,7 +134,7 @@ $('#btndownloadpdf').click(function() {
 	var adminSanctionToDate = $('#adminSanctionToDate').val();
 	var typeOfWork = $('#typeOfWork').val();
 	var subTypeOfWork = $('#subTypeOfWork').val();
-	var department = $('#department').val();
+	var departments = $('#departmentsSelect').val();
 	var scheme = $('#scheme').val();
 	var subScheme = $('#subScheme').val();
 	var workCategory = $("input[name=workCategory]:checked").val();
@@ -136,31 +144,36 @@ $('#btndownloadpdf').click(function() {
 	var spillOver = document.getElementById("spillOverFlag");
 	
 	var spillOverFlag = spillOver.checked ? true : false;
+	
+	if(departments == null)
+		departments = 0;
+	//TO-DO : Need to change to ajax submit
+	var url = "/egworks/reports/estimateabstractreport/typeofworkwise/pdf?adminSanctionFromDate="
+	+ adminSanctionFromDate
+	+ "&adminSanctionToDate="
+	+ adminSanctionToDate
+	+ "&typeOfWork="
+	+ typeOfWork
+	+ "&subTypeOfWork="
+	+ subTypeOfWork
+	+ "&departments="
+	+ departments
+	+ "&scheme="
+	+ scheme
+	+ "&subScheme="
+	+ subScheme
+	+ "&workCategory="
+	+ workCategory
+	+ "&typeOfSlum="
+	+ typeOfSlum
+	+ "&beneficiary="
+	+ beneficiary
+	+ "&natureOfWork="
+	+ natureOfWork
+	+ "&spillOverFlag=" + spillOverFlag
+	+ "&contentType=pdf";
 
-	window.open("/egworks/reports/estimateabstractreportbytypeofworkwise/pdf?adminSanctionFromDate="
-			+ adminSanctionFromDate
-			+ "&adminSanctionToDate="
-			+ adminSanctionToDate
-			+ "&typeOfWork="
-			+ typeOfWork
-			+ "&subTypeOfWork="
-			+ subTypeOfWork
-			+ "&department="
-			+ department
-			+ "&scheme="
-			+ scheme
-			+ "&subScheme="
-			+ subScheme
-			+ "&workCategory="
-			+ workCategory
-			+ "&typeOfSlum="
-			+ typeOfSlum
-			+ "&beneficiary="
-			+ beneficiary
-			+ "&natureOfWork="
-			+ natureOfWork
-			+ "&spillOverFlag=" + spillOverFlag
-			+ "&contentType=pdf", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	window.open(url, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
 
 $('#btndownloadexcel').click(function() {
@@ -168,7 +181,7 @@ $('#btndownloadexcel').click(function() {
 	var adminSanctionToDate = $('#adminSanctionToDate').val();
 	var typeOfWork = $('#typeOfWork').val();
 	var subTypeOfWork = $('#subTypeOfWork').val();
-	var department = $('#department').val();
+	var departments = $('#departmentsSelect').val();
 	var scheme = $('#scheme').val();
 	var subScheme = $('#subScheme').val();
 	var workCategory = $("input[name=workCategory]:checked").val();
@@ -178,31 +191,35 @@ $('#btndownloadexcel').click(function() {
 	var spillOver = document.getElementById("spillOverFlag");
 	
 	var spillOverFlag = spillOver.checked ? true : false;
+	if(departments == null)
+		departments = 0;
+	//TO-DO : Need to change to ajax submit
+	var url = "/egworks/reports/estimateabstractreport/typeofworkwise/pdf?adminSanctionFromDate="
+	+ adminSanctionFromDate
+	+ "&adminSanctionToDate="
+	+ adminSanctionToDate
+	+ "&typeOfWork="
+	+ typeOfWork
+	+ "&subTypeOfWork="
+	+ subTypeOfWork
+	+ "&departments="
+	+ departments
+	+ "&scheme="
+	+ scheme
+	+ "&subScheme="
+	+ subScheme
+	+ "&workCategory="
+	+ workCategory
+	+ "&typeOfSlum="
+	+ typeOfSlum
+	+ "&beneficiary="
+	+ beneficiary
+	+ "&natureOfWork="
+	+ natureOfWork
+	+ "&spillOverFlag=" + spillOverFlag
+	+ "&contentType=excel";
 
-	window.open("/egworks/reports/estimateabstractreportbytypeofworkwise/pdf?adminSanctionFromDate="
-			+ adminSanctionFromDate
-			+ "&adminSanctionToDate="
-			+ adminSanctionToDate
-			+ "&typeOfWork="
-			+ typeOfWork
-			+ "&subTypeOfWork="
-			+ subTypeOfWork
-			+ "&department="
-			+ department
-			+ "&scheme="
-			+ scheme
-			+ "&subScheme="
-			+ subScheme
-			+ "&workCategory="
-			+ workCategory
-			+ "&typeOfSlum="
-			+ typeOfSlum
-			+ "&beneficiary="
-			+ beneficiary
-			+ "&natureOfWork="
-			+ natureOfWork
-			+ "&spillOverFlag=" + spillOverFlag
-			+ "&contentType=excel", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	window.open(url, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
 
 	
@@ -211,7 +228,10 @@ function getFormData($form){
     var indexed_array = {};
 
     $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
+    	if (indexed_array.hasOwnProperty(n['name']))
+    		indexed_array[n['name']] = indexed_array[n['name']] + ',' + n['value'];	
+    	else
+    		indexed_array[n['name']] = n['value'];
     });
 
     return indexed_array;
@@ -222,6 +242,7 @@ function callAjaxSearch() {
 	jQuery('.report-section').removeClass('display-hide');
 	 $("#adminSanctionFromDate").removeAttr("disabled");
 	 $("#adminSanctionToDate").removeAttr("disabled");
+	 $("#departmentSelected").val($("#departmentsSelect").val());
 	 var postData = getFormData(jQuery('form'));
 	 $("#adminSanctionFromDate").attr('disabled', 'disabled');
 	 $("#adminSanctionToDate").attr('disabled', 'disabled');
@@ -244,7 +265,7 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('#btndownloadpdf').show();
 					$('#btndownloadexcel').show();
-					$('td:eq(0)',row).html(index+1);
+					/*$('td:eq(0)',row).html(index+1);*/
 					disableDateFields();
 					if(index == 0) {
 						$createdDate = data.createdDate;
@@ -256,8 +277,9 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-					"data" : "", "sClass" : "text-center"} ,{ 
+					/*"data" : "", "sClass" : "text-center"} ,{*/ 
 					"data" : "typeOfWorkName", "sClass" : "text-left"} ,{
+					"data" : "subTypeOfWorkName", "sClass" : "text-left"} ,{
 					"data" : "departmentName", "sClass" : "text-left"} ,{
 					"data" : "lineEstimates", "sClass" : "text-left"} ,{
 					"data" : "adminSanctionedEstimates", "sClass" : "text-left"} ,{ 
@@ -272,9 +294,9 @@ function callAjaxSearch() {
 				});
 		
 		//show/hide department
-		var department = $("#department").val();
+		var department = $("#departmentsSelect").val();
 
-		if(department==""){
+		if(department==null){
 			var oTable = $('#resultTable').DataTable();
 			oTable.column(2).visible(false);
 		}
@@ -401,6 +423,16 @@ function replaceBeneficiaryChar() {
 	});
 }
 $(document).ready(function(){
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+	
+	var selectedFYId = $("#financialYear").val();
+	getFinancialYearDatesByFYId(selectedFYId);
+	
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$('#typeOfWork').change(function(){
 		 if ($('#typeOfWork').val() === '') {
@@ -418,7 +450,7 @@ $(document).ready(function(){
 					console.log(value);
 					$('#subTypeOfWork').empty();
 					$('#subTypeOfWork').append($("<option value=''>Select from below</option>"));
-					$.each(value, function(index, val) {
+					$.each(value, function(index, val) { 
 					var selected="";
 						if($subTypeOfWorkId)
 						{

@@ -39,6 +39,7 @@
  */
 package org.egov.collection.entity;
 
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfoImpl;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
@@ -238,6 +239,21 @@ public class ChallanInfo {
             return receiptHeader.getChallan().getService() == null ? null : receiptHeader.getChallan().getService()
                     .getName();
 
+    }
+
+    /**
+     * @return receipt instrument type
+     */
+    public String getReceiptInstrumentType() {
+        String instrumentType = "";
+        for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
+            if (instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) ||
+                    instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+                instrumentType = CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD;
+                break;
+            } else
+                instrumentType = instrumentInfo.getInstrumentType();
+        return instrumentType;
     }
 
 }

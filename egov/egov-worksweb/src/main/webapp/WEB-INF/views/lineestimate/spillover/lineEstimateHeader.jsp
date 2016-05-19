@@ -51,7 +51,7 @@
 	
 	<spring:hasBindErrors name="lineEstimate">
 		<div class="alert alert-danger col-md-10 col-md-offset-1">
-      			<form:errors path="*" /><br/>
+      			<form:errors path="*" cssClass="error-msg add-margin"/><br/>
       	</div>
     </spring:hasBindErrors>
 

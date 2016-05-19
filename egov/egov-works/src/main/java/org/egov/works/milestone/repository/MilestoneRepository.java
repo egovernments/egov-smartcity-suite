@@ -43,6 +43,8 @@ import java.util.List;
 
 import org.egov.works.milestone.entity.Milestone;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -52,4 +54,6 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
 
     List<Milestone> findByWorkOrderEstimate_Id(final Long id);
 
+    @Query("select distinct(m.workOrderEstimate.workOrder.workOrderNumber) from Milestone as m where upper(m.workOrderEstimate.workOrder.workOrderNumber) like upper(:code) and m.status.code = :status")
+    List<String> findLoaNumbersToCancelMilestone(@Param("code") String code, @Param("status") String status);
 }

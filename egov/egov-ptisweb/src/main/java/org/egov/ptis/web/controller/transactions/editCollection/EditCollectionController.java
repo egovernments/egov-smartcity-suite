@@ -80,6 +80,7 @@ public class EditCollectionController {
 
     private static final String EDIT_COLLECTION_FORM = "editCollection-form";
     private static final String EDIT_COLLECTION_ACK = "editCollection-ack";
+    private static final String EDIT_COLLECTION_ERROR = "editCollection-error";
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
@@ -104,6 +105,9 @@ public class EditCollectionController {
             @PathVariable final String assessmentNo, Model model) {
         List<DemandDetail> demandDetailBeans = new ArrayList<DemandDetail>();
         basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if (!basicProperty.isEligible()) {
+            return EDIT_COLLECTION_ERROR;
+        }
         List<EgDemandDetails> demandDetails = persistenceService.findAllBy(QUERY_DEMAND_DETAILS, basicProperty,
                 propertyTaxCommonUtils.getCurrentInstallment(), propertyTaxCommonUtils.getCurrentInstallment().getFinYearRange());
         if (!demandDetails.isEmpty()) {
@@ -243,7 +247,7 @@ public class EditCollectionController {
         if (editingCollection && StringUtils.isBlank(demandDetailBeansForm.getRemarks())) {
             errors.rejectValue("remarks", "mandatory.remarks");
         }
-        
+
         if (!editingCollection) {
             errors.rejectValue("remarks", "error.collection.notmodified");
         }

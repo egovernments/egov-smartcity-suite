@@ -156,6 +156,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private String ulbCode;
     private RevisionPetitionService revisionPetitionService;
     private String signedFileStoreId;
+    private boolean digitalSignEnabled;
 
     @Autowired
     private DesignationService designationService;
@@ -182,6 +183,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     @Override
     public StateAware getModel() {
         return null;
+    }
+
+    public void prepare() {
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
     }
 
     /**
@@ -739,6 +744,14 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     public void setSignedFileStoreId(String signedFileStoreId) {
         this.signedFileStoreId = signedFileStoreId;
+    }
+
+    public boolean isDigitalSignEnabled() {
+        return digitalSignEnabled;
+    }
+
+    public void setDigitalSignEnabled(boolean digitalSignEnabled) {
+        this.digitalSignEnabled = digitalSignEnabled;
     }
 
 }

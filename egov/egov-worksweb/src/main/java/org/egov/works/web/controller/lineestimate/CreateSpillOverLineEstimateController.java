@@ -158,7 +158,7 @@ public class CreateSpillOverLineEstimateController {
             final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
             final BindingResult resultBinder)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
 
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
@@ -169,36 +169,36 @@ public class CreateSpillOverLineEstimateController {
         final AppConfigValues value = values.get(0);
         if (value.getValue().equalsIgnoreCase("Y"))
             validateBudgetAmount(lineEstimate, errors);
-
+        
+        validateBudgetHead(lineEstimate, errors);
+        
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", null);
             model.addAttribute("designation", request.getParameter("designation"));
             return "spillOverLineEstimate-form";
         } else {
-            if (lineEstimate.getBudgetHead() != null) {
-                Boolean check = false;
-                List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
-                accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-                for (CChartOfAccountDetail detail : accountDetails) {
-                    if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase("PROJECTCODE"))
-                        check = true;
-                }
-                if (!check) {
-                    setDropDownValues(model);
-                    model.addAttribute("mode", null);
-                    model.addAttribute("designation", request.getParameter("designation"));
-                    
-                    model.addAttribute("errorMessage", "The COA used is not a control code for project code sub-ledger. Kindly do the mapping from modify detailed code screen and then proceed for creating line estimate");
-
-                    return "spillOverLineEstimate-form";
-                }
-
-            }
             final LineEstimate newLineEstimate = lineEstimateService.createSpillOver(lineEstimate, files);
             return "redirect:/lineestimate/spillover-lineestimate-success?lineEstimateNumber="
                     + newLineEstimate.getLineEstimateNumber();
         }
+    }
+
+    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+        if (lineEstimate.getBudgetHead() != null) {
+            Boolean check = false;
+            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
+            for (CChartOfAccountDetail detail : accountDetails) {
+                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                    check = true;
+            }
+            if (!check) {
+                errors.reject("error.budgethead.validate","error.budgethead.validate");
+            }
+
+        }
+
     }
 
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {

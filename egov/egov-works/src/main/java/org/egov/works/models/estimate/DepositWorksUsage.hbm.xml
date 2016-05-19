@@ -48,7 +48,7 @@
 				<param name="sequence_name">SEQ_EGW_DEPOSITWORKS_USAGE</param>
 			</generator>
 		</id>
-		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" unique="true" />
+		<many-to-one name="abstractEstimate" class="org.egov.works.abstractestimate.entity.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" unique="true" />
 		<many-to-one name="depositCode" class="org.egov.works.models.masters.DepositCode" fetch="select">
 			<column name="DEPOSITCODE_ID" not-null="true"/>
 		</many-to-one>

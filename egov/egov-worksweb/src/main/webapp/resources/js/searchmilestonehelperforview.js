@@ -91,7 +91,23 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var fromDate = '';
+	var toDate = '';
+	if($('#milestoneFromDate').val() != "") {
+		fromDate = $('#milestoneFromDate').data('datepicker').date;
+	}
+	if($('#milestoneToDate').val() != "") {
+		toDate = $('#milestoneToDate').data('datepicker').date;
+	}
+	var flag = true; 
+	if(toDate != '' && fromDate != '') {
+		if(fromDate > toDate) {
+			flag = false;
+			bootbox.alert('Milestone To Date should be greater than Milestone From Date');
+		}
+	}
+	if(flag)
+		callAjaxSearch();
 });
 
 function getFormData($form) {

@@ -444,9 +444,29 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         return additionalInfo;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getSource()
+     */
     @Override
     public String getSource() {
         return receiptHeader.getSource() == null ? "" : receiptHeader.getSource();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getReceiptInstrumentType()
+     */
+    @Override
+    public String getReceiptInstrumentType() {
+        String instrumentType = "";
+        for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
+            if (instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) ||
+                    instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+                instrumentType = CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD;
+                break;
+            } else
+                instrumentType = instrumentInfo.getInstrumentType();
+        return instrumentType;
+    }
 }

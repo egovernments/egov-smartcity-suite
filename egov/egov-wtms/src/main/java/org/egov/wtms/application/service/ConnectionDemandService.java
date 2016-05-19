@@ -65,6 +65,7 @@ import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.collection.ConnectionBillService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
 import org.egov.wtms.masters.entity.DonationDetails;
+import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -204,11 +205,16 @@ public class ConnectionDemandService {
     }
 
     public DonationDetails getDonationDetails(final WaterConnectionDetails waterConnectionDetails) {
-        DonationDetails donationDetails;
-        donationDetails = donationDetailsService.findByDonationHeader(donationHeaderService
-                .findByPropertyandCategoryandUsageandMinPipeSize(waterConnectionDetails.getPropertyType(),
-                        waterConnectionDetails.getCategory(), waterConnectionDetails.getUsageType(),
-                        waterConnectionDetails.getPipeSize().getSizeInInch()));
+        DonationDetails donationDetails = null;
+        final List<DonationHeader> donationHeaderTempList = donationHeaderService
+                .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(waterConnectionDetails.getPropertyType(),  waterConnectionDetails.getCategory(), waterConnectionDetails.getUsageType(), waterConnectionDetails.getPipeSize().getSizeInInch()
+                        , waterConnectionDetails.getPipeSize().getSizeInInch());
+            for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
+                donationDetails = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(
+                        donationHeaderTemp, new Date(), new Date());
+                if (donationDetails != null)
+                    break;
+            }
         return donationDetails;
     }
 

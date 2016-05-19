@@ -42,13 +42,16 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="page-container" id="page-container">
-	<div class="main-content">
-		<div class="alert text-center" style="color: green;">
-			${message}
-		<div class="row">
-			<div class="col-sm-12 text-center">
-				<input type="submit" name="closeButton" id="closeButton"
-					value="Close" Class="btn btn-default" onclick="window.close();" />
+	<div class="panel panel-primary" data-collapsed="0">
+		<div class="main-content">
+			<div class="alert text-center" style="color: green;" id="successMessage">
+				${message}
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<input type="submit" name="closeButton" id="closeButton"
+						value="Close" Class="btn btn-default" onclick="window.close();" />
+				</div>
 			</div>
 		</div>
 	</div>

@@ -46,7 +46,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;

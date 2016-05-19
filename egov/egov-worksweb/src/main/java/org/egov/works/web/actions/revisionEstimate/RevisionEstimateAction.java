@@ -60,17 +60,17 @@ import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.Activity;
-import org.egov.works.models.estimate.NonSor;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.entity.NonSor;
 import org.egov.works.models.masters.ScheduleOfRate;
-import org.egov.works.models.revisionEstimate.RevisionAbstractEstimate;
-import org.egov.works.models.revisionEstimate.RevisionType;
-import org.egov.works.models.revisionEstimate.RevisionWorkOrder;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderActivity;
 import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.RevisionWorkOrder;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.RevisionEstimateService;
 import org.egov.works.services.WorkOrderService;
@@ -278,7 +278,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                         && revisionEstimate.getCreatedDate() != null
                         && ae.getCreatedDate().before(revisionEstimate.getCreatedDate())) {
                     originalRevisedActivityList.addAll(ae.getActivities());
-                    originalTotalAmount = originalTotalAmount + ae.getWorkValue().getValue();
+                    originalTotalAmount = originalTotalAmount + ae.getWorkValue();
                     originalTotalTax = originalTotalTax + ae.getTotalTax().getValue();
                     originalWorkValueIncludingTax = originalWorkValueIncludingTax
                             + ae.getWorkValueIncludingTaxes().getValue();
@@ -310,7 +310,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
 
     @Override
     protected BigDecimal getAmountRule() {
-        return new BigDecimal(revisionEstimate.getWorkValue().getValue());
+        return new BigDecimal(revisionEstimate.getWorkValue());
     }
 
     public String save() {
@@ -454,13 +454,13 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                             && parentWOA.getActivity().getRevisionType().toString()
                                     .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                         woa.getActivity().setRate(
-                                new Money(woa.getActivity().getRate().getValue()
+                              woa.getActivity().getRate()
                                         * parentWOA.getActivity()
-                                                .getConversionFactorForRE(workOrder.getWorkOrderDate())));
+                                                .getConversionFactorForRE(workOrder.getWorkOrderDate()));
                     else
                         woa.getActivity().setRate(
-                                new Money(woa.getActivity().getRate().getValue()
-                                        * parentWOA.getActivity().getConversionFactor()));
+                               woa.getActivity().getRate()
+                                        * parentWOA.getActivity().getConversionFactor());
                 } else
                     woa.getActivity().setRate(woa.getActivity().getRate());
                 if (parentWOA.getActivity().getNonSor() == null)
@@ -553,7 +553,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                     && (activity.getRevisionType().toString()
                             .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()) || activity.getRevisionType()
                                     .toString().equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
-                workOrderActivity.setApprovedRate(activity.getRate().getValue()
+                workOrderActivity.setApprovedRate(activity.getRate()
                         / activity.getConversionFactorForRE(workOrder.getWorkOrderDate()));
             else if (activity != null
                     && activity.getRevisionType() != null
@@ -561,7 +561,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                             .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString()) || activity
                                     .getRevisionType().toString().equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
                 if (tenderResponse.getTenderEstimate().getTenderType().equalsIgnoreCase(WorksConstants.PERC_TENDER))
-                    workOrderActivity.setApprovedRate(activity.getRate().getValue()
+                    workOrderActivity.setApprovedRate(activity.getRate()
                             / activity.getConversionFactorForRE(revisionEstimate.getParent().getEstimateDate()));
                 else {
                     final WorkOrderActivity parentWOA = (WorkOrderActivity) persistenceService
@@ -570,7 +570,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                     workOrderActivity.setApprovedRate(parentWOA.getApprovedRate());
                 }
             workOrderActivity.setApprovedQuantity(activity.getQuantity());
-            approvedAmount = new Money(activity.getRate().getValue() * workOrderActivity.getApprovedQuantity())
+            approvedAmount = new Money(activity.getRate() * workOrderActivity.getApprovedQuantity())
                     .getValue();
             // If it is a reduced quantity, then the work order activity's
             // amount needs to be negative, else the RevWO amount will always

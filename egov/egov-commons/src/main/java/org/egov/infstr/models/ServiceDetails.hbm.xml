@@ -76,7 +76,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			<key>
 				<column name="SERVICEDETAILS" precision="22" scale="0" />
 			</key>
-			<one-to-many class="org.egov.infstr.models.BankAccountServiceMap" />
+			<one-to-many class="org.egov.commons.entity.BankAccountServiceMap" />
 		</set>
 
 		<many-to-one name="fund" class="org.egov.commons.Fund"

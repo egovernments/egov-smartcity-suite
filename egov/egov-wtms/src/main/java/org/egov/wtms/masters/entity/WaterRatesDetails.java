@@ -40,8 +40,11 @@
 package org.egov.wtms.masters.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,6 +60,7 @@ import java.util.Date;
 @Entity
 @Table(name = "egwtr_water_rates_details")
 @SequenceGenerator(name = WaterRatesDetails.SEQ_WATERRATESDETAILS, sequenceName = WaterRatesDetails.SEQ_WATERRATESDETAILS, allocationSize = 1)
+@EntityListeners(AuditingEntityListener.class)
 public class WaterRatesDetails extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = -8237417567777811811L;
@@ -69,6 +73,7 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "waterratesheader", nullable = false)
+    @Audited
     private WaterRatesHeader waterRatesHeader;
 
     private Long startingUnits;
@@ -79,13 +84,16 @@ public class WaterRatesDetails extends AbstractPersistable<Long> {
 
     private Double minimumRate;
 
+    @Audited
     private Double monthlyRate;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
+    @Audited
     private Date fromDate;
 
     @Temporal(value = TemporalType.DATE)
+    @Audited
     private Date toDate;
 
     @Override

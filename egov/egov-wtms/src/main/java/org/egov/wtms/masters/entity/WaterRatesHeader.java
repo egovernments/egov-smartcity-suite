@@ -41,6 +41,9 @@ package org.egov.wtms.masters.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -62,6 +65,8 @@ import java.util.List;
 @Entity
 @Table(name = "egwtr_water_rates_header")
 @SequenceGenerator(name = WaterRatesHeader.SEQ_WATERRATESHEADER, sequenceName = WaterRatesHeader.SEQ_WATERRATESHEADER, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class WaterRatesHeader extends AbstractAuditable {
 
     private static final long serialVersionUID = -2596548687171468023L;
@@ -73,26 +78,32 @@ public class WaterRatesHeader extends AbstractAuditable {
 
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Audited
     private ConnectionType connectionType;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "usagetype", nullable = false)
+    @Audited
     private UsageType usageType;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "watersource", nullable = false)
+    @Audited
     private WaterSource waterSource;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "pipesize", nullable = false)
+    @Audited
     private PipeSize pipeSize;
 
+    @Audited
     private boolean active;
 
     @OneToMany(mappedBy = "waterRatesHeader", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @Audited
     private List<WaterRatesDetails> waterRatesDetails = new ArrayList<WaterRatesDetails>();
 
     @Override

@@ -61,6 +61,7 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
+import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -121,6 +122,9 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Autowired
     private ConnectionBillService connectionBillService;
+    
+    @Autowired
+    private CollectionIntegrationService collectionService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -499,28 +503,35 @@ public class WaterTaxCollection extends TaxCollection {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final BigDecimal amounttobeCalc = egBill.getTotalAmount().subtract(egBill.getTotalCollectedAmount());
-        final List<EgBillDetails> billdEtList = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
+        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
+       
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
             if (billDet.getOrderNo() == 1) {
                 additionalInfo.append(" ").append(
                         formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate())).append(" To ");
-                if (billdEtList.size() == 1) {
+                if (egBill.getEgBillDetails().size() == 1) {
                     additionalInfo.append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
                     break;
                 }
 
             }
-            if (billdEtList.size() > 1
-                    && billdEtList.get(billdEtList.size() - 1).getOrderNo().equals(billDet.getOrderNo())) {
-                additionalInfo.append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
-                break;
-            }
+            if(egBill.getEgBillDetails().size() > 1)
+            	{
+            		  if(billDet.getCrAmount().compareTo(BigDecimal.ZERO) ==1 && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo())))
+            	        {
+            	        	additionalInfo.append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster()
+                                    .getToDate()));
+                            break;	
+            	        }
+            	}
         }
+           
         if (amounttobeCalc.compareTo(BigDecimal.ZERO) == 1)
             additionalInfo = additionalInfo.append(" (Partialy)");
 
         return additionalInfo.toString();
     }
+
 
     @Override
     public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
@@ -533,6 +544,7 @@ public class WaterTaxCollection extends TaxCollection {
         BigDecimal arrearAmount = BigDecimal.ZERO;
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(egBill.getEgDemand());
+        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
             	final String[] desc = rcptAccInfo.getDescription().split("-", 2);
@@ -566,12 +578,15 @@ public class WaterTaxCollection extends TaxCollection {
                 }
 
             }
-            if (billDetails.size() > 1
-                    && billDetails.get(billDetails.size() - 1).getOrderNo().equals(billDet.getOrderNo())) {
-                receiptAmountInfo.setInstallmentTo(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster()
-                        .getToDate()));
-                break;
-            }
+            if(egBill.getEgBillDetails().size() > 1)
+        	{
+        		  if(billDet.getCrAmount().compareTo(BigDecimal.ZERO) ==1 && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo())))
+        	        {
+        			  receiptAmountInfo.setInstallmentTo(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster()
+                                .getToDate()));
+                        break;	
+        	        }
+        	}
         }
         receiptAmountInfo.setArrearsAmount(arrearAmount);
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);

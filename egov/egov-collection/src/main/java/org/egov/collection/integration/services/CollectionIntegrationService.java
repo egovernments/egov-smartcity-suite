@@ -39,6 +39,11 @@
  */
 package org.egov.collection.integration.services;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
@@ -46,10 +51,6 @@ import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.infstr.models.ServiceCategory;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Interface exposed by collections system to other systems (typically billing systems)
@@ -145,18 +146,16 @@ public interface CollectionIntegrationService {
     public BillReceiptInfo createMiscellaneousReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList);
 
     /**
-     * This method returns the count of receipts created with the sum total of receipt amount
-     * for the given date range
+     * This method returns the count of receipts created with the sum total of receipt amount for the given date range
      * @param fromDate From Date to Search the Aggregate Payment
      * @param toDate To Date to Search the Aggregate Payment
      * @return List of <code>RestAggregatePaymentInfo</code> containing aggregate information of receipts
      */
     public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(PaymentInfoSearchRequest paymentInfoSearchRequest);
-    
-    
+
     /**
-     * This method returns the list of receipt created in the system for the 
-     * given date range and service code of the billing system.
+     * This method returns the list of receipt created in the system for the given date range and service code of the billing
+     * system.
      * @param fromDate From Date to Search the Aggregate Paymentss
      * @param toDate To Date to Search the Aggregate Payment
      * @param serviceCode The service code of the billing system
@@ -164,10 +163,24 @@ public interface CollectionIntegrationService {
      */
     public List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
-    
-    public List<ServiceCategory>  getActiveServiceCategories();
-    
+    /**
+     * This method cancel the receipt information provided by the billing system
+     * @param paymentInfoSearchRequest
+     * @return success/failure based on the cancellation status
+     */
     public String cancelReceipt(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
-    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest);  
+    /**
+     * This method returns the receipt information for the transaction id and channel information provided by the billing system.
+     * @param paymentInfoSearchRequest
+     * @return <code>RestReceiptInfo</code> containing details of Receipt Information
+     */
+    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest);
+
+    /**
+     * This method returns sorted list of only the paid receipt detail for the receipt number provided
+     * @param receiptNumber
+     * @return List of <code>ReceiptDetail</code>
+     */
+    public List<ReceiptDetail> getReceiptDetailListByReceiptNumber(String receiptNumber);
 }

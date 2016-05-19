@@ -49,23 +49,24 @@ import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.milestone.service.TrackMilestoneService;
 import org.egov.works.models.masters.MilestoneTemplate;
+import org.egov.works.web.adaptor.SearchCancelMilestoneJsonAdaptor;
 import org.egov.works.web.adaptor.SearchMilestoneJsonAdaptor;
 import org.egov.works.web.adaptor.SearchMilestoneTemplateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchTrackMilestoneJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@Controller
+@RestController
 @RequestMapping(value = "/milestone")
 public class AjaxMilestoneController {
 
@@ -87,9 +88,11 @@ public class AjaxMilestoneController {
     @Autowired
     private SearchTrackMilestoneJsonAdaptor searchTrackMilestoneJsonAdaptor;
 
+    @Autowired
+    private SearchCancelMilestoneJsonAdaptor searchCancelMilestoneJsonAdaptor;
+
     @RequestMapping(value = "/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchMilestones(final Model model,
-            @ModelAttribute final SearchRequestMilestone searchRequestMilestone) {
+    public @ResponseBody String searchMilestones(@ModelAttribute final SearchRequestMilestone searchRequestMilestone) {
         final List<Milestone> searchMilestoneList = milestoneService
                 .searchMilestone(searchRequestMilestone);
         final String result = new StringBuilder("{ \"data\":").append(toSearchMilestone(searchMilestoneList))
@@ -144,8 +147,31 @@ public class AjaxMilestoneController {
     }
 
     @RequestMapping(value = "/ajaxworkidentificationnumbers-trackmilestone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findWorkIdNumbersToCancelLOA(@RequestParam final String code) {
-        return trackMilestoneService.findWorkIdentificationNumbersTrackMileston(code);
+    public @ResponseBody List<String> findWorkIdNumbersToTrackMilestone(@RequestParam final String code) {
+        return trackMilestoneService.findWorkIdentificationNumbersTrackMilestone(code);
     }
 
+    @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchMilestonesToCancel(final Model model,
+            @ModelAttribute final SearchRequestMilestone searchRequestMilestone) {
+        final List<Milestone> milestones = milestoneService
+                .searchMilestonesToCancel(searchRequestMilestone);
+        final String result = new StringBuilder("{ \"data\":")
+        .append(toSearchMilestonesToCancelJson(milestones))
+        .append("}").toString();
+        return result;
+    }
+
+    public Object toSearchMilestonesToCancelJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Milestone.class, searchCancelMilestoneJsonAdaptor)
+                .create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/ajaxloanumbers-milestonetocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findLOAsToCancelMilestone(@RequestParam final String code) {
+        return milestoneService.findLoaNumbersToCancelMilestone(code);
+    }
 }

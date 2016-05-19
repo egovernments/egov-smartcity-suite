@@ -91,17 +91,32 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var fromDate = '';
+	var toDate = '';
+	if ($('#fromDate').val() != "") {
+		fromDate = $('#milestoneFromDate').data('datepicker').date;
+	}
+	if ($('#toDate').val() != "") {
+		toDate = $('#milestoneToDate').data('datepicker').date;
+	}
+	var flag = true;
+	if (toDate != '' && fromDate != '') {
+		if (fromDate > toDate) {
+			flag = false;
+			bootbox.alert('Milestone Created To Date should be greater than Milestone Created From Date');
+		}
+	}
+	if(flag)
+		callAjaxSearch();
 });
 
-function getFormData($form) {
+function getFormDataJson($form) {
 	var unindexed_array = $form.serializeArray();
 	var indexed_array = {};
 
 	$.map(unindexed_array, function(n, i) {
 		indexed_array[n['name']] = n['value'];
 	});
-
 	return indexed_array;
 }
 
@@ -113,7 +128,7 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/milestone/ajax-search",
 					type : "POST",
-					"data" : getFormData(jQuery('form'))
+					data : getFormDataJson(jQuery('#searchRequestMilestone'))
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');
@@ -204,7 +219,77 @@ $('#btntrackmilestone').click(function() {
 	if(milestoneId == null) {
 		bootbox.alert("Please select a Milestone to Track");
 	} else {
-		
+		$('#searchFormDiv').remove();
+		$('.loader-class').modal('show', {backdrop: 'static'});
+		$.ajax({
+			type: "GET",
+			url: "/egworks/milestone/track/" + milestoneId,
+			cache: true,
+			dataType: "json"
+		}).done(function(json) {
+			json = $.parseJSON(json);
+			console.log(json);
+			$.each(json, function(key, value){
+				if($('#' + key).is('div') || $('#' + key).is('span'))
+					$('#' + key).html(value);
+				else
+					$('#' + key).val(value);
+			});
+			$.each(json['activities'], function(key, value) {
+				var nextIdx = key + 1;
+				$.each(value, function(id, val) {
+					if($('.' + id + "_" + key).is('td') || $('.' + id + "_" + key).is('div'))
+						$('.' + id + "_" + key).html(val);
+					else
+						$('#' + id + "_" + key).val(val);
+				});
+				
+				var total = parseFloat($('#totalPercentage').html().trim()) + parseFloat($('.percentage_' + key).html().trim());
+				$('#totalPercentage').html(total);
+				
+				var rowcount = $("#tblmilestone tbody tr").length;
+				if(json['activities'].length > rowcount) {
+					$("#milestoneRow").clone().find("input, select, td").each(
+							function() {
+								if(!$(this).is('td')) {
+									$(this).attr({
+										'name' : function(_, name) {
+											return name.replace(/\d([^\d]*)$/,nextIdx+'$1');
+										},
+										'id' : function(_, id) {
+											return id.replace(/\d+/, nextIdx);
+										},
+										'data-idx' : function(_,dataIdx)
+										{
+											return nextIdx;
+										}
+									});
+								} else {
+									$(this).attr({
+										'class' : function(_, name) {
+											return name.replace(/\d+/, nextIdx);
+										}
+									});
+								}
+					}).end().appendTo("#tblmilestone tbody");
+					$(".completionDate").datepicker({
+						format: "dd/mm/yyyy",
+						autoclose:true
+					});
+					try { $(".datepicker").inputmask(); }catch(e){}
+				}
+			});
+			$.each(json['trackMilestoneActivities'], function(key, value) {
+				$.each(value, function(id, val) {
+					$('#' + id + "_" + key).val(val);
+				});
+				$('#completedPercentage_' + key).trigger('blur');
+				$('#currentStatus_' + key).trigger('change');
+			});
+			$('#divWorkOrderDate').html(json['workOrderDate']);
+		});
+		$('#trackMilestoneDiv').show();
+		$('.loader-class').modal('hide');
 	}
 	return false;
 });

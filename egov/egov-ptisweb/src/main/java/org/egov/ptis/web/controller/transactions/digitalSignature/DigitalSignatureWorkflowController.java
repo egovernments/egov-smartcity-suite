@@ -73,6 +73,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -100,6 +101,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 @Controller
 @RequestMapping(value = "/digitalSignature")
 public class DigitalSignatureWorkflowController {
+
+    private static final String DIGISIGN_SUCCESS_MESSAGE = "Digitally Signed Successfully";
+
+    private static final String NOTICE_SUCCESS_MESSAGE = "Notice Generated Successfully";
 
     private static final String STR_DEMOLITION = "Demolition";
 
@@ -153,6 +158,7 @@ public class DigitalSignatureWorkflowController {
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
         final String fileStoreIds = request.getParameter("fileStoreId");
+        final String isDigiEnabled = request.getParameter("isDigiEnabled");
         final String[] fileStoreId = fileStoreIds.split(",");
         for (final String id : fileStoreId) {
             final String applicationNumber = (String) getCurrentSession()
@@ -189,7 +195,11 @@ public class DigitalSignatureWorkflowController {
                 }
             }
         }
-        model.addAttribute("successMessage", "Digitally Signed Successfully");
+        if (isDigiEnabled != null && isDigiEnabled.equals("false")) {
+            model.addAttribute("successMessage", NOTICE_SUCCESS_MESSAGE);
+        } else {
+            model.addAttribute("successMessage", DIGISIGN_SUCCESS_MESSAGE);
+        }
         model.addAttribute("fileStoreId", fileStoreId.length == 1 ? fileStoreId[0] : "");
         return DIGITAL_SIGNATURE_SUCCESS;
     }

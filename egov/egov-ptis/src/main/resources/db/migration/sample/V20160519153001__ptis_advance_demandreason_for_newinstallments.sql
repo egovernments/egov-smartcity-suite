@@ -1,0 +1,4 @@
+-- Insert demand reason for Advance for all installments after 2016-2017-1
+Insert into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) select nextval('seq_eg_demand_reason'), (select id from eg_demand_reason_master where reasonmaster='Advance' and module=(select id from eg_module where name='Property Tax')), inst.id, null, null, current_timestamp, current_timestamp, (select id from chartofaccounts where name='Advance Collection of Revenues-Advertisement Tax') from eg_installment_master inst where inst.id_module=(select id from eg_module where name='Property Tax') and INSTALLMENT_YEAR > (select start_date from eg_installment_master where id_module=(select id from eg_module where name='Property Tax') and description = '2016-2017-1');
+
+

@@ -42,8 +42,8 @@ package org.egov.works.models.workorder;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.estimate.Activity;
-import org.egov.works.models.revisionEstimate.RevisionType;
+import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 
 import java.util.Date;
 

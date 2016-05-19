@@ -68,7 +68,7 @@ import org.egov.model.budget.BudgetReAppropriationMisc;
 import org.egov.pims.commons.Position;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
-import org.egov.web.actions.budget.BudgetReAppropriationView;
+import org.egov.egf.model.BudgetReAppropriationView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;

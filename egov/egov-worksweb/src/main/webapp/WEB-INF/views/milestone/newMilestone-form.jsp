@@ -72,4 +72,4 @@
 	</div>
 </form:form>  
 </body>
-<script src="<c:url value='/resources/js/Milestone/milestone.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/milestone/milestone.js?rnd=${app_release_no}'/>"></script>

@@ -44,19 +44,35 @@
 	<head>
 		<title>Digital Signature</title>
 		<script type="text/javascript">
+			
+			jQuery(document)
+					.ready(
+							function() {
+								var fileStoreIds = '<s:property value="%{fileStoreIds}" />';
+								var ulbCode = '<s:property value="%{ulbCode}" />';
+								var isDigiEnabled = '<s:property value="%{digitalSignEnabled}"/>';
+								var callBackUrl = '/ptis/digitalSignature/propertyTax/transitionWorkflow';
+								var actionUrl = null;
 
-	 	jQuery(document).ready( function() {
-	 		var fileStoreIds = '<s:property value="%{fileStoreIds}" />';
-	 		var ulbCode = '<s:property value="%{ulbCode}" />';
-	 		var callBackUrl = '/ptis/digitalSignature/propertyTax/transitionWorkflow';
-			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=PTIS&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
-				target: '_self'
-			})
-			.appendTo(document.body).submit();
-		});
-		
+								if (isDigiEnabled == true) {
+									actionUrl = '/digisign/reports/selectCertificate.jsp?fileStoreId='
+											+ fileStoreIds
+											+ '&moduleName=PTIS&ulbCode='
+											+ ulbCode
+											+ '&callBackUrl='
+											+ callBackUrl;
+								} else {
+									actionUrl = callBackUrl + '?fileStoreId='
+											+ fileStoreIds + '&isDigiEnabled='
+											+ isDigiEnabled;
+								}
+
+								jQuery('<form>.').attr({
+									method : 'post',
+									action : actionUrl,
+									target : '_self'
+								}).appendTo(document.body).submit();
+							});
 		</script>
 	</head>
 	<body>

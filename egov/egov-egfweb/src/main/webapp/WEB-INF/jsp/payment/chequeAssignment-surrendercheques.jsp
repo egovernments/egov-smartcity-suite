@@ -147,7 +147,7 @@
 											list="chequeSlNoMap" value='%{newSerialNo[#stat.index]}' />
 									</td>
 									<td style="text-align: left" class="blueborderfortdnew"><s:textfield maxlength="6"
-											size="10"
+											size="6"
 											name="newInstrumentNumber"
 											id="newInstrumentNumber%{#stat.index}"
 											value='%{newInstrumentNumber[#stat.index]}'

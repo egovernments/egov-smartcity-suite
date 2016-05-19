@@ -40,6 +40,12 @@
 
 package org.egov.works.services.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
@@ -49,22 +55,16 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetUsage;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.models.estimate.DepositWorksUsage;
-import org.egov.works.models.estimate.FinancialDetail;
-import org.egov.works.models.revisionEstimate.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.RevisionEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This class will expose all Revision Estimate related operations.
@@ -90,34 +90,32 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     @Override
     public void consumeBudget(final RevisionAbstractEstimate revisionEstimate) {
         final AbstractEstimate parentEstimate = revisionEstimate.getParent();
-        revisionEstimate.setBudgetApprNo(abstractEstimateService.getBudgetAppropriationNumber(parentEstimate));
-        boolean isBudgetConsumptionSuccessful = false;
+        final String appropriationNumber = abstractEstimateService.getBudgetAppropriationNumber(parentEstimate);
         if (isDepositWorksType(parentEstimate))
-            isBudgetConsumptionSuccessful = checkForBudgetaryAppropriationForDepositWorks(revisionEstimate);
+            checkForBudgetaryAppropriationForDepositWorks(revisionEstimate, appropriationNumber);
         else
-            isBudgetConsumptionSuccessful = consumeBudgetForNormalWorks(revisionEstimate);
-        if (!isBudgetConsumptionSuccessful)
-            revisionEstimate.setBudgetApprNo(null);
+            consumeBudgetForNormalWorks(revisionEstimate, appropriationNumber);
     }
 
     @Override
     public void releaseBudget(final RevisionAbstractEstimate revisionEstimate) {
         final AbstractEstimate parentEstimate = revisionEstimate.getParent();
-        revisionEstimate.setBudgetRejectionNo("BC/" + revisionEstimate.getBudgetApprNo());
+        final String appropriationNumber = abstractEstimateService.getLatestEstimateAppropriationNumber(revisionEstimate);
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("BC/");
+        stringBuilder.append(appropriationNumber);
+        final String budgetRejectionNumber = stringBuilder.toString();
 
         // Financial details of the parent
         final FinancialDetail financialDetail = parentEstimate.getFinancialDetails().get(0);
-        boolean isBudgetReleaseSuccessful = false;
         if (isDepositWorksType(parentEstimate))
-            isBudgetReleaseSuccessful = releaseDepositWorksAmountOnReject(revisionEstimate, financialDetail);
+            releaseDepositWorksAmountOnReject(revisionEstimate, financialDetail, budgetRejectionNumber);
         else
-            isBudgetReleaseSuccessful = releaseBudgetOnReject(revisionEstimate, financialDetail);
-        if (!isBudgetReleaseSuccessful)
-            revisionEstimate.setBudgetRejectionNo(null);
+            releaseBudgetOnReject(revisionEstimate, financialDetail, budgetRejectionNumber);
     }
 
     private boolean releaseDepositWorksAmountOnReject(final RevisionAbstractEstimate revisionEstimate,
-            final FinancialDetail financialDetail) throws ValidationException {
+            final FinancialDetail financialDetail, final String budgetRejectionNumber) throws ValidationException {
         boolean flag = false;
         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
@@ -133,7 +131,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         depositWorksUsage.setTotalDepositAmount(creditBalance);
         depositWorksUsage.setConsumedAmount(BigDecimal.ZERO);
         depositWorksUsage.setReleasedAmount(new BigDecimal(releaseAmount));
-        depositWorksUsage.setAppropriationNumber(revisionEstimate.getBudgetRejectionNo());
+        depositWorksUsage.setAppropriationNumber(budgetRejectionNumber);
         depositWorksUsage.setAbstractEstimate(revisionEstimate);
         depositWorksUsage.setAppropriationDate(new Date());
         depositWorksUsage.setFinancialYear(estimateAppropriation.getDepositWorksUsage().getFinancialYear());
@@ -159,14 +157,15 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    private boolean consumeBudgetForNormalWorks(final RevisionAbstractEstimate revisionEstimate) {
+    private boolean consumeBudgetForNormalWorks(final RevisionAbstractEstimate revisionEstimate,
+            final String appropriationNumber) {
         boolean flag = false;
         final Long finYearId = finHibernateDao.getFinancialYearByDate(new Date()).getId();
         final List<Long> budgetHeadId = new ArrayList<Long>();
         final FinancialDetail financialDetail = revisionEstimate.getParent().getFinancialDetails().get(0);
         budgetHeadId.add(financialDetail.getBudgetGroup().getId());
         final BudgetUsage budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
-                revisionEstimate.getBudgetApprNo() == null ? null : revisionEstimate.getBudgetApprNo(),
+                appropriationNumber == null ? null : appropriationNumber,
                 finYearId,
                 Integer.valueOf(11),
                 revisionEstimate.getEstimateNumber(),
@@ -210,8 +209,9 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    private boolean checkForBudgetaryAppropriationForDepositWorks(final RevisionAbstractEstimate revisionEstimate)
-            throws ValidationException {
+    private boolean checkForBudgetaryAppropriationForDepositWorks(final RevisionAbstractEstimate revisionEstimate,
+            final String appropriationNumber)
+                    throws ValidationException {
         boolean flag = false;
         final Date appDate = new Date();
         double depApprAmnt = 0.0;
@@ -238,7 +238,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
             depositWorksUsage.setTotalDepositAmount(creditBalance);
             depositWorksUsage.setConsumedAmount(new BigDecimal(depApprAmnt));
             depositWorksUsage.setReleasedAmount(BigDecimal.ZERO);
-            depositWorksUsage.setAppropriationNumber(revisionEstimate.getBudgetApprNo());
+            depositWorksUsage.setAppropriationNumber(appropriationNumber);
             depositWorksUsage.setAbstractEstimate(revisionEstimate);
             depositWorksUsage.setAppropriationDate(appDate);
             depositWorksUsage.setFinancialYear(budgetApprDate_finYear);
@@ -284,7 +284,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     }
 
     private boolean releaseBudgetOnReject(final RevisionAbstractEstimate revisionEstimate,
-            final FinancialDetail financialDetail) throws ValidationException {
+            final FinancialDetail financialDetail, final String budgetRejectionNumber) throws ValidationException {
         boolean flag = false;
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
                 "getLatestBudgetUsageForEstimate", revisionEstimate.getId());
@@ -296,7 +296,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
         BudgetUsage budgetUsage = null;
 
         budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
-                revisionEstimate.getBudgetRejectionNo() == null ? null : revisionEstimate.getBudgetRejectionNo(),
+                budgetRejectionNumber == null ? null : budgetRejectionNumber,
                 estimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
                 Integer.valueOf(11),
                 revisionEstimate.getEstimateNumber(),

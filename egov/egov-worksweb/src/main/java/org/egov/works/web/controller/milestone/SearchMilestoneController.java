@@ -49,6 +49,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
+import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
 import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +86,7 @@ public class SearchMilestoneController {
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMilestone.setDepartment(departments.get(0).getId());
+        model.addAttribute("currentStatus", MilestoneActivityStatus.values());
         model.addAttribute("searchRequestMilestone", searchRequestMilestone);
         return "searchmilestone-form";
     }
@@ -125,7 +127,7 @@ public class SearchMilestoneController {
             searchRequestMilestone.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestMilestone", searchRequestMilestone);
         model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MILESTONE_MODULE_KEY));
-        return "trackMilestone-form";
+        return "searchTrackMilestone-form";
     }
 
 }

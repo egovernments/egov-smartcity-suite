@@ -64,8 +64,8 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.revisionEstimate.RevisionType;
 import org.egov.works.models.tender.OfflineStatus;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.hibernate.validator.constraints.Length;
 
 public class WorkOrder extends StateAware implements Auditable {

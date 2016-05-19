@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">
-		<spring:message code="title.letterofacceptance.search" />
+		<spring:message code="trackmilestone.search.result" />
 	</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
@@ -55,7 +55,7 @@
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
-					<th><spring:message code="lbl.agreement.amount" /></th>
+					<th><spring:message code="lbl.agreement.value" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
 					<th><spring:message code="lbl.status" /></th>

@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.service.utils;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -53,9 +54,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +83,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PropertyTaxCommonUtils {
-	private static final Logger LOGGER = Logger.getLogger(PropertyTaxCommonUtils.class);
+    private static final Logger LOGGER = Logger.getLogger(PropertyTaxCommonUtils.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -203,4 +206,24 @@ public class PropertyTaxCommonUtils {
         return wfPropTaxDetailsMap;
     }
 
+    public boolean isDigitalSignatureEnabled() {
+        List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                APPCONFIG_DIGITAL_SIGNATURE);
+        return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
+    }
+
+    /**
+     * Fetches the list of installments for advance collections
+     * @param startDate
+     * @return List of Installment
+     */
+    public List<Installment> getAdvanceInstallmentsList(Date startDate){
+    	List<Installment> advanceInstallments = new ArrayList<Installment>();
+    	String query = "select inst from Installment inst where inst.module.name = '" + PTMODULENAME
+                + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
+    	advanceInstallments = entityManager.unwrap(Session.class).createQuery(query)
+                .setParameter("startdate", startDate)
+                .setMaxResults(PropertyTaxConstants.MAX_ADVANCES_ALLOWED).list();
+    	return advanceInstallments;
+    }
 }

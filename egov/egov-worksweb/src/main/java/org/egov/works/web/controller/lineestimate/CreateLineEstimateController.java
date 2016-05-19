@@ -156,13 +156,13 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate, final BindingResult resultBinder,
+    public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction)
             throws ApplicationException, IOException {
         setDropDownValues(model);
-
+        validateBudgetHead(lineEstimate, errors);
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
@@ -172,26 +172,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
             return "newLineEstimate-form";
         } else {
-            if (lineEstimate.getBudgetHead() != null) {
-                Boolean check = false;
-                List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
-                accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-                for (CChartOfAccountDetail detail : accountDetails) {
-                    if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase("PROJECTCODE"))
-                        check = true;
-                }
-                if (!check) {
-                    model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
-
-                    prepareWorkflow(model, lineEstimate, new WorkflowContainer());
-
-                    model.addAttribute("mode", null);
-                    model.addAttribute("errorMessage", "The COA used is not a control code for project code sub-ledger. Kindly do the mapping from modify detailed code screen and then proceed for creating line estimate");
-
-                    return "newLineEstimate-form";
-                }
-
-            }
 
             if (lineEstimate.getState() == null)
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
@@ -215,6 +195,23 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
             return "redirect:/lineestimate/lineestimate-success?pathVars=" + pathVars;
         }
+    }
+
+    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+        if (lineEstimate.getBudgetHead() != null) {
+            Boolean check = false;
+            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
+            for (CChartOfAccountDetail detail : accountDetails) {
+                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                    check = true;
+            }
+            if (!check) {
+                errors.reject("error.budgethead.validate","error.budgethead.validate");
+            }
+
+        }
+
     }
 
     private void setDropDownValues(final Model model) {

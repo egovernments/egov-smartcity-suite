@@ -52,7 +52,7 @@
 	<parameter name="heading" class="java.lang.String"/>
 	<parameter name="functionCode" class="java.lang.String"/>
 	<parameter name="planningBudgetPerc" class="java.math.BigDecimal"/>
-	<parameter name="ABSTRACT_ESTIMATE" class="org.egov.works.models.estimate.AbstractEstimate" isForPrompting="false">
+	<parameter name="ABSTRACT_ESTIMATE" class="org.egov.works.abstractestimate.entity.AbstractEstimate" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="UNAPPROVED_BUDGET_FOLIO_LIST" class="java.util.List" isForPrompting="false"/>

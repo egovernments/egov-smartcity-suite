@@ -42,7 +42,7 @@
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="fund" class="java.lang.String"/>
-	<parameter name="ABSTRACT_ESTIMATE" class="org.egov.works.models.estimate.AbstractEstimate" isForPrompting="false">
+	<parameter name="ABSTRACT_ESTIMATE" class="org.egov.works.abstractestimate.entity.AbstractEstimate" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="totalDeposit" class="java.math.BigDecimal"/>

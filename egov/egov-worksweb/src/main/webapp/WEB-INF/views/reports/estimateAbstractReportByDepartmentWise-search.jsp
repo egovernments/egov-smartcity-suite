@@ -50,7 +50,7 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.slno" /></th>
+					<%-- <th><spring:message code="lbl.slno" /></th> --%>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.lineestimate" /></th>
 					<th><spring:message code="lbl.adminsanctionedestimates" /></th>

@@ -451,6 +451,14 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         wfAction = CollectionConstants.WF_ACTION_SUBMIT;
         return updateReceiptWorkflowStatus(wfAction, remarks);
     }
+    
+    @ValidationErrorPage(value = INDEX)
+    @Action(value = "/receipts/collectionsWorkflow-submitAllCollections")
+    public String submitAllCollections() {
+        setInboxItemDetails(inboxItemDetails);
+        fetchReceipts(wfAction);
+        return updateReceiptWorkflowStatus(wfAction, remarks);
+    }
 
     /**
      * Action method to approve the selected receipt headers
@@ -460,6 +468,13 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     @Action(value = "/receipts/collectionsWorkflow-approveCollections")
     public String approveCollections() {
         wfAction = CollectionConstants.WF_ACTION_APPROVE;
+        return updateReceiptWorkflowStatus(wfAction, remarks);
+    }
+    
+    @Action(value = "/receipts/collectionsWorkflow-approveAllCollections")
+    public String approveAllCollections() {
+        setInboxItemDetails(inboxItemDetails);
+        fetchReceipts(wfAction);
         return updateReceiptWorkflowStatus(wfAction, remarks);
     }
 

@@ -39,21 +39,6 @@
  */
 package org.egov.services.report;
 
-import org.apache.log4j.Logger;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.utils.Constants;
-import org.egov.web.actions.report.IEStatementEntry;
-import org.egov.web.actions.report.Statement;
-import org.egov.web.actions.report.StatementEntry;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,6 +49,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Fund;
+import org.egov.egf.model.IEStatementEntry;
+import org.egov.egf.model.Statement;
+import org.egov.egf.model.StatementEntry;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.utils.Constants;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ScheduleService extends PersistenceService {
     private static final Logger LOGGER = Logger.getLogger(ScheduleService.class);

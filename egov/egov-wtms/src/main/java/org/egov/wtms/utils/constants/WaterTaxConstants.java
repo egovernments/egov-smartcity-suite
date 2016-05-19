@@ -191,6 +191,7 @@ public class WaterTaxConstants {
     public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
     public static final String ROLEFORNONEMPLOYEEINWATERTAX = "ROLEFORNONEMPLOYEEINWATERTAX";
     public static final String ROLESFORLOGGEDINUSER = "RolesForSearchWAterTaxConnection";
+    public static final String ENABLEDIGITALSIGNATURE = "ENABLEDIGITALSIGNATURE";
 
     // this is just another name to new connection
     public static final String PRIMARYCONNECTION = "Primary Connection";

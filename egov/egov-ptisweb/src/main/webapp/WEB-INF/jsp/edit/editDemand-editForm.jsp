@@ -560,6 +560,11 @@
 							<s:textarea name="remarks" id="remarks" cols="60" rows="5" onkeypress="checkTextAreaLength(this, 256)"></s:textarea>
 						</td>
 					</tr> 
+					<tr>
+						<td class="bluebox" colspan="5">
+							<font color="red"><s:text name="editdemamd.note.message"/></font>
+						</td>
+					</tr>
 				</table>
 				<br/>
 			</div>

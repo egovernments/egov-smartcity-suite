@@ -43,29 +43,37 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-		<form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestMilestone" id="searchRequestMilestone" class="form-horizontal form-groups-bordered">
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="searchMilestone-form.jsp"/>
-				</div>
+<div id="searchFormDiv">
+	<form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestMilestone" id="searchRequestMilestone" class="form-horizontal form-groups-bordered">
+		<div class="row">
+			<div class="col-md-12">
+				<jsp:include page="searchMilestone-form.jsp"/>
 			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type='button' class='btn btn-primary' id="btnsearch">
-						<spring:message code='lbl.search' />
-					</button>
-					<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
-				</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<button type='button' class='btn btn-primary' id="btnsearch">
+					<spring:message code='lbl.search' />
+				</button>
+				<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
-		</form:form>  
+		</div>
+	</form:form>  
 	<jsp:include page="milestone-searchResult.jsp"/>
-<script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
-<script src="<c:url value='/resources/js/searchmilestonehelper.js?rnd=${app_release_no}'/>"></script>
+	<script>
+		$('#btnsearch').click(function(e) {
+			if ($('#searchRequestMilestone').valid()) {
+			} else {
+				e.preventDefault();
+			}
+		});
+	</script>
+	<script src="<c:url value='/resources/js/searchmilestonehelper.js?rnd=${app_release_no}'/>"></script>
+</div>
+<div id="successPage" hidden="true">
+	<jsp:include page="milestone-success.jsp"/>
+</div>
+<div id="trackMilestoneDiv" hidden="true">
+	<jsp:include page="track/trackMilestone-form.jsp"/>
+</div>

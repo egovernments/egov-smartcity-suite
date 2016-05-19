@@ -416,8 +416,8 @@ public class WorksGISReportAction extends BaseFormAction {
                                             * act.getActivity().getConversionFactor();
 
                             if (tr.getTenderEstimate().getTenderType().equals(tenderTypeList.get(0)))
-                                totalAmt += wpd.getEstimate().getWorkValue().getValue()
-                                        + wpd.getEstimate().getWorkValue().getValue()
+                                totalAmt += wpd.getEstimate().getWorkValue()
+                                        + wpd.getEstimate().getWorkValue()
                                                 * tr.getPercNegotiatedAmountRate() / 100;
                             break;
                         }

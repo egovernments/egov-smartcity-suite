@@ -195,7 +195,8 @@ function createSorRateHiddenFormatter(size,maxlength){
 var textboxFormatter = function(el, oRecord, oColumn, oData) {
     var value = (YAHOO.lang.isValue(oData))?oData:"";
     var id=oColumn.getKey()+oRecord.getId();
-    var fieldName="sor"+oColumn.getKey()+oRecord.getId();
+    //var fieldName="sor"+oColumn.getKey()+oRecord.getId();
+    var fieldName = "sorActivities[" + oRecord.getCount() + "].sorRate";
     markup="<input type='text' class='selectamountwk' id='"+id+"' name='"+fieldName+"' value='"+value+"' readonly='true' />";
     el.innerHTML = markup;
 }

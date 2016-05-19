@@ -44,7 +44,7 @@
        default-lazy-init="true">
 	
     <bean id="AbstractEstimatePersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.works.models.estimate.AbstractEstimate" />
+        <property name="type" value="org.egov.works.abstractestimate.entity.AbstractEstimate" />
     </bean>
         
     <bean id="AbstractEstimateInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
@@ -71,7 +71,7 @@
 	<bean id="assetsForEstimateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.estimate.AssetsForEstimate" />
+			value="org.egov.works.abstractestimate.entity.AssetsForEstimate" />
 	</bean>
 	
 	<bean id="projectCodeService" class="org.egov.works.services.ProjectCodeService">

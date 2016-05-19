@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
-		<div class="panel-title" style="text-align:center;"><spring:message code="title.search.letterofacceptance" /></div>
+		<div class="panel-title" style="text-align:center;"><spring:message code="title.searchandview.milestone" /></div>
 	</div>
 	<input type="hidden" id="workorderid" value="${workOrder.id }"/>
 	<div class="panel-body">

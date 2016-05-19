@@ -47,7 +47,7 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetDetail;
-import org.egov.web.actions.budget.BudgetAmountView;
+import org.egov.egf.model.BudgetAmountView;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

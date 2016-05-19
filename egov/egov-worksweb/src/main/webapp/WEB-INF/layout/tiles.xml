@@ -211,7 +211,7 @@
         <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-view.jsp"/>
 	</definition>
 
-	<definition name="trackMilestone-form" extends="base_layout">
+	<definition name="searchTrackMilestone-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.searchtrackmilestonetemplate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchTrackMilestone-header.jsp"/>
 	</definition>
@@ -224,6 +224,21 @@
 	<definition name="estimateAbstractReportByTypeOfWorkWise-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.title.search.estimateabstractreportbytypeofworkwise" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/estimateAbstractReportByTypeOfWorkWise-form.jsp"/>
+	</definition>
+
+	<definition name="searchlineestimate-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.lineestimate.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateToCancel-header.jsp"/>
     </definition>
 
+    <definition name="trackMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.trackmilestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-form.jsp"/>
+    </definition>
+    
+    <definition name="milestonecancel-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.milestone.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestoneToCancel-header.jsp"/>
+    </definition>
+    
 </tiles-definitions>

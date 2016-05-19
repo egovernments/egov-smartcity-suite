@@ -42,6 +42,7 @@ package org.egov.works.web.controller.reports;
 
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -67,6 +68,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -268,6 +270,10 @@ public class WorkProgressRegisterPDFController {
                     pdf.setTotalBillAmount(wpr.getTotalBillAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setTotalBillAmount("NA");
+                if (wpr.getMilestonePercentageCompleted() != null)
+                    pdf.setMilestonePercentageCompleted(wpr.getMilestonePercentageCompleted().toString());
+                else
+                    pdf.setMilestonePercentageCompleted("NA");
                 if (wpr.getTotalBillPaidSoFar() != null)
                     pdf.setTotalBillPaidSoFar(wpr.getTotalBillPaidSoFar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
@@ -291,9 +297,11 @@ public class WorkProgressRegisterPDFController {
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
+            reportInput.setReportFormat(FileFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=WorkProgressRegister.pdf");
         } else {
+            reportInput.setReportFormat(FileFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=WorkProgressRegister.xls");
         }

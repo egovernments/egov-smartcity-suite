@@ -57,6 +57,7 @@
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
 <link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}" TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"	src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"> </script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 

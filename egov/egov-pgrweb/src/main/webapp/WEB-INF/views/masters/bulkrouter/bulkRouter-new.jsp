@@ -59,7 +59,7 @@
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label">
 							<spring:message code="lbl.category"/><span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
+						<div class="col-sm-6 add-margin">
 							<form:select path="complaintTypeCategory" id="complaintTypeCategory"
 								cssClass="form-control" required="required">
 								<form:option value="">
@@ -68,9 +68,20 @@
 								<form:options items="${categories}" itemValue="id" itemLabel="name" />
 							</form:select>
 						</div>
-						<label for="field-1" class="col-sm-2 control-label">
+					</div>
+					<div class="form-group">
+						<label for="field-1" class="col-sm-3 control-label">
+							<spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
+						<div class="col-sm-6 add-margin">
+							<form:select style="overflow:auto;" multiple="true" path="complaintTypes" id="complaintTypes" cssClass="form-control" required="required">
+								<form:options items="${complaintTypeCategory.complaintTypes}" itemLabel="name" itemValue="id"/>
+							</form:select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="field-1" class="col-sm-3 control-label">
 							<spring:message code="lbl.router.boundaryType"/><span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
+						<div class="col-sm-6 add-margin">
 							<form:select path="boundaryType" id="boundaryType"
 								cssClass="form-control" required="required">
 								<form:option value="">
@@ -82,15 +93,8 @@
 					</div>
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label">
-							<spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<form:select style="overflow:auto;" multiple="true" path="complaintTypes" id="complaintTypes" cssClass="form-control" required="required">
-								<form:options items="${complaintTypeCategory.complaintTypes}" itemLabel="name" itemValue="id"/>
-							</form:select>
-						</div>
-						<label for="field-1" class="col-sm-2 control-label">
 							<spring:message code="lbl.router.boundary"/><span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
+						<div class="col-sm-6 add-margin">
 						<form:select multiple="true" path="boundaries" id="boundaries" cssClass="form-control" required="required">
 							<form:options items="${boundaries}" itemLabel="name" itemValue="id"/>
 						</form:select>
@@ -99,7 +103,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 						<spring:message code="lbl.router.position" /><span class="mandatory"></span></label>
-						<div class="col-sm-3">
+						<div class="col-sm-6">
 							<input id="position" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required"/>
 							<form:hidden path="position" id="positionId"/>
 							<form:errors path="position" cssClass="error-msg" />

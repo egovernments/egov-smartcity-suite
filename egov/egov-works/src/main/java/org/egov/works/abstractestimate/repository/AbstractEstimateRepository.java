@@ -41,7 +41,7 @@ package org.egov.works.abstractestimate.repository;
 
 import java.util.List;
 
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

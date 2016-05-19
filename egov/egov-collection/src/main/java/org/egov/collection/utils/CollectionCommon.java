@@ -208,7 +208,7 @@ public class CollectionCommon {
         }
         return templateName;
     }
-
+    
     public ReceiptDetail addDebitAccountHeadDetails(final BigDecimal debitAmount, final ReceiptHeader receiptHeader,
             final BigDecimal chequeInstrumenttotal, final BigDecimal otherInstrumenttotal, final String instrumentType) {
 

@@ -148,11 +148,14 @@
 									list="chequeSlNoMap"
 									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
+									size="6"
+									maxLength="6"
 									id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}"
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
 									onchange="validateReassignSurrenderChequeNumber(this)"
-									size="10" /></td>
+									 /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
@@ -173,7 +176,9 @@
 									id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}" onchange="validateChequeNumber(this)"
-									size="10" /></td>
+									size="6" 
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+									maxLength="6"/></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
@@ -209,7 +214,8 @@
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
 								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
 									size="6" value="%{chequeNo}"
-									onchange="validateReassignSurrenderChequeNumber(this)" /></td>
+									onchange="validateReassignSurrenderChequeNumber(this)" 
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57'/></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.date" /><span
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
@@ -232,7 +238,8 @@
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
 								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
 									size="6" value="%{chequeNo}"
-									onchange="validateChequeNumber(this)" /></td>
+									onchange="validateChequeNumber(this)"
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.date" /><span
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"

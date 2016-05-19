@@ -94,6 +94,8 @@ public class WorkProgressRegisterPdf {
     private String totalBillPaidSoFar;
 
     private String balanceValueOfWorkToBill;
+    
+    private String milestonePercentageCompleted;
 
     public String getWard() {
         return ward;
@@ -309,6 +311,14 @@ public class WorkProgressRegisterPdf {
 
     public void setBalanceValueOfWorkToBill(final String balanceValueOfWorkToBill) {
         this.balanceValueOfWorkToBill = balanceValueOfWorkToBill;
+    }
+
+    public String getMilestonePercentageCompleted() {
+        return milestonePercentageCompleted;
+    }
+
+    public void setMilestonePercentageCompleted(String milestonePercentageCompleted) {
+        this.milestonePercentageCompleted = milestonePercentageCompleted;
     }
 
 }
