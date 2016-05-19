@@ -118,8 +118,8 @@
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.purpose" />:</strong></td>
 					<td class="bluebox"><s:select list="dropdownData.purposeList"
-							listKey="id" listValue="name" name="purposeId" headerKey="0"
-							headerValue="--- Select ---" value="model.purpose"></s:select></td>
+							listKey="id" listValue="name" name="accountcodePurpose.id" headerKey="0"
+							headerValue="--- Select ---" value="accountcodePurpose.id"></s:select></td>
 				</tr>
 				<tr>
 					<td width="20%" class="greybox">&nbsp;</td>

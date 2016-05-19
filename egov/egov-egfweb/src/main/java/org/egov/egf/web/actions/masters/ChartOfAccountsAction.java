@@ -447,8 +447,10 @@ public class ChartOfAccountsAction extends BaseFormAction {
         saveCoaDetails(model);
         addActionMessage(getText("chartOfAccount.saved.successfully"));
         clearCache();
-        reset();
-        return NEW;
+       // reset();
+        coaId = model.getId();
+        return Constants.VIEW;
+       
     }
 
     private void reset() {
