@@ -88,7 +88,7 @@
           </class>
         <query name="QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER">
 	<![CDATA[
-	select  receiptDet from  org.egov.collection.entity.ReceiptDetail receiptDet  WHERE receiptDet.receiptHeader.receiptnumber=? and  (cramount!=0  or (ordernumber!=0 and  dramount!=0)) order by receiptDet.ordernumber desc 
+	select receiptDet from  org.egov.collection.entity.ReceiptDetail receiptDet WHERE receiptDet.receiptHeader.receiptnumber=? and  (cramount!=0  or (ordernumber!=0 and  dramount!=0)) order by receiptDet.ordernumber desc 
 	]]>
 	</query>
   

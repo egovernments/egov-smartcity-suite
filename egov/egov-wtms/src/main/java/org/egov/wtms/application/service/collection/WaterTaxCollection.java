@@ -503,7 +503,7 @@ public class WaterTaxCollection extends TaxCollection {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final BigDecimal amounttobeCalc = egBill.getTotalAmount().subtract(egBill.getTotalCollectedAmount());
-        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetListByReceiptNumber(billReceiptInfo.getReceiptNum());
+        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
        
         for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
             if (billDet.getOrderNo() == 1) {
@@ -544,7 +544,7 @@ public class WaterTaxCollection extends TaxCollection {
         BigDecimal arrearAmount = BigDecimal.ZERO;
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .getWaterConnectionDetailsByDemand(egBill.getEgDemand());
-        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetListByReceiptNumber(billReceiptInfo.getReceiptNum());
+        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
             	final String[] desc = rcptAccInfo.getDescription().split("-", 2);
