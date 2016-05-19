@@ -136,11 +136,7 @@
 	</bean>
 	
 	<bean id="bankAccountMappingService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.models.BankAccountServiceMap" />
-	</bean>
-	
-	<bean id="bankAccountServiceMap" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.models.BankAccountServiceMap" />
+		<property name="type" value="org.egov.commons.entity.BankAccountServiceMap" />
 	</bean>
 	
 	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">

@@ -39,16 +39,40 @@
  */
 package org.egov.collection.entity;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.integration.pgi.DefaultPaymentResponse;
-import org.egov.commons.*;
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bank;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.Bankbranch;
+import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFunction;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Fundsource;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.commons.entity.BankAccountServiceMap;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infstr.models.BankAccountServiceMap;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.Number;
@@ -61,16 +85,8 @@ import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
+import org.elasticsearch.repositories.RepositoryException;
 import org.hibernate.Session;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 /**
  * 
@@ -125,8 +141,8 @@ public class CollectionObjectFactory {
 		bankServ.setServiceDetails(serviceDetails);
 		bankServ.setBankAccountId(createBankAccount("$" + serviceDetails.getCode() + "%"));
 		bankServ.setDeptId(createDept("testDeptName", "testDeptCode"));
-		bankServ.setModifiedBy(createUser("egovernments"));
-		bankServ.setModifiedDate(new Date());
+		bankServ.setLastModifiedBy(createUser("egovernments"));
+		bankServ.setLastModifiedDate(new Date());
 		bankServ.setCreatedBy(createUser("egovernments"));
 		bankServ.setCreatedDate(new Date());
 		return  (bankServ);
