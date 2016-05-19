@@ -146,23 +146,26 @@ function viewVoucher(vid){
 					<td class="greybox" width="10%">&nbsp;</td>
 					<td class="greybox" width="10%">Cheque From Date:<span
 						class="mandatory1">*</span></td>
-					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-							cssStyle="width:100px"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('chequeIssueRegister.fromDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
-					</td>
+
+					<td class="greybox"><s:date name="fromDate" id="fromDate"
+							format="dd/MM/yyyy" /> <s:textfield id="fromDate"
+							name="fromDate" value="%{fromDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+
+
 					<td width="10%">&nbsp;</td>
 					<td class="greybox" width="10%">Cheque To Date:<span
 						class="mandatory1">*</span></td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate"
-							cssStyle="width:100px"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('chequeIssueRegister.toDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
-					</td>
+
+					<td class="greybox"><s:date name="toDate" id="toDate"
+							format="dd/MM/yyyy" /> <s:textfield id="toDate" name="toDate"
+							value="%{toDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+
 				</tr>
 				<tr>
 					<td width="10%" class="bluebox">&nbsp;</td>

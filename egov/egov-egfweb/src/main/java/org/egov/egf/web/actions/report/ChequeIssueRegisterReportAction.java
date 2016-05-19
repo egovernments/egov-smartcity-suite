@@ -40,6 +40,7 @@
 package org.egov.egf.web.actions.report;
 
 import net.sf.jasperreports.engine.JRException;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -66,6 +67,7 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -181,7 +183,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
                                 .addScalar("billDate",StandardBasicTypes.DATE)
                                 .addScalar("type")
                                 .addScalar("vhId",BigDecimalType.INSTANCE)
-                                .addScalar("serialNo")
+                                .addScalar("serialNo",StringType.INSTANCE)
                                 .addScalar("chequeStatus")
                                 .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
         if (LOGGER.isDebugEnabled())
