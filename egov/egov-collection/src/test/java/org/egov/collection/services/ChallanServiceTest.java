@@ -32,7 +32,6 @@ public class ChallanServiceTest { /* extends
 		collectionsUtil.setPersistenceService(genericService);
 		
 		challanService = new ChallanService();
-		challanService.setSessionFactory(egovSessionFactory);
 		challanService.setCollectionsUtil(collectionsUtil);
 		challanWorkflowService = new SimpleWorkflowService<Challan>(
 				challanService, Challan.class);

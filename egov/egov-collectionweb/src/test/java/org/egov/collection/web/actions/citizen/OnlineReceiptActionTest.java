@@ -116,8 +116,7 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 			}
 		};
 		receiptService.setType(ReceiptPayeeDetails.class);
-		receiptService.setSessionFactory(egovSessionFactory);
-		
+
 		financialsUtil = new FinancialsUtil(){
 			public InstrumentType getInstrumentTypeByType(String type){
 				return (InstrumentType) genericService.find("from InstrumentType  where type=? and isActive=true",type);
@@ -153,11 +152,9 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 		financialsUtil.setVoucherCreator(voucherCreator);
 		
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		collectionsNumberGenerator=new CollectionsNumberGenerator();
 		collectionsNumberGenerator.setScriptExecutionService(scriptExecutionService);
-		sequenceGenerator = new SequenceNumberGenerator(egovSessionFactory);
 		collectionsNumberGenerator.setSequenceGenerator(sequenceGenerator);
 		collectionsNumberGenerator.setCollectionsUtil(collectionsUtil);
 		
@@ -165,7 +162,6 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 		
 		receiptHeaderService = new ReceiptHeaderService();
 		receiptHeaderService.setType(ReceiptHeader.class);
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
 		receiptHeaderService.setFinancialsUtil(financialsUtil);
 		receiptHeaderService.setCollectionsUtil(collectionsUtil);
 		receiptHeaderService.setCollectionsNumberGenerator(collectionsNumberGenerator);
@@ -382,18 +378,15 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 			}
 		};
 		receiptService.setType(ReceiptPayeeDetails.class);
-		receiptService.setSessionFactory(egovSessionFactory);
 		receiptService.setFinancialsUtil(financialsUtil);
 		
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		collectionsUtil=new CollectionsUtil();
 		collectionsUtil.setPersistenceService(genericService);
 		
 		collectionsNumberGenerator=new CollectionsNumberGenerator();
 		collectionsNumberGenerator.setScriptExecutionService(scriptExecutionService);
-		sequenceGenerator = new SequenceNumberGenerator(egovSessionFactory);
 		collectionsNumberGenerator.setSequenceGenerator(sequenceGenerator);
 		collectionsNumberGenerator.setCollectionsUtil(collectionsUtil);
 		
@@ -409,7 +402,6 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 			}
 		};
 		receiptHeaderService.setType(ReceiptHeader.class);
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
 		receiptHeaderService.setFinancialsUtil(financialsUtil);
 		receiptHeaderService.setCollectionsUtil(collectionsUtil);
 		receiptHeaderService.setCollectionsNumberGenerator(collectionsNumberGenerator);
@@ -825,7 +817,6 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 			}
 		};
 		receiptHeaderService.setType(ReceiptHeader.class);
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
 		receiptHeaderService.setFinancialsUtil(financialsUtil);
 		receiptHeaderService.setCollectionsUtil(collectionsUtil);
 		receiptHeaderService.setCollectionsNumberGenerator(collectionsNumberGenerator);
@@ -836,7 +827,6 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 			}
 		};
 		receiptService.setType(ReceiptPayeeDetails.class);
-		receiptService.setSessionFactory(egovSessionFactory);
 		receiptService.setFinancialsUtil(financialsUtil);
 		receiptService.setCollectionsNumberGenerator(collectionsNumberGenerator);
 		collectionCommon.setReceiptPayeeDetailsService(receiptService);

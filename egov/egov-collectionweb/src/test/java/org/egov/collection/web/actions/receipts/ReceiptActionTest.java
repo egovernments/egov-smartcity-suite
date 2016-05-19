@@ -136,11 +136,9 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		};
 		
 		receiptHeaderService.setType(ReceiptHeader.class);
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
-		
+
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		userManager = createMock(UserManager.class);
 		boundaryDAO = createMock(BoundaryDAO.class);
 		commonsManager = createMock(CommonsManager.class);
@@ -166,7 +164,6 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		
 		collectionsNumberGenerator=new CollectionsNumberGenerator();
 		collectionsNumberGenerator.setScriptExecutionService(scriptExecutionService);
-		sequenceGenerator = new SequenceNumberGenerator(egovSessionFactory);
 		collectionsNumberGenerator.setSequenceGenerator(sequenceGenerator);
 		collectionsNumberGenerator.setCollectionsUtil(collectionsUtil);
 		
@@ -176,8 +173,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		}
 		};;
 		receiptService.setType(ReceiptPayeeDetails.class);
-		receiptService.setSessionFactory(egovSessionFactory);
-		
+
 		receiptService.setFinancialsUtil(financialsUtil);
 		receiptService.setCollectionsUtil(collectionsUtil);
 		receiptService.setCollectionsNumberGenerator(collectionsNumberGenerator);
@@ -203,7 +199,6 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		};
 		
 		PersistenceService<ServiceCategory, Long> serviceCategoryService = new PersistenceService<ServiceCategory, Long>();
-		serviceCategoryService.setSessionFactory(new SessionFactory());
 		action.setServiceCategoryService(serviceCategoryService);
 		
 		Map<String, String[]> parameters = new HashMap<String, String[]>();

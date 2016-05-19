@@ -43,19 +43,19 @@ import org.egov.commons.ObjectType;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 public class ObjectTypeDAO {
 
-	private SessionFactory sessionFactory;
-
-	public ObjectTypeDAO(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	private Session getSession() {
-		return this.sessionFactory.getCurrentSession();
+		return this.entityManager.unwrap(Session.class);
 	}
+
 	public void createObjectType(final ObjectType objectType) {
 		try {
 			getSession().save(objectType);

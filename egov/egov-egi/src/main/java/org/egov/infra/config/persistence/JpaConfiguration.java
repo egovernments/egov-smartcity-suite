@@ -51,7 +51,6 @@ import org.springframework.data.jpa.support.ClasspathScanningPersistenceUnitPost
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -110,13 +109,6 @@ public class JpaConfiguration {
         vendorAdapter.setShowSql(applicationProperties.getProperty("jpa.showSql", Boolean.class));
         vendorAdapter.setGenerateDdl(env.getProperty("jpa.generateDdl", Boolean.class));
         return vendorAdapter;
-    }
-
-    @Bean(name = "sessionFactory")
-    public HibernateJpaSessionFactoryBean sessionFactory() {
-        final HibernateJpaSessionFactoryBean hibernateJpaSessionFactoryBean = new HibernateJpaSessionFactoryBean();
-        hibernateJpaSessionFactoryBean.setEntityManagerFactory(entityManagerFactory());
-        return hibernateJpaSessionFactoryBean;
     }
 
     private Map<String, Object> additionalProperties() {

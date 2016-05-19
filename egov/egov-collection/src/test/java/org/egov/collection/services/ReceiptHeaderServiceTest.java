@@ -94,7 +94,6 @@ public class ReceiptHeaderServiceTest { /* extends
 		collectionsUtil.setGenericDao(genericHibDao);
 
 		receiptHeaderService = new ReceiptHeaderService();
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
 		receiptHeaderService.setCollectionsUtil(collectionsUtil);
 		receiptHeaderService.setFinancialsUtil(financialsUtil);
 		receiptHeaderService.setCollectionsNumberGenerator(numberGenerator);

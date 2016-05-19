@@ -857,7 +857,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             final EgfRecordStatus recordStatus = new EgfRecordStatus();
             PersistenceService<EgfRecordStatus, Long> recordStatusSer;
             recordStatusSer = new PersistenceService<EgfRecordStatus, Long>();
-            // recordStatusSer.setSessionFactory(new SessionFactory());
             // recordStatusSer.setType(EgfRecordStatus.class);
             final String code = EGovConfig.getProperty("egf_config.xml", "confirmoncreate", "", voucherHeader.getType());
             if ("N".equalsIgnoreCase(code))

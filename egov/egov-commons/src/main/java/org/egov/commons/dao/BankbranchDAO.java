@@ -42,19 +42,19 @@ package org.egov.commons.dao;
 import org.egov.commons.Bankbranch;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 public class BankbranchDAO {
 
-	private SessionFactory sessionFactory;
-
-	public BankbranchDAO(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	private Session getSession() {
-		return this.sessionFactory.getCurrentSession();
+		return this.entityManager.unwrap(Session.class);
 	}
+
 	public void createBankbranch(final Bankbranch bankbranch) {
 		try {
 			getSession().save(bankbranch);

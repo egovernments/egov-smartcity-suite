@@ -46,10 +46,6 @@
 	   default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.works" />
-	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" 
-		/> <bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" 
-		scope="prototype"> <property name="sessionFactory" ref="egovSessionFactory" 
-		/> </bean> -->
 
 	<bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService"
 		parent="persistenceService" scope="prototype">
