@@ -358,7 +358,7 @@ public class PropertyTransferService {
             noticeBean.setMunicipalityName(cityName);
             BasicProperty basicProp = propertyMutation.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<String, Object>();
-            reportParams.put("userSignature", securityUtils.getCurrentUser().getSalutation() != null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
+            reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
             reportParams.put("isCorporation", isCorporation);
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
