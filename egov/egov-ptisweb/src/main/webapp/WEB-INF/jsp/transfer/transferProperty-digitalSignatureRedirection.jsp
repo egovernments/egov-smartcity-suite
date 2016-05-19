@@ -54,7 +54,7 @@
 								var callBackUrl = '/ptis/digitalSignature/propertyTax/transitionWorkflow';
 								var actionUrl = null;
 
-								if (isDigiEnabled == true) {
+								if (isDigiEnabled) {
 									actionUrl = '/digisign/reports/selectCertificate.jsp?fileStoreId='
 											+ fileStoreIds
 											+ '&moduleName=PTIS&ulbCode='
