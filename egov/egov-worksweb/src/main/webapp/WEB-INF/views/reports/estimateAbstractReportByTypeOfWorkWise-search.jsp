@@ -43,7 +43,7 @@
 <div class="row display-hide report-section">
 	<div id="searchCriteria" class="text-center"></div>
 	<div id="dataRun" class="text-center"></div>
-	<div class="form-group report-table-container" style="overflow:auto">
+	<div class="form-group report-table-container" >
 		<table class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

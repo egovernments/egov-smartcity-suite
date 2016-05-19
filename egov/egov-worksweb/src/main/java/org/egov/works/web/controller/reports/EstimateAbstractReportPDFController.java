@@ -376,11 +376,11 @@ public class EstimateAbstractReportPDFController {
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
         if (workCategory != null && !workCategory.equalsIgnoreCase("undefined")) {
-            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory + ", ";
+            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_',' ') + ", ";
         }
 
         if (typeOfSlum != null) {
-            queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum + ", ";
+            queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum.replace('_',' ') + ", ";
         }
 
         if (beneficiary != null) {

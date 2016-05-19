@@ -88,11 +88,11 @@ jQuery('#btnsearch').click(function(e) {
     }
     
     if($("input[name=workCategory]").is(":checked") ) {
-        queryParameters += "Work Category : " + $("input[name=workCategory]:checked").val() + ", ";
+        queryParameters += "Work Category : " + $("input[name=workCategory]:checked").val().replace('_',' ').replace('_',' ') + ", ";
     }
     
     if($('#typeOfSlum').val() != "") {
-        queryParameters += "Type Of Slum : " + $('#typeOfSlum').val() + ", ";
+        queryParameters += "Type Of Slum : " + $('#typeOfSlum').val().replace('_',' ') + ", ";
     }
     
     if($('#beneficiary').val() != "") {
