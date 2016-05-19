@@ -122,7 +122,7 @@
 	<s:text id="select"	name="%{getText('column.title.select')}"></s:text>
  	<s:text	id="slNo" name="%{getText('column.title.SLNo')}"></s:text>
 	<s:text id="code" name="%{getText('contractor.code')}"></s:text>
-	<s:text id="name" name="%{getText('contractor.name')}"></s:text>
+	<s:text id="name" name="%{getText('contractot.contractorname')}"></s:text>
 	<s:text id="class" name="%{getText('contractor.grade')}"></s:text>
 	<s:text id="status"	name="%{getText('contractor.status')}" />
 		<s:if test="%{searchResult.fullListSize != 0}">

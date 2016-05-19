@@ -47,10 +47,12 @@
 <div id="main">
 <div class="row">
 	<div class="col-md-12">
-		<form:form  id="waterConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="waterConnectionDetails" >
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center">
+					<c:if test="${mode == 'cancel'}">
+						<spring:message code="lineestimate.cancel.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
+					</c:if>
 					<c:out value="${message }" /><br />
 					<c:forEach items="${basMessages }" var="basMessage">
 						<c:out value="${basMessage }" /><br />
@@ -58,7 +60,6 @@
 				</div>
 			</div>
 		</div>
-		</form:form>
 	</div>					
 </div>					
 </div>

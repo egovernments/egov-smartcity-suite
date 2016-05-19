@@ -39,6 +39,25 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -94,6 +113,7 @@ import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.recoveries.RecoveryService;
 import org.egov.services.voucher.VoucherService;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.models.contractorBill.AssetForBill;
@@ -101,7 +121,6 @@ import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
-import org.egov.works.models.estimate.FinancialDetail;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.TenderResponse;
@@ -114,25 +133,6 @@ import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.script.ScriptContext;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ContractorBillAction.PRINT, type = "stream", location = "CompletionCertificatePDF", params = {
@@ -1206,7 +1206,7 @@ public class ContractorBillAction extends BaseFormAction {
         if (advaceAdjustmentCreditAmount.intValue() > 0)
             contractorBillRegister.setAdvanceadjusted(advaceAdjustmentCreditAmount);
         final List<FinancialDetail> fdList = financialDetailService.findAllByNamedQuery(
-                "getFinancialDetailByEstimateId", workOrderEstimate.getEstimate().getId());
+                "FINANCIALDETAILS_BY_ESTIMATEID", workOrderEstimate.getEstimate().getId());
         contractorBillRegister.setEgBillregistermis(setEgBillregistermis(fdList));
         if (shouldAddAccountDetails)
             addAccountDetails(fdList);

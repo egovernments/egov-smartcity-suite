@@ -39,11 +39,11 @@
  */
 package org.egov.works.models.contractorBill;
 
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.works.models.workorder.WorkOrderEstimate;
-
 import java.util.Date;
 import java.util.List;
+
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 
 public class WorkCompletionInfo {
 
@@ -121,7 +121,8 @@ public class WorkCompletionInfo {
      * @return appr no
      */
     public String getApprNo() {
-        return workOrderEstimate.getEstimate().getBudgetApprNo();
+        // TODO:Fixme: Get latest appropriation number from estimate and display here
+        return "";
     }
 
     /**

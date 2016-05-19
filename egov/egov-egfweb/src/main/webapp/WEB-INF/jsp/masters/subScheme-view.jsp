@@ -47,7 +47,7 @@
 <title><s:if test="%{showMode=='edit'}">
 		<s:text name="subscheme.modify" />
 	</s:if> <s:else>
-		<s:text name="subScheme.add" />
+		<s:text name="masters.subscheme.searchview.title" />
 	</s:else></title>
 <script type="text/javascript">
 		function validate(){
@@ -100,15 +100,18 @@
 <body name="subSchemeView">
 
 	<jsp:include page="../budget/budgetHeader.jsp" />
-	<s:actionmessage theme="simple" />
+	<div style="color: green;"><s:actionmessage theme="simple" /></div>
 	<div class="formmainbox">
 		<div class="subheadnew">
-			<s:if test="%{showMode=='edit'}">
-				<s:text name="subscheme.modify" />
+			<s:if test="%{showMode=='new'}">
+			<s:text name="subScheme.add" />
+				
 			</s:if>
-			<s:else>
-				<s:text name="subScheme.add" />
-			</s:else>
+			<s:elseif  test="%{showMode=='view'}">
+				<s:text name="masters.subscheme.searchview.title" />
+			</s:elseif>
+			<s:else><s:text name="subscheme.modify" /></s:else>
+			
 		</div>
 
 		<s:actionerror />

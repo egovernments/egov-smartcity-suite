@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-05-18T16:45:30 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt_accounts_amtpayable" language="groovy" pageWidth="257" pageHeight="802" columnWidth="257" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="d6dde3bd-46d2-4d95-aed5-b446b5d9af4e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="java.math.*"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="functionName" class="java.lang.String">
+		<fieldDescription><![CDATA[Function]]></fieldDescription>
+	</field>
+	<field name="glCode" class="java.lang.String">
+		<fieldDescription><![CDATA[GL Code]]></fieldDescription>
+	</field>
+	<field name="accountName" class="java.lang.String">
+		<fieldDescription><![CDATA[Account Name]]></fieldDescription>
+	</field>
+	<field name="crAmount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Credit Amount]]></fieldDescription>
+	</field>
+	<field name="drAmount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Debit Amount]]></fieldDescription>
+	</field>
+	<field name="orderNumber" class="java.lang.Long"/>
+	<field name="description" class="java.lang.String">
+		<fieldDescription><![CDATA[Account description]]></fieldDescription>
+	</field>
+	<field name="isRevenueAccount" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[Flag indicating whether this is a revenue account head]]></fieldDescription>
+	</field>
+	<field name="creditAmountToBePaid" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[Actual credit amount to be paid]]></fieldDescription>
+	</field>
+	<sortField name="orderNumber"/>
+	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{creditAmountToBePaid}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="arrearFrom" class="java.lang.String" calculation="Lowest">
+		<variableExpression><![CDATA[($F{crAmount}.compareTo(java.math.BigDecimal.ZERO) > 0 && "4311004".equals($F{glCode})) ? $F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()) : $V{arrearFrom}]]></variableExpression>
+	</variable>
+	<variable name="arrearTo" class="java.lang.String" calculation="Highest">
+		<variableExpression><![CDATA[($F{crAmount}.compareTo(java.math.BigDecimal.ZERO) > 0 && "4311004".equals($F{glCode})) ? $F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()) : $V{arrearTo}]]></variableExpression>
+	</variable>
+	<variable name="arrearTotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA["4311004".equals($F{glCode}) ? ($F{creditAmountToBePaid}-$F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="currentTotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
+	</variable>
+	<variable name="currentInst" class="java.lang.String">
+		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode}) && ($V{currentInst} == null || $V{currentInst} == "")) ? $F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()) : $V{currentInst}]]></variableExpression>
+	</variable>
+	<variable name="penaltyTotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA["1402002".equals($F{glCode}) ? ($F{creditAmountToBePaid}-$F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="from_date" class="java.lang.String" calculation="Lowest">
+		<variableExpression><![CDATA[$F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length())]]></variableExpression>
+	</variable>
+	<variable name="to_year" class="java.lang.String" calculation="Highest">
+		<variableExpression><![CDATA[$V{to_date}.substring(0,$V{to_date}.indexOf('-'))-1]]></variableExpression>
+	</variable>
+	<variable name="from_year" class="java.lang.String" incrementType="Column">
+		<variableExpression><![CDATA[$V{from_date}.substring(0,$V{from_date}.indexOf('-'))]]></variableExpression>
+	</variable>
+	<variable name="from_which_half" class="java.lang.String">
+		<variableExpression><![CDATA[$V{from_date}.substring($V{from_date}.indexOf('-')+1, $V{from_date}.length()).substring($V{from_date}.substring($V{from_date}.indexOf('-')+1, $V{from_date}.length()).indexOf('-')+1,$V{from_date}.substring($V{from_date}.indexOf('-')+1, $V{from_date}.length()).length())]]></variableExpression>
+	</variable>
+	<variable name="to_date" class="java.lang.String" calculation="Highest">
+		<variableExpression><![CDATA[$F{crAmount}>0?($F{description}.length()>0?($F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()).substring($F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()).indexOf('-')+1,$F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()).length())):$V{to_date}):$V{to_date}]]></variableExpression>
+	</variable>
+	<variable name="to_which_half" class="java.lang.String">
+		<variableExpression><![CDATA[$V{to_date}.substring($V{to_date}.length()-1)]]></variableExpression>
+	</variable>
+	<variable name="totalamounttobepaid" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{creditAmountToBePaid}]]></variableExpression>
+	</variable>
+	<variable name="totalpaid" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{crAmount}]]></variableExpression>
+	</variable>
+	<variable name="rebate" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA["2202103".equals($F{glCode}) ? ($F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<variable name="advance" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA["3504102".equals($F{glCode}) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
+	</variable>
+	<filterExpression><![CDATA[$F{isRevenueAccount} == false]]></filterExpression>
+	<group name="REPORT_GROUP">
+		<groupExpression><![CDATA["DUMMY_GROUP"]]></groupExpression>
+		<groupFooter>
+			<band height="81" splitType="Stretch">
+				<staticText>
+					<reportElement positionType="Float" x="1" y="1" width="65" height="20" uuid="9511f8ac-41df-46af-9208-cbe3a5152146">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Arrears]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="66" y="1" width="60" height="20" uuid="0d6e039d-07d4-41f6-92dc-aced348bf587">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Current]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="126" y="1" width="65" height="20" uuid="0a12ad1e-da2f-43a7-8dbd-37363fd31d40">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Interest]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="191" y="1" width="64" height="20" uuid="ceef559a-483c-40ae-8719-a6c30ec7a5c1">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="###0.00">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="1" y="21" width="65" height="30" isPrintWhenDetailOverflows="true" uuid="70715818-3d37-4a0e-a7cd-87fdfe062d47">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[!$V{arrearTotal}.equals(BigDecimal.ZERO)?$V{arrearTotal}:BigDecimal.ZERO]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0.00">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="66" y="21" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="9991a373-55c6-4541-b22d-0c4cedc23620">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[!$V{currentTotal}.equals(BigDecimal.ZERO)?$V{currentTotal} + $V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0.00">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="126" y="21" width="65" height="30" isPrintWhenDetailOverflows="true" uuid="a3d66d36-041e-4078-b46c-607d236abeac">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[!$V{penaltyTotal}.equals(BigDecimal.ZERO)?$V{penaltyTotal}:BigDecimal.ZERO]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0.00">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="191" y="21" width="64" height="30" isPrintWhenDetailOverflows="true" uuid="641501af-9eac-43fc-9c9d-34347962c5eb">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} + $V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="37" y="57" width="218" height="20" isPrintWhenDetailOverflows="true" uuid="73c20945-d099-4509-a893-a3f3cba1fc0b">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Paid From "+(($V{from_which_half}=="1")?"01-04-"+$V{from_year}:"01-10-"+$V{from_year})+" to "+($V{to_which_half}=="1"?("30-09-"+((Integer.parseInt($V{to_date}.substring(0,$V{to_date}.indexOf('-'))))-1)):"31-03-"+$V{to_date}.substring(0,$V{to_date}.indexOf('-')))+(($V{totalamounttobepaid}-$V{totalpaid})>0?"(Partially)":"")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="3" y="58" width="32" height="15" isPrintWhenDetailOverflows="true" uuid="7d8e32dd-c298-45bc-a2c1-12e1b1aa4849">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Period :]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+</jasperReport>

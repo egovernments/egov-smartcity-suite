@@ -38,6 +38,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	
+	$('#donationMasterTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 9,
+			"orderable": false
+		} ]
+	});
 	 $('#propertyType').change(function(){
 	  $.ajax({
 			url: "/wtms/ajax-PipeSizesByPropertyType",     
@@ -93,10 +109,8 @@ $(document).ready(function(){
 		     $('#addnewid').hide();
 		     $('#resetid').show();
 			}
-		
 		else
 			{
-			
 			$('#resetid').hide();
 			$('#statusdiv').show();
 			 $('#addnewid').show();
@@ -105,6 +119,20 @@ $(document).ready(function(){
 	  $('#buttonid').click(function() {
 		  if ($( "#donationDetailsform" ).valid())
 			  {
+			  if($('#effectiveDate').val() != '' && $('#toDate').val() != ''){
+					var start = $('#effectiveDate').val();
+					var end = $('#toDate').val();
+					var stsplit = start.split("/");
+						var ensplit = end.split("/");
+						
+						start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+						end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+						if(!validRange(start,end))
+						{
+						return false;
+						}
+				}
+			  
 			  var val = parseFloat($('#donationAmount').val());
 			  if (isNaN(val) || (val === 0)  )
 			  {
@@ -116,9 +144,14 @@ $(document).ready(function(){
 					var maximum = getMaximumPipeSizeInInch();
 					if( (minimum > 0) && (maximum  > 0) ){
 						if (minimum > maximum){
-							bootbox.alert("Minimum PipeSize  should not be greater than the maximum PipeSize");
+							bootbox.alert("Minimum PipeSize should not be greater than the maximum PipeSize");
 							return false;
-						}else{
+						}
+						else if(minimum == maximum) {
+							bootbox.alert("Minimum PipeSize should not be same as maximum PipeSize");
+							return false;
+					    }
+						else{
 								  if($('#effectiveDate').val() !=undefined)
 							     donationheadercombination();
 						}
@@ -130,20 +163,28 @@ $(document).ready(function(){
 			window.open("/wtms/masters/donationMaster/list", "_self");
 		 });
 	  
-	  $('#addnewid').click(function() {
-		  window.open("/wtms/masters/donationMaster/", "_self");
-			
-	  });
-	  
-	  $('#resetid').click(function() {
-		  document.forms[0].reset();
-		  window.open("/wtms/masters/donationMaster/", "_self");
-			
-	  });
-
+	  $("#resetid").click(function(){
+			$("#donationDetailsform")[0].reset();
+			window.open("/wtms/masters/donationMaster/", "_self");
+			});
 
      });
 
+function validRange(start, end) {
+    var startDate = Date.parse(start);
+    var endDate = Date.parse(end);
+	
+    // Check the date range, 86400000 is the number of milliseconds in one day
+    var difference = (endDate - startDate) / (86400000 * 7);
+    if (difference < 0) {
+    	bootbox.alert("From date should not be greater than the To Date.");
+		$('#end_date').val('');
+		return false;
+		} else {
+		return true;
+	}
+    return true;
+}
 
 function getMinimumPipeSizeInInch() {
 	var minPipeSize = "";
@@ -186,6 +227,14 @@ function getMaximumPipeSizeInInch()
 	}
 function donationheadercombination()
 {
+	var activeDiv = $('#reqAttr').val();
+	if (activeDiv =='false')
+		{
+		var activeid = true;
+		}
+	else{
+		var activeid = ( $("#activeid").is(':checked') ) ? true : false;
+	    }
 	$.ajax({
         url: '/wtms/ajax-donationheadercombination',
         type: "GET",
@@ -194,14 +243,17 @@ function donationheadercombination()
         	categoryType: $('#connectionCategorie').val(),
         	usageType: $('#usageType').val(),
         	maxPipeSize :$('#pipeSize').val(),
-        	minPipeSize :$('#minpipeSize').val()
+        	minPipeSize :$('#minpipeSize').val(),
+        	fromDate : $('#effectiveDate').val(),
+        	toDate : $('#toDate').val(),
+        	activeid : activeid
         },
         dataType : 'json',
         success: function (response) {
 			console.log("success"+response);
-			if(response > 0){
-				var res = overwritedonation(response)
-				if(res==false)
+			if(response){
+				response=JSON.parse(response);
+				bootbox.alert("For the Selected Combination, record already present with the H.S.C Pipesize range : "+response.maxPipeSize+" and "+response.minPipeSize +" and date range "+response.fromDate+ "and "+response.toDate);
 				return false;
     			}
 			else{

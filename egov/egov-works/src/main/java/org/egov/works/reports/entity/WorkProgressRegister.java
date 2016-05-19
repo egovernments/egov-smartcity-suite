@@ -39,21 +39,8 @@
  */
 package org.egov.works.reports.entity;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.EgwTypeOfWork;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.model.budget.BudgetGroup;
-import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
-import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
-import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.egov.works.models.masters.Contractor;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -68,8 +55,27 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import org.egov.commons.CFunction;
+import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.Fund;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.model.budget.BudgetGroup;
+import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.entity.enums.Beneficiary;
+import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
+import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
+import org.egov.works.lineestimate.entity.enums.WorkCategory;
+import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.NatureOfWork;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_MV_WORK_PROGRESS_REGISTER")
@@ -178,7 +184,7 @@ public class WorkProgressRegister extends AbstractAuditable {
     private String billtype;
 
     private BigDecimal billamount;
-    
+
     private BigDecimal totalBillAmount;
 
     private BigDecimal totalBillPaidSoFar;
@@ -191,6 +197,47 @@ public class WorkProgressRegister extends AbstractAuditable {
     @JoinColumn(name = "department")
     private Department department;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scheme")
+    private Scheme scheme;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subScheme")
+    private SubScheme subScheme;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "natureOfWork")
+    private NatureOfWork natureOfWork;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leid")
+    private LineEstimate lineEstimate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ledid")
+    private LineEstimateDetails lineEstimateDetails;
+
+    @Length(max = 50)
+    private String lineEstimateStatus;
+
+    @Length(max = 50)
+    private String departmentName;
+
+    @Length(max = 50)
+    private String woStatusCode;
+
+    private boolean workOrderCreated;
+
+    private boolean workCompleted;
+
+    @Length(max = 50)
+    private String typeOfWorkName;
+
+    @Length(max = 50)
+    private String subTypeOfWorkName;
+
+    private Double milestonePercentageCompleted;
+    
     @Override
     protected void setId(final Long id) {
         this.id = id;
@@ -472,4 +519,109 @@ public class WorkProgressRegister extends AbstractAuditable {
     public void setDepartment(final Department department) {
         this.department = department;
     }
+
+    public Scheme getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(Scheme scheme) {
+        this.scheme = scheme;
+    }
+
+    public SubScheme getSubScheme() {
+        return subScheme;
+    }
+
+    public void setSubScheme(SubScheme subScheme) {
+        this.subScheme = subScheme;
+    }
+
+    public NatureOfWork getNatureOfWork() {
+        return natureOfWork;
+    }
+
+    public void setNatureOfWork(NatureOfWork natureOfWork) {
+        this.natureOfWork = natureOfWork;
+    }
+
+    public LineEstimate getLineEstimate() {
+        return lineEstimate;
+    }
+
+    public void setLineEstimate(LineEstimate lineEstimate) {
+        this.lineEstimate = lineEstimate;
+    }
+
+    public LineEstimateDetails getLineEstimateDetails() {
+        return lineEstimateDetails;
+    }
+
+    public void setLineEstimateDetails(LineEstimateDetails lineEstimateDetails) {
+        this.lineEstimateDetails = lineEstimateDetails;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public String getWoStatusCode() {
+        return woStatusCode;
+    }
+
+    public void setWoStatusCode(String woStatusCode) {
+        this.woStatusCode = woStatusCode;
+    }
+
+    public boolean isWorkOrderCreated() {
+        return workOrderCreated;
+    }
+
+    public void setWorkOrderCreated(boolean workOrderCreated) {
+        this.workOrderCreated = workOrderCreated;
+    }
+
+    public boolean isWorkCompleted() {
+        return workCompleted;
+    }
+
+    public void setWorkCompleted(boolean workCompleted) {
+        this.workCompleted = workCompleted;
+    }
+
+    public String getTypeOfWorkName() {
+        return typeOfWorkName;
+    }
+
+    public void setTypeOfWorkName(String typeOfWorkName) {
+        this.typeOfWorkName = typeOfWorkName;
+    }
+
+    public String getSubTypeOfWorkName() {
+        return subTypeOfWorkName;
+    }
+
+    public void setSubTypeOfWorkName(String subTypeOfWorkName) {
+        this.subTypeOfWorkName = subTypeOfWorkName;
+    }
+
+    public String getLineEstimateStatus() {
+        return lineEstimateStatus;
+    }
+
+    public void setLineEstimateStatus(String lineEstimateStatus) {
+        this.lineEstimateStatus = lineEstimateStatus;
+    }
+
+    public Double getMilestonePercentageCompleted() {
+        return milestonePercentageCompleted;
+    }
+
+    public void setMilestonePercentageCompleted(Double milestonePercentageCompleted) {
+        this.milestonePercentageCompleted = milestonePercentageCompleted;
+    }
+
 }

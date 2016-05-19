@@ -75,7 +75,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
@@ -86,7 +85,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * systems) to interact with the collections module.
  */
 public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
-CollectionIntegrationService {
+        CollectionIntegrationService {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionIntegrationServiceImpl.class);
 
@@ -526,14 +525,6 @@ CollectionIntegrationService {
     }
 
     @Override
-    public List<ServiceCategory> getActiveServiceCategories() {
-        final List<ServiceCategory> services = null;// =
-        // serviceCategoryService.getAllActiveServiceCategories();
-        return services;
-
-    }
-
-    @Override
     public String cancelReceipt(final PaymentInfoSearchRequest cancelReq) {
         String statusMessage = null;
         String instrumentType = "";
@@ -600,6 +591,14 @@ CollectionIntegrationService {
         }
 
         return statusMessage;
+    }
+
+    @Override
+    public List<ReceiptDetail> getReceiptDetailListByReceiptNumber(final String receiptNumber) {
+        final List<ReceiptDetail> receiptDetList = persistenceService.findAllByNamedQuery(
+                CollectionConstants.QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER, receiptNumber);
+
+        return receiptDetList;
     }
 
 }

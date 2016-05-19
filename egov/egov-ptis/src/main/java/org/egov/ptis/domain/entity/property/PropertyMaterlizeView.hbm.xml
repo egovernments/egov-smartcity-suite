@@ -81,6 +81,9 @@
 		<property name="alv" column="ALV"/>
 		<property name="mobileNumber" column="mobileno"/>
 		<property name="isActive" column="isactive"/>
+		<property name="arrearDemand" column="ARREAR_DEMAND"/>
+		<property name="arrearCollection" column="ARREAR_collection"/>
+		<property name="isUnderCourtCase" column="is_under_courtcase"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>

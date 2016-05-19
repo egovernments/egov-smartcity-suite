@@ -39,6 +39,9 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.repository.PipeSizeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +51,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -106,7 +106,7 @@ public class PipeSizeService {
     }
 
     public List<PipeSize> getAllActivePipeSize() {
-        return pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
+        return pipeSizeRepository.findByActiveTrueOrderByCodeAsc();
     }
 
     public List<PipeSize> getAllPipeSizesByPropertyType(final Long propertyType) {
@@ -123,7 +123,7 @@ public class PipeSizeService {
     }
 
     public List<PipeSize> getPipeSizeListForRest() {
-        final List<PipeSize> pipeSizeList = pipeSizeRepository.findByActiveTrueOrderBySizeInInchAsc();
+        final List<PipeSize> pipeSizeList = pipeSizeRepository.findByActiveTrueOrderByCodeAsc();
         final List<PipeSize> prepareListForRest = new ArrayList<PipeSize>(0);
 
         for (final PipeSize pipeSize : pipeSizeList) {

@@ -82,8 +82,10 @@ public class SearchContractorBillsToCancelJsonAdaptor implements JsonSerializer<
                 final String workIdentificationNumber = led.getProjectCode().getCode();
                 jsonObject.addProperty("workIdentificationNumber", workIdentificationNumber);
             }
-            else
+            else {
                 jsonObject.addProperty("estimateNumber", "");
+                jsonObject.addProperty("workIdentificationNumber", "");
+            }
             if (contractorBillRegister.getWorkOrder() != null)
                 jsonObject.addProperty("workOrderNumber", contractorBillRegister.getWorkOrder().getWorkOrderNumber());
             else

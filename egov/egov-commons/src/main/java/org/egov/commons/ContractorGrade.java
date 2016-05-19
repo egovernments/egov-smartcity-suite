@@ -39,6 +39,7 @@
  */
 package org.egov.commons;
 
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -48,16 +49,19 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Min;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+@CompositeUnique(fields = { "minAmount",
+"maxAmount" }, message = "contractorgrade.amount.exist")
 @Unique(fields = { "grade" }, id = "id", tableName = "EGW_CONTRACTOR_GRADE", columnName = { "GRADE" }, message = "contractorGrade.grade.isunique")
 public class ContractorGrade extends BaseModel {
 
 	@Required(message = "contractorGrade.grade.null")
 	@Length(max = 20, message = "contractorGrade.grade.length")
-	@OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSPACE, message = "contractorGrade.grade.alphaNumeric")
+        @OptionalPattern(regex = Constants.ALPHANUMERICWITHSPECIALCHAR, message = "contractorGrade.grade.alphaNumeric")
 	private String grade;
 
 	@Required(message = "contractorGrade.description.null")

@@ -46,10 +46,6 @@
 	   default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.works" />
-	<!-- <bean id="egovSessionFactory" class="org.egov.infstr.services.SessionFactory" 
-		/> <bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" 
-		scope="prototype"> <property name="sessionFactory" ref="egovSessionFactory" 
-		/> </bean> -->
 
 	<bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService"
 		parent="persistenceService" scope="prototype">
@@ -101,7 +97,7 @@
 	<!--  <bean id="estimateWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="abstractEstimateService" />
-		<constructor-arg value="org.egov.works.models.estimate.AbstractEstimate" />
+		<constructor-arg value="org.egov.works.abstractestimate.entity.AbstractEstimate" />
 	</bean>  -->
 
 	<!-- <bean id="packageWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
@@ -139,12 +135,6 @@
 		<property name="type" value="org.egov.works.models.masters.Overhead" />
 	</bean>
 
-	<bean id="assetsForEstimateService" parent="persistenceService"
-		scope="prototype">
-		<property name="type"
-			value="org.egov.works.models.estimate.AssetsForEstimate" />
-	</bean>
-
 	<!-- changing budgetservice with budgetgropDao -->
 	<bean id="budgetGroupDAO" class="org.egov.dao.budget.BudgetGroupHibernateDAO">
 	</bean>
@@ -156,7 +146,7 @@
 	<bean id="financialDetailService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.estimate.FinancialDetail" />
+			value="org.egov.works.abstractestimate.entity.FinancialDetail" />
 	</bean>
 
 	<bean class="org.egov.works.models.tender.NegotiationNumberGenerator"
@@ -278,7 +268,7 @@
 		<constructor-arg>
 			<bean parent="persistenceService">
 				<property name="type"
-					value="org.egov.works.models.revisionEstimate.RevisionAbstractEstimate" />
+					value="org.egov.works.revisionestimate.entity.RevisionAbstractEstimate" />
 			</bean>
 		</constructor-arg>
 		<property name="abstractEstimateService" ref="abstractEstimateService" />
@@ -377,7 +367,7 @@
 		</property>
 	</bean>
 	<bean id="activityService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.works.models.estimate.Activity">
+		<property name="type" value="org.egov.works.abstractestimate.entity.Activity">
 		</property>
 	</bean>
 	<bean id="cancelBillService" parent="persistenceService" scope="prototype">
@@ -449,7 +439,7 @@
 	<bean id="revisionAbstractEstimateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.revisionEstimate.RevisionAbstractEstimate" />
+			value="org.egov.works.revisionestimate.entity.RevisionAbstractEstimate" />
 	</bean>
 
 
@@ -463,15 +453,15 @@
 		scope="prototype">
 		<constructor-arg ref="revisionEstimateWFService" />
 		<constructor-arg
-			value="org.egov.works.models.revisionEstimate.RevisionAbstractEstimate" />
+			value="org.egov.works.revisionestimate.entity.RevisionAbstractEstimate" />
 	</bean> -->
 	<bean id="revisionWorkOrderService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.revisionEstimate.RevisionWorkOrder" />
+			value="org.egov.works.revisionestimate.entity.RevisionWorkOrder" />
 	</bean>
 	<bean id="nonSorService" parent="persistenceService">
-		<property name="type" value="org.egov.works.models.estimate.NonSor" />
+		<property name="type" value="org.egov.works.abstractestimate.entity.NonSor" />
 	</bean>
 	<bean class="org.egov.works.services.WorkProgressAbstractReportService"
 		id="workProgressAbstractReportService" scope="prototype">

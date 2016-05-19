@@ -46,5 +46,25 @@
        default-lazy-init="true">
 
     <context:component-scan base-package="org.egov.commons" />
-        
+    <context:component-scan base-package="org.egov.lib"/>
+
+
+    <bean id="authRuleService" parent="persistenceService" autowire-candidate="true">
+        <property name="type" value="org.egov.lib.rrbac.model.AuthorizationRule"/>
+    </bean>
+
+    <bean id="RuleInterceptorFilter" class="org.egov.lib.rrbac.filter.RuleInterceptorFilter">
+        <property name="userService" ref="userService" />
+        <property name="daoService" ref="persistenceService" />
+        <property name="authRuleService" ref="authRuleService" />
+    </bean>
+
+    <bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO"/>
+
+    <bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO"/>
+
+    <bean id="bankBranchDao" class="org.egov.commons.dao.BankbranchDAO"/>
+
+    <bean id="bankDao" class="org.egov.commons.dao.BankDAO"/>
+
 </beans>

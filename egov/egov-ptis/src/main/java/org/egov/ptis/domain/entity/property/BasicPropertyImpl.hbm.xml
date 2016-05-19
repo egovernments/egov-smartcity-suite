@@ -191,6 +191,7 @@
 		<property name="assessmentdate" column="assessmentdate" type="java.util.Date"/> 
 		<property name="longitude" column="LONGITUDE" type="double" />
 		<property name="latitude" column="LATITUDE" type="double" />
+		<property name="eligible" column="eligible" type="boolean" />
 	</class>
 
 </hibernate-mapping>

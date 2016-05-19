@@ -92,8 +92,8 @@
    
     <link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/collections.css?rnd=${app_release_no}"/>
-	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/fonts/fonts-min.css"/>
-	<link rel="stylesheet" type="text/css" href="/egi/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>
+	<link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/fonts/fonts-min.css"/>
+	<link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>
 	
 	<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 	<link href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
@@ -110,24 +110,22 @@
 	
 	<script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 	<SCRIPT type="text/javascript" src="/collection/resources/js/jsCommonMethods.js"></SCRIPT>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/element/element-min.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/connection/connection-min.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/datasource/datasource-min.js"></script>
-	<script type="text/javascript" src="/egi/commonyui/yui2.8/datatable/datatable-min.js"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/yahoo/yahoo-min.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/dom/dom-min.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
+	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
+	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/element/element-min.js"></script>
+	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/connection/connection-min.js"></script>
+	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/datasource/datasource-min.js"></script>
+	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/datatable/datatable-min.js"></script>
+	<script type="text/javascript" src="<c:url value='/resources/commonyui/yui2.8/yahoo/yahoo-min.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/commonyui/yui2.8/dom/dom-min.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/autocomplete.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/event/event-min.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonyui/yui2.8/animation/animation-min.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/commonyui/yui2.8/event/event-min.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/commonyui/yui2.8/animation/animation-min.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/commonjs/ajaxCommonFunctions.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/helper.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/collections.js' context='/collection'/>"></script>
 	<script type="text/javascript" src="<c:url value='/resources/js/calender.js' context='/collection'/>"></script>
-<%-- 	<script type="text/javascript" src="<c:url value='/javascript/jquery/jquery-ui-1.8.22.custom.min.js' context='/egi'/>"></script>
-	<link rel="stylesheet" type="text/css" href="<c:url value='/css/jquery/jquery-ui-1.8.22.custom.css' context='/egi'/>" />
-     --%>
+
     <decorator:head/>
     </head>
     

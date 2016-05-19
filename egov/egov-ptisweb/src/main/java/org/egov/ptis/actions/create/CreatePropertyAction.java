@@ -178,6 +178,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private Integer reportId = -1;
     private boolean approved = false;
+    private boolean updateUpicNo;
 
     private BasicProperty basicProp;
     @Autowired
@@ -1133,13 +1134,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (!cityCode.equals(upicNo.substring(0, 4))) {
                 addActionError(getText("assessmentno.incorrect"));
                 return "dataEntry";
-            } else {
-                BasicProperty basicProperty = (BasicProperty) persistenceService.findByNamedQuery(
-                        QUERY_BASICPROPERTY_BY_UPICNO, upicNo);
-                if (basicProperty != null) {
-                    addActionError(getText("propertyexistsforassessmentno"));
-                    return "dataEntry";
-                }
             }
         }
 
@@ -1151,7 +1145,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final BasicProperty basicProperty = createBasicProp(PropertyTaxConstants.STATUS_ISACTIVE);
         basicProperty.setUnderWorkflow(false);
         basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY);
-        basicProperty.setUpicNo(upicNo);
+        if (updateUpicNo) {
+            basicProperty.setOldMuncipalNum(upicNo);
+            basicProperty.setUpicNo(propertyTaxNumberGenerator.generateAssessmentNumber());
+        } else
+            basicProperty.setUpicNo(upicNo);
         try {
             addDemandAndCompleteDate(PropertyTaxConstants.STATUS_ISACTIVE, basicProperty,
                     basicProperty.getPropertyMutationMaster());
@@ -1171,7 +1169,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         // propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
         setBasicProp(basicProperty);
         setAckMessage("Property data entry saved in the system successfully and created with Assessment No "
-                + upicNo);
+                + basicProperty.getUpicNo());
         // setApplicationNoMessage(" with application number : ");
         propService.updateAssessmentSeq();
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
@@ -1695,4 +1693,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         this.propertyTaxDetailsMap = propertyTaxDetailsMap;
     }
 
+    public boolean isUpdateUpicNo() {
+        return updateUpicNo;
+    }
+
+    public void setUpdateUpicNo(boolean updateUpicNo) {
+        this.updateUpicNo = updateUpicNo;
+    }
 }

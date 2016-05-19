@@ -74,20 +74,25 @@
 					<td class="bluebox">&nbsp;</td>
 					<td class="greybox"><s:text name="bill.search.dateFrom" /> <span
 						class="mandatory1">*</span></td>
-					<td class="greybox"><s:textfield name="billDateFrom"
-							id="billDateFrom" cssStyle="width:100px" value='%{billDateFrom}'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('billRegisterForm.billDateFrom');"
-						style="text-decoration: none"><img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+
+					<td class="greybox"><s:date name="billDateFrom"
+							id="billDateFrom" format="dd/MM/yyyy" /> <s:textfield
+							id="billDateFrom" name="billDateFrom" value="%{billDateFrom}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+
 					<td class="greybox"><s:text name="bill.search.dateTo" /> <span
 						class="mandatory1">*</span></td>
-					<td class="greybox"><s:textfield name="billDateTo"
-							id="billDateTo" cssStyle="width:100px" value='%{billDateTo}'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('billRegisterForm.billDateTo');"
-						style="text-decoration: none"><img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+
+					<td class="greybox"><s:date name="billDateTo" id="billDateTo"
+							format="dd/MM/yyyy" /> <s:textfield id="billDateTo"
+							name="billDateTo" value="%{billDateTo}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+
+
 				</tr>
 				<jsp:include page="billSearchCommon-filter.jsp" />
 				<tr>
@@ -268,7 +273,7 @@
 	}
 function openBill(url){
 		
-			window.open(url,'','width=900, height=700');
+			window.open(url,'','width=900, height=700,scrollbars=1');
 			
 		}
 function doAfterSubmit(){

@@ -130,7 +130,10 @@ function checkMiscAttributes(obj)
 }
 function check()                   
 {
+
 	
+    
+   
 	var rtgsMode = document.getElementById("rtgsDefaultMode").value;
 	//var restrictionDate = document.getElementById("paymentRestrictionDateForCJV").value;
 	var restrictionDateForCJV = document.getElementById("rtgsModeRestrictionDateForCJV").value;
@@ -156,9 +159,10 @@ function check()
 		{
 			bootbox.alert("Mode of payment for contractor bills should only be RTGS");
 			return false;
-		}	 
-		document.forms[0].action='${pageContext.request.contextPath}/payment/payment-save.action';
-		document.forms[0].submit();
+		}	
+       addSelectedToForm2();   
+		document.form2.action='${pageContext.request.contextPath}/payment/payment-save.action';
+		document.form2.submit();
 	}	             
 	if(document.getElementById('miscount').value==0)
 	{
@@ -167,8 +171,9 @@ function check()
 	}
 	if(document.getElementById('vouchermis.departmentid'))
 		document.getElementById('vouchermis.departmentid').disabled=false;
-	document.forms[0].action='${pageContext.request.contextPath}/payment/payment-save.action';
-	document.forms[0].submit();
+    addSelectedToForm2();  
+	document.form2.action='${pageContext.request.contextPath}/payment/payment-save.action';
+	document.form2.submit();
 	return true;
 }
 function loadBank(obj){}
@@ -322,6 +327,51 @@ function checkcontractorForSameMisAttribs(obj,len)
 		   }
 		   return concount;
 }
+ function addSelectedToForm2()
+{
+ document.getElementById("exp2").innerHTML="";
+var field='contingentList';
+var length=<s:property value="%{contingentList.size()}"/>;
+for (i = 0; i < length; i++){
+  if(document.getElementsByName(field+'['+i+'].isSelected')[0].checked == true)
+{
+var k=document.getElementsByName(field+'['+i+'].isSelected')[0].parentNode.parentNode.innerHTML;
+k="<tr>"+k+"</tr>";
+console.log(k);
+document.getElementById("exp2").innerHTML=document.getElementById("exp2").innerHTML+k;
+console.log(document.getElementById("exp2").innerHTML);
+}
+}
+ document.getElementById("sup2").innerHTML="";
+ field='supplierList';
+ length=<s:property value="%{supplierList.size()}"/>;
+for (i = 0; i < length; i++){
+  if(document.getElementsByName(field+'['+i+'].isSelected')[0].checked == true)
+{
+var k=document.getElementsByName(field+'['+i+'].isSelected')[0].parentNode.parentNode.innerHTML;
+k="<tr>"+k+"</tr>"
+document.getElementById("sup2").innerHTML=document.getElementById("sup2").innerHTML+k;
+//console.log(document.getElementById("exp2").innerHTML);
+}
+}
+
+ document.getElementById("con2").innerHTML="";
+field='contractorList';
+ length=<s:property value="%{contractorList.size()}"/>;
+for (i = 0; i < length; i++){
+  if(document.getElementsByName(field+'['+i+'].isSelected')[0].checked == true)
+{
+var k=document.getElementsByName(field+'['+i+'].isSelected')[0].parentNode.parentNode.innerHTML;
+k="<tr>"+k+"</tr>"
+document.getElementById("con2").innerHTML=document.getElementById("con2").innerHTML+k;
+//console.log(document.getElementById("con2").innerHTML);
+}
+}
+
+document.getElementById("search").innerHTML="";
+document.getElementById("search").innerHTML=document.getElementById("searchtab").innerHTML;
+console.log(document.getElementById("exp2").innerHTML);
+} 
  
 function checkSupplierForSameMisAttribs(obj,len)
 {
@@ -483,7 +533,10 @@ function checkContingentForSameMisAttribs(obj,len)
 
 </head>
 <body>
+
+
 	<s:form action="payment" theme="simple">
+
 		<div class="formmainbox">
 			<s:token />
 			<jsp:include page="../budget/budgetHeader.jsp">
@@ -1075,31 +1128,6 @@ function checkContingentForSameMisAttribs(obj,len)
 			<option>Show All</option>
 		</select> -->
 			</div>
-			<div id="buttondiv" align="center" style="display: visible">
-				<table align="center" width="100%">
-					<tr>
-						<font size="small" color="red">*Maximum of 500 records are
-							displayed here</font>
-					</tr>
-					<tr>
-						<td class="modeofpayment"><strong><s:text
-									name="payment.mode" /><span class="mandatory1">*</span></strong> <input
-							name="paymentMode" id="paymentModecheque" checked="checked"
-							value="cheque" type="radio"><label
-							for="paymentModecheque">Cheque</label> <input name="paymentMode"
-							id="paymentModecash" value="cash" type="radio"><label
-							for="paymentModecash"><s:text
-									name="cash.consolidated.cheque" /></label> <input name="paymentMode"
-							id="paymentModertgs" value="rtgs" type="radio"><label
-							for="paymentModertgs">RTGS</label></td>
-					</tr>
-					<tr>
-						<td class="buttonbottomnew" align="center"><br> <input
-							type="button" class="buttonsubmit" value="Generate Payment"
-							id="generatePayment" onclick="return check();" /></td>
-					</tr>
-				</table>
-			</div>
 			<s:if test="%{!validateUser('createpayment')}">
 				<script>
 			document.getElementById('searchBtn').disabled=true;
@@ -1122,6 +1150,43 @@ function checkContingentForSameMisAttribs(obj,len)
 			</s:if>
 		</div>
 	</s:form>
+<form action="payment" id="form2" name="form2" method="POST" >
+<div id="search" style="display:visible"></div>
+<table id="con2" style="display:visible">
+</table>
+<table id="sup2" style="display:hidden">
+</table>
+
+<table id="exp2" style="display:hidden" >
+</table>
+<div id="buttondiv" align="center" style="display: visible">
+				<table align="center" width="100%">
+					<tr>
+						<font size="small" color="red">*Maximum of 500 records are
+							displayed here<br>*You can select Maximum of 65 bills for single payment</font>
+					</tr>
+					<tr>
+						<td class="modeofpayment"><strong><s:text
+									name="payment.mode" /><span class="mandatory1">*</span></strong> <input
+							name="paymentMode" id="paymentModecheque" checked="checked"
+							value="cheque" type="radio"><label
+							for="paymentModecheque">Cheque</label> <input name="paymentMode"
+							id="paymentModecash" value="cash" type="radio"><label
+							for="paymentModecash"><s:text
+									name="cash.consolidated.cheque" /></label> <input name="paymentMode"
+							id="paymentModertgs" value="rtgs" type="radio"><label
+							for="paymentModertgs">RTGS</label></td>
+					</tr>
+
+			
+<tr>
+						<td class="buttonbottomnew" align="center"><br> <input
+							type="button" class="buttonsubmit" value="Generate Payment"
+							id="generatePayment" onclick="return check();" /></td>
+					</tr>
+</table>
+</div>
+</form>
 
 </body>
 </html>

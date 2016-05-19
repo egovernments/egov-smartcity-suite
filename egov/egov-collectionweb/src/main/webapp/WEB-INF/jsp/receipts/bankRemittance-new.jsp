@@ -286,9 +286,9 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="4%" class="bluebox">&nbsp;</td>
-						<td width="15%" class="bluebox"><s:text
+						<td class="bluebox"><s:text
 								name="bankremittance.bank" />:</td>
-						<td width="36%" class="bluebox"><s:select
+						<td class="bluebox"><s:select
 								headerValue="--Select--" headerKey="-1"
 								list="dropdownData.bankBranchList" listKey="id"
 								id="bankBranchMaster" listValue="branchname"
@@ -299,9 +299,9 @@
 								dropdownId='accountNumberId'
 								url='receipts/ajaxBankRemittance-accountListOfService.action'
 								selectedValue="%{accountNumberId}" /></td>
-						<td width="15%" class="bluebox"><s:text
+						<td class="bluebox"><s:text
 								name="bankremittance.accountnumber" />:</td>
-						<td width="30%" class="bluebox"><s:select
+						<td class="bluebox"><s:select
 								headerValue="--Select--" headerKey="-1"
 								list="dropdownData.accountNumberList" listKey="id"
 								id="accountNumberId" listValue="accountnumber"
@@ -433,7 +433,7 @@
 					<br />
 					<div id="loadingMask"
 						style="display: none; overflow: hidden; text-align: center">
-						<img src="/egi/resources/erp2/images/bar_loader.gif" alt=""/> <span
+						<img src="/collection/resources/images/bar_loader.gif" alt=""/> <span
 							style="color: red">Please wait....</span>
 					</div>
 

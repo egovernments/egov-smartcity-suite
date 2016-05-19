@@ -59,20 +59,20 @@
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="waterSourceTbl">
 					<thead>
 						<tr>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.code" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.code" />
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.watersourcetype" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.watersourcetype" />
 							</th>
-							<th align="center" colspan="1">
-								<div align="center"><spring:message code="lbl.status"/></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.status"/>
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.edit" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.edit" />
 							</th>
 						</tr>
 					</thead>

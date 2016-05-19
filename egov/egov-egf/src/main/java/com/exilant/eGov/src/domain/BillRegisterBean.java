@@ -227,11 +227,11 @@ public class BillRegisterBean
 		this.taskExc = taskExc;
 	}
 
-	public boolean isId() {
+	public boolean getIsId() {
 		return isId;
 	}
 
-	public void setId(boolean isId) {
+	public void setIsId(boolean isId) {
 		this.isId = isId;
 	}
 

@@ -294,4 +294,16 @@
     	<put-attribute name="body" value="/WEB-INF/views/transactions/editOwner/ownerdetails-success.jsp"/>
     </definition>
     
+    <definition name="editCollection-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.editCollection.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editCollection/editCollection-form.jsp"/>
+    </definition>
+    <definition name="editCollection-ack" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.editCollection.ack" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editCollection/editCollection-ack.jsp"/>
+    </definition>
+    <definition name="editCollection-error" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.editCollection.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/editCollection/editCollection-error.jsp"/>
+    </definition>
 </tiles-definitions> 

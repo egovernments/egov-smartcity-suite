@@ -57,6 +57,7 @@ public class SearchRequestLetterOfAcceptance {
     private Date adminSanctionToDate;
     private Long typeOfWork;
     private Long subTypeOfWork;
+    private String contractor;
 
     public SearchRequestLetterOfAcceptance() {
     }
@@ -137,7 +138,7 @@ public class SearchRequestLetterOfAcceptance {
         return adminSanctionFromDate;
     }
 
-    public void setAdminSanctionFromDate(Date adminSanctionFromDate) {
+    public void setAdminSanctionFromDate(final Date adminSanctionFromDate) {
         this.adminSanctionFromDate = adminSanctionFromDate;
     }
 
@@ -145,7 +146,7 @@ public class SearchRequestLetterOfAcceptance {
         return adminSanctionToDate;
     }
 
-    public void setAdminSanctionToDate(Date adminSanctionToDate) {
+    public void setAdminSanctionToDate(final Date adminSanctionToDate) {
         this.adminSanctionToDate = adminSanctionToDate;
     }
 
@@ -153,7 +154,7 @@ public class SearchRequestLetterOfAcceptance {
         return typeOfWork;
     }
 
-    public void setTypeOfWork(Long typeOfWork) {
+    public void setTypeOfWork(final Long typeOfWork) {
         this.typeOfWork = typeOfWork;
     }
 
@@ -161,8 +162,15 @@ public class SearchRequestLetterOfAcceptance {
         return subTypeOfWork;
     }
 
-    public void setSubTypeOfWork(Long subTypeOfWork) {
+    public void setSubTypeOfWork(final Long subTypeOfWork) {
         this.subTypeOfWork = subTypeOfWork;
     }
 
+    public String getContractor() {
+        return contractor;
+    }
+
+    public void setContractor(final String contractor) {
+        this.contractor = contractor;
+    }
 }

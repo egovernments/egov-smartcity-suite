@@ -41,8 +41,8 @@ package org.egov.works.web.actions.milestone;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.milestone.entity.Milestone;
-import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.masters.MilestoneTemplate;
 import org.egov.works.models.workorder.WorkOrder;

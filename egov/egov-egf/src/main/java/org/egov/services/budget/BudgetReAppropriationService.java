@@ -39,6 +39,15 @@
  */
 package org.egov.services.budget;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.script.ScriptContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -46,12 +55,12 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetReAppropriation;
@@ -59,18 +68,10 @@ import org.egov.model.budget.BudgetReAppropriationMisc;
 import org.egov.pims.commons.Position;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
-import org.egov.web.actions.budget.BudgetReAppropriationView;
+import org.egov.egf.model.BudgetReAppropriationView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.script.ScriptContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class BudgetReAppropriationService extends PersistenceService<BudgetReAppropriation, Long> {
 
@@ -88,7 +89,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
-    private SequenceGenerator sequenceGenerator;
+    private ApplicationSequenceNumberGenerator sequenceGenerator;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -106,11 +107,11 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
         this.type = budgetReAppropriation;
     }
 
-    public SequenceGenerator getSequenceGenerator() {
+    public ApplicationSequenceNumberGenerator getSequenceGenerator() {
         return sequenceGenerator;
     }
 
-    public void setSequenceGenerator(final SequenceGenerator sequenceGenerator) {
+    public void setSequenceGenerator(final ApplicationSequenceNumberGenerator sequenceGenerator) {
         this.sequenceGenerator = sequenceGenerator;
     }
 

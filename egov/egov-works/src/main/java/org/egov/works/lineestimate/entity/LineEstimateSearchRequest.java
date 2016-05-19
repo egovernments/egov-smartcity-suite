@@ -51,6 +51,9 @@ public class LineEstimateSearchRequest {
     private Date adminSanctionFromDate;
     private Date adminSanctionToDate;
     private boolean spillOverFlag;
+    private Long createdBy;
+    private String lineEstimateNumber;
+    private String workIdentificationNumber;
 
     public LineEstimateSearchRequest() {
     }
@@ -125,6 +128,30 @@ public class LineEstimateSearchRequest {
 
     public void setSpillOverFlag(final boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
+    }
+
+    public String getLineEstimateNumber() {
+        return lineEstimateNumber;
+    }
+
+    public void setLineEstimateNumber(final String lineEstimateNumber) {
+        this.lineEstimateNumber = lineEstimateNumber;
+    }
+
+    public String getWorkIdentificationNumber() {
+        return workIdentificationNumber;
+    }
+
+    public void setWorkIdentificationNumber(final String workIdentificationNumber) {
+        this.workIdentificationNumber = workIdentificationNumber;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(final Long createdBy) {
+        this.createdBy = createdBy;
     }
 
 }

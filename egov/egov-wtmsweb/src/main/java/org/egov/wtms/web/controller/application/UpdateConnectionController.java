@@ -240,6 +240,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         }
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("closeConnectionType", waterConnectionDetails.getCloseConnectionType());
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         return "newconnection-edit";
     }
@@ -421,7 +422,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                                     .equals(WaterTaxConstants.RECONNECTIONCONNECTION))
                         return "redirect:/application/ReconnacknowlgementNotice?pathVar="
                                 + waterConnectionDetails.getApplicationNumber();
-                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION)) { // Sign
+                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) && waterTaxUtils.isDigitalSignatureEnabled()) { // Sign
                         WaterConnectionDetails upadtedWaterConnectionDetails = null;
                         if (waterConnectionDetails.getApplicationType().getCode()
                                 .equals(WaterTaxConstants.NEWCONNECTION)
@@ -479,7 +480,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                         session.setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER,
                                 fileStoreIdsApplicationNoMap);
                         return "newConnection-digitalSignatureRedirection";
-                    } else
+                    } 
+                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) && !waterTaxUtils.isDigitalSignatureEnabled()) {
+                        waterConnectionDetails.setWorkOrderDate(new Date());
+                        waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
+                    }
+                    else
                         waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                                 approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
                                 mode, null ,sourceChannel);

@@ -339,7 +339,7 @@ function recalculateOverHeadTotalsOnDelete(record){
 		                                    SlNo:'<s:property value="#row_status.count"/>',
 		                                    Name:'<s:property value="overhead.name"/>',
 		                                    Percentage:'<s:property value="getOverheadRateOn(abstractEstimate.estimateDate).percentage"/>',
-		                                    amount:'<s:property value="amount.value"/>',
+		                                    amount:'<s:property value="amount"/>',
 		                                    Add:createAddImageFormatter("${pageContext.request.contextPath}"),
 		                                    Delete:'X'});
 		          </s:if>
@@ -348,7 +348,7 @@ function recalculateOverHeadTotalsOnDelete(record){
                                             SlNo:'<s:property value="#row_status.count"/>',
                                             Name:'<s:property value="overhead.name"/>',
                                             Percentage:'<s:property value="getOverheadRateOn(abstractEstimate.estimateDate).percentage"/>',
-                                            amount:'<s:property value="amount.value"/>',
+                                            amount:'<s:property value="amount"/>',
                                             Add:createAddImageFormatter("${pageContext.request.contextPath}"),
                                             Delete:'X'});
 		          </s:else>

@@ -49,7 +49,7 @@
 	default-lazy-init="true">
 
 	<context:component-scan
-		base-package="org.egov.billsaccounting.* , org.egov.dao.* , com.exilant.eGov.src.common.*,org.egov.deduction.* ,org.egov.model.service.*, org.egov.egf.* , org.egov.masters.* , org.egov.model , org.egov.payment.* , org.egov.services.*,  org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*" />
+		base-package="org.egov.billsaccounting.* , org.egov.dao.* , com.exilant.eGov.src.common.*,org.egov.deduction.* ,org.egov.model.service.*, org.egov.egf.* , org.egov.masters.* , org.egov.model , org.egov.payment.* , org.egov.services.*,  org.egov.utils.* , org.egov.egf.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*" />
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
 	<bean class="org.egov.infra.admin.master.service.AppConfigService"
@@ -99,7 +99,6 @@
 		scope="prototype">
 		<constructor-arg index="0"
 			value="org.egov.model.budget.BudgetReAppropriation" />
-		<property name="sequenceGenerator" ref="sequenceGenerator" />
 		<property name="budgetDetailService" ref="budgetDetailService" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 	</bean>
@@ -174,11 +173,11 @@
 	</bean>
 
 
-	<bean id="expenseBillPrint" class="org.egov.web.actions.bill.ExpenseBillPrintAction"
+	<bean id="expenseBillPrint" class="org.egov.egf.web.actions.bill.ExpenseBillPrintAction"
 		scope="prototype">
 
 	</bean>
-	<bean id="common" class="org.egov.web.actions.voucher.CommonAction"
+	<bean id="common" class="org.egov.egf.web.actions.voucher.CommonAction"
 		parent="baseForm" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>

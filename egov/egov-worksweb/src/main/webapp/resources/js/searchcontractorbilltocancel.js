@@ -38,7 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var department = $('#department').val();
+	var workOrderNumber = $('#workOrderNumber').val();
+	var workIdentificationNumber = $('#workIdentificationNumber').val();
+	var billNumber = $('#billNumber').val();
+	if(department == '' && workOrderNumber == '' && workIdentificationNumber == '' && billNumber == '')
+		bootbox.alert('Atleast one search criteria is mandatory');
+	else
+		callAjaxSearch();
 });
 
 function callAjaxSearch() {
@@ -99,7 +106,7 @@ function callAjaxSearch() {
 					"data" : "contractorName",
 					"sClass" : "text-center","autoWidth": "false",
 					 "render":function(data, type, full, meta){
-					       return full.contractorName + " - " + full.contractorCode;
+					       return full.contractorCode + " - " + full.contractorName;
 					    } 
 				} ]
 			});
@@ -187,20 +194,20 @@ $(document).ready(function() {
 			
 			if($("#cancelForm").valid()) {
 				$('#cancelForm #id').val(contractorBillId);
-				bootbox.confirm($('#confirm').val(), function(result) {
-					if(!result) {
-						bootbox.hideAll();
-						return false;
-					} else {
-						var voucherNumber = $('input[name=selectCheckbox]:checked').attr('data');
-						if(voucherNumber != "") {
-							bootbox.alert($('#voucherCreatedMessage').val() + " " + voucherNumber);
+				var voucherNumber = $('input[name=selectCheckbox]:checked').attr('data');
+				if(voucherNumber != "") {
+					bootbox.alert($('#voucherCreatedMessage').val() + " " + voucherNumber);
+				} else {
+					bootbox.confirm($('#confirm').val(), function(result) {
+						if(!result) {
+							bootbox.hideAll();
+							return false;
 						} else {
 							$("#cancelForm").attr('action','/egworks/contractorbill/cancel');
 							$("#cancelForm").submit();
 						}
-					}
-				});
+					});
+				}
 			}
 		}
 		return false;

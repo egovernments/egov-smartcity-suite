@@ -48,6 +48,13 @@
 		</div>
 	</div>
 	<form:hidden path="" value="${lineEstimate.function.id }" id="functionId"/>
+	<div>
+		<spring:hasBindErrors name="lineEstimate">  
+		 		<div class="alert alert-danger col-md-10 col-md-offset-1">
+		  			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+		      	</div>
+		</spring:hasBindErrors>
+	</div>
 	<div class="panel-body custom-form">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.date" /><span class="mandatory"></span></label>

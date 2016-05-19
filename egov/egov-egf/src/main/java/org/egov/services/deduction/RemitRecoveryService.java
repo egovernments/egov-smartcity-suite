@@ -52,8 +52,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.deduction.RemittanceBean;
 import org.egov.utils.Constants;
 import org.egov.utils.VoucherHelper;
-import org.egov.web.actions.deduction.RemitRecoveryAction;
-import org.egov.web.actions.report.AutoRemittanceBeanReport;
+import org.egov.egf.model.AutoRemittanceBeanReport;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -74,7 +73,7 @@ public class RemitRecoveryService {
 
     private PersistenceService persistenceService;
 
-    private static final Logger LOGGER = Logger.getLogger(RemitRecoveryAction.class);
+    private static final Logger LOGGER = Logger.getLogger(RemitRecoveryService.class);
     private static final SimpleDateFormat DDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
     private static final SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     private VoucherHibernateDAO voucherHibDAO;

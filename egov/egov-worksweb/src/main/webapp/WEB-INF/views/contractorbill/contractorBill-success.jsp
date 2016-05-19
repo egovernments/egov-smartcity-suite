@@ -51,9 +51,7 @@
 				</c:if>
 			</div>
 			<div class="alert text-center" style="color:red;">
-				<c:if test="${contractorBillRegister.getId() != null}">
-					<c:out value="${errorMessage }" />
-				</c:if>
+				<c:out value="${errorMessage }" />
 			</div>
 		</div>
 		<div class="row">

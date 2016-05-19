@@ -39,17 +39,41 @@
  */
 package org.egov.billsaccounting.services;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.exilant.GLEngine.TransaxtionParameter;
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.eGov.src.transactions.CommonMethodsImpl;
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-import com.exilant.exility.common.TaskFailedException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.model.Worksdetail;
-import org.egov.commons.*;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.Bankreconciliation;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFiscalPeriod;
+import org.egov.commons.CFunction;
+import org.egov.commons.CGeneralLedger;
+import org.egov.commons.CGeneralLedgerDetail;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Fundsource;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
@@ -114,21 +138,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.exilant.GLEngine.TransaxtionParameter;
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.eGov.src.transactions.CommonMethodsImpl;
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.exilant.exility.common.TaskFailedException;
 
 /**
  * This Class will create voucher from bill <br>
@@ -279,13 +295,11 @@ public class CreateVoucher {
 			// generalLedgerService = new PersistenceService<CGeneralLedger,
 			// Long>();
 			// generalLedgerService.setType(CGeneralLedger.class);
-			// generalLedgerService.setSessionFactory(new SessionFactory());
 
 			// generalLedgerDetailService = new
 			// PersistenceService<CGeneralLedgerDetail, Long>();
 			// generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
 			// generalLedgerDetailService.setSessionFactory(new
-			// SessionFactory());
 
 		} catch (final Exception e) {
 			LOGGER.error("Exception in CreateVoucher", e);
@@ -817,8 +831,9 @@ public class CreateVoucher {
 		try {
 			vh = createVoucher(headerdetails, accountcodedetails,
 					subledgerdetails);
-			if (vh.getModuleId() != null)
-				startWorkflow(vh);
+			/*if (vh.getModuleId() != null)
+				startWorkflow(vh);*/ 
+			//if u need workflow enable above lines and fix workflow
 		} catch (final ValidationException ve) {
 			LOGGER.error(ERR, ve);
 			final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -886,7 +901,6 @@ public class CreateVoucher {
 			 * )) { // ReceiptVoucher rv=new ReceiptVoucher();
 			 * PersistenceService<ReceiptVoucher, Long> persistenceService = new
 			 * PersistenceService<ReceiptVoucher, Long>();
-			 * persistenceService.setSessionFactory(new SessionFactory());
 			 * //persistenceService.setType(ReceiptVoucher.class);
 			 * rv.setId(voucherheader.getId());
 			 * rv.setVoucherHeader(voucherheader);
@@ -2434,7 +2448,6 @@ public class CreateVoucher {
 	}
 
 	public Functionary getFunctionaryByCode(final BigDecimal code) {
-		// functionarySer.setSessionFactory(new SessionFactory());
 		// functionarySer.setType(Functionary.class);
 		final Functionary functionary = (Functionary) persistenceService.find(
 				"from Functionary where code=?", code);

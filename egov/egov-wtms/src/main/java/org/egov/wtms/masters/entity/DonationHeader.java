@@ -39,7 +39,8 @@
  */
 package org.egov.wtms.masters.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -52,12 +53,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Table(name = "egwtr_donation_header")
 @SequenceGenerator(name = DonationHeader.SEQ_DONATIONHEADER, sequenceName = DonationHeader.SEQ_DONATIONHEADER, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class DonationHeader extends AbstractAuditable {
 
     private static final long serialVersionUID = 4583091947098722880L;
@@ -70,28 +76,34 @@ public class DonationHeader extends AbstractAuditable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "category", nullable = false)
+    @Audited
     private ConnectionCategory category;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "usagetype", nullable = false)
+    @Audited
     private UsageType usageType;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "propertytype", nullable = false)
+    @Audited
     private PropertyType propertyType;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "minpipesize", nullable = false)
+    @Audited
     private PipeSize minPipeSize;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "maxpipesize", nullable = false)
+    @Audited
     private PipeSize maxPipeSize;
 
+    @Audited
     private boolean active;
 
     @OneToMany(mappedBy = "donationHeader", orphanRemoval = true, cascade = CascadeType.ALL)

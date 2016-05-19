@@ -252,7 +252,7 @@ public interface FinancialConstants {
     public static final String PAYMENTS = "Payments";
     public static final String OPERATING_PAYMENTS = "Operating Payments";
 
-    public static final String SUPERUSER = "superuser";
+    public static final String SUPERUSER = "super user";
     public static final String REMITTANCE_SCHEDULER_LOG_STATUS_FAILURE = "failure";
     public static final String REMITTANCE_SCHEDULER_LOG_STATUS_SUCCESS = "success";
     public static final String REMITTANCE_SCHEDULER_LOG_STATUS_PARTIAL = "partial";

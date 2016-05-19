@@ -39,10 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,9 +48,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
 @Table(name = "egwtr_application_type")
 @SequenceGenerator(name = ApplicationType.SEQ_APPLICATIONTYPE, sequenceName = ApplicationType.SEQ_APPLICATIONTYPE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class ApplicationType extends AbstractAuditable {
 
     private static final long serialVersionUID = -6274768406807604673L;
@@ -68,17 +73,20 @@ public class ApplicationType extends AbstractAuditable {
     @SafeHtml
     @Length(min = 1, max = 25)
     @Column(name = "code", unique = true)
+    @Audited
     private String code;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
     @Column(name = "name", unique = true)
+    @Audited
     private String name;
 
     @SafeHtml
     private String description;
-
+    
+    @Audited
     private boolean active;
 
     @Override

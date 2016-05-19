@@ -81,7 +81,6 @@ import org.egov.tl.entity.LicenseSubCategory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,19 +152,8 @@ public class LicenseUtils {
         this.persistenceService = persistenceService;
     }
 
-    public LicenseUtils() {
-        // session = persistenceService.getSession();
-    }
-
-    public LicenseUtils(final SessionFactory factory) {
-    }
-
     // private ContractorService contractorService;
     private final HashMap<String, Object> contractorDetailsMap = new HashMap<String, Object>();
-
-    protected Session getHibSession() {
-        return persistenceService.getSession();
-    }
 
     public Boundary getBoundary(final String id) {
         return boundaryService.getBoundaryById(Long.valueOf(id));

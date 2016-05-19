@@ -368,8 +368,7 @@ $(document).ready(function()
 	            //console.log(prop + ': ' + theObject[prop]);
 	            if(prop == 'name') {
 	                if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0){
-	                	//console.log(theObject);
-	                	if(theObject.link != 'javascript:void(0);'){
+	                	if(theObject.link != 'javascript:void(0);' && theObject.icon != 'fa fa-times-circle remove-favourite'){
 	                		var obj = {};
 	                		obj['id'] = theObject.id;
 	                		obj['name'] = theObject.name;

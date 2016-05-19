@@ -40,12 +40,14 @@
 package org.egov.works.web.controller.lineestimate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.DesignationService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -156,7 +158,7 @@ public class CreateSpillOverLineEstimateController {
             final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
             final BindingResult resultBinder)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
 
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
@@ -167,7 +169,9 @@ public class CreateSpillOverLineEstimateController {
         final AppConfigValues value = values.get(0);
         if (value.getValue().equalsIgnoreCase("Y"))
             validateBudgetAmount(lineEstimate, errors);
-
+        
+        validateBudgetHead(lineEstimate, errors);
+        
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", null);
@@ -178,6 +182,23 @@ public class CreateSpillOverLineEstimateController {
             return "redirect:/lineestimate/spillover-lineestimate-success?lineEstimateNumber="
                     + newLineEstimate.getLineEstimateNumber();
         }
+    }
+
+    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+        if (lineEstimate.getBudgetHead() != null) {
+            Boolean check = false;
+            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
+            for (CChartOfAccountDetail detail : accountDetails) {
+                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                    check = true;
+            }
+            if (!check) {
+                errors.reject("error.budgethead.validate","error.budgethead.validate");
+            }
+
+        }
+
     }
 
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {

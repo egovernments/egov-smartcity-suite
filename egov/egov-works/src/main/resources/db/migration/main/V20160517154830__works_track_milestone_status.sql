@@ -1,0 +1,5 @@
+
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (NEXTVAL('SEQ_EGW_STATUS'),'TrackMilestone','Approved',now(),'APPROVED',1);
+Insert into EGW_STATUS (ID,MODULETYPE,DESCRIPTION,LASTMODIFIEDDATE,CODE,ORDER_ID) values (NEXTVAL('SEQ_EGW_STATUS'),'TrackMilestone','Cancelled',now(),'CANCELLED',2);
+
+--rollback delete from EGW_STATUS where MODULETYPE='TrackMilestone';

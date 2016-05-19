@@ -156,6 +156,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private String ulbCode;
     private RevisionPetitionService revisionPetitionService;
     private String signedFileStoreId;
+    private boolean digitalSignEnabled;
 
     @Autowired
     private DesignationService designationService;
@@ -182,6 +183,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     @Override
     public StateAware getModel() {
         return null;
+    }
+
+    public void prepare() {
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
     }
 
     /**
@@ -401,7 +406,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ReportRequest reportInput = null;
         final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
                 .getDesignationByName(COMMISSIONER_DESGN).getId());
-        reportParams.put("userId", !users.isEmpty() ? users.get(0).getId() : 0);
+        reportParams.put("userSignature", (!users.isEmpty() && users.get(0).getSignature() != null) ? new ByteArrayInputStream(users.get(0).getSignature()) : null);
         if (NOTICE_TYPE_SPECIAL_NOTICE.equals(noticeType)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             final String url = WebUtils.extractRequestDomainURL(request, false);
@@ -739,6 +744,14 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     public void setSignedFileStoreId(String signedFileStoreId) {
         this.signedFileStoreId = signedFileStoreId;
+    }
+
+    public boolean isDigitalSignEnabled() {
+        return digitalSignEnabled;
+    }
+
+    public void setDigitalSignEnabled(boolean digitalSignEnabled) {
+        this.digitalSignEnabled = digitalSignEnabled;
     }
 
 }

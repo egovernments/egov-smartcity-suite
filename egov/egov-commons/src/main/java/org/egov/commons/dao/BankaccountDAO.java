@@ -42,24 +42,22 @@ package org.egov.commons.dao;
 import org.egov.commons.Bankaccount;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 public class BankaccountDAO {
 
-	private SessionFactory sessionFactory;
-
-	public BankaccountDAO(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	private Session getSession() {
-		return this.sessionFactory.getCurrentSession();
+		return this.entityManager.unwrap(Session.class);
 	}
 
 	public void createBankaccount(final Bankaccount bankaccount) {
 		try {
 			getSession().save(bankaccount);
-			getSession().getSessionFactory();
 		} catch (final Exception e) {
 			throw new ApplicationRuntimeException("Exception occurred while creating Bank Account",e);
 		}
@@ -76,7 +74,6 @@ public class BankaccountDAO {
 	public void removeBankaccount(final Bankaccount bankaccount) {
 		try {
 			getSession().delete(bankaccount);
-			getSession().getSessionFactory();
 		} catch (final Exception e) {
 			throw new ApplicationRuntimeException("Exception occurred while deleting Bank Account",e);
 		}

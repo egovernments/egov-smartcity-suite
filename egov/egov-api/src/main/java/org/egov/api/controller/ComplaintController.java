@@ -444,6 +444,47 @@ public class ComplaintController extends ApiController {
 			return getResponseHandler().error(getMessage("server.error"));
         }
     }
+    
+    // --------------------------------------------------------------------------------//
+    /**
+     * This will returns resolved and unresolved complaints count in the city.
+     *
+     * @param page
+     * @param pageSize
+     * @return Complaint
+     */
+
+    @RequestMapping(value = {
+            ApiUrl.COMPLAINT_RESOLVED_UNRESOLVED_COUNT }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getComplaintsTotalCount() {
+    	try {
+    		return getResponseHandler().success(complaintService.getComplaintsTotalCount());
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
+        }
+    }
+    
+    
+    // --------------------------------------------------------------------------------//
+    /**
+     * This will returns complaints count by status of current user.
+     *
+     * @param page
+     * @param pageSize
+     * @return Complaint
+     */
+
+    @RequestMapping(value = {
+            ApiUrl.CITIZEN_COMPLAINT_COUNT }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getComplaintsCount() {
+    	try {
+    		return getResponseHandler().success(complaintService.getMyComplaintsCount());
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ", e);
+			return getResponseHandler().error(getMessage("server.error"));
+        }
+    }
 
     // --------------------------------------------------------------------------------//
     /**
@@ -465,22 +506,22 @@ public class ComplaintController extends ApiController {
         	
         	Page<Complaint> pagelist=null;
         	boolean hasNextPage=false;
-        	if(StringUtils.isEmpty(complaintStatus) || complaintStatus.equals("ALL"))
+        	if(StringUtils.isEmpty(complaintStatus) || complaintStatus.equals(complaintService.COMPLAINT_ALL))
         	{
         		pagelist = complaintService.getMyComplaint(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
         	}
-        	else if(complaintStatus.equals("PENDING"))
+        	else if(complaintStatus.equals(complaintService.COMPLAINT_PENDING))
         	{
         		pagelist = complaintService.getMyPendingGrievances(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
         	}
-        	else if(complaintStatus.equals("COMPLETED"))
+        	else if(complaintStatus.equals(complaintService.COMPLAINT_COMPLETED))
         	{
         		pagelist = complaintService.getMyCompletedGrievances(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
         	}
-        	else if(complaintStatus.equals("REJECTED"))
+        	else if(complaintStatus.equals(complaintService.COMPLAINT_REJECTED))
         	{
         		pagelist = complaintService.getMyRejectedGrievances(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;

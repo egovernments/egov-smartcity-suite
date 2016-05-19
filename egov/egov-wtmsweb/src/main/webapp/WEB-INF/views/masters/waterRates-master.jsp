@@ -46,13 +46,9 @@
 
  <form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="waterRatesHeader" id="waterRatesform"
 			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading"></div>
-					<div class="panel-body custom-form">
-				<c:if test="${not empty message}">
-                    <div >${message}</div>
-                </c:if>
-				
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading"></div>
+	<div class="panel-body custom-form">
 <form:hidden path="connectionType" value="${waterRatesConnecionType}" id="connectionType" name="waterRatesConnecionType"/>
 <div class="form-group">
      <label class="col-sm-3 control-label text-right"><spring:message code="lbl.watersourcetype" />:<span class="mandatory"></span></label>
@@ -81,21 +77,31 @@
 		</form:select>		
 			<form:errors path="pipeSize" cssClass="add-margin error-msg" />					
 	</div>
+	<c:forEach items="${waterRatesHeader.waterRatesDetails}" var="var1" varStatus="counter">
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.monthlyrate" />:<span class="mandatory"></span></label> 
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control patternvalidation" data-pattern="number"  name="waterRatesDetails[${counter.index}].monthlyRate" 
+					id="monthlyrate"  required="required"  value =<c:out value="${var1.monthlyRate}" />></input>
+			
+	</div>
+	</c:forEach>
 </div>
+<div class="form-group">
 <c:forEach items="${waterRatesHeader.waterRatesDetails}" var="var1" varStatus="counter">
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.monthlyrate" />:<span class="mandatory"></span></label> 	
-			<div class="col-sm-3 add-margin">
-				<input type="text" class="form-control patternvalidation" data-pattern="number"  name="waterRatesDetails[${counter.index}].monthlyRate" 
-					id="monthlyrate"  required="required"  id="donationAmount" value =<c:out value="${var1.monthlyRate}" />></input>
-			</div>
-   		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.effective.fromdate" />:<span class="mandatory"></span></label>
+   		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.effective.fromdate" />:<span class="mandatory"></span></label>
    			<div class="col-sm-3 add-margin"> 
    				<input type="text" name="waterRatesDetails[${counter.index}].fromDate" id="formDate" class="form-control datepicker" 
 								data-inputmask="'mask': 'd/m/y'" required="required" value ="<fmt:formatDate pattern="dd-MM-yyyy" value="${var1.fromDate}" />"></input>
             </div>
+            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.effective.todate" />:<span class="mandatory"></span></label>
+   			<div class="col-sm-3 add-margin"> 
+   				<input type="text" name="waterRatesDetails[${counter.index}].toDate" id="toDate" class="form-control datepicker" 
+								data-inputmask="'mask': 'd/m/y'" required="required" value ="<fmt:formatDate pattern="dd-MM-yyyy" value="${var1.toDate}" />"></input>
+            </div>
     </div>
 </c:forEach>
+</div>
 <div class="form-group" id="statusdiv">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active" /></label>
 				<div class="col-sm-3 add-margin" >
@@ -105,8 +111,10 @@
 			</div>								
 					<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
 					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
+					
 <div class="form-group text-center" >
-						<form:button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></form:button>
+
+						<form:button type="button" class="btn btn-primary"  id="buttonid"><spring:message code="lbl.save.button"/></form:button>
 						<form:button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew"/></form:button>
 						<form:button type="button" class="btn btn-primary" id="listid"><spring:message code="lbl.list"/></form:button>
 						<form:button type="button" class="btn btn-default" id="resetid" ><spring:message code="lbl.reset"/></form:button>

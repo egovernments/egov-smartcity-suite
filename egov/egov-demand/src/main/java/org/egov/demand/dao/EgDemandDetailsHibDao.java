@@ -52,42 +52,43 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class EgDemandDetailsHibDao implements EgDemandDetailsDao {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Override
-	public EgDemandDetails findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public EgDemandDetails findById(Integer id, boolean lock) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<EgDemandDetails> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<EgDemandDetails> findAll() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public EgDemandDetails create(EgDemandDetails egDemandDetails) {
-	    getCurrentSession().saveOrUpdate(egDemandDetails);
-	    getCurrentSession().flush();
-	    return egDemandDetails;
-	}
+    @Override
+    public EgDemandDetails create(EgDemandDetails egDemandDetails) {
+        getCurrentSession().saveOrUpdate(egDemandDetails);
+        getCurrentSession().flush();
+        return egDemandDetails;
+    }
 
-	@Override
-	public void delete(EgDemandDetails egDemandDetails) {
-		// TODO Auto-generated method stub
+    @Override
+    public void delete(EgDemandDetails egDemandDetails) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	@Override
-	public EgDemandDetails update(EgDemandDetails egDemandDetails) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Transactional
+    @Override
+    public EgDemandDetails update(EgDemandDetails egDemandDetails) {
+        getCurrentSession().saveOrUpdate(egDemandDetails);
+        return egDemandDetails;
+    }
 
 }

@@ -39,27 +39,26 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.Activity;
-import org.egov.works.models.estimate.AssetsForEstimate;
-import org.egov.works.models.estimate.MultiYearEstimate;
-import org.egov.works.models.estimate.NonSor;
-import org.egov.works.models.estimate.OverheadValue;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.entity.AssetsForEstimate;
+import org.egov.works.abstractestimate.entity.MultiYearEstimate;
+import org.egov.works.abstractestimate.entity.NonSor;
+import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @ParentPackage("egov")
 @Result(name = CopyEstimateAction.SUCCESS, location = "copyEstimate-success.jsp")
@@ -87,7 +86,7 @@ public class CopyEstimateAction extends BaseFormAction {
 
     public String copyEstimate() {
         final AbstractEstimate abstractEstimate = abstractEstimateService.findById(estimateId, false);
-        final PersonalInformation loggedInEmp = employeeService
+        employeeService
                 .getEmpForUserId(worksService.getCurrentLoggedInUserId());
 
         copyEstimate.setWard(abstractEstimate.getWard());
@@ -109,9 +108,9 @@ public class CopyEstimateAction extends BaseFormAction {
         copyEstimate.setMultiYearEstimates(cloneMultiYearEstimate(abstractEstimate.getMultiYearEstimates()));
 
         copyEstimate.setWorkValue(abstractEstimate.getWorkValue());
-        copyEstimate.setIsCopiedEst("Y");
+        copyEstimate.setCopiedEstimate(true);
 
-        //loggedInEmp.getAssignment(getFinancialYearStartDate()).getPosition();
+        // loggedInEmp.getAssignment(getFinancialYearStartDate()).getPosition();
 
         // TODO - workflowService.start hase been removed. Need to find
         // alternative.

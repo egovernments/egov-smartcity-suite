@@ -196,8 +196,8 @@ public class TrackMilestoneAction extends BaseFormAction {
          * TODO - check for application for commenting out this line for any issues
          */
         // trackMilestone.setState(null);
-        if (trackMilestone.getIsProjectCompleted() == null)
-            trackMilestone.setIsProjectCompleted(Boolean.FALSE);
+        if (trackMilestone.isProjectCompleted())
+            trackMilestone.setProjectCompleted(false);
         trackMilestone = trackMilestoneService.persist(trackMilestone);
         trackMilestoneWorkflowService.transition(actionName, trackMilestone,
                 trackMilestone.getApprovalComent());
@@ -345,8 +345,8 @@ public class TrackMilestoneAction extends BaseFormAction {
             addFieldError("milestone.activity.missing", "Milestone Activity is not added");
         BigDecimal percentage = BigDecimal.ZERO;
         for (final TrackMilestoneActivity trackmilestoneActivity : trackMilestone.getActivities()) {
-            if (trackmilestoneActivity.getCompletedPercentage() != null)
-                percentage = trackmilestoneActivity.getCompletedPercentage();
+            if (Double.valueOf(trackmilestoneActivity.getCompletedPercentage()) != null)
+                percentage = new BigDecimal(trackmilestoneActivity.getCompletedPercentage());
             if (percentage.compareTo(BigDecimal.valueOf(100)) == 1) {
                 addFieldError("milestone.activity.total.percentage",
                         "Total activity percentage should not be greater than 100%");

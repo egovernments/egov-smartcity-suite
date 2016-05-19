@@ -263,7 +263,7 @@ body {
 									code="lbl.doorNumber" /><span class="mandatory1">*</span> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="" id="doorNumber" name="doorNumber"
-									value="${doorNumber}" maxlength="18"
+									value="${doorNumber}" maxlength="32"
 									cssClass="form-control patternvalidation"
 									data-pattern="address" />
 							</div>

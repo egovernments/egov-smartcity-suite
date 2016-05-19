@@ -518,15 +518,6 @@ public class ChartOfAccounts {
     
 
 
-    public void setScriptService()
-    {
-        // This fix is for Phoenix Migration.
-        /*while fixing Chnage new  ScriptService to autowired
-         * ScriptService scriptService = new ScriptService(100,100,100,100); scriptService.setSessionFactory(new
-         * SessionFactory()); budgetDetailsDAO.setScriptExecutionService(scriptService); SequenceGenerator sequenceGenerator = new
-         * SequenceGenerator(new SessionFactory()); budgetDetailsDAO.setSequenceGenerator(sequenceGenerator);
-         */
-    }
     @Transactional(readOnly=true)
     private boolean checkBudget(final Transaxtion txnList[]) throws Exception, ValidationException
     {

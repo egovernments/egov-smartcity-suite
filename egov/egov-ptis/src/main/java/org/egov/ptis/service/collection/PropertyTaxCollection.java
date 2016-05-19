@@ -39,6 +39,45 @@
  */
 package org.egov.ptis.service.collection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_DEMANDRSN_GLCODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
+import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH_ADJUSTMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_SUBMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CHEQUE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -46,6 +85,7 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
+import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -76,17 +116,6 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * This class is used to persist Collections .This is used for the integration
@@ -131,9 +160,12 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     PropertyTaxUtil propertyTaxUtil;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private CollectionIntegrationService collectionService;
 
     @Override
     protected Module module() {
@@ -321,7 +353,8 @@ public class PropertyTaxCollection extends TaxCollection {
         String installmentDesc = null;
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         for (final EgDemandDetails dmdDtls : demandDetailList)
-            if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+            if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0
+            		|| dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)) {
 
                 dmdRsn = dmdDtls.getEgDemandReason();
                 installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
@@ -347,9 +380,15 @@ public class PropertyTaxCollection extends TaxCollection {
                     final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                     final String reason = desc[0].trim();
                     final String instDesc = desc[1].trim();
-                    demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
-                    if (rcptAccInfo.getGlCode().equalsIgnoreCase(
-                    /* GLCODEMAP_FOR_CURRENTTAX.get( */PropertyTaxConstants.GLCODE_FOR_PENALTY/* ) */)) {
+                    
+                    if (reason.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE)) {
+						demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription())
+								.get(reason);
+					} else {
+						demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
+					}
+                    
+                    if (rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_PENALTY)) {
 
                         if (demandDetail == null)
                             throw new ApplicationRuntimeException("Demand Details for reason " + reason
@@ -357,6 +396,26 @@ public class PropertyTaxCollection extends TaxCollection {
                         else
                             demandDetail.addCollected(rcptAccInfo.getCrAmount());
 
+                    } else if(rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE)){
+                    	if (demandDetail != null) {
+							demandDetail.setAmtCollected(demandDetail.getAmtCollected().add(rcptAccInfo.getCrAmount()));
+						} else {
+							demandDetail = insertAdvanceCollection(DEMANDRSN_CODE_ADVANCE,rcptAccInfo.getCrAmount(), 
+									currInstallments.get(CURRENTYEAR_SECOND_HALF));
+
+							demand.addEgDemandDetails(demandDetail);
+							persistenceService.getSession().flush();
+
+							if (installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)) == null) {
+								Map<String, EgDemandDetails> reasonAndDemandDetail = new HashMap<String, EgDemandDetails>();
+								reasonAndDemandDetail.put(DEMANDRSN_STR_ADVANCE, demandDetail);
+								installmentWiseDemandDetailsByReason.put(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription(),
+										reasonAndDemandDetail);
+							} else {
+								installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()).put(
+										DEMANDRSN_STR_ADVANCE, demandDetail);
+							}
+						}
                     } else {
                         demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                         if (rebateAmount.compareTo(BigDecimal.ZERO) > 0
@@ -403,7 +462,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
                     demandReasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster();
 
-                    if (reason.equals(demandReasonMaster.getReasonMaster()))
+                    if (reason.equalsIgnoreCase(demandReasonMaster.getReasonMaster()))
                         if (reason.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)
                                 || installment.equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()
                                         .getDescription())) {
@@ -743,6 +802,8 @@ public class PropertyTaxCollection extends TaxCollection {
         BigDecimal rebateAmount = BigDecimal.ZERO;
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
+        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetailListByReceiptNumber(billReceiptInfo
+                .getReceiptNum());
 
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
@@ -773,11 +834,11 @@ public class PropertyTaxCollection extends TaxCollection {
                     break;
                 }
             }
-            if (billDetails.size() > 1
-                    && billDetails.get(billDetails.size() - 1).getOrderNo().equals(billDet.getOrderNo())) {
-                receiptAmountInfo.setInstallmentTo(desc[1]);
-                break;
-            }
+            if (billDetails.size() > 1)
+                if (billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                        && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
+                    receiptAmountInfo.setInstallmentTo(desc[1]);
+                }
         }
 
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);

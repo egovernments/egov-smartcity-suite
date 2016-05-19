@@ -27,13 +27,11 @@ public class CollectionsNumberGeneratorTest { /*extends AbstractPersistenceServi
 		};
 		
 		scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		collectionsUtil.setPersistenceService(genericService);
 		
 		collNumberGenerator = new CollectionsNumberGenerator();
 		collNumberGenerator.setScriptExecutionService(scriptExecutionService);
-		sequenceGenerator = new SequenceNumberGenerator(egovSessionFactory);
 		collNumberGenerator.setSequenceGenerator(sequenceGenerator);
 		collNumberGenerator.setCollectionsUtil(collectionsUtil);
 	}

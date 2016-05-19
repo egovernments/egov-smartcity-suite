@@ -39,17 +39,6 @@
  */
 package org.egov.ptis.constants;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import static java.util.Calendar.APRIL;
 import static java.util.Calendar.AUGUST;
 import static java.util.Calendar.DECEMBER;
@@ -65,6 +54,17 @@ import static java.util.Calendar.SEPTEMBER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_COUNTER;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public interface PropertyTaxConstants {
 
@@ -116,6 +116,7 @@ public interface PropertyTaxConstants {
     public static final String CURR_FIRSTHALF_COLL_STR = "CURR_FIRSTHALF_COLL";
     public static final String CURR_SECONDHALF_DMD_STR = "CURR_SECONDHALF_DMD";
     public static final String CURR_SECONDHALF_COLL_STR = "CURR_SECONDHALF_COLL";
+    public static final String ADVANCE_COLLECTION_STR = "ADVANCECOLLECTION";
 
     public static final String BUILT_UP_PROPERTY = "BuiltUpProperty";
     public static final String VACANT_PROPERTY = "VacantProperty";
@@ -399,7 +400,7 @@ public interface PropertyTaxConstants {
     public static final String QUERY_PROPERTIES_FOR_PENALTY_CALCULATION = "propertiesForPenaltyCalculation";
     public static final String QUERY_DEMAND_BILL_STATUS = "demandBillstatus";
     public static final String QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR = "INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR";
-    
+    public static final String QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC = "INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC";
 
     // Base Rents
     public static final BigDecimal BASERENT_FROM_APRIL2008_BUILDINGS = new BigDecimal("10");
@@ -452,7 +453,7 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "Unauthorized Penalty";
     public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "Cheque Bounce Penalty";
     public static final String DEMANDRSN_STR_PENALTY_FINES = "Penalty Fines";
-    public static final String DEMANDRSN_STR_ADVANCE = "ADVANCE";
+    public static final String DEMANDRSN_STR_ADVANCE = "Advance";
     public static final String DEMANDRSN_STR_ADVANCE_REBATE = "ADVANCE_REBATE";
 
     // Tax Payable constants
@@ -482,6 +483,7 @@ public interface PropertyTaxConstants {
             put(DEMANDRSN_CODE_EDUCATIONAL_CESS, 5);
             put(DEMANDRSN_CODE_SEWERAGE_TAX, 6);
             put(DEMANDRSN_CODE_REBATE, 7);
+            put(DEMANDRSN_CODE_ADVANCE, 8);
         }
     };
 
@@ -682,11 +684,11 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_STATUS_INACTIVE = "INACTIVE";
     public static final String PROP_STATUS_TYPE_DEACT = "DEACTIVATE";
 
-    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
-    public static final String DEFAULT_FUND_SRC_CODE = "01";
-    public static final String DEFAULT_FUND_CODE = "01";
-    public static final String DEPT_CODE_TAX = "T";
-    public static final String FUNCTION_CODE = "9100";
+    public static final String DEFAULT_FUNCTIONARY_CODE = "FUNCTIONARY_CODE";
+    public static final String DEFAULT_FUND_SRC_CODE = "FUND_SOURCE_CODE";
+    public static final String DEFAULT_FUND_CODE = "FUND_CODE";
+    public static final String DEPT_CODE_TAX = "DEPARTMENT_CODE";
+    public static final String FUNCTION_CODE = "FUNCTION_CODE";
 
     // Roles
     public static final String CSC_OPERATOR_ROLE = "CSC Operator";
@@ -990,8 +992,8 @@ public interface PropertyTaxConstants {
 
     public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
             DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY,
-            DEMANDRSN_CODE_LIBRARY_CESS,
-            DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_SEWERAGE_TAX, DEMANDRSN_CODE_REBATE, DEMANDRSN_CODE_ADVANCE,DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
+            DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_SEWERAGE_TAX,
+            DEMANDRSN_CODE_REBATE, DEMANDRSN_CODE_ADVANCE, DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
 
     public static final String APPCONFIG_KEY_WARDSFOR_BULKBILL = "WardNum";
     public static final String APPCONFIG_KEY_WARDSFOR_TAXXMLMIGRTN = "WardNo";
@@ -1030,7 +1032,7 @@ public interface PropertyTaxConstants {
     public static final String STRING_EMPTY = new String();
 
     public static final BigDecimal ADVANCE_REBATE_PERCENTAGE = new BigDecimal(5);
-    public static final Integer MAX_ADVANCES_ALLOWED = 5;
+    public static final Integer MAX_ADVANCES_ALLOWED = 10;
 
     public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
     public static final String MUTATIONRS_OTHERS = "OTHERS";
@@ -1050,8 +1052,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_DEACTIVATE_ERR_CODE = "PTAX101";
     public static final String PROPERTY_MARK_DEACTIVATE_ERR_CODE = "PTAX102";
     public static final String PROPERTY_ACTIVE_ERR_CODE = "PTAX103";
-    public static final String PROPERTY_INACTIVE_ERR_CODE = "PTAX104"; 
-    
+    public static final String PROPERTY_INACTIVE_ERR_CODE = "PTAX104";
 
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_PREFIX = "Property with assessment no ";
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
@@ -1233,6 +1234,8 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
     public static final String APPLICATION_TYPE_GRP = "General_Revision_Petition";
     public static final String APPLICATION_TYPE_EDIT_DEMAND = "Edit_demand";
+    public static final String APPLICATION_TYPE_EDIT_OWNER = "Edit_owner";
+    public static final String APPLICATION_TYPE_EDIT_COLLECTION = "Edit_Collection";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
@@ -1329,28 +1332,28 @@ public interface PropertyTaxConstants {
 
         }
     };
-    
-    //Tax collection SMS
-    public static final String STR_INSTRUMENTTYPE_CHEQUE = "Your cheque no.";  
+
+    // Tax collection SMS
+    public static final String STR_INSTRUMENTTYPE_CHEQUE = "Your cheque no.";
     public static final String STR_INSTRUMENTTYPE_DD = "Your DD no.";
     public static final String STR_WITH_AMOUNT = " with amount :";
     public static final String STR_FOR_SUBMISSION = "/- has been submitted for Property tax collection. Amount received will be adjusted against the assessment no : ";
     public static final String STR_REALIZATION = " subject to the realization of instrument.";
     public static final String STR_FOR_CASH = "We have received a property tax cash payment of Rs.";
     public static final String STR_FOR_CASH_ADJUSTMENT = "/- and it would be adjusted against your assessment no.";
-    
+
     public static final String GUARDIAN_RELATION_FATHER = "FATHER";
     public static final String GUARDIAN_RELATION_MOTHER = "MOTHER";
     public static final String GUARDIAN_RELATION_HUSBAND = "HUSBAND";
     public static final String GUARDIAN_RELATION_WIFE = "WIFE";
     public static final String GUARDIAN_RELATION_OTHERS = "OTHERS";
-    
+
     public static final String WRITEOFF_REASON_DEMOLITION = "Demolition";
     public static final String WRITEOFF_REASON_ROAD_WIDENING = "Road widening";
     public static final String WRITEOFF_REASON_DOUBLE_ASSESSMENT = "Double Assessment";
     public static final String WRITEOFF_REASON_NOT_TRACED = "Not traced";
     public static final String WRITEOFF_REASON_OTHER_REASONS = "Other reasons";
-    
+
     public static final List<String> WRITEOFF_REASONS = new ArrayList<String>() {
         {
             add(WRITEOFF_REASON_DEMOLITION);
@@ -1360,7 +1363,7 @@ public interface PropertyTaxConstants {
             add(WRITEOFF_REASON_OTHER_REASONS);
         }
     };
-    
+
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT = "CENTRAL_GOVT";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_STR = "Central Government";
     public static final String OWNERSHIP_TYPE_COURT_CASE = "COURT_CASE";
@@ -1374,17 +1377,19 @@ public interface PropertyTaxConstants {
 
         {
             put(OWNERSHIP_TYPE_CENTRAL_GOVT, OWNERSHIP_TYPE_CENTRAL_GOVT_STR);
-            put(OWNERSHIP_TYPE_STATE_GOVT,OWNERSHIP_TYPE_STATE_GOVT_STR);
-            put(OWNERSHIP_TYPE_COURT_CASE,OWNERSHIP_TYPE_COURT_CASE_STR);
+            put(OWNERSHIP_TYPE_STATE_GOVT, OWNERSHIP_TYPE_STATE_GOVT_STR);
+            put(OWNERSHIP_TYPE_COURT_CASE, OWNERSHIP_TYPE_COURT_CASE_STR);
             put(OWNERSHIP_TYPE_PRIVATE, OWNERSHIP_TYPE_PRIVATE_DEFAULTERS_STR);
-            
+
         }
     };
-    
+
     public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String ARREARS = "Arrears";
-    
+
     public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
+    
+    public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
 }

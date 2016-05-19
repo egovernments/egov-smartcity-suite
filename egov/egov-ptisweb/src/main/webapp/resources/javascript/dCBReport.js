@@ -214,10 +214,7 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "dmnd_arrearPFT",
 							"sTitle" : "Penalty On Arrear"
-						},/*{
-							"data" : "dmnd_arrearLC",
-							"sTitle" : "Arrear LibraryCess"
-						},*/ {
+						}, {
 							"data" : "dmnd_arrearTotal",
 							"sTitle" : "Arrear Total"
 						}, {
@@ -226,10 +223,7 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "dmnd_currentPFT",
 							"sTitle" : "Penalty On Current"
-						},/*{
-							"data" : "dmnd_currentLC",
-							"sTitle" : "Current LibraryCess"
-						},*/ {
+						}, {
 							"data" : "dmnd_currentTotal",
 							"sTitle" : "Current Total"
 						}, {
@@ -238,10 +232,7 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "clctn_arrearPT",
 							"sTitle" : "Arrear Property Tax"
-						}, /*{
-							"data" : "clctn_arrearLC",
-							"sTitle" : "Arrear LibraryCess"
-						},*/ {
+						}, {
 							"data" : "clctn_arrearPFT",
 							"sTitle" : "Penalty On Arrear"
 						}, {
@@ -250,10 +241,7 @@ function callAjaxByBoundary() {
 						}, {
 							"data" : "clctn_currentPT",
 							"sTitle" : "Current Property Tax"
-						}, /*{
-							"data" : "clctn_currentLC",
-							"sTitle" : "Current LibraryCess"
-						},*/ {
+						}, {
 							"data" : "clctn_currentPFT",
 							"sTitle" : "Penalty On Current"
 						}, {

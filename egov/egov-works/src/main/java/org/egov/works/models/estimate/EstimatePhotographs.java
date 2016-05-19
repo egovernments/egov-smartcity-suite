@@ -40,6 +40,7 @@
 package org.egov.works.models.estimate;
 
 import org.egov.infstr.models.BaseModel;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 
 import java.io.File;
 import java.util.Date;

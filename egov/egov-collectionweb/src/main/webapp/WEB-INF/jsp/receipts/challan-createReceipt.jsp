@@ -1129,12 +1129,12 @@ function validate()
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/resources/erp2/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="../../egi/images/delete.png" id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="../../egi/resources/erp2/images/delete.png" id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -1179,12 +1179,12 @@ function validate()
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/images/add.png"  id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/resources/erp2/images/add.png"  id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-									<img src="../../egi/images/delete.png"  id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+									<img src="../../egi/resources/erp2/images/delete.png"  id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -1223,7 +1223,7 @@ function validate()
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
- <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+ <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
   	 
 <div class="buttonbottom" align="center">
       <label><input align="center" type="button"  class="buttonsubmit" id="button2" value="Pay"  onclick="return validate();"/></label>

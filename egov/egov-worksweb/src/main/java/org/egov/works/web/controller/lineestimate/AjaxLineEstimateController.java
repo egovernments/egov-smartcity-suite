@@ -39,14 +39,20 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.service.FinancialYearService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -64,8 +70,10 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
+import org.egov.works.web.adaptor.SearchLineEstimateToCancelJSONAdaptor;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,11 +84,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -108,6 +113,15 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private SearchLineEstimateToCancelJSONAdaptor searchLineEstimateToCancelJSONAdaptor;
+    
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
+
+    @Autowired
+    private FinancialYearService financialYearService;
 
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
@@ -118,6 +132,16 @@ public class AjaxLineEstimateController {
         return jsonResponse;
     }
 
+    @RequestMapping(value = "/getfinancilyearbyid", method = RequestMethod.GET)
+    public @ResponseBody CFinancialYear getFinancilYearById(@RequestParam("fyId") Long fyId) {
+
+        CFinancialYear financialYear = new CFinancialYear();
+        if (fyId != null) {
+            financialYear = financialYearService.findById(Long.valueOf(fyId), false);
+        }
+
+        return financialYear;
+    }
     @RequestMapping(value = "/ajax-getlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
         return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
@@ -216,4 +240,40 @@ public class AjaxLineEstimateController {
 
         return users;
     }
+    
+    @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<User> getcreateByDepartment(
+            @RequestParam("department") final Long department) {
+        final List<User> users = lineEstimateService.getCreatedByUsersForCancelLineEstimateByDepartment(department);
+        return users;
+    }
+    
+   @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchLineEstimatesToCancel(final Model model,
+            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
+        final List<LineEstimate> lineestimates = lineEstimateService
+                .searchLineEstimatesToCancel(lineEstimateSearchRequest);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchLineEstimatesToCancelJson(lineestimates))
+                .append("}").toString();
+        return result;
+    }
+    
+    public Object toSearchLineEstimatesToCancelJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, searchLineEstimateToCancelJSONAdaptor)
+                .create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+       
+    @RequestMapping(value = "/ajax-checkifloascreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String checkIfLOAsCreated(@RequestParam final Long id) {
+        final String estimateNumbers = lineEstimateService.checkIfLOAsCreated(id);
+        String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { estimateNumbers }, null);
+        if(estimateNumbers.equals(""))
+            return "";
+        return message;
+    }
+
 }

@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.service;
 
+import org.egov.wtms.application.entity.DefaultersReport;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -47,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.text.ParseException;
 
 @Service

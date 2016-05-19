@@ -39,6 +39,18 @@
  */
 package org.egov.works.milestone.repository;
 
-public class TrackMilestoneRepository {
+import java.util.List;
+
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface TrackMilestoneRepository extends JpaRepository<TrackMilestone, Long> {
+
+    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(tm.milestone.workOrderEstimate.workOrder.estimateNumber) from TrackMilestone as tm where led.estimateNumber = tm.milestone.workOrderEstimate.workOrder.estimateNumber and tm.status.code = :status)")
+    List<String> findWorkIdentificationNumbersTrackMilestone(@Param("code") String code, @Param("status") String status);
 
 }

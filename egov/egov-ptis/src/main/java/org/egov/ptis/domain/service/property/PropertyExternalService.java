@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.service.property;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
+
 import org.apache.commons.io.FilenameUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
@@ -106,6 +107,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -123,6 +125,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
@@ -212,6 +215,11 @@ public class PropertyExternalService {
                 }
                 if (flag.equals(FLAG_TAX_DETAILS))
                     loadPropertyDues();
+                if (assessmentDetail.isExempted()) {
+                    assessmentDetail.getPropertyDetails().setTaxDue(ZERO);
+                    assessmentDetail.getPropertyDetails().setCurrentTax(ZERO);
+                    assessmentDetail.getPropertyDetails().setArrearTax(ZERO);
+                }
             }
         }
         return assessmentDetail;
@@ -226,9 +234,9 @@ public class PropertyExternalService {
 
     private void initiateBasicProperty(BasicPropertyStatus status) {
         basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
-        assessmentDetail.setStatus(basicProperty.isActive());
         final ErrorDetails errorDetails = new ErrorDetails();
         if (null != basicProperty) {
+            assessmentDetail.setStatus(basicProperty.isActive());
             if (status.equals(BasicPropertyStatus.ACTIVE)) {
                 if (basicProperty.isActive()) {
                     checkStatusValues(basicProperty, errorDetails);
@@ -295,6 +303,7 @@ public class PropertyExternalService {
         assessmentDetail.setPropertyAddress(basicProperty.getAddress().toString());
         if (null != property) {
             assessmentDetail.setOwnerNames(prepareOwnerInfo(property));
+            assessmentDetail.setExempted(property.getIsExemptedFromTax());
             // Property Details
             final PropertyDetail propertyDetail = property.getPropertyDetail();
             if (null != propertyDetail) {
@@ -1391,10 +1400,10 @@ public class PropertyExternalService {
             builtUpArea.setArea(floorDetials.getPlinthArea());
             builtUpArea.setBreadth(floorDetials.getPlinthBreadth());
             builtUpArea.setLength(floorDetials.getPlinthLength());
-            
+
             floor.setBuiltUpArea(builtUpArea);
             floor.setUnstructuredLand(floorDetials.getUnstructuredLand());
-            
+
             floorList.add(floor);
         }
         return floorList;

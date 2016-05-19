@@ -44,9 +44,14 @@
 <title><s:text name='page.title.milestone.template'/></title>
 <body class="yui-skin-sam">
 <script src="<egov:url path='/resources/js/milestonetemplate/milestonetemplate.js?${app_release_no}'/>"></script>
-<div class="new-page-header">
-    <s:text name="milestone.template.create" />
-</div>
+	<div class="new-page-header">
+		<s:if test="%{model.id == null}">
+			<s:text name="milestone.template.create" />
+		</s:if>
+		<s:else>
+			<s:text name="milestone.template.modify" />
+		</s:else>
+	</div>
 <div id="milestonetemplateerror" class="alert alert-danger" style="display:none;"></div>
     <s:if test="%{hasErrors()}">
         <div id="errorstyle" class="alert alert-danger" >
@@ -56,8 +61,12 @@
     </s:if>
     <input type="hidden" value="<s:text name='milestonetemplate.code.not.null' />" id='templateCode'>
     <input type="hidden" value="<s:text name='milestonetemplate.name.not.null' />" id='templateName'>
-    <input type="hidden" value="<s:text name='milestonetemplate.description.not.null' />" id='templateDescription'>
-    <input type="hidden" value="<s:text name='milestonetemplate.workType.not.null' />" id='selectTypeOfWork'>
+    <input type="hidden" value="<s:text name='milestonetemplate.description.not.null' />" id='templateDesc'>
+    <input type="hidden" value="<s:text name='milestone.template.search.workType.error' />" id='selectTypeOfWork'>
+    <input type="hidden" value="<s:text name='milestoneTemplateActivity.desc.null' />" id='description'>
+    <input type="hidden" value="<s:text name='milestoneTemplateActivity.stageOrderNo.null' />" id='stageOrderNo'>
+    <input type="hidden" value="<s:text name='milestoneTemplateActivity.percentage.null' />" id='tempPercentage'>
+    <input type="hidden" value="<s:text name='milestone.activity.total.percentage' />" id='validateTotalPercentage'>
     <s:if test="%{hasActionMessages()}">
         <div class="messagestyle">
         	<s:property value="%{code}"/> &nbsp; <s:actionmessage theme="simple"/>

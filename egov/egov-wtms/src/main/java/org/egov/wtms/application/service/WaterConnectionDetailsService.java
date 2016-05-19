@@ -539,7 +539,7 @@ public class WaterConnectionDetailsService {
 
                 if (waterConnectionDetails.getConnection().getConsumerCode() == null)
                     waterConnectionDetails.getConnection().setConsumerCode(
-                            waterTaxNumberGenerator.generateConsumerNumber());
+                            waterTaxNumberGenerator.getNextConsumerNumber());
 
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING, WaterTaxConstants.MODULETYPE));
@@ -803,7 +803,7 @@ public class WaterConnectionDetailsService {
                             .getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED))) {
                 applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
                 applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
-                applicationIndex.setApproved(ApprovalStatus.UNKNOWN);
+                applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 applicationIndex.setClosed(ClosureStatus.NO);
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 if (sourceChannel == null)
@@ -908,7 +908,7 @@ public class WaterConnectionDetailsService {
                 applicationIndexBuilder.mobileNumber(mobileNumber.toString());
                 applicationIndexBuilder.aadharNumber(aadharNumber.toString());
                 applicationIndexBuilder.closed(ClosureStatus.NO);
-                applicationIndexBuilder.approved(ApprovalStatus.UNKNOWN);
+                applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
                 applicationIndex = applicationIndexBuilder.build();
                 if (!waterConnectionDetails.getLegacy()
                         && !waterConnectionDetails.getStatus().getCode()

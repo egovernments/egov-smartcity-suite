@@ -39,6 +39,7 @@
  */
 package org.egov.works.lineestimate.repository;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -85,4 +86,8 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
     List<String> findWorkIdentificationNumbersToSearchWorkProgressRegister(@Param("code") String code,
             @Param("adminSanctionstatus") String adminSanctionstatus,
             @Param("technicalSanctionstatus") String technicalSanctionstatus);
+    
+    @Query("select distinct(led.lineEstimate.createdBy) from LineEstimateDetails as led where led.lineEstimate.executingDepartment.id = :department and led.lineEstimate.status.code = :lineEstimateStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) = :workOrderStatus)")
+    List<User> findCreatedByForCancelLineEstimateByDepartment(@Param("department") Long department,@Param("lineEstimateStatus") String lineEstimateStatus,@Param("workOrderStatus") String workOrderStatus);
+
 }

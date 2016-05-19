@@ -59,9 +59,9 @@ var textboxFormatter = function(el, oRecord, oColumn, oData) {
     var fieldName = "templateActivities[" + oRecord.getCount() + "]." + oColumn.getKey();
     var id=oColumn.getKey()+oRecord.getId();
     if(oColumn.getKey()=='percentage'){
-    	el.innerHTML="<div class='text-right'><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='selectamountwk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onblur='validateNumberInTableCell(this);calculateTotalPercentage();' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></div>";
+    	el.innerHTML="<div class='text-right'><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='selectamountwk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onkeyup='isNumberKey(this);calculateTotalPercentage();' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></div>";
     }else{
-   		el.innerHTML="<center><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='slnowk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onblur='validateNumberInTableCell(this);' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></center>";
+   		el.innerHTML="<center><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='slnowk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onkeyup='isNumberKey(this);' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></center>";
     }
 }
 return textboxFormatter;
@@ -129,17 +129,6 @@ var makeTmptActvDataTable = function() {
 
 }
 
-function validateNumberInTableCell(elem){
-		elem.value=trim(elem.value);
-		dom.get('error'+elem.id).style.display='none';
-		if(isNaN(elem.value) || getNumber(elem.value)<=0 ||trim(elem.value)==""){
-			dom.get('error'+elem.id).style.display='';
-			isValidPercentage=false;
-		}else{
-			isValidPercentage=true;
-		}
-}
-
 function validateDescription(elem){
 		dom.get('error'+elem.id).style.display='none';
 		if(trim(elem.value)==""){
@@ -174,6 +163,18 @@ function calculateTotalPercentage(){
     }
 	dom.get('totalValue').innerHTML=total;
 }
+
+function isNumberKey(elem) {
+	var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(jQuery(elem).val()),
+    val = jQuery(elem).val();
+
+	if(!valid){
+	    console.log("Invalid input!");
+	    jQuery(elem).val(val.substring(0, val.length - 1));
+	}
+	calculateTotalPercentage();
+}
+
 
 </script>
 <div id="temptActvTable" class="panel panel-primary" data-collapsed="0"
@@ -225,10 +226,9 @@ function calculateTotalPercentage(){
 
 	var column = temptActvDataTable.getColumn('percentage');
 	dom.get(column.getKey() + record.getId()).value = '<s:property value="percentage" />';
+	
 	</s:iterator>
 	calculateTotalPercentage();
-
-	
 
 </script> 
 	

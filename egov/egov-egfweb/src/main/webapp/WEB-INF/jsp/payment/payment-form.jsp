@@ -55,7 +55,7 @@
 
 </script>
 </head>
-<body onload="onLoadTask();">
+<body >
 	<br>
 	<s:form action="payment" theme="simple">
 		<s:token />
@@ -246,13 +246,12 @@
 																<td class="greybox"><s:text
 																		name="payment.voucherdate" /><span class="mandatory1">*</span></td>
 																<td class="greybox" colspan="2"><s:textfield
-																		name="voucherdate" id="voucherdate" maxlength="20"
-																		value="%{voucherdate}"
-																		onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-																	href="javascript:show_calendar('forms[0].voucherdate');"
-																	style="text-decoration: none">&nbsp;<img
-																		src="/egi/resources/erp2/images/calendaricon.gif"
-																		border="0" /></a>(dd/mm/yyyy)</td>
+																		id="voucherdate" name="voucherdate"
+																		value="%{voucherdate}" data-date-end-date="0d"
+																		onkeyup="DateFormat(this,this.value,event,false,'3')"
+																		placeholder="DD/MM/YYYY"
+																		class="form-control datepicker"
+																		data-inputmask="'mask': 'd/m/y'" /></td>
 															</tr>
 															<s:if test='%{billSubType.equalsIgnoreCase("TNEB")}'>
 																<tr>
@@ -507,6 +506,11 @@
 			</div>
 
 			<script>
+			jQuery(document).ready(function() {
+				if(document.getElementById('approverDepartment'))
+					document.getElementById('approverDepartment').value = "-1";
+				});
+			 
 		function back(){
 			window.location = "/EGF/payment/payment-beforeSearch.action?salaryType";
 			return true;
@@ -531,11 +535,7 @@
 			else
 				document.getElementById('hiddenText').value=obj.value;
 		}
-		function onLoadTask()
-		{
-			if(document.getElementById('approverDepartment'))
-				document.getElementById('approverDepartment').value = "-1";
-			}
+		
 		function calcGrandTotal(obj)
 		{
 			var vBillListSize = document.getElementById('billListSize').value;

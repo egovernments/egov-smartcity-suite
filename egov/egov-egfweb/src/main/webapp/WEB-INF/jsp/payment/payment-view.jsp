@@ -65,6 +65,7 @@ function fetchDeptId() {
 			document.getElementById('departmentid').value = id;
 			//document.getElementById('departmentid').disabled=true;
 		} else if(did != null && did != '-1' && did != '' ) {
+			if(document.getElementById('departmentid')!=null)
 			document.getElementById('departmentid').value = did;
 			//document.getElementById('departmentid').disabled=true;
 		}
@@ -84,7 +85,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 
 </head>
 
-<body onload="refreshInbox()">
+<body >
 	<br>
 	<s:form action="payment" theme="simple">
 		<s:push value="model">
@@ -435,11 +436,11 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 			<script>
 		document.getElementById('paymentAmountspan').innerHTML = "<fmt:formatNumber value='${totalAmt}' pattern='#0.00'/>";
 		if('<%=request.getParameter("paymentid")%>'==null || '<%=request.getParameter("paymentid")%>'=='null'){
-			document.getElementById('backbtnid').style.display='inline';
+			//document.getElementById('backbtnid').style.display='inline';
 			document.getElementById('printPreview').disabled=true;
 		}
 		else{
-			document.getElementById('backbtnid').style.display='none';
+			//document.getElementById('backbtnid').style.display='none';
 			document.getElementById('printPreview').disabled=false;
 		}
 			
@@ -459,7 +460,7 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 		
 		if(document.getElementById('actionName').value!='' ||( '<%=request.getParameter("showMode")%>'!=null && '<%=request.getParameter("showMode")%>'=='view'))
 		{
-			document.getElementById('backbtnid').style.display='none';
+			//document.getElementById('backbtnid').style.display='none';
 			if(document.getElementById('wfBtn0'))
 				document.getElementById('wfBtn0').style.display='none';
 			if(document.getElementById('wfBtn1'))

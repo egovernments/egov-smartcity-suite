@@ -59,35 +59,38 @@
 	<div class="form-group" align ="center"> No Master Data</div>
  </c:when>
  <c:otherwise>
-      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="donationMasterTbl">
                   <thead>
 					<tr>
 						<th colspan="1" >
-							<div align="center"><spring:message code="lbl.propertytype" /> </div>
+							<spring:message code="lbl.propertytype" />
 						</th>
-						<th colspan="1" >
-						   <div align="center"><spring:message code="lbl.category" /> </div>
+						<th colspan="1" class="text-center" >
+						   <spring:message code="lbl.category" /> </div>
 						</th>
-						<th colspan="1" >
-						   <div align="center"><spring:message code="lbl.usagetype" /></div>
+						<th colspan="1" class="text-center" >
+						   <spring:message code="lbl.usagetype" />
 						</th>
-						<th align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.hscpipesize.max.inches" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.hscpipesize.max.inches" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.hscpipesize.min.inches" /> </div>
+						<th colspan="1" class="text-center" >
+						   <spring:message code="lbl.hscpipesize.min.inches" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.donation.amount" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.donation.amount" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.effective.fromdate" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.effective.fromdate" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.status"/></div>
+						<th  colspan="1" class="text-center">
+						   <spring:message code="lbl.effective.todate" />
 						</th>
-						<th colspan="1" >
-						    <div align="center"><spring:message code="lbl.edit" /></div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.status"/>
+						</th>
+						<th colspan="1" class="text-center">
+						    <spring:message code="lbl.edit" />
 						</th>
 					</tr>
 					</thead>
@@ -119,6 +122,11 @@
 							<td colspan="1" >
 								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${donationDetails.fromDate}"/></div>
 							</td>
+							
+							<td colspan="1" >
+								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${donationDetails.toDate}"/></div>
+							</td>
+							
 							<td colspan="1" >
 								<div align="center">
 								<c:choose>

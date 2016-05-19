@@ -53,7 +53,7 @@
 			<column name="WORKSPACKAGE_ID" not-null="true" />
 		</many-to-one>
 		<many-to-one name="estimate"
-			class="org.egov.works.models.estimate.AbstractEstimate" >
+			class="org.egov.works.abstractestimate.entity.AbstractEstimate" >
 			<column name="ABSTRACTESTIMATE_ID" not-null="true"/>
 		</many-to-one>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />

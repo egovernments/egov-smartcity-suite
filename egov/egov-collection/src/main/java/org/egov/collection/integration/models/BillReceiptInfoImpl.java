@@ -112,13 +112,14 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         if (!CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus))
             for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
                 instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
-        else
+        else if (bouncedInstrumentInfo != null)
             instrumentDetails.add(new ReceiptInstrumentInfoImpl(bouncedInstrumentInfo));
 
         if (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus)) {
             event = BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED;
             // find bounced instruments of this receipt
-            findBouncedInstrument();
+            if (bouncedInstrumentInfo != null)
+                findBouncedInstrument();
         } else if (CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_APPROVED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED.equals(receiptStatus))
@@ -426,7 +427,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         Boolean legacy = Boolean.FALSE;
         for (final ReceiptAccountInfo receiptAccountInfo : getAccountDetails())
             if (receiptAccountInfo.getDescription() != null && !"".equals(receiptAccountInfo.getDescription())
-                    && (!receiptAccountInfo.getDescription().contains("#") ||
+            && (!receiptAccountInfo.getDescription().contains("#") ||
                     receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE))) {
                 legacy = Boolean.TRUE;
                 break;
@@ -443,9 +444,29 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         return additionalInfo;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getSource()
+     */
     @Override
     public String getSource() {
         return receiptHeader.getSource() == null ? "" : receiptHeader.getSource();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getReceiptInstrumentType()
+     */
+    @Override
+    public String getReceiptInstrumentType() {
+        String instrumentType = "";
+        for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
+            if (instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) ||
+                    instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+                instrumentType = CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD;
+                break;
+            } else
+                instrumentType = instrumentInfo.getInstrumentType();
+        return instrumentType;
+    }
 }

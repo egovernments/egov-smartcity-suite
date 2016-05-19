@@ -40,6 +40,9 @@
 package org.egov.wtms.masters.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -55,6 +58,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "egwtr_property_type")
 @SequenceGenerator(name = PropertyType.SEQ_PROPERTYTYPE, sequenceName = PropertyType.SEQ_PROPERTYTYPE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class PropertyType extends AbstractAuditable {
 
     private static final long serialVersionUID = 7783533782750455687L;
@@ -68,17 +73,21 @@ public class PropertyType extends AbstractAuditable {
     @SafeHtml
     @Length(min = 1, max = 25)
     @Column(name = "code", unique = true)
+    @Audited
     private String code;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
     @Column(name = "name", unique = true)
+    @Audited
     private String name;
 
     @NotNull
+    @Audited
     private Character connectionEligibility;
-
+    
+    @Audited
     private boolean active;
 
     @Override

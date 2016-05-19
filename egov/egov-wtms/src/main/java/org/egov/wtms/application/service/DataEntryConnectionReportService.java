@@ -44,6 +44,7 @@ import java.text.ParseException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.wtms.application.entity.DataEntryConnectionReport;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;

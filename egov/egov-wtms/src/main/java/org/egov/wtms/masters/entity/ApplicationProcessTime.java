@@ -39,9 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,11 +49,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+
 @Entity
 @Table(name = "egwtr_application_process_time")
 @CompositeUnique(fields = { "applicationType",
         "category" }, enableDfltMsg = true, message = "{application.validity.exist}")
 @SequenceGenerator(name = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, sequenceName = ApplicationProcessTime.SEQ_APPLICATIONPROCESSTIME, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class ApplicationProcessTime extends AbstractAuditable {
 
     private static final long serialVersionUID = -4345303220154873437L;
@@ -69,16 +74,20 @@ public class ApplicationProcessTime extends AbstractAuditable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "applicationtype")
+    @Audited
     private ApplicationType applicationType;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "category")
+    @Audited
     private ConnectionCategory category;
 
     @NotNull
+    @Audited
     private Integer processingTime;
 
+    @Audited
     private boolean active;
 
     @Override

@@ -39,6 +39,8 @@
  */
 package org.egov.works.master.repository;
 
+import java.util.List;
+
 import org.egov.works.models.masters.MilestoneTemplateActivity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -47,5 +49,9 @@ import org.springframework.stereotype.Repository;
 public interface MilestoneTemplateActivityRepository extends JpaRepository<MilestoneTemplateActivity, Long> {
 
     MilestoneTemplateActivity findById(final Long id);
+
+    List<MilestoneTemplateActivity> findByMilestoneTemplate_IdOrderById(final Long id);
+
+    List<MilestoneTemplateActivity> findByMilestoneTemplate_Code(final String code);
 
 }

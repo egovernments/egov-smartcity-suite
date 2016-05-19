@@ -57,21 +57,29 @@
 					name="milestone.template.code" /> <span class="mandatory" />
 			</label>
 			<div class="col-sm-3 add-margin">
-			<s:if test="%{model.id == null}">
-				<s:textfield name="code" value="%{code}" id="code"
-					cssClass="form-control" maxlength="25" />
-					</s:if>
+				<s:if test="%{model.id == null}">
+					<s:textfield name="code" value="%{code}" id="code"
+						cssClass="form-control" maxlength="25" />
+				</s:if>
 				<s:else>
-			<s:textfield name="code" value="%{code}" id="code"
-					cssClass="form-control" maxlength="25" disabled="true"/>
-			</s:else>
+					<s:textfield name="code" value="%{code}" id="code"
+						cssClass="form-control" maxlength="25" disabled="true" />
+				</s:else>
 			</div>
 			<label class="col-sm-2 control-label text-right"> <s:text
 					name="milestone.template.status" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="1" list="#{ '1':'ACTIVE','0':'INACTIVE'}"
-					name="status" value="%{status}" id="status" cssClass="form-control" />
+				<s:if test="%{model.id == null}">
+					<s:select headerKey="1" list="#{ '1':'ACTIVE','0':'INACTIVE'}"
+						name="status" value="%{status}" id="status"
+						cssClass="form-control" />
+				</s:if>
+				<s:else>
+					<s:select headerKey="1" list="#{ '1':'ACTIVE','0':'INACTIVE'}"
+						name="status" value="%{status}" id="status"
+						cssClass="form-control" disabled="true" />
+				</s:else>
 			</div>
 		</div>
 
@@ -88,7 +96,7 @@
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textarea name="description" cols="35" cssClass="form-control"
-					id="description" maxlength="1024"
+					maxlength="1024" id="templateDescription"
 					onkeyup="return ismaxlength(this)" value="%{description}" />
 			</div>
 		</div>
@@ -99,11 +107,11 @@
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1"
-					headerValue="%{getText('estimate.default.select')}" name="typeOfWork"
-					id="typeOfWork" cssClass="form-control"
+					headerValue="%{getText('estimate.default.select')}"
+					name="typeOfWork" id="typeOfWork" cssClass="form-control"
 					list="dropdownData.parentCategoryList" listKey="id"
 					listValue="description" value="%{typeOfWork.id}"
-					onChange="setupSubTypes(this);" />
+					onChange="setupSubTypes(this);"/>
 				<egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']"
 					dropdownId='subType'
 					url='estimate/ajaxEstimate-subcategories.action'
@@ -114,10 +122,10 @@
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1"
-					headerValue="%{getText('estimate.default.select')}" name="subTypeOfWork"
-					value="%{subType.id}" id="subType" cssClass="form-control"
-					list="dropdownData.categoryList" listKey="id"
-					listValue="description" />
+					headerValue="%{getText('estimate.default.select')}"
+					name="subTypeOfWork" value="%{subTypeOfWork.id}" id="subType"
+					cssClass="form-control" list="dropdownData.categoryList"
+					listKey="id" listValue="description" />
 			</div>
 		</div>
 	</div>

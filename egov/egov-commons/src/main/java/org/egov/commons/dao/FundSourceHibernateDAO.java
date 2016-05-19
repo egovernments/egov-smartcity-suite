@@ -39,15 +39,16 @@
  */
 package org.egov.commons.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Fundsource;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Repository
 public class FundSourceHibernateDAO {
@@ -79,7 +80,6 @@ public class FundSourceHibernateDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -91,8 +91,8 @@ public class FundSourceHibernateDAO {
     }
 
     public List<Fundsource> findAllActiveIsLeafFundSources() {
-        return getCurrentSession().createQuery(
-                "from org.egov.commons.Fundsource where isactive = true and isnotleaf=false order by name").list();
+        return getCurrentSession().createQuery("from org.egov.commons.Fundsource where isactive = true  order by name")
+                .list();
     }
 
     public Fundsource getFundSourceByCode(final String code) {

@@ -162,6 +162,9 @@ label.error {
 .view-content {
   font-family: semibold;
 }
+.img-width {
+  width: 100%;
+}
 .font-12 {
   font-size: 12px;
 }
@@ -251,7 +254,7 @@ label.error {
 }
 .page-container.horizontal-menu .search .searchicon {
   position: absolute;
-  left: 14px;
+  right: 20px;
   top: 18px;
   color: #fff;
   cursor: pointer;
@@ -366,11 +369,8 @@ label.error {
 .page-container.horizontal-menu header.navbar ul.nav > li.dropdown a {
   position: relative;
   display: block;
-  padding: 8px;
+  padding: 8px 9px;
   margin: 14px 15px 5px 0;
-}
-.page-container.horizontal-menu header.navbar ul.nav > li.dropdown a i {
-  font-size: 16px;
 }
 .page-container.horizontal-menu header.navbar ul.nav > li.dropdown a:hover,
 .page-container.horizontal-menu header.navbar ul.nav > li.dropdown a:focus {

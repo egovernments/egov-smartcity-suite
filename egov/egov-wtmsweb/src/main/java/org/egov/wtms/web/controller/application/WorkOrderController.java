@@ -69,6 +69,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -164,6 +166,7 @@ public class WorkOrderController {
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
+            reportParams.put("usersignature", (securityUtils.getCurrentUser().getSignature()!=null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null));
             reportParams.put("applicationDate",formatter.format(connectionDetails.getApplicationDate()));
             reportInput = new ReportRequest(CONNECTIONWORKORDER, connectionDetails, reportParams);
         }

@@ -48,9 +48,8 @@
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<input type="hidden" name="usageTypeList" id="usageTypeList" value="${usageTypeList}">
 	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usageType.id}" />
-	<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-body custom-form ">
-			<c:if test="${not empty message}">
+	
+	<c:if test="${not empty message}">
                 <div class="alert alert-success" role="alert">${message}</div>
              </c:if>
 			<c:choose>
@@ -58,20 +57,20 @@
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="usageTypeTbl">
 					<thead>
 						<tr>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.code" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.code" />
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.usagetype" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.usagetype" />
 							</th>
-							<th align="center" colspan="1">
-								<div align="center"><spring:message code="lbl.status"/></div>
+							<th align="center" colspan="1" class="text-center">
+								<spring:message code="lbl.status"/>
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.edit" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.edit" />
 							</th>
 						</tr>
 					</thead>
@@ -113,8 +112,7 @@
 				<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)"><spring:message code="lbl.addnew" /></a>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>
-		</div>
-	</div>
+		
 </form:form>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">

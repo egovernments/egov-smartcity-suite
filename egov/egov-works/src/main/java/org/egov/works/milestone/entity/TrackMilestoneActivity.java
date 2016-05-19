@@ -39,7 +39,6 @@
  */
 package org.egov.works.milestone.entity;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -52,15 +51,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 
 @Entity
 @Table(name = "EGW_TRACK_MILESTONE_ACTIVITY")
 @Unique(id = "id", tableName = "EGW_TRACK_MILESTONE_ACTIVITY")
 @SequenceGenerator(name = TrackMilestoneActivity.EGW_TRACK_MILESTONE_ACTIVITY, sequenceName = TrackMilestoneActivity.EGW_TRACK_MILESTONE_ACTIVITY, allocationSize = 1)
-public class TrackMilestoneActivity {
+public class TrackMilestoneActivity extends AbstractAuditable{
 
-    public static final String EGW_TRACK_MILESTONE_ACTIVITY = "EGW_TRACK_MILESTONE_ACTIVITY";
+    private static final long serialVersionUID = -4386325007110227524L;
+
+    public static final String EGW_TRACK_MILESTONE_ACTIVITY = "SEQ_EGW_TRACK_MILESTONE_ACTIVITY";
 
     @Id
     @GeneratedValue(generator = EGW_TRACK_MILESTONE_ACTIVITY, strategy = GenerationType.SEQUENCE)
@@ -68,7 +70,7 @@ public class TrackMilestoneActivity {
 
     private String status;
 
-    private BigDecimal completedPercentage;
+    private double completedPercentage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trackMilestone", nullable = false)
@@ -130,11 +132,11 @@ public class TrackMilestoneActivity {
         this.completionDate = completionDate;
     }
 
-    public BigDecimal getCompletedPercentage() {
+    public double getCompletedPercentage() {
         return completedPercentage;
     }
 
-    public void setCompletedPercentage(final BigDecimal completedPercentage) {
+    public void setCompletedPercentage(final double completedPercentage) {
         this.completedPercentage = completedPercentage;
     }
 

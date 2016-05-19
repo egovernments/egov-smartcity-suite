@@ -146,10 +146,12 @@
 										<s:select name="newSerialNo" id="newSerialNo%{#stat.index}"
 											list="chequeSlNoMap" value='%{newSerialNo[#stat.index]}' />
 									</td>
-									<td style="text-align: left" class="blueborderfortdnew"><s:textfield
+									<td style="text-align: left" class="blueborderfortdnew"><s:textfield maxlength="6"
+											size="6"
 											name="newInstrumentNumber"
 											id="newInstrumentNumber%{#stat.index}"
 											value='%{newInstrumentNumber[#stat.index]}'
+											onkeypress='return event.charCode >= 48 && event.charCode <= 57' 
 											onblur="validatechequeno(this)" /></td>
 									<td style="text-align: left"
 										class="blueborderfortdnew"><s:textfield

@@ -40,7 +40,7 @@
 package org.egov.works.services;
 
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.revisionEstimate.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 
 public class RevisionEstimateWFService extends PersistenceService<RevisionAbstractEstimate, Long> {
 

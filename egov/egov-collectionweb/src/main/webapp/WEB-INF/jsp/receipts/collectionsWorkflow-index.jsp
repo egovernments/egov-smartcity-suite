@@ -260,7 +260,7 @@ function readOnlyCheckBox() {
 <body onload="javascript:refreshSummary()">
 <div class="formmainbox">
 
-<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 
 <s:form theme="simple" name="collectionsWorkflowForm">
 	<div class="subheadnew"><s:if test="%{isSubmitAction == true}">
@@ -284,6 +284,7 @@ function readOnlyCheckBox() {
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
 			<s:hidden name="receiptDate" id="receiptDate" value="%{receiptDate}"/>	
+			<s:hidden name="inboxItemDetails" id="inboxItemDetails" value="%{inboxItemDetails}"/>	
 			<display:table name="receiptHeaders"
 				uid="currentRow" pagesize="30" style="border:1px;empty-cells:show;border-collapse:collapse;" cellpadding="0"
 				cellspacing="0" export="false" requestURI="">
@@ -419,18 +420,30 @@ function readOnlyCheckBox() {
 			<s:if test="%{isSubmitAction == true}">
 				<s:submit type="submit" cssClass="buttonsubmit"
 					id="submitCollections" name="submitCollections"
-					value="Submit Collections" method="submitCollections"
+					value="Submit Page Collections" 
 					disabled="false"
 					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-submitCollections.action'" />
+					<s:submit type="submit" cssClass="buttonsubmit"
+					id="submitCollections" name="submitCollections"
+					value="Submit All Collections" 
+					disabled="false"
+					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-submitAllCollections.action'" />
 			</s:if> <!-- else show only approve and reject buttons --> <s:else>
 				<s:submit type="submit" cssClass="buttonsubmit"
 					id="approveCollections" name="approveCollections"
-					value="Approve Collections" method="approveCollections"
+					value="Approve Page Collections" 
 					disabled="false"
 					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-approveCollections.action'" />
-				&nbsp;<s:submit type="submit" cssClass="buttonsubmit"
+				&nbsp;
+				<s:submit type="submit" cssClass="buttonsubmit"
+					id="approveCollections" name="approveCollections"
+					value="Approve All Collections" 
+					disabled="false"
+					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-approveAllCollections.action'" />
+				&nbsp;
+				<s:submit type="submit" cssClass="buttonsubmit"
 					id="rejectCollections" name="rejectCollections"
-					value="Reject Collections" method="rejectCollections"
+					value="Reject Collections" 
 					disabled="false"
 					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-rejectCollections.action'" />
 			</s:else>

@@ -51,8 +51,6 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.Sequence;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -88,7 +86,6 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	private final String EMPVIEWDEPTIDSLOGGEDINUSER="EMPVIEW-DEPTIDS-LOGGEDINUSER";
 	private static final String EMPVIEWACTIVEEMPS="EMPVIEW-ACTIVE-EMPS"; 
 	private static final String EMPVIEWEMPSLASTASSPRD="EMPVIEW-EMPS-LASTASSPRD";
-	private SequenceGenerator sequenceGenerator;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -101,13 +98,6 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
     
 	public Session  getCurrentSession() {
 		return entityManager.unwrap(Session.class);
-	}
-	public SequenceGenerator getSequenceGenerator() {
-		return sequenceGenerator;
-	}
-
-	public void setSequenceGenerator(SequenceGenerator sequenceGenerator) {
-		this.sequenceGenerator = sequenceGenerator;
 	}
 	private ScriptService scriptService;
 
@@ -225,20 +215,6 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 		return personalInfEntities;
 	}
 
-	/**
-	 * Returns the generated employee code. The employee code can be based on the employee type.
-	 * This calls the script named "pims.employeeCode.generator" to get the next code value.
-	 * @param employee
-	 * @return
-	 */
-	public String generateEmployeeCode(PersonalInformation employee) {
-		//SequenceGenerator sequenceGenerator = new SequenceGenerator(sessionFactory);
-		Object result=scriptService.executeScript("pims.employeeCode.generator", scriptService.createContext("sequenceGenerator",sequenceGenerator,"employee", employee));
-		if (result instanceof Sequence) {
-			return ((Sequence)result).getFormattedNumber();
-		}
-		return result.toString();
-	}
 
 	/**
 	 * Returns List of Employees for the given status  and

@@ -41,10 +41,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-center">
-		<spring:message
-			code="title.estimateappropriationregister.searchresult" />
-	</div>
 	<div id="balanceAvailable" class="text-center"></div>
 	<div id="errorMessage" style="display: none;">
 		<spring:message code="error.lineestimate.loa.search" />

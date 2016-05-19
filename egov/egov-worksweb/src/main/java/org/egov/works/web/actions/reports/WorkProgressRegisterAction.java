@@ -89,13 +89,13 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.model.PersonalInformation;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.PaymentDetail;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.milestone.entity.WorkProgressRegister;
-import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.NatureOfWork;
@@ -308,7 +308,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 workProgress.setNameOfWork(estimate.getName());
                 workProgress.setTypeOfWork(estimate.getParentCategory().getDescription());
                 workProgress.setEstimateDate(DateUtils.getFormattedDate(estimate.getEstimateDate(), dateFormat));
-                workProgress.setEstimateAmt(new BigDecimal(estimate.getWorkValue().getValue()));
+                workProgress.setEstimateAmt(new BigDecimal(estimate.getWorkValue()));
                 final Date techSanctionDate = getTechSanctionDate(estimate);
                 if (techSanctionDate != null)
                     workProgress.setTechSanctionDate(DateUtils.getFormattedDate(techSanctionDate, dateFormat));
@@ -411,7 +411,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 workProgress.setWorkOrderDate(DateUtils.getFormattedDate(workOrder.getWorkOrderDate(), dateFormat));
                 if (trackMilestone != null && "APPROVED".equalsIgnoreCase(trackMilestone.getStatus().getCode())) {
                     workProgress.setTrackMilestoneActivities(trackMilestone.getActivities());
-                    workProgress.setCompletedPercentage(trackMilestone.getTotal());
+                    workProgress.setCompletedPercentage(trackMilestone.getTotalPercentage());
                 } else if (milestone != null && "APPROVED".equalsIgnoreCase(milestone.getStatus().getCode())) {
                     final List<TrackMilestoneActivity> trackList = new LinkedList<TrackMilestoneActivity>();
                     for (final MilestoneActivity milestoneActivity : milestone.getActivities()) {

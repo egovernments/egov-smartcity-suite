@@ -42,6 +42,7 @@ package org.egov.wtms.application.service;
 import org.apache.log4j.Logger;
 import org.egov.demand.model.EgBill;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.wtms.application.entity.GenerateConnectionBill;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;

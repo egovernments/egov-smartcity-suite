@@ -104,12 +104,7 @@
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<constructor-arg ref="dataSource" />
 	</bean>
-	<!-- Will be used untill we remove sessionFactory concept -->
-	<bean id="sessionFactory"
-		class="org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
-	
+
 	<bean id="entityValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"></bean>
 	
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

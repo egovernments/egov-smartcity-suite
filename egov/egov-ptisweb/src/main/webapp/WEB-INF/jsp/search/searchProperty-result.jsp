@@ -49,17 +49,17 @@
 					window.location = "../property/transfer/new.action?assessmentNo=" + assessmentNum;
 				} else if (selectedValue == 'ADD_OR_ALTER') {
 					window.location = "../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=" + assessmentNum;
-				} else if (selectedValue=='Bifurcation') {
+				} /* else if (selectedValue=='Bifurcation') {
 					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+assessmentNum;
 				} else if (selectedValue == 'RevisionPetition') {
 					window.location = "../revPetition/revPetition-newForm.action?propertyId=" + assessmentNum;
-				} else if (selectedValue == 'CollectTax') {
+				}  */else if (selectedValue == 'CollectTax') {
 					window.location = "/../ptis/search/searchProperty-searchOwnerDetails.action?assessmentNum=" + assessmentNum;
-				} else if (selectedValue == 'EDIT_DATAENTRY') {
+				} /* else if (selectedValue == 'EDIT_DATAENTRY') {
 					window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
-				}/*  else if (selectedValue == 'ADD_EDIT_DEMAND') {
+				} *//*  else if (selectedValue == 'ADD_EDIT_DEMAND') {
 					window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
-				} */ else if (selectedValue == 'VacancyRemission') {
+				} */ /* else if (selectedValue == 'VacancyRemission') {
 					window.location = "/ptis/vacancyremission/create/" + assessmentNum+",normalSearch";
 				} else if(selectedValue == 'VacancyRemissionMonthlyUpdate'){
 					window.location = "/ptis/vacancyremission/monthlyupdate/" + assessmentNum;
@@ -73,11 +73,11 @@
 					window.location = "/ptis/addarrears/form/" + assessmentNum;
 				} else if(selectedValue == 'GeneralRevisionPetition'){
 					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=GRP&indexNumber="+assessmentNum;
-				} /* else if(selectedValue == 'WriteOff'){
+				} */ /* else if(selectedValue == 'WriteOff'){
 					window.location = "/ptis/writeOff/form/" + assessmentNum;
-				} */ else if(selectedValue == 'editOwner'){
+				} */ /* else if(selectedValue == 'editOwner'){
 			      window.location = "/ptis/editowner/" + assessmentNum;
-			    } 
+			    }  */
 			}
 
 			function gotoSearchForm(){
@@ -171,8 +171,8 @@
 										<s:if test="%{(roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
 										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()))
 										&& #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
-										<%-- <c:if test="${currentRowObject.isTaxExempted == false }">
-											<c:if test="${currentRowObject.source == 'D'}">
+										<c:if test="${currentRowObject.isTaxExempted == false }">
+											<%-- <c:if test="${currentRowObject.source == 'D'}">
 												<option value="EDIT_DATAENTRY">
 													<s:text name="editdataentry.title"></s:text>
 												</option>
@@ -187,10 +187,10 @@
 												</option>
 											</c:if> --%>
 											<s:if test="%{#attr.currentRowObject.isDemandActive}">
-												<%-- <option value="ADD_OR_ALTER">
+												<option value="ADD_OR_ALTER">
 													<s:text name="viewprop.option.alter"></s:text>
 												</option>
-												<option value="Bifurcation">
+												<%-- <option value="Bifurcation">
 													<s:text name="Bifurcation"></s:text>
 												</option> --%>
 												<option value="TransferProperty">
@@ -227,8 +227,8 @@
 												<option value="RevisionPetition">
 													<s:text name="revisionPetition"></s:text>
 												</option>
-											</s:else>
-											</c:if> --%>
+											</s:else>--%>
+											</c:if> 
 										</s:if>
 										<%-- <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE.toUpperCase())}">
 												<option value="editOwner">

@@ -104,6 +104,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private List<VacancyRemission> vacancyRemissions = new ArrayList<VacancyRemission>();
     private Double longitude;
     private Double latitude;
+    private boolean eligible;
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -171,8 +172,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /**
-     * Returns the default and non-history current installment Property for
-     * basicproperty.
+     * Returns the default and non-history current installment Property for basicproperty.
      *
      * @return Property
      */
@@ -270,8 +270,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /*
-     * @Override public PropertyReference getPropertyReference() { return
-     * propertyReference; }
+     * @Override public PropertyReference getPropertyReference() { return propertyReference; }
      */
 
     @Override
@@ -421,11 +420,10 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     /**
      * <p>
      * Returns a Map with two key-value pairs
-     * <li>The value of key WFSTATUS gives the work flow status for given
-     * property (TRUE - in work flow, FALSE - not in work flow).</li>
-     * <li>The value of key WFOWNER gives the owner of work flow object if
-     * property is under work flow otherwise gives blank string.</li> Note: This
-     * implementation may change from client to client
+     * <li>The value of key WFSTATUS gives the work flow status for given property (TRUE - in work flow, FALSE - not in work
+     * flow).</li>
+     * <li>The value of key WFOWNER gives the owner of work flow object if property is under work flow otherwise gives blank
+     * string.</li> Note: This implementation may change from client to client
      * </p>
      *
      * @param {@link BasicProperty} basicProperty
@@ -493,8 +491,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /**
-     * Returns the default and workflow current installment Property for
-     * basicproperty.
+     * Returns the default and workflow current installment Property for basicproperty.
      *
      * @return Property
      */
@@ -558,8 +555,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /**
-     * @param isTaxXMLMigrated
-     *            the isTaxXMLMigrated to set
+     * @param isTaxXMLMigrated the isTaxXMLMigrated to set
      */
     @Override
     public void setIsTaxXMLMigrated(final Character isTaxXMLMigrated) {
@@ -585,8 +581,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /**
-     * Gives the Inactive property i.e., PropertyImpl.status = 'I' Inactive
-     * property is the property whose demand is not active
+     * Gives the Inactive property i.e., PropertyImpl.status = 'I' Inactive property is the property whose demand is not active
      */
     @Override
     public PropertyImpl getInactiveProperty() {
@@ -688,7 +683,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     public String getMobileNumber() {
         return getPropertyOwnerInfo().get(0).getOwner().getMobileNumber();
     }
-    
+
     @Override
     public String getAadharNumber() {
         return getPropertyOwnerInfo().get(0).getOwner().getAadhaarNumber();
@@ -715,13 +710,13 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
             mobileNo.deleteCharAt(mobileNo.length() - 2);
         if (aadharNo.length() > 2)
             aadharNo.deleteCharAt(aadharNo.length() - 2);
-        
+
         ownerMap.put("OWNERNAME", ownerName.toString());
         ownerMap.put("MOBILENO", mobileNo.toString());
         ownerMap.put("AADHARNO", aadharNo.toString());
         return ownerMap;
     }
-    
+
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy() {
         return propertyOwnerInfoProxy;
@@ -795,24 +790,35 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         else
             return this.getActiveProperty();
     }
-    
+
     @Override
     public Double getLongitude() {
-		return longitude;
-	}
+        return longitude;
+    }
 
     @Override
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
-	}
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 
     @Override
-	public Double getLatitude() {
-		return latitude;
-	}
+    public Double getLatitude() {
+        return latitude;
+    }
 
     @Override
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    @Override
+    public boolean isEligible() {
+        return eligible;
+    }
+
+    @Override
+    public void setEligible(boolean eligible) {
+        this.eligible = eligible;
+    }
+
 }

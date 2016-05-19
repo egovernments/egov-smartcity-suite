@@ -39,36 +39,6 @@
  */
 package org.egov.works.web.actions.tender;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.model.PersonalInformation;
-import org.egov.pims.service.EmployeeServiceOld;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.Activity;
-import org.egov.works.models.masters.Contractor;
-import org.egov.works.models.masters.MarketRate;
-import org.egov.works.models.tender.EstimateLineItemsForWP;
-import org.egov.works.models.tender.TenderResponse;
-import org.egov.works.models.tender.TenderResponseActivity;
-import org.egov.works.models.tender.TenderResponseContractors;
-import org.egov.works.models.tender.TenderResponseQuotes;
-import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.services.WorksService;
-import org.egov.works.utils.AbstractPDFGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -81,6 +51,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.model.PersonalInformation;
+import org.egov.pims.service.EmployeeServiceOld;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.models.masters.Contractor;
+import org.egov.works.models.masters.MarketRate;
+import org.egov.works.models.tender.EstimateLineItemsForWP;
+import org.egov.works.models.tender.TenderResponse;
+import org.egov.works.models.tender.TenderResponseActivity;
+import org.egov.works.models.tender.TenderResponseContractors;
+import org.egov.works.models.tender.TenderResponseQuotes;
+import org.egov.works.models.tender.WorksPackage;
+import org.egov.works.services.WorksService;
+import org.egov.works.utils.AbstractPDFGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 
 public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     private static final Logger LOGGER = Logger.getLogger(TenderNegotiationPDFGenerator.class);
@@ -438,13 +439,13 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                     if (tenderResponseActivity.getActivity() != null
                             && tenderResponseActivity.getActivity().getSchedule() != null && asOnDate != null
                             && !tenderResponseActivity.getActivity().getSchedule().hasValidMarketRateFor(asOnDate)) {
-                        marketRate = tenderResponseActivity.getActivity().getRate().getValue();
+                        marketRate = tenderResponseActivity.getActivity().getRate();
                         marketRateAmount = quantity * marketRate;
                     }
 
                     if (tenderResponseActivity.getActivity() != null
                             && tenderResponseActivity.getActivity().getNonSor() != null) {
-                        marketRate = tenderResponseActivity.getActivity().getRate().getValue();
+                        marketRate = tenderResponseActivity.getActivity().getRate();
                         final double marketQty = tenderResponseActivity.getActivity().getQuantity();
                         marketRateAmount = marketQty * marketRate;
                     }
@@ -510,19 +511,19 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                 negotiationTable.addCell(makePara(description, Element.ALIGN_LEFT));
                 negotiationTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
                 if (tenderResponseActivity.getActivity() != null
-                        && tenderResponseActivity.getActivity().getQuantity() != null)
+                        && tenderResponseActivity.getActivity().getQuantity() != 0)
                     quantity = tenderResponseActivity.getActivity().getQuantity();
                 negotiationTable.addCell(centerPara(quantity));
                 negotiationTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
                 if (tenderResponseActivity.getActivity() != null
                         && tenderResponseActivity.getActivity().getSchedule() != null
-                        && tenderResponseActivity.getActivity().getRate() != null
+                        && tenderResponseActivity.getActivity().getRate() != 0
                         && tenderResponseActivity.getActivity().getSORCurrentRate() != null)
                     rate = tenderResponseActivity.getActivity().getSORCurrentRate().getValue();
                 if (tenderResponseActivity.getActivity() != null
                         && tenderResponseActivity.getActivity().getNonSor() != null
-                        && tenderResponseActivity.getActivity().getRate() != null)
-                    rate = tenderResponseActivity.getActivity().getRate().getValue();
+                        && tenderResponseActivity.getActivity().getRate() != 0)
+                    rate = tenderResponseActivity.getActivity().getRate();
                 negotiationTable.addCell(rightPara(formatter.format(rate)));
                 negotiationTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
                 if (tenderResponseActivity.getActivity().getSchedule() != null
@@ -570,7 +571,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                     marketRateAmount = marketQty * marketRate / uomFactor;
                 } else if (tenderResponseActivity.getActivity() != null
                         && tenderResponseActivity.getActivity().getNonSor() != null) {
-                    marketRate = tenderResponseActivity.getActivity().getRate().getValue();
+                    marketRate = tenderResponseActivity.getActivity().getRate();
                     final double marketQty = tenderResponseActivity.getActivity().getQuantity();
                     marketRateAmount = marketQty * marketRate;
                 }

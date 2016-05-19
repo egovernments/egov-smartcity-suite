@@ -59,7 +59,6 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.dao.BankaccountHibernateDAO;
-import org.egov.commons.service.BankAccountService;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
@@ -74,14 +73,11 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-        @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
-                "namespace", "/reports", "totalCashAmount",
-                "${totalCashAmount}", "totalChequeAmount", "${totalChequeAmount}", "totalOnlineAmount",
-                "${totalOnlineAmount}", "bank",
-                "${bank}", "bankAccount",
-                "${bankAccount}" }),
-        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+    @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
+    @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
+            "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
+                "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
+    "${bankAccount}" }), @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -121,7 +117,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private List<CollectionBankRemittanceReport> bankRemittanceList;
     private String bank;
     private String bankAccount;
-    
 
     /**
      * @param collectionsUtil
@@ -199,7 +194,6 @@ public class BankRemittanceAction extends BaseFormAction {
         return EDIT;
     }
 
-    
     public String save() {
         return SUCCESS;
     }
@@ -249,10 +243,10 @@ public class BankRemittanceAction extends BaseFormAction {
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         bankRemittanceList = prepareBankRemittanceReport(voucherHeaderValues);
-        if(getSession().get("REMITTANCE_LIST")!=null)
+        if (getSession().get("REMITTANCE_LIST") != null)
             getSession().remove("REMITTANCE_LIST");
         getSession().put("REMITTANCE_LIST", bankRemittanceList);
-        Bankaccount bankAcc = bankaccountHibernateDAO.findById(Long.valueOf(accountNumberId), false);
+        final Bankaccount bankAcc = bankaccountHibernateDAO.findById(Long.valueOf(accountNumberId), false);
         bankAccount = bankAcc.getAccountnumber();
         bank = bankAcc.getBankbranch().getBank().getName();
         totalCashAmount = getSum(getTotalCashAmountArray());
@@ -263,22 +257,23 @@ public class BankRemittanceAction extends BaseFormAction {
 
     private List<CollectionBankRemittanceReport> prepareBankRemittanceReport(final List<ReceiptHeader> receiptHeaders) {
         final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>();
-        for (ReceiptHeader receiptHead : receiptHeaders) {
-            final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
-            collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
+        for (final ReceiptHeader receiptHead : receiptHeaders) {
+            @SuppressWarnings("rawtypes")
+            final Iterator itr = receiptHead.getReceiptInstrument().iterator();
+            while (itr.hasNext()) {
+                final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
+                final InstrumentHeader instHead = (InstrumentHeader) itr.next();
+                collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
+                collBankRemitReport.setBranchName(instHead.getBankBranchName());
+                collBankRemitReport.setBankName(instHead.getBankId() != null ? instHead.getBankId().getName() : "");
+                collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
+                collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
+                collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
+                collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
                 collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
-            collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
-            Iterator itr = receiptHead.getReceiptInstrument().iterator();
-            while(itr.hasNext()) {
-                InstrumentHeader instHead = (InstrumentHeader) itr.next();
-            collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
-            collBankRemitReport.setBranchName(instHead.getBankBranchName());
-            collBankRemitReport.setBankName(instHead.getBankId()!=null?instHead.getBankId().getName():"");
-            collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
-            collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
-            collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
+                collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
+                reportList.add(collBankRemitReport);
             }
-            reportList.add(collBankRemitReport);
         }
         return reportList;
     }
@@ -540,7 +535,7 @@ public class BankRemittanceAction extends BaseFormAction {
         return bankRemittanceList;
     }
 
-    public void setBankRemittanceList(List<CollectionBankRemittanceReport> bankRemittanceList) {
+    public void setBankRemittanceList(final List<CollectionBankRemittanceReport> bankRemittanceList) {
         this.bankRemittanceList = bankRemittanceList;
     }
 
@@ -548,7 +543,7 @@ public class BankRemittanceAction extends BaseFormAction {
         return bank;
     }
 
-    public void setBank(String bank) {
+    public void setBank(final String bank) {
         this.bank = bank;
     }
 
@@ -556,7 +551,7 @@ public class BankRemittanceAction extends BaseFormAction {
         return bankAccount;
     }
 
-    public void setBankAccount(String bankAccount) {
+    public void setBankAccount(final String bankAccount) {
         this.bankAccount = bankAccount;
     }
 }

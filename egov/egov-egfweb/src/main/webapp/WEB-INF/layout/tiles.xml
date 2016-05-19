@@ -266,5 +266,30 @@
 	<put-attribute name="body" value="/WEB-INF/views/fund/fund-search.jsp"/>
 </definition>
 
+<definition name="fundsource-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.fundsource.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-new.jsp"/>
+</definition>
+
+<definition name="fundsource-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.fundsource.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-view.jsp"/>
+</definition>
+
+<definition name="fundsource-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.fundsource.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-edit.jsp"/>
+</definition>
+
+<definition name="fundsource-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.fundsource.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-result.jsp"/>
+</definition>
+
+<definition name="fundsource-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.fundsource.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-search.jsp"/>
+</definition>
+
 
 </tiles-definitions>

@@ -59,7 +59,7 @@ body
 		</c:if>
 		<form:form class="form-horizontal form-groups-bordered"
 			id="dailyCollectionform" modelAttribute="dailyWTCollectionReport"
-			method="get">
+			method="post">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -94,7 +94,7 @@ body
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.collectioMode" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:select id="mode" name="mode" path=""
+							<form:select id="collectionMode" name="collectionMode" path=""
 								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
@@ -105,18 +105,18 @@ body
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.collectionOperator" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="operator" id="operator" path=""
+							<form:select name="collectionOperator" id="collectionOperator" path=""
 								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${operators}" id="operator" name="operator" itemValue="id" itemLabel="name" />
+								<form:options items="${operators}" id="collectionOperator" name="collectionOperator" itemValue="username" itemLabel="name" />
 							</form:select>
 						</div>
 
 					</div>
 				</div>
-				<%-- <div class="panel-body custom-form">
+				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.status" /></label>
@@ -126,11 +126,22 @@ body
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${status}"  itemValue="id" itemLabel="description" />
+								<form:options items="${status}"  itemValue="description" itemLabel="description" />
+							</form:select>
+						</div>
+						
+						<label for="field-1" class="col-sm-2 control-label"><spring:message code="lbl.ward" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select name="revenueWard" id="revenueward" path=""
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${wards}" id="revenueWard" name="revenueWard" itemValue="name" itemLabel="name" />
 							</form:select>
 						</div>
 				</div>
-				</div> --%>
+				</div>
 			</div>
 			<div class="row">
 				<div class="text-center">
@@ -168,7 +179,6 @@ body
 								<td></td>
 								<td></td>
 								<td></td>
-								<td></td>
 							</tr>
 				</tfoot> 
 			</tbody>
@@ -176,6 +186,7 @@ body
 	</div>
 </div>
 
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>

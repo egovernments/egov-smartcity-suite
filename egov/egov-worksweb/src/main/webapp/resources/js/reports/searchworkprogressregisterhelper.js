@@ -236,6 +236,7 @@ function callAjaxSearch() {
 					"data" : "agreementNumberDate", "sClass" : "text-right"}, {
 					"data" : "contractorCodeName", "sClass" : "text-right"}, {
 					"data" : "agreementAmount", "sClass" : "text-right"}, {
+					"data" : "milestonePercentageCompleted", "sClass" : "text-center"}, {
 					"data" : "latestMbNumberDate", "sClass" : "text-right"}, {
 					"data" : "latestBillNumberDate", "sClass" : "text-right"}, {
 					"data" : "billType", "sClass" : "text-right"}, {

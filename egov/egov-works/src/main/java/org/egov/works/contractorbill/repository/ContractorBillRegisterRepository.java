@@ -86,4 +86,6 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     @Query("select distinct(cbr.billnumber) from ContractorBillRegister as cbr where upper(cbr.billnumber) like upper(:billnumber) and billstatus = :status")
     List<String> findBillNumberToSearchContractorBillToCancel(@Param("billnumber") String billNumber,
             @Param("status") String status);
+    
+    List<ContractorBillRegister> findByWorkOrderAndBillstatusNot(final WorkOrder workOrder, final String billstatus);
 }

@@ -91,9 +91,9 @@ public class TrackMilestone extends StateAware {
     @GeneratedValue(generator = SEQ_EGW_TRACK_MILESTONE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private BigDecimal total;
+    private BigDecimal totalPercentage;
 
-    private Boolean isProjectCompleted;
+    private boolean projectCompleted;
 
     @Temporal(TemporalType.DATE)
     private Date approvedDate;
@@ -125,16 +125,12 @@ public class TrackMilestone extends StateAware {
         this.id = id;
     }
 
-    public BigDecimal getTotal() {
-        return total;
+    public BigDecimal getTotalPercentage() {
+        return totalPercentage;
     }
 
-    public void setTotal(final BigDecimal total) {
-        this.total = total;
-    }
-
-    public void setProjectCompleted(final boolean isProjectCompleted) {
-        this.isProjectCompleted = isProjectCompleted;
+    public void setTotalPercentage(BigDecimal totalPercentage) {
+        this.totalPercentage = totalPercentage;
     }
 
     public Date getApprovedDate() {
@@ -182,14 +178,6 @@ public class TrackMilestone extends StateAware {
         activities.add(activity);
     }
 
-    public Boolean getIsProjectCompleted() {
-        return isProjectCompleted;
-    }
-
-    public void setIsProjectCompleted(final Boolean isProjectCompleted) {
-        this.isProjectCompleted = isProjectCompleted;
-    }
-
     public void setActivities(final List<TrackMilestoneActivity> activities) {
         this.activities = activities;
     }
@@ -201,4 +189,13 @@ public class TrackMilestone extends StateAware {
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
+
+    public boolean isProjectCompleted() {
+        return projectCompleted;
+    }
+
+    public void setProjectCompleted(final boolean projectCompleted) {
+        this.projectCompleted = projectCompleted;
+    }
+
 }

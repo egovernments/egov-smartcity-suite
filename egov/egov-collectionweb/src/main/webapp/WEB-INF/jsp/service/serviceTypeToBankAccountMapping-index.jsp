@@ -59,6 +59,20 @@
 			serviceCatId : serviceId,
 		});
 	}
+
+	function validate(obj){
+		dom.get('error_area').innerHTML = '';
+		dom.get("error_area").style.display="none";
+		<s:if test="%{null != bankAccountServices && bankAccountServices.size() >0}">
+			if(dom.get('serviceAccountId').value == "") {
+				dom.get("error_area").innerHTML = '<s:text name="service.error.select" />';
+				dom.get("error_area").style.display="block";
+				return false;
+			}
+		</s:if>
+		document.forms[0].action=obj;
+		document.forms[0].submit;
+	}
 </script>
 </head>
 <body>
@@ -103,8 +117,8 @@
 						<td class="bluebox"><s:select headerKey="-1"
 								headerValue="----Choose----" name="bankAccountId"
 								id="bankAccountId" cssClass="selectwk" value="%{bankAccountId.id}"
-								list="dropdownData.accountNumberList" listKey="id"
-								listValue="accountnumber" /></td>
+								list="dropdownData.bankAccountIdList" listKey="id"
+								listValue="accountnumber"  /></td>
 					</tr>
 					<tr>
 						<td class="bluebox">&nbsp;</td>
@@ -124,7 +138,7 @@
 						<td class="bluebox"><s:select headerKey="-1"
 								headerValue="----Choose----" name="serviceDetails"
 								id="serviceDetailsId" cssClass="selectwk"
-								list="dropdownData.serviceTypeList" listKey="id"
+								list="dropdownData.serviceDetailsList" listKey="id"
 								listValue="name" value="%{serviceDetails.id}" /></td>
 					</tr>
 				</table>
@@ -142,6 +156,8 @@
 				<input name="close" type="button" class="button" id="button"
 					onclick="window.close()" value="Close" />
 			</div>
+			<s:hidden id="serviceAccountId" name="serviceAccountId" />
+			<s:hidden id="sourcePage" name="sourcePage" value="modify" />
 			<div>
 				<s:if
 					test="%{null != bankAccountServices && bankAccountServices.size() >0}">
@@ -167,7 +183,8 @@
 							</tr>
 							<s:iterator var="p" value="%{bankAccountServices}" status="s">
 								<tr>
-									<td class="bluebox"><input type="radio"
+									<td width="5%" class="bluebox"><input type="radio"
+										onclick='dom.get("serviceAccountId").value = <s:property value="id"/>'
 										name="radioButton1" /></td>
 									<td class="bluebox"><div align="left">
 											<s:property value="serviceDetails.serviceCategory.name" />
@@ -193,8 +210,26 @@
 								</tr>
 							</s:iterator>
 						</table>
+						<s:submit type="submit" cssClass="buttonsubmit" id="button32"
+							value="Modify"
+							onclick="return validate('serviceTypeToBankAccountMapping-newform.action');" />
+						<input type="button" id="Close" value="Close"
+							onclick="javascript:window.close()" class="buttonsubmit" />
 					</div>
 				</s:if>
+				<s:else>
+					<s:if test="target=='searchresult'">
+					<table width="90%" border="0" align="center" cellpadding="0"
+						cellspacing="0" class="tablebottom">
+						<tr>
+							<div>&nbsp;</div>
+							<div class="subheadnew">
+								<s:text name="searchresult.norecord" />
+							</div>
+						</tr>
+					</table>
+					</s:if>
+				</s:else>
 			</div>
 		</s:push>
 	</s:form>

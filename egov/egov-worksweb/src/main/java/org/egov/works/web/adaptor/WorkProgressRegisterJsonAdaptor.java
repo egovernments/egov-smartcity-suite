@@ -189,6 +189,10 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("balanceValueOfWorkToBill", workProgressRegister.getBalanceValueOfWorkToBill());
             else
                 jsonObject.addProperty("balanceValueOfWorkToBill", "");
+            if (workProgressRegister.getMilestonePercentageCompleted() != null)
+                jsonObject.addProperty("milestonePercentageCompleted", workProgressRegister.getMilestonePercentageCompleted());
+            else
+                jsonObject.addProperty("milestonePercentageCompleted", "NA");
 
             jsonObject.addProperty("createdDate", formatter.format(workProgressRegister.getCreatedDate()));
         }
