@@ -63,7 +63,7 @@
 	<jsp:include page="milestone-searchResult.jsp"/>
 	<script>
 		$('#btnsearch').click(function(e) {
-			if ($('form').valid()) {
+			if ($('#searchRequestMilestone').valid()) {
 			} else {
 				e.preventDefault();
 			}

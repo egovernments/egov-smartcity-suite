@@ -91,17 +91,33 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var fromDate = '';
+	var toDate = '';
+	if ($('#fromDate').val() != "") {
+		fromDate = $('#milestoneFromDate').data('datepicker').date;
+	}
+	if ($('#toDate').val() != "") {
+		toDate = $('#milestoneToDate').data('datepicker').date;
+	}
+	var flag = true;
+	if (toDate != '' && fromDate != '') {
+		if (fromDate > toDate) {
+			flag = false;
+			bootbox.alert('To Date should be greater than From Date');
+		}
+	}
+	if(flag)
+		callAjaxSearch();
 });
 
-function getFormData($form) {
+function getFormDataJson($form) {
+		
 	var unindexed_array = $form.serializeArray();
 	var indexed_array = {};
 
 	$.map(unindexed_array, function(n, i) {
 		indexed_array[n['name']] = n['value'];
 	});
-
 	return indexed_array;
 }
 
@@ -113,8 +129,7 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/milestone/ajax-search",
 					type : "POST",
-					"data" : getFormData(jQuery('form')),
-					contentType: "application/json"
+					data : getFormDataJson(jQuery('#searchRequestMilestone'))
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');

@@ -55,7 +55,7 @@
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
-					<th><spring:message code="lbl.agreement.amount" /></th>
+					<th><spring:message code="lbl.agreement.value" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
 					<th><spring:message code="lbl.status" /></th>
