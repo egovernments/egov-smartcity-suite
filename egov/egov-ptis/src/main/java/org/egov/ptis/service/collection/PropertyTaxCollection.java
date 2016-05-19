@@ -39,6 +39,43 @@
  */
 package org.egov.ptis.service.collection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_DEMANDRSN_GLCODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
+import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH_ADJUSTMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_SUBMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CHEQUE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -46,6 +83,7 @@ import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptInstrumentInfo;
+import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -76,17 +114,6 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * This class is used to persist Collections .This is used for the integration
@@ -131,9 +158,12 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     PropertyTaxUtil propertyTaxUtil;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private CollectionIntegrationService collectionService;
 
     @Override
     protected Module module() {
@@ -743,6 +773,8 @@ public class PropertyTaxCollection extends TaxCollection {
         BigDecimal rebateAmount = BigDecimal.ZERO;
         final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
+        final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetailListByReceiptNumber(billReceiptInfo
+                .getReceiptNum());
 
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
@@ -773,11 +805,11 @@ public class PropertyTaxCollection extends TaxCollection {
                     break;
                 }
             }
-            if (billDetails.size() > 1
-                    && billDetails.get(billDetails.size() - 1).getOrderNo().equals(billDet.getOrderNo())) {
-                receiptAmountInfo.setInstallmentTo(desc[1]);
-                break;
-            }
+            if (billDetails.size() > 1)
+                if (billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                        && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
+                    receiptAmountInfo.setInstallmentTo(desc[1]);
+                }
         }
 
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
