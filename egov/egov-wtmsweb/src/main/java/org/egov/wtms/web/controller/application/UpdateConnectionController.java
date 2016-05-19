@@ -480,7 +480,12 @@ public class UpdateConnectionController extends GenericConnectionController {
                         session.setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER,
                                 fileStoreIdsApplicationNoMap);
                         return "newConnection-digitalSignatureRedirection";
-                    } else
+                    } 
+                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) && !waterTaxUtils.isDigitalSignatureEnabled()) {
+                        waterConnectionDetails.setWorkOrderDate(new Date());
+                        waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
+                    }
+                    else
                         waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                                 approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
                                 mode, null ,sourceChannel);
