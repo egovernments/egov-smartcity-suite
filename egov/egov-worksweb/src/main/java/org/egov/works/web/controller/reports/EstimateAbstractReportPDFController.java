@@ -499,9 +499,11 @@ public class EstimateAbstractReportPDFController {
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
+            reportInput.setReportFormat(FileFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.pdf");
         } else {
+            reportInput.setReportFormat(FileFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByTypeOfWorkWise.xls");
         }
