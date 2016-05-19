@@ -40,6 +40,13 @@
 
 package org.egov.wtms.integration;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -60,13 +67,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrationService {
@@ -112,7 +112,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                         if (null != arrInstal) {
                             consumerConsumption.setArrearFromDate(new DateTime(arrInstal.getFromDate()));
                             consumerConsumption.setArrearToDate(new DateTime(currentInstallment.getFromDate())
-                                    .minusDays(1));
+                            .minusDays(1));
                         }
                         consumerConsumption.setCurrentFromDate(new DateTime(currentInstallment.getFromDate()));
                         consumerConsumption.setCurentToDate(new DateTime(currentInstallment.getToDate()));
@@ -163,14 +163,15 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
     public void updateConsumerIndex(final AssessmentDetails assessmentDetails) {
         final List<WaterConnection> waterConnections = waterConnectionService
                 .findByPropertyIdentifier(assessmentDetails.getPropertyID());
-        for (final WaterConnection waterConnection : waterConnections) {
-            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                    .findByConsumerCodeAndConnectionStatus(waterConnection.getConsumerCode(), ConnectionStatus.ACTIVE);
-            if (waterConnectionDetails != null)
-                consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
-                        waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
-
-        }
+        for (final WaterConnection waterConnection : waterConnections)
+            if (waterConnection.getConsumerCode() != null) {
+                final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                        .findByConnection(waterConnection);
+                if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS)
+                        || waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
+                    consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
+                            waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
+            }
 
     }
 
