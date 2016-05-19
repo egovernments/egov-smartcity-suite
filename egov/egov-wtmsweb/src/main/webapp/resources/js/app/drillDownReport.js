@@ -109,8 +109,6 @@ function callajaxdatatableForDrilDownReport() {
 							"data" : "total",
 							"sTitle" : "Total"
 
-						},{
-							
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
