@@ -268,6 +268,10 @@ public class WorkProgressRegisterPDFController {
                     pdf.setTotalBillAmount(wpr.getTotalBillAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setTotalBillAmount("NA");
+                if (wpr.getMilestonePercentageCompleted() != null)
+                    pdf.setMilestonePercentageCompleted(wpr.getMilestonePercentageCompleted().toString());
+                else
+                    pdf.setMilestonePercentageCompleted("NA");
                 if (wpr.getTotalBillPaidSoFar() != null)
                     pdf.setTotalBillPaidSoFar(wpr.getTotalBillPaidSoFar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
