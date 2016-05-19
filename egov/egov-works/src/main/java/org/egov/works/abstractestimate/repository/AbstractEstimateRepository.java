@@ -56,6 +56,6 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     
     AbstractEstimate findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
     
-    AbstractEstimate findByLineEstimateDetails_Id(final Long id);
+    AbstractEstimate findByLineEstimateDetails_IdAndEgwStatus_codeEquals(final Long id, final String statusCode);
     
 }

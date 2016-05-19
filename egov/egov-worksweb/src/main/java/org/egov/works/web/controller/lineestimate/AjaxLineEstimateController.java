@@ -244,7 +244,7 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<User> getcreateByDepartment(
             @RequestParam("department") final Long department) {
-        final List<User> users = lineEstimateService.getCreatedByUsers(department);
+        final List<User> users = lineEstimateService.getCreatedByUsersForCancelLineEstimateByDepartment(department);
         return users;
     }
     

@@ -169,7 +169,8 @@ public class EstimateService {
     }
     
     public AbstractEstimate getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(final Long id) {
-        return abstractEstimateRepository.findByLineEstimateDetails_Id(id);
+        return abstractEstimateRepository.findByLineEstimateDetails_IdAndEgwStatus_codeEquals(id,
+                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
     }
 
 }

@@ -75,7 +75,6 @@ import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
-import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -171,9 +170,6 @@ public class LineEstimateService {
     
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
-    
-    @Autowired
-    private LetterOfAcceptanceRepository letterOfAcceptanceRepository;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -844,8 +840,8 @@ public class LineEstimateService {
         return lineEstimateDetailsRepository.findEstimateNumbersForSpillOverFlag(spillOverFlag);
     }
     
-    public List<User> getCreatedByUsers(final Long department) {
-        return lineEstimateDetailsRepository.findCreadtedByForCancelLineEstimateByDepartment(department);
+    public List<User> getCreatedByUsersForCancelLineEstimateByDepartment(final Long department) {
+        return lineEstimateDetailsRepository.findCreatedByForCancelLineEstimateByDepartment(department,LineEstimateStatus.TECHNICAL_SANCTIONED.toString(),WorksConstants.APPROVED);
     }
     
     public List<LineEstimate> searchLineEstimatesToCancel(final LineEstimateSearchRequest lineEstimateSearchRequest) {
@@ -871,7 +867,7 @@ public class LineEstimateService {
         if (lineEstimateSearchRequest.isSpillOverFlag()) {
             criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
         }
-        criteria.add(Restrictions.ne("status.code", WorksConstants.CANCELLED).ignoreCase());
+        criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()).ignoreCase());
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
@@ -880,8 +876,8 @@ public class LineEstimateService {
         LineEstimate lineEstimate = lineEstimateRepository.findById(id);
         String estimateNumbers = "";
         for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            List<WorkOrder> workOrders = letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeEquals(
-                    led.getEstimateNumber(), WorksConstants.APPROVED);
+            List<WorkOrder> workOrders = letterOfAcceptanceService.findWorkOrderByEstimateNumberAndEgwStatus(
+                    led.getEstimateNumber());
             for (WorkOrder wo : workOrders) {
                 estimateNumbers += wo.getEstimateNumber() + ", ";
             }
@@ -895,7 +891,7 @@ public class LineEstimateService {
     @Transactional
     public LineEstimate cancel(final LineEstimate lineEstimate) {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                WorksConstants.CANCELLED_STATUS));
+                LineEstimateStatus.CANCELLED.toString()));
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
         final AppConfigValues value = values.get(0);
@@ -907,8 +903,9 @@ public class LineEstimateService {
             final Long id = led.getId();
             final AbstractEstimate abstractEstimate = estimateService
                     .getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(id);
-            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                    WorksConstants.CANCELLED_STATUS));
+            if(abstractEstimate != null)
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                    AbstractEstimate.EstimateStatus.CANCELLED.toString()));
         }
         return lineEstimateRepository.save(lineEstimate);
     }
