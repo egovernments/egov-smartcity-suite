@@ -1625,7 +1625,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (!"".equals(chequeDDNo) && chequeDDNo != null)
             sb.append(" AND ih.instrumentnumber=trim('" + chequeDDNo + "') ");
         if (!"".equals(chqueDDDate) && chqueDDDate != null)
-            sb.append(" AND ih.instrumentdate >= '" + chqueDDDate + "' ");
+            sb.append(" AND ih.instrumentdate = '" + chqueDDDate + "' ");
 
         return sb.toString();
     }
