@@ -73,7 +73,10 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.letterofacceptance.repository.LetterOfAcceptanceRepository;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
@@ -87,12 +90,14 @@ import org.egov.works.lineestimate.repository.LineEstimateAppropriationRepositor
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
 import org.egov.works.models.estimate.EstimateNumberGenerator;
+import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,6 +168,12 @@ public class LineEstimateService {
 
     @Autowired
     private EstimateService estimateService;
+    
+    @Autowired
+    private LetterOfAcceptanceService letterOfAcceptanceService;
+    
+    @Autowired
+    private LetterOfAcceptanceRepository letterOfAcceptanceRepository;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -725,39 +736,41 @@ public class LineEstimateService {
         BudgetUsage budgetUsage = null;
         final boolean flag = false;
 
-        if (budgApprAmnt == null)
-            budgApprAmnt = lineEstimateAppropriation.getBudgetUsage().getConsumedAmount();
+        if(lineEstimateAppropriation != null) {
+            if (budgApprAmnt == null)
+                budgApprAmnt = lineEstimateAppropriation.getBudgetUsage().getConsumedAmount();
 
-        if (appropriationnumber == null)
-            appropriationnumber = lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber();
+            if (appropriationnumber == null)
+                appropriationnumber = lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber();
 
-        budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
-                lineEstimateAppropriation.getBudgetUsage() == null ? null
-                        : budgetAppropriationNumberGenerator.generateCancelledBudgetAppropriationNumber(
-                                appropriationnumber),
-                lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
-                Integer.valueOf(11),
-                lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),
-                Integer.parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getExecutingDepartment()
-                        .getId().toString()),
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction() == null ? null
-                        : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction().getId(),
-                null,
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme() == null ? null
-                        : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme().getId(),
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme() == null ? null
-                        : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme().getId(),
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard() == null ? null : Integer
-                        .parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard().getId()
-                                .toString()),
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getBudgetHead() == null ? null
-                        : budgetheadid,
-                lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund() == null ? null
-                        : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund().getId(),
-                budgApprAmnt);
+            budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
+                    lineEstimateAppropriation.getBudgetUsage() == null ? null
+                            : budgetAppropriationNumberGenerator.generateCancelledBudgetAppropriationNumber(
+                                    appropriationnumber),
+                    lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
+                    Integer.valueOf(11),
+                    lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),
+                    Integer.parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getExecutingDepartment()
+                            .getId().toString()),
+                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction() == null ? null
+                            : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFunction().getId(),
+                    null,
+                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme() == null ? null
+                            : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getScheme().getId(),
+                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme() == null ? null
+                            : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getSubScheme().getId(),
+                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard() == null ? null : Integer
+                            .parseInt(lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getWard().getId()
+                                    .toString()),
+                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getBudgetHead() == null ? null
+                            : budgetheadid,
+                    lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund() == null ? null
+                            : lineEstimateAppropriation.getLineEstimateDetails().getLineEstimate().getFund().getId(),
+                    budgApprAmnt);
 
-        if (lineEstimateAppropriation.getLineEstimateDetails() != null)
-            persistBudgetReleaseDetails(lineEstimateDetails, budgetUsage);
+            if (lineEstimateAppropriation.getLineEstimateDetails() != null)
+                persistBudgetReleaseDetails(lineEstimateDetails, budgetUsage);
+        }
         return flag;
     }
 
@@ -829,5 +842,74 @@ public class LineEstimateService {
 
     public List<String> getEstimateNumbersForSpillOverFlag(final boolean spillOverFlag) {
         return lineEstimateDetailsRepository.findEstimateNumbersForSpillOverFlag(spillOverFlag);
+    }
+    
+    public List<User> getCreatedByUsers(final Long department) {
+        return lineEstimateDetailsRepository.findCreadtedByForCancelLineEstimateByDepartment(department);
+    }
+    
+    public List<LineEstimate> searchLineEstimatesToCancel(final LineEstimateSearchRequest lineEstimateSearchRequest) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
+                .createAlias("lineEstimateDetails", "led")
+                .createAlias("executingDepartment", "ed")
+                .createAlias("led.projectCode", "pc")
+                .createAlias("status", "status");
+        if (lineEstimateSearchRequest != null) {
+            if (lineEstimateSearchRequest.getExecutingDepartment() != null)
+                criteria.add(Restrictions.eq("ed.id", lineEstimateSearchRequest.getExecutingDepartment()));
+            if (lineEstimateSearchRequest.getLineEstimateNumber() != null) {
+                criteria.add(Restrictions.eq("lineEstimateNumber", lineEstimateSearchRequest.getLineEstimateNumber())
+                        .ignoreCase());
+            }
+            if (lineEstimateSearchRequest.getWorkIdentificationNumber() != null)
+                criteria.add(
+                        Restrictions.ilike("pc.code", lineEstimateSearchRequest.getWorkIdentificationNumber(), MatchMode.ANYWHERE));    
+        }
+        if (lineEstimateSearchRequest.getCreatedBy() != null) {
+            criteria.add(Restrictions.eq("createdBy.id", lineEstimateSearchRequest.getCreatedBy()));
+        }
+        if (lineEstimateSearchRequest.isSpillOverFlag()) {
+            criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
+        }
+        criteria.add(Restrictions.ne("status.code", WorksConstants.CANCELLED).ignoreCase());
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+    
+    public String checkIfLOAsCreated(final Long id) {
+        LineEstimate lineEstimate = lineEstimateRepository.findById(id);
+        String estimateNumbers = "";
+        for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            List<WorkOrder> workOrders = letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeEquals(
+                    led.getEstimateNumber(), WorksConstants.APPROVED);
+            for (WorkOrder wo : workOrders) {
+                estimateNumbers += wo.getEstimateNumber() + ", ";
+            }
+        }
+        if (estimateNumbers.equals(""))
+            return "";
+        else
+            return estimateNumbers;
+    }
+    
+    @Transactional
+    public LineEstimate cancel(final LineEstimate lineEstimate) {
+        lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                WorksConstants.CANCELLED_STATUS));
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Y"))
+            for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+                releaseBudgetOnReject(led, null, null);
+
+        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            final Long id = led.getId();
+            final AbstractEstimate abstractEstimate = estimateService
+                    .getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(id);
+            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                    WorksConstants.CANCELLED_STATUS));
+        }
+        return lineEstimateRepository.save(lineEstimate);
     }
 }

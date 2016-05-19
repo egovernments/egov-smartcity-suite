@@ -38,42 +38,35 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
-<div id="main">
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title text-center">
-					<c:if test="${mode == 'cancel'}">
-						<spring:message code="lineestimate.cancel.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
-					</c:if>
-					<c:out value="${message }" /><br />
-					<c:forEach items="${basMessages }" var="basMessage">
-						<c:out value="${basMessage }" /><br />
-					</c:forEach>
+		<form:form name="SearchRequest" role="form" action="" modelAttribute="lineEstimateSearchRequest" id="lineEstimateSearchRequest" class="form-horizontal form-groups-bordered">
+			<div class="row">
+				<div class="col-md-12">
+					<jsp:include page="searchLineEstimateToCancel-form.jsp"/>
 				</div>
 			</div>
-		</div>
-	</div>					
-</div>					
-</div>
-<div class="row text-center">
-	<div class="add-margin">
-		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
-			<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPdf()" ><spring:message code="lbl.generate.proceedings" /></a>
-		</c:if>
-		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
-	</div>
-</div>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lbl.search' />
+					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
+				</div>
+			</div>
+		</form:form>  
+	<jsp:include page="searchLineEstimateToCancel-searchResult.jsp"/>
 
-<script type="text/javascript">
-function renderPdf() {
-	window.open("/egworks/lineestimate/lineEstimatePDF/" + ${lineEstimate.id}, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
-}
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
 </script>
+<script src="<c:url value='/resources/js/searchlineestimatetocancel.js?rnd=${app_release_no}'/>"></script>
