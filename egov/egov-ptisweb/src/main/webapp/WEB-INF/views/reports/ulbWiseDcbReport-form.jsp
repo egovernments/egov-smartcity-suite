@@ -244,9 +244,6 @@ table tbody tr.odd td {
 <script
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.stickytableheaders.min.js' context='/egi'/>"
-	type="text/javascript"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/ulbWiseDcbReport.js'/>"></script>
 	

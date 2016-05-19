@@ -52,10 +52,6 @@ $(document)
 									function(event) {
 								event.preventDefault();
 								
-								$('#tblulbDCBcollection').stickyTableHeaders({
-									fixedOffset: $('nav').outerHeight()
-								});
-							
 					 usagetableContainer.dataTable({
 						type : 'GET',
 						responsive : true,
