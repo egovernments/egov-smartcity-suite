@@ -39,22 +39,22 @@
  */
 package org.egov.services.report;
 
-import org.apache.log4j.Logger;
-import org.egov.commons.CFinancialYear;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.web.actions.report.Statement;
-import org.egov.web.actions.report.StatementResultObject;
-import org.hibernate.Query;
-import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
+import org.egov.egf.model.Statement;
+import org.egov.egf.model.StatementResultObject;
+import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public class RPService extends ScheduleService {
  @Autowired

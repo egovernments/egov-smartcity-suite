@@ -46,7 +46,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	   default-lazy-init="true">
 	<context:component-scan
-		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*, org.egov.egf.formatters.*" />
+		base-package="org.egov.billsaccounting.* , org.egov.dao.* , org.egov.deduction.* , org.egov.egf.* , org.egov.masters.* , org.egov.model.* , org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.egf.web.* ,org.egov.report.* ,org.egov.commons,com.exilant.*, org.egov.egf.formatters.*" />
 
 
 	<bean id="instrumentTypeService" class = "org.egov.services.instrument.InstrumentTypeService" >
