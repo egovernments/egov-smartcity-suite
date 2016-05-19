@@ -386,6 +386,7 @@ $(document).ready(function(){
 		//console.log(lat+'<-->'+lng);
 		$('#lat').val(lat);
 		$('#lng').val(lng);
+		$('#crosshierarchyId, #locationid').val('');
 	});
 
 	$('#modal-6').on('hidden.bs.modal', function () {
