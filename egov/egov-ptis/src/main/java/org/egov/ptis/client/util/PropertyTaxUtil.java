@@ -61,6 +61,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_S
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_COLLECTION_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
@@ -499,14 +500,15 @@ public class PropertyTaxUtil {
     }
 
     public HashMap<String, Integer> generateOrderForDemandDetails(final Set<EgDemandDetails> demandDetails,
-            final PropertyTaxBillable billable) {
+            final PropertyTaxBillable billable, List<Installment> advanceInstallments) {
 
         final Map<Date, String> instReasonMap = new TreeMap<Date, String>();
         final HashMap<String, Integer> orderMap = new HashMap<String, Integer>();
         BigDecimal balance = BigDecimal.ZERO;
         Date key = null;
         String reasonMasterCode = null;
-
+        Map<String, Installment> currYearInstMap = getInstallmentsForCurrYear(new Date());
+        
         for (final EgDemandDetails demandDetail : demandDetails) {
             balance = BigDecimal.ZERO;
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
@@ -524,7 +526,6 @@ public class PropertyTaxUtil {
             }
         }
         if (isRebatePeriodActive()) {
-            Map<String, Installment> currYearInstMap = getInstallmentsForCurrYear(new Date());
             Installment currFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
             final DateTime dateTime = new DateTime(currFirstHalf.getInstallmentYear());
             key = getOrder(currFirstHalf.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE));
@@ -532,15 +533,20 @@ public class PropertyTaxUtil {
         }
 
         DateTime dateTime = null;
+        for(Installment inst : advanceInstallments){
+        	dateTime = new DateTime(inst.getInstallmentYear());
+
+			key = getOrder(inst.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_ADVANCE));
+
+			instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-"
+                    + DEMANDRSN_CODE_ADVANCE);
+        }
+        
         BigDecimal penaltyAmount = BigDecimal.ZERO;
-
         for (final Map.Entry<Installment, PenaltyAndRebate> mapEntry : billable.getInstTaxBean().entrySet()) {
-
             penaltyAmount = mapEntry.getValue().getPenalty();
             final boolean thereIsPenalty = penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0;
-
             if (thereIsPenalty) {
-
                 dateTime = new DateTime(mapEntry.getKey().getInstallmentYear());
 
                 key = getOrder(mapEntry.getKey().getInstallmentYear(),
@@ -570,7 +576,6 @@ public class PropertyTaxUtil {
             }
 
         return orderMap;
-
     }
 
     /**
@@ -927,26 +932,36 @@ public class PropertyTaxUtil {
         BigDecimal arrColelection = BigDecimal.ZERO;
         BigDecimal currentRebate = BigDecimal.ZERO;
         BigDecimal arrearRebate = BigDecimal.ZERO;
+        String reason = "";
 
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
         final List dmdCollList = propertyDAO.getDmdCollForAllDmdReasons(currDemand);
-
+        BigDecimal advanceCollection = BigDecimal.ZERO;
+        BigDecimal secondHalfTax = BigDecimal.ZERO;
+        Map<String, Installment> currYearInstallments = getInstallmentsForCurrYear(new Date());
+        
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
             installment = (Installment) installmentDao.findById(instId, false);
+            reason = listObj[5].toString();
             if (currDemand.getEgInstallmentMaster().equals(installment)) {
                 if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO))
                     currCollection = currCollection.add(new BigDecimal(listObj[2].toString()));
 
                 currentRebate = currentRebate.add(new BigDecimal(listObj[3].toString()));
                 currDmd = currDmd.add(new BigDecimal(listObj[1].toString()));
-            } else {
+            } else if(currYearInstallments.get(CURRENTYEAR_SECOND_HALF).equals(installment)) {
+            	secondHalfTax = secondHalfTax.add(new BigDecimal(listObj[1].toString()));
+            }
+            else {
                 arrDmd = arrDmd.add(new BigDecimal((Double) listObj[1]));
                 if (listObj[2] != null && !listObj[2].equals(BigDecimal.ZERO))
                     arrColelection = arrColelection.add(new BigDecimal(listObj[2].toString()));
                 arrearRebate = arrearRebate.add(new BigDecimal(listObj[3].toString()));
             }
+            if(reason.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE))
+            	advanceCollection = new BigDecimal(listObj[2].toString());
         }
         demandCollMap.put(CURR_DMD_STR, currDmd);
         demandCollMap.put(ARR_DMD_STR, arrDmd);
@@ -954,6 +969,8 @@ public class PropertyTaxUtil {
         demandCollMap.put(ARR_COLL_STR, arrColelection);
         demandCollMap.put(CURRENT_REBATE_STR, currentRebate);
         demandCollMap.put(ARREAR_REBATE_STR, arrearRebate);
+        demandCollMap.put(CURR_SECONDHALF_DMD_STR, secondHalfTax);
+        demandCollMap.put(ADVANCE_COLLECTION_STR, advanceCollection);
         LOGGER.debug("getDemandAndCollection - demandCollMap = " + demandCollMap);
         LOGGER.debug("Exiting from getDemandAndCollection");
         return demandCollMap;
@@ -2442,9 +2459,7 @@ public class PropertyTaxUtil {
     }
 
     /**
-     * Returns a list of Installments for tax calculation, based on the
-     * effective date
-     * 
+     * Returns a list of Installments for tax calculation, based on the effective date
      * @param effectiveDate
      * @return List of Installments
      */
@@ -2469,13 +2484,11 @@ public class PropertyTaxUtil {
                     .setParameter("startdate", effectiveInstallment.getFromDate())
                     .setParameter("enddate", installmentSecondHalf.getFromDate()).list();
         } else if (effectiveInstallment.equals(installmentFirstHalf)) {
-            // If effective date is in 1st half of current financial year, fetch
-            // both installments
+            // If effective date is in 1st half of current financial year, fetch both installments
             installmentList.add(installmentFirstHalf);
             installmentList.add(installmentSecondHalf);
         } else if (effectiveInstallment.equals(installmentSecondHalf)) {
-            // If effective date is in 2nd half of current financial year, fetch
-            // only 2nd half installment
+            // If effective date is in 2nd half of current financial year, fetch only 2nd half installment
             installmentList.add(installmentSecondHalf);
         } else if (effectiveDate.after(installmentSecondHalf.getToDate())) {
             /*
@@ -2487,10 +2500,8 @@ public class PropertyTaxUtil {
              */
             query = "select inst from Installment inst where inst.module.name = '"
                     + PTMODULENAME
-                    + "' "
-                    + " and exists (select inst2.finYearRange from Installment inst2 where inst.finYearRange = inst2.finYearRange "
-                    + "and inst2.module.name = '" + PTMODULENAME
-                    + "' and inst2.fromDate = :startdate ) order by inst.fromDate";
+                    + "' and exists (select inst2.finYearRange from Installment inst2 where inst.finYearRange = inst2.finYearRange "
+                    + "and inst2.module.name = '" + PTMODULENAME+ "' and inst2.fromDate = :startdate ) order by inst.fromDate";
             installmentList = entityManager.unwrap(Session.class).createQuery(query)
                     .setParameter("startdate", effectiveInstallment.getFromDate()).list();
         }
