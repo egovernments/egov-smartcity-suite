@@ -265,34 +265,44 @@ function callAjaxByBoundary(event) {
 							"sTitle" : "Municipality Name"
 						},{
 							"data" : "no_of_users",
-							"sTitle" : "No.of Consumer No."
+							"sTitle" : "No.of Consumer No.",
+							"className": "text-right"
 						},{
 							"data" : "arr_demand",
-							"sTitle" : "Arrears"
+							"sTitle" : "Arrears",
+							"className": "text-right"
 						},{
 							"data" : "curr_demand",
-							"sTitle" : "Current"
+							"sTitle" : "Current",
+							"className": "text-right"
 						}, {
 							"data" : "total_demand",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"className": "text-right"
 						}, {
 							"data" : "arr_coll",
-							"sTitle" : "Arrears"
+							"sTitle" : "Arrears",
+							"className": "text-right"
 						}, {
 							"data" : "curr_coll",
-							"sTitle" : "Current"
+							"sTitle" : "Current",
+							"className": "text-right"
 						}, {
 							"data" : "total_coll",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"className": "text-right"
 						}, {
 							"data" : "arr_balance",
-							"sTitle" : "Arrears"
+							"sTitle" : "Arrears",
+							"className": "text-right"
 						}, {
 							"data" : "curr_balance",
-							"sTitle" : "Current"
+							"sTitle" : "Current",
+							"className": "text-right"
 						}, {
 							"data" : "total_balance",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"className": "text-right"
 						} ],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;

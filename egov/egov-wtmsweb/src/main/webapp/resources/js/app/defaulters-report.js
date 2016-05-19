@@ -129,9 +129,9 @@ function loadingReport()
 								  }
 							  },
 							  { "data" : "duePeriodFrom", "title": "Due Period From"},
-							  { "data" : "arrearsDue", "title": "Arears Amount"},
-							  { "data" : "currentDue", "title": "Current Amount"},
-							  { "data" : "totalDue", "title": "Total"}
+							  { "data" : "arrearsDue", "title": "Arears Amount","className": "text-right"},
+							  { "data" : "currentDue", "title": "Current Amount","className": "text-right"},
+							  { "data" : "totalDue", "title": "Total","className": "text-right"}
 							],
 							 /* "aaSorting": [[3, 'asc'] , [8,'desc']] ,*/
 							  "footerCallback" : function(row, data, start, end, display) {

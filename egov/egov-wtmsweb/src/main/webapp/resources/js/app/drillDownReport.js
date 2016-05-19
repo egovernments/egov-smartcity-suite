@@ -89,25 +89,30 @@ function callajaxdatatableForDrilDownReport() {
 							"sTitle" : "Boundary Name"
 						}, {
 							"mData" : "newconnection",
-							"sTitle" : "New Connection"
-
+							"sTitle" : "New Connection",
+							"className": "text-right"
 						}, {
 							"data" : "addconnection",
-							"sTitle" : "Additinal Connection"
+							"sTitle" : "Additional Connection",
+							"className": "text-right"
 						}, {
 							"data" : "changeofusage",
-							"sTitle" : "Change of Usage"
+							"sTitle" : "Change of Usage",
+							"className": "text-right"
 						}, {
 							"data" : "closeconnection",
-							"sTitle" : "Close Connection"
+							"sTitle" : "Close Connection",
+							"className": "text-right"
 
 						},{
 							"data" : "reconnection",
-							"sTitle" : "Re Connection"
+							"sTitle" : "Re Connection",
+							"className": "text-right"
 						},
 						{
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"className": "text-right"
 
 						}],
 				"footerCallback" : function(row, data, start, end, display) {

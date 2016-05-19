@@ -133,9 +133,9 @@ $('#dailyCollectionReportSearch').click(function(e){
 						{title: 'Status', data: 'resource.clauses.status'},
 						{title: 'Paid From', data: 'resource.searchable.installmentfrom'},
 						{title: 'Paid To', data: 'resource.searchable.installmentto'},
-						{title: 'Arrear Total', data: 'resource.searchable.arrearamount'},
-						{title: 'Current Total', data: 'resource.searchable.currentamount'},
-						{title: 'Total Collection', data: 'resource.searchable.totalamount'}
+						{title: 'Arrear Total', data: 'resource.searchable.arrearamount',"className": "text-right"},
+						{title: 'Current Total', data: 'resource.searchable.currentamount',"className": "text-right"},
+						{title: 'Total Collection', data: 'resource.searchable.totalamount',"className": "text-right"}
 						],
 							  "aaSorting": [[3, 'desc']] ,
 							  "footerCallback" : function(row, data, start, end, display) {
