@@ -103,7 +103,7 @@ jQuery('#btnsearch').click(function(e) {
 	if (toDate != '' && fromDate != '') {
 		if (fromDate > toDate) {
 			flag = false;
-			bootbox.alert('To Date should be greater than From Date');
+			bootbox.alert('Milestone Created To Date should be greater than Milestone Created From Date');
 		}
 	}
 	if(flag)
@@ -111,7 +111,6 @@ jQuery('#btnsearch').click(function(e) {
 });
 
 function getFormDataJson($form) {
-		
 	var unindexed_array = $form.serializeArray();
 	var indexed_array = {};
 
