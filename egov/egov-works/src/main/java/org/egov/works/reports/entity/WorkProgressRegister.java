@@ -236,7 +236,7 @@ public class WorkProgressRegister extends AbstractAuditable {
     @Length(max = 50)
     private String subTypeOfWorkName;
 
-    private BigDecimal milestonePercentageCompleted;
+    private Double milestonePercentageCompleted;
     
     @Override
     protected void setId(final Long id) {
@@ -616,11 +616,11 @@ public class WorkProgressRegister extends AbstractAuditable {
         this.lineEstimateStatus = lineEstimateStatus;
     }
 
-    public BigDecimal getMilestonePercentageCompleted() {
+    public Double getMilestonePercentageCompleted() {
         return milestonePercentageCompleted;
     }
 
-    public void setMilestonePercentageCompleted(BigDecimal milestonePercentageCompleted) {
+    public void setMilestonePercentageCompleted(Double milestonePercentageCompleted) {
         this.milestonePercentageCompleted = milestonePercentageCompleted;
     }
 
