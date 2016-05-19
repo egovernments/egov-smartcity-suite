@@ -76,8 +76,12 @@ public class SearchTrackMilestoneJsonAdaptor implements JsonSerializer<TrackMile
                 jsonObject.addProperty("workIdentificationNumber", led.getProjectCode().getCode());
                 jsonObject.addProperty("nameOfWork", led.getNameOfWork());
                 jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
-                jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getCode());
-                jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode());
+                if(led.getLineEstimate().getTypeOfWork().getCode() != null){
+                    jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getCode());
+                }
+                if(led.getLineEstimate().getSubTypeOfWork().getCode() != null){
+                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode());
+                }
                 jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
             }
             else {

@@ -127,7 +127,7 @@ public class SearchMilestoneController {
             searchRequestMilestone.setDepartment(departments.get(0).getId());
         model.addAttribute("searchRequestMilestone", searchRequestMilestone);
         model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MILESTONE_MODULE_KEY));
-        return "trackMilestone-form";
+        return "searchTrackMilestone-form";
     }
 
 }
