@@ -60,6 +60,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.works.master.service.NatureOfWorkService;
@@ -286,9 +287,11 @@ public class EstimateAbstractReportPDFController {
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
+            reportInput.setReportFormat(FileFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByDepartmentWise.pdf");
         } else {
+            reportInput.setReportFormat(FileFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=EstimateAbstractReportByDepartmentWise.xls");
         }

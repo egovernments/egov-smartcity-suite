@@ -46,19 +46,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.abstractestimate.service.EstimateService;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.web.adaptor.TrackMilestoneJsonAdaptor;
-import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
@@ -80,28 +74,10 @@ import com.google.gson.JsonObject;
 public class TrackMilestoneController {
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
-    @Autowired
     private MilestoneService milestoneService;
 
     @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private WorkOrderEstimateService workOrderEstimateService;
-
-    @Autowired
     private ResourceBundleMessageSource messageSource;
-
-    @Autowired
-    private EstimateService estimateService;
 
     @Autowired
     private TrackMilestoneJsonAdaptor trackMilestoneJsonAdaptor;
