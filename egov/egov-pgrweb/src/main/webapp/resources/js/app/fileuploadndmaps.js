@@ -277,7 +277,45 @@ $(document).ready(function(){
 		    }
 		}, mapOptions.timeout + 500); // Wait extra second
 		
+		searchBar(map);  
+		
 	};
+	
+	function searchBar(map) {
+		
+		var input = /** @type {!HTMLInputElement} */(
+			      document.getElementById('pac-input'));
+
+			  var autocomplete = new google.maps.places.Autocomplete(input);
+			  autocomplete.bindTo('bounds', map);
+
+			  autocomplete.addListener('place_changed', function() {
+			    var place = autocomplete.getPlace();
+			    if (!place.geometry) {
+			      window.alert("Autocomplete's returned place contains no geometry");
+			      return;
+			    }
+
+			    // If the place has a geometry, then present it on a map.
+			    if (place.geometry.viewport) {
+			      map.fitBounds(place.geometry.viewport);
+			    } else {
+			      map.setCenter(place.geometry.location);
+			      map.setZoom(17);  // Why 17? Because it looks good.
+			    }
+
+			    var address = '';
+			    if (place.address_components) {
+			      address = [
+			        (place.address_components[0] && place.address_components[0].short_name || ''),
+			        (place.address_components[1] && place.address_components[1].short_name || ''),
+			        (place.address_components[2] && place.address_components[2].short_name || '')
+			      ].join(' ');
+			    }
+
+			  });
+
+    };
 	
 	function mapcenterchangeevent(){
 		google.maps.event.addListener(map, 'center_changed', function() {
@@ -351,6 +389,7 @@ $(document).ready(function(){
 	});
 
 	$('#modal-6').on('hidden.bs.modal', function () {
+		$('#pac-input').val('');
 	    var userLatLng = new google.maps.LatLng(lat, lng);
 	    map.setCenter(userLatLng);
 	});
