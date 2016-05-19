@@ -39,19 +39,21 @@
  */
 package org.egov.wtms.utils;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.exception.SQLGrammarException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.io.Serializable;
+import java.sql.SQLException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.io.Serializable;
-import java.sql.SQLException;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.utils.DBSequenceGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.wtms.application.service.WaterConnectionService;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.exception.SQLGrammarException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class WaterTaxNumberGenerator {
@@ -70,6 +72,27 @@ public class WaterTaxNumberGenerator {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
+    private WaterConnectionService waterConnectionService;
+
+    @Transactional
+    public String getNextConsumerNumber() {
+        Boolean cosumerCodeExists = true;
+        String consumerCode = null;
+        while (cosumerCodeExists) {
+            consumerCode = generateConsumerNumber();
+            if (waterConnectionService.findByConsumerCode(consumerCode) != null) {
+                cosumerCodeExists = true;
+                continue;
+            } else {
+                cosumerCodeExists = false;
+                break;
+            }
+
+        }
+        return consumerCode;
+    }
 
     @Transactional
     public String generateConsumerNumber() {

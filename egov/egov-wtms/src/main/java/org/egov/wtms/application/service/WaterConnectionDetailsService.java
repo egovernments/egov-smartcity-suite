@@ -539,7 +539,7 @@ public class WaterConnectionDetailsService {
 
                 if (waterConnectionDetails.getConnection().getConsumerCode() == null)
                     waterConnectionDetails.getConnection().setConsumerCode(
-                            waterTaxNumberGenerator.generateConsumerNumber());
+                            waterTaxNumberGenerator.getNextConsumerNumber());
 
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING, WaterTaxConstants.MODULETYPE));
