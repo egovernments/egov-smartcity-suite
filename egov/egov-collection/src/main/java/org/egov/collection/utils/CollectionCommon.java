@@ -208,7 +208,13 @@ public class CollectionCommon {
         }
         return templateName;
     }
-
+    
+    public List<ReceiptDetail> getReceiptDetListByReceiptNumber(final String receeiptNumber ) {
+        final List<ReceiptDetail> receiptDetList = persistenceService.findAllByNamedQuery(
+                CollectionConstants.QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER, receeiptNumber);
+       
+            return receiptDetList;
+        }
     public ReceiptDetail addDebitAccountHeadDetails(final BigDecimal debitAmount, final ReceiptHeader receiptHeader,
             final BigDecimal chequeInstrumenttotal, final BigDecimal otherInstrumenttotal, final String instrumentType) {
 

@@ -147,6 +147,9 @@ public final class CollectionConstants {
 
 	// named queries (collections)
 	public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
+	public static final String QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER = "QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER";
+
+	
 	public static final String QUERY_RECEIPTS_FOR_BOUNCED_INSTRUMENTS = "RECEIPTS_FOR_BOUNCED_INSTRUMENTS";
 	// public static final String QUERY_RECEIPTS_FOR_PAYEEDETAIL =
 	// "RECEIPTS_BY_PAYEEDETAILID";

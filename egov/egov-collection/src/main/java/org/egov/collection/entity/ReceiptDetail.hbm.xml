@@ -85,5 +85,11 @@
 	 	<many-to-one name="financialYear" class="org.egov.commons.CFinancialYear" fetch="select">
             <column name="financialyear" precision="22" scale="0" />
         </many-to-one>
-    </class>
+          </class>
+        <query name="QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER">
+	<![CDATA[
+	select  receiptDet from  org.egov.collection.entity.ReceiptDetail receiptDet  WHERE receiptDet.receiptHeader.receiptnumber=? and  (cramount!=0  or (ordernumber!=0 and  dramount!=0)) order by receiptDet.ordernumber desc 
+	]]>
+	</query>
+  
 </hibernate-mapping>
