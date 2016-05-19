@@ -406,7 +406,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ReportRequest reportInput = null;
         final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
                 .getDesignationByName(COMMISSIONER_DESGN).getId());
-        reportParams.put("userId", !users.isEmpty() ? users.get(0).getId() : 0);
+        reportParams.put("userSignature", (!users.isEmpty() && users.get(0).getSignature() != null) ? new ByteArrayInputStream(users.get(0).getSignature()) : null);
         if (NOTICE_TYPE_SPECIAL_NOTICE.equals(noticeType)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             final String url = WebUtils.extractRequestDomainURL(request, false);
