@@ -633,4 +633,11 @@ public class LetterOfAcceptanceService {
         return letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeEquals(estimateNumber, WorksConstants.APPROVED);
     }
     
+    public List<String> getEstimateNumbersToSearchLOAToCancel(final Long lineEstimateId) {
+        final List<String> estimateNumbers = letterOfAcceptanceRepository
+                .findEstimateNumbersToSearchLOAToCancel(lineEstimateId,
+                        WorksConstants.APPROVED.toString());
+        return estimateNumbers;
+    }
+    
 }

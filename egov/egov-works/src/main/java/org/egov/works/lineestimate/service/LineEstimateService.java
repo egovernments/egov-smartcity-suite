@@ -89,7 +89,6 @@ import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateAppropriationRepository;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
-import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.elasticsearch.common.joda.time.DateTime;
@@ -872,15 +871,11 @@ public class LineEstimateService {
         return criteria.list();
     }
     
-    public String checkIfLOAsCreated(final Long id) {
-        LineEstimate lineEstimate = lineEstimateRepository.findById(id);
+    public String checkIfLOAsCreated(final Long lineEstimateId) {
+        List<String> listString = letterOfAcceptanceService.getEstimateNumbersToSearchLOAToCancel(lineEstimateId);
         String estimateNumbers = "";
-        for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            List<WorkOrder> workOrders = letterOfAcceptanceService.findWorkOrderByEstimateNumberAndEgwStatus(
-                    led.getEstimateNumber());
-            for (WorkOrder wo : workOrders) {
-                estimateNumbers += wo.getEstimateNumber() + ", ";
-            }
+        for (String estimateNumber : listString) {
+            estimateNumbers += estimateNumber + ", ";
         }
         if (estimateNumbers.equals(""))
             return "";

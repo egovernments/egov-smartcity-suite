@@ -268,8 +268,8 @@ public class AjaxLineEstimateController {
     }
        
     @RequestMapping(value = "/ajax-checkifloascreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String checkIfLOAsCreated(@RequestParam final Long id) {
-        final String estimateNumbers = lineEstimateService.checkIfLOAsCreated(id);
+    public @ResponseBody String checkIfLOAsCreated(@RequestParam final Long lineEstimateId) {
+        final String estimateNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimateId);
         String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { estimateNumbers }, null);
         if(estimateNumbers.equals(""))
             return "";

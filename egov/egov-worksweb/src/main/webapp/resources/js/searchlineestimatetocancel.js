@@ -152,7 +152,8 @@ function getFormData($form) {
 	$('#btncancel').click(function() {
 		var lineEstimateId = $('input[name=selectCheckbox]:checked').val();
 		if(lineEstimateId == null) {
-			bootbox.alert("Please select a Line Estimate to Cancel");
+			var message = $('#selectLineEstimate').val();
+			bootbox.alert(message);
 		} else {
 			if($('#cancellationReason').val() == 'Others')
 				$('#cancellationRemarks').attr('required', 'required');
@@ -162,7 +163,7 @@ function getFormData($form) {
 			if($("#cancelForm").valid()) {
 				$('#cancelForm #id').val(lineEstimateId);
 					$.ajax({
-						url: "/egworks/lineestimate/ajax-checkifloascreated?id="+lineEstimateId,     
+						url: "/egworks/lineestimate/ajax-checkifloascreated?lineEstimateId="+lineEstimateId,     
 						type: "GET",
 						dataType: "json",
 						success: function (message) {
