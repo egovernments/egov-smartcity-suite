@@ -93,10 +93,10 @@ $(document).ready(function(){
 jQuery('#btnsearch').click(function(e) {
 	var fromDate = '';
 	var toDate = '';
-	if ($('#fromDate').val() != "") {
+	if ($('#milestoneFromDate').val() != "") {
 		fromDate = $('#milestoneFromDate').data('datepicker').date;
 	}
-	if ($('#toDate').val() != "") {
+	if ($('#milestoneToDate').val() != "") {
 		toDate = $('#milestoneToDate').data('datepicker').date;
 	}
 	var flag = true;
