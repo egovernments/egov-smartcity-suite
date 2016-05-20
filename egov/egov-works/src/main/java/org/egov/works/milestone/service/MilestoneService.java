@@ -208,7 +208,7 @@ public class MilestoneService {
             if (searchRequestMilestone.getWorkOrderNumber() != null)
                 criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber()));
             if (searchRequestMilestone.getContractor() != null)
-                criteria.add(Restrictions.eq("contractor.name", searchRequestMilestone.getContractor()));
+                criteria.add(Restrictions.eq("contractor.name", searchRequestMilestone.getContractor()).ignoreCase());
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
