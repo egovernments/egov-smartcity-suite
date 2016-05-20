@@ -84,7 +84,7 @@ public class ComplaintSearchRequestTest {
 		request.setComplaintDate("today");
 
 		Filters filters = request.searchFilters();
-		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 		Date today = new Date();
 		
 		assertThat(filters.getAndFilters().size(), is(1));
