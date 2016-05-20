@@ -67,6 +67,14 @@ $(document).ready(function(){
 		if(value == authorityValue)
 			$(this).attr('selected', 'selected');
 	});
+	
+	var functionId = $('#functionId').val();
+	if (functionId != "") {
+		$('#function option').each(function() {
+			if ($(this).val() == functionId)
+				$(this).prop('selected', true);
+		});
+	}
 
 
 	return showSlumFieldsValue();

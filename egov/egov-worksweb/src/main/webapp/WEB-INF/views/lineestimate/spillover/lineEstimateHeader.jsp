@@ -47,7 +47,7 @@
 			<spring:message code="header.lineestimate" />
 		</div>
 	</div>
-	
+	<form:hidden path="" value="${lineEstimate.function.id }" id="functionId"/>
 	
 	<spring:hasBindErrors name="lineEstimate">
 		<div class="alert alert-danger col-md-10 col-md-offset-1">
