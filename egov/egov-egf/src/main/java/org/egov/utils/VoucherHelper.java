@@ -318,7 +318,7 @@ public class VoucherHelper {
                      "transNumber",
                      transNumber, "vNumGenMode", vNumGenMode, "date", voucherDate, "month", month, "commonsService",
                      financialYearDAO, "dbSequenceGenerator", dbSequenceGenerator, "sequenceNumberGenerator",
-                     sequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
+                     applicationSequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
              fVoucherNumber = (String) scriptService.executeScript(scriptName, scriptContext);
 
         } else
