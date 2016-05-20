@@ -55,18 +55,14 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.stageordernumber" /></th>
-					<th><spring:message code="lbl.stagedescription" /><span
+					<th><spring:message code="lbl.stagedescription" /></th>
+					<th><spring:message code="lbl.percentage.stage" /></th>
+					<th><spring:message code="lbl.schedulestartdate" /></th>
+					<th><spring:message code="lbl.scheduleenddate" /></th>
+					<th><spring:message code="lbl.currentstatus.stage" /><span
 						class="mandatory"></span></th>
-					<th><spring:message code="lbl.percentage" /><span
-						class="mandatory"></span></th>
-					<th><spring:message code="lbl.schedulestartdate" /><span
-						class="mandatory"></span></th>
-					<th><spring:message code="lbl.scheduleenddate" /><span
-						class="mandatory"></span></th>
-					<th><spring:message code="lbl.currentstatus" /><span
-						class="mandatory"></span></th>
-					<th><spring:message code="lbl.completed.percentage" /></th>
-					<th><spring:message code="lbl.actual.percentage" /></th>
+					<th><spring:message code="lbl.completed.percentage.stage" /></th>
+					<th><spring:message code="lbl.actual.percentage.stage" /></th>
 					<th><spring:message code="lbl.completion.date" /></th>
 					<th><spring:message code="lbl.reason.for.delay" /></th>
 				</tr>
@@ -84,6 +80,8 @@
 					</td>
 					<td class='scheduleStartDate_0'>
 					</td>
+					<input type="hidden" name="hiddenScheduleStartDate_0" id="hiddenScheduleStartDate_0" class="hiddenScheduleStartDate_0"
+							value='' />
 					<td class='scheduleEndDate_0'>
 					</td>
 					<input type="hidden" name="hiddenScheduleEndDate_0" id="hiddenScheduleEndDate_0" class="hiddenScheduleEndDate_0"

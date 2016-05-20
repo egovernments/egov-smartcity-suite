@@ -146,12 +146,13 @@ public class TrackMilestoneController {
                                     new String[] {}, null));
                     flag = true;
                 }
-                if (tma.getCompletionDate().after(milestone.getActivities().get(count).getScheduleEndDate())) {
-                    jsonObject.addProperty("reasonForDelay_" + count,
-                            messageSource.getMessage("error.trackmilestone.reasonfordelay.mandatory",
-                                    new String[] {}, null));
-                    flag = true;
-                }
+                if(tma.getCompletionDate() != null)
+                    if (tma.getCompletionDate().after(milestone.getActivities().get(count).getScheduleEndDate())) {
+                        jsonObject.addProperty("reasonForDelay_" + count,
+                                messageSource.getMessage("error.trackmilestone.reasonfordelay.mandatory",
+                                        new String[] {}, null));
+                        flag = true;
+                    }
                 count++;
                 if (flag)
                     break;

@@ -117,6 +117,7 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                     child.addProperty("percentage", ma.getPercentage());
                     child.addProperty("scheduleStartDate", sdf.format(ma.getScheduleStartDate()));
                     child.addProperty("scheduleEndDate", sdf.format(ma.getScheduleEndDate()));
+                    child.addProperty("hiddenScheduleStartDate", sdf2.format(ma.getScheduleStartDate()));
                     child.addProperty("hiddenScheduleEndDate", sdf2.format(ma.getScheduleEndDate()));
                     jsonArray.add(child);
                 }
