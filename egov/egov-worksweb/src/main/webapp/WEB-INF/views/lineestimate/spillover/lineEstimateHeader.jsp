@@ -101,13 +101,12 @@
 					<form:input id="wardInput" path="ward.name" class="form-control" type="text" required="required"/>
 					<form:errors path="ward" cssClass="add-margin error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.location" /><span class="mandatory"></span>
-				</label>
+				<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.location" /></label>
 				<div class="col-sm-3 add-margin">
-					<input type="hidden" id="locationValue" value="${lineEstimate.location.id }"/>
-					<form:select path="location" data-first-option="false" id="locationBoundary" cssClass="form-control" required="required">
+					<form:select path="location" data-first-option="false" id="locationBoundary" cssClass="form-control">
 						<form:option value="">
 							<spring:message code="lbl.select" />
+							<form:options items="${locations}" itemValue="id" itemLabel="name" />
 						</form:option>
 					</form:select>
 					<form:errors path="location" cssClass="add-margin error-msg" />

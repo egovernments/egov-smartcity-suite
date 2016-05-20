@@ -51,7 +51,6 @@ $(document).ready(function(){
 	
 	getLineEstimateDate();
 	$locationId = $('#locationValue').val();
-	$('#wardInput').trigger('blur');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
 	$('#scheme').trigger('change');
@@ -374,37 +373,6 @@ function validateActualEstimateAmount() {
 	    }
 	});
 }
-
-$('#wardInput').blur(function(){
-	   if ($('#ward').val() === '') {
-		   $('#locationBoundary').empty();
-		   $('#locationBoundary').append($('<option>').text('Select from below').attr('value', ''));
-			return;
-		} else {
-			$.ajax({
-				type: "GET",
-				url: "/egworks/lineestimate/ajax-getlocation",
-				cache: true,
-				dataType: "json",
-				data:{'id' : $('#ward').val()}
-			}).done(function(value) {
-				console.log(value);
-				$('#locationBoundary').empty();
-				$('#locationBoundary').append($('<option>').text('Select from below').attr('value', ''));
-				$.each(value, function(index, val) {
-					var selected="";
-					if($locationId)
-					{
-						if($locationId==val.id)
-						{
-							selected="selected";
-						}
-					}
-				    $('#locationBoundary').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
-				});
-			});
-		}
-	});
 
 function disableSlumFields() {
 	var slum = document.getElementById("slum");
