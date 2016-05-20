@@ -37,26 +37,76 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
-
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
+package org.egov.works.abstractestimate.entity;
 
 import java.io.File;
 import java.util.Date;
 
-public class EstimatePhotographs extends BaseModel {
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
+@Entity
+@Table(name = "EGW_ESTIMATE_PHOTOGRAPHS")
+@SequenceGenerator(name = EstimatePhotographs.SEQ_EGW_ESTIMATEPHOTOGRAPHS, sequenceName = EstimatePhotographs.SEQ_EGW_ESTIMATEPHOTOGRAPHS, allocationSize = 1)
+public class EstimatePhotographs extends AbstractAuditable {
 
     private static final long serialVersionUID = -4760202350886149567L;
-    private Double latitude;
-    private Double longitude;
+
+    public static final String SEQ_EGW_ESTIMATEPHOTOGRAPHS = "SEQ_EGW_ESTIMATE_PHOTOGRAPHS";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_ESTIMATEPHOTOGRAPHS, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractestimate", nullable = false)
+    private AbstractEstimate abstractEstimate;
+
+    @NotNull
+    private double latitude;
+
+    @NotNull
+    private double longitude;
+
+    @SafeHtml
+    @Length(max = 1024)
     private String description;
+
+    @NotNull
+    @Temporal(value = TemporalType.DATE)
     private Date dateOfCapture;
-    private AbstractEstimate estimate;
+
     private File fileUpload;
+
+    @NotNull
     private byte[] image;
 
     public EstimatePhotographs() {
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public File getFileUpload() {
@@ -67,12 +117,12 @@ public class EstimatePhotographs extends BaseModel {
         this.fileUpload = fileUpload;
     }
 
-    public AbstractEstimate getEstimate() {
-        return estimate;
+    public AbstractEstimate getAbstractEstimate() {
+        return abstractEstimate;
     }
 
-    public void setEstimate(final AbstractEstimate estimate) {
-        this.estimate = estimate;
+    public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
+        this.abstractEstimate = abstractEstimate;
     }
 
     public byte[] getImage() {
@@ -83,19 +133,19 @@ public class EstimatePhotographs extends BaseModel {
         this.image = image;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLatitude(final Double latitude) {
+    public void setLatitude(final double latitude) {
         this.latitude = latitude;
     }
 
-    public void setLongitude(final Double longitude) {
+    public void setLongitude(final double longitude) {
         this.longitude = longitude;
     }
 

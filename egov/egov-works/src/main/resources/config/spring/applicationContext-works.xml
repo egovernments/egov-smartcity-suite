@@ -82,7 +82,6 @@
 	
 	<bean class="org.egov.works.services.AbstractEstimateService" id="abstractEstimateService"
 		parent="persistenceService" scope="prototype">
-		<property name="estimateNumberGenerator" ref="estimateNumberGenerator" />
 		<property name="budgetNumberGenerator" ref="budgetNumberGenerator" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 		<property name="egovCommon" ref="egovCommon" />
@@ -113,10 +112,6 @@
  -->
 	<bean id="checklistService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.models.EgChecklists" />
-	</bean>
-
-	<bean class="org.egov.works.models.estimate.EstimateNumberGenerator"
-		id="estimateNumberGenerator">
 	</bean>
 
 	<bean class="org.egov.works.models.estimate.BudgetNumberGenerator"
@@ -382,7 +377,7 @@
 	<bean id="estimateAppropriationService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.estimate.AbstractEstimateAppropriation" />
+			value="org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation" />
 	</bean>
 	<!-- <bean id="milestoneTemplateService" parent="persistenceService"
 		scope="prototype">

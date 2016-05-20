@@ -43,9 +43,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -86,8 +84,6 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.models.estimate.AbstractEstimateAppropriation;
-import org.egov.works.models.estimate.EstimatePhotographs;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.NatureOfWork;
@@ -97,7 +93,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_ABSTRACTESTIMATE")
-@Inheritance(strategy = InheritanceType.JOINED) 
+@Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
         @NamedQuery(name = AbstractEstimate.ABSTRACTESTIMATELIST_BY_ID, query = "from AbstractEstimate ab where ab.id in(:param_0)"),
         @NamedQuery(name = AbstractEstimate.REVISION_ESTIMATES_BY_ESTID, query = "from AbstractEstimate ae where ae.parent.id=? and ae.egwStatus.code='APPROVED' order by ae.id"),
@@ -246,19 +242,29 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AbstractEstimateAppropriation.class)
-    private Set<AbstractEstimateAppropriation> abstractEstimateAppropriations = new HashSet<AbstractEstimateAppropriation>();
+    private List<AbstractEstimateAppropriation> abstractEstimateAppropriations = new ArrayList<AbstractEstimateAppropriation>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = FinancialDetail.class)
     private List<FinancialDetail> financialDetails = new ArrayList<FinancialDetail>(0);
 
     @OrderBy("id")
-    @OneToMany(mappedBy = "estimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
-    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
+    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateTechnicalSanction.class)
     private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new ArrayList<EstimateTechnicalSanction>(0);
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     @Required(message = "estimate.name.null")
     @Length(max = 1024, message = "estimate.name.length")
@@ -604,12 +610,12 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return createdDate;
     }
 
-    public Set<AbstractEstimateAppropriation> getAbstractEstimateAppropriations() {
+    public List<AbstractEstimateAppropriation> getAbstractEstimateAppropriations() {
         return abstractEstimateAppropriations;
     }
 
     public void setAbstractEstimateAppropriations(
-            final Set<AbstractEstimateAppropriation> abstractEstimateAppropriations) {
+            final List<AbstractEstimateAppropriation> abstractEstimateAppropriations) {
         this.abstractEstimateAppropriations = abstractEstimateAppropriations;
     }
 
@@ -667,16 +673,6 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setEstimateValue(final BigDecimal estimateValue) {
         this.estimateValue = estimateValue;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public LineEstimateDetails getLineEstimateDetails() {

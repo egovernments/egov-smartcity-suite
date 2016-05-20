@@ -74,13 +74,13 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
-import org.egov.works.models.estimate.AbstractEstimateAppropriation;
+import org.egov.works.abstractestimate.service.EstimateNumberGenerator;
 import org.egov.works.models.estimate.BudgetFolioDetail;
 import org.egov.works.models.estimate.BudgetNumberGenerator;
 import org.egov.works.models.estimate.DepositWorksUsage;
-import org.egov.works.models.estimate.EstimateNumberGenerator;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.estimate.ProjectCodeGenerator;
 import org.egov.works.utils.WorksConstants;
@@ -88,6 +88,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractEstimateService extends PersistenceService<AbstractEstimate, Long> {
     private static final Logger logger = Logger.getLogger(AbstractEstimateService.class);
+
+    @Autowired
     private EstimateNumberGenerator estimateNumberGenerator;
     private BudgetNumberGenerator budgetNumberGenerator;
     @Autowired
@@ -720,15 +722,6 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         }
         return appType;
     }
-
-    public void setEstimateNumberGenerator(final EstimateNumberGenerator estimateNumberGenerator) {
-        this.estimateNumberGenerator = estimateNumberGenerator;
-    }
-
-    /*
-     * public void setProjectCodeService(final PersistenceService<ProjectCode, Long> projectCodeService) { this.projectCodeService
-     * = projectCodeService; } public PersistenceService<ProjectCode, Long> getProjectCodeService() { return projectCodeService; }
-     */
 
     public BudgetGroupDAO getBudgetGroupDAO() {
         return budgetGroupDAO;
