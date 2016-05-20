@@ -41,6 +41,7 @@ package org.egov.commons.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -54,11 +55,18 @@ public class FinancialYearService extends PersistenceService<CFinancialYear, Lon
         this.type = financialYear;
     }
 
+    public List<CFinancialYear> getAll() {
+
+        Query query = getSession()
+                .createQuery(
+                        " from CFinancialYear cfinancialyear order by  cfinancialyear.finYearRange desc");
+        return query.list();
+    }
+
     public CFinancialYear getCurrentFinancialYear() {
 
         Date date = new Date();
         CFinancialYear cFinancialYear = null;
-        String result = "";
         Query query = getSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");

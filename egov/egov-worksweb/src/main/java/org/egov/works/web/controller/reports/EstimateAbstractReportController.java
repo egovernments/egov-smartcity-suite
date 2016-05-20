@@ -102,7 +102,7 @@ public class EstimateAbstractReportController {
     }
 
     private void setDropDownValues(final Model model) {
-        model.addAttribute("financialyears", financialYearService.findAll());
+        model.addAttribute("financialyears", financialYearService.getAll());
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("subSchemes", Collections.emptyList());
