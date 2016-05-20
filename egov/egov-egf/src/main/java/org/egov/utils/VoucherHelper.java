@@ -84,7 +84,7 @@ import com.exilant.exility.common.TaskFailedException;
  */
 public class VoucherHelper {
     private static final Logger LOGGER = Logger.getLogger(VoucherHelper.class);
-    public static final String DEFAULT_SEQUENCE_PREFIX = "SQ";
+    public static final String DEFAULT_SEQUENCE_PREFIX = "SQ_";
     @SuppressWarnings("unchecked")
     private PersistenceService persistenceService;
     private EisCommonService eisCommonService;
