@@ -422,7 +422,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                                     .equals(WaterTaxConstants.RECONNECTIONCONNECTION))
                         return "redirect:/application/ReconnacknowlgementNotice?pathVar="
                                 + waterConnectionDetails.getApplicationNumber();
-                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) && waterTaxUtils.isDigitalSignatureEnabled()) { // Sign
+                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) ) { // Sign
                         WaterConnectionDetails upadtedWaterConnectionDetails = null;
                         if (waterConnectionDetails.getApplicationType().getCode()
                                 .equals(WaterTaxConstants.NEWCONNECTION)
@@ -479,12 +479,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 upadtedWaterConnectionDetails.getApplicationNumber());
                         session.setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER,
                                 fileStoreIdsApplicationNoMap);
+                        model.addAttribute("isDigitalSignatureEnabled", waterTaxUtils.isDigitalSignatureEnabled());
                         return "newConnection-digitalSignatureRedirection";
                     } 
-                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) && !waterTaxUtils.isDigitalSignatureEnabled()) {
-                        waterConnectionDetails.setWorkOrderDate(new Date());
-                        waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
-                    }
                     else
                         waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                                 approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,

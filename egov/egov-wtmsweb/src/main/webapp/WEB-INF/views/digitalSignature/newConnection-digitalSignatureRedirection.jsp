@@ -42,15 +42,23 @@
 <html>
 	<head>
 		<title>Digital Signature</title>
+		<input type="hidden" id="isDigitalSignatureEnabled" value="${isDigitalSignatureEnabled}"/>
 		<script type="text/javascript">
 
 	 	jQuery(document).ready( function() {
 	 		var fileStoreIds = '${fileStoreIds}';
 	 		var ulbCode = '${ulbCode}';
 	 		var callBackUrl = '/wtms/digitalSignature/waterTax/transitionWorkflow';
+	 		var actionUrl = null;
+	 		var isDigitalSignatureEnabled = $('#isDigitalSignatureEnabled').val();
+			if (isDigitalSignatureEnabled) {
+				actionUrl = '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=WTMS&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl;
+			} else {
+				actionUrl = '/wtms/digitalSignature/waterTax/transitionWorkflow?fileStoreId='+fileStoreIds;
+			}
 			jQuery('<form>.').attr({
 				method: 'post',
-				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=WTMS&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
+				action: actionUrl,
 				target: '_self'
 			})
 			.appendTo(document.body).submit();
