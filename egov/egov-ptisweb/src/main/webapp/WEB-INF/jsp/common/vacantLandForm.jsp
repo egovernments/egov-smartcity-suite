@@ -42,7 +42,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
 	
 	<tr>
-	    <th class="bluebgheadtd" style="height: 45px;"><s:text name="surveyNumber" /><span class="mandatory1">*</span></th>
+	    <th class="bluebgheadtd"><s:text name="surveyNumber" /><span class="mandatory1">*</span></th>
 	    <th class="bluebgheadtd"><s:text name="pattaNumber" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="vacantLandArea" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="MarketValue" /><span class="mandatory1">*</span></th>

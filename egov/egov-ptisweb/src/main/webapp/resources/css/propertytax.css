@@ -826,3 +826,15 @@ tbody tr.shown td.details-control {
 	color: #F2351F;
 	font-family: semibold;
 }
+
+.table-fixed
+{
+	table-layout: fixed;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.overflow-x-scroll
+{
+	overflow-x:scroll;
+}
