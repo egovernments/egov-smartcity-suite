@@ -66,8 +66,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CH
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -353,8 +351,7 @@ public class PropertyTaxCollection extends TaxCollection {
         String installmentDesc = null;
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         for (final EgDemandDetails dmdDtls : demandDetailList)
-            if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0
-            		|| dmdDtls.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)) {
+            if (dmdDtls.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 
                 dmdRsn = dmdDtls.getEgDemandReason();
                 installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
@@ -380,15 +377,9 @@ public class PropertyTaxCollection extends TaxCollection {
                     final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                     final String reason = desc[0].trim();
                     final String instDesc = desc[1].trim();
-                    
-                    if (reason.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE)) {
-						demandDetail = installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription())
-								.get(reason);
-					} else {
-						demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
-					}
-                    
-                    if (rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_PENALTY)) {
+                    demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
+                    if (rcptAccInfo.getGlCode().equalsIgnoreCase(
+                    /* GLCODEMAP_FOR_CURRENTTAX.get( */PropertyTaxConstants.GLCODE_FOR_PENALTY/* ) */)) {
 
                         if (demandDetail == null)
                             throw new ApplicationRuntimeException("Demand Details for reason " + reason
@@ -396,26 +387,6 @@ public class PropertyTaxCollection extends TaxCollection {
                         else
                             demandDetail.addCollected(rcptAccInfo.getCrAmount());
 
-                    } else if(rcptAccInfo.getGlCode().equalsIgnoreCase(PropertyTaxConstants.GLCODE_FOR_ADVANCE)){
-                    	if (demandDetail != null) {
-							demandDetail.setAmtCollected(demandDetail.getAmtCollected().add(rcptAccInfo.getCrAmount()));
-						} else {
-							demandDetail = insertAdvanceCollection(DEMANDRSN_CODE_ADVANCE,rcptAccInfo.getCrAmount(), 
-									currInstallments.get(CURRENTYEAR_SECOND_HALF));
-
-							demand.addEgDemandDetails(demandDetail);
-							persistenceService.getSession().flush();
-
-							if (installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)) == null) {
-								Map<String, EgDemandDetails> reasonAndDemandDetail = new HashMap<String, EgDemandDetails>();
-								reasonAndDemandDetail.put(DEMANDRSN_STR_ADVANCE, demandDetail);
-								installmentWiseDemandDetailsByReason.put(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription(),
-										reasonAndDemandDetail);
-							} else {
-								installmentWiseDemandDetailsByReason.get(currInstallments.get(CURRENTYEAR_SECOND_HALF).getDescription()).put(
-										DEMANDRSN_STR_ADVANCE, demandDetail);
-							}
-						}
                     } else {
                         demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
                         if (rebateAmount.compareTo(BigDecimal.ZERO) > 0
@@ -462,7 +433,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
                     demandReasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster();
 
-                    if (reason.equalsIgnoreCase(demandReasonMaster.getReasonMaster()))
+                    if (reason.equals(demandReasonMaster.getReasonMaster()))
                         if (reason.equalsIgnoreCase(DEMANDRSN_CODE_ADVANCE)
                                 || installment.equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()
                                         .getDescription())) {

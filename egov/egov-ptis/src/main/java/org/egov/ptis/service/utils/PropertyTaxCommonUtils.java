@@ -58,7 +58,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -210,20 +209,5 @@ public class PropertyTaxCommonUtils {
         List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 APPCONFIG_DIGITAL_SIGNATURE);
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
-    }
-
-    /**
-     * Fetches the list of installments for advance collections
-     * @param startDate
-     * @return List of Installment
-     */
-    public List<Installment> getAdvanceInstallmentsList(Date startDate){
-    	List<Installment> advanceInstallments = new ArrayList<Installment>();
-    	String query = "select inst from Installment inst where inst.module.name = '" + PTMODULENAME
-                + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
-    	advanceInstallments = entityManager.unwrap(Session.class).createQuery(query)
-                .setParameter("startdate", startDate)
-                .setMaxResults(PropertyTaxConstants.MAX_ADVANCES_ALLOWED).list();
-    	return advanceInstallments;
     }
 }
