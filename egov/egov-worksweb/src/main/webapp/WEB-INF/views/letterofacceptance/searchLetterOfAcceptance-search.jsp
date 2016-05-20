@@ -43,8 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
-<!-- Need to change title for search criteria and result, add auto populate for the fields -->
+<input type="hidden" value="<spring:message code='error.letterofacceptance.select' />" id='selectLOA'>
 <form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestLetterOfAcceptance" id="searchRequestLetterOfAcceptance" class="form-horizontal form-groups-bordered">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">

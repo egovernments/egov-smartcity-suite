@@ -91,6 +91,23 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
+	var trackMilestoneFromDate = '';
+	var trackMilestoneToDate = '';
+	if ($('#trackMilestoneFromDate').val() != "") {
+		trackMilestoneFromDate = $('#trackMilestoneFromDate').data('datepicker').date;
+	}
+	if ($('#trackMilestoneToDate').val() != "") {
+		trackMilestoneToDate = $('#trackMilestoneToDate').data('datepicker').date;
+	}
+	var flag = true;
+	if (trackMilestoneToDate != '' && trackMilestoneFromDate != '') {
+		if (trackMilestoneFromDate > trackMilestoneToDate) {
+			flag = false;
+			var message = document.getElementById('validateDate').value;
+			bootbox.alert(message);
+		}
+	}
+	if(flag)
 	callAjaxSearch();
 });
 
@@ -195,5 +212,6 @@ function openLOA(workOrderId) {
 }
 
 function openMilestone(milestoneId) {
-	window.open("/egworks/milestone/viewmilestone/" + milestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	var id=milestoneId;
+	window.open("/egworks/milestone/viewtrackmilestone/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

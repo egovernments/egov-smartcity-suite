@@ -52,16 +52,16 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.milestonetemplatecode" /></label>
 			<div class="col-sm-3 add-margin">
-			<input name="code" id="templateCode" class="form-control" placeholder="Type first 3 letters of Template Code"/>
+			<input name="code" id="templateCode" class="form-control" placeholder="Type first 3 letters of Template Code" />
 			<input type="hidden" value="" id="milestoneTemplateId" />	
 			</div>
+			<button type='button' class='btn btn-primary' id="submitMilestoneDetails">
+					<spring:message code='lbl.submit' />
+			</button>
 		</div>
 	</div>
 	
 	<div align="center">
-		<button type='button' class='btn btn-primary' id="submitMilestoneDetails">
-			<spring:message code='lbl.submit' />
-		</button>
 		<button type='button' class='btn btn-primary' id="searchMilestoneTemplate">
 			<spring:message code='lbl.searchmilestonetemplate' />
 		</button>

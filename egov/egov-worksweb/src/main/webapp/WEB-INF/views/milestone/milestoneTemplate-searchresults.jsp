@@ -50,7 +50,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.selectonly" /></th>
-					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.slNo" /></th>
 					<th><spring:message code="lbl.templatecode" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
@@ -60,7 +60,7 @@
 			<tbody class="no-pointer">
 			</tbody>
 		</table>
-		<div class="col-sm-12 text-center">
+		<div class="col-sm-12 text-center" style="display: none;" id="selectMilestoneTemplate">
 			<button id="milestoneDetails" type="button" class="btn btn-primary"><spring:message code="lbl.selectonly" /></button>
 		</div>
 	</div>

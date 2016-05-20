@@ -72,7 +72,7 @@
 						<c:out default="N/A" value="${milestoneTemplate.description}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.templatedescription" />
+						<spring:message code="lbl.status" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:choose>
@@ -94,7 +94,7 @@
 						<c:out default="N/A" value="${milestoneTemplate.typeOfWork.code}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.templatedescription" />
+						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
@@ -128,8 +128,8 @@
 										value="${milestoneDtls.stageOrderNo}"></c:out></td>
 								<td><c:out default="N/A"
 										value="${milestoneDtls.description}"></c:out></td>
-								<td><c:out default="N/A"
-										value="${milestoneDtls.percentage}"></c:out></td>
+								<td align="right"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+							minFractionDigits="2" value="${milestoneDtls.percentage}" />
 							</tr>
 						</c:forEach>
 					</tbody>

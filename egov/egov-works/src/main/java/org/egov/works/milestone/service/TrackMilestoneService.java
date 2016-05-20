@@ -119,4 +119,8 @@ public class TrackMilestoneService {
     public TrackMilestone save(final TrackMilestone trackMilestone) {
         return trackMilestoneRepository.save(trackMilestone);
     }
+    
+    public TrackMilestone getTrackMilestoneByMilestoneId(final Long id) {
+        return trackMilestoneRepository.findByMilestone_Id(id);
+    }
 }

@@ -52,5 +52,7 @@ public interface TrackMilestoneRepository extends JpaRepository<TrackMilestone, 
 
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(tm.milestone.workOrderEstimate.workOrder.estimateNumber) from TrackMilestone as tm where led.estimateNumber = tm.milestone.workOrderEstimate.workOrder.estimateNumber and tm.status.code = :status)")
     List<String> findWorkIdentificationNumbersTrackMilestone(@Param("code") String code, @Param("status") String status);
+    
+    TrackMilestone findByMilestone_Id(final Long id);
 
 }

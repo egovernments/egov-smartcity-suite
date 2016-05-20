@@ -39,6 +39,7 @@
  */
 $subTypeOfWorkId = 0;
 jQuery('#btnsearch').click(function(e) {
+	$('#selectMilestoneTemplate').hide();
 	if($('#milestoneTemplate').valid())
 		callAjaxSearch();
 });
@@ -77,6 +78,7 @@ function callAjaxSearch() {
 					if (data.code != null)
 						$('td:eq(0)',row).html('<input type="radio" data='+ data.milestoneId +' name="selectCheckbox" value="'+ data.milestoneId +'"/>');
 					$('td:eq(1)', row).html(index + 1);
+					$('#selectMilestoneTemplate').show();
 					if (data.code != null)
 						$('td:eq(2)', row).html(
 								'<a href="javascript:void(0);" onclick="openMilestoneTemplate(\''
@@ -108,7 +110,7 @@ function callAjaxSearch() {
 }
 
 function openMilestoneTemplate(milestoneId) {
-	window.open("/egworks/milestone/view/" + milestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	window.open("/egworks/milestone/viewmilestonetemplate/" + milestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 $('#typeofwork').blur(function(){
