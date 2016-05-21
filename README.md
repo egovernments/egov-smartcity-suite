@@ -21,11 +21,12 @@ FAQ related to various deployment and development issues are discussed [here][FA
 
 #### Prerequisites
 
-* Install [maven >= v3.2.x][Maven]
-* Install [PostgreSQL >= v9.3 ][PostgreSQL]
-* Install [Elastic Search >= v1.7.1][Elastic Search]
-* Install [Jboss Wildfly v9.0.x][Wildfly Customized]
-* [Git][] and [JDK 8 update 66 or later][JDK8 build]
+* Install [maven v3.2.x][Maven]
+* Install [PostgreSQL v9.4][PostgreSQL]
+* Install [Elastic Search v2.1.2][Elastic Search]
+* Install [Jboss Wildfly v10.0.x][Wildfly Customized]
+* Install [Git 2.8.3][Git]
+* Install [JDK 8 update 92 or later][JDK8 build]
 
 #### Database Setup
 Create a database and user in postgres
@@ -209,10 +210,11 @@ This section gives more details regarding developing and contributing to eGov su
 
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
 * Install [maven >= v3.2.x][Maven]
-* Install [PostgreSQL >= v9.3 ][PostgreSQL]
-* Install [Elastic Search >= v1.7.1][Elastic Search]
-* Install [Jboss Wildfly v9.0.x][Wildfly Customized]
-* [Git][] and [JDK 8 update 66 or later][JDK8 build]
+* Install [PostgreSQL >= v9.4 ][PostgreSQL]
+* Install [Elastic Search >= v2.1.2][Elastic Search]
+* Install [Jboss Wildfly v10.0.x][Wildfly Customized]
+* Install [Git 2.8.3][Git]
+* Install [JDK 8 update 92 or later][JDK8 build]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
 
@@ -245,26 +247,27 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 V20150918161507__egi_initial_data.sql
 
 ```
-For More details refer [Flyway]
+For more details refer [Flyway]
 
 #  
 Note: This system is supported
 
 OS:-
-* Linux
+* Linux (Recommended)
 * Mac
 * Windows (If Redis server standalone installed). 
 
 Browser:-
 * Chrome (Recommended)
 * Firefox
+* Internet Explorer
 
-[Git]: http://help.github.com/set-up-git-redirect
+[Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://downloads.egovernments.org/wildfly-9.0.2.Final.zip
+[Wildfly Customized]: http://downloads.egovernments.org/wildfly-10.0.0.Final.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
-[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.1.zip
+[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.1.2.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
 [eGov Tools Repository]: http://downloads.egovernments.org/
