@@ -51,7 +51,7 @@
 	 		var callBackUrl = '/wtms/digitalSignature/waterTax/transitionWorkflow';
 	 		var actionUrl = null;
 	 		var isDigitalSignatureEnabled = $('#isDigitalSignatureEnabled').val();
-			if (isDigitalSignatureEnabled) {
+			if (isDigitalSignatureEnabled == 'true') {
 				actionUrl = '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=WTMS&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl;
 			} else {
 				actionUrl = '/wtms/digitalSignature/waterTax/transitionWorkflow?fileStoreId='+fileStoreIds;

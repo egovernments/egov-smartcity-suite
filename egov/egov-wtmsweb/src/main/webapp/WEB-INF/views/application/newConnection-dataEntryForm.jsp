@@ -54,6 +54,7 @@
 			<form:hidden path="id" id="id" value="${waterConnectionDetails.id}"/>
 			<form:hidden path="legacy" id="legacy" value="true"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
+			
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="true"> 
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -121,10 +122,10 @@
 						$('#previousReading').val('');
 						$('#currentcurrentReading').val('');
 						$('#existreadingDate').val('');
-						
+						$('#monthlyFee').attr('required', 'required');
 					}
 				else {
-					
+					$('#monthlyFee').removeAttr('required');
 					$('#existmeterCost').attr('required', 'required');
 					$('#existmeterName').attr('required', 'required');
 					$('#existmeterNo').attr('required', 'required');
