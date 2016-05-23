@@ -135,10 +135,11 @@ public class TransferClosingBalanceAction extends BaseFormAction {
                 throw new ValidationException(errors);
             }
 
-            if (!validatePreviousFinancialYear())
-                throw new ValidationException("Previous Financial Year is Open, it can not be closed",
-                        "Previous Financial Year is Open, it can not be closed");
+            /*if (!validatePreviousFinancialYear())
+                throw new ValidationException("Previous Financial Year is Open, it can not be transferred",
+                        "Previous Financial Year is Open, it can not be transferred");*/
 
+            
             if (nextFinancialYear == null || !nextFinancialYear.getIsActive())
                 throw new ValidationException("Next Financial Year is not active",
                         "Next Financial Year is not active");
