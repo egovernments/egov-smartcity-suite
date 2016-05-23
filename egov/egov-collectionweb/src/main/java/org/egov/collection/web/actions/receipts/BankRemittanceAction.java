@@ -55,6 +55,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.service.CollectionRemittanceService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
@@ -64,6 +65,7 @@ import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -71,6 +73,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @Results({
     @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
@@ -84,6 +87,8 @@ public class BankRemittanceAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
     private List<HashMap<String, Object>> paramList = null;
+    @Autowired
+    private ApplicationProperties applicationProperties;
     private ReceiptHeaderService receiptHeaderService;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
     private List<ReceiptHeader> voucherHeaderValues = new ArrayList(0);
@@ -101,7 +106,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private Integer branchId;
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
     private Boolean isListData = false;
-
     // Added for Manual Work Flow
     private Integer positionUser;
     private Integer designationId;
@@ -117,6 +121,8 @@ public class BankRemittanceAction extends BaseFormAction {
     private List<CollectionBankRemittanceReport> bankRemittanceList;
     private String bank;
     private String bankAccount;
+    @Autowired
+    private ApplicationContext beanProvider;
 
     /**
      * @param collectionsUtil
@@ -207,7 +213,7 @@ public class BankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/bankRemittance-create")
     @ValidationErrorPage(value = NEW)
-    public String create() {
+    public String create() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         final long startTimeMillis = System.currentTimeMillis();
         BigInteger accountNumber = null;
         String serviceName = "";
@@ -236,7 +242,12 @@ public class BankRemittanceAction extends BaseFormAction {
                 && accountNumber.intValue() != accountNumberId)
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
-        voucherHeaderValues = receiptHeaderService.createBankRemittance(getServiceNameArray(),
+        Class<?> service = Class.forName(applicationProperties.getProperty("collection.remittance.client.impl.class"));
+        // getting the entity type service.
+        String serviceClassName = service.getSimpleName();
+        String remittanceService =  Character.toLowerCase(serviceClassName.charAt(0)) + serviceClassName.substring(1).substring(0,serviceClassName.length()-5);
+        CollectionRemittanceService collectionRemittanceService=(CollectionRemittanceService)beanProvider.getBean(remittanceService);
+        voucherHeaderValues = collectionRemittanceService.createBankRemittance(getServiceNameArray(),
                 getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
                 getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
                 accountNumberId, positionUser, getReceiptNumberArray());
