@@ -403,19 +403,18 @@
 									&nbsp;
 								</div>
 							</display:column>
-
+							<s:if test="showCardAndOnlineColumn">
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd" title="Total Card Collection"
 								style="width:10%;text-align: center">
 								<div align="center">
 									<c:if
-										test="${not empty currentRow.SERVICETOTALCARDPAYMENTAMOUNT}">
+										test="${not empty currentRow.SERVICETOTALCARDPAYMENTAMOUNT && showCardAndOnlineColumn}">
 										<c:out value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
 									</c:if>
 									&nbsp;
 								</div>
 							</display:column>
-
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd" title="Total Online Collection"
 								style="width:10%;text-align: center">
@@ -427,7 +426,7 @@
 									&nbsp;
 								</div>
 							</display:column>
-
+							</s:if>
 						</display:table>
 					</div>
 					<br />

@@ -40,6 +40,7 @@
 
 package org.egov.collection.service;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
@@ -565,6 +567,182 @@ public class CollectionRemittanceServiceImpl extends CollectionRemittanceService
 
     }
 
+
+    /**
+     * Method to find all the Cash,Cheque and DD type instruments with status as :new and
+     *
+     * @return List of HashMap
+     */
+    @Override
+    public List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(String boundaryIdList,
+            String serviceCodes, String fundCodes) {
+
+        final List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
+        // TODO: Fix the sum(ih.instrumentamount) the amount is wrong because of
+        // the ujl.boundary in (" + boundaryIdList + ")"
+        final String queryBuilder = "SELECT sum(ih.instrumentamount) as INSTRUMENTMAOUNT,date(ch.RECEIPTDATE) AS RECEIPTDATE,"
+                + "sd.NAME as SERVICENAME,it.TYPE as INSTRUMENTTYPE,fnd.name AS FUNDNAME,dpt.name AS DEPARTMENTNAME,"
+                + "fnd.code AS FUNDCODE,dpt.code AS DEPARTMENTCODE from EGCL_COLLECTIONHEADER ch,"
+                + "EGF_INSTRUMENTHEADER ih,EGCL_COLLECTIONINSTRUMENT ci,EGCL_SERVICEDETAILS sd,"
+                + "EGF_INSTRUMENTTYPE it,EGCL_COLLECTIONMIS cm,FUND fnd,EG_DEPARTMENT dpt";
+
+        final String whereClauseBeforInstumentType = " where ch.id=cm.collectionheader AND "
+                + "fnd.id=cm.fund AND dpt.id=cm.department and ci.INSTRUMENTHEADER=ih.ID and "
+                + "ch.SERVICEDETAILS=sd.ID and ch.ID=ci.COLLECTIONHEADER and ih.INSTRUMENTTYPE=it.ID and ";
+
+        final String whereClauseForServiceAndFund = " sd.code in (" + serviceCodes + ")" + " and fnd.code in ("
+                + fundCodes + ")" + " and ";
+
+        final String whereClause = " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
+                + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER + "' " + "and description='"
+                + CollectionConstants.INSTRUMENT_NEW_STATUS
+                + "') and ih.ISPAYCHEQUE='0' and ch.STATUS=(select id from egw_status where " + "moduletype='"
+                + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
+                + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') ";
+
+        final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
+        final String orderBy = " order by RECEIPTDATE";
+
+        /**
+         * Query to get the collection of the instrument types Cash,Cheque,DD & Card for bank remittance
+         */
+        final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",egeis_jurisdiction ujl"
+                + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('"
+                + CollectionConstants.INSTRUMENTTYPE_CASH + "','" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "',"
+                + "'" + CollectionConstants.INSTRUMENTTYPE_DD + "','" + CollectionConstants.INSTRUMENTTYPE_CARD + "') "
+                + whereClause + "AND ch.CREATEDBY=ujl.employee and ujl.boundary in (" + boundaryIdList + ")"
+                + groupByClause);
+
+        /**
+         * If the department of login user is AccountCell .i.e., Department Code-'A',then this user will be able to remit online
+         * transaction as well. All the online receipts created by 'citizen' user will be remitted by Account Cell user.
+         */
+        final User citizenUser = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
+
+        if (boundaryIdList != null && citizenUser != null) {
+            final String queryStringForOnline = " union " + queryBuilder + whereClauseBeforInstumentType
+                    + whereClauseForServiceAndFund + "it.TYPE='" + CollectionConstants.INSTRUMENTTYPE_ONLINE + "'"
+                    + whereClause + "AND ch.CREATEDBY=" + citizenUser.getId() + groupByClause;
+
+            queryStringForCashChequeDDCard.append(queryStringForOnline);
+        }
+
+        final Query query = receiptHeaderService.getSession().createSQLQuery(queryStringForCashChequeDDCard.toString() + orderBy);
+
+        final List<Object[]> queryResults = query.list();
+
+        for (int i = 0; i < queryResults.size(); i++) {
+            final Object[] arrayObjectInitialIndex = queryResults.get(i);
+            HashMap<String, Object> objHashMap = new HashMap<String, Object>(0);
+
+            if (i == 0) {
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_RECEIPTDATE, arrayObjectInitialIndex[1]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICENAME, arrayObjectInitialIndex[2]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDNAME, arrayObjectInitialIndex[4]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTNAME, arrayObjectInitialIndex[5]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDCODE, arrayObjectInitialIndex[6]);
+                objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE, arrayObjectInitialIndex[7]);
+
+                if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
+                            arrayObjectInitialIndex[0]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
+                }
+                if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
+                        || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT,
+                            arrayObjectInitialIndex[0]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
+                }
+                if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT,
+                            arrayObjectInitialIndex[0]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
+                }
+                if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
+                            arrayObjectInitialIndex[0]);
+                }
+            } else {
+                final int checknew = receiptHeaderService.checkIfMapObjectExist(paramList, arrayObjectInitialIndex);
+                if (checknew == -1) {
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_RECEIPTDATE, arrayObjectInitialIndex[1]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICENAME, arrayObjectInitialIndex[2]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDNAME, arrayObjectInitialIndex[4]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTNAME, arrayObjectInitialIndex[5]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_FUNDCODE, arrayObjectInitialIndex[6]);
+                    objHashMap.put(CollectionConstants.BANKREMITTANCE_DEPARTMENTCODE, arrayObjectInitialIndex[7]);
+
+                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
+                                arrayObjectInitialIndex[0]);
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
+                    }
+                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
+                            || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT,
+                                arrayObjectInitialIndex[0]);
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
+                    }
+                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CARD)) {
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT,
+                                arrayObjectInitialIndex[0]);
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
+                    }
+                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
+                                arrayObjectInitialIndex[0]);
+                    }
+                } else {
+                    objHashMap = paramList.get(checknew);
+
+                    paramList.remove(checknew);
+
+                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CASH))
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
+                                arrayObjectInitialIndex[0]);
+                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
+                            || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+                        BigDecimal existingAmount = BigDecimal.ZERO;
+                        if (objHashMap.get(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT) != "")
+                            existingAmount = new BigDecimal(objHashMap.get(
+                                    CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT).toString());
+                        existingAmount = existingAmount.add(new BigDecimal(arrayObjectInitialIndex[0].toString()));
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, existingAmount);
+                    }
+                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CARD))
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT,
+                                arrayObjectInitialIndex[0]);
+                    if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
+                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
+                                arrayObjectInitialIndex[0]);
+                }
+            }
+            if (objHashMap.get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE) != null
+                    && objHashMap.get(CollectionConstants.BANKREMITTANCE_SERVICENAME) != null)
+                paramList.add(objHashMap);
+        }
+        return paramList;
+    }
+    
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
     }

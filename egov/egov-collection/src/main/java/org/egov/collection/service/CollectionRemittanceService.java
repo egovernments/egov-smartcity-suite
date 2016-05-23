@@ -41,6 +41,7 @@
 package org.egov.collection.service;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 import org.egov.collection.entity.ReceiptHeader;
@@ -53,4 +54,7 @@ public abstract class CollectionRemittanceService implements Serializable {
             final String[] totalOnlineAmount, final String[] receiptDateArray, final String[] fundCodeArray,
             final String[] departmentCodeArray, final Integer accountNumberId, final Integer positionUser,
             final String[] receiptNumberArray);
+    
+    public abstract List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(final String boundaryIdList,
+            final String serviceCodes, final String fundCodes);
 }
