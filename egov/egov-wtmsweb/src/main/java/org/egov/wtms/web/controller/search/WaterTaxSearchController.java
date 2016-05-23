@@ -49,8 +49,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Document;
 import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
@@ -114,8 +114,8 @@ public class WaterTaxSearchController {
         String cscUserRole = "";
         User currentUser = null;
 
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
 
@@ -130,8 +130,8 @@ public class WaterTaxSearchController {
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
-        if (EgovThreadLocals.getUserId() != null) {
-            final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
             for (final Role userrole : currentUser.getRoles())
                 if (userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
                     citizenrole = Boolean.TRUE;
@@ -152,8 +152,8 @@ public class WaterTaxSearchController {
     public String getUlbOperatorUserRole() {
         String userRole = "";
         User currentUser = null;
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
@@ -172,8 +172,8 @@ public class WaterTaxSearchController {
         String userRole = "";
         User currentUser = null;
 
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
@@ -193,8 +193,8 @@ public class WaterTaxSearchController {
         String userRole = "";
         User currentUser = null;
 
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
@@ -218,8 +218,8 @@ public class WaterTaxSearchController {
         User currentUser = null;
         waterTaxUtils.getUserRolesForLoggedInUser();
 
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
@@ -240,8 +240,8 @@ public class WaterTaxSearchController {
     public String getOperatorUserRole() {
         String userRole = "";
         User currentUser = null;
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
@@ -256,8 +256,8 @@ public class WaterTaxSearchController {
     public String getBillOperatorUserRole() {
         String userRole = "";
         User currentUser = null;
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())
@@ -281,7 +281,7 @@ public class WaterTaxSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
 
         final Sort sort = Sort.by().field("common.createdDate", SortOrder.DESC);

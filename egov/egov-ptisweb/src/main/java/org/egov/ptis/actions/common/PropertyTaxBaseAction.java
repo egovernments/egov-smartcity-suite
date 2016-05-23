@@ -52,12 +52,12 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -617,7 +617,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertycreate.sms", args);
                     if (emailid != null) {
-                        args.add(EgovThreadLocals.getMunicipalityName());
+                        args.add(ApplicationThreadLocals.getMunicipalityName());
                         emailSubject = getText("msg.newpropertycreate.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
@@ -627,21 +627,21 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
                     if (emailid != null) {
-                        args.add(EgovThreadLocals.getMunicipalityName());
+                        args.add(ApplicationThreadLocals.getMunicipalityName());
                         emailSubject = getText("msg.alterAssessmentForward.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.alterAssessmentForward.email", args);
                     }
                 } else if (APPLICATION_TYPE_GRP.equals(applicationType)) {
                     smsMsg = getText("msg.grpcreate.sms", args);
-                    args.add(EgovThreadLocals.getMunicipalityName());
+                    args.add(ApplicationThreadLocals.getMunicipalityName());
                     emailSubject = getText("msg.grpcreate.email.subject", new String[] { property.getApplicationNo() });
                     emailBody = getText("msg.grpcreate.email", args);
 
                 }
             } else if (propertyState.getValue().endsWith(WF_STATE_REJECTED)) {
                 args.add(property.getApplicationNo());
-                args.add(EgovThreadLocals.getMunicipalityName());
+                args.add(ApplicationThreadLocals.getMunicipalityName());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertyreject.sms", args);
@@ -669,7 +669,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 args.add(property.getBasicProperty().getUpicNo());
                 args.add(demandCollMap.get(CURR_FIRSTHALF_DMD_STR).add(demandCollMap.get(ARR_DMD_STR)).toString());
                 args.add(DateUtils.getFormattedDate(property.getBasicProperty().getPropOccupationDate(), "dd/MM/yyyy"));
-                args.add(EgovThreadLocals.getMunicipalityName());
+                args.add(ApplicationThreadLocals.getMunicipalityName());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertyapprove.sms", args);

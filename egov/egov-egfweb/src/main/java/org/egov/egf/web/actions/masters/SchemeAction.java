@@ -50,7 +50,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -182,7 +182,7 @@ public class SchemeAction extends BaseFormAction {
     public String edit() {
         try {
         	scheme.setLastModifiedDate(new Date());
-        	scheme.setLastModifiedBy((User)schemeService.getSession().load(User.class, EgovThreadLocals.getUserId()));
+        	scheme.setLastModifiedBy((User)schemeService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
             LOGGER.error("ValidationException in creating Scheme" + e.getMessage());
@@ -207,7 +207,7 @@ public class SchemeAction extends BaseFormAction {
 
         try {
         	scheme.setCreatedDate(new Date());
-        	scheme.setCreatedBy((User)schemeService.getSession().load(User.class, EgovThreadLocals.getUserId()));
+        	scheme.setCreatedBy((User)schemeService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
             LOGGER.error("ValidationException in create Scheme" + e.getMessage());

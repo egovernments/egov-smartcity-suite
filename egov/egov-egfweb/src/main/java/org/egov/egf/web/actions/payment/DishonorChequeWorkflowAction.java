@@ -62,8 +62,8 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -229,7 +229,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
 
     public void populateWorkflowEntities() {
         approverDepartmentList = persistenceService.findAllBy("from Department order by deptName");
-        eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
+        eisCommonService.getEmployeeByUserId(ApplicationThreadLocals.getUserId());
         desgnationList = persistenceService.findAllBy("from Designation where name=?", "ACCOUNTS OFFICER");
         addDropdownData("approverDepartmentList", approverDepartmentList);
         addDropdownData("desgnationList", desgnationList);
@@ -305,7 +305,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                 " iod.instrumentHeaderId=:instrumentHeaderId ";
         final Query instOtherDetailUpdateQuery = persistenceService.getSession().createQuery(instOtherDetailUpdate.toString());
         instOtherDetailUpdateQuery.setString("refNo", dishonorChequeView.getBankReferenceNumber());
-        instOtherDetailUpdateQuery.setLong("modifiedby", EgovThreadLocals.getUserId().intValue());
+        instOtherDetailUpdateQuery.setLong("modifiedby", ApplicationThreadLocals.getUserId().intValue());
         instOtherDetailUpdateQuery.setDate("modifiedDate", new Date());
         instOtherDetailUpdateQuery.setDate("InstrumentUpdatedDate", dishonorChequeView.getTransactionDate());
         instOtherDetailUpdateQuery.setLong("instrumentHeaderId", dishonorChequeView.getInstrumentHeader().getId());
@@ -321,7 +321,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         Integer userId = null;   
         if (actionNm.equalsIgnoreCase(APPROVE)) {
             userId=   parameters.get("approverUserId") != null ? Integer.valueOf(parameters.get("approverUserId")[0]) :
-                EgovThreadLocals.getUserId().intValue();
+                ApplicationThreadLocals.getUserId().intValue();
             createReversalVoucher();
             updateInstrumentDetailsAfterDishonor();
             addActionMessage("Cheque Dishonored Succesfully");
@@ -366,7 +366,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         }
         else if (actionNm.equalsIgnoreCase("forward")) {
             userId =  parameters.get("approverUserId") != null ? Integer.valueOf(parameters.get("approverUserId")[0]) :
-                EgovThreadLocals.getUserId().intValue();
+                ApplicationThreadLocals.getUserId().intValue();
             startChequeWorkflow(dishonorChequeView, actionNm,
                     null != parameters.get("approverComments") ? parameters.get("approverComments")[0] : null);
             final EmployeeView nextUser = (EmployeeView) persistenceService.find("from EmployeeView where position.id=?", null/*

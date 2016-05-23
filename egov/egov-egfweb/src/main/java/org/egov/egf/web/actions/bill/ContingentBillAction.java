@@ -63,7 +63,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.NumberToWord;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -610,7 +610,7 @@ public class ContingentBillAction extends BaseBillAction {
         if (null != parameters.get(APPROVER_USER_ID) && Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]) != -1)
             userId = Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]);
         else
-            userId = EgovThreadLocals.getUserId().intValue();
+            userId = ApplicationThreadLocals.getUserId().intValue();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("User selected id is : " + userId);
         addActionMessage(getText("bill.forwarded",

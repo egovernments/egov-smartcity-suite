@@ -70,7 +70,7 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
@@ -102,7 +102,6 @@ import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -379,7 +378,7 @@ public class PropertyService {
                     floor.setCreatedDate(new Date());
                     floor.setModifiedDate(new Date());
                     floor.setFloorUid(floorUid++);
-                    final User user = userService.getUserById(EgovThreadLocals.getUserId());
+                    final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
                     floor.setCreatedBy(user);
                     floor.setModifiedBy(user);
                     property.getPropertyDetail().getFloorDetails().add(floor);
@@ -429,7 +428,7 @@ public class PropertyService {
             propStatVal.setIsActive("W");
         else
             propStatVal.setIsActive("Y");
-        final User user = userService.getUserById(EgovThreadLocals.getUserId());
+        final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         propStatVal.setCreatedDate(new Date());
         propStatVal.setModifiedDate(new Date());
         propStatVal.setCreatedBy(user);

@@ -45,9 +45,9 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.BaseModel;
@@ -369,20 +369,20 @@ public class PersistenceService<T, ID extends Serializable> {
     public void applyAuditing(AbstractAuditable auditable) {
         Date currentDate = new Date();
         if (auditable.isNew()) {
-            auditable.setCreatedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
+            auditable.setCreatedBy((User)getSession().load(User.class, ApplicationThreadLocals.getUserId()));
             auditable.setCreatedDate(currentDate);
         } 
-        auditable.setLastModifiedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
+        auditable.setLastModifiedBy((User)getSession().load(User.class, ApplicationThreadLocals.getUserId()));
         auditable.setLastModifiedDate(currentDate);
     }
     
     public void applyAuditing(BaseModel baseModel) {
         Date currentDate = new Date();
         if (baseModel.getId() == null) {
-            baseModel.setCreatedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
+            baseModel.setCreatedBy((User)getSession().load(User.class, ApplicationThreadLocals.getUserId()));
             baseModel.setCreatedDate(currentDate);
         } 
-        baseModel.setModifiedBy((User)getSession().load(User.class, EgovThreadLocals.getUserId()));
+        baseModel.setModifiedBy((User)getSession().load(User.class, ApplicationThreadLocals.getUserId()));
         baseModel.setModifiedDate(currentDate);
     }
 

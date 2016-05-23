@@ -45,7 +45,7 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -160,7 +160,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                         AdvertisementTaxConstants.WF_CANCELRENEWAL_BUTTON.equalsIgnoreCase(workFlowAction)) {
                     final Assignment wfInitiator = advertisementPermitDetailService
                             .getWfInitiator(advertisementPermitDetail);
-                    if (EgovThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId())){
+                    if (ApplicationThreadLocals.getUserId().equals(wfInitiator.getEmployee().getId())){
                     	 message = messageSource.getMessage("msg.success.cancelled",
                                  new String[] { advertisementPermitDetail.getApplicationNumber() }, null);
                     	redirAttrib.addFlashAttribute("message", message);

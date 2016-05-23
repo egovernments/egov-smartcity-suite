@@ -54,7 +54,7 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -305,7 +305,7 @@ public class SubSchemeAction extends BaseFormAction {
     }
 
     private User getLoggedInUser() {
-        return (User) persistenceService.getSession().load(User.class, EgovThreadLocals.getUserId());
+        return (User) persistenceService.getSession().load(User.class, ApplicationThreadLocals.getUserId());
     }
 
     public void setFundId(final int fundId) {

@@ -47,9 +47,9 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -244,8 +244,8 @@ public class JournalVoucherAction extends BaseVoucherAction
     {
         Position pos;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("getPosition====" + EgovThreadLocals.getUserId());
-        pos = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+            LOGGER.debug("getPosition====" + ApplicationThreadLocals.getUserId());
+        pos = eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("position===" + pos.getId());
         return pos;

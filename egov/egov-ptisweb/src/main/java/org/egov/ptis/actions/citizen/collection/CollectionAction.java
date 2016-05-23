@@ -50,8 +50,8 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
@@ -123,7 +123,7 @@ public class CollectionAction extends BaseFormAction {
         LOGGER.debug("Entered into prepare method");
         final User usr = userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
         setUserId(usr.getId().longValue());
-        EgovThreadLocals.setUserId(usr.getId());
+        ApplicationThreadLocals.setUserId(usr.getId());
         basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
         LOGGER.debug("Exit from prepare method");
     }

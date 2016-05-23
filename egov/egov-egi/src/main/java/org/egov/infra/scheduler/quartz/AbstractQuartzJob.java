@@ -44,8 +44,8 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.scheduler.GenericJob;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -99,7 +99,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
             AbstractQuartzJob.LOGGER.error("Unable to complete execution Scheduler ", ex);
             throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
         } finally {
-            EgovThreadLocals.clearValues();
+            ApplicationThreadLocals.clearValues();
             MDC.clear();
         }
     }
@@ -121,14 +121,14 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 
     protected void prepareCityThreadLocal() {
         City city = getCurrentCity();
-        EgovThreadLocals.setCityCode(city.getCode());
-        EgovThreadLocals.setCityName(city.getName());
-        EgovThreadLocals.setMunicipalityName(city.getPreferences().getMunicipalityName());
-        EgovThreadLocals.setDomainName(city.getDomainURL());
+        ApplicationThreadLocals.setCityCode(city.getCode());
+        ApplicationThreadLocals.setCityName(city.getName());
+        ApplicationThreadLocals.setMunicipalityName(city.getPreferences().getMunicipalityName());
+        ApplicationThreadLocals.setDomainName(city.getDomainURL());
     }
 
     private void prepareThreadLocal(String tenant) {
-        EgovThreadLocals.setTenantID(tenant);
-        EgovThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
+        ApplicationThreadLocals.setTenantID(tenant);
+        ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
     }
 }

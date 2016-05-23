@@ -55,13 +55,13 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
@@ -354,7 +354,7 @@ public class BudgetProposalAction extends BaseFormAction {
                     .setBigDecimal("amount", amount)
                     .setLong("detailId", detailId)
                     .setDate("modifiedate", new java.sql.Date(new Date().getTime()))
-                    .setInteger("modifiedby", EgovThreadLocals.getUserId().intValue());
+                    .setInteger("modifiedby", ApplicationThreadLocals.getUserId().intValue());
             final int executeUpdate = updateQuery.executeUpdate();
             if (executeUpdate == 1)
                 return SUCCESSFUL;
@@ -1034,7 +1034,7 @@ public class BudgetProposalAction extends BaseFormAction {
         if (approverUserId != null && approverUserId != -1)
             userId = approverUserId;
         else
-            userId = EgovThreadLocals.getUserId().intValue();
+            userId = ApplicationThreadLocals.getUserId().intValue();
 
         topBudget = budgetService.find("from Budget where id=?", topBudget.getId());
         final Position positionByUserId = eisCommonService.getPositionByUserId(userId.longValue());
@@ -1207,7 +1207,7 @@ public class BudgetProposalAction extends BaseFormAction {
     private boolean isHOD()
     {
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),
+        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(),
                 new Date());
         if (empAssignment.getDesignation().getName().equalsIgnoreCase("assistant"))
         {
@@ -1228,7 +1228,7 @@ public class BudgetProposalAction extends BaseFormAction {
     {
         Position pos;
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        pos = eisCommonService.getPrimaryAssignmentPositionForEmp(EgovThreadLocals.getUserId());
+        pos = eisCommonService.getPrimaryAssignmentPositionForEmp(ApplicationThreadLocals.getUserId());
         return pos;
     }
 
@@ -1380,9 +1380,9 @@ public class BudgetProposalAction extends BaseFormAction {
     protected Boolean validateOwner()
     {
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("validating owner for user " + EgovThreadLocals.getUserId());
+            LOGGER.debug("validating owner for user " + ApplicationThreadLocals.getUserId());
         List<Position> positionsForUser = null;
-        positionsForUser = eisService.getPositionsForUser(Long.valueOf(EgovThreadLocals.getUserId()), new Date());
+        positionsForUser = eisService.getPositionsForUser(Long.valueOf(ApplicationThreadLocals.getUserId()), new Date());
         State state = null;
         if (factor.equalsIgnoreCase("thousand"))
             state = (State) persistenceService

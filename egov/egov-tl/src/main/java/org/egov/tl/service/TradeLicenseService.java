@@ -49,7 +49,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
@@ -222,9 +222,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                         ? license.getLicenseAppType().getName() != null && license.getLicenseAppType().getName().equals("New")
                                 ? "New Trade" : "Renewal"
                         : "New");
-        if (EgovThreadLocals.getMunicipalityName().contains("Corporation"))
+        if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);
-        reportParams.put("municipality", EgovThreadLocals.getMunicipalityName());
+        reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
         final LicenseDemand licenseDemand = license.getLicenseDemand();
         final String startYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getFromDate());
         final String EndYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getToDate());

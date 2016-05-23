@@ -54,7 +54,7 @@ import org.egov.dcb.bean.Receipt;
 import org.egov.dcb.service.DCBService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.client.model.PropertyArrearBean;
@@ -171,7 +171,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         if (session.getAttribute(SESSIONLOGINID) == null) {
             User user = userService.getUserByUsername(CITIZENUSER);
             userId = user.getId();
-            EgovThreadLocals.setUserId(userId);
+            ApplicationThreadLocals.setUserId(userId);
             session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
             if (user != null)
                 setCitizen(Boolean.TRUE);

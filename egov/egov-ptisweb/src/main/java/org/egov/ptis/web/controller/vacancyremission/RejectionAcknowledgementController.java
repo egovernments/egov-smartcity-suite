@@ -40,10 +40,10 @@
 package org.egov.ptis.web.controller.vacancyremission;
 
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
@@ -103,7 +103,7 @@ public class RejectionAcknowledgementController {
             
             reportParams.put("logoPath", cityLogo);
             reportParams.put("cityName", cityName);
-            reportParams.put("loggedInUsername", userService.getUserById(EgovThreadLocals.getUserId()).getName());
+            reportParams.put("loggedInUsername", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
             reportParams.put("rejectionDate", formatter.format(vacancyRemission.getState().getCreatedDate()));
             reportParams.put("rejectingUser", rejectingUser);
             ackBean.setAssessmentNo(vacancyRemission.getBasicProperty().getUpicNo());

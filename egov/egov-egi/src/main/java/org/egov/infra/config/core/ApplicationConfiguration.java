@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config;
+package org.egov.infra.config.core;
 
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;

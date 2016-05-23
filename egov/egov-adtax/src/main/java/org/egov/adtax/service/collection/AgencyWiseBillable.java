@@ -57,7 +57,7 @@ import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -232,7 +232,7 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
 
     @Override
     public Long getUserId() {
-        return EgovThreadLocals.getUserId() == null ? null : Long.valueOf(EgovThreadLocals.getUserId());
+        return ApplicationThreadLocals.getUserId() == null ? null : Long.valueOf(ApplicationThreadLocals.getUserId());
     }
 
     @Override

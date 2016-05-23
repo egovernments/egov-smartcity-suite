@@ -39,8 +39,8 @@
  */
 package org.egov.wtms.elasticSearch.entity;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.search.elastic.Indexable;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
 import org.elasticsearch.common.geo.GeoPoint;
 
@@ -167,7 +167,7 @@ public class ConsumerSearch implements Indexable {
 
     @Override
     public String getIndexId() {
-        return EgovThreadLocals.getCityCode() + "-" + consumerCode;
+        return ApplicationThreadLocals.getCityCode() + "-" + consumerCode;
     }
 
     public String getZone() {

@@ -53,7 +53,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
@@ -80,7 +80,7 @@ public class CancelBillAction extends BaseFormAction {
 	private String expType;
 	private List<BillRegisterBean> billListDisplay = new ArrayList<BillRegisterBean>();
 	private boolean afterSearch = false;
-	Integer loggedInUser = EgovThreadLocals.getUserId().intValue();
+	Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
 	public final SimpleDateFormat formatter = new SimpleDateFormat(
 			"dd/MM/yyyy", Constants.LOCALE);
 

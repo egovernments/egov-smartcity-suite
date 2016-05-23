@@ -48,7 +48,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.egf.model.BudgetAmountView;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -450,7 +450,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         else if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
             userId = Integer.valueOf(parameters.get("approverUserId")[0]);
         else
-            userId = EgovThreadLocals.getUserId().intValue();
+            userId = ApplicationThreadLocals.getUserId().intValue();
 
         for (final BudgetDetail detail : savedbudgetDetailList) {
             if (new String("forward").equals(parameters.get(ACTIONNAME)[0]))

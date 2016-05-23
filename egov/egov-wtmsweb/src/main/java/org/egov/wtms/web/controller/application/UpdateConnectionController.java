@@ -65,7 +65,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -467,7 +467,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                         }
                         model.addAttribute("fileStoreIds", upadtedWaterConnectionDetails.getFileStore()
                                 .getFileStoreId());
-                        model.addAttribute("ulbCode", EgovThreadLocals.getCityCode());
+                        model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
                         final HttpSession session = request.getSession();
                         session.setAttribute(WaterTaxConstants.MODE, mode);
                         session.setAttribute(WaterTaxConstants.APPROVAL_POSITION, approvalPosition);

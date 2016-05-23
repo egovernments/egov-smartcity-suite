@@ -74,7 +74,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -931,8 +931,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         Position position = null;
         User user = null;
 
-        position = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
-        user = userService.getUserById(EgovThreadLocals.getUserId());
+        position = eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
+        user = userService.getUserById(ApplicationThreadLocals.getUserId());
 
         /*
          * Change workflow object as Active property and Active one to history.
@@ -988,7 +988,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition/revPetition-generateSpecialNotice")
     public String generateSpecialNotice() {
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         if (PREVIEW.equalsIgnoreCase(actionType) || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
             objection = revisionPetitionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
         }

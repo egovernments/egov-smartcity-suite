@@ -57,10 +57,10 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.aadhaar.webservice.client.AadhaarInfoServiceClient;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.rest.client.SimpleRestClient;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -171,7 +171,7 @@ public class PropertyTransferRestService {
         Boolean isAuthenticatedUser = authenticateUser(username, password);
         if (isAuthenticatedUser) {
 
-            EgovThreadLocals.setUserId(Long.valueOf(LOGIN_USERID));
+            ApplicationThreadLocals.setUserId(Long.valueOf(LOGIN_USERID));
 
             List<OwnerDetails> ownerDetailsList = null;
             if (ownerDetails != null && ownerDetails.trim().length() > 0)

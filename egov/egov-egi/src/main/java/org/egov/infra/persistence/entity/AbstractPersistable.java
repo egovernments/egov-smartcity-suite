@@ -41,7 +41,7 @@
 package org.egov.infra.persistence.entity;
 
 import org.egov.infra.search.elastic.Indexable;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
@@ -97,6 +97,6 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
 
     @Override
     public String getIndexId() {
-        return EgovThreadLocals.getCityCode()+"-"+getId().toString();
+        return ApplicationThreadLocals.getCityCode()+"-"+getId().toString();
     }
 }

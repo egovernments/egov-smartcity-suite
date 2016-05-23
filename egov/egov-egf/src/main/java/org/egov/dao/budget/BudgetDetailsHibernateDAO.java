@@ -74,9 +74,9 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -448,7 +448,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     budgetUsage.setConsumedAmount(0.0);
                     budgetUsage.setReleasedAmount(amount);
                 }
-                budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
+                budgetUsage.setCreatedby(ApplicationThreadLocals.getUserId().intValue());
                 budgetUsageService.create(budgetUsage);
                 return BigDecimal.ONE;
             } else
@@ -531,7 +531,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     budgetUsage.setConsumedAmount(0.0);
                     budgetUsage.setReleasedAmount(amount);
                 }
-                budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
+                budgetUsage.setCreatedby(ApplicationThreadLocals.getUserId().intValue());
                 budgetUsageService.create(budgetUsage);
                 return BigDecimal.ONE;
             } else
@@ -615,7 +615,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     budgetUsage.setConsumedAmount(0.0);
                     budgetUsage.setReleasedAmount(amount);
                 }
-                budgetUsage.setCreatedby(EgovThreadLocals.getUserId().intValue());
+                budgetUsage.setCreatedby(ApplicationThreadLocals.getUserId().intValue());
                 budgetUsageService.create(budgetUsage);
                 return budgetUsage;
             } else

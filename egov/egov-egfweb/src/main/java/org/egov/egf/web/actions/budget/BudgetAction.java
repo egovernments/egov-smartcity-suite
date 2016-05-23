@@ -50,7 +50,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -150,7 +150,7 @@ public class BudgetAction extends BaseFormAction {
             budget.setReferenceBudget(budgetService.findById(Long.valueOf(getReferenceId()), false));
         if (budget.getParent() != null && budget.getParent().getIsPrimaryBudget() == true)
             budget.setIsPrimaryBudget(true);
-        final Position p = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+        final Position p = eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
         budget.start().withOwner(p);
         addActionMessage(getMessage("budget.create"));
         target = "SUCCESS";

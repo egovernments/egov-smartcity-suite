@@ -75,10 +75,10 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -706,7 +706,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
         Integer userId = null;
         if (parameters.get("actionName")[0].contains("approve"))
             userId = parameters.get("approverUserId") != null ? Integer.valueOf(parameters.get("approverUserId")[0]) :
-                    EgovThreadLocals.getUserId().intValue();
+                    ApplicationThreadLocals.getUserId().intValue();
         else
             userId = voucherHeader.getCreatedBy().getId().intValue();
 
@@ -1125,8 +1125,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     {
         Position pos;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("getPosition====" + EgovThreadLocals.getUserId());
-        pos = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+            LOGGER.debug("getPosition====" + ApplicationThreadLocals.getUserId());
+        pos = eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("position===" + pos.getId());
         return pos;
@@ -1177,9 +1177,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     {
         Boolean check = false;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("validating owner for user " + EgovThreadLocals.getUserId());
+            LOGGER.debug("validating owner for user " + ApplicationThreadLocals.getUserId());
         List<Position> positionsForUser = null;
-        positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
+        positionsForUser = eisService.getPositionsForUser(ApplicationThreadLocals.getUserId(), new Date());
         for (final Position pos : positionsForUser)
             if (pos.getId().equals(state.getOwnerPosition().getId()))
             {

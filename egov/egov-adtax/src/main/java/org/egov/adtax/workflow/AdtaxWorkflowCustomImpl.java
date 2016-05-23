@@ -52,7 +52,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -155,7 +155,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                 ) {
             
             // In case of rejection of renewal record, do not change status of advertisement . We need to change previous record as active.
-            if (EgovThreadLocals.getUserId().equals(wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getId():0 )) {
+            if (ApplicationThreadLocals.getUserId().equals(wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getId():0 )) {
                 advertisementPermitDetail.setStatus(egwStatusHibernateDAO
                         .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
                                 AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED));

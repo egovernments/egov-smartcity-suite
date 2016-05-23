@@ -38,9 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.utils;
+package org.egov.infra.config.core;
 
-public class EgovThreadLocals {
+public class ApplicationThreadLocals {
 
     private static ThreadLocal<String> domainName = new ThreadLocal<>();
     private static ThreadLocal<Long> userId = new ThreadLocal<>();

@@ -47,7 +47,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -617,7 +617,7 @@ public class AssessmentService {
     @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String createProperty(@RequestBody String createPropertyDetails)
             throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-        EgovThreadLocals.setUserId(Long.valueOf("40"));
+        ApplicationThreadLocals.setUserId(Long.valueOf("40"));
         CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
                 createPropertyDetails, CreatePropertyDetails.class);
 

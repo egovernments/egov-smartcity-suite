@@ -59,8 +59,8 @@ import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.recoveries.TdsHibernateDAO;
 import org.egov.deduction.model.EgRemittanceGldtl;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -247,7 +247,7 @@ public class ChartOfAccounts {
             // cache.put(ROOTNODE+"/"+FilterName.get(),ACCOUNTDETAILTYPENODE,accountDetailType);
             // cache.put(ROOTNODE+"/"+FilterName.get(),GLACCCODENODE,glAccountCodes);
             // cache.put(ROOTNODE+"/"+FilterName.get(),GLACCIDNODE,glAccountIds);
-            cache.put(ROOTNODE + "/" + EgovThreadLocals.getDomainName(), hm);
+            cache.put(ROOTNODE + "/" + ApplicationThreadLocals.getDomainName(), hm);
         } catch (final Exception e)
         {
             LOGGER.error(EXP + e.getMessage(), e);
@@ -1122,12 +1122,12 @@ public class ChartOfAccounts {
      */
     public static HashMap getAccountDetailType()
     {
-        LOGGER.debug("in getAccountDetailType():jndi name is :" + EgovThreadLocals.getDomainName());
+        LOGGER.debug("in getAccountDetailType():jndi name is :" + ApplicationThreadLocals.getDomainName());
         HashMap retMap = null;
         try
         {
             HashMap cacheValuesHashMap = new HashMap<Object, Object>();
-            cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/" + EgovThreadLocals.getDomainName());
+            cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/" + ApplicationThreadLocals.getDomainName());
             if (cacheValuesHashMap != null && !cacheValuesHashMap.isEmpty())
                 retMap = (HashMap) cacheValuesHashMap.get(ACCOUNTDETAILTYPENODE);
 
@@ -1144,12 +1144,12 @@ public class ChartOfAccounts {
      */
     public static HashMap getGlAccountCodes()
     {
-        LOGGER.debug("in getGlAccountCodes():jndi name is :" + EgovThreadLocals.getDomainName());
+        LOGGER.debug("in getGlAccountCodes():jndi name is :" + ApplicationThreadLocals.getDomainName());
         HashMap retMap = null;
         try
         {
             HashMap cacheValuesHashMap = new HashMap<Object, Object>();
-            cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/" + EgovThreadLocals.getDomainName());
+            cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/" + ApplicationThreadLocals.getDomainName());
             if (cacheValuesHashMap != null && !cacheValuesHashMap.isEmpty())
                 retMap = (HashMap) cacheValuesHashMap.get(GLACCCODENODE);
             if (retMap != null)
@@ -1168,12 +1168,12 @@ public class ChartOfAccounts {
      */
     public static HashMap getGlAccountIds()
     {
-        LOGGER.debug("in getGlAccountIds():jndi name is :" + EgovThreadLocals.getDomainName());
+        LOGGER.debug("in getGlAccountIds():jndi name is :" + ApplicationThreadLocals.getDomainName());
         HashMap retMap = null;
         try
         {
             HashMap cacheValuesHashMap = new HashMap<Object, Object>();
-            cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/" + EgovThreadLocals.getDomainName());
+            cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/" + ApplicationThreadLocals.getDomainName());
             if (cacheValuesHashMap != null && !cacheValuesHashMap.isEmpty())
                 retMap = (HashMap) cacheValuesHashMap.get(GLACCIDNODE);
 

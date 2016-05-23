@@ -44,7 +44,7 @@ import java.text.SimpleDateFormat;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.hibernate.Query;
@@ -145,7 +145,7 @@ public class TransferClosingBalanceService extends PersistenceService {
         query.append(" SELECT nextval('seq_transactionsummary'), ");
         query.append(nextFinancialYear.getId());
         query.append(" , ");
-        query.append(EgovThreadLocals.getUserId());
+        query.append(ApplicationThreadLocals.getUserId());
         query.append(" ,glcodeId AS glCodeId, fundid AS fundId,deptId AS deptId ,functionid AS functionId,CASE WHEN balance > 0 THEN abs(balance) ELSE 0 END AS openingbalancedebitamount,CASE WHEN balance < 0 THEN abs(balance) ELSE 0 END AS openingbalancecreditamount,null,null,current_date ");
         query.append(" FROM ( ");
         query.append(" SELECT glcodeId AS glCodeId,fundId AS fundId,deptId AS deptId,functionid AS functionId,SUM(dr) AS dr,SUM(cr) AS cr,SUM(balance) AS balance ");
@@ -230,7 +230,7 @@ public class TransferClosingBalanceService extends PersistenceService {
         query.append(" SELECT nextval('seq_transactionsummary'), ");
         query.append(nextFinancialYear.getId());
         query.append(" , ");
-        query.append(EgovThreadLocals.getUserId());
+        query.append(ApplicationThreadLocals.getUserId());
         query.append(" ,glcodeId AS glCodeId, fundid AS fundId,deptId AS deptId ,functionid AS functionId, detailTypeId  AS detailTypeId,detailKeyId AS detailKeyId, CASE WHEN balance > 0 THEN abs(balance) ELSE 0 END AS openingbalancedebitamount, CASE WHEN balance < 0 THEN abs(balance) ELSE 0 END AS openingbalancecreditamount,current_date ");
         query.append(" FROM ( ");
         query.append(" SELECT glcodeId AS glCodeId,fundId AS fundId, deptId AS deptId,functionid AS functionId,detailTypeId  AS detailTypeId,detailKeyId AS detailKeyId,SUM(dr) AS dr,SUM(cr) AS cr,SUM(balance)   AS balance ");
@@ -299,7 +299,7 @@ public class TransferClosingBalanceService extends PersistenceService {
         query.append(" SELECT nextval('seq_transactionsummary'), ");
         query.append(nextFinancialYear.getId());
         query.append(" , ");
-        query.append(EgovThreadLocals.getUserId());
+        query.append(ApplicationThreadLocals.getUserId());
         query.append(" ,(select id from chartofaccounts where purposeid in (SELECT id FROM egf_accountcode_purpose WHERE name = 'ExcessIE' )), fundid AS fundId,deptId  AS deptId ,functionid  AS functionId,CASE WHEN balance < 0 THEN abs(balance) ELSE 0 END AS openingbalancedebitamount,CASE WHEN balance > 0 THEN abs(balance) ELSE 0 END AS openingbalancecreditamount,null,null,current_date ");
         query.append(" FROM ( ");
         query.append(" SELECT fundid AS fundId,deptId  AS deptId , functionid   AS functionId, SUM(balance) AS balance ");

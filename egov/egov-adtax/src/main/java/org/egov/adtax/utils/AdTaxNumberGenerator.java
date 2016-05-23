@@ -40,11 +40,11 @@
 
 package org.egov.adtax.utils;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,7 +83,7 @@ public class AdTaxNumberGenerator {
             } catch (final SQLGrammarException e) {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
-            return String.format("%s%06d", EgovThreadLocals.getCityCode(), sequenceNumber);
+            return String.format("%s%06d", ApplicationThreadLocals.getCityCode(), sequenceNumber);
         } catch (final SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating Advertisement Number", e);
         }
@@ -99,7 +99,7 @@ public class AdTaxNumberGenerator {
             } catch (final SQLGrammarException e) {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
-            return String.format("%s%06d", EgovThreadLocals.getCityCode(), sequenceNumber);
+            return String.format("%s%06d", ApplicationThreadLocals.getCityCode(), sequenceNumber);
         } catch (final SQLException e) {
             throw new ApplicationRuntimeException("Error occurred while generating Permit Number", e);
         }

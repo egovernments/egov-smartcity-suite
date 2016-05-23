@@ -41,8 +41,8 @@
 package org.egov.ptis.domain.service.property;
 
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SMSEmailService {
@@ -54,7 +54,7 @@ public class SMSEmailService {
     private MessagingService messagingService;
 
     public String getCityName() {
-        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
+        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getName();
     }
 
     public void sendSMSOnNewAssessment(final String mobileNumber, final String smsBody) {

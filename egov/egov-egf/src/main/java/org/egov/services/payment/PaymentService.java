@@ -70,10 +70,10 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -278,7 +278,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
 
             final HashMap<String, Object> headerdetails = new HashMap<String, Object>();
 
-            user = (User) persistenceService.find(" from User where id = ?", EgovThreadLocals.getUserId());
+            user = (User) persistenceService.find(" from User where id = ?", ApplicationThreadLocals.getUserId());
             if (billList != null && billList.size() > 0 && "salary".equalsIgnoreCase(billList.get(0).getExpType()))
                 headerdetails.put(VoucherConstant.VOUCHERNAME, "Salary Bill Payment");
             else if (billList != null && billList.size() > 0 && "pension".equalsIgnoreCase(billList.get(0).getExpType()))
@@ -695,7 +695,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         try
         {
             miscBillList = new ArrayList<Miscbilldetail>();
-            user = (User) persistenceService.find(" from User where id = ?", EgovThreadLocals.getUserId());
+            user = (User) persistenceService.find(" from User where id = ?", ApplicationThreadLocals.getUserId());
             final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount where id=?", payheader
                     .getBankaccount()
                     .getId());
@@ -3336,7 +3336,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getPosition...");
-        return eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+        return eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
     }
 
     public String getFunctionaryAndDesignation()
@@ -3352,7 +3352,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getAssignment...");
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        return eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(), new Date());
+        return eisCommonService.getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(), new Date());
     }
 
     public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException
@@ -3366,7 +3366,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside getEmpForCurrentUser...");
-        return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
+        return eisCommonService.getEmployeeByUserId(ApplicationThreadLocals.getUserId());
     }
 
     public String getEmployeeNameForPositionId(final Position pos) throws ApplicationRuntimeException

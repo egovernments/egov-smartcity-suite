@@ -595,7 +595,7 @@ String[] inputArrayCheque = new String[21];
 		
 		egovEJBTest=new EGovEJBTest();
 		egovEJBTest.setUp();
-		EgovThreadLocals.setUserId(user.getId().toString());
+		ApplicationThreadLocals.setUserId(user.getId().toString());
 		egovEJBTest.registerEJB("CommonsManagerHome", CommonsManagerHome.class, CommonsManager.class, CommonsManagerBean.class);
 		egovEJBTest.registerEJB("EmpLeaveManagerHome", EmpLeaveManagerHome.class, EmpLeaveManager.class, EmpLeaveManagerBean.class);
 		egovEJBTest.registerEJB("UserManagerHome", UserManagerHome.class, UserManager.class, UserManagerBean.class);

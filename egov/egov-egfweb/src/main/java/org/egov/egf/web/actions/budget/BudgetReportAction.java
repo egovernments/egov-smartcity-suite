@@ -54,8 +54,8 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -753,7 +753,7 @@ public class BudgetReportAction extends BaseFormAction {
         Position pos;
         try {
             // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-            pos = eisCommonService.getPrimaryAssignmentPositionForEmp(EgovThreadLocals.getUserId());
+            pos = eisCommonService.getPrimaryAssignmentPositionForEmp(ApplicationThreadLocals.getUserId());
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Unable to get Position for the user");
         }
@@ -1233,7 +1233,7 @@ public class BudgetReportAction extends BaseFormAction {
                 "budget_toplevel_approver_designation");
         final String value = list.get(0).getValue();
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),
+        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(),
                 new Date());
         final Designation designation = empAssignment.getDesignation();
         if (designation.getName().equalsIgnoreCase(value))

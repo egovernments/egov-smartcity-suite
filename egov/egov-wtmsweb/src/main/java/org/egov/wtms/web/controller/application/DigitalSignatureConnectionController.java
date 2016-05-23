@@ -39,13 +39,13 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
@@ -256,7 +256,7 @@ public class DigitalSignatureConnectionController {
             }
             request.getSession().setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
             model.addAttribute("fileStoreIds", fileStoreIds.toString());
-            model.addAttribute("ulbCode", EgovThreadLocals.getCityCode());
+            model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
         }
         return "newConnection-digitalSignatureRedirection";
     }

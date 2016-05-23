@@ -52,8 +52,8 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.voucher.BaseVoucherAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -157,7 +157,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
             if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
                 userId = Integer.valueOf(parameters.get("approverUserId")[0]);
             else
-                userId = EgovThreadLocals.getUserId().intValue();
+                userId = ApplicationThreadLocals.getUserId().intValue();
           /*  if (narration != null)
                 paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader, narration);
             else

@@ -57,6 +57,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -64,7 +65,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.NumberToWord;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
@@ -264,7 +264,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         }
         setFileStoreIds(license().getFileStore()
                 .getFileStoreId());
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         final HttpSession session = request.getSession();
         session.setAttribute("mode", "");
         session.setAttribute(Constants.APPROVAL_COMMENT, "");
@@ -331,7 +331,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     // create workflow and pushes to drafts
     public void initiateWorkFlowForLicense() {
         // licenseService().initiateWorkFlowForLicense(license(), workflowBean);
-        final Position position = positionMasterService.getCurrentPositionForUser(EgovThreadLocals.getUserId());
+        final Position position = positionMasterService.getCurrentPositionForUser(ApplicationThreadLocals.getUserId());
         if (position != null)
             addActionMessage(this.getText("license.saved.in.inbox"));
     }

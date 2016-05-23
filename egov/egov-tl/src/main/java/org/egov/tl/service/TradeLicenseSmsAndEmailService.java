@@ -39,8 +39,8 @@
  */
 package org.egov.tl.service;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +69,7 @@ public class TradeLicenseSmsAndEmailService {
     }
 
     public String getMunicipalityName() {
-        return EgovThreadLocals.getMunicipalityName();
+        return ApplicationThreadLocals.getMunicipalityName();
     }
 
     public void sendSmsAndEmail(final License license, final String workFlowAction) {
@@ -159,7 +159,7 @@ public class TradeLicenseSmsAndEmailService {
                 "Dear %s,\nTrade License with TIN No.%s, fee collected is at the rate of Rs.%s/- per year w.e.f %s.\nThanks,\n%s",
                 license.getLicensee().getApplicantName(), license.getLicenseNumber(),
                 demandAmount.toString(),
-                new SimpleDateFormat("dd/MM/yyyy").format(receiptDate), EgovThreadLocals.getMunicipalityName());
+                new SimpleDateFormat("dd/MM/yyyy").format(receiptDate), ApplicationThreadLocals.getMunicipalityName());
         final StringBuilder emailSubjectColl = new StringBuilder();
         emailSubjectColl.append(Constants.STR_FOR_EMAILSUBJECT).append(license.getLicenseNumber());
         messagingService.sendSMS(license.getLicensee().getMobilePhoneNumber(), smsMsgColl);

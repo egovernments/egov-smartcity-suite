@@ -41,10 +41,10 @@
 package org.egov.infra.reporting.util;
 
 import org.apache.struts2.ServletActionContext;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
@@ -111,7 +111,7 @@ public final class ReportUtil {
     }
 
     public static String getCityName() {
-        return EgovThreadLocals.getMunicipalityName();
+        return ApplicationThreadLocals.getMunicipalityName();
     }
 
     /**

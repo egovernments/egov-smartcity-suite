@@ -68,7 +68,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -560,7 +560,7 @@ public class PropertyExternalService {
                 .getAssessmentNo());
         propertyTaxBillable.setBasicProperty(basicProperty);
         propertyTaxBillable.setUserId(2L);
-        EgovThreadLocals.setUserId(2L);
+        ApplicationThreadLocals.setUserId(2L);
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         // propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
@@ -1694,7 +1694,7 @@ public class PropertyExternalService {
 
     private PropertyImpl transitionWorkFlow(final PropertyImpl property) {
         final DateTime currentDate = new DateTime();
-        final User user = userService.getUserById(EgovThreadLocals.getUserId());
+        final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         final String approverComments = "Property has been successfully forwarded.";
         final String currentState = "Created";
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);

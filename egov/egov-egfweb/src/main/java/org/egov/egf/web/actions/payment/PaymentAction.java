@@ -61,12 +61,12 @@ import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -1391,7 +1391,7 @@ public class PaymentAction extends BasePaymentAction {
                 if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
                     userId = Integer.valueOf(parameters.get("approverUserId")[0]);
                 else
-                    userId = EgovThreadLocals.getUserId().intValue();
+                    userId = ApplicationThreadLocals.getUserId().intValue();
                 /*
                  * paymentWorkflowService.transition(getValidActions().get(0).getName() + "|" + userId, paymentheader,
                  * paymentheader.getVoucherheader().getDescription());

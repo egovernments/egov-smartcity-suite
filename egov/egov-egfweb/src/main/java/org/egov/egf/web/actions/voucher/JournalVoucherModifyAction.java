@@ -59,9 +59,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -169,7 +169,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         try {
             if (voucherHeader != null && voucherHeader.getState() != null)
                 if (voucherHeader.getState().getValue().contains("Rejected")) {
-                    positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
+                    positionsForUser = eisService.getPositionsForUser(ApplicationThreadLocals.getUserId(), new Date());
                 }
                 else if (voucherHeader.getState().getValue().contains("Closed")) {
                     if (LOGGER.isDebugEnabled())
@@ -384,8 +384,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     {
         Position pos;
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("getPosition====" + EgovThreadLocals.getUserId());
-        pos = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+            LOGGER.debug("getPosition====" + ApplicationThreadLocals.getUserId());
+        pos = eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("position===" + pos.getId());
         return pos;
@@ -395,7 +395,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     public List<WorkflowAction> getValidActions(final String purpose) {
         final List<WorkflowAction> validButtons = new ArrayList<WorkflowAction>();
         final List<String> list = (List<String>) scriptService.executeScript("pjv.validbuttons", ScriptService.createContext(
-                "eisCommonServiceBean", eisCommonService, "userId", EgovThreadLocals.getUserId().intValue(), "date", new Date(),
+                "eisCommonServiceBean", eisCommonService, "userId", ApplicationThreadLocals.getUserId().intValue(), "date", new Date(),
                 "purpose", purpose));
         for (final Object s : list)
         {

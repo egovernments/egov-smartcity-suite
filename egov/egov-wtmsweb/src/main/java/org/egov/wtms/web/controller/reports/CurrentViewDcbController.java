@@ -49,7 +49,7 @@ import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -109,8 +109,8 @@ public class CurrentViewDcbController {
     @ModelAttribute("citizenRole")
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
-        if (EgovThreadLocals.getUserId() != null) {
-            final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
             for (final Role userrole : currentUser.getRoles())
                 if (userrole.getName().equals(WaterTaxConstants.ROLE_CITIZEN)) {
                     citizenrole = Boolean.TRUE;

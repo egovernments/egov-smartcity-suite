@@ -58,7 +58,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.WorkflowAction;
@@ -156,7 +156,7 @@ public class BaseBillAction extends BaseVoucherAction {
 
     public Position getPosition() throws ApplicationRuntimeException
     {
-        return eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+        return eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
     }
 
     public CommonBean getCommonBean() {
