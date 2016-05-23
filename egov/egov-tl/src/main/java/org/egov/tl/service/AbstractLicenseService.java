@@ -40,6 +40,26 @@
 
 package org.egov.tl.service;
 
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
+import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+
+import java.io.File;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
@@ -82,26 +102,6 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
-import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
 /**
  * @author mani
@@ -502,7 +502,7 @@ public abstract class AbstractLicenseService<T extends License> {
             }
             if (null == license.getState()) {
                 final WorkFlowMatrix wfmatrix = licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                        null, null, workflowBean.getCurrentState(), null);
+                        null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)

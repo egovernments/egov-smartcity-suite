@@ -313,7 +313,12 @@
 							<s:actionmessage theme="simple" />
 						</div>
 						</s:if>
-                 	
+                 		<s:if test="%{getMessage() != null}">
+                 			<div class="alert alert-danger view-content" style="font-size: 18px;">
+							  <s:text name="%{getMessage()}" />
+							</div>
+                 		</s:if>
+                 		
                  	<s:form name="newTradeLicense" action="newTradeLicense" theme="simple"  enctype="multipart/form-data" 
 					cssClass="form-horizontal form-groups-bordered" validate="true" >    
 					<s:push value="model"> 
