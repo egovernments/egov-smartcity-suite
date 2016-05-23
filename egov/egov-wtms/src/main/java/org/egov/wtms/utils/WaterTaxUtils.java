@@ -52,6 +52,7 @@ import java.util.Locale;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -518,6 +519,15 @@ public class WaterTaxUtils {
             }
 
         return waterdemandConnection;
+    }
+    public List<EgDemand> getAllDemand(final WaterConnectionDetails waterConnectionDetails) {
+        List<EgDemand> demandList=new ArrayList<EgDemand>();
+        final List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
+                .findByWaterConnectionDetails(waterConnectionDetails);
+        for (final WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
+        	demandList.add(waterDemandConnection.getDemand());
+
+        return demandList;
     }
 
     public Boolean getCitizenUserRole() {

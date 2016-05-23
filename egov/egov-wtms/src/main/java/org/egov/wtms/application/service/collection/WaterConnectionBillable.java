@@ -128,13 +128,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public List<EgDemand> getAllDemands() {
-        List<EgDemand> demands = null;
-       final Long demandIds = getCurrentDemand().getId();
-        if (demandIds != null ) {
-            demands = new ArrayList<EgDemand>();
-            
-                demands.add(egDemandDAO.findById(Long.valueOf(demandIds.toString()), false));
-        }
+        List<EgDemand> demands = waterTaxUtils.getAllDemand(getWaterConnectionDetails());
         return demands;
     }
 
