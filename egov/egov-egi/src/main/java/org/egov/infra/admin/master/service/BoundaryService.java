@@ -48,7 +48,6 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.utils.StringUtils;
 import org.geotools.data.DataStore;
@@ -130,15 +129,14 @@ public class BoundaryService {
     }
 
     // TODO - Later - Use materializedPath instead of recursive calling
-    public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) throws NoSuchObjectException {
+    public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) {
         List<Boundary> boundaryList = new ArrayList<Boundary>();
         final Boundary bndry = getBoundaryById(boundaryId);
         if (bndry != null) {
             boundaryList.add(bndry);
             if (bndry.getParent() != null)
                 boundaryList = getParentBoundariesByBoundaryId(bndry.getParent().getId());
-        } else
-            throw new NoSuchObjectException("bndry.Obj.null");
+        }
         return boundaryList;
     }
 
