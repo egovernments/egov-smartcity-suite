@@ -174,4 +174,9 @@ public class AjaxMilestoneController {
     public @ResponseBody List<String> findLOAsToCancelMilestone(@RequestParam final String code) {
         return milestoneService.findLoaNumbersToCancelMilestone(code);
     }
+    
+    @RequestMapping(value = "/ajaxcontractors-milestonetocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsToCancelMilestone(@RequestParam final String code) {
+        return milestoneService.findContractorsToCancelMilestone(code);
+    }
 }

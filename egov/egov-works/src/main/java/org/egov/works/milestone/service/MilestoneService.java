@@ -213,4 +213,11 @@ public class MilestoneService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
+    
+    public List<String> findContractorsToCancelMilestone(final String code) {
+        final List<String> loaNumbers = milestoneRepository
+                .findContractorsToSearchMilestoneToCancel("%" + code + "%",
+                        WorksConstants.APPROVED.toString());
+        return loaNumbers;
+    }
 }

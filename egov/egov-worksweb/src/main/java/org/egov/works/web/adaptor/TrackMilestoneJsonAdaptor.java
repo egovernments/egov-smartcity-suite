@@ -131,7 +131,8 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                         final JsonObject child = new JsonObject();
                         child.addProperty("currentStatus", tma.getStatus());
                         child.addProperty("completedPercentage", tma.getCompletedPercentage());
-                        child.addProperty("completionDate", sdf.format(tma.getCompletionDate()));
+                        if(tma.getCompletionDate() != null)
+                            child.addProperty("completionDate", sdf.format(tma.getCompletionDate()));
                         child.addProperty("reasonForDelay", tma.getRemarks());
                         jsonArray.add(child);
                     }

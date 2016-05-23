@@ -156,7 +156,7 @@ $(document).ready(function() {
 	    },
 	    queryTokenizer: Bloodhound.tokenizers.whitespace,
 	    remote: {
-	        url: '/egworks/letterofacceptance/ajaxcontractors-loatocancel?code=%QUERY',
+	        url: '/egworks/milestone/ajaxcontractors-milestonetocancel?code=%QUERY',
 	        filter: function (data) {
 	            return $.map(data, function (ct) {
 	                return {
