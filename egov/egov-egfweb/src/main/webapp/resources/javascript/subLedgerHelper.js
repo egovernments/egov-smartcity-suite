@@ -188,12 +188,12 @@
 				document.getElementById('accEntityKey').value=entity_array[1];
 				document.getElementById('entityName').value=entity_array[0].split("`-`")[1];
 				
-			}else{
+			}/*else{
 				bootbox.alert("Invalid entity selected.");
 				document.getElementById('accEntitycode').value="";
 				document.getElementById('accEntityKey').value="";
 				document.getElementById('entityName').value="";
-			}
+			}*/
 		}
 	}
 	
