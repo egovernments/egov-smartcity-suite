@@ -153,7 +153,7 @@
 											name="payto" /><span class="mandatory1"> *</span></td>
 									<td class="bluebox" style="text-align: left; width: 240"
 										colspan="4"><s:textfield name="commonBean.payto"
-											id="commonBean.payto" size="55" /></td>
+											id="commonBean.payto" size="55" value="%{commonBean.payto}"/></td>
 								</tr>
 							</tbody>
 						</table>
@@ -162,6 +162,22 @@
 			</tr>
 		</table>
 	</div>
+
+	<div>
+		<table class="tablebottom" width="90%" cellspacing="0" cellpadding="0"
+			border="0">
+			<tbody>
+				<tr>
+					<th colspan="5">
+						<div class="subheadsmallnew">
+							<s:text name="bill.accountdetails" />
+						</div>
+					</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
 	<div class="yui-skin-sam" align="center">
 		<div id="billDetailTable"></div>
 	</div>
@@ -266,7 +282,7 @@
 					<tr>
 						<th colspan="5">
 							<div class="subheadsmallnew">
-								<s:text name="subledger.details" />
+								<s:text name="bill.subledgerdetails" />
 							</div>
 						</th>
 					</tr>
