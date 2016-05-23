@@ -266,6 +266,7 @@
 	<put-attribute name="body" value="/WEB-INF/views/fund/fund-search.jsp"/>
 </definition>
 
+
 <definition name="fundsource-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.fundsource.new" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-new.jsp"/>
@@ -289,6 +290,25 @@
 <definition name="fundsource-search" extends="base_layout">
 	<put-attribute name="page-title" value="title.fundsource.search" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-search.jsp"/>
+</definition>
+
+
+
+
+<definition name="closedperiod-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.closedperiod.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/closedperiod/closedperiod-edit.jsp"/>
+</definition>
+
+<definition name="closedperiod-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.closedperiod.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/closedperiod/closedperiod-result.jsp"/>
+</definition>
+
+<definition name="closedperiod-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.closedperiod.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/closedperiod/closedperiod-search.jsp"/>
+
 </definition>
 
 
