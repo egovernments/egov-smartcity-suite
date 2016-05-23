@@ -97,7 +97,8 @@ public class MilestoneService {
                 .createAlias("led.lineEstimate", "le")
                 .createAlias("status", "status")
                 .createAlias("woe.workOrder", "wo")
-                .createAlias("led.projectCode", "projectCode");
+                .createAlias("led.projectCode", "projectCode")
+                .createAlias("trackMilestone", "tm");
 
         if (searchRequestMilestone != null) {
             if (searchRequestMilestone.getDepartment() != null)
@@ -121,6 +122,8 @@ public class MilestoneService {
                 criteria.add(Restrictions.ilike("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber(),
                         MatchMode.ANYWHERE));
         }
+        criteria.add(Restrictions.eq("tm.projectCompleted", false));
+        
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
