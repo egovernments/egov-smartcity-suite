@@ -66,6 +66,7 @@ import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -213,7 +214,7 @@ public class BankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/bankRemittance-create")
     @ValidationErrorPage(value = NEW)
-    public String create() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public String create() throws InstantiationException, IllegalAccessException {
         final long startTimeMillis = System.currentTimeMillis();
         BigInteger accountNumber = null;
         String serviceName = "";
@@ -242,7 +243,12 @@ public class BankRemittanceAction extends BaseFormAction {
                 && accountNumber.intValue() != accountNumberId)
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
-        Class<?> service = Class.forName(applicationProperties.getProperty("collection.remittance.client.impl.class"));
+        Class<?> service = null;
+        try {
+            service = Class.forName(applicationProperties.getProperty("collection.remittance.client.impl.class"));
+        } catch (ClassNotFoundException e) {
+            throw new ApplicationRuntimeException("Error in Create Bank Remittance"+ e.getMessage());
+        }
         // getting the entity type service.
         String serviceClassName = service.getSimpleName();
         String remittanceService =  Character.toLowerCase(serviceClassName.charAt(0)) + serviceClassName.substring(1).substring(0,serviceClassName.length()-5);
