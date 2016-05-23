@@ -204,7 +204,7 @@ $(document).ready(function(){
 						$("#zonewardblock").html(boundaryData);
 						$("#propertytaxdue").html(response.propertyDetails.taxDue);
 						
-						
+						   
 						if(parseInt($("#propertytaxdue").html()) > 0){
 							$("#propertytaxdue").addClass("error-msg");
 						}

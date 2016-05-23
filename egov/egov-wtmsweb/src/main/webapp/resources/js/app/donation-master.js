@@ -285,3 +285,6 @@ function addNew()
 	window.open("/wtms/masters/donationMaster/", "_self");
 }
 	
+$('#addnewid').click(function() {
+	window.open("/wtms/masters/donationMaster/", "_self");
+});
