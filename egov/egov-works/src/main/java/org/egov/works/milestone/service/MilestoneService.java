@@ -61,6 +61,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,7 +99,8 @@ public class MilestoneService {
                 .createAlias("status", "status")
                 .createAlias("woe.workOrder", "wo")
                 .createAlias("led.projectCode", "projectCode")
-                .createAlias("trackMilestone", "tm");
+                .createAlias("trackMilestone", "tm", JoinType.LEFT_OUTER_JOIN)
+                .createAlias("tm.status", "trackStatus", JoinType.LEFT_OUTER_JOIN);
 
         if (searchRequestMilestone != null) {
             if (searchRequestMilestone.getDepartment() != null)
@@ -122,9 +124,13 @@ public class MilestoneService {
                 criteria.add(Restrictions.ilike("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber(),
                         MatchMode.ANYWHERE));
         }
-        criteria.add(Restrictions.eq("tm.projectCompleted", false));
-        
+
+        criteria.add(Restrictions.or(
+                Restrictions.isEmpty("trackMilestone"),
+                Restrictions.or(Restrictions.eq("tm.projectCompleted", false),
+                        Restrictions.eq("trackStatus.code", WorksConstants.CANCELLED_STATUS))));
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
         return criteria.list();
     }
 
@@ -216,7 +222,7 @@ public class MilestoneService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-    
+
     public List<String> findContractorsToCancelMilestone(final String code) {
         final List<String> loaNumbers = milestoneRepository
                 .findContractorsToSearchMilestoneToCancel("%" + code + "%",
