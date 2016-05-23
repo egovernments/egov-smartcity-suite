@@ -832,9 +832,37 @@ tbody tr.shown td.details-control {
 	table-layout: fixed;
     overflow: hidden;
     white-space: nowrap;
+    width:100%;
 }
 
 .overflow-x-scroll
 {
 	overflow-x:scroll;
+}
+
+.floors-tbl-freeze-column-div
+{
+	margin-right:90px;
+}
+
+.freeze-action-th
+{
+	position: absolute;
+    right: 20px;
+    padding: 4px 2px !important;
+    min-height: 40px;
+    min-width: 90px !important;
+    line-height: 30px;
+    margin-top: 0px;
+}
+
+.freeze-action-td
+{
+	position: absolute;
+    right: 20px;
+    padding: 4px 2px;
+    padding-bottom: 4px;
+    height: 28px;
+    width: 90px;
+    margin-top: 1px;
 }

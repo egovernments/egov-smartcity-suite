@@ -241,7 +241,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center" class="overflow-x-scroll">
+			<div align="center" class="overflow-x-scroll floors-tbl-freeze-column-div">
 				<%@ include file="../common/FloorForm.jsp"%>
 			</div>
 		</td>
