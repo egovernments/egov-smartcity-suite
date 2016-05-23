@@ -170,60 +170,66 @@ $(document).ready(function(){
 		changeLabel();
 	});
 	
+	
+	try{
 	deptapp=$('#approvalDepartment').val() ;
 	if(deptapp.length != 0){
-	$.ajax({
-		url: "/eis/ajaxWorkFlow-getDesignationsByObjectType",     
-		type: "GET",
-		data: {
-			approvalDepartment : $('#approvalDepartment').val(),
-			departmentRule : $('#approvalDepartment').find("option:selected").text(),
-			type : $('#stateType').val(),
-			currentState : $('#currentState').val(),
-			amountRule : $('#amountRule').val(),
-			additionalRule : $('#additionalRule').val(),
-			pendingAction : $('#pendingActions').val()
-		},
-		dataType: "json",
-		success: function (response) {
-			console.log("success"+response);
-			$('#approvalDesignation').empty();
-			
-			$.each(response, function(index, value) {
-				$('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
+			$.ajax({
+				url: "/eis/ajaxWorkFlow-getDesignationsByObjectType",     
+				type: "GET",
+				data: {
+					approvalDepartment : $('#approvalDepartment').val(),
+					departmentRule : $('#approvalDepartment').find("option:selected").text(),
+					type : $('#stateType').val(),
+					currentState : $('#currentState').val(),
+					amountRule : $('#amountRule').val(),
+					additionalRule : $('#additionalRule').val(),
+					pendingAction : $('#pendingActions').val()
+				},
+				dataType: "json",
+				success: function (response) {
+					console.log("success"+response);
+					$('#approvalDesignation').empty();
+					
+					$.each(response, function(index, value) {
+						$('#approvalDesignation').append($('<option>').text(value.name).attr('value', value.id));
+					});
+					
+				}, 
+				error: function (response) {
+					bootbox.alert('json fail');
+					console.log("failed");
+				}
 			});
-			
-		}, 
-		error: function (response) {
-			bootbox.alert('json fail');
-			console.log("failed");
-		}
-	});
-	if($('#approvalPosOnValidate').val().length != 0){
-	$.ajax({
-		url: "/wtms/ajaxconnection/assignmentByPositionId",     
-		type: "GET",
-		data: {
-			approvalPositionId : $('#approvalPosOnValidate').val(),
-			
-		},
-		dataType: "json",
-		success: function (response) {
-			console.log("success"+response);
-			$('#approvalPosition').empty();
-			$.each(response, function(index, value) {
-				//$('#approvalPosition').append($('<option>').text(value.name).attr('value', value.id));
-				$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
+			if($('#approvalPosOnValidate').val().length != 0){
+			$.ajax({
+				url: "/wtms/ajaxconnection/assignmentByPositionId",     
+				type: "GET",
+				data: {
+					approvalPositionId : $('#approvalPosOnValidate').val(),
+					
+				},
+				dataType: "json",
+				success: function (response) {
+					console.log("success"+response);
+					$('#approvalPosition').empty();
+					$.each(response, function(index, value) {
+						//$('#approvalPosition').append($('<option>').text(value.name).attr('value', value.id));
+						$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
+					});
+					
+				}, 
+				error: function (response) {
+					console.log("failed");
+				}
 			});
-			
-		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	});
+			}
 	}
 	}
-	
+	catch(e)
+	{
+		console.log("ERROR :"+e);
+	}
 });
 $('#consumerCodeData').blur(function(){
 	console.log('Got blur event');
