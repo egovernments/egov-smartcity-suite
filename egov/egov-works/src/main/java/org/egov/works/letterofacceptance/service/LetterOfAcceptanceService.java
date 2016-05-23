@@ -408,7 +408,7 @@ public class LetterOfAcceptanceService {
     
     private void buildWhereClause(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
         
-        queryStr.append("select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status ");
+        queryStr.append("select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status and not exists (select ms.workOrderEstimate.workOrder.id from Milestone ms where ms.workOrderEstimate.workOrder.id = wo.id and upper(wo.egwStatus.code)  != upper(:workorderstatus) )");
         queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.executingDepartment.id = :departmentName)");
         
         if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
@@ -439,6 +439,7 @@ public class LetterOfAcceptanceService {
 
             qry.setParameter("status", WorksConstants.APPROVED);
             qry.setParameter("moduleType", WorksConstants.WORKORDER);
+            qry.setParameter("workorderstatus", WorksConstants.CANCELLED_STATUS);
         if (searchRequestLetterOfAcceptance != null ) {
             qry.setParameter("departmentName", searchRequestLetterOfAcceptance.getDepartmentName());
         if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))

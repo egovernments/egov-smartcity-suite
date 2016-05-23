@@ -59,4 +59,8 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
     
     @Query("select distinct(milestone.workOrderEstimate.workOrder.contractor.name) from Milestone as milestone where upper(milestone.workOrderEstimate.workOrder.contractor.name) like upper(:code) or upper(milestone.workOrderEstimate.workOrder.contractor.code) like upper(:code) and milestone.status.code = :status")
     List<String> findContractorsToSearchMilestoneToCancel(@Param("code") String code, @Param("status") String status);
+
+    @Query("select ms.id from Milestone ms where ms.workOrderEstimate.workOrder.id = :workorderid and upper(ms.workOrderEstimate.workOrder.egwStatus.code) != upper(:workorderstatus) ")
+    Long findWorkOrderToCreateMilestone(@Param("workorderid") Long workOrderId, @Param("workorderstatus") String workOrderStatus);
+
 }
