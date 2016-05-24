@@ -79,15 +79,6 @@ public class Milestone extends StateAware implements Comparable {
         CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
     }
 
-    public enum Actions {
-        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
-
     @Id
     @GeneratedValue(generator = SEQ_EGW_MILESTONE, strategy = GenerationType.SEQUENCE)
     private Long id;
