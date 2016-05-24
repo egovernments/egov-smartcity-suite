@@ -79,7 +79,9 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                 jsonObject.addProperty("nameOfWork", led.getNameOfWork());
                 jsonObject.addProperty("projectCode", led.getProjectCode().getCode());
                 jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getCode().toString());
-                jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode().toString());
+                if(led.getLineEstimate().getSubTypeOfWork() != null){
+                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode().toString());
+                }       
                 jsonObject.addProperty("lineEstimateCreatedBy", led.getLineEstimate().getCreatedBy().getName());
                 jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
             }
