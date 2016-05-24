@@ -296,4 +296,8 @@ public class WorksConstants {
     public static final String SLUM_WORK = "SLUM_WORK";
 
     public static final String NON_SLUM_WORK = "NON_SLUM_WORK";
+    
+    public static final String LOCATION_BOUNDARYTYPE = "Locality";
+    
+    public static final String LOCATION_HIERARCHYTYPE = "LOCATION";
 }

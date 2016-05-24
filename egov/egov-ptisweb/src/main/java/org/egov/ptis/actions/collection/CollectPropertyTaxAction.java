@@ -74,9 +74,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_COLLECTION_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
 
 @Namespace("/collection")
 @ResultPath("/WEB-INF/jsp/")
@@ -145,14 +142,6 @@ public class CollectPropertyTaxAction extends BaseFormAction {
                 .getProperty());
         final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
         final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
-        /*
-         * Advance collection should also be considered for full payment validation. 
-         * Current year second installment demand will be the demand for all the advance installments
-         */
-        BigDecimal advanceCollected = demandCollMap.get(ADVANCE_COLLECTION_STR);
-        BigDecimal secondHalfTax = demandCollMap.get(CURR_SECONDHALF_DMD_STR);
-        BigDecimal actualAdvanceToBeCollected = secondHalfTax.multiply(new BigDecimal(MAX_ADVANCES_ALLOWED));
-        BigDecimal advanceBalance = actualAdvanceToBeCollected.subtract(advanceCollected);
         //finding if there are any alter additions from eSuvidha.
 		final SQLQuery qry = entityQueryService
 				.getSession()
@@ -168,7 +157,7 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 					+ " was pending so, there might be difference in tax due compared to demand notice.";
 		}
 		
-        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0 && advanceBalance.compareTo(BigDecimal.ZERO) <= 0) {
+        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0) {
             args.add(propertyId);
             isAssessmentNoValid = Boolean.TRUE;
             setErrorMsg(getText("msg.collection.fully.paid", args));

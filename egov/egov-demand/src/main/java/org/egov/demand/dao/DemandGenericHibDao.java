@@ -819,43 +819,4 @@ public class DemandGenericHibDao implements DemandGenericDao {
             list = qry.list();
             return list;
     }
-	
-	/**
-	 * Method called to get the balance Amount for the given Demand reason
-	 * Master Code ,Module and Installment.
-	 * 
-	 * @param demand
-	 *            - EgDemand Object.
-	 * @param dmdReasonMasterCode
-	 *            - Code of the EgDemandReasonMaster
-	 * @param module
-	 *            - EgModule object
-	 * @param installment
-	 * 			  - Installment of the demand details          
-	 * @return java.math.BigDecimal - returns the Balance(Demand - Collection)
-	 * 
-	 */
-
-	@Override
-	public BigDecimal getBalanceByDmdMasterCodeInst(EgDemand demand, String dmdReasonMasterCode,
-			Module module, Installment installment) {
-		BigDecimal balance = BigDecimal.ZERO;
-		if (demand != null && dmdReasonMasterCode != null && module != null) {
-			List<EgDemandDetails> dmdDetList = getDmdDetailList(demand,
-					installment, module,
-					getDemandReasonMasterByCode(dmdReasonMasterCode, module));
-			if (!dmdDetList.isEmpty()) {
-				for (EgDemandDetails dmdDet : dmdDetList) {
-					if (dmdDet.getAmount() != null) {
-						balance = balance.add(dmdDet.getAmount());
-					}
-					if (dmdDet.getAmtCollected() != null
-							&& dmdDet.getAmtCollected().compareTo(BigDecimal.ZERO) > 0) {
-						balance = balance.subtract(dmdDet.getAmtCollected());
-					}
-				}
-			}
-		}
-		return balance;
-	}
 }

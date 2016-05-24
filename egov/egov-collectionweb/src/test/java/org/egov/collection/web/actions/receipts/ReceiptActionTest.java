@@ -148,7 +148,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		//receiptWorkflowServiceMock = createMock(WorkflowService.class);
 		beanProvider=createMock(ApplicationContextBeanProvider.class);
 		auditEventService =  new AuditEventService();
-		EgovThreadLocals.setUserId("1");
+		ApplicationThreadLocals.setUserId("1");
 		genericService.setType(AuditEvent.class);
 		auditEventService.setAuditEventPersistenceService(genericService);
 		
@@ -1206,7 +1206,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		HashMap<String, Object> sess = new HashMap<String, Object>();
 		sess.put("com.egov.user.LoginUserName", "egovernments");
 		action.setSession(sess);
-		EgovThreadLocals.setDomainName("localhost");
+		ApplicationThreadLocals.setDomainName("localhost");
 		
 		String result = action.newform();
 		assertEquals("new",result);
@@ -1215,7 +1215,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 	
 	//@Test
 	public void testSaveNewMiscReceiptsForCash() throws Exception{
-		EgovThreadLocals.setDomainName("localhost");
+		ApplicationThreadLocals.setDomainName("localhost");
 		collectionsUtil=new CollectionsUtil(){
 			public List<String> getCollectionModesNotAllowed(User loggedInUser,ServiceDetails serviceDetails){
 				return (new ArrayList<String>());
@@ -1355,7 +1355,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 	
 	//@Test
 	public void testSaveNewMiscReceiptsForCashWithSubledger() throws Exception{
-		EgovThreadLocals.setDomainName("localhost");
+		ApplicationThreadLocals.setDomainName("localhost");
 		collectionsUtil=new CollectionsUtil(){
 			public List<String> getCollectionModesNotAllowed(User loggedInUser){
 				return (new ArrayList<String>());

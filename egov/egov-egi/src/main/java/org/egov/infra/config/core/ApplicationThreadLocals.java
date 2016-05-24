@@ -38,37 +38,72 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.exception;
+package org.egov.infra.config.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class ApplicationThreadLocals {
 
-/**
- * The Class TooManyValuesException.
- * Checked exception for values.
- */
-public class TooManyValuesException extends ApplicationException {
+    private static ThreadLocal<String> domainName = new ThreadLocal<>();
+    private static ThreadLocal<Long> userId = new ThreadLocal<>();
+    private static ThreadLocal<String> tenantID = new ThreadLocal<>();
+    private static ThreadLocal<String> cityCode = new ThreadLocal<>();
+    private static ThreadLocal<String> cityName = new ThreadLocal<>();
+    private static ThreadLocal<String> municipalityName = new ThreadLocal<String>();
 
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(TooManyValuesException.class);
+    public static String getCityName() {
+        return cityName.get();
+    }
 
-	/**
-	 * Instantiates a new too many values exception.
-	 * @param msg the msg
-	 */
-	public TooManyValuesException(final String msg) {
-		super(msg);
-		LOGGER.error(msg);
-	}
+    public static void setCityName(final String citiName) {
+        cityName.set(citiName);
+    }
 
-	/**
-	 * Instantiates a new too many values exception.
-	 * @param msg the msg
-	 * @param e the e
-	 */
-	public TooManyValuesException(final String msg, final Throwable e) {
-		super(msg, e);
-		LOGGER.error(msg, e);
-	}
+    public static String getCityCode() {
+        return cityCode.get();
+    }
+
+    public static void setCityCode(final String citiCode) {
+        cityCode.set(citiCode);
+    }
+
+    public static String getTenantID() {
+        return tenantID.get();
+    }
+
+    public static void setTenantID(final String tenantJNDI) {
+        tenantID.set(tenantJNDI);
+    }
+
+    public static String getDomainName() {
+        return domainName.get();
+    }
+
+    public static void setDomainName(final String domName) {
+        domainName.set(domName);
+    }
+
+    public static Long getUserId() {
+        return userId.get();
+    }
+
+    public static void setUserId(final Long userid) {
+        userId.set(userid);
+    }
+
+    public static String getMunicipalityName() {
+        return municipalityName.get();
+    }
+
+    public static void setMunicipalityName(final String cityMunicipalityName) {
+        municipalityName.set(cityMunicipalityName);
+    }
+
+    public static void clearValues() {
+        domainName.remove();
+        userId.remove();
+        tenantID.remove();
+        cityCode.remove();
+        cityName.remove();
+        municipalityName.remove();
+    }
 
 }

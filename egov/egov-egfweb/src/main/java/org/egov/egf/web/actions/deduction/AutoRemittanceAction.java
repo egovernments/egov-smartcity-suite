@@ -45,8 +45,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.dao.recoveries.TdsHibernateDAO;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -150,7 +150,7 @@ public class AutoRemittanceAction extends BaseFormAction {
             remittanceScheduler.setSchJobName("Manual");
             remittanceScheduler.setLastRunDate(new Date());
             remittanceScheduler.setCreatedDate(new Date());
-            remittanceScheduler.setCreatedBy(EgovThreadLocals.getUserId().intValue());
+            remittanceScheduler.setCreatedBy(ApplicationThreadLocals.getUserId().intValue());
             remittanceScheduler.setStatus("Started");
             scheduledRemittanceService.getRemittanceSchedulerLogService().persist(remittanceScheduler);
             final Long schedularLogId = remittanceScheduler.getId();

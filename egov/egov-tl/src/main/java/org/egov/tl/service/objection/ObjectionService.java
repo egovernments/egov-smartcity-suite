@@ -112,7 +112,7 @@ public class ObjectionService extends PersistenceService<LicenseObjection, Long>
     private void processWorkflow(LicenseObjection objection, WorkflowBean workflowBean) {
         /*
 		 * if (workflowBean.getActionName().equalsIgnoreCase(Constants.BUTTONAPPROVE)) { Position position =
-		 * positionMasterService.getCurrentPositionForUser(EgovThreadLocals.getUserId());
+		 * positionMasterService.getCurrentPositionForUser(ApplicationThreadLocals.getUserId());
 		 * objection.changeState(Constants.WORKFLOW_STATE_TYPE_OBJECTLICENSE + Constants.WORKFLOW_STATE_APPROVED, position,
 		 * workflowBean.getComments()); objection.getCurrentState().setText2(contextName); position =
 		 * this.eisCommonsManager.getPositionByUserId(objection.getCreatedBy().getId());

@@ -39,6 +39,12 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgDemandDao;
@@ -46,7 +52,9 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -67,24 +75,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Service
 @Transactional(readOnly = true)
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterConnectionBillable extends AbstractBillable implements Billable {
 
-    private static final String STRING_DEPARTMENT_CODE = "REV";
-    private static final String STRING_SERVICE_CODE = "WT";
-    private static final String EST_STRING_SERVICE_CODE = "WES";
-    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
-    public static final String DEFAULT_FUND_SRC_CODE = "01";
-    public static final String DEFAULT_FUND_CODE = "01";
     private static final String DISPLAY_MESSAGE = "Water Charge Collection";
     private WaterConnectionDetails WaterConnectionDetails;
     private AssessmentDetails assessmentDetails;
@@ -109,6 +104,9 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Autowired
     private WaterTaxUtils waterTaxUtils;
     
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    
     @Override
     public String getBillPayee() {
         return buildOwnerFullName(getAssessmentDetails().getOwnerNames());
@@ -128,13 +126,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public List<EgDemand> getAllDemands() {
-        List<EgDemand> demands = null;
-       final Long demandIds = getCurrentDemand().getId();
-        if (demandIds != null ) {
-            demands = new ArrayList<EgDemand>();
-            
-                demands.add(egDemandDAO.findById(Long.valueOf(demandIds.toString()), false));
-        }
+        List<EgDemand> demands = waterTaxUtils.getAllDemand(getWaterConnectionDetails());
         return demands;
     }
 
@@ -163,22 +155,30 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getDepartmentCode() {
-        return STRING_DEPARTMENT_CODE;
+    	 final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DEPTCODEGENBILL).get(0);
+        return (appConfigValue!=null?appConfigValue.getValue().trim():null);
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
+    	final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNCTIONARYCODEGENBILL).get(0);
+        return new BigDecimal((appConfigValue!=null?appConfigValue.getValue():"0"));
     }
 
     @Override
     public String getFundCode() {
-        return DEFAULT_FUND_CODE;
+         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNDCODEGENBILL).get(0);
+        return (appConfigValue!=null?appConfigValue.getValue():null);
     }
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUND_SRC_CODE;
+    	 final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNDSOURCEGENBILL).get(0);
+        return (appConfigValue!=null?appConfigValue.getValue():null);
     }
 
     @Override
@@ -214,9 +214,13 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public String getServiceCode() {
         if (getWaterConnectionDetails().getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
-            return EST_STRING_SERVICE_CODE;
+        	return appConfigValuesService.getConfigValuesByModuleAndKey(
+                     WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ESTSERVICECODEGENBILL).get(0).getValue();
+           
         else
-        return STRING_SERVICE_CODE;
+        return  appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SERVEICECODEGENBILL).get(0).getValue();
+       
     }
 
     @Override

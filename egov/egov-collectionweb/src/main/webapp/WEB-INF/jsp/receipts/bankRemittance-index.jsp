@@ -51,7 +51,7 @@
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="main" align="center">
 <tr>
-<td class="mainheading" colspan="6" align="center"><s:text name="bankremittance.confirmation"/><br/></td>
+<td class="mainheading" colspan="6" align="center"><s:text name="bankremittance.confirmation"/>&nbsp;<b></b><s:property value="%{voucherHeaderValues[0].remittanceVoucher}" /></b><br/></td>
 </tr>
 <tr>
 <td>&nbsp;</td>
@@ -62,7 +62,6 @@
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptnumber"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.receiptdate"/></th>
 			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.servicename"/></th>
-			<th class="bluebgheadtd" width="20%" ><s:text name="bankremittance.remittance.vouchernum"/></th>
 		</tr>
 		<s:iterator value="%{voucherHeaderValues}" status="s"> 
 		<tr>
@@ -70,7 +69,6 @@
 			<td class="blueborderfortd"><div align="center"><s:property value="%{receiptnumber}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:date name="receiptDate" var="cdFormat" format="dd/MM/yyyy"/><s:property value="%{cdFormat}" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{service.name}" /></div></td>
-			<td class="blueborderfortd"><div align="center"><s:property value="%{remittanceVoucher}" /></div></td>
 			
 		</s:iterator>
 		<s:hidden name="totalCashAmount" value="%{totalCashAmount}"/>

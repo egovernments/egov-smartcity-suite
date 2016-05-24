@@ -40,7 +40,7 @@
 package org.egov.works.services;
 
 import org.egov.commons.service.EntityTypeService;
-import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;

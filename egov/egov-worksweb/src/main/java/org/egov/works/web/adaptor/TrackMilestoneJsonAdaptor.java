@@ -79,7 +79,9 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                 jsonObject.addProperty("nameOfWork", led.getNameOfWork());
                 jsonObject.addProperty("projectCode", led.getProjectCode().getCode());
                 jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getCode().toString());
-                jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode().toString());
+                if(led.getLineEstimate().getSubTypeOfWork() != null){
+                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode().toString());
+                }       
                 jsonObject.addProperty("lineEstimateCreatedBy", led.getLineEstimate().getCreatedBy().getName());
                 jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
             }
@@ -117,6 +119,7 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                     child.addProperty("percentage", ma.getPercentage());
                     child.addProperty("scheduleStartDate", sdf.format(ma.getScheduleStartDate()));
                     child.addProperty("scheduleEndDate", sdf.format(ma.getScheduleEndDate()));
+                    child.addProperty("hiddenScheduleStartDate", sdf2.format(ma.getScheduleStartDate()));
                     child.addProperty("hiddenScheduleEndDate", sdf2.format(ma.getScheduleEndDate()));
                     jsonArray.add(child);
                 }
@@ -130,7 +133,8 @@ public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                         final JsonObject child = new JsonObject();
                         child.addProperty("currentStatus", tma.getStatus());
                         child.addProperty("completedPercentage", tma.getCompletedPercentage());
-                        child.addProperty("completionDate", sdf.format(tma.getCompletionDate()));
+                        if(tma.getCompletionDate() != null)
+                            child.addProperty("completionDate", sdf.format(tma.getCompletionDate()));
                         child.addProperty("reasonForDelay", tma.getRemarks());
                         jsonArray.add(child);
                     }

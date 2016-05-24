@@ -47,7 +47,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -111,7 +111,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
 
     private void populateBankBranchDetail(final Bankbranch bankBranch) {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        bankBranch.setModifiedby(BigDecimal.valueOf(Long.valueOf(EgovThreadLocals.getUserId())));
+        bankBranch.setModifiedby(BigDecimal.valueOf(Long.valueOf(ApplicationThreadLocals.getUserId())));
         bankBranch.setLastmodified(new Date());
         bankBranch.setBranchcode(request.getParameter("branchcode"));
         bankBranch.setBranchname(request.getParameter("branchname"));

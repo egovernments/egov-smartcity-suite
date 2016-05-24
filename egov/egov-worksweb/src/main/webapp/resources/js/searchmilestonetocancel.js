@@ -106,7 +106,7 @@ function viewLetterOfAcceptance(id) {
 
 function viewMilestone(id, trackMilestone) {
 	if(trackMilestone == 'true')
-		window.open("/egworks/trackmilestone/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+		window.open("/egworks/milestone/viewtrackmilestone/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	else
 		window.open("/egworks/milestone/viewmilestone/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
@@ -156,7 +156,7 @@ $(document).ready(function() {
 	    },
 	    queryTokenizer: Bloodhound.tokenizers.whitespace,
 	    remote: {
-	        url: '/egworks/letterofacceptance/ajaxcontractors-loatocancel?code=%QUERY',
+	        url: '/egworks/milestone/ajaxcontractors-milestonetocancel?code=%QUERY',
 	        filter: function (data) {
 	            return $.map(data, function (ct) {
 	                return {

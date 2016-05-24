@@ -40,7 +40,7 @@
   -->
 
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-17T10:54:56 -->
+<!-- 2016-05-24T11:03:14 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="551" pageHeight="802" columnWidth="551" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="dbbc36f2-fb09-429d-8985-50a04d1a0b3f">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -160,7 +160,7 @@
 		<groupFooter>
 			<band height="130" splitType="Stretch">
 				<staticText>
-					<reportElement positionType="Float" x="198" y="0" width="350" height="15" uuid="48129c3c-b8b5-4515-ba6e-75f4fb7ddc43">
+					<reportElement positionType="Float" x="204" y="0" width="344" height="15" uuid="48129c3c-b8b5-4515-ba6e-75f4fb7ddc43">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
@@ -175,7 +175,7 @@
 					<text><![CDATA[Amount Paid (Rs.)]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="198" y="15" width="60" height="15" uuid="9511f8ac-41df-46af-9208-cbe3a5152146">
+					<reportElement positionType="Float" x="204" y="15" width="59" height="15" uuid="9511f8ac-41df-46af-9208-cbe3a5152146">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					</reportElement>
@@ -191,7 +191,7 @@
 					<text><![CDATA[Arrears]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="258" y="15" width="60" height="15" uuid="0d6e039d-07d4-41f6-92dc-aced348bf587">
+					<reportElement positionType="Float" x="263" y="15" width="59" height="15" uuid="0d6e039d-07d4-41f6-92dc-aced348bf587">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -207,7 +207,7 @@
 					<text><![CDATA[Current]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="318" y="15" width="60" height="15" uuid="0a12ad1e-da2f-43a7-8dbd-37363fd31d40">
+					<reportElement positionType="Float" x="322" y="15" width="59" height="15" uuid="0a12ad1e-da2f-43a7-8dbd-37363fd31d40">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -223,7 +223,7 @@
 					<text><![CDATA[Interest]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="429" y="15" width="60" height="15" uuid="5b5ca177-48fb-4a95-8270-cdc7beb5105d">
+					<reportElement positionType="Float" x="431" y="15" width="59" height="15" uuid="5b5ca177-48fb-4a95-8270-cdc7beb5105d">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -239,7 +239,7 @@
 					<text><![CDATA[Advance]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="489" y="15" width="59" height="15" uuid="ceef559a-483c-40ae-8719-a6c30ec7a5c1">
+					<reportElement positionType="Float" x="490" y="15" width="58" height="15" uuid="ceef559a-483c-40ae-8719-a6c30ec7a5c1">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -255,7 +255,7 @@
 					<text><![CDATA[Total]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="198" y="30" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="70715818-3d37-4a0e-a7cd-87fdfe062d47">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="204" y="30" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="70715818-3d37-4a0e-a7cd-87fdfe062d47">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -272,7 +272,7 @@
 					<textFieldExpression><![CDATA[!$V{arrearTotal}.equals(BigDecimal.ZERO)?$V{arrearTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="258" y="30" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="9991a373-55c6-4541-b22d-0c4cedc23620">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="263" y="30" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="9991a373-55c6-4541-b22d-0c4cedc23620">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -288,7 +288,7 @@
 					<textFieldExpression><![CDATA[!$V{currentTotal}.equals(BigDecimal.ZERO)?$V{currentTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="318" y="30" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="a3d66d36-041e-4078-b46c-607d236abeac">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="322" y="30" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="a3d66d36-041e-4078-b46c-607d236abeac">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -304,7 +304,7 @@
 					<textFieldExpression><![CDATA[!$V{penaltyTotal}.equals(BigDecimal.ZERO)?$V{penaltyTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="429" y="30" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="ed9b69e8-26fb-4cef-8731-cd3332b78ee6">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="431" y="30" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="ed9b69e8-26fb-4cef-8731-cd3332b78ee6">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -320,8 +320,9 @@
 					<textFieldExpression><![CDATA[!$V{advance}.equals(BigDecimal.ZERO)?$V{advance}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="489" y="30" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="641501af-9eac-43fc-9c9d-34347962c5eb">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="490" y="30" width="58" height="30" isPrintWhenDetailOverflows="true" uuid="641501af-9eac-43fc-9c9d-34347962c5eb">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.5"/>
@@ -352,7 +353,7 @@
 					<textFieldExpression><![CDATA["Amount (in words): " + ReportUtil.amountInWords($V{totalAmount} - $V{rebate})]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" x="378" y="15" width="51" height="15" uuid="37655b30-f977-4ed8-8e7f-f2ca88fb0089">
+					<reportElement positionType="Float" x="381" y="15" width="50" height="15" uuid="37655b30-f977-4ed8-8e7f-f2ca88fb0089">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -368,9 +369,8 @@
 					<text><![CDATA[Rebate]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="378" y="30" width="51" height="30" isPrintWhenDetailOverflows="true" uuid="e3ed6ffe-6a1e-426b-920c-ca5b0baef7ad">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="381" y="30" width="50" height="30" isPrintWhenDetailOverflows="true" uuid="e3ed6ffe-6a1e-426b-920c-ca5b0baef7ad">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.5"/>
@@ -384,8 +384,9 @@
 					<textFieldExpression><![CDATA[!$V{rebate}.equals(BigDecimal.ZERO)?$V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" x="198" y="60" width="350" height="15" uuid="6d80cce4-ed16-4e44-80e0-d25134364d56">
+					<reportElement positionType="Float" x="204" y="60" width="344" height="15" uuid="6d80cce4-ed16-4e44-80e0-d25134364d56">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.5"/>
@@ -399,7 +400,7 @@
 					<text><![CDATA[Balance]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="198" y="75" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="1d307dc9-4f9d-4512-91dd-36da28537405">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="204" y="75" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="1d307dc9-4f9d-4512-91dd-36da28537405">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -415,7 +416,7 @@
 					<textFieldExpression><![CDATA[$V{arrearTotalBalance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="258" y="75" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="d907f992-d85e-42b6-b631-043fa07806b8">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="263" y="75" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="d907f992-d85e-42b6-b631-043fa07806b8">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -432,7 +433,7 @@
 					<textFieldExpression><![CDATA[$V{currentTotalBalance} > 0 ? $V{currentTotalBalance} : BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="318" y="75" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="cd8c0de3-78b8-483f-817e-9160ced10892">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="322" y="75" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="cd8c0de3-78b8-483f-817e-9160ced10892">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -448,7 +449,7 @@
 					<textFieldExpression><![CDATA[$V{penaltyTotalBalance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="378" y="75" width="51" height="30" isPrintWhenDetailOverflows="true" uuid="ca148b41-43bc-45a4-837a-79ccdb5eff7e">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="381" y="75" width="50" height="30" isPrintWhenDetailOverflows="true" uuid="ca148b41-43bc-45a4-837a-79ccdb5eff7e">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -464,9 +465,8 @@
 					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="429" y="75" width="60" height="30" isPrintWhenDetailOverflows="true" uuid="1f3ae934-f0e0-4e67-a565-f30e97974774">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="431" y="75" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="1f3ae934-f0e0-4e67-a565-f30e97974774">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.5"/>
@@ -480,7 +480,7 @@
 					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00">
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="489" y="75" width="59" height="30" isPrintWhenDetailOverflows="true" uuid="2891bb59-49b7-4f36-92ce-861cdf41889a">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="490" y="75" width="58" height="30" isPrintWhenDetailOverflows="true" uuid="2891bb59-49b7-4f36-92ce-861cdf41889a">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					</reportElement>
 					<box leftPadding="5" rightPadding="5">

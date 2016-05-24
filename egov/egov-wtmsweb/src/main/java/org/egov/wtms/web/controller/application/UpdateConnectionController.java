@@ -65,7 +65,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -422,7 +422,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                                     .equals(WaterTaxConstants.RECONNECTIONCONNECTION))
                         return "redirect:/application/ReconnacknowlgementNotice?pathVar="
                                 + waterConnectionDetails.getApplicationNumber();
-                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) && waterTaxUtils.isDigitalSignatureEnabled()) { // Sign
+                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) ) { // Sign
                         WaterConnectionDetails upadtedWaterConnectionDetails = null;
                         if (waterConnectionDetails.getApplicationType().getCode()
                                 .equals(WaterTaxConstants.NEWCONNECTION)
@@ -467,7 +467,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                         }
                         model.addAttribute("fileStoreIds", upadtedWaterConnectionDetails.getFileStore()
                                 .getFileStoreId());
-                        model.addAttribute("ulbCode", EgovThreadLocals.getCityCode());
+                        model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
                         final HttpSession session = request.getSession();
                         session.setAttribute(WaterTaxConstants.MODE, mode);
                         session.setAttribute(WaterTaxConstants.APPROVAL_POSITION, approvalPosition);
@@ -479,12 +479,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 upadtedWaterConnectionDetails.getApplicationNumber());
                         session.setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER,
                                 fileStoreIdsApplicationNoMap);
+                        model.addAttribute("isDigitalSignatureEnabled", waterTaxUtils.isDigitalSignatureEnabled());
                         return "newConnection-digitalSignatureRedirection";
                     } 
-                    else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) && !waterTaxUtils.isDigitalSignatureEnabled()) {
-                        waterConnectionDetails.setWorkOrderDate(new Date());
-                        waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
-                    }
                     else
                         waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                                 approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,

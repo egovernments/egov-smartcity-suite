@@ -57,7 +57,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -755,11 +755,11 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     protected abstract void approve();
 
     protected User getUser() {
-        return (User) persistenceService.find("from User where id_user=?", EgovThreadLocals.getUserId());
+        return (User) persistenceService.find("from User where id_user=?", ApplicationThreadLocals.getUserId());
     }
 
     protected Position getPosition() {
-        return eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+        return eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
     }
 
     protected Position getPositionByUserId(final Integer userId) {

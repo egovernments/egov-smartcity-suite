@@ -203,6 +203,11 @@ $(document).ready(function(){
 						$("#locality").html(response.boundaryDetails.localityName);
 						$("#zonewardblock").html(boundaryData);
 						$("#propertytaxdue").html(response.propertyDetails.taxDue);
+						
+						   
+						if(parseInt($("#propertytaxdue").html()) > 0){
+							$("#propertytaxdue").addClass("error-msg");
+						}
 										
 				}, 
 				error: function (response) {
@@ -212,7 +217,6 @@ $(document).ready(function(){
 		}		
 	}
 	
-	$("#propertytaxdue").addClass("error-msg");
 	$("#waterSourceDropdown").prop("disabled", true);
 	$("#connectionCategorie").prop("disabled", true);
 	

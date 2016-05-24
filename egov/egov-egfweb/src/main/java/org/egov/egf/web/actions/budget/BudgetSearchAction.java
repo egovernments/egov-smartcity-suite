@@ -63,8 +63,8 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -553,7 +553,7 @@ public class BudgetSearchAction extends BaseFormAction {
         Position pos;
         try {
             // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-            pos = eisCommonService.getPrimaryAssignmentPositionForEmp(EgovThreadLocals.getUserId());
+            pos = eisCommonService.getPrimaryAssignmentPositionForEmp(ApplicationThreadLocals.getUserId());
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Unable to get Position for the user");
         }
@@ -561,7 +561,7 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     protected User getUser() {
-        final User user = (User) persistenceService.find("from User where id_user=?", EgovThreadLocals.getUserId());
+        final User user = (User) persistenceService.find("from User where id_user=?", ApplicationThreadLocals.getUserId());
         return user;
     }
 

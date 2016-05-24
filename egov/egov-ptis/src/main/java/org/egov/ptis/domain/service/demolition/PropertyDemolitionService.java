@@ -49,11 +49,11 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -362,7 +362,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
             smsMsg = messageSource.getMessage("demolition.rejection.sms", new String[] { applicantName, assessmentNo,
-                    EgovThreadLocals.getMunicipalityName() }, null);
+                    ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
         	Installment effectiveInstallment = null;
         	Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
@@ -388,7 +388,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                     .add(demandMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                             : demandMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             smsMsg = messageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,
-            		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveInstallment.getFromDate()),EgovThreadLocals.getMunicipalityName() },
+            		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveInstallment.getFromDate()), ApplicationThreadLocals.getMunicipalityName() },
                     null);
         }
 

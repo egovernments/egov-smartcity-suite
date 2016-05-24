@@ -46,11 +46,11 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.calculator.DemandNoticeInfo;
@@ -249,7 +249,7 @@ public class BillService {
             BasicProperty basicProperty = null;
             try {
                 basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNumber);
-                generateBill(basicProperty, EgovThreadLocals.getUserId().intValue());
+                generateBill(basicProperty, ApplicationThreadLocals.getUserId().intValue());
                 noOfBillsGenerated++;
             } catch (final Exception e) {
                 basicProperty.setIsBillCreated('F');

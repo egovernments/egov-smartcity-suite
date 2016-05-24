@@ -248,7 +248,8 @@ function openLetterOfAcceptance(id) {
 jQuery('#createMilestone').click(function(e) {
 	var estimateNumber = $('input[name=selectCheckbox]:checked').attr('data');
 	if(estimateNumber == null) {
-		bootbox.alert("");
+		var message = document.getElementById('selectLOA').value;
+		bootbox.alert(message);
 	}else {
 			window.location = "/egworks/milestone/newform?estimateNumber="+estimateNumber;
 		}

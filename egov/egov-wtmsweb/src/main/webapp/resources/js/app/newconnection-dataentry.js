@@ -38,24 +38,21 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
-function validRange(start, end) {
-	        var startDate = Date.parse(start);
-	        var endDate = Date.parse(end);
-			
-	        // Check the date range, 86400000 is the number of milliseconds in one day
-	        var difference = (endDate - startDate) / (86400000 * 7);
-	        if (difference < 0) {
-	        	bootbox.alert("Last Reading date should not be less than the connection date.");
-				$('#end_date').val('');
-				return false;
-				} else {
-				return true;
-			}
-			
-	        return true;
-			
-			
+	
+
+	$("#connectionType").change(function(){
+		
+		
+		if($('#connectionType').val() === "METERED")
+		{
+			$('#spanmonthlymandatory').hide();
 		}
+		else
+		{
+		   $('#spanmonthlymandatory').show();
+		}
+	});
+	
 		
 		$(".btn-primary").click(function(event){
 			
@@ -95,3 +92,23 @@ function validRange(start, end) {
 			
 		});
 });	
+
+
+function validRange(start, end) {
+	        var startDate = Date.parse(start);
+	        var endDate = Date.parse(end);
+			
+	        // Check the date range, 86400000 is the number of milliseconds in one day
+	        var difference = (endDate - startDate) / (86400000 * 7);
+	        if (difference < 0) {
+	        	bootbox.alert("Last Reading date should not be less than the connection date.");
+				$('#end_date').val('');
+				return false;
+				} else {
+				return true;
+			}
+			
+	        return true;
+			
+			
+	}

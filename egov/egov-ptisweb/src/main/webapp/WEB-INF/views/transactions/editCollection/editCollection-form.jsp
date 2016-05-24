@@ -110,7 +110,7 @@ body {
 								<td class="col-xs-2" align="right">
 									<c:if
 										test="${demandDetailBeans[demandInfoStatus.index].reasonMaster == 'Penalty Fines'}">
-										<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedAmount" onblur="validNumber(this);checkZero(this);" id="revisedAmount" cssClass="form-control" />
+										<form:input path="demandDetailBeans[${demandInfoStatus.index}].revisedAmount" onblur="validNumber(this);" id="revisedAmount" cssClass="form-control" />
 										<form:errors path="demandDetailBeans[${demandInfoStatus.index}].revisedAmount" cssClass="add-margin error-msg" />
 									</c:if>
 									<c:if

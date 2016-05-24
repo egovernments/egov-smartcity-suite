@@ -214,9 +214,8 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "technicalSanctionBy")
     private User technicalSanctionBy;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location", nullable = false)
+    @JoinColumn(name = "location")
     private Boundary location;
 
     @NotNull

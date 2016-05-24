@@ -59,7 +59,7 @@
 		<th class="bluebgheadtd"><s:text name="buildingpermdate" />
 		<th class="bluebgheadtd"><s:text name="buildingpermplintharea" />
 
-		<th class="bluebgheadtd"><s:text name="Add/Delete" /></th>
+		<th class="bluebgheadtd freeze-action-th"><s:text name="Add/Delete" /></th>
 	</tr>
 	<s:if test="propertyDetail.floorDetailsProxy.size()==0">
 		<tr id="Floorinfo">
@@ -199,7 +199,7 @@
 				</div>
 			</td>
 			
-			<td class="blueborderfortd" id="AddRemoveFloor">
+			<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 			
 			  <span id="addF" alt="AddF" class="tblactionicon add" 
 			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
@@ -371,7 +371,7 @@
 				</div>
 			</td>
 				
-				<td class="blueborderfortd" id="AddRemoveFloor">
+				<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 				  <span id="addF" alt="AddF" class="tblactionicon add" 
 			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
 			           <i class="fa fa-plus-circle"></i>

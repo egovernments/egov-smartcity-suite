@@ -38,72 +38,57 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.utils;
+jQuery('#btnsearch').click(function(e) {
 
-public class EgovThreadLocals {
+	callAjaxSearch();
+});
 
-    private static ThreadLocal<String> domainName = new ThreadLocal<>();
-    private static ThreadLocal<Long> userId = new ThreadLocal<>();
-    private static ThreadLocal<String> tenantID = new ThreadLocal<>();
-    private static ThreadLocal<String> cityCode = new ThreadLocal<>();
-    private static ThreadLocal<String> cityName = new ThreadLocal<>();
-    private static ThreadLocal<String> municipalityName = new ThreadLocal<String>();
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
 
-    public static String getCityName() {
-        return cityName.get();
-    }
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
 
-    public static void setCityName(final String citiName) {
-        cityName.set(citiName);
-    }
+	return indexed_array;
+}
 
-    public static String getCityCode() {
-        return cityCode.get();
-    }
-
-    public static void setCityCode(final String citiCode) {
-        cityCode.set(citiCode);
-    }
-
-    public static String getTenantID() {
-        return tenantID.get();
-    }
-
-    public static void setTenantID(final String tenantJNDI) {
-        tenantID.set(tenantJNDI);
-    }
-
-    public static String getDomainName() {
-        return domainName.get();
-    }
-
-    public static void setDomainName(final String domName) {
-        domainName.set(domName);
-    }
-
-    public static Long getUserId() {
-        return userId.get();
-    }
-
-    public static void setUserId(final Long userid) {
-        userId.set(userid);
-    }
-
-    public static String getMunicipalityName() {
-        return municipalityName.get();
-    }
-
-    public static void setMunicipalityName(final String cityMunicipalityName) {
-        municipalityName.set(cityMunicipalityName);
-    }
-
-    public static void clearValues() {
-        domainName.remove();
-        userId.remove();
-        tenantID.remove();
-        cityCode.remove();
-        cityName.remove();
-        municipalityName.remove();
-    }
-
+function callAjaxSearch() {
+	drillDowntableContainer = jQuery("#resultTable");
+	jQuery('.report-section').removeClass('display-hide');
+	reportdatatable = drillDowntableContainer
+			.dataTable({
+				ajax : {
+					url : "/EGF/closedperiod/ajaxsearch/" + $('#mode').val(),
+					type : "POST",
+					"data" : getFormData(jQuery('form'))
+				},
+				"fnRowCallback" : function(row, data, index) {
+					$(row).on(
+							'click',
+							function() {
+								console.log(data.id);
+								window.open('/EGF/closedperiod/'
+										+ $('#mode').val() + '/' + data.id, '',
+										'width=800, height=600');
+							});
+				},
+				"sPaginationType" : "bootstrap",
+				"bDestroy" : true,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"oTableTools" : {
+					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : [ "xls", "pdf", "print" ]
+				},
+				aaSorting : [],
+				columns : [ {
+					"data" : "Financial Year",
+					"sClass" : "text-left"
+				}, {
+					"data" : "Closed",
+					"sClass" : "text-left"
+				} ]
+			});
 }

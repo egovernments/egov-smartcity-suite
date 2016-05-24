@@ -66,9 +66,9 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
@@ -860,9 +860,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected Boolean validateOwner(final State state)
     {
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("validating owner for user " + EgovThreadLocals.getUserId());
+            LOGGER.debug("validating owner for user " + ApplicationThreadLocals.getUserId());
         List<Position> positionsForUser = null;
-        positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
+        positionsForUser = eisService.getPositionsForUser(ApplicationThreadLocals.getUserId(), new Date());
         if (positionsForUser.contains(state.getOwnerPosition()))
         {
             if (LOGGER.isDebugEnabled())

@@ -103,10 +103,10 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infra.exception.TooManyValuesException;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.commons.exception.NoSuchObjectException;
+import org.egov.commons.exception.TooManyValuesException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -341,7 +341,7 @@ public class CreateVoucher {
 							"PREAPPROVEDVOUCHERSTATUS"
 									+ "is not defined in AppConfig values cannot proceed creating voucher");
 			}
-			usrId = EgovThreadLocals.getUserId().intValue();
+			usrId = ApplicationThreadLocals.getUserId().intValue();
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(" ---------------Generating Voucher for Bill-------");
 			EgBillregister egBillregister = null;
@@ -615,7 +615,7 @@ public class CreateVoucher {
 			TaskFailedException {
 		final CVoucherHeader vh = null;
 		try {
-			usrId = EgovThreadLocals.getUserId().intValue();
+			usrId = ApplicationThreadLocals.getUserId().intValue();
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(" ---------------Generating Voucher-------");
 			EgBillregister egBillregister = null;
@@ -880,7 +880,7 @@ public class CreateVoucher {
 					// voucherWorkflowService.transition("aa_approve",
 					// voucherheader, "Created"); // action name need to pass
 					// Position position =
-					// eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+					// eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
 
 					final VoucherService vs = (VoucherService) applicationContext
 							.getBean("voucherService");
@@ -1019,7 +1019,7 @@ public class CreateVoucher {
 				// cjv.getVoucherHeaderId(), "Created"); // action name need to
 				// pass
 				final Position position = eisCommonService
-						.getPositionByUserId(EgovThreadLocals.getUserId());
+						.getPositionByUserId(ApplicationThreadLocals.getUserId());
 				cjv.transition(true).withStateValue("WORKFLOW INITIATED")
 						.withOwner(position).withComments("WORKFLOW STARTED");
 				final VoucherService vs = (VoucherService) applicationContext
@@ -1092,9 +1092,9 @@ public class CreateVoucher {
 	public Position getPosition() throws ApplicationRuntimeException {
 		Position pos;
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("getPosition====" + EgovThreadLocals.getUserId());
+			LOGGER.debug("getPosition====" + ApplicationThreadLocals.getUserId());
 		pos = eisCommonService
-				.getPositionByUserId(EgovThreadLocals.getUserId());
+				.getPositionByUserId(ApplicationThreadLocals.getUserId());
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("position===" + pos.getId());
 		return null;// pos;
@@ -1284,7 +1284,7 @@ public class CreateVoucher {
 				LOGGER.error(ERR, e);
 				throw new ApplicationRuntimeException(e.getMessage());
 			}
-			vh.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals
+			vh.setCreatedBy(userMngr.getUserById(Long.valueOf(ApplicationThreadLocals
 					.getUserId())));
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info("++++++++++++++++++" + vh.toString());
@@ -1551,7 +1551,7 @@ public class CreateVoucher {
 			LOGGER.error(ERR, e);
 			throw new ApplicationRuntimeException(e.getMessage());
 		}
-		vh.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals
+		vh.setCreatedBy(userMngr.getUserById(Long.valueOf(ApplicationThreadLocals
 				.getUserId())));
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("++++++++++++++++++" + vh.toString());
@@ -2660,9 +2660,9 @@ public class CreateVoucher {
 		status = (EgwStatus) egwStatusDAO.getStatusByModuleAndCode("PURCHBILL",
 				"Pending");
 		billregister.setStatus(status);
-		if (null != EgovThreadLocals.getUserId())
+		if (null != ApplicationThreadLocals.getUserId())
 			billregister.setCreatedBy(userMngr.getUserById(Long
-					.valueOf(EgovThreadLocals.getUserId())));
+					.valueOf(ApplicationThreadLocals.getUserId())));
 		billregister.setCreatedDate(new Date());
 		final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
 		final String date = df.format((Date) supplierBillDetails

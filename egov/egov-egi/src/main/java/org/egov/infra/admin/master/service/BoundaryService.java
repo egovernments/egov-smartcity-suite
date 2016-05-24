@@ -48,8 +48,7 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.StringUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -130,15 +129,14 @@ public class BoundaryService {
     }
 
     // TODO - Later - Use materializedPath instead of recursive calling
-    public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) throws NoSuchObjectException {
+    public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) {
         List<Boundary> boundaryList = new ArrayList<Boundary>();
         final Boundary bndry = getBoundaryById(boundaryId);
         if (bndry != null) {
             boundaryList.add(bndry);
             if (bndry.getParent() != null)
                 boundaryList = getParentBoundariesByBoundaryId(bndry.getParent().getId());
-        } else
-            throw new NoSuchObjectException("bndry.Obj.null");
+        }
         return boundaryList;
     }
 
@@ -303,7 +301,7 @@ public class BoundaryService {
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<String, URL>();
                 map.put("url", Thread.currentThread().getContextClassLoader()
-                        .getResource("gis/" + EgovThreadLocals.getTenantID() + "/wards.shp"));
+                        .getResource("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
                 final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
                         .getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();

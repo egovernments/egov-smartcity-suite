@@ -48,11 +48,11 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -345,12 +345,12 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
             smsMsg = messageSource.getMessage("msg.rejectexemption.sms", new String[] { applicantName, assessmentNo,
-                    EgovThreadLocals.getMunicipalityName() }, null);
+                    ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
             Installment installment = propertyTaxUtil.getInstallmentListByStartDate(new Date()).get(0);
             Date effectiveDate = DateUtils.addDays(installment.getToDate(), 1);
             smsMsg = messageSource.getMessage("msg.approveexemption.sms", new String[] { applicantName, assessmentNo,
-                    new SimpleDateFormat("dd/MM/yyyy").format(effectiveDate), EgovThreadLocals.getMunicipalityName() },
+                    new SimpleDateFormat("dd/MM/yyyy").format(effectiveDate), ApplicationThreadLocals.getMunicipalityName() },
                     null);
         }
 

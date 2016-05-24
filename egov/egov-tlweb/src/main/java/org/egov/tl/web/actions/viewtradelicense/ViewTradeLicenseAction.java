@@ -50,7 +50,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseStatus;
@@ -135,7 +135,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
         this.session = this.requestObj.getSession();
         User user = this.userService.getUserByUsername(this.CITIZENUSER);
         this.userId = user.getId();
-        EgovThreadLocals.setUserId(this.userId);
+        ApplicationThreadLocals.setUserId(this.userId);
         this.session.setAttribute("com.egov.user.LoginUserName", user.getName());
         this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
         return Constants.VIEW;

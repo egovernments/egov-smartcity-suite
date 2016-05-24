@@ -47,12 +47,12 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
@@ -473,10 +473,10 @@ public class VacancyRemissionService {
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
             smsMsg = messageSource.getMessage("vacancyremission.rejection.sms", new String[] { applicantName, assessmentNo,
-                    EgovThreadLocals.getMunicipalityName() }, null);
+                    ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
             smsMsg = messageSource.getMessage("vacancyremission.approval.sms", new String[] { applicantName, assessmentNo,
-                    EgovThreadLocals.getMunicipalityName() },null);
+                    ApplicationThreadLocals.getMunicipalityName() },null);
         }
 
         if (StringUtils.isNotBlank(mobileNumber)) {

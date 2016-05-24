@@ -39,20 +39,20 @@
  */
 package org.egov.works.web.actions.mobile;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.models.estimate.EstimatePhotographs;
+import org.egov.works.abstractestimate.entity.EstimatePhotographs;
 import org.egov.works.services.AbstractEstimateService;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @SuppressWarnings("serial")
 @Result(name = UploadEstimatePhotosAction.SEARCH, location = "uploadEstimatePhotos-search.jsp")
@@ -130,7 +130,7 @@ public class UploadEstimatePhotosAction extends BaseFormAction {
                         fileInputStream.read(bFile);
                         fileInputStream.close();
                         estPic.setImage(bFile);
-                        estPic.setEstimate(ae);
+                        estPic.setAbstractEstimate(ae);
                     } catch (final IOException e) {
                         LOGGER.error("Error while uploading file - " + e.getMessage());
                     }

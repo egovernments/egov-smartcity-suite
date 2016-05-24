@@ -84,8 +84,8 @@ import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -457,7 +457,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         session = request.getSession();
 
         final User user = collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
-        EgovThreadLocals.setUserId(user.getId());
+        ApplicationThreadLocals.setUserId(user.getId());
         session.setAttribute(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME, user.getUsername());
 
         // populates model when request is from the billing system

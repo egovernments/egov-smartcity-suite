@@ -58,7 +58,7 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -137,7 +137,7 @@ public class CancelVoucherAction extends BaseFormAction {
     public void prepare()
     {
 
-        loggedInUser = EgovThreadLocals.getUserId().intValue();
+        loggedInUser = ApplicationThreadLocals.getUserId().intValue();
         super.prepare();
         getHeaderFields();
         loadDropDowns();

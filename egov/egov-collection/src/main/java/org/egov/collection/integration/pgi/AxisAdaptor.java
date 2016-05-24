@@ -49,9 +49,9 @@ import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,13 +112,13 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         fields.put(CollectionConstants.AXIS_VERSION, collectionApplicationProperties.axisVersion().toString());
         fields.put(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommand());
         fields.put(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
-        fields.put(CollectionConstants.AXIS_MERCHANT_TXN_REF, EgovThreadLocals.getCityCode()
+        fields.put(CollectionConstants.AXIS_MERCHANT_TXN_REF, ApplicationThreadLocals.getCityCode()
                 + CollectionConstants.SEPARATOR_HYPHEN + receiptHeader.getId().toString());
         fields.put(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
         fields.put(CollectionConstants.AXIS_LOCALE, collectionApplicationProperties.axisLocale());
         fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
-        fields.put(CollectionConstants.AXIS_ORDER_INFO, EgovThreadLocals.getCityCode()
-                + CollectionConstants.SEPARATOR_HYPHEN + EgovThreadLocals.getCityName());
+        fields.put(CollectionConstants.AXIS_ORDER_INFO, ApplicationThreadLocals.getCityCode()
+                + CollectionConstants.SEPARATOR_HYPHEN + ApplicationThreadLocals.getCityName());
         final StringBuilder returnUrl = new StringBuilder();
         returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
         .append(paymentServiceDetails.getId());
@@ -396,13 +396,13 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             formData.add(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommandQuery());
             formData.add(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
             formData.add(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
-            final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+            final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
             formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, cityWebsite.getCode()
                     + CollectionConstants.SEPARATOR_HYPHEN + onlinePayment.getReceiptHeader().getId().toString());
             formData.add(CollectionConstants.AXIS_OPERATOR_ID, collectionApplicationProperties.axisOperator());
             formData.add(CollectionConstants.AXIS_PASSWORD, collectionApplicationProperties.axisPassword());
-            formData.add(CollectionConstants.AXIS_ORDER_INFO, EgovThreadLocals.getCityCode()
-                    + CollectionConstants.SEPARATOR_HYPHEN + EgovThreadLocals.getCityName());
+            formData.add(CollectionConstants.AXIS_ORDER_INFO, ApplicationThreadLocals.getCityCode()
+                    + CollectionConstants.SEPARATOR_HYPHEN + ApplicationThreadLocals.getCityName());
             final String responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(String.class,
                     formData);
             final Map<String, String> responseAxisMap = new LinkedHashMap<String, String>();

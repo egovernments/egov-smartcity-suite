@@ -37,52 +37,39 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
 
-import org.egov.infstr.models.BaseModel;
-import org.egov.model.budget.BudgetUsage;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
+package org.egov.commons.exception;
 
-import java.math.BigDecimal;
+import org.egov.infra.exception.ApplicationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class AbstractEstimateAppropriation extends BaseModel {
+/**
+ * The Class TooManyValuesException.
+ * Checked exception for values.
+ */
+public class TooManyValuesException extends ApplicationException {
 
-    private static final long serialVersionUID = -6631492431676743631L;
-    private AbstractEstimate abstractEstimate;
-    private BudgetUsage budgetUsage;
-    private BigDecimal balanceAvailable;
-    private DepositWorksUsage depositWorksUsage;
+	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = LoggerFactory.getLogger(TooManyValuesException.class);
 
-    public DepositWorksUsage getDepositWorksUsage() {
-        return depositWorksUsage;
-    }
+	/**
+	 * Instantiates a new too many values exception.
+	 * @param msg the msg
+	 */
+	public TooManyValuesException(final String msg) {
+		super(msg);
+		LOGGER.error(msg);
+	}
 
-    public void setDepositWorksUsage(final DepositWorksUsage depositWorksUsage) {
-        this.depositWorksUsage = depositWorksUsage;
-    }
-
-    public BudgetUsage getBudgetUsage() {
-        return budgetUsage;
-    }
-
-    public void setBudgetUsage(final BudgetUsage budgetUsage) {
-        this.budgetUsage = budgetUsage;
-    }
-
-    public AbstractEstimate getAbstractEstimate() {
-        return abstractEstimate;
-    }
-
-    public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
-        this.abstractEstimate = abstractEstimate;
-    }
-
-    public BigDecimal getBalanceAvailable() {
-        return balanceAvailable;
-    }
-
-    public void setBalanceAvailable(final BigDecimal balanceAvailable) {
-        this.balanceAvailable = balanceAvailable;
-    }
+	/**
+	 * Instantiates a new too many values exception.
+	 * @param msg the msg
+	 * @param e the e
+	 */
+	public TooManyValuesException(final String msg, final Throwable e) {
+		super(msg, e);
+		LOGGER.error(msg, e);
+	}
 
 }

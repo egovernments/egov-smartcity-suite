@@ -53,8 +53,10 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.service.CollectionRemittanceService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
@@ -64,27 +66,32 @@ import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @Results({
-    @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-    @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
-            "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
-                "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
-    "${bankAccount}" }), @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
+        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
+                "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
+            "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
+                "${bankAccount}" }), @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
     private List<HashMap<String, Object>> paramList = null;
-    private ReceiptHeaderService receiptHeaderService;
+    @Autowired
+    private ApplicationProperties applicationProperties;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
     private List<ReceiptHeader> voucherHeaderValues = new ArrayList(0);
     private String[] serviceNameArray;
@@ -101,7 +108,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private Integer branchId;
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
     private Boolean isListData = false;
-
     // Added for Manual Work Flow
     private Integer positionUser;
     private Integer designationId;
@@ -117,6 +123,9 @@ public class BankRemittanceAction extends BaseFormAction {
     private List<CollectionBankRemittanceReport> bankRemittanceList;
     private String bank;
     private String bankAccount;
+    @Autowired
+    private ApplicationContext beanProvider;
+    private Boolean showCardAndOnlineColumn = false;
 
     /**
      * @param collectionsUtil
@@ -180,9 +189,28 @@ public class BankRemittanceAction extends BaseFormAction {
             serviceCodeList.add(arrayObjectInitialIndex[0].toString());
             fundCodeList.add(arrayObjectInitialIndex[1].toString());
         }
-        paramList = receiptHeaderService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(), "'"
-                + StringUtils.join(serviceCodeList, "','") + "'", "'" + StringUtils.join(fundCodeList, "','") + "'");
+        final CollectionRemittanceService collectionRemittanceService = getServiceForRemittance();
+        paramList = collectionRemittanceService
+                .findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(),
+                        "'" + StringUtils.join(serviceCodeList, "','") + "'",
+                        "'" + StringUtils.join(fundCodeList, "','") + "'");
         return NEW;
+    }
+
+    public CollectionRemittanceService getServiceForRemittance() throws ApplicationRuntimeException, BeansException {
+        Class<?> service = null;
+        try {
+            service = Class.forName(applicationProperties.getProperty("collection.remittance.client.impl.class"));
+        } catch (final ClassNotFoundException e) {
+            throw new ApplicationRuntimeException("Error in Create Bank Remittance" + e.getMessage());
+        }
+        // getting the entity type service.
+        final String serviceClassName = service.getSimpleName();
+        final String remittanceService = Character.toLowerCase(serviceClassName.charAt(0))
+                + serviceClassName.substring(1).substring(0, serviceClassName.length() - 5);
+        final CollectionRemittanceService collectionRemittanceService = (CollectionRemittanceService) beanProvider
+                .getBean(remittanceService);
+        return collectionRemittanceService;
     }
 
     @Action(value = "/receipts/bankRemittance-printBankChallan")
@@ -201,13 +229,17 @@ public class BankRemittanceAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
+        final String showColumn = collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE);
+        if (!showColumn.isEmpty() && showColumn.equals(CollectionConstants.YES))
+            showCardAndOnlineColumn = true;
         addDropdownData("bankBranchList", Collections.EMPTY_LIST);
         addDropdownData("accountNumberList", Collections.EMPTY_LIST);
     }
 
     @Action(value = "/receipts/bankRemittance-create")
     @ValidationErrorPage(value = NEW)
-    public String create() {
+    public String create() throws InstantiationException, IllegalAccessException {
         final long startTimeMillis = System.currentTimeMillis();
         BigInteger accountNumber = null;
         String serviceName = "";
@@ -236,7 +268,8 @@ public class BankRemittanceAction extends BaseFormAction {
                 && accountNumber.intValue() != accountNumberId)
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
-        voucherHeaderValues = receiptHeaderService.createBankRemittance(getServiceNameArray(),
+        final CollectionRemittanceService collectionRemittanceService = getServiceForRemittance();
+        voucherHeaderValues = collectionRemittanceService.createBankRemittance(getServiceNameArray(),
                 getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
                 getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
                 accountNumberId, positionUser, getReceiptNumberArray());
@@ -292,7 +325,6 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
-        this.receiptHeaderService = receiptHeaderService;
     }
 
     /**
@@ -553,5 +585,13 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setBankAccount(final String bankAccount) {
         this.bankAccount = bankAccount;
+    }
+
+    public Boolean getShowCardAndOnlineColumn() {
+        return showCardAndOnlineColumn;
+    }
+
+    public void setShowCardAndOnlineColumn(final Boolean showCardAndOnlineColumn) {
+        this.showCardAndOnlineColumn = showCardAndOnlineColumn;
     }
 }

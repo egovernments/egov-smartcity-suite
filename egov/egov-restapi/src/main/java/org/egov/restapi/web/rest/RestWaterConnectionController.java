@@ -45,8 +45,8 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.model.WaterConnectionInfo;
@@ -322,7 +322,7 @@ public class RestWaterConnectionController {
         Boolean isAuthenticated = false;
         if (username.equals("mahesh") && password.equals("demo"))
             isAuthenticated = true;
-        EgovThreadLocals.setUserId(Long.valueOf("2"));
+        ApplicationThreadLocals.setUserId(Long.valueOf("2"));
         return isAuthenticated;
     }
 }

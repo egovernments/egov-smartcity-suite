@@ -60,7 +60,7 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -871,7 +871,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final Address propAddr = basicProperty.getAddress();
         propAddr.setHouseNoBldgApt(getHouseNumber());
         propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getLocality()).getName());
-        String cityName = EgovThreadLocals.getCityName();
+        String cityName = ApplicationThreadLocals.getCityName();
         propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getWardId()).getName());
         propAddr.setCityTownVillage(cityName);
 
@@ -911,7 +911,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final Address propAddr = new PropertyAddress();
         propAddr.setHouseNoBldgApt(getHouseNumber());
         propAddr.setAreaLocalitySector(boundaryService.getBoundaryById(getLocality()).getName());
-        String cityName = EgovThreadLocals.getCityName();
+        String cityName = ApplicationThreadLocals.getCityName();
         propAddr.setStreetRoadLine(boundaryService.getBoundaryById(getWardId()).getName());
         propAddr.setCityTownVillage(cityName);
 

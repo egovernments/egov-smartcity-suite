@@ -70,6 +70,13 @@
 		<property name="contraWorkflowService" ref="contraWorkflowService" /> -->
 	</bean>
 	
+	<bean id="collectionRemittanceService" class="org.egov.collection.service.CollectionRemittanceServiceImpl" scope="prototype">
+		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="financialsUtil" ref="financialsUtil" />
+		<property name="receiptHeaderService" ref="receiptHeaderService" />
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	
 	<bean id="collectionCommon" class="org.egov.collection.utils.CollectionCommon" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<!-- <property name="commonsServiceImpl" ref="commonsServiceImpl" /> -->

@@ -51,7 +51,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -452,7 +452,7 @@ public class ConnectionDemandService {
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
-        waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
+        waterConnectionBillable.setUserId(ApplicationThreadLocals.getUserId());
 
         waterConnectionBillable.setReferenceNumber(waterTaxNumberGenerator.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
@@ -628,7 +628,7 @@ public class ConnectionDemandService {
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
-        waterConnectionBillable.setUserId(EgovThreadLocals.getUserId());
+        waterConnectionBillable.setUserId(ApplicationThreadLocals.getUserId());
         waterConnectionBillable.setReferenceNumber(waterTaxNumberGenerator.generateMeterDemandNoticeNumber());
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL));
 

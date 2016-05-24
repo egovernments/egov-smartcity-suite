@@ -63,10 +63,10 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.service.WorkflowService;
@@ -328,7 +328,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
 
         budgetDetail = budgetReAppropriationService.setRelatedValues(budgetDetail);
         final List<BudgetReAppropriation> results = budgetReAppropriationService.getNonApprovedReAppByUser(
-                EgovThreadLocals.getUserId(), budgetDetail, financialYear);
+                ApplicationThreadLocals.getUserId(), budgetDetail, financialYear);
         for (final BudgetReAppropriation row : results) {
             final BudgetReAppropriationView budgetReAppropriationView = new BudgetReAppropriationView();
             budgetReAppropriationView.setBudgetDetail(row.getBudgetDetail());
@@ -570,7 +570,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
             userId = Integer.valueOf(parameters.get("approverUserId")[0]);
         else
-            userId = EgovThreadLocals.getUserId().intValue();
+            userId = ApplicationThreadLocals.getUserId().intValue();
         return userId;
     }
 
@@ -623,9 +623,9 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
     protected Boolean validateOwner(final State state)
     {
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("validating owner for user " + EgovThreadLocals.getUserId());
+            LOGGER.debug("validating owner for user " + ApplicationThreadLocals.getUserId());
         List<Position> positionsForUser = null;
-        positionsForUser = eisService.getPositionsForUser(EgovThreadLocals.getUserId(), new Date());
+        positionsForUser = eisService.getPositionsForUser(ApplicationThreadLocals.getUserId(), new Date());
         if (positionsForUser.contains(state.getOwnerPosition()))
         {
             if (LOGGER.isDebugEnabled())

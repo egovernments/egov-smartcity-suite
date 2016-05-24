@@ -46,7 +46,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +82,7 @@ public class PropertyTaxNumberGenerator {
                 } else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE)) {
                     noticeNo.append("MC").append("/");
                 }
-                final String cityCode = EgovThreadLocals.getCityCode();
+                final String cityCode = ApplicationThreadLocals.getCityCode();
                 noticeNo.append(cityCode);
                 final String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER).toString();
                 noticeNo.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
@@ -138,7 +138,7 @@ public class PropertyTaxNumberGenerator {
 
         final StringBuffer indexNum = new StringBuffer();
         try {
-            final String cityCode = EgovThreadLocals.getCityCode();
+            final String cityCode = ApplicationThreadLocals.getCityCode();
             indexNum.append(cityCode);
             final String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_ASSESSMENT_NUMBER).toString();
             indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));

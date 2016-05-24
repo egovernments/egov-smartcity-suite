@@ -42,8 +42,8 @@ package org.egov.wtms.web.controller.application;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -105,8 +105,8 @@ public class ViewConnectionController {
         String cscUserRole = "";
         User currentUser = null;
 
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
 
@@ -122,8 +122,8 @@ public class ViewConnectionController {
     public String getUlbOperatorUserRole() {
         String userRole = "";
         User currentUser = null;
-        if (EgovThreadLocals.getUserId() != null)
-            currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null)
+            currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
         else
             currentUser = securityUtils.getCurrentUser();
         for (final Role userrole : currentUser.getRoles())

@@ -57,7 +57,7 @@ import org.egov.egf.masters.model.SubSchemeProject;
 import org.egov.egf.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.egov.egf.web.actions.voucher.CommonAction;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -370,7 +370,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         try {
             final SubScheme subScheme = (SubScheme) persistenceService.find(" from SubScheme where id=?", getSubSchemeId());
             loanGrantHeader.setSubScheme(subScheme);
-            final User user = (User) persistenceService.find("from User where id=?", EgovThreadLocals.getUserId());
+            final User user = (User) persistenceService.find("from User where id=?", ApplicationThreadLocals.getUserId());
             final Date currDate = new Date();
             loanGrantHeader.setCreatedBy(user);
             loanGrantHeader.setModifiedBy(user);

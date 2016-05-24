@@ -166,20 +166,26 @@
 						<tr>
 							<td class="greybox"><s:text name="subLedger.startDate" /><span
 								class="mandatory"></span></td>
-							<td class="greybox"><s:textfield name="startDate"
-									id="startDate" cssStyle="width:100px" value='%{startDate}'
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-								href="javascript:show_calendar('subLedgerForm.startDate');"
-								style="text-decoration: none"><img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+
+							<td class="greybox"><s:date name="startDate" id="startDate"
+									format="dd/MM/yyyy" /> <s:textfield id="startDate"
+									name="startDate" value="%{startDate}"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
+
+
 							<td class="greybox"><s:text name="subLedger.endDate" /><span
 								class="mandatory"></span></td>
-							<td class="greybox"><s:textfield name="endDate" id="endDate"
-									cssStyle="width:100px" value='%{endDate}'
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-								href="javascript:show_calendar('subLedgerForm.endDate');"
-								style="text-decoration: none"><img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+
+							<td class="greybox"><s:date name="endDate" id="endDate"
+									format="dd/MM/yyyy" /> <s:textfield id="endDate"
+									name="endDate" value="%{endDate}"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
+
+
 						</tr>
 						<tr>
 							<egov:ajaxdropdown id="subledger" fields="['Text','Value']"

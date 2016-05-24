@@ -79,7 +79,7 @@ public class CFinancialYearService {
     }
 
     public List<CFinancialYear> findAll() {
-        return cFinancialYearRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return cFinancialYearRepository.findAll(new Sort(Sort.Direction.ASC, "finYearRange"));
     }
 
     public CFinancialYear findOne(final Long id) {

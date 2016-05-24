@@ -47,7 +47,7 @@ import javax.persistence.PersistenceContext;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.repository.TrackMilestoneRepository;
-import org.egov.works.utils.WorksConstants;
+import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -85,10 +85,12 @@ public class TrackMilestoneService {
         if (searchRequestMilestone != null) {
             if (searchRequestMilestone.getDepartment() != null)
                 criteria.add(Restrictions.eq("le.executingDepartment.id", searchRequestMilestone.getDepartment()));
-            if (searchRequestMilestone.getMilestoneFromDate() != null)
+            if (searchRequestMilestone.getTrackMilestoneFromDate() != null)
                 criteria.add(Restrictions.ge("createdDate", searchRequestMilestone.getTrackMilestoneFromDate()));
-            if (searchRequestMilestone.getMilestoneToDate() != null)
-                criteria.add(Restrictions.le("createdDate", searchRequestMilestone.getTrackMilestoneToDate()));
+            if (searchRequestMilestone.getTrackMilestoneToDate() != null){
+                final DateTime dateTime = new DateTime(searchRequestMilestone.getTrackMilestoneToDate().getTime()).plusDays(1);
+                criteria.add(Restrictions.le("createdDate", dateTime.toDate()));
+            }
             if (searchRequestMilestone.getStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestMilestone.getStatus()));
             if (searchRequestMilestone.getSubTypeOfWork() != null)
@@ -101,22 +103,24 @@ public class TrackMilestoneService {
             if (searchRequestMilestone.getWorkOrderNumber() != null) {
                 criteria.add(Restrictions.ilike("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber(),
                         MatchMode.ANYWHERE));
-                criteria.add(Restrictions.eq("status.code", WorksConstants.APPROVED));
             }
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-
+    
     public List<String> findWorkIdentificationNumbersTrackMilestone(final String code) {
         final List<String> workIdNumbers = trackMilestoneRepository
-                .findWorkIdentificationNumbersTrackMilestone("%" + code + "%",
-                        WorksConstants.APPROVED.toString());
+                .findWorkIdentificationNumbersTrackMilestone("%" + code + "%");
         return workIdNumbers;
     }
 
     @Transactional
     public TrackMilestone save(final TrackMilestone trackMilestone) {
         return trackMilestoneRepository.save(trackMilestone);
+    }
+    
+    public TrackMilestone getTrackMilestoneByMilestoneId(final Long id) {
+        return trackMilestoneRepository.findByMilestone_Id(id);
     }
 }

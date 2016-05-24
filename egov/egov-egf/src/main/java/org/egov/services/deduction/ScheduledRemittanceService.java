@@ -55,8 +55,8 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -792,7 +792,7 @@ public class ScheduledRemittanceService {
         record.setRemarks(message);
         record.setSchJobName(jobName);
         record.setCreatedDate(new Date());
-        record.setCreatedBy(EgovThreadLocals.getUserId().intValue());
+        record.setCreatedBy(ApplicationThreadLocals.getUserId().intValue());
         remittanceSchedulerLogService.persist(record);
 
     }
@@ -807,8 +807,8 @@ public class ScheduledRemittanceService {
         final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(voucherHeader.getVoucherDate());
         remit.setFinancialyear(financialYearByDate);
         remit.setCreateddate(today);
-        remit.setCreatedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
-        remit.setLastmodifiedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
+        remit.setCreatedby(BigDecimal.valueOf(ApplicationThreadLocals.getUserId()));
+        remit.setLastmodifiedby(BigDecimal.valueOf(ApplicationThreadLocals.getUserId()));
         remit.setLastmodifieddate(today);
         remit.setMonth(BigDecimal.valueOf(today.getMonth()));
         remit.setVoucherheader(voucherHeader);

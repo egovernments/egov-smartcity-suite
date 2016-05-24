@@ -74,6 +74,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateNumberGenerator;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -88,8 +89,6 @@ import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateAppropriationRepository;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
-import org.egov.works.models.estimate.EstimateNumberGenerator;
-import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.hibernate.Criteria;
@@ -872,15 +871,11 @@ public class LineEstimateService {
         return criteria.list();
     }
     
-    public String checkIfLOAsCreated(final Long id) {
-        LineEstimate lineEstimate = lineEstimateRepository.findById(id);
+    public String checkIfLOAsCreated(final Long lineEstimateId) {
+        List<String> listString = letterOfAcceptanceService.getEstimateNumbersToSearchLOAToCancel(lineEstimateId);
         String estimateNumbers = "";
-        for (LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            List<WorkOrder> workOrders = letterOfAcceptanceService.findWorkOrderByEstimateNumberAndEgwStatus(
-                    led.getEstimateNumber());
-            for (WorkOrder wo : workOrders) {
-                estimateNumbers += wo.getEstimateNumber() + ", ";
-            }
+        for (String estimateNumber : listString) {
+            estimateNumbers += estimateNumber + ", ";
         }
         if (estimateNumbers.equals(""))
             return "";

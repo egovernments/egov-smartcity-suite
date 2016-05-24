@@ -61,7 +61,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -313,7 +313,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
 
     @Action(value = "/budget/budgetReAppropriation-create")
     public String create() {
-        save(EgovThreadLocals.getUserId().intValue());
+        save(ApplicationThreadLocals.getUserId().intValue());
         return NEW;
     }
 
@@ -382,7 +382,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (null != parameters.get("approverUserId") && Integer.valueOf(parameters.get("approverUserId")[0]) != -1)
             userId = Integer.valueOf(parameters.get("approverUserId")[0]);
         else
-            userId = EgovThreadLocals.getUserId().intValue();
+            userId = ApplicationThreadLocals.getUserId().intValue();
         return userId;
     }
 
@@ -403,7 +403,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
 
     protected Position getPosition() {
         try {
-            return eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+            return eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
         } catch (final ValidationException e)
         {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),

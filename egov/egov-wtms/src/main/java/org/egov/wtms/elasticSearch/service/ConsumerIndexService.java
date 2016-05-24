@@ -46,7 +46,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.search.elastic.annotation.Indexing;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -78,7 +78,7 @@ public class ConsumerIndexService {
 		if (ownerNameItr != null && ownerNameItr.hasNext())
 			mobileNumber = ownerNameItr.next().getMobileNumber();
 
-		final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 
 		final ConsumerSearch consumerSearch = new ConsumerSearch(waterConnectionDetails.getConnection()
 				.getConsumerCode(), mobileNumber, waterConnectionDetails.getUsageType().getName(), cityWebsite.getName(),

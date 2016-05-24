@@ -251,7 +251,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         if (billRegistermis != null) {
             paramMap.put("billDate", Constants.DDMMYYYYFORMAT2.format(billRegistermis.getEgBillregister().getBilldate()));
             paramMap.put("partyBillNumber", billRegistermis.getPartyBillNumber());
-            paramMap.put("serviceOrder", billRegistermis.getNarration());
+            paramMap.put("serviceOrder", billRegistermis.getEgBillregister().getNarration());
             paramMap.put("partyName", billRegistermis.getPayto());
             if (billRegistermis.getPartyBillDate() != null)
                 paramMap.put("partyBillDate", sdf.format(billRegistermis.getPartyBillDate()));

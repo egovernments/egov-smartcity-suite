@@ -52,8 +52,8 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -510,14 +510,14 @@ public class AutoReconcileHelper {
 	                updateQuery.setLong("accountId", accountId);
 
 	                updateQuery.setString("instrumentNo", bean.getInstrumentNo());
-	                updateQuery.setInteger("userId", EgovThreadLocals.getUserId().intValue());
+	                updateQuery.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
 
 	                updateQuery2.setDate("txDate", bean.getTxDate());
 	                updateQuery2.setDate("reconciliationDate", reconciliationDate);
 	                updateQuery2.setLong("accountId", accountId);
 
 	                updateQuery2.setString("instrumentNo", bean.getInstrumentNo());
-	                updateQuery2.setInteger("userId", EgovThreadLocals.getUserId().intValue());
+	                updateQuery2.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
 	                if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0)
 	                {
 	                    updateQuery.setBigDecimal("amount", bean.getDebit());
@@ -661,14 +661,14 @@ public class AutoReconcileHelper {
 	                updateQuery.setLong("accountId", accountId);
 
 	                updateQuery.setString("cslNo", bean.getCSLno());
-	                updateQuery.setInteger("userId", EgovThreadLocals.getUserId().intValue());
+	                updateQuery.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
 
 	                updateQuery2.setDate("txDate", bean.getTxDate());
 	                updateQuery2.setDate("reconciliationDate", reconciliationDate);
 	                updateQuery2.setLong("accountId", accountId);
 
 	                updateQuery2.setString("cslNo", bean.getCSLno());
-	                updateQuery2.setInteger("userId", EgovThreadLocals.getUserId().intValue());
+	                updateQuery2.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
 	                if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0)
 	                {
 	                    updateQuery.setBigDecimal("amount", bean.getDebit());

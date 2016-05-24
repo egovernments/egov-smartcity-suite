@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,38 +36,40 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.egov.works.models.estimate.EstimatePhotographs"
-		table="EGW_ESTIMATE_PHOTOGRAPHS">
-		<id name="id" type="long">
-			<column name="ID" />
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EGW_ESTIMATE_PHOTOGRAPHS</param>
-			</generator>
-		</id>
-		<many-to-one name="estimate" column="ABSTRACTESTIMATE_ID" not-null="true" insert="false" update="false"/>
-		<property name="image" type="binary">
-            <column name="IMAGE" not-null="true" />
-        </property>
-        <property name="latitude" type="java.lang.Double">
-			<column name="LATITUDE" precision="15" />
-		</property>
-		<property name="longitude" type="java.lang.Double">
-			<column name="LONGITUDE" precision="15" />
-		</property>
-		<property name="description" type="java.lang.String">
-			<column name="DESCRIPTION" length="1024" />
-		</property>
-		<property name="dateOfCapture" type="date">
-			<column name="CAPTURED_DATE" length="7" />
-		</property>
-		
-		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
-		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
-		<property column="MODIFIED_DATE" name="modifiedDate" type="timestamp" />
-	</class>
-</hibernate-mapping>
+  --%>
+
+<div class="main-content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">Closed Period</div>
+				</div>
+				<div class="panel-body">
+
+					<div class="form-group">
+
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.cfinancialyearid" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="cFinancialYearId" id="cFinancialYearId"
+								cssClass="form-control" cssErrorClass="form-control error"
+								style="pointer-events: none; cursor: default;">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${cFinancialYears}" itemValue="id"
+									itemLabel="finYearRange" />
+							</form:select>
+							<form:errors path="cFinancialYearId" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.isclosed" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:checkbox path="isClosed" />
+							<form:errors path="isClosed" cssClass="error-msg" />
+						</div>
+					</div>
+					<input type="hidden" name="closedPeriod"
+						value="${closedPeriod.cFinancialYearId.id}" /> <input
+						type="hidden" name="closedPeriod" value="${closedPeriod.isClosed}" />

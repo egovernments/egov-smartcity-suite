@@ -37,7 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
+package org.egov.works.abstractestimate.service;
+
+import java.io.Serializable;
+import java.sql.SQLException;
+
+import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -50,10 +55,6 @@ import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.script.ScriptContext;
-import java.io.Serializable;
-import java.sql.SQLException;
 
 @Service
 public class EstimateNumberGenerator {

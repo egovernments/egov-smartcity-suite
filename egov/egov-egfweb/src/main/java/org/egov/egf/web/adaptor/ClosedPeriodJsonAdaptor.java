@@ -37,37 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.web.adaptor;
 
-package org.egov.infra.exception;
+import java.lang.reflect.Type;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.egov.commons.ClosedPeriod;
 
-/**
- * The Class NoSuchObjectTypeException.
- * Unchecked exception for Object existence.
- */
-public class NoSuchObjectTypeException extends ApplicationRuntimeException {
-	
-	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(NoSuchObjectTypeException.class);
-	
-	/**
-	 * Instantiates a new no such object type exception.
-	 * @param msg the msg
-	 */
-	public NoSuchObjectTypeException(final String msg) {
-		super(msg);
-		LOGGER.error(msg);
-	}
-	
-	/**
-	 * Instantiates a new no such object type exception.
-	 * @param msg the msg
-	 * @param throwable the throwable
-	 */
-	public NoSuchObjectTypeException(final String msg, final Throwable throwable) {
-		super(msg, throwable);
-		LOGGER.error(msg, throwable);
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+public class ClosedPeriodJsonAdaptor implements JsonSerializer<ClosedPeriod> {
+	@Override
+	public JsonElement serialize(final ClosedPeriod closedPeriod,
+			final Type type, final JsonSerializationContext jsc) {
+		final JsonObject jsonObject = new JsonObject();
+		if (closedPeriod != null) {
+
+			if (closedPeriod.getIsClosed() != null)
+				jsonObject.addProperty("Closed", closedPeriod.getIsClosed());
+			else
+				jsonObject.addProperty("closed", "");
+			if (closedPeriod.getcFinancialYearId() != null)
+				jsonObject.addProperty("Financial Year", closedPeriod
+						.getcFinancialYearId().getFinYearRange());
+			else
+				jsonObject.addProperty("financialyear", "");
+			jsonObject.addProperty("id", closedPeriod.getcFinancialYearId()
+					.getId());
+		}
+		return jsonObject;
 	}
 }

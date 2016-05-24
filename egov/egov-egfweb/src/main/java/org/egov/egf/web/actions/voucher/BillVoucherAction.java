@@ -53,9 +53,9 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -171,7 +171,7 @@ public class BillVoucherAction extends BaseVoucherAction {
         final Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "pjv.validbuttons")
                 .get(0);
         final List<String> list = (List<String>) scriptService.executeScript(validScript, ScriptService.createContext(
-                "eisCommonServiceBean", eisCommonService, "userId", EgovThreadLocals.getUserId().intValue(), "date", new Date(),
+                "eisCommonServiceBean", eisCommonService, "userId", ApplicationThreadLocals.getUserId().intValue(), "date", new Date(),
                 "purpose", purpose));
         for (final Object s : list)
         {

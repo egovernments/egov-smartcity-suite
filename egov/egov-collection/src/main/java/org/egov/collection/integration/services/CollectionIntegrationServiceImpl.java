@@ -72,8 +72,8 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
@@ -268,15 +268,15 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
         receiptHeader.setPaidBy(bill.getPaidBy());
 
-        if (EgovThreadLocals.getUserId() != null) {
-            final User user = collectionsUtil.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User user = collectionsUtil.getUserById(ApplicationThreadLocals.getUserId());
             receiptHeader.setCreatedBy(user);
             receiptHeader.setLastModifiedBy(user);
             receiptHeader.setLastModifiedDate(new Date());
             // TODO: Uncomment following lines once LocationId is added to ThreadLocals
             /*
-             * if (EgovThreadLocals.getLocationId() != null) { final Location location =
-             * collectionsUtil.getLocationById(EgovThreadLocals.getLocationId()); if (location != null)
+             * if (ApplicationThreadLocals.getLocationId() != null) { final Location location =
+             * collectionsUtil.getLocationById(ApplicationThreadLocals.getLocationId()); if (location != null)
              * receiptHeader.setLocation(location); }
              */
         }
@@ -394,12 +394,12 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
         receiptHeader.setPaidBy(bill.getPaidBy());
 
-        if (EgovThreadLocals.getUserId() != null)
-            receiptHeader.setCreatedBy(collectionsUtil.getUserById(EgovThreadLocals.getUserId()));
+        if (ApplicationThreadLocals.getUserId() != null)
+            receiptHeader.setCreatedBy(collectionsUtil.getUserById(ApplicationThreadLocals.getUserId()));
         // TODO: Uncomment following lines once LocationId is added to ThreadLocals
         /*
-         * if (EgovThreadLocals.getLocationId() != null) { final Location location =
-         * collectionsUtil.getLocationById(EgovThreadLocals.getLocationId()); if (location != null)
+         * if (ApplicationThreadLocals.getLocationId() != null) { final Location location =
+         * collectionsUtil.getLocationById(ApplicationThreadLocals.getLocationId()); if (location != null)
          * receiptHeader.setLocation(location); }
          */
 

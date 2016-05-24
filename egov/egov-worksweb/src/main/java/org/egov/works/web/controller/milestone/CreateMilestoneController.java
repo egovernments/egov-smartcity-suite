@@ -98,6 +98,12 @@ public class CreateMilestoneController {
             final Model model, final HttpServletRequest request) throws ApplicationException {
         final String estimateNumber = request.getParameter("estimateNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(estimateNumber);
+        if(milestoneService.checkMilestoneCreated(workOrder.getId())){
+            String message = messageSource.getMessage("error.milestonecreated.validate", new String[] { workOrder.getWorkOrderNumber() }, null);
+            model.addAttribute("errorMessage", message);
+            return "milestone-success";
+        }
+        
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);

@@ -41,7 +41,7 @@ package org.egov.wtms.web.controller.application;
 
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -156,9 +156,9 @@ public class GenericBillGeneratorController {
         else
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                     applicationCode, ConnectionStatus.ACTIVE);
-        if (EgovThreadLocals.getUserId() == null)
+        if (ApplicationThreadLocals.getUserId() == null)
             if (securityUtils.getCurrentUser().getUsername().equals("anonymous"))
-                EgovThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
+                ApplicationThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
         model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode, applicationTypeCode));
         model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";

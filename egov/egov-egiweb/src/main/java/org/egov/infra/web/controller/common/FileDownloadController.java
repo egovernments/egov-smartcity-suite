@@ -41,7 +41,7 @@
 package org.egov.infra.web.controller.common;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +94,7 @@ public class FileDownloadController {
     @RequestMapping("/gis")
     public void download(HttpServletResponse response) throws IOException {
         try (final InputStream in = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("gis/" + EgovThreadLocals.getTenantID() + "/wards.kml");
+                .getResourceAsStream("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.kml");
              final OutputStream out = response.getOutputStream()) {
             if (in != null) {
                 response.setHeader("Content-Disposition", "inline;filename=wards.kml");

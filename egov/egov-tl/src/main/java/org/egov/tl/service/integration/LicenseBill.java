@@ -49,7 +49,7 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.PenaltyRatesService;
@@ -221,7 +221,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public Long getUserId() {
-        return EgovThreadLocals.getUserId();
+        return ApplicationThreadLocals.getUserId();
     }
 
     @Override

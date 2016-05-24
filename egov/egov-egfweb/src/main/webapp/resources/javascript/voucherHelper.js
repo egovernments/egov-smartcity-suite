@@ -481,7 +481,7 @@ function resetonChangeofSubledger()
 {
 
 	if(mode=='new'){
-		document.getElementById("commonBean.payto").value="";
+		//document.getElementById("commonBean.payto").value="";
 		document.getElementById("detailName").value="";
 		document.getElementById("detailKey").value="";
 		document.getElementById("detailCode").value="";

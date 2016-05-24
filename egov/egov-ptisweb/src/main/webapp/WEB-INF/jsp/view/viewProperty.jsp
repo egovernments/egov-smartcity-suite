@@ -417,10 +417,10 @@
 	</div>
 </div>
 
-<table style="width: 100%;">
+<table class="table-fixed">
 	<tr class="floordetails">
 		<td colspan="5" width="5%">
-			<div class="headingsmallbg"
+			<div class="overflow-x-scroll"
 				style="font-size: 19px; font-family: regular;">
 				<span><s:text name="FloorDetailsHeader" /> </span>
 			</div>

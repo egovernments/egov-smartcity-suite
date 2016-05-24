@@ -62,7 +62,7 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -239,7 +239,7 @@ public class WaterConnectionDetailsService {
                 .save(waterConnectionDetails);
         final User meesevaUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
         if (meesevaUser.getUsername().equals(WaterTaxConstants.USERNAME_MEESEVA)) {
-            EgovThreadLocals.setUserId(meesevaUser.getId());
+            ApplicationThreadLocals.setUserId(meesevaUser.getId());
             savedWaterConnectionDetails.setCreatedBy(meesevaUser);
         }
         if (LOG.isDebugEnabled())

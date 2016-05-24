@@ -50,7 +50,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.DailyCollectionReportSearch;
 import org.egov.ptis.domain.service.report.ReportService;
@@ -134,7 +134,7 @@ public class DailyCollectionReportController {
         List<String> consumerCodes = new ArrayList<String>();
         final List<Document> searchResultFomatted = new ArrayList<Document>(0);
         final Sort sortByAssessment = Sort.by().field("clauses.revwardname", SortOrder.ASC);
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
         
         if (StringUtils.isNotBlank(searchRequest.getRevenueWard())) {

@@ -57,6 +57,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -65,7 +66,6 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -73,7 +73,6 @@ import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
@@ -199,7 +198,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
             ReportOutput reportOutput = null;
 
             if (egBill == null)
-                reportOutput = getBillService().generateBill(basicProperty, EgovThreadLocals.getUserId().intValue());
+                reportOutput = getBillService().generateBill(basicProperty, ApplicationThreadLocals.getUserId().intValue());
             else {
                 final String query = "SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp "
                         + "WHERE bill.is_History = 'N' "

@@ -45,6 +45,7 @@ import org.egov.demand.utils.DemandConstants;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -57,7 +58,6 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -483,7 +483,7 @@ public class PropertyTransferService {
         propertyTaxBillable.setCollectionType(DemandConstants.COLLECTIONTYPE_COUNTER);
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
         propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
-        propertyTaxBillable.setUserId(EgovThreadLocals.getUserId());
+        propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(propertyMutation
                 .getBasicProperty().getPropertyID()));
         return ptBillServiceImpl.getBillXML(propertyTaxBillable);
@@ -504,7 +504,7 @@ public class PropertyTransferService {
     }
 
     public String getCityName() {
-        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getName();
+        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getName();
     }
 
     public Designation getUserDesigantion() {

@@ -62,11 +62,11 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.DeptDesig;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.entity.OverheadValue;
-import org.egov.works.models.estimate.AbstractEstimateAppropriation;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;
@@ -129,7 +129,8 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
             document.add(headerTextPara);
             document.add(makePara("Executing Department:" + estimate.getExecutingDepartment().getName(),
                     Element.ALIGN_LEFT));
-            document.add(makePara("User Department:" + estimate.getUserDepartment().getName(), Element.ALIGN_LEFT));
+            if (estimate.getUserDepartment() != null)
+                document.add(makePara("User Department:" + estimate.getUserDepartment().getName(), Element.ALIGN_LEFT));
 
             final CFinancialYear estimateFinancialYear = estimate.getMultiYearEstimates().get(0).getFinancialYear();
             addZoneYearHeader(estimate, estimateFinancialYear);

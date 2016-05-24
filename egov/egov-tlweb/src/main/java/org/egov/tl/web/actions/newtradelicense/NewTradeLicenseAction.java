@@ -40,6 +40,18 @@
 
 package org.egov.tl.web.actions.newtradelicense;
 
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -61,18 +73,6 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
-
 @ParentPackage("egov")
 @Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
         @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT + ".jsp"),
@@ -90,6 +90,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
+    private String message;
     private String renewAppType;
     @Autowired
     @Qualifier("tradeLicenseService")
@@ -110,7 +111,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
-       return super.create(tradeLicense);
+        return super.create(tradeLicense);
     }
 
     @Override
@@ -126,8 +127,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             mode = "editForApproval";
         if (license().getState().getValue().contains(Constants.WF_STATE_DIGISIGN_STR)
                 || license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_APPROVED_STR)
-                ||license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+                || license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
             mode = "disableApprover";
+        if (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+            message = "Pending for Collection";
         return super.showForApproval();
     }
 
@@ -136,13 +139,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
 
-        BigDecimal  newTradeAreWt=tradeLicense.getTradeArea_weight();
+        final BigDecimal newTradeAreWt = tradeLicense.getTradeArea_weight();
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
-        if(null != license().getState() && license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
-        tradeLicense.setTradeArea_weight(newTradeAreWt);
-        }
+        if (null != license().getState()
+                && license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING))
+            tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
-                && (tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))&& tradeLicense != null
+                && tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
+                && tradeLicense != null
                 && !tradeLicense.isPaid() &&
                 !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
             prepareNewForm();
@@ -157,10 +161,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
     public String beforeRenew() {
         prepareNewForm();
-        if(!tradeLicense.hasState() || tradeLicense.getCurrentState().getValue().equals("Closed")) {
-            currentState="";
-        }
-        renewAppType=Constants.RENEWAL_LIC_APPTYPE;
+        if (!tradeLicense.hasState() || tradeLicense.getCurrentState().getValue().equals("Closed"))
+            currentState = "";
+        renewAppType = Constants.RENEWAL_LIC_APPTYPE;
         return super.beforeRenew();
     }
 
@@ -242,12 +245,22 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void setMode(final String mode) {
         this.mode = mode;
     }
+
     @Override
     public String getAdditionalRule() {
-        if((renewAppType !=null && renewAppType.equals(Constants.RENEWAL_LIC_APPTYPE)) ||(tradeLicense !=null && tradeLicense.getLicenseAppType() !=null && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))){
-        return "RENEWALTRADE";
-        }
+        if (renewAppType != null && renewAppType.equals(Constants.RENEWAL_LIC_APPTYPE)
+                || tradeLicense != null && tradeLicense.getLicenseAppType() != null
+                        && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+            return "RENEWALTRADE";
         else
-            return "";
+            return "NEWTRADE";
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(final String message) {
+        this.message = message;
     }
 }

@@ -241,4 +241,9 @@
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestoneToCancel-header.jsp"/>
     </definition>
     
+    <definition name="trackmilestone-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.trackmilestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-view.jsp"/>
+    </definition>
+    
 </tiles-definitions>

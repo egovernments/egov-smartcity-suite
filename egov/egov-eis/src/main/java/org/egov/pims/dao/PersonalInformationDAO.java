@@ -41,8 +41,8 @@
 package org.egov.pims.dao;
 
 
-import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infra.exception.TooManyValuesException;
+import org.egov.commons.exception.NoSuchObjectException;
+import org.egov.commons.exception.TooManyValuesException;
 import org.egov.pims.model.PersonalInformation;
 
 import java.util.Date;

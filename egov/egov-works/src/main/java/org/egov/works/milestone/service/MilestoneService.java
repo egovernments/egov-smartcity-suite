@@ -60,6 +60,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,6 +98,50 @@ public class MilestoneService {
                 .createAlias("led.lineEstimate", "le")
                 .createAlias("status", "status")
                 .createAlias("woe.workOrder", "wo")
+                .createAlias("led.projectCode", "projectCode")
+                .createAlias("trackMilestone", "tm", JoinType.LEFT_OUTER_JOIN)
+                .createAlias("tm.status", "trackStatus", JoinType.LEFT_OUTER_JOIN);
+
+        if (searchRequestMilestone != null) {
+            if (searchRequestMilestone.getDepartment() != null)
+                criteria.add(Restrictions.eq("le.executingDepartment.id", searchRequestMilestone.getDepartment()));
+            if (searchRequestMilestone.getMilestoneFromDate() != null)
+                criteria.add(Restrictions.ge("createdDate", searchRequestMilestone.getMilestoneFromDate()));
+            if (searchRequestMilestone.getMilestoneToDate() != null) {
+                final DateTime dateTime = new DateTime(searchRequestMilestone.getMilestoneToDate().getTime()).plusDays(1);
+                criteria.add(Restrictions.le("createdDate", dateTime.toDate()));
+            }
+            if (searchRequestMilestone.getStatus() != null)
+                criteria.add(Restrictions.eq("status.code", searchRequestMilestone.getStatus()));
+            if (searchRequestMilestone.getSubTypeOfWork() != null)
+                criteria.add(Restrictions.eq("le.subTypeOfWork.id", searchRequestMilestone.getSubTypeOfWork()));
+            if (searchRequestMilestone.getTypeOfWork() != null)
+                criteria.add(Restrictions.eq("le.typeOfWork.id", searchRequestMilestone.getTypeOfWork()));
+            if (searchRequestMilestone.getWorkIdentificationNumber() != null)
+                criteria.add(Restrictions.eq("projectCode.code", searchRequestMilestone.getWorkIdentificationNumber())
+                        .ignoreCase());
+            if (searchRequestMilestone.getWorkOrderNumber() != null)
+                criteria.add(Restrictions.ilike("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber(),
+                        MatchMode.ANYWHERE));
+        }
+
+        criteria.add(Restrictions.or(
+                Restrictions.isEmpty("trackMilestone"),
+                Restrictions.or(Restrictions.eq("tm.projectCompleted", false),
+                        Restrictions.eq("trackStatus.code", WorksConstants.CANCELLED_STATUS))));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+        return criteria.list();
+    }
+    
+    public List<Milestone> searchMilestoneForView(final SearchRequestMilestone searchRequestMilestone) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Milestone.class)
+                .createAlias("workOrderEstimate", "woe")
+                .createAlias("woe.estimate", "estimate")
+                .createAlias("estimate.lineEstimateDetails", "led")
+                .createAlias("led.lineEstimate", "le")
+                .createAlias("status", "status")
+                .createAlias("woe.workOrder", "wo")
                 .createAlias("led.projectCode", "projectCode");
 
         if (searchRequestMilestone != null) {
@@ -124,6 +169,7 @@ public class MilestoneService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
+
 
     public Milestone getMilestoneById(final Long id) {
         return milestoneRepository.findOne(id);
@@ -208,9 +254,25 @@ public class MilestoneService {
             if (searchRequestMilestone.getWorkOrderNumber() != null)
                 criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber()));
             if (searchRequestMilestone.getContractor() != null)
-                criteria.add(Restrictions.eq("contractor.name", searchRequestMilestone.getContractor()));
+                criteria.add(Restrictions.eq("contractor.name", searchRequestMilestone.getContractor()).ignoreCase());
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
+    }
+
+    public List<String> findContractorsToCancelMilestone(final String code) {
+        final List<String> loaNumbers = milestoneRepository
+                .findContractorsToSearchMilestoneToCancel("%" + code + "%",
+                        WorksConstants.APPROVED.toString());
+        return loaNumbers;
+    }
+    
+    public boolean checkMilestoneCreated(final Long workOrderId){
+        Long milestoneId = milestoneRepository.findWorkOrderToCreateMilestone(workOrderId, WorksConstants.CANCELLED_STATUS);
+        boolean flag = false;
+        if(milestoneId != null){
+            flag = true;
+        }
+        return flag;
     }
 }

@@ -50,7 +50,7 @@ import org.egov.commons.Fundsource;
 import org.egov.commons.SharedFundSource;
 import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -201,7 +201,7 @@ public class FinancingSourceAction extends BaseFormAction {
             LOGGER.debug("FinancingSourceAction | save | start");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("financial source list size " + fundSourceList.size());
-        final User user = (User) persistenceService.find("from User where id=" + EgovThreadLocals.getUserId());
+        final User user = (User) persistenceService.find("from User where id=" + ApplicationThreadLocals.getUserId());
         SharedFundSource sharedFundSource;
         try {
             for (Fundsource fundsource : fundSourceList)

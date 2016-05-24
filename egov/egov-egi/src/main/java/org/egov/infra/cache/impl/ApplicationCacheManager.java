@@ -40,7 +40,7 @@
 
 package org.egov.infra.cache.impl;
 
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -52,18 +52,18 @@ public class ApplicationCacheManager {
     private CacheManager cacheManager;
 
     public void put(Object key, Object value) {
-        cacheManager.getCache(EgovThreadLocals.getTenantID()).put(key, value);
+        cacheManager.getCache(ApplicationThreadLocals.getTenantID()).put(key, value);
     }
 
     public Object get(Object key) {
-        return cacheManager.getCache(EgovThreadLocals.getTenantID()).get(key).get();
+        return cacheManager.getCache(ApplicationThreadLocals.getTenantID()).get(key).get();
     }
 
     public <T> T get(Object key, Class<T> returnType) {
-        return cacheManager.getCache(EgovThreadLocals.getTenantID()).get(key, returnType);
+        return cacheManager.getCache(ApplicationThreadLocals.getTenantID()).get(key, returnType);
     }
 
     public void remove(Object key) {
-        cacheManager.getCache(EgovThreadLocals.getTenantID()).evict(key);
+        cacheManager.getCache(ApplicationThreadLocals.getTenantID()).evict(key);
     }
 }

@@ -47,6 +47,7 @@
 		<div class="panel-title" style="text-align:center;"><spring:message code="title.search.trackmilestone" /></div>
 	</div>
 	<input type="hidden" id="workorderid" value="${workOrder.id }"/>
+	<input type="hidden" value="<spring:message code='error.trackmilestonedate.validate' />" id='validateDate'>
 	<div class="panel-body">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
@@ -66,13 +67,13 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.trackmilestone.from.date" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="milestoneFromDate" class="form-control datepicker" id="milestoneFromDate" data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="milestoneFromDate" cssClass="add-margin error-msg" />
+				<form:input path="trackMilestoneFromDate" class="form-control datepicker" id="trackMilestoneFromDate" data-inputmask="'mask': 'd/m/y'" />
+				<form:errors path="trackMilestoneFromDate" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.trackmilestone.to.date" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="milestoneToDate" class="form-control datepicker" id="milestoneToDate" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d"/>
-				<form:errors path="milestoneToDate" cssClass="add-margin error-msg" />
+				<form:input path="trackMilestoneToDate" class="form-control datepicker" id="trackMilestoneToDate" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d"/>
+				<form:errors path="trackMilestoneToDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">

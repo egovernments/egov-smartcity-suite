@@ -41,7 +41,7 @@
 package org.egov.infstr.utils;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.infinispan.manager.EmbeddedCacheManager;
@@ -96,7 +96,7 @@ public class EgovMasterDataCaching {
 
     public List get(final String sqlTagName) throws ApplicationRuntimeException {
         final String temp[] = sqlTagName.split("-");
-        final String domainName = EgovThreadLocals.getDomainName();
+        final String domainName = ApplicationThreadLocals.getDomainName();
         final String applName = temp[0];
         List<Object> dataList = null;
         HashMap<String, Object> cacheValuesHashMap = new HashMap<String, Object>();
@@ -159,7 +159,7 @@ public class EgovMasterDataCaching {
         Map dataMap = new HashMap();
         final String temp[] = sqlTagName.split("-");
         final String applName = temp[0];
-        final String domainName = EgovThreadLocals.getDomainName();
+        final String domainName = ApplicationThreadLocals.getDomainName();
         final String type = EGovConfig.getProperty(applName + CONFIG_FILE_SUFFIX, "type", EMPTY, SQL_TAG_PREFIX + sqlTagName)
                 .trim();
         try {
@@ -217,7 +217,7 @@ public class EgovMasterDataCaching {
     public static void removeFromCache(final String sqlTagName) throws ApplicationRuntimeException {
         try {
             final String temp[] = sqlTagName.split("-");
-            final String domainName = EgovThreadLocals.getDomainName();
+            final String domainName = ApplicationThreadLocals.getDomainName();
             final String applName = temp[0];
             CACHE_MANAGER.getCache().remove(applName + PATH_DELIM + domainName + PATH_DELIM + sqlTagName);
         } catch (final Exception e) {

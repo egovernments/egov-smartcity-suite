@@ -51,7 +51,6 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -195,7 +194,7 @@ public class GenericMasterAjaxController {
     }
     
     @RequestMapping(value = "/boundary/ajaxBoundary-blockByLocality", method = RequestMethod.GET)
-    public void blockByLocality(@RequestParam final Long locality, final HttpServletResponse response) throws IOException, NoSuchObjectException {
+    public void blockByLocality(@RequestParam final Long locality, final HttpServletResponse response) throws IOException {
         BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
         final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
         List<Boundary> streets = boundaryService.getChildBoundariesByBoundaryId(locality);

@@ -316,7 +316,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		// User authorisedUser =
 		// (User)eisCommonService.getUserforPosition(state.getOwnerUser());
 		// User loggedInUser =(User) new
-		// UserDAO().getUserByID(Integer.valueOf(EgovThreadLocals.getUserId()));
+		// UserDAO().getUserByID(Integer.valueOf(ApplicationThreadLocals.getUserId()));
 		User authorisedUser = null;
 		User loggedInUser = null;
 		return authorisedUser.equals(loggedInUser);
