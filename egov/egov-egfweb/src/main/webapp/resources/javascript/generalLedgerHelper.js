@@ -112,7 +112,7 @@
 		   oAutoCompEntityForJV.minQueryLength = 3;
 		   oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 		   oAutoCompEntityForJV.useShadow = true;
-		   oAutoCompEntityForJV.forceSelection = true;
+		   //oAutoCompEntityForJV.forceSelection = true;
 		   oAutoCompEntityForJV.maxResultsDisplayed = 10;
 		   oAutoCompEntityForJV.useIFrame = true;
 		   oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox, oContainer, sQDetauery, aResults) {
