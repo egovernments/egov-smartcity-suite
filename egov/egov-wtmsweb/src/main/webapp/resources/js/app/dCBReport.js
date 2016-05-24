@@ -230,7 +230,11 @@ function callAjaxByBoundary(event) {
 						'connectionType' : connectiontype,
 						'selectedModeBndry' : selectedModeBndry,
 						'reportType' : reportType
-					}
+					},
+					dataSrc: function ( json ) {  
+						jQuery('.loader-class').modal('hide'); 
+						return json.data;
+					}       
 				},
 				"sPaginationType" : "bootstrap",
 				"autoWidth" : false,
@@ -331,7 +335,6 @@ function callAjaxByBoundary(event) {
 					}
 				} ]
 			});
-	    jQuery('.loader-class').modal('hide');
 	
 	    if ($('#mode').val() == 'property') {
 	    	reportdatatable.fnSetColumnVis(1, false);
