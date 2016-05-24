@@ -132,7 +132,7 @@ public class ComplaintSearchRequest {
             DateTime currentDate = new DateTime();
             complaintDateTo = currentDate.toString(SEARCH_DATE_FORMAT);
             if (complaintDate.equalsIgnoreCase("today")) {
-                complaintDateFrom = complaintDateTo;
+                complaintDateFrom = currentDate.withTimeAtStartOfDay().toString(SEARCH_DATE_FORMAT);
             } else if (complaintDate.equalsIgnoreCase("all")) {
                 complaintDateFrom = null;
                 complaintDateTo = null;
