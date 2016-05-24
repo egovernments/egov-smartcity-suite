@@ -1136,8 +1136,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 return "dataEntry";
             }
         }
+        propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
+                "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
 
-        if (StringUtils.isBlank(houseNumber)) {
+        if (!(propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) && StringUtils.isBlank(houseNumber)) {
             addActionError(getText("mandatory.doorNo"));
             return "dataEntry";
         }
