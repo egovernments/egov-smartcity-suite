@@ -387,7 +387,7 @@ public class ConnectionDemandService {
         final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>(0);
 
         if (currDemand != null)
-            dmdCollList = getDmdCollAmtInstallmentWise(currDemand);
+            dmdCollList = getDmdCollAmtInstallmentWise(currDemand,waterConnectionDetails);
         currInst = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
 
@@ -411,15 +411,27 @@ public class ConnectionDemandService {
         retMap.put(WaterTaxConstants.ARR_COLL_STR, arrColelection);
         return retMap;
     }
-
-    public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
+ 
+    public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand,final WaterConnectionDetails waterConnectionDetails) {
+        Installment currInstallment = null;
+          if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
+          {
+              currInstallment = getCurrentInstallment(
+                      WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+          }
+          else
+          {
+              currInstallment =  getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
+                      WaterTaxConstants.MONTHLY, new Date());
+          }
         final StringBuffer strBuf = new StringBuffer(2000);
         strBuf.append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
                 + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
                 + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
-                + "and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
+                + "and dmdDet.id_demand =:dmdId and inst.start_date<=:currInstallmentDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
                 + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
+        Query query =getCurrentSession().createSQLQuery(strBuf.toString()).setParameter("dmdId", egDemand.getId()).setParameter("currInstallmentDate", currInstallment.getToDate());
+        return query.list();
     }
 
     public String generateBill(final String consumerCode, final String applicationTypeCode) {
