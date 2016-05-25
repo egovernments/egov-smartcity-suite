@@ -293,4 +293,9 @@
         <put-attribute name="page-title" value="title.dataentry.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dataentry-report.jsp"/>
     </definition>
+    <definition name="baseRegister-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.baseregister.report" cascade="true" />
+	<put-attribute name="body"
+		value="/WEB-INF/views/reports/baseRegister-form.jsp" />
+</definition>
 </tiles-definitions>
