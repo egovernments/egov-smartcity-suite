@@ -132,6 +132,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
                 persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUND));
         critParams.put(EGOV_FROM_DATE, new Date());
         critParams.put(EGOV_TO_DATE, new Date());
+        setReportParam(EGOV_FROM_DATE, new Date());
+        setReportParam(EGOV_TO_DATE, new Date());
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("bankAccountList", Collections.EMPTY_LIST);
         final User user = collectionsUtil.getLoggedInUser();
