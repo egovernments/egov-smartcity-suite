@@ -246,4 +246,9 @@
         <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-view.jsp"/>
     </definition>
     
+    <definition name="searchLineEstimateForAbstractEstimate-header.jsp" extends="base_layout">
+        <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForAbstractEstimate-header.jsp"/>
+    </definition>
+    
 </tiles-definitions>

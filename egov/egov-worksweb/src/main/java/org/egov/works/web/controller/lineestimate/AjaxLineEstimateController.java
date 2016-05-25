@@ -66,6 +66,7 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
+import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
@@ -113,10 +114,10 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private SearchLineEstimateToCancelJSONAdaptor searchLineEstimateToCancelJSONAdaptor;
-    
+
     @Autowired
     private ResourceBundleMessageSource messageSource;
 
@@ -142,6 +143,7 @@ public class AjaxLineEstimateController {
 
         return financialYear;
     }
+
     @RequestMapping(value = "/ajax-getlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
         return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
@@ -185,6 +187,17 @@ public class AjaxLineEstimateController {
         return result;
     }
 
+    @RequestMapping(value = "/ajaxsearchlineestimatesforabstractestimate", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchLineEstimatesForAbstractEstimate(final Model model,
+            @ModelAttribute final LineEstimatesForAbstractEstimate lineEstimatesForAbstractEstimate) {
+        final List<LineEstimatesForAbstractEstimate> searchResultList = lineEstimateService
+                .searchLineEstimatesForAbstractEstimate(lineEstimatesForAbstractEstimate);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchLineEstimateForAbstractEstimateResultJson(searchResultList))
+                .append("}").toString();
+        return result;
+    }
+
     public Object toSearchLineEstimateResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, lineEstimateJsonAdaptor).create();
@@ -193,6 +206,13 @@ public class AjaxLineEstimateController {
     }
 
     public Object toSearchLineEstimateForLOAResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateForLOAJsonAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    public Object toSearchLineEstimateForAbstractEstimateResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateForLOAJsonAdaptor()).create();
         final String json = gson.toJson(object);
@@ -209,6 +229,11 @@ public class AjaxLineEstimateController {
         return lineEstimateService.findEstimateNumbersForLoa(name);
     }
 
+    @RequestMapping(value = "/lineEstimateNumbersForAbstractEstimate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findEstimateNumbersForAbstractEstimate(@RequestParam final String name) {
+        return lineEstimateService.findEstimateNumbersForAbstractEstimate(name);
+    }
+    
     @RequestMapping(value = "/adminSanctionNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findAdminSanctionNumbers(@RequestParam final String name) {
         return lineEstimateService.findAdminSanctionNumbers(name);
@@ -217,6 +242,11 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/adminSanctionNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findAdminSanctionNumbersForLoa(@RequestParam final String name) {
         return lineEstimateService.findAdminSanctionNumbersForLoa(name);
+    }
+    
+    @RequestMapping(value = "/adminSanctionNumbersForAbstractEstimate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findAdminSanctionNumbersForAbstractEstimate(@RequestParam final String name) {
+        return lineEstimateService.findAdminSanctionNumbersForAbstractEstimate(name);
     }
 
     @RequestMapping(value = "/workIdNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -240,15 +270,15 @@ public class AjaxLineEstimateController {
 
         return users;
     }
-    
+
     @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<User> getcreateByDepartment(
             @RequestParam("department") final Long department) {
         final List<User> users = lineEstimateService.getCreatedByUsersForCancelLineEstimateByDepartment(department);
         return users;
     }
-    
-   @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+
+    @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchLineEstimatesToCancel(final Model model,
             @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
         final List<LineEstimate> lineestimates = lineEstimateService
@@ -258,7 +288,7 @@ public class AjaxLineEstimateController {
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchLineEstimatesToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, searchLineEstimateToCancelJSONAdaptor)
@@ -266,12 +296,12 @@ public class AjaxLineEstimateController {
         final String json = gson.toJson(object);
         return json;
     }
-       
+
     @RequestMapping(value = "/ajax-checkifloascreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfLOAsCreated(@RequestParam final Long lineEstimateId) {
         final String estimateNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimateId);
         String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { estimateNumbers }, null);
-        if(estimateNumbers.equals(""))
+        if (estimateNumbers.equals(""))
             return "";
         return message;
     }

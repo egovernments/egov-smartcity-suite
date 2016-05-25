@@ -39,6 +39,8 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.util.List;
+
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
@@ -50,6 +52,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
+import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,8 +60,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -86,7 +87,7 @@ public class SearchLineEstimateController {
     private SecurityUtils securityUtils;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
-    public String showSearchLineEstimateForm(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
+    public String showSearchLineEstimateForLoa(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
@@ -103,6 +104,19 @@ public class SearchLineEstimateController {
         model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
         model.addAttribute("departments", departments);
         return "searchLineEstimateForLoa-form";
+    }
+
+    @RequestMapping(value = "/searchlineestimateforabstractestimate-form", method = RequestMethod.GET)
+    public String searchLineEstimateForAbstractEstimate(
+            @ModelAttribute final LineEstimatesForAbstractEstimate lineEstimatesForAbstractEstimate,
+            final Model model) {
+        setDropDownValues(model);
+        final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        model.addAttribute("lineEstimatesForAbstractEstimate", lineEstimatesForAbstractEstimate);
+        model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
+        model.addAttribute("departments", departments);
+        return "searchLineEstimateForAbstractEstimate-header.jsp";
     }
 
     private void setDropDownValues(final Model model) {
