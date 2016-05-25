@@ -669,7 +669,7 @@
 				}
 			</s:if>
 			if(!balanceCheck()){
-				 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+				 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
 				 if (msg == true) {
 					 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
 					return true;

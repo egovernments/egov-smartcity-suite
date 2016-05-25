@@ -180,6 +180,13 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
             }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        	
+        	final WorkFlowMatrix wfmatrix = billRegisterWorkflowService.getWfMatrix(billregister.getStateType(), null,
+                    null, null, billregister.getCurrentState().getValue(), null);
+            billregister.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withStateValue(wfmatrix.getCurrentDesignation()+" Approved").withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction());
+            
             EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
                     FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
             billregister.setStatus(egwStatus);

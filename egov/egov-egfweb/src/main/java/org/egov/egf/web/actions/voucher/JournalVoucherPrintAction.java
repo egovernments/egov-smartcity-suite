@@ -307,6 +307,8 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     private void loadInboxHistoryData(final List<StateHistory> stateHistory) throws ApplicationRuntimeException {
         Collections.reverse(stateHistory);
+        
+        
         for (final StateHistory historyState : stateHistory) {
             // WorkflowTypes workflowTypes =
             // inboxService.getWorkflowType(state.getType());
@@ -318,7 +320,9 @@ public class JournalVoucherPrintAction extends BaseFormAction {
                         historyState.getComments() != null ? removeSpecialCharacters(historyState.getComments()) : "");
                 inboxHistory.add(inboxHistoryItem);
             }
+            
         }
+
     }
 
     private String removeSpecialCharacters(final String str) {

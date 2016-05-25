@@ -154,9 +154,6 @@ public class Scheme implements java.io.Serializable {
 		return isactive;
 	}
 
-	public void setIsactive(boolean isactive) {
-		this.isactive = isactive;
-	}
 
 	public String getDescription() {
         return description;

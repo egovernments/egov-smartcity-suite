@@ -425,6 +425,13 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        	
+        	 final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
+                     null, null, paymentheader.getCurrentState().getValue(), null);
+             paymentheader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                     .withStateValue(wfmatrix.getCurrentDesignation()+" Approved").withDateInfo(currentDate.toDate()).withOwner(pos)
+                     .withNextAction(wfmatrix.getNextAction());
+             
             paymentheader.getVoucherheader().setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
             paymentheader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
@@ -438,12 +445,16 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
             if (null == paymentheader.getState()) {
+            	
+            	
                 final WorkFlowMatrix wfmatrix = paymentHeaderWorkflowService.getWfMatrix(paymentheader.getStateType(), null,
                         null, null, workflowBean.getCurrentState(), null);
                 paymentheader.transition().start().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
+                
+                
             } else if (paymentheader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 paymentheader.transition(true).end().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())

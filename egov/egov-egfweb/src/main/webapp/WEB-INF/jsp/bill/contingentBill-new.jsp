@@ -194,7 +194,7 @@ billDetailsTableCredit = new YAHOO.widget.DataTable("billDetailTableCredit",vouc
 var makeVoucherDetailTableNet = function() {
  var voucherDetailColumnsNet = [ 
 {key:"glcode",label:'Account Code', formatter:netglcodeFormatter("billDetailsTableNet",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head',width:480,formatter:accountheadFormatter("billDetailsTableNet",".accounthead","text")},				
+{key:"accounthead", label:'Account Head',width:600,formatter:accountheadFormatter("billDetailsTableNet",".accounthead","text")},				
 {key:"amount",label:'Net',formatter:amountFormatter("billDetailsTableNet",".debitAmountDetail","text")},
 {key:'Add',label:'Add'},
 {key:'Delete',label:'Delete'}
@@ -286,7 +286,7 @@ billDetailsTableCreditFinal = new YAHOO.widget.DataTable("billDetailTableCreditF
 var makeVoucherDetailTableNetFinal = function() {
  var voucherDetailColumnsNet = [ 
 {key:"glcode",label:'Account Code', formatter:glcodeFormatter("billDetailsTableNetFinal",".glcodeDetail","text")},
-{key:"accounthead", label:'Account Head', width:480, formatter:accountheadFormatter("billDetailsTableNetFinal",".accounthead","text")},				
+{key:"accounthead", label:'Account Head', width:600, formatter:accountheadFormatter("billDetailsTableNetFinal",".accounthead","text")},				
 {key:"amount",label:'Net',formatter:amountFormatter("billDetailsTableNetFinal",".creditAmountDetail","text")},
 {key:'Add',label:'Add'},
 {key:'Delete',label:'Delete'}
@@ -574,11 +574,11 @@ var i=1;
 <s:iterator value="netPayList" status="stat">
 
 	<s:if test="%{chartOfAccountDetails.size()>0}">
-	net.options[i] =new Option('<s:property value="glcode"/>-<s:property value="name"/>','<s:property value="glcode"/>~#<s:property value="name"/>~#true');
+	net.options[i] =new Option('<s:property value="glcode"/>','<s:property value="glcode"/>~#<s:property value="name"/>~#true');
 	
 	</s:if> 
 	<s:else>
-	net.options[i] =new Option('<s:property value="glcode"/>-<s:property value="name"/>','<s:property value="glcode"/>~#<s:property value="name"/>~#false');
+	net.options[i] =new Option('<s:property value="glcode"/>','<s:property value="glcode"/>~#<s:property value="name"/>~#false');
 	</s:else>  
 i++;
 </s:iterator>
