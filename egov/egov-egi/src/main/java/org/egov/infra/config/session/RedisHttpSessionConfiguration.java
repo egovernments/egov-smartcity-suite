@@ -56,7 +56,7 @@ public class RedisHttpSessionConfiguration {
     @Bean
     public CookieSerializer cookieSerializer() {
         final DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-        serializer.setCookieName("JSESSIONID");
+        serializer.setCookieName("SESSIONID");
         serializer.setCookiePath("/");
         return serializer;
     }
