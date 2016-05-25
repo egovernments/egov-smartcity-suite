@@ -247,7 +247,7 @@
     </definition>
     
     <definition name="searchLineEstimateForAbstractEstimate-header.jsp" extends="base_layout">
-        <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.createae" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForAbstractEstimate-header.jsp"/>
     </definition>
     
