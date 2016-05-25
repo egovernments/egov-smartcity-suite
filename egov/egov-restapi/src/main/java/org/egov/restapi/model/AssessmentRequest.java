@@ -40,30 +40,49 @@
 
 package org.egov.restapi.model;
 
-public class AssessmentNoRequest {
+public class AssessmentRequest {
 
-	private String assessmentNo;
-	private String ulbCode;
+    private String assessmentNo;
+    private String ownerName;
+    private String mobileNumber;
+    private String ulbCode;
 
-	public String getAssessmentNo() {
-		return assessmentNo;
-	}
+    public String getAssessmentNo() {
+        return assessmentNo;
+    }
 
-	public void setAssessmentNo(String assessmentNo) {
-		this.assessmentNo = assessmentNo;
-	}
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
 
-	@Override
-	public String toString() {
-		return "AssessmentNoRequest [assessmentNo=" + assessmentNo + "]";
-	}
+    @Override
+    public String toString() {
+        return "AssessmentRequest [assessmentNo=" + assessmentNo + "ownerName=" + ownerName + "mobileNumber=" + mobileNumber
+                + "]";
+    }
 
-	public String getUlbCode() {
-		return ulbCode;
-	}
+    public String getUlbCode() {
+        return ulbCode;
+    }
 
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
 
 }

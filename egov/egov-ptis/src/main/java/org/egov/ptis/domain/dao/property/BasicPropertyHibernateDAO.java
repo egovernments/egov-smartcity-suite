@@ -39,6 +39,16 @@
  */
 package org.egov.ptis.domain.dao.property;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.exception.ApplicationException;
@@ -46,17 +56,14 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository(value = "basicPropertyDAO")
 @Transactional(readOnly = true)
@@ -294,7 +301,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
     public List<BasicProperty> getBasicPropertiesForTaxDetails(String circleName, String zoneName,
             String wardName, String blockName, String ownerName, String doorNo, String aadhaarNumber, String mobileNumber) {
 
-        List<BasicProperty> basicProeprtyList = new ArrayList<BasicProperty>();
+        List<BasicProperty> basicPropertyList = new ArrayList<BasicProperty>();
 
         BasicProperty basicProperty = null;
         StringBuilder sb = new StringBuilder();
@@ -323,11 +330,11 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
                 Object[] data = (Object[]) record;
                 if (null != data[1]) {
                     basicProperty = getBasicPropertyByPropertyID((String) data[1]);
-                    basicProeprtyList.add(basicProperty);
+                    basicPropertyList.add(basicProperty);
                 }
             }
         }
-        return basicProeprtyList;
+        return basicPropertyList;
     }
 
     @Override
@@ -439,5 +446,38 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
                 .createQuery("select psv.referenceBasicProperty from PropertyStatusValues psv where psv.basicProperty.id = :id")
                 .setParameter("id", basicPropertyId).uniqueResult();
         return basicProperty;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("select distinct bp.propertyid from egpt_basic_property bp left join egpt_property_owner_info info on bp.id = info.basicproperty "
+                + "left join eg_user u on info.owner = u.id where bp.isactive = 'Y' and bp.propertyid is not null ");
+        Map<String, String> params = new HashMap<String, String>();
+        if (assessmentNo != null && !assessmentNo.trim().isEmpty()) {
+            sb.append(" and bp.propertyId=:assessmentNo ");
+            params.put("assessmentNo", assessmentNo);
+        }
+        if (ownerName != null && !ownerName.trim().isEmpty()) {
+            sb.append(" and upper(trim(u.name)) like :OwnerName ");
+            params.put("OwnerName", "%" + ownerName.toUpperCase() + "%");
+        }
+        if (mobileNumber != null && !mobileNumber.trim().isEmpty()) {
+            sb.append(" and u.mobileNumber like :MobileNumber ");
+            params.put("MobileNumber", mobileNumber);
+        }
+        final Query query = getCurrentSession().createSQLQuery(sb.toString());
+        for (String param : params.keySet()) {
+            query.setParameter(param, params.get(param));
+        }
+        List<String> list = query.list();
+        List<BasicProperty> basicProperties = new ArrayList<BasicProperty>();
+        if (null != list && !list.isEmpty()) {
+            for (String propertyid : list) {
+                basicProperties.add(getBasicPropertyByPropertyID(propertyid));
+            }
+        }
+        return basicProperties;
     }
 }

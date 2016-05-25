@@ -95,4 +95,6 @@ public interface BasicPropertyDAO {
     public Boolean isAssessmentNoExist(String assessmentNo);
 
     public BasicProperty getParentBasicPropertyByBasicPropertyId(Long basicPropertyId);
+
+    public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber);
 }
