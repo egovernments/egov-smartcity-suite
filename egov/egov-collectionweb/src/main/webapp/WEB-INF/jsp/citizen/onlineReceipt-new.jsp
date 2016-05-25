@@ -44,7 +44,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Online Payment</title>
-<script src="/egi/javascript/common/watermark.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/resources/common/watermark.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/resources/css/collectionspublic.css?rnd=${app_release_no}" />
 <script type="text/javascript">
@@ -242,9 +242,12 @@ function validateOnlineReceipt(){
 	var validation=true;
 	var zeroAccHeads=false;
 	var noofaccounts=dom.get("totalNoOfAccounts").value;
+	var totalCreditAmountToBePaid = 0;
 	for(var j=0;j<noofaccounts; j++)
 	{
-		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
+		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;			
+		var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
+		totalCreditAmountToBePaid = eval(totalCreditAmountToBePaid)+eval(amounttobecollected);
 		if(advanceRebatePresent==0){
 			zeroAccHeads=true;
 		}
@@ -257,7 +260,16 @@ function validateOnlineReceipt(){
 		return false;
 	}
 	amount=eval(amount);
-	billingtotal=eval(billingtotal);
+
+	if(document.getElementById("callbackForApportioning").value=="false")	
+	{	
+			billingtotal=document.forms[0].totalAmountToBeCollected.value;
+	}
+	else
+	{	
+			billingtotal=totalCreditAmountToBePaid;
+	}
+
 
 	if(checkpartpaymentvalue=="false" && amount < billingtotal){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.partpaymenterror" />' + '<br>';
