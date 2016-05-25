@@ -182,6 +182,7 @@ function submitForm(){
 		    	}
 			},
 			{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
+			{title: 'Channel', data: 'resource.clauses.channel'},
 			
 			{title: 'Applicant Address', data: 'resource.searchable.applicantAddress'},
 			{title: 'Status', data: 'resource.clauses.status'},
