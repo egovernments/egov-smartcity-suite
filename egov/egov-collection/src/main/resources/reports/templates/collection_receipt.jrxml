@@ -40,7 +40,7 @@
   -->
 
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-16T13:04:54 -->
+<!-- 2016-05-24T16:32:18 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_challan" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="10" bottomMargin="10" resourceBundle="custom" uuid="1fd0c026-6f9d-417e-b936-3ab1dd76cfd4">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -75,6 +75,9 @@
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="EGOV_COPY">
+					<subreportParameterExpression><![CDATA["Original Copy"]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_single.jasper")]]></subreportExpression>
 			</subreport>
@@ -86,9 +89,20 @@
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="EGOV_COPY">
+					<subreportParameterExpression><![CDATA["Duplicate Copy"]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_single.jasper")]]></subreportExpression>
 			</subreport>
+			<frame>
+				<reportElement x="0" y="0" width="595" height="2" uuid="e90d9345-c385-4d59-9dd7-0811cfb4d6d0">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dashed"/>
+				</box>
+			</frame>
 		</band>
 		<band height="200">
 			<subreport>
@@ -97,9 +111,20 @@
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="EGOV_COPY">
+					<subreportParameterExpression><![CDATA["Triplicate Copy"]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_single.jasper")]]></subreportExpression>
 			</subreport>
+			<frame>
+				<reportElement x="0" y="0" width="595" height="2" uuid="e90d9345-c385-4d59-9dd7-0811cfb4d6d0">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dashed"/>
+				</box>
+			</frame>
 		</band>
 	</detail>
 </jasperReport>
