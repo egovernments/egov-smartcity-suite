@@ -353,4 +353,7 @@ public class User extends AbstractAuditable {
         this.signature = signature;
     }
 
+    public void updateNextPwdExpiryDate(Integer passwordExpireInDays) {
+        this.setPwdExpiryDate(new DateTime().plusDays(passwordExpireInDays).toDate());
+    }
 }

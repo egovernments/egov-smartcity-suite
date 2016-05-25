@@ -70,7 +70,6 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -167,7 +166,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Transactional
     public void create(final Employee employee) {
-        employee.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
+        employee.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
 
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
 
@@ -206,7 +205,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Transactional
     public void createEmployeeData(final Employee employee) {
-        employee.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
+        employee.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
         employeeRepository.save(employee);

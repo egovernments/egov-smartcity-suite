@@ -53,7 +53,6 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.support.ui.Menu;
-import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +138,7 @@ public class HomeController {
                 return "NEWPWD_INVALID";
             if (newPwd.equals(retypeNewPwd)) {
                 user.setPassword(passwordEncoder.encode(newPwd));
-                user.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
+                user.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
                 userService.updateUser(user);
                 return "SUCCESS";
             }
