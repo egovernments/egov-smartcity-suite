@@ -1924,7 +1924,7 @@ function showHideMandataryMark(obj){
 	   				<input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamounttobepaid" id="totalamounttobepaid" readonly="readonly" value='<s:property value="%{totalAmountToBeCollected}" />' >
 	   				</span>
 	   			</s:if>
-	   			<s:text name="billreceipt.payment.totalamt.received"/><span><input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamountdisplay" id="totalamountdisplay" readonly="readonly"></span>
+	   			<s:text name="billreceipt.payment.totalamt.received"/><span><input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamountdisplay" id="totalamountdisplay" readonly="readonly" tabindex='-1'></span>
    			</div>
    			<s:hidden label="totalAmountToBeCollected" name="totalAmountToBeCollected" value="%{totalAmountToBeCollected}"/>
     	</td></tr>
@@ -2155,11 +2155,13 @@ function showHideMandataryMark(obj){
 		</td></tr>
 		
 		<!-- Paid by details -->
+		<s:if test="%{!isBillSourcemisc()}">
 		<tr >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
+	    </s:if>
 		<table id="manualreceipt" style="display:none">
 		<s:if test="%{!isBillSourcemisc()}">
 					<tr>
