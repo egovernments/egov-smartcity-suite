@@ -80,6 +80,7 @@ function populateapportioningamountnew(){
 	var noofaccounts=dom.get("totalNoOfAccounts").value;
 	var credittotal=0;
 	collectiontotal=dom.get("paymentAmount").value;
+	var totalCreditAmountToBePaid = 0;
 	var zeroAccHeads=false;
 	if(isNaN(collectiontotal)){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.invalidamount" />' + '<br>';
@@ -92,23 +93,27 @@ function populateapportioningamountnew(){
 	for(var j=0;j<noofaccounts; j++)
 	{
 		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
+		var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
+		totalCreditAmountToBePaid = eval(totalCreditAmountToBePaid)+eval(amounttobecollected);
 		if(advanceRebatePresent==0){
 			zeroAccHeads=true;
 		}
 	}
-	if(dom.get("callbackForApportioning").value=="true")
-	{
-		if(collectiontotal > billingtotal && zeroAccHeads==false)
-		{
-			document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
-			dom.get("receipt_error_area").style.display="block";
-			return false;
-		}
-		else
-		{																														    			//makeJSONCall(["OrderNumber","CreditAmount","DebitAmount","CrAmountToBePaid"],'${pageContext.request.contextPath}/citizen/onlineReceipt!apportionBillAmount.action',{onlineInstrumenttotal:collectiontotal},apportionLoadHandler,apportionLoadFailureHandler);
-		}
+	if(document.getElementById("callbackForApportioning").value=="false")	
+	{	
+			billingtotal=document.forms[0].totalAmountToBeCollected.value;
 	}
-	else if(dom.get("callbackForApportioning").value=="false")
+	else
+	{	
+			billingtotal=totalCreditAmountToBePaid;
+	}
+	if(collectiontotal > billingtotal && zeroAccHeads==false)
+	{
+		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
+		dom.get("receipt_error_area").style.display="block";
+		return false;
+	}
+	if(dom.get("callbackForApportioning").value=="false")
 	{
 		if(initialSetting=="true"){
 			initialiseCreditAmount();

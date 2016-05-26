@@ -307,11 +307,10 @@ public class CollectionCommon {
                     final CChartOfAccounts account = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(billAccount
                             .getGlCode());
                     final CFunction function = functionDAO.getFunctionByCode(billAccount.getFunctionCode());
-                    // TODO: Need to check for getIsActualDemand()
-                    /* if (billAccount.getIsActualDemand()) { */
-                    totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(
+                    if (billAccount.getIsActualDemand()) { 
+                    	totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(
                             billAccount.getDrAmount());
-                    /* } */
+                    } 
                     final ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
                             .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
                             Long.valueOf(billAccount.getOrder()), billAccount.getDescription(),
