@@ -65,7 +65,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -179,7 +178,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String eastBoundary;
     private String westBoundary;
     private Map<String, String> propTypeCategoryMap;
-    private Integer reportId = -1;
+    private String reportId;
     private Long taxExemptedReason;
 
     @Autowired
@@ -222,6 +221,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private MessagingService messagingService;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
+
     private SMSEmailService sMSEmailService;
     private String actionType;
     private String fileStoreIds;
@@ -503,7 +505,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(FileFormat.PDF);
-            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else
             addActionMessage(getText("objection.nohearingNotice"));
         return NOTICE;
@@ -701,8 +703,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(FileFormat.PDF);
-            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else {
             if (WFLOW_ACTION_STEP_SIGN.equals(actionType) && notice == null) {
                 noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(NOTICE_TYPE_SPECIAL_NOTICE);
@@ -752,8 +753,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 }
                 noticeService.getSession().flush();
             } else {
-                getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-                reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+                reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }
         }
     }
@@ -911,7 +911,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 }
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);
-                reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+                reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }
         } else
             addActionMessage(getText("objection.noendoresementNotice"));
@@ -946,7 +946,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         } else
             updateStateAndStatus(objection); // If objection not rejected, then print special notice.
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         reportOutput = createEndoresement(reportOutput, objection);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             endoresementPdf = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -979,7 +978,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 }
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);
-                reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+                reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }
         }
         return NOTICE;
@@ -1024,9 +1023,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (!WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
             revisionPetitionService.updateRevisionPetition(objection);
         }
-        if (!PREVIEW.equalsIgnoreCase(actionType)) {
-            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        }
         /* return STRUTS_RESULT_MESSAGE; */
         final ReportOutput reportOutput = new ReportOutput();
         if (objection != null && objection.getObjectionNumber() != null) {
@@ -1047,8 +1043,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 reportOutput.setReportOutputData(bFile);
                 reportOutput.setReportFormat(FileFormat.PDF);
                 if (!WFLOW_ACTION_STEP_SIGN.equals(actionType)) {
-                    getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-                    reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+                    reportId = reportViewerUtil.addReportToTempCache(reportOutput);
                 }
             }
         }
@@ -1741,12 +1736,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.propTypeObjId = propTypeObjId;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     public Map<String, String> getDeviationPercentageMap() {

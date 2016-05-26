@@ -56,7 +56,6 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -206,7 +205,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private Long woodTypeId;
     private List<DocumentType> documentTypes = new ArrayList<>();
     private ReportService reportService;
-    private Integer reportId = -1;
+    private String reportId;
     private PropertyTypeMaster propTypeMstr;
     private Map<String, String> deviationPercentageMap;
     private String certificationNumber;
@@ -242,6 +241,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private SecurityUtils securityUtils;
     @Autowired
     private AssignmentService assignmentService;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     public ModifyPropertyAction() {
         super();
@@ -1321,9 +1322,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         else
             reportInput = new ReportRequest(MODIFY_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return PRINT_ACK;
     }
 
@@ -1834,12 +1834,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         this.documentTypes = documentTypes;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     public void setReportService(final ReportService reportService) {

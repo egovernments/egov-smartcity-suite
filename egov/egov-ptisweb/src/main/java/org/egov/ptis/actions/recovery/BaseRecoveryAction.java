@@ -103,7 +103,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected String propertyAddress;
 	protected EisCommonService eisCommonService;
 	protected ReportService reportService;
-	protected Integer reportId = -1;
+	protected String reportId;
 	protected ModuleService moduleService;
 	protected PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	protected PersistenceService<BasicProperty, Long> basicPropertyService;
@@ -115,6 +115,9 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	private EgBillDao egBillDAO;
 	@Autowired
 	private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 
 	@Override
 	public StateAware getModel() {
@@ -323,8 +326,8 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 
 	}
 
-	protected Integer addingReportToSession(ReportOutput reportOutput) {
-		return ReportViewerUtil.addReportToSession(reportOutput, getSession());
+	protected String addingReportToSession(ReportOutput reportOutput) {
+		return reportViewerUtil.addReportToTempCache(reportOutput);
 	}
 
 	public Map<String, Object> getViewMap() {
@@ -343,12 +346,8 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		this.reportService = reportService;
 	}
 
-	public Integer getReportId() {
+	public String getReportId() {
 		return reportId;
-	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
 	}
 
 	public void setModuleService(ModuleService moduleService) {

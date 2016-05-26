@@ -132,7 +132,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected List<String> selectedCheckList;
     protected List<LicenseChecklistHelper> checkList;
     protected String roleName;
-    protected Integer reportId = -1;
+    protected String reportId;
     private Long feeTypeId;
     protected boolean showAgreementDtl;
     private String fileStoreIds;
@@ -179,7 +179,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
     
-    
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -231,8 +232,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     private String redirectToPrintCertificate() {
-        reportId = ReportViewerUtil.addReportToSession(
-                reportService.createReport(tradeLicenseService.prepareReportInputData(license())), getSession());
+        reportId = reportViewerUtil.addReportToTempCache(
+                reportService.createReport(tradeLicenseService.prepareReportInputData(license())));
         return "report";
     }
 
@@ -600,12 +601,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         return wfInitiator;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     public Long getFeeTypeId() {

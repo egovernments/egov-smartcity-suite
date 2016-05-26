@@ -125,6 +125,8 @@ public class CollectionCommon {
     private EgwStatusHibernateDAO statusDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     /**
      * @param receiptHeaderService the receipt header Service to be set
@@ -343,11 +345,10 @@ public class CollectionCommon {
      * This method generates a report for the given array of receipts
      *
      * @param receipts an array of <code>ReceiptHeader</code> objects for which the report is to be generated
-     * @param session a <code>Map</code> of String and Object key- value pairs containing the session information
      * @param flag a boolean value indicating if the generated report should also have the print option
      * @return an integer representing the report id
      */
-    public Integer generateReport(final ReceiptHeader[] receipts, final Map<String, Object> session, final boolean flag) {
+    public String generateReport(final ReceiptHeader[] receipts, final boolean flag) {
         final String serviceCode = receipts[0].getService().getCode();
         final char receiptType = receipts[0].getReceipttype();
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
@@ -383,19 +384,17 @@ public class CollectionCommon {
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-        session.remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
+        return reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
     }
 
     /**
      * This method generates a challan for the given receipt
      *
      * @param receipt <code>ReceiptHeader</code> object for which the report is to be generated
-     * @param session a <code>Map</code> of String and Object key- value pairs containing the session information
      * @param flag a boolean value indicating if the generated challan should also have the print option
      * @return an integer representing the report id
      */
-    public Integer generateChallan(final ReceiptHeader receipt, final Map<String, Object> session, final boolean flag) {
+    public String generateChallan(final ReceiptHeader receipt, final boolean flag) {
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
         receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader(), chartOfAccountsHibernateDAO,
                 persistenceService));
@@ -408,8 +407,7 @@ public class CollectionCommon {
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-        session.remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
+        return reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
     }
 
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails,

@@ -61,7 +61,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
@@ -135,7 +134,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     private String indexNumber;
     private String ackMessage;
-    private Integer reportId = -1;
+    private String reportId;
     private String billNo;
     private BasicProperty basicProperty;
     private PropertyImpl property;
@@ -165,6 +164,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     @Override
     public StateAware getModel() {
@@ -217,8 +219,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                     reportOutput.setReportFormat(FileFormat.PDF);
                 }
             }
-            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("generateBill: ReportId: " + reportId);
                 LOGGER.debug("Exit from generateBill");
@@ -237,8 +239,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     public String generateDemandBill() {
         DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
         ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return BILL;
     }
 
@@ -393,12 +394,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         return ACK;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     @Override

@@ -125,7 +125,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private Long receiptId;
     private ReceiptHeader[] receipts;
     private Integer paymentServiceId = -1;
-    private Integer reportId = -1;
+    private String reportId;
     private String serviceCode;
     private PaymentRequest paymentRequest;
     private PaymentResponse paymentResponse;
@@ -424,7 +424,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         receipts[0] = receiptHeaderService.findById(getReceiptId(), false);
 
         try {
-            setReportId(collectionCommon.generateReport(receipts, getSession(), true));
+            reportId = collectionCommon.generateReport(receipts, true);
         } catch (final Exception e) {
             LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
             throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
@@ -679,12 +679,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         this.statusCode = statusCode;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     public String getServiceCode() {

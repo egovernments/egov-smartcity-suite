@@ -106,7 +106,9 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private CollectionReportService collectionReportService;
     @Autowired
     private ReportService reportService;
-    private Integer reportId = -1;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
+    private String reportId;
 
     private final Map<String, String> paymentModes = createPaymentModeList();
     private List<CollectionBankRemittanceReport> bankRemittanceList;
@@ -184,8 +186,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final ReportRequest reportInput = new ReportRequest(getReportTemplateName(), critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
 
@@ -203,8 +204,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
         final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
 
@@ -312,7 +312,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     }
 
     @Override
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
     }
 

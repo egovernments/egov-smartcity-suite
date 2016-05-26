@@ -57,7 +57,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -176,8 +175,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private Map<String, String> guardianRelationMap;
     private List<DocumentType> documentTypes = new ArrayList<>();
 
-    private Integer reportId = -1;
-    private boolean approved = false;
+    private String reportId;
+    private boolean approved;
     private boolean updateUpicNo;
 
     private BasicProperty basicProp;
@@ -193,6 +192,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private BoundaryService boundaryService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
 
@@ -1105,9 +1106,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(
-                basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName), getSession());
+        reportId = reportViewerUtil.addReportToTempCache(
+                basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName));
         return PRINTACK;
     }
 
@@ -1554,12 +1554,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         this.propCompletionDate = propCompletionDate;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     public boolean isApproved() {

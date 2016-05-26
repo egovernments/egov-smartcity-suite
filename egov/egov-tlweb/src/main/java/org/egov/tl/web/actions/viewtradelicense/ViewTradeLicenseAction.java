@@ -47,7 +47,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -83,7 +82,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     private String rejectreason;
     private HttpSession session;
     private HttpServletRequest requestObj;
-    protected Integer reportId = -1;
+    protected String reportId;
     private String applicationNo;
     private Long userId;
  
@@ -91,6 +90,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     private ReportService reportService;
     @Autowired
     private TradeLicenseService tradeLicenseService;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     /**
      * @return the rejectreason
@@ -153,8 +154,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
          * notice.setNoticeType(this.license().getClass().getSimpleName() + "-Certificate"); notice.setNoticeDate(new Date());
          * this.request.put("noticeObject", notice); }
          */
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportService.createReport(tradeLicenseService.prepareReportInputData((License)license())), getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportService.createReport(tradeLicenseService.prepareReportInputData((License)license())));
         return "report";
     }
 
@@ -271,13 +271,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
         this.applicationNo = applicationNo;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
     }
-
-    public void setReportId(Integer reportId) {
-        this.reportId = reportId;
-    }
-
     
 }

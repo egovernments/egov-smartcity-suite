@@ -47,7 +47,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.bean.ReportInfo;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
@@ -68,7 +67,7 @@ public class HeadWiseDmdNdRecReportAction extends BaseFormAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
     private final String RESULT_GENERATE = "generate";
     private ReportService reportService;
-    private Integer reportId = -1;
+    private String reportId;
     private BigDecimal arrDmdTotal = BigDecimal.ZERO;
     private BigDecimal currDmdTotal = BigDecimal.ZERO;
     private BigDecimal arrCollTotal = BigDecimal.ZERO;
@@ -85,6 +84,9 @@ public class HeadWiseDmdNdRecReportAction extends BaseFormAction {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     public String generateHeadWiseDmdColl() {
         ReportRequest reportRequest = null;
@@ -108,7 +110,7 @@ public class HeadWiseDmdNdRecReportAction extends BaseFormAction {
         reportRequest = new ReportRequest(REPORT_TEMPLATENAME_HEADWISEDMDCOLL, reportInfo,
                 new HashMap<String, Object>());
         reportRequest.setPrintDialogOnOpenReport(true);
-        reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportRequest), getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportService.createReport(reportRequest));
 
         return RESULT_GENERATE;
     }
@@ -256,12 +258,8 @@ public class HeadWiseDmdNdRecReportAction extends BaseFormAction {
         this.reportService = reportService;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(Integer reportId) {
-        this.reportId = reportId;
     }
 
     @Override

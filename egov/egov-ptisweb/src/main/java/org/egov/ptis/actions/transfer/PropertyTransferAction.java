@@ -92,7 +92,6 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -193,6 +192,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
+
     // Model and View data
     private Long mutationId;
     private String assessmentNo;
@@ -206,7 +208,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private List<DocumentType> documentTypes = new ArrayList<>();
     private BasicProperty basicproperty; // Do not change variable name, struts2
     // crazy.
-    private Integer reportId = -1;
+    private String reportId;
     private Long transfereeId;
     private double marketValue;
     private String transferReason;
@@ -444,11 +446,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(
-                transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo),
-                getSession());
+        reportId = reportViewerUtil.addReportToTempCache(
+                transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo));
         return PRINTACK;
     }
 
@@ -474,8 +473,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         ReportOutput reportOutput = transferOwnerService.generateTransferNotice(basicproperty, propertyMutation,
                 cityName, cityLogo, actionType, isCorporation);
         if (!WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
-            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else {
             PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
                     propertyMutation.getApplicationNo());
@@ -881,12 +879,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         return arrearPropertyTaxDue;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     public void setTransfereeId(final Long transfereeId) {
