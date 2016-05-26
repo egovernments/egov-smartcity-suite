@@ -105,7 +105,7 @@
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<td class="greybox">
 							<s:textfield id="fromDate" name="fromDate"
-							value="%{tempFromDate}"
+							value="%{tempFromDate}"  data-date-end-date="0d" 
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" />
@@ -115,7 +115,7 @@
 						class="mandatory1">*</span></td>
 					<td class="greybox">
 							<s:textfield id="toDate" name="toDate"
-							value="%{tempToDate}"
+							value="%{tempToDate}"  data-date-end-date="0d" 
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" />
@@ -322,13 +322,9 @@
 		{
 			var fromDate=document.getElementById('fromDate').value;
 			var toDate=document.getElementById('toDate').value;
-			var todayDate = new Date();
-			var todayMonth = todayDate.getMonth() + 1;
-			var todayDay = todayDate.getDate();
-			var todayYear = todayDate.getFullYear();
-			var todayDateText = todayDay + "/" + todayMonth + "/" +  todayYear;
 			var fundId=document.getElementById('fundId').value;
-
+			if(!DateValidation(fromDate,toDate))
+				return false;
 			if(fromDate == ""){
 				bootbox.alert("Please select from date");
 				return false;
@@ -344,14 +340,8 @@
 				return false;
 				}
 			
-			if(fromDate>todayDateText){
-				bootbox.alert("Invalid Date! from date is greater than current date");
+			if(!DateValidation(fromDate,toDate))
 				return false;
-			}
-			if (fromDate > toDate) {
-				bootbox.alert("Invalid Date Range! From Date cannot be after To Date!")
-				return false;
-				} 
 			
 		document.getElementById('type').disabled=false;
 		return true;
