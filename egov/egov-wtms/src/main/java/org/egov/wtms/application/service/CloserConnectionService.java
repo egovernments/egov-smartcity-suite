@@ -111,7 +111,7 @@ public class CloserConnectionService {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                         parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "Closure" }, null);
         } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
-            final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
+            final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getCurrentDue(parentWaterConnectionDetail);
             if (waterTaxDueforParent.doubleValue() > 0)
                 validationMessage = messageSource
                         .getMessage("err.closure.connection.watertaxdue", null, null);
