@@ -251,4 +251,9 @@
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForAbstractEstimate-header.jsp"/>
     </definition>
     
+    <definition name="newAbstractEstimate-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/newAbstractEstimate-form.jsp"/>
+    </definition>
+    
 </tiles-definitions>

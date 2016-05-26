@@ -300,4 +300,6 @@ public class WorksConstants {
     public static final String LOCATION_BOUNDARYTYPE = "Locality";
     
     public static final String LOCATION_HIERARCHYTYPE = "LOCATION";
+    
+    public static final String STATUS_TECHNICAL_SANCTIONED = "TECHNICAL_SANCTIONED";
 }

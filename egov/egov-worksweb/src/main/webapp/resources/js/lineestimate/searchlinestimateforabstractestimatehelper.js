@@ -64,7 +64,7 @@ jQuery('#btncreateae').click(function(e) {
 		bootbox.alert(message);
 	}
 	else {
-		window.location = "/egworks/estimate/abstractEstimate-newform.action?estimateNumber=" + lineEstimateNumber;
+		window.location = "/egworks/abstractestimate/newform?estimateNumber=" + lineEstimateNumber;
 	}
 });
 	

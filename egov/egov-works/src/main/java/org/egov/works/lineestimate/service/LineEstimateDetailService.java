@@ -195,5 +195,9 @@ public class LineEstimateDetailService {
 
         return flag;
     }
+    
+    public LineEstimateDetails findLineEstimateByEstimateNumber(final String estimatenumber,final String status) {
+        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimatenumber,status);
+    }
 
 }
