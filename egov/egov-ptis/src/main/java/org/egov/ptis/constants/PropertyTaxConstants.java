@@ -116,6 +116,7 @@ public interface PropertyTaxConstants {
     public static final String CURR_FIRSTHALF_COLL_STR = "CURR_FIRSTHALF_COLL";
     public static final String CURR_SECONDHALF_DMD_STR = "CURR_SECONDHALF_DMD";
     public static final String CURR_SECONDHALF_COLL_STR = "CURR_SECONDHALF_COLL";
+    public static final String ADVANCE_COLLECTION_STR = "ADVANCECOLLECTION";
 
     public static final String BUILT_UP_PROPERTY = "BuiltUpProperty";
     public static final String VACANT_PROPERTY = "VacantProperty";
@@ -452,7 +453,7 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "Unauthorized Penalty";
     public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "Cheque Bounce Penalty";
     public static final String DEMANDRSN_STR_PENALTY_FINES = "Penalty Fines";
-    public static final String DEMANDRSN_STR_ADVANCE = "ADVANCE";
+    public static final String DEMANDRSN_STR_ADVANCE = "Advance";
     public static final String DEMANDRSN_STR_ADVANCE_REBATE = "ADVANCE_REBATE";
 
     // Tax Payable constants
@@ -482,6 +483,7 @@ public interface PropertyTaxConstants {
             put(DEMANDRSN_CODE_EDUCATIONAL_CESS, 5);
             put(DEMANDRSN_CODE_SEWERAGE_TAX, 6);
             put(DEMANDRSN_CODE_REBATE, 7);
+            put(DEMANDRSN_CODE_ADVANCE, 8);
         }
     };
 
@@ -1030,7 +1032,7 @@ public interface PropertyTaxConstants {
     public static final String STRING_EMPTY = new String();
 
     public static final BigDecimal ADVANCE_REBATE_PERCENTAGE = new BigDecimal(5);
-    public static final Integer MAX_ADVANCES_ALLOWED = 5;
+    public static final Integer MAX_ADVANCES_ALLOWED = 10;
 
     public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
     public static final String MUTATIONRS_OTHERS = "OTHERS";

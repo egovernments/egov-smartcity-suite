@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-24T11:03:14 -->
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-05-24T17:31:25 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="551" pageHeight="802" columnWidth="551" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="dbbc36f2-fb09-429d-8985-50a04d1a0b3f">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -93,7 +92,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="currentTotal" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode})) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode}) && !"3504102".equals($F{glCode})) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="currentInst" class="java.lang.String">
@@ -143,7 +142,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="currentTotalBalance" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode})) ? ($F{creditAmountToBePaid}-$F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode}) && !"3504102".equals($F{glCode})) ? ($F{creditAmountToBePaid}-$F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="penaltyTotalBalance" class="java.math.BigDecimal" calculation="Sum">
@@ -151,7 +150,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="totalAmountBalance" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{creditAmountToBePaid}-$F{crAmount}]]></variableExpression>
+		<variableExpression><![CDATA[(!"3504102".equals($F{glCode})) ? ($F{creditAmountToBePaid}-$F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<filterExpression><![CDATA[$F{isRevenueAccount} == false]]></filterExpression>

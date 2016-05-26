@@ -71,8 +71,7 @@ public class BillDetailBean {
 		this.reasonMaster = reasonMaster;
 		this.isActualDemand = isActualDemand;
 
-		if (reasonMaster.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE_REBATE)
-				|| reasonMaster.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE)) {
+		if (reasonMaster.equalsIgnoreCase(DEMANDRSN_STR_ADVANCE_REBATE)) {
 			this.description = reasonMaster + "-" + key;
 		} else {
 			this.description = reasonMaster + "-" + installment.getDescription();

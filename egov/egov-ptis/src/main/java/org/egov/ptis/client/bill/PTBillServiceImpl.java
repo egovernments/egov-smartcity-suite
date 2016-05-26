@@ -40,12 +40,17 @@
 package org.egov.ptis.client.bill;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_MUTATION_FEE;
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.MUTATION_FEE_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_ADVANCE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -75,6 +80,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -183,13 +189,16 @@ public class PTBillServiceImpl extends BillServiceInterface {
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 
         installmentPenaltyAndRebate = billable.getCalculatedPenalty();
+        Date advanceStartDate = DateUtils.addYears(currInstallments.get(CURRENTYEAR_FIRST_HALF).getFromDate(), 1);
+        List<Installment> advanceInstallments = propertyTaxCommonUtils.getAdvanceInstallmentsList(advanceStartDate);
+        
         billable.setInstTaxBean(installmentPenaltyAndRebate);
         if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
             earlyPayRebate = installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).getRebate();
         }
         final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(activeProperty);
         final HashMap<String, Integer> orderMap = propertyTaxUtil.generateOrderForDemandDetails(
-                ptDemand.getEgDemandDetails(), billable);
+                ptDemand.getEgDemandDetails(), billable,advanceInstallments);
 
         for (final EgDemandDetails demandDetail : ptDemand.getEgDemandDetails()) {
             balance = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
@@ -226,10 +235,74 @@ public class PTBillServiceImpl extends BillServiceInterface {
                 ptDemand.getEgDemandDetails().add(penaltyDemandDetail);
         }
 
+        //Get the demand for current year second half and use it in advance collection
+        BigDecimal currentInstDemand = BigDecimal.ZERO;
+        for(EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()){
+        	if(dmdDet.getInstallmentStartDate().equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getFromDate())){
+        		currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
+        	}
+        }
+        createAdvanceBillDetails(billDetails, currentInstDemand, orderMap, ptDemand,billable,
+        		advanceInstallments,currInstallments.get(CURRENTYEAR_SECOND_HALF));
+        
         LOGGER.debug("Exiting method getBilldetails : " + billDetails);
         return billDetails;
     }
 
+    /**
+	 * Creates the advance bill details
+	 * 
+	 * @param billDetails
+	 * @param orderMap
+	 * @param currentInstallmentDemand
+	 * @param demandDetail
+	 * @param reason
+	 * @param installment
+	 */
+	private void createAdvanceBillDetails(List<EgBillDetails> billDetails, BigDecimal currentInstallmentDemand, 
+			HashMap<String, Integer> orderMap, Ptdemand ptDemand, PropertyTaxBillable billable,
+			List<Installment> advanceInstallments, Installment dmdDetInstallment) {
+
+		BillDetailBean billDetailBean = null;
+		/*
+		 * Advance will be created with current year second half installment. 
+		 * While fetching advance collection, we will pass current year second half installment
+		 */
+		BigDecimal advanceCollection = demandGenericDAO.getBalanceByDmdMasterCodeInst(ptDemand,
+				DEMANDRSN_CODE_ADVANCE, getModule(),dmdDetInstallment);
+		
+		if (advanceCollection.compareTo(BigDecimal.ZERO) < 0) {
+			advanceCollection = advanceCollection.abs();
+		}
+
+		BigDecimal partiallyCollectedAmount = advanceCollection.remainder(currentInstallmentDemand);
+
+		Integer noOfAdvancesPaid = (advanceCollection.subtract(partiallyCollectedAmount)
+				.divide(currentInstallmentDemand)).intValue();
+
+		LOGGER.debug("getBilldetails - advanceCollection = " + advanceCollection + ", noOfAdvancesPaid="
+				+ noOfAdvancesPaid);
+
+		String key = null;
+		DateTime installmentDate = null;
+		Installment installment = null;
+		if (noOfAdvancesPaid < MAX_ADVANCES_ALLOWED) {
+			for (int i = noOfAdvancesPaid; i < advanceInstallments.size(); i++) {
+				installment = advanceInstallments.get(i);
+				installmentDate = new DateTime(installment.getInstallmentYear().getTime());
+				key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_ADVANCE;
+
+				billDetailBean = new BillDetailBean(installment, orderMap.get(key),key,
+						i == noOfAdvancesPaid ? currentInstallmentDemand.subtract(partiallyCollectedAmount)
+								: currentInstallmentDemand, GLCODE_FOR_ADVANCE, DEMANDRSN_STR_ADVANCE,
+						Integer.valueOf(0));
+				billDetails.add(createBillDet(billDetailBean));
+			}
+		} else {
+			LOGGER.debug("getBillDetails - All advances are paid...");
+		}
+	}
+	
     private EgDemandDetails insertPenaltyAndBillDetails(final List<EgBillDetails> billDetails,
             final PropertyTaxBillable billable, final HashMap<String, Integer> orderMap, BigDecimal penalty,
             final Installment installment) {

@@ -642,13 +642,13 @@ public class PropertyHibernateDAO implements PropertyDAO {
     public List getDmdCollForAllDmdReasons(EgDemand egDemand) {
         List list = new ArrayList();
         StringBuffer strBuf = new StringBuffer(2000);
-        strBuf.append(" select dmdRes.ID_INSTALLMENT, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as rebate, inst.start_date "
+        strBuf.append(" select dmdRes.ID_INSTALLMENT, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, sum(dmdDet.amt_rebate) as rebate, inst.start_date, dmdresmas.code as reason "
                 + "from eg_demand_details dmdDet ,eg_demand_reason dmdRes, eg_installment_master inst, eg_demand_reason_master dmdresmas "
                 + "where dmdDet.id_demand_reason=dmdRes.id "
                 + "and dmdDet.id_demand =:dmdId "
                 + "and dmdRes.id_installment = inst.id "
                 + "and dmdresmas.id = dmdres.id_demand_reason_master "
-                + "group by dmdRes.id_installment, inst.start_date " + "order by inst.start_date ");
+                + "group by dmdRes.id_installment, inst.start_date, dmdresmas.code " + "order by inst.start_date ");
         Query qry = getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId());
         return qry.list();
     }

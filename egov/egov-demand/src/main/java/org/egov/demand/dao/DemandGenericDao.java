@@ -287,5 +287,18 @@ public interface DemandGenericDao {
 	     */
 		public List<EgdmCollectedReceipt> getAllEgdmCollectedReceipts(String receiptNo);  
 		
+		/**
+	     * Method called to get the balance Amount for the given Demand reason Master Code ,module, demand
+	     * and Installment.
+	     *   
+	     *@param demand - EgDemand Object.
+	     *@param dmdReasonMasterCode - Code of the EgDemandReasonMaster 
+	     *@param module - EgModule object 
+	     *@param installment - Installment object 
+	     *@return java.math.BigDecimal - returns the Balance(Demand - Collection)
+	     * 
+	     */
+		public BigDecimal getBalanceByDmdMasterCodeInst(EgDemand demand, String dmdReasonMasterCode,
+				Module module, Installment installment);
 
 }
