@@ -59,7 +59,8 @@
 		<property name="fromDate" column="FROM_DATE" type="java.util.Date"/>
 		<property name="toDate" column="TO_DATE" type="java.util.Date"/>
 		<property name="receiptAmount" column="RCPT_AMOUNT" />
-		
+		<property name="source" column="source" type="java.lang.Character" />
+		<property name="remarks" column="remarks" type="string"/>
  	</class>
 	
 </hibernate-mapping>

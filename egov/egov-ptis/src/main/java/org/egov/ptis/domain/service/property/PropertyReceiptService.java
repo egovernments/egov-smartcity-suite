@@ -37,14 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.ptis.domain.service.property;
 
-package org.egov.ptis.web.controller.transactions.editCollection;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.ptis.bean.DemandDetail;
-import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
 
 /**
@@ -52,33 +47,10 @@ import org.egov.ptis.domain.entity.property.PropertyReceipt;
  * @author subhash
  *
  */
-public class DemandDetailBeansForm {
-    private List<DemandDetail> demandDetailBeans = new ArrayList<DemandDetail>();
-    private BasicPropertyImpl basicProperty;
-    private PropertyReceipt propertyReceipt;
+@SuppressWarnings("deprecation")
+public class PropertyReceiptService extends PersistenceService<PropertyReceipt, Long> {
 
-    public List<DemandDetail> getDemandDetailBeans() {
-        return demandDetailBeans;
+    public PropertyReceipt save(PropertyReceipt propertyReceipt) {
+        return persist(propertyReceipt);
     }
-
-    public void setDemandDetailBeans(List<DemandDetail> demandDetailBeans) {
-        this.demandDetailBeans = demandDetailBeans;
-    }
-
-    public BasicPropertyImpl getBasicProperty() {
-        return basicProperty;
-    }
-
-    public void setBasicProperty(BasicPropertyImpl basicProperty) {
-        this.basicProperty = basicProperty;
-    }
-
-    public PropertyReceipt getPropertyReceipt() {
-        return propertyReceipt;
-    }
-
-    public void setPropertyReceipt(PropertyReceipt propertyReceipt) {
-        this.propertyReceipt = propertyReceipt;
-    }
-
 }

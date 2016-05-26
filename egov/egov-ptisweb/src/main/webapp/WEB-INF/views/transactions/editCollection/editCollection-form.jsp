@@ -136,15 +136,47 @@ body {
 			</table>
 			<div class="row">
 				<div class="col-xs-2" align="right">
-					&nbsp;
+					<spring:message code="lbl.receipt.number" /><span class="mandatory"></span>
 				</div>
-				<div class="col-xs-2" align="center" >
-					<spring:message code="lbl.remarks" />
+				<div class="col-xs-2" align="center">
+					<form:input path="propertyReceipt.receiptNumber" id="receiptNumber" cssClass="form-control"/>
+					<form:errors path="propertyReceipt.receiptNumber" cssClass="add-margin error-msg" />
 				</div>
 				<div class="col-xs-2" align="right">
-					<form:textarea path="remarks" id="remarks" cssClass="form-control"/>
-					<form:errors path="remarks" cssClass="add-margin error-msg" />
+					<spring:message code="lbl.receipt.date" /><span class="mandatory"></span>
 				</div>
+				<div class="col-xs-2" align="center">
+					<form:input path="propertyReceipt.receiptDate" id="receiptDate" cssClass="form-control datepicker" data-date-end-date="0d"/>
+					<form:errors path="propertyReceipt.receiptDate" cssClass="add-margin error-msg" />
+				</div>
+				<div class="col-xs-2" align="right">
+					<spring:message code="lbl.receipt.amount" /><span class="mandatory"></span>
+				</div>
+				<div class="col-xs-2" align="center">
+					<form:input path="propertyReceipt.receiptAmount"  onblur="validNumber(this);checkZero(this);" id="receiptAmount" cssClass="form-control"/>
+					<form:errors path="propertyReceipt.receiptAmount" cssClass="add-margin error-msg" />
+				</div>
+			</div>
+			<div class="row">
+				&nbsp;
+			</div>
+			<div class="row">
+				&nbsp;
+			</div>
+			<div class="row">
+				<div class="col-xs-2" align="right">
+					&nbsp;
+				</div>
+				<div class="col-xs-2" align="right" >
+					<spring:message code="lbl.remarks" /><span class="mandatory"></span>
+				</div>
+				<div class="col-xs-4" align="center">
+					<form:textarea path="propertyReceipt.remarks" id="remarks" cssClass="form-control"/>
+					<form:errors path="propertyReceipt.remarks" cssClass="add-margin error-msg" />
+				</div>
+			</div>
+			<div class="row">
+				&nbsp;
 			</div>
 			<div class="row">
 				&nbsp;
