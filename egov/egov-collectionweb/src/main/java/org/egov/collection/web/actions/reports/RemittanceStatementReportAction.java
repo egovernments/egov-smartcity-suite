@@ -139,6 +139,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final User user = collectionsUtil.getLoggedInUser();
         final List<Boundary> boundaryList = new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
+        if(employee!=null)
         for (final Jurisdiction element : employee.getJurisdictions())
             boundaryList.add(element.getBoundary());
         addDropdownData("boundaryList", boundaryList);
@@ -160,16 +161,20 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
 
-        for (final Jurisdiction element : employee.getJurisdictions()) {
-            if (jurValuesId.length() > 0)
-                jurValuesId.append(',');
-            jurValuesId.append(element.getBoundary().getId());
+        if (employee != null) 
+        {
+            for (final Jurisdiction element : employee.getJurisdictions()) {
+                    if (jurValuesId.length() > 0)
+                            jurValuesId.append(',');
+                    jurValuesId.append(element.getBoundary().getId());
 
-            for (final Boundary boundary : element.getBoundary().getChildren()) {
-                jurValuesId.append(',');
-                jurValuesId.append(boundary.getId());
+                    for (final Boundary boundary : element.getBoundary()
+                                    .getChildren()) {
+                            jurValuesId.append(',');
+                            jurValuesId.append(boundary.getId());
+                    }
             }
-        }
+       }
         if (null == jurValuesId.toString() || StringUtils.isEmpty(jurValuesId.toString())
                 || "-1".equals(jurValuesId.toString()))
             critParams.put(EGOV_DEPT_ID, null);
