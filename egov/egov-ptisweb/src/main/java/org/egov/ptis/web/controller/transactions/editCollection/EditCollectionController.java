@@ -96,6 +96,7 @@ public class EditCollectionController {
     protected PersistenceService persistenceService;
     private BasicPropertyImpl basicProperty;
     @Autowired
+    @Qualifier("propertyReceiptService")
     private PropertyReceiptService propertyReceiptService;
     @Autowired
     private InstallmentHibDao installmentDao;

@@ -41,6 +41,8 @@ package org.egov.ptis.domain.service.property;
 
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -48,6 +50,8 @@ import org.egov.ptis.domain.entity.property.PropertyReceipt;
  *
  */
 @SuppressWarnings("deprecation")
+@Service
+@Transactional
 public class PropertyReceiptService extends PersistenceService<PropertyReceipt, Long> {
 
     public PropertyReceipt save(PropertyReceipt propertyReceipt) {
