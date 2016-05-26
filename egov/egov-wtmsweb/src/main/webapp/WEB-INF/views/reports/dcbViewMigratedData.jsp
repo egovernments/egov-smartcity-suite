@@ -126,20 +126,17 @@
 							</td>
 							<td  colspan="1" >
 								<div align="center">
-								<c:out value="${receipt.receiptDate}" />
-									
+								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.receiptDate}"/>
 								</div>
 							</td>
 							<td  colspan="1" >
 								<div align="center">
-								<c:out value="${receipt.fromDate}" />
-								
+								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.fromDate}"/>
 								</div>
 							</td>
 							<td  colspan="1" >
 								<div align="center">
-								<c:out value="${receipt.toDate}" />
-								
+								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.toDate}"/>
 								</div>
 							</td>
 							<td  colspan="1">
