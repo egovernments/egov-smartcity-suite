@@ -126,9 +126,9 @@
 		<property name="type" value="org.egov.commons.EgwTypeOfWork">
 		</property>
 	</bean>
-	<bean id="overheadService" parent="persistenceService" scope="prototype">
+<!-- 	<bean id="overheadService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.works.models.masters.Overhead" />
-	</bean>
+	</bean> -->
 
 	<!-- changing budgetservice with budgetgropDao -->
 	<bean id="budgetGroupDAO" class="org.egov.dao.budget.BudgetGroupHibernateDAO">

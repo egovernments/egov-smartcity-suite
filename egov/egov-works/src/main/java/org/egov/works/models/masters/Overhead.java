@@ -39,46 +39,72 @@
  */
 package org.egov.works.models.masters;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.LocalDate;
-
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
-@Unique(fields = "name", id = "id", tableName = "EGW_OVERHEAD", columnName = "NAME", message = "overhead.name.isunique")
-public class Overhead extends BaseModel {
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-    private static final long serialVersionUID = 985152668665306509L;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+
+@Entity
+@Table(name = "EGW_OVERHEAD")
+@Unique(id = "id", tableName = "EGW_OVERHEAD", columnName = { "name" }, fields = { "name" }, enableDfltMsg = true)
+@NamedQueries({
+    @NamedQuery(name = Overhead.OVERHEADS_BY_DATE, query = "from Overhead o inner join fetch o.overheadRates as rates where ((? between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=? and rates.validity.endDate is null))"),
+    @NamedQuery(name = Overhead.BY_DATE_AND_TYPE, query = "from Overhead o inner join fetch o.overheadRates as rates where ((? between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=? and rates.validity.endDate is null))") })
+@SequenceGenerator(name = Overhead.SEQ_EGW_OVERHEAD, sequenceName = Overhead.SEQ_EGW_OVERHEAD, allocationSize = 1)
+public class Overhead extends AbstractAuditable {
+
+    private static final long serialVersionUID = 474905206086516812L;
+
+    public static final String SEQ_EGW_OVERHEAD = "SEQ_EGW_OVERHEAD";
     public static final String BY_DATE_AND_TYPE = "BY_DATE_AND_TYPE";
     public static final String OVERHEADS_BY_DATE = "OVERHEADS_BY_DATE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_OVERHEAD, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
     private String name;
+
+    @NotNull
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accountcode", nullable = false)
     private CChartOfAccounts accountCode;
 
-    private ExpenditureType expenditureType;
+    @OrderBy("id")
+    @OneToMany(mappedBy = "overhead", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = OverheadRate.class)
+    private final List<OverheadRate> overheadRates = new ArrayList<OverheadRate>(0);
 
-    private List<OverheadRate> overheadRates = new LinkedList<OverheadRate>();
-
-    public Overhead() {
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public Overhead(final String name, final String description) {
-        this.name = name;
-        this.description = description;
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    @NotEmpty(message = "overhead.name.not.empty")
     public String getName() {
         return name;
     }
@@ -87,7 +113,6 @@ public class Overhead extends BaseModel {
         this.name = name;
     }
 
-    @NotEmpty(message = "overhead.description.not.empty")
     public String getDescription() {
         return description;
     }
@@ -96,7 +121,6 @@ public class Overhead extends BaseModel {
         this.description = description;
     }
 
-    @NotNull(message = "overhead.account.not.empty")
     public CChartOfAccounts getAccountCode() {
         return accountCode;
     }
@@ -105,166 +129,8 @@ public class Overhead extends BaseModel {
         this.accountCode = accountCode;
     }
 
-    @NotNull(message = "overhead.expenditure.not.empty")
-    public ExpenditureType getExpenditureType() {
-        return expenditureType;
-    }
-
-    public void setExpenditureType(final ExpenditureType expenditureType) {
-        this.expenditureType = expenditureType;
-    }
-
     public List<OverheadRate> getOverheadRates() {
         return overheadRates;
     }
 
-    public void setOverheadRates(final List<OverheadRate> overheadRates) {
-        this.overheadRates = overheadRates;
-    }
-
-    /**
-     * This method checks if no overhead rates have been entered for the Overhead.
-     *
-     * @return list of <code>ValidationError</code> indicating that at least one Overhead Rate should be entered for teh Overhead
-     */
-    private List<ValidationError> checkForNoRatesPresent() {
-        if (overheadRates != null && overheadRates.isEmpty())
-            return Arrays.asList(new ValidationError("overheadrate",
-                    "estimate.overhead.altleastone_overheadrate_needed"));
-        else
-            return null;
-    }
-
-    private List<ValidationError> validateOverheadRates() {
-        List<ValidationError> errorList = null;
-        boolean openEndedRangeFlag = false;
-
-        for (final OverheadRate overheadRate : overheadRates) {
-            // check if multiple open ended date ranges are present
-            if (overheadRate.getValidity().getEndDate() == null && openEndedRangeFlag)
-                return Arrays.asList(new ValidationError("openendedrange",
-                        "estimate.overheadrate.multiple.openendedrange"));
-            if (overheadRate.getValidity().getEndDate() == null)
-                openEndedRangeFlag = true;
-
-            // validation for percentage-lumpsum amount and invalid date ranges
-            errorList = overheadRate.validate();
-            if (errorList != null)
-                return errorList;
-        }
-        return errorList;
-    }
-
-    private List<ValidationError> validateDateRanges() {
-        final List<Period> validDates = new ArrayList<Period>();
-        // check for date range over lap
-        validDates.add(0, overheadRates.get(0).getValidity());
-        Date existingStartDate = null;
-        Date checkStartDate = null;
-        Date checkEndDate = null;
-        Period existingPeriod = null;
-        Period checkPeriod1 = null;
-        boolean flag1 = true;
-        int k = 1;
-        for (int i = 1; i < overheadRates.size(); i++) {
-            checkStartDate = overheadRates.get(i).getValidity().getStartDate();
-            checkEndDate = overheadRates.get(i).getValidity().getEndDate();
-            checkPeriod1 = new Period(checkStartDate, checkEndDate);
-            for (int j = 0; j < validDates.size(); j++) {
-                existingStartDate = validDates.get(j).getStartDate();
-                existingPeriod = validDates.get(0);
-
-                // check if the period to be checked is within any of the
-                // existing periods.
-                if (isWithin(existingPeriod, checkStartDate) || isWithin(checkPeriod1, existingStartDate)) {
-                    flag1 = false;
-                    break;
-                } else if (checkEndDate != null && isWithin(existingPeriod, checkEndDate)) {
-                    flag1 = false;
-                    break;
-                }
-            }
-            if (flag1)
-                validDates.add(k++, checkPeriod1);
-            else
-                return Arrays.asList(new ValidationError("dateoverlap", "estimate.overhead.dates.overlap"));
-        }
-
-        return null;
-    }
-
-    /**
-     * This method removes any empty over head rate from the list of over head rates.
-     */
-    private void removeEmptyRates() {
-        final List<OverheadRate> emptyRateObjs = new LinkedList<OverheadRate>();
-
-        for (final OverheadRate overheadRate : overheadRates)
-            if (overheadRate.getPercentage() == 0.0
-                    && (overheadRate.getLumpsumAmount() == null || overheadRate.getLumpsumAmount().getValue() == 0.0)
-                    && (overheadRate.getValidity() == null || overheadRate.getValidity().getStartDate() == null || overheadRate
-                            .getValidity().getEndDate() == null))
-                emptyRateObjs.add(overheadRate);
-
-        overheadRates.removeAll(emptyRateObjs);
-    }
-
-    /**
-     * This method performs the validations for the over head rates entered by the user.
-     */
-    @Override
-    public List<ValidationError> validate() {
-        List<ValidationError> errorList = new ArrayList<ValidationError>();
-
-        removeEmptyRates();
-        if ((errorList = checkForNoRatesPresent()) != null)
-            return errorList;
-
-        if ((errorList = validateOverheadRates()) != null)
-            return errorList;
-
-        if ((errorList = validateDateRanges()) != null)
-            return errorList;
-
-        return errorList;
-
-    }
-
-    public boolean isWithin(final Period period, final Date dateTime) {
-        final LocalDate start = new LocalDate(period.getStartDate());
-        final LocalDate end = new LocalDate(period.getEndDate());
-        final LocalDate date = new LocalDate(dateTime);
-        if (period.getEndDate() == null)
-            return start.compareTo(date) <= 0;
-        else
-            return start.compareTo(date) <= 0 && end.compareTo(date) >= 0;
-    }
-
-    public void setOverheadRate(final List<OverheadRate> overheadRates) {
-        this.overheadRates = overheadRates;
-    }
-
-    public void addOverheadRate(final OverheadRate overheadRate) {
-        overheadRates.add(overheadRate);
-    }
-
-    public String getValidPercentage(final Date estimateDate) {
-        for (final OverheadRate overheadRate : overheadRates)
-            if (overheadRate != null && isWithin(overheadRate.getValidity(), estimateDate)
-                    && overheadRate.getPercentage() > 0.0)
-                return String.valueOf(overheadRate.getPercentage());
-
-        return "";
-    }
-
-    public OverheadRate getOverheadRateOn(final Date estimateDate) {
-        if (estimateDate == null)
-            throw new ApplicationRuntimeException("no.rate.for.date");
-
-        for (final OverheadRate overheadRate : overheadRates)
-            if (overheadRate != null && isWithin(overheadRate.getValidity(), estimateDate))
-                return overheadRate;
-
-        return null;
-    }
 }

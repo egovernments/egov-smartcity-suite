@@ -254,6 +254,16 @@
     <definition name="newAbstractEstimate-form" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/newAbstractEstimate-form.jsp"/>
+   	</definition>
+
+   	<definition name="overhead-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createoverhead" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/overhead/overhead-form.jsp"/>
+    </definition>
+
+   	<definition name="overhead-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createoverhead" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/overhead/overhead-success.jsp"/>
     </definition>
     
 </tiles-definitions>

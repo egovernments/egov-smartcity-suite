@@ -38,4 +38,22 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="overhead-new.jsp"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<div class="page-container" id="page-container">
+	<div class="panel panel-primary" data-collapsed="0">
+		<div class="main-content">
+			<div class="alert text-center" style="color: green;" id="successMessage">
+				${message}
+			</div>
+				<jsp:include page="overhead-commonView.jsp" />
+				<div class="col-sm-12 text-center">
+			<div class="row">
+					<input type="submit" name="closeButton" id="closeButton"
+						value="Close" Class="btn btn-default" onclick="window.close();" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

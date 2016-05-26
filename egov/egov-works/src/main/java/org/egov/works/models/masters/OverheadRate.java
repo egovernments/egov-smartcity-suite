@@ -39,50 +39,52 @@
  */
 package org.egov.works.models.masters;
 
-import org.egov.infra.persistence.entity.component.Money;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import java.util.ArrayList;
-import java.util.List;
+@Entity
+@Table(name = "EGW_OVERHEAD_RATE")
+@Unique(id = "id", tableName = "EGW_OVERHEAD_RATE", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = OverheadRate.SEQ_EGW_OVERHEAD_RATE, sequenceName = OverheadRate.SEQ_EGW_OVERHEAD_RATE, allocationSize = 1)
+public class OverheadRate extends AbstractAuditable {
 
-public class OverheadRate extends BaseModel {
+    private static final long serialVersionUID = 474905206086516812L;
 
-    private static final long serialVersionUID = 5980950787039146268L;
+    public static final String SEQ_EGW_OVERHEAD_RATE = "SEQ_EGW_OVERHEAD_RATE";
 
-    @Valid
-    @Required(message = "validity.period.not.null")
-    private Period validity;
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_OVERHEAD_RATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
+    private Double lumpsumAmount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "overhead", nullable = false)
     private Overhead overhead;
 
-    @Min(value = 0, message = "overhead.percentage.not.negative")
-    private double percentage;
+    private Period validity;
 
-    @Valid
-    private Money lumpsumAmount;
+    private Double percentage;
 
-    private Long overheadId;
-
-    public Long getOverheadId() {
-        return overheadId;
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public void setOverheadId(final Long overheadId) {
-        this.overheadId = overheadId;
-    }
-
-    public OverheadRate() {
-
-    }
-
-    public OverheadRate(final double percentage, final Money lumpsum) {
-        this.percentage = percentage;
-        lumpsumAmount = lumpsum;
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public Overhead getOverhead() {
@@ -93,14 +95,6 @@ public class OverheadRate extends BaseModel {
         this.overhead = overhead;
     }
 
-    public Money getLumpsumAmount() {
-        return lumpsumAmount;
-    }
-
-    public void setLumpsumAmount(final Money lumpsumAmount) {
-        this.lumpsumAmount = lumpsumAmount;
-    }
-
     public Period getValidity() {
         return validity;
     }
@@ -109,61 +103,20 @@ public class OverheadRate extends BaseModel {
         this.validity = validity;
     }
 
-    public double getPercentage() {
+    public Double getLumpsumAmount() {
+        return lumpsumAmount;
+    }
+
+    public void setLumpsumAmount(final Double lumpsumAmount) {
+        this.lumpsumAmount = lumpsumAmount;
+    }
+
+    public Double getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(final double percentage) {
+    public void setPercentage(final Double percentage) {
         this.percentage = percentage;
     }
 
-    /**
-     * This method validates the overhead rate values. Appropriate validation error is returned in each of the following
-     * scenarios:
-     * <ol>
-     * <li>If percentage is less than zero or greater than 100.</li>
-     * <li>If neither of percentage or lump sum amount is present.</li>
-     * <li>If start date is not present, or start date date falls after the end date.</li>
-     * </ol>
-     *
-     * @return a list of <code>ValidationError</code> containing the appropriate error messages or null in case of no errors.
-     */
-    @Override
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-
-        if (percentage < 0.0 || percentage > 100)
-            validationErrors.add(new ValidationError("percentage", "estimate.overhead.percentage.lessthan.100"));
-
-        if (percentage == 0.0 && (lumpsumAmount == null || lumpsumAmount.getValue() == 0.0))
-            validationErrors.add(new ValidationError("percentage", "estimate.overhead.percentage_or_lumpsum_needed"));
-
-        if (percentage > 0.0 && lumpsumAmount != null && lumpsumAmount.getValue() > 0.0)
-            validationErrors.add(new ValidationError("percentage",
-                    "estimate.overhead.only_one_of_percentage_or_lumpsum_needed"));
-
-        if (validity == null
-                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
-            validationErrors.add(new ValidationError("validity", "estimate.overhead.invalid_date_range"));
-
-        if (!validationErrors.isEmpty())
-            return validationErrors;
-        return null;
-    }
-
-    /**
-     * compares two date object return type boolean
-     */
-    public static boolean compareDates(final java.util.Date startDate, final java.util.Date endDate) {
-        if (startDate == null)
-            return false;
-
-        if (endDate == null)
-            return true;
-
-        if (endDate.before(startDate))
-            return false;
-
-        return true;
-    }
 }
