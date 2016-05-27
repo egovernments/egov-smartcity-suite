@@ -74,6 +74,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.voucher.VoucherHibernateDAO;
+import org.egov.egf.autonumber.JVBillNumberGenerator;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
@@ -93,6 +94,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.EISServeable;
@@ -155,7 +157,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     @Qualifier("voucherHelper")
     private VoucherHelper voucherHelper;
-  
+
     @Autowired
     @Qualifier("eGovernCommon")
     private EGovernCommon eGovernCommon;
@@ -171,6 +173,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     @Autowired
     private DesignationService designationService;
 
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+
     public VoucherService(final Class<CVoucherHeader> voucherHeader) {
         super(voucherHeader);
     }
@@ -183,14 +188,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
     private EmployeeServiceOld employeeService;
     @Autowired
     private ScriptService scriptService;
-    
 
     @Autowired
     private EgBillRegisterService egBillRegisterService;
     @Autowired
     private EntityManager entityManager;
     @Autowired
-        private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
 
     public Boundary getBoundaryForUser(final CVoucherHeader rv)
     {
@@ -232,7 +236,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     public Department getDepartmentForUser(final User user)
     {
-        return  egovCommon.getDepartmentForUser(user, eisCommonService, employeeService, persistenceService);
+        return egovCommon.getDepartmentForUser(user, eisCommonService, employeeService, persistenceService);
     }
 
     public PersonalInformation getEmpForCurrentUser()
@@ -283,16 +287,18 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
 
     @SuppressWarnings({ "unchecked", "deprecation" })
     public Map<String, Object> getDesgByDeptAndTypeAndVoucherDate(final String type, final String scriptName, final Date vouDate,
-            final Paymentheader paymentheader)  {
+            final Paymentheader paymentheader) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Voucher Service | getDesgUserByDeptAndDesgName | Start");
         final Map<String, Object> map = new HashMap<String, Object>();
         Designation designation = null;
         final Double grossAmount = getJVsGrassAmount(paymentheader);
         // final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(0);
-        final List<String> list = (List<String>) scriptService.executeScript(scriptName,
+        final List<String> list = (List<String>) scriptService.executeScript(
+                scriptName,
                 ScriptService.createContext("eisCommonServiceBean", eisCommonService, "grossAmount", grossAmount, "userId",
-                        ApplicationThreadLocals.getUserId().intValue(), "DATE", new Date(), "type", type, "vouDate", vouDate.getTime(),
+                        ApplicationThreadLocals.getUserId().intValue(), "DATE", new Date(), "type", type, "vouDate",
+                        vouDate.getTime(),
                         "paymentheader", paymentheader));
         Map<String, Object> desgFuncryMap;
         final List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();
@@ -441,7 +447,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                 billDetailslist.add(voucherDetail);
 
                 final List<CGeneralLedgerDetail> gledgerDetailList = voucherHibDAO.getGeneralledgerdetail(generalLedger
-                                .getId());
+                        .getId());
 
                 for (final CGeneralLedgerDetail gledgerDetail : gledgerDetailList) {
                     subLedgerDetail = new VoucherDetails();
@@ -700,7 +706,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
                     if (glcodeId.equals(detailGlCode)
                             && (repeatedglCodes.contains(glcodeId) ? accDetailFunc.equals(detailedFunc) : true)) {
                         final TransaxtionParameter reqData = new TransaxtionParameter();
-                        final Accountdetailtype adt = (Accountdetailtype)accountdetailtypeHibernateDAO.findById(Integer.valueOf(detailtypeid), false);
+                        final Accountdetailtype adt = (Accountdetailtype) accountdetailtypeHibernateDAO.findById(
+                                Integer.valueOf(detailtypeid), false);
                         reqData.setDetailName(adt.getAttributename());
                         reqData.setGlcodeId(detailGlCode);
                         reqData.setDetailAmt(subledgerDetails.getAmount().toString());
@@ -767,9 +774,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
          * getGeneratedVoucherNumber(voucherHeader.getFundId().getId(), autoVoucherType, voucherHeader.getVoucherDate());
          * voucherHeader
          * .setVoucherNumber(cmImpl.getTxnNumber(voucherHeader.getFundId().getId().toString(),autoVoucherType,vDate,conn)); } else
-         * { Query query=getSession().createQuery("select f.identifier from Fund f where id=:fundId");
-         * query.setInteger("fundId", voucherHeader.getFundId().getId()); String fundIdentifier = query.uniqueResult().toString();
-         * //String vn2 = getFormattedManualVoucherNumber(fundIdentifier, autoVoucherType, voucherHeader.getVoucherNumber());
+         * { Query query=getSession().createQuery("select f.identifier from Fund f where id=:fundId"); query.setInteger("fundId",
+         * voucherHeader.getFundId().getId()); String fundIdentifier = query.uniqueResult().toString(); //String vn2 =
+         * getFormattedManualVoucherNumber(fundIdentifier, autoVoucherType, voucherHeader.getVoucherNumber());
          * voucherHeader.setVoucherNumber(new StringBuffer().append(fundIdentifier).append(autoVoucherType).
          * append(voucherHeader.getVoucherNumber()).toString()); }
          */
@@ -972,7 +979,8 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
         final Script validScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, scriptName).get(0);
         final List<String> list = (List<String>) scriptService.executeScript(validScript, ScriptService.createContext(
                 "eisCommonServiceBean", eisCommonService, "userId",
-                ApplicationThreadLocals.getUserId().intValue(), "DATE", new Date(), "type", type, "wfitem", wfitem, "deptId", deptId,
+                ApplicationThreadLocals.getUserId().intValue(), "DATE", new Date(), "type", type, "wfitem", wfitem, "deptId",
+                deptId,
                 "persistenceService", persistenceService));
         Map<String, Object> desgFuncryMap;
         List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();
@@ -1118,9 +1126,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             if (null != voucherTypeBean.getBillNum() && StringUtils.isNotEmpty(voucherTypeBean.getBillNum()))
                 egBillregister.setBillnumber(voucherTypeBean.getBillNum());
             else {
-                final ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator", sequenceGenerator, "bill",
-                        egBillregister, "commonsService", financialYearDAO);
-                final String billNumber = (String) scriptService.executeScript("autobillnumber", scriptContext);
+                JVBillNumberGenerator b = (JVBillNumberGenerator) beanResolver.getBean(JVBillNumberGenerator.class);
+                final String billNumber = b.getNextNumber(egBillregister);
+
                 egBillregister.setBillnumber(billNumber);
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("VoucherService | createBillForVoucherSubType | Bill number generated :=" + billNumber);
