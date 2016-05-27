@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-24T19:51:21 -->
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-05-27T14:40:22 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt_instruments" language="groovy" pageWidth="200" pageHeight="802" columnWidth="200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="38993dc9-3850-45d9-bf7e-36770fea0cb0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -143,7 +143,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque No:\n" + $F{instrumentNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "D.D. No:\n" + $F{instrumentNumber}  + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_ONLINE ? "Transaction No:\n" + $F{transactionNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_BANK ? "Bank Challan No:\n" + $F{transactionNumber} + + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):"NA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque No:\n" + $F{instrumentNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "D.D. No:\n" + $F{instrumentNumber}  + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_ONLINE ? "Transaction No:\n" + $F{transactionNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_BANK ? "Bank Challan No:\n" + $F{transactionNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):"NA"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="97" y="45" width="101" height="60" isPrintWhenDetailOverflows="true" uuid="8c8a7296-0eaa-44aa-bd50-a0b112775d1c">
