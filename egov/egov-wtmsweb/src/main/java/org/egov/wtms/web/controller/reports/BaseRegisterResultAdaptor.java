@@ -53,16 +53,16 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
     public JsonElement serialize(BaseRegisterResult baseRegisterResultObj, Type type, JsonSerializationContext jsc) {
         // TODO Auto-generated method stub
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("consumerNo", baseRegisterResultObj.getConsumerNo());
-        jsonObject.addProperty("assessmentNo", baseRegisterResultObj.getAssementNo());
-        jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
-        jsonObject.addProperty("doorNo", baseRegisterResultObj.getDoorNo());
-        jsonObject.addProperty("categoryType", baseRegisterResultObj.getCategoryType());
-        jsonObject.addProperty("period", baseRegisterResultObj.getPeriod());
+        jsonObject.addProperty("consumerNo", null!=baseRegisterResultObj.getConsumerNo()?baseRegisterResultObj.getConsumerNo().toString():"");
+        jsonObject.addProperty("assessmentNo", null!=baseRegisterResultObj.getAssementNo()?baseRegisterResultObj.getAssementNo().toString():"");
+        jsonObject.addProperty("ownerName", null!=baseRegisterResultObj.getOwnerName()?baseRegisterResultObj.getOwnerName().toString():"");
+        jsonObject.addProperty("doorNo", null!=baseRegisterResultObj.getDoorNo()?baseRegisterResultObj.getDoorNo().toString():"");
+        jsonObject.addProperty("categoryType", null!=baseRegisterResultObj.getCategoryType()?baseRegisterResultObj.getCategoryType().toString():"");
+        jsonObject.addProperty("period", null!=baseRegisterResultObj.getPeriod()?baseRegisterResultObj.getPeriod().toString():"");
         jsonObject.addProperty("arrears", baseRegisterResultObj.getArrears());
         jsonObject.addProperty("current", baseRegisterResultObj.getCurrent());
-        jsonObject.addProperty("penalty", baseRegisterResultObj.getPenalty());
-        jsonObject.addProperty("totalDemand", baseRegisterResultObj.getTotalDemand());
+        jsonObject.addProperty("penalty",null!= baseRegisterResultObj.getPenalty()?baseRegisterResultObj.getPenalty().toString():"");
+        jsonObject.addProperty("totalDemand",baseRegisterResultObj.getTotalDemand());
         return jsonObject;
     }
 

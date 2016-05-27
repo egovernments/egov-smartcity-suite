@@ -40,7 +40,13 @@
 jQuery(document).ready(function() {
 	$('#baseRegister-header').hide();
 $('#baseRegisterReportSearch').click(function(e){
+	  
 		var ward = $("#ward").val();
+		if ((ward == "" )) {
+			bootbox.alert('Please select the revenue ward');
+			return false;
+		}
+		
 		oTable= $('#baseRegisterReport-table');
 		$('#baseRegister-header').show();
 		oTable.dataTable({
@@ -78,16 +84,17 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "doorNo", "title": "Door No"},
 						  { "data" : "categoryType", "title": "Category Type"},
 						  { "data" : "period", "title": "Period"},
-						  { "data" : "arrears", "title": "Arrears"},
-						  { "data" : "current", "title": "Current"},
+						  { "data" : "arrears", "title": "Arrears", class : 'text-right'},
+						  { "data" : "current", "title": "Current", class : 'text-right'},
 						  { "data" : "penalty", "title": "Penalty"},
-						  { "data" : "totalDemand", "title": "Total Demand"},
+						  { "data" : "totalDemand", "title": "Total Demand", class : 'text-right'},
 						  ],
 						  "aaSorting": [] 
 				});
 		e.stopPropagation();
 	});
 
+});
 
 $('#ward').change(function(){
 	console.log("came on change of ward"+$('#ward').val());
@@ -101,6 +108,7 @@ $('#ward').change(function(){
 		dataType: "json",
 		
 	});
-});
+	
 	
 });
+

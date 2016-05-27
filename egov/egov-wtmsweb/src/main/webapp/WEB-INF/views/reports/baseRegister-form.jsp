@@ -53,7 +53,7 @@
 
 		<form:form class="form-horizontal form-groups-bordered"
 			id="baseregisterform" modelAttribute="baseRegisterResult"
-			method="post">
+			method="post" >
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -66,7 +66,7 @@
 								code="lbl.revenueWard" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select id="ward" name="ward" path=""
-								cssClass="form-control" cssErrorClass="form-control error">
+								cssClass="form-control" cssErrorClass="form-control error" required="required">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -98,7 +98,7 @@
 			<c:out value="${currDate}"></c:out>
 		</div>
 		<table
-			class="table table-bordered datatable dt-responsive table-hover"
+			class="table table-bordered table-hover multiheadertbl dataTable"
 			id="baseRegisterReport-table">
 		</table>
 	</div>
