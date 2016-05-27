@@ -88,9 +88,12 @@ import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
+import org.egov.commons.exception.NoSuchObjectException;
+import org.egov.commons.exception.TooManyValuesException;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.budget.BudgetUsageHibernateDAO;
+import org.egov.egf.autonumber.VouchernumberGenerator;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -105,8 +108,7 @@ import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.commons.exception.NoSuchObjectException;
-import org.egov.commons.exception.TooManyValuesException;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -185,6 +187,8 @@ public class CreateVoucher {
 	private PersistenceService persistenceService;
 	@Autowired
 	private EGovernCommon eGovernCommon;
+	@Autowired
+	private AutonumberServiceBeanResolver beanResolver;
 
 	// add here for other bills
 
@@ -1791,13 +1795,18 @@ public class CreateVoucher {
 						.get(VoucherConstant.VOUCHERNUMBER).toString();
 			if (null != headerdetails.get(VoucherConstant.MODULEID))
 				vNumGenMode = "Auto";
+			
+			cVoucherHeader.setFundId(fundByCode); 
+			if (vNumGenMode.equals("Auto")) {
+				cVoucherHeader.setVoucherNumberPrefix(voucherNumberPrefix);
+				VouchernumberGenerator v = (VouchernumberGenerator) beanResolver
+						.getBean(VouchernumberGenerator.class);
 
-			final String strVoucherNumber = voucherHelper
-					.getGeneratedVoucherNumber(fundByCode.getId(),
-							voucherNumberPrefix, voucherDate, vNumGenMode,
-							voucherNumber);
-			cVoucherHeader.setVoucherNumber(strVoucherNumber);
+				final String strVoucherNumber = v.getNextNumber(cVoucherHeader);
 
+				System.out.println(v.getClass().getSimpleName());
+				cVoucherHeader.setVoucherNumber(strVoucherNumber);
+			}
 			/*
 			 * if("Auto".equalsIgnoreCase(vNumGenMode) || null !=
 			 * headerdetails.get(VoucherConstant.MODULEID)){
@@ -1819,7 +1828,7 @@ public class CreateVoucher {
 			 * }
 			 */
 
-			cVoucherHeader.setFundId(fundByCode);
+		 
 			if (headerdetails.containsKey(VoucherConstant.MODULEID)
 					&& null != headerdetails.get(VoucherConstant.MODULEID)) {
 				cVoucherHeader.setModuleId(Integer.valueOf(headerdetails.get(
