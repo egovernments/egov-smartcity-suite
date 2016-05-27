@@ -179,6 +179,8 @@ function check()
 function loadBank(obj){}
 function search()
 {
+
+	
 	if(document.getElementById('vouchermis.departmentid'))
 		document.getElementById('vouchermis.departmentid').disabled=false;
 	var fund = document.getElementById('fundId').value;
@@ -186,8 +188,11 @@ function search()
 		bootbox.alert("Please select fund");   
 		return false;  
 	}else{
+		 document.getElementById("search").innerHTML="";
+		document.getElementById("search").innerHTML=document.getElementById("searchtab").innerHTML;
 		document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
 		document.forms[0].submit();
+		
 	}
 	
 }
@@ -327,6 +332,7 @@ function checkcontractorForSameMisAttribs(obj,len)
 		   }
 		   return concount;
 }
+
  function addSelectedToForm2()
 {
  document.getElementById("exp2").innerHTML="";
@@ -612,9 +618,9 @@ function checkContingentForSameMisAttribs(obj,len)
 															<tr>
 																<td align="center" colspan="5">
 																	<div class="buttonbottom">
-																		<s:submit method="search" value="Search"
-																			cssClass="buttonsubmit" onclick="return search()" />
-																		<input type="submit" value="Close"
+																		<input type="button" method="search" value="Search"
+																			Class="button" onclick="return search()" />
+																		<input type="button" value="Close"
 																			onclick="javascript:window.close()" class="button" />
 																		<s:hidden name="miscount" id="miscount" />
 																		<s:hidden name="miscattributes" id="miscattributes"
