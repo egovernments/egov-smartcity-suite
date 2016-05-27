@@ -40,6 +40,17 @@
 
 package org.egov.tl.service.integration;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -51,7 +62,6 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
-import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgBillDetailsDao;
 import org.egov.demand.dao.EgBillReceiptDao;
@@ -95,17 +105,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 @Service
 @Transactional(readOnly = true)
@@ -505,7 +504,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     protected void updateReceiptStatusWhenCancelled(final String receiptNumber) {
-        final DemandGenericDao demandGenericDao = new DemandGenericHibDao();
         final List<EgdmCollectedReceipt> egdmCollectedReceipts = demandGenericDao
                 .getAllEgdmCollectedReceipts(receiptNumber);
         if (egdmCollectedReceipts != null && !egdmCollectedReceipts.isEmpty())
@@ -815,7 +813,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     EgDemandDetails insertPenalty(final BigDecimal chqBouncePenalty, final Module module) {
         EgDemandDetails demandDetail = null;
         if (chqBouncePenalty != null && chqBouncePenalty.compareTo(BigDecimal.ZERO) > 0) {
-            final DemandGenericDao demandGenericDao = new DemandGenericHibDao();
             final Installment currInstallment = getCurrentInstallment(module);
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
                     Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, module);
