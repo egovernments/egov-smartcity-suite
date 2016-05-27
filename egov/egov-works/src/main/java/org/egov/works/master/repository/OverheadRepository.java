@@ -39,13 +39,20 @@
  */
 package org.egov.works.master.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.works.models.masters.Overhead;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OverheadRepository extends JpaRepository<Overhead, Long> {
 
-    Overhead findByNameIgnoreCase(String name);
+	Overhead findByNameIgnoreCase(String name);
 
+	@Query("from Overhead o inner join fetch o.overheadRates as rates where ((:date between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:date and rates.validity.endDate is null))")
+	List<Overhead> getByDate(@Param("date") Date date);
 }

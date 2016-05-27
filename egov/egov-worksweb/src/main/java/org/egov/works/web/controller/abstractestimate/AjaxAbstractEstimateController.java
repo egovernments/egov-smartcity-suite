@@ -37,44 +37,48 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.service;
+package org.egov.works.web.controller.abstractestimate;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
-import org.egov.works.master.repository.OverheadRepository;
+import org.egov.works.master.service.OverheadService;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@Service
-@Transactional(readOnly = true)
-public class OverheadService {
+@Controller
+@RequestMapping(value = "/abstractestimate")
+public class AjaxAbstractEstimateController {
 
-    @Autowired
-    private OverheadRepository overheadRepository;
+	@Autowired
+	private OverheadService overheadService;
 
-    @Transactional
-    public Overhead create(final Overhead overhead) throws IOException {
-        for (final OverheadRate overheadRates : overhead.getOverheadRates())
-            overheadRates.setOverhead(overhead);
-        final Overhead newOverhead = overheadRepository.save(overhead);
-        return newOverhead;
-    }
+	@RequestMapping(value = "/getpercentageorlumpsumbyoverheadid", method = RequestMethod.GET)
+	public @ResponseBody OverheadRate getPercentageOrLumpsumByOverhead(@RequestParam("overheadId") Long overheadId) {
 
-    public Overhead getOverheadById(final Long overheadId) {
-        return overheadRepository.findOne(overheadId);
-    }
+		Overhead overhead = new Overhead();
+		OverheadRate overheadRate = new OverheadRate();
+		Date startDate, endDate, estDate = new Date();
+		if (overheadId != null) {
+			overhead = overheadService.getOverheadById(overheadId);
+		}
 
-    public Overhead getOverheadByName(final String name) {
-        return overheadRepository.findByNameIgnoreCase(name);
-    }
-    
-    public List<Overhead> getOverheadsByDate(final Date date) {
-        return overheadRepository.getByDate(date);
-    }
+		if (overhead != null && overhead.getOverheadRates() != null && overhead.getOverheadRates().size() > 0) {
+			for (OverheadRate obj : overhead.getOverheadRates()) {
+				startDate = obj.getValidity().getStartDate();
+				endDate = obj.getValidity().getEndDate();
+				if (estDate.compareTo(startDate) >= 0 && (endDate == null || endDate.compareTo(estDate) >= 0 )) {
+					overheadRate = obj;
+				}
+			}
+		}
+
+		return overheadRate;
+	}
 
 }

@@ -38,7 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
   
-  <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
@@ -53,5 +53,7 @@
 <div id="estimate_header">
 	<%@ include file="estimate-header.jsp"%>            
 	<%@ include file="estimate-multiYearEstimate.jsp"%>  
+	<%@ include file="estimate-overheads.jsp"%>    
 </div> 	
 </form:form>
+<script type="text/javascript" src="<c:url value='/resources/js/abstractestimate.js?rnd=${app_release_no}'/>"></script>
