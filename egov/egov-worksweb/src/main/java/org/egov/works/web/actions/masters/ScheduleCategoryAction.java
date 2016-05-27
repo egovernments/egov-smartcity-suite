@@ -121,7 +121,7 @@ public class ScheduleCategoryAction extends BaseFormAction {
             addActionMessage(getText("scheduleCategory.code.isunique"));
             return EDIT;
         } else
-            scheduleCategoryService.persist(scheduleCategory);
+            scheduleCategoryService.save(scheduleCategory);
         addActionMessage(getText("schedule.category.save.success"));
         return SUCCESS;
     }

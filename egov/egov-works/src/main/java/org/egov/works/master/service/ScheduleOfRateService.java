@@ -41,6 +41,7 @@
 package org.egov.works.master.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -49,13 +50,21 @@ import javax.persistence.Query;
 
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.repository.ScheduleOfRateRepository;
 import org.egov.works.models.masters.ScheduleOfRate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Long> {
+@Service
+@Transactional(readOnly = true)
+public class ScheduleOfRateService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private ScheduleOfRateRepository scheduleOfRateRepository;
 
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {
         final ScheduleOfRate scheduleOfRate = entityManager.find(ScheduleOfRate.class,
@@ -104,5 +113,23 @@ public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Lo
         scheduleOfRateStr = scheduleOfRateSql.toString();
         final String countQuery = "select count(*) " + scheduleOfRateStr;
         return new SearchQueryHQL(scheduleOfRateStr, countQuery, paramList);
+    }
+    
+    @Transactional
+    public ScheduleOfRate save(final ScheduleOfRate scheduleOfRate) {
+        return scheduleOfRateRepository.save(scheduleOfRate);
+    }
+    
+    public ScheduleOfRate findById(Long id, boolean b) {
+        return scheduleOfRateRepository.findOne(id);
+    }
+    
+    public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategories(final String code, final String ids) {
+        List<Long> scheduleOfCategoryIds = new ArrayList<Long>();
+        String[] split = ids.split(",");
+        for(String s : split)
+            scheduleOfCategoryIds.add(Long.parseLong(s));
+        
+        return scheduleOfRateRepository.findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(code.toUpperCase(), scheduleOfCategoryIds, new Date());
     }
 }

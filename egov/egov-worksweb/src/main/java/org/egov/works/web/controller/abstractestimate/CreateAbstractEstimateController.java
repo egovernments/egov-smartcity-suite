@@ -8,6 +8,8 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.master.service.OverheadService;
+import org.egov.works.master.service.ScheduleCategoryService;
+import org.egov.works.master.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,30 +22,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/abstractestimate")
 public class CreateAbstractEstimateController extends GenericWorkFlowController {
 
-	@Autowired
-	private EstimateService estimateService;
+    @Autowired
+    private EstimateService estimateService;
 
-	@Autowired
-	private LineEstimateDetailService lineEstimateDetailService;
-	
-	@Autowired
-	private OverheadService overheadService;
+    @Autowired
+    private LineEstimateDetailService lineEstimateDetailService;
 
-	@RequestMapping(value = "/newform", method = RequestMethod.GET)
-	public String showAbstractEstimateForm(@RequestParam final String estimateNumber, final Model model) {
-		Date currentDate = new Date();
-		LineEstimateDetails lineEstimateDetails = lineEstimateDetailService
-				.findLineEstimateByEstimateNumber(estimateNumber, WorksConstants.STATUS_TECHNICAL_SANCTIONED);
-		model.addAttribute("lineEstimateDetails", lineEstimateDetails);
-		model.addAttribute("abstractEstimate", new AbstractEstimate());
-		model.addAttribute("currentDate", currentDate);
+    @Autowired
+    private OverheadService overheadService;
+    
+    @Autowired
+    private ScheduleCategoryService scheduleCategoryService;
 
-		setDropDownValues(model);
-		return "newAbstractEstimate-form";
-	}
-	
-	 private void setDropDownValues(final Model model) {
-	        model.addAttribute("overheads", overheadService.getOverheadsByDate(new Date()));
-	    }
+    @RequestMapping(value = "/newform", method = RequestMethod.GET)
+    public String showAbstractEstimateForm(@RequestParam final String estimateNumber, final Model model) {
+        final Date currentDate = new Date();
+        final LineEstimateDetails lineEstimateDetails = lineEstimateDetailService
+                .findLineEstimateByEstimateNumber(estimateNumber, WorksConstants.STATUS_TECHNICAL_SANCTIONED);
+        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+        model.addAttribute("abstractEstimate", new AbstractEstimate());
+        model.addAttribute("currentDate", currentDate);
+
+        setDropDownValues(model);
+        return "newAbstractEstimate-form";
+    }
+
+    private void setDropDownValues(final Model model) {
+        model.addAttribute("overheads", overheadService.getOverheadsByDate(new Date()));
+        model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
+    }
 
 }

@@ -46,13 +46,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.repository.ScheduleCategoryRepository;
 import org.egov.works.models.masters.ScheduleCategory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public class ScheduleCategoryService extends PersistenceService<ScheduleCategory, Long> {
+@Service
+@Transactional(readOnly = true)
+public class ScheduleCategoryService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private ScheduleCategoryRepository scheduleCategoryRepository;
 
     public ScheduleCategory getScheduleCategoryById(final Long scheduleCategoryId) {
         final ScheduleCategory scheduleCategory = entityManager.find(ScheduleCategory.class,
@@ -60,11 +68,11 @@ public class ScheduleCategoryService extends PersistenceService<ScheduleCategory
         return scheduleCategory;
     }
 
-    public List<ScheduleCategory> getAllScheduleCategories() {
-        final Query query = entityManager.createQuery("from ScheduleCategory sc");
-        final List<ScheduleCategory> scheduleCategoryList = query.getResultList();
-        return scheduleCategoryList;
-    }
+//    public List<ScheduleCategory> getAllScheduleCategories() {
+//        final Query query = entityManager.createQuery("from ScheduleCategory sc");
+//        final List<ScheduleCategory> scheduleCategoryList = query.getResultList();
+//        return scheduleCategoryList;
+//    }
 
     public boolean checkForSOR(final Long id) {
         final Query query = entityManager.createQuery(" from ScheduleOfRate rate where sor_category_id  = "
@@ -85,5 +93,17 @@ public class ScheduleCategoryService extends PersistenceService<ScheduleCategory
             return true;
         else
             return false;
+    }
+    
+    public List<ScheduleCategory> getAllScheduleCategories() {
+        return scheduleCategoryRepository.findAll();
+    }
+
+    public ScheduleCategory findById(Long id, boolean b) {
+        return scheduleCategoryRepository.findOne(id);
+    }
+
+    public ScheduleCategory save(ScheduleCategory scheduleCategory) {
+        return scheduleCategoryRepository.save(scheduleCategory);
     }
 }

@@ -45,8 +45,10 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.service.ScheduleOfRateService;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
@@ -57,7 +59,8 @@ import java.util.List;
 public class ScheduleOfRateSearchAction extends BaseFormAction {
 
     private static final long serialVersionUID = -3299140283276738474L;
-    private PersistenceService<ScheduleOfRate, Long> scheduleOfRateService;
+    @Autowired
+    private ScheduleOfRateService scheduleOfRateService;
     public static final String SEARCH_RESULTS = "searchResults";
     public static final String SOR = "SOR";
     private ScheduleOfRate sor = new ScheduleOfRate();
@@ -93,20 +96,17 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
     }
 
     public void setScheduleOfRateService(
-            final PersistenceService<ScheduleOfRate, Long> scheduleOfRateService) {
+            final ScheduleOfRateService scheduleOfRateService) {
         this.scheduleOfRateService = scheduleOfRateService;
     }
 
     public List<ScheduleOfRate> getSORList() {
         if (estimateId != null && estimateDate != null)
-            return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH_REVISIONESTIMATE", query, query,
-                    scheduleCategoryId, estimateDate, estimateDate, estimateId, estimateId);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString());
         else if (estimateDate != null)
-            return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH", query, query,
-                    scheduleCategoryId, estimateDate, estimateDate);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString());
         else
-            return scheduleOfRateService.findAllByNamedQuery("SCHEDULEOFRATES_SEARCH_ESTIMATETEMPLATE", query, query,
-                    scheduleCategoryId);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString());
 
     }
 

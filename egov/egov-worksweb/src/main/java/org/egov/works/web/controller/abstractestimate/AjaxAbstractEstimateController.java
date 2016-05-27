@@ -40,10 +40,14 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.util.Date;
+import java.util.List;
 
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.master.service.OverheadService;
+import org.egov.works.master.service.ScheduleOfRateService;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
+import org.egov.works.models.masters.ScheduleOfRate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,30 +59,43 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/abstractestimate")
 public class AjaxAbstractEstimateController {
 
-	@Autowired
-	private OverheadService overheadService;
+    @Autowired
+    private OverheadService overheadService;
+    
+    @Autowired
+    private EstimateService estimateService;
+    
+    @Autowired
+    private ScheduleOfRateService scheduleOfRateService;
 
-	@RequestMapping(value = "/getpercentageorlumpsumbyoverheadid", method = RequestMethod.GET)
-	public @ResponseBody OverheadRate getPercentageOrLumpsumByOverhead(@RequestParam("overheadId") Long overheadId) {
+    @RequestMapping(value = "/getpercentageorlumpsumbyoverheadid", method = RequestMethod.GET)
+    public @ResponseBody OverheadRate getPercentageOrLumpsumByOverhead(@RequestParam("overheadId") final Long overheadId) {
 
-		Overhead overhead = new Overhead();
-		OverheadRate overheadRate = new OverheadRate();
-		Date startDate, endDate, estDate = new Date();
-		if (overheadId != null) {
-			overhead = overheadService.getOverheadById(overheadId);
-		}
+        Overhead overhead = new Overhead();
+        OverheadRate overheadRate = new OverheadRate();
+        Date startDate, endDate;
+        final Date estDate = new Date();
+        if (overheadId != null)
+            overhead = overheadService.getOverheadById(overheadId);
 
-		if (overhead != null && overhead.getOverheadRates() != null && overhead.getOverheadRates().size() > 0) {
-			for (OverheadRate obj : overhead.getOverheadRates()) {
-				startDate = obj.getValidity().getStartDate();
-				endDate = obj.getValidity().getEndDate();
-				if (estDate.compareTo(startDate) >= 0 && (endDate == null || endDate.compareTo(estDate) >= 0 )) {
-					overheadRate = obj;
-				}
-			}
-		}
+        if (overhead != null && overhead.getOverheadRates() != null && overhead.getOverheadRates().size() > 0)
+            for (final OverheadRate obj : overhead.getOverheadRates()) {
+                startDate = obj.getValidity().getStartDate();
+                endDate = obj.getValidity().getEndDate();
+                if (estDate.compareTo(startDate) >= 0 && (endDate == null || endDate.compareTo(estDate) >= 0))
+                    overheadRate = obj;
+            }
 
-		return overheadRate;
-	}
+        return overheadRate;
+    }
+    
+    @RequestMapping(value = "/ajaxsor-byschedulecategories", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    public @ResponseBody List<ScheduleOfRate> findSorByScheduleCategories(@RequestParam("code") final String code,
+            @RequestParam("scheduleCategories") final String scheduleCategories) {
+        if(!scheduleCategories.equals("null")) {
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(code, scheduleCategories);
+        }
+        return null;
+    }
 
 }

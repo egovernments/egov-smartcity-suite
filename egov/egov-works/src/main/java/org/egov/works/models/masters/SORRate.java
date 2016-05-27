@@ -44,7 +44,10 @@ import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.Valid;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +55,7 @@ public class SORRate extends BaseModel {
 
     private static final long serialVersionUID = 4057715980589711248L;
 
+    @JsonIgnore
     private ScheduleOfRate scheduleOfRate;
 
     @Valid
