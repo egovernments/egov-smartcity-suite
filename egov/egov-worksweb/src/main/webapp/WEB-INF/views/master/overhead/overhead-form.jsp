@@ -44,9 +44,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<form:form name="overheadForm" id="overheadForm" role="form" action="overhead-save" modelAttribute="overhead"  class="form-horizontal form-groups-bordered">
+<form:form name="overheadForm" id="overheadForm" role="form" action="/egworks/masters/overhead-save" modelAttribute="overhead"  class="form-horizontal form-groups-bordered">
 	<input type="hidden" value="<spring:message code='overhead.overheadRates.invalid' />" id='overheadRateDetails'>
-	<input type="hidden" value="<spring:message code='overhead.date.invalid' />" id='validateDate'>
 	<input type="hidden" value="<spring:message code='overhead.date.invalid' />" id='validateDate'>
 	<input type="hidden" value="<spring:message code='overhead.lumpsumandpercentage.invalid' />" id='validateLumpsumAndPercentage'>
 	<input type="hidden" value="<spring:message code='overhead.percentage.invalid' />" id='validateTotalPercentage'>
@@ -66,10 +65,20 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type="submit" name="submit" id="save"
-				class="btn btn-primary" value="Save">
-				<spring:message code="lbl.save" />
-			</button>
+		<c:choose>
+			<c:when test="${mode == 'edit' }">
+				<button type="submit" name="submit" id="save"
+					class="btn btn-primary" value="Modify">
+					<spring:message code="lbl.modify" />
+				</button>
+			</c:when>
+			<c:otherwise>
+				<button type="submit" name="submit" id="save"
+					class="btn btn-primary" value="Save">
+					<spring:message code="lbl.save" />
+				</button>
+			</c:otherwise>
+		</c:choose>
 			<button type="button" class="btn btn-default" id="button2"
 				onclick="window.close();">
 				<spring:message code="lbl.close" />

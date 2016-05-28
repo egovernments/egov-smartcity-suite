@@ -46,7 +46,8 @@
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align:center;"><spring:message code="lbl.createoverhead" /></div>
 	</div>
-	<input type="hidden" id="overheadid" value="${overhead.id }"/>
+	<input type="hidden" value="${overhead.id }" id="overheadid" name="overhead" />
+	
 	<div class="panel-body">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /><span

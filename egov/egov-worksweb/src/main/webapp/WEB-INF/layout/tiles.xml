@@ -262,8 +262,13 @@
     </definition>
 
    	<definition name="overhead-success" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.createoverhead" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.viewoverhead" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/master/overhead/overhead-success.jsp"/>
+    </definition>
+    
+   	<definition name="overhead-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchoverhead" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/master/overhead/searchOverhead-header.jsp"/>
     </definition>
     
 </tiles-definitions>

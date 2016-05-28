@@ -45,7 +45,13 @@
 	<div class="col-md-12">
 		<div id="overheadTable" class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
-			<div class="panel-heading"></div>
+			<div class="panel-heading">
+			<c:if test="${mode=='view' }">
+				<div class="panel-title">
+					<spring:message code="lbl.viewoverhead" />
+				</div>
+			</c:if>	
+			</div>
 			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
