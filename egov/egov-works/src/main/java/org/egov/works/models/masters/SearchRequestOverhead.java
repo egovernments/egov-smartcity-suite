@@ -37,24 +37,31 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.repository;
+package org.egov.works.models.masters;
 
-import java.util.Date;
-import java.util.List;
+public class SearchRequestOverhead {
 
-import org.egov.works.models.masters.Overhead;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+    private String overheadName;
+    private String overheadDescription;
 
-@Repository
-public interface OverheadRepository extends JpaRepository<Overhead, Long> {
+    public SearchRequestOverhead() {
+        // TODO Auto-generated constructor stub
+    }
 
-	Overhead findByNameIgnoreCase(String name);
+    public String getOverheadName() {
+        return overheadName;
+    }
 
-        List<Overhead> findByNameContainingIgnoreCase(String name);
+    public void setOverheadName(final String overheadName) {
+        this.overheadName = overheadName;
+    }
 
-	@Query("from Overhead o inner join fetch o.overheadRates as rates where ((:date between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:date and rates.validity.endDate is null))")
-	List<Overhead> getByDate(@Param("date") Date date);
+    public String getOverheadDescription() {
+        return overheadDescription;
+    }
+
+    public void setOverheadDescription(final String overheadDescription) {
+        this.overheadDescription = overheadDescription;
+    }
+
 }

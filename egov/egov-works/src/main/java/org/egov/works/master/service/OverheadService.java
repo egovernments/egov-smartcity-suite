@@ -40,12 +40,23 @@
 package org.egov.works.master.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.egov.works.master.repository.OverheadRepository;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
+import org.egov.works.models.masters.SearchRequestOverhead;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +68,9 @@ public class OverheadService {
     @Autowired
     private OverheadRepository overheadRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+    
     @Transactional
     public Overhead create(final Overhead overhead) throws IOException {
         for (final OverheadRate overheadRates : overhead.getOverheadRates())
@@ -77,4 +91,39 @@ public class OverheadService {
         return overheadRepository.getByDate(date);
     }
 
+    public List<Overhead> searchOverheadToModify(final SearchRequestOverhead searchRequestOverhead) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Overhead.class)
+                .addOrder(Order.asc("createdDate"));
+        if (searchRequestOverhead != null) {
+            if (searchRequestOverhead.getOverheadName() != null)
+                criteria.add(Restrictions.eq("name", searchRequestOverhead.getOverheadName()).ignoreCase());
+            if (searchRequestOverhead.getOverheadDescription() != null)
+                criteria.add(
+                        Restrictions.ilike("description", searchRequestOverhead.getOverheadDescription(), MatchMode.ANYWHERE));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+    
+    public List<String> findOverheadNameToSearchOverhead(final String name) {
+        final List<Overhead> overhead = overheadRepository.findByNameContainingIgnoreCase("%" + name + "%");
+        final List<String> results = new ArrayList<String>();
+        for (final Overhead details : overhead)
+            results.add(details.getName());
+        return results;
+    }
+    
+    public List<Overhead> searchOverheadToView(final SearchRequestOverhead searchRequestOverhead) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Overhead.class)
+                .addOrder(Order.asc("createdDate"));
+        if (searchRequestOverhead != null) {
+            if (searchRequestOverhead.getOverheadName() != null)
+                criteria.add(Restrictions.eq("name", searchRequestOverhead.getOverheadName()).ignoreCase());
+            if (searchRequestOverhead.getOverheadDescription() != null)
+                criteria.add(
+                        Restrictions.ilike("description", searchRequestOverhead.getOverheadDescription(), MatchMode.ANYWHERE));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
 }

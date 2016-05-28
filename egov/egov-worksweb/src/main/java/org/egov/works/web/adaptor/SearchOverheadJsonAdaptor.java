@@ -37,24 +37,45 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.repository;
 
-import java.util.Date;
-import java.util.List;
+package org.egov.works.web.adaptor;
+
+import java.lang.reflect.Type;
 
 import org.egov.works.models.masters.Overhead;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
-public interface OverheadRepository extends JpaRepository<Overhead, Long> {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-	Overhead findByNameIgnoreCase(String name);
+@Component
+public class SearchOverheadJsonAdaptor implements JsonSerializer<Overhead> {
+    @Override
+    public JsonElement serialize(final Overhead overhead, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (overhead != null) {
+            if (overhead.getName() != null)
+                jsonObject.addProperty("name", overhead.getName());
+            else
+                jsonObject.addProperty("name", "");
+            if (overhead.getDescription() != null)
+                jsonObject.addProperty("description", overhead.getDescription());
+            else
+                jsonObject.addProperty("description", "");
+            if (overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getStartDate() != null)
+                jsonObject.addProperty("startDate", overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getStartDate().toString());
+            else
+                jsonObject.addProperty("startDate", "");
+            if (overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getEndDate() != null)
+                jsonObject.addProperty("endDate", overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getEndDate().toString());
+            else
+                jsonObject.addProperty("endDate", "");
 
-        List<Overhead> findByNameContainingIgnoreCase(String name);
-
-	@Query("from Overhead o inner join fetch o.overheadRates as rates where ((:date between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:date and rates.validity.endDate is null))")
-	List<Overhead> getByDate(@Param("date") Date date);
+            jsonObject.addProperty("id", overhead.getId());
+        }
+        return jsonObject;
+    }
 }

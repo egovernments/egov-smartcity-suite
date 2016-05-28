@@ -246,7 +246,7 @@ function initializeDatePicker()
 
 function validatePercentage() {
 	$( "input[name$='percentage']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
+	    var valid = /^[0-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
 	        val = this.value;
 	    
 	    if(!valid){

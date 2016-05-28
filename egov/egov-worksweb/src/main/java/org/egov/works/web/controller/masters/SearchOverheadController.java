@@ -37,24 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.repository;
+package org.egov.works.web.controller.masters;
 
-import java.util.Date;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
-import org.egov.works.models.masters.Overhead;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.master.service.OverheadService;
+import org.egov.works.models.masters.SearchRequestOverhead;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@Repository
-public interface OverheadRepository extends JpaRepository<Overhead, Long> {
+@Controller
+@RequestMapping(value = "/masters")
+public class SearchOverheadController {
 
-	Overhead findByNameIgnoreCase(String name);
+    @Autowired
+    private OverheadService overheadService;
 
-        List<Overhead> findByNameContainingIgnoreCase(String name);
+    @RequestMapping(value = "/overhead-search", method = RequestMethod.GET)
+    public String searchOverhead(
+            @ModelAttribute final SearchRequestOverhead searchRequestOverhead,
+            final Model model, final HttpServletRequest request) throws ApplicationException {
+        model.addAttribute("searchRequestOverhead", searchRequestOverhead);
+        String mode = "";
+        mode = request.getParameter("mode");
+        model.addAttribute("mode", mode);
+        return "overhead-search";
+    }
 
-	@Query("from Overhead o inner join fetch o.overheadRates as rates where ((:date between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:date and rates.validity.endDate is null))")
-	List<Overhead> getByDate(@Param("date") Date date);
 }
