@@ -52,7 +52,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;

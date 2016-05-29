@@ -42,8 +42,21 @@
  */
 package org.egov.egf.web.actions.bill;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.script.ScriptContext;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -54,17 +67,19 @@ import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
+import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
+import org.egov.egf.autonumber.JVBillNumberGenerator;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -86,21 +101,8 @@ import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.script.ScriptContext;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author mani
@@ -150,6 +152,9 @@ public class ContingentBillAction extends BaseBillAction {
     @Autowired
     private ApplicationSequenceNumberGenerator sequenceGenerator;
 
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+    
     @Override
     public StateAware getModel() {
         return super.getModel();
@@ -1199,20 +1204,10 @@ public class ContingentBillAction extends BaseBillAction {
      * @return
      */
     private String getNextBillNumber(final EgBillregister bill) {
-        String billNumber = null;
-        final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(bill.getBilldate());
-        final String year = financialYear != null ? financialYear.getFinYearRange() : "";
-        /*
-         * final Script billNumberScript = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME,
-         * "egf.bill.number.generator") .get(0);
-         */
-        final ScriptContext scriptContext = ScriptService.createContext("sequenceGenerator", sequenceGenerator, "sItem", bill,
-                "year",
-                year);
-        billNumber = (String) scriptService.executeScript("egf.bill.number.generator", scriptContext);
-        if (billNumber == null)
-            throw new ValidationException(Arrays.asList(new ValidationError("unable.to.generate.bill.number",
-                    "No Financial Year for bill date" + sdf.format(bill.getBilldate()))));
+        
+       ExpenseBillNumberGenerator b = (ExpenseBillNumberGenerator) beanResolver.getBean(ExpenseBillNumberGenerator.class);
+        final String billNumber = b.getNextNumber(bill);
+
         return billNumber;
     }
 
