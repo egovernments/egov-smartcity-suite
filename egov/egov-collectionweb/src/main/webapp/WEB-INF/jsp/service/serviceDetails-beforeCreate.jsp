@@ -46,6 +46,7 @@
 function onBodyLoad()
 {
 	document.getElementById("voucherApprovedDetails").style.display="none";
+	document.getElementById("urlDetails").style.display = "none";
 }
 
 function EnableVoucherDetails(obj){
