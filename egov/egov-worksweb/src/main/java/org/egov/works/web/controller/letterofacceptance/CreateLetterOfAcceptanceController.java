@@ -39,6 +39,11 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.io.IOException;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -49,8 +54,10 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.ContractorGradeService;
+import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -60,21 +67,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.IOException;
-import java.util.Date;
-
 @Controller
 @RequestMapping(value = "/letterofacceptance")
 public class CreateLetterOfAcceptanceController {
 
     @Autowired
     private LineEstimateService lineEstimateService;
+    
     @Autowired
     private SecurityUtils securityUtils;
+    
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
+    
     @Autowired
     private LetterOfAcceptanceNumberGenerator letterOfAcceptanceNumberGenerator;
     
@@ -83,6 +88,10 @@ public class CreateLetterOfAcceptanceController {
     
     @Autowired
     private ContractorGradeService contractorGradeService;
+    
+    @Autowired
+    @Qualifier("contractorService")
+    private ContractorService contractorService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
@@ -105,7 +114,7 @@ public class CreateLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
-    public String create(@ModelAttribute("workOrder") final WorkOrder workOrder,
+    public String create(@ModelAttribute("workOrder") WorkOrder workOrder,
             final Model model, final BindingResult resultBinder, final HttpServletRequest request,
             @RequestParam("file") final MultipartFile[] files) throws IOException {
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
@@ -130,6 +139,7 @@ public class CreateLetterOfAcceptanceController {
             model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
             return "createLetterOfAcceptance-form";
         } else {
+        	workOrder.setContractor(contractorService.findById(workOrder.getContractor().getId(), false));
             if (lineEstimateDetails.getLineEstimate().isSpillOverFlag() && !lineEstimateDetails.getLineEstimate()
                     .isWorkOrderCreated() || !lineEstimateDetails.getLineEstimate().isSpillOverFlag())
                 workOrder.setWorkOrderNumber(

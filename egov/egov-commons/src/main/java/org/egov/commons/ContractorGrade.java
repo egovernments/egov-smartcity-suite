@@ -39,50 +39,80 @@
  */
 package org.egov.commons;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.regex.Constants;
-import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Min;
+@Entity
+@Table(name = "EGW_CONTRACTOR_GRADE")
+@CompositeUnique(fields = { "minAmount", "maxAmount" }, message = "contractorgrade.amount.exist")
+@Unique(fields = { "grade" }, id = "id", tableName = "EGW_CONTRACTOR_GRADE", columnName = {
+		"GRADE" }, message = "contractorGrade.grade.isunique")
+@NamedQueries({
+		@NamedQuery(name = ContractorGrade.GETCONTRACTORGRADEMAXAMOUNTLIST, query = " select distinct(maxAmount) from ContractorGrade cg order by cg.maxAmount "),
+		@NamedQuery(name = ContractorGrade.GETCONTRACTORGRADEMINAMOUNTLIST, query = " select distinct(minAmount) from ContractorGrade cg order by cg.minAmount ") })
+@SequenceGenerator(name = ContractorGrade.SEQ_EGW_CONTRACTOR_GRADE, sequenceName = ContractorGrade.SEQ_EGW_CONTRACTOR_GRADE, allocationSize = 1)
+public class ContractorGrade extends AbstractAuditable {
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
+	private static final long serialVersionUID = 4996716596644028190L;
+	public static final String SEQ_EGW_CONTRACTOR_GRADE = "SEQ_EGW_CONTRACTOR_GRADE";
+	public static final String GETCONTRACTORGRADEMAXAMOUNTLIST = "getContractorGradeMaxAmountList";
+	public static final String GETCONTRACTORGRADEMINAMOUNTLIST = "getContractorGradeMinAmountList";
 
-@CompositeUnique(fields = { "minAmount",
-"maxAmount" }, message = "contractorgrade.amount.exist")
-@Unique(fields = { "grade" }, id = "id", tableName = "EGW_CONTRACTOR_GRADE", columnName = { "GRADE" }, message = "contractorGrade.grade.isunique")
-public class ContractorGrade extends BaseModel {
+	@Id
+	@GeneratedValue(generator = SEQ_EGW_CONTRACTOR_GRADE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
 	@Required(message = "contractorGrade.grade.null")
 	@Length(max = 20, message = "contractorGrade.grade.length")
-        @OptionalPattern(regex = Constants.ALPHANUMERICWITHSPECIALCHAR, message = "contractorGrade.grade.alphaNumeric")
+	@OptionalPattern(regex = Constants.ALPHANUMERICWITHSPECIALCHAR, message = "contractorGrade.grade.alphaNumeric")
 	private String grade;
 
 	@Required(message = "contractorGrade.description.null")
 	@Length(max = 100, message = "contractorGrade.description.length")
 	private String description;
 
+	@Column(name = "MIN_AMOUNT")
 	@Required(message = "contractorGrade.minAmount.null")
 	@Min(value = 0, message = "contractorGrade.minAmount.valid")
 	@OptionalPattern(regex = Constants.NUMERIC, message = "contractorGrade.minAmount.numeric")
 	private BigDecimal minAmount;
 
+	@Column(name = "MAX_AMOUNT")
 	@Required(message = "contractorGrade.maxAmount.null")
 	@Min(value = 0, message = "contractorGrade.maxAmount.valid")
 	@OptionalPattern(regex = Constants.NUMERIC, message = "contractorGrade.maxAmount.numeric")
 	private BigDecimal maxAmount;
 
+	@Transient
 	private String maxAmountString;
+
+	@Transient
 	private String minAmountString;
-	
+
 	public ContractorGrade() {
-		//For hibernate to work
+		// For hibernate to work
 	}
 
 	public ContractorGrade(String grade, String description, BigDecimal minAmount, BigDecimal maxAmount) {
@@ -142,7 +172,7 @@ public class ContractorGrade extends BaseModel {
 
 	public List<ValidationError> validate() {
 		List<ValidationError> errorList = null;
-		if(minAmount != null && maxAmount != null) {
+		if (minAmount != null && maxAmount != null) {
 			if (maxAmount.compareTo(minAmount) == -1) {
 				return Arrays.asList(new ValidationError("maxAmount", "contractor.grade.maxamount.invalid"));
 			}
@@ -153,9 +183,19 @@ public class ContractorGrade extends BaseModel {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ContractorGrade [grade=").append(grade).append(", description=").append(description).append(", minAmount=").append(minAmount).append(", maxAmount=").append(maxAmount).append(", maxAmountString=").append(maxAmountString)
-				.append(", minAmountString=").append(minAmountString).append("]");
+		builder.append("ContractorGrade [grade=").append(grade).append(", description=").append(description)
+				.append(", minAmount=").append(minAmount).append(", maxAmount=").append(maxAmount)
+				.append(", maxAmountString=").append(maxAmountString).append(", minAmountString=")
+				.append(minAmountString).append("]");
 		return builder.toString();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }

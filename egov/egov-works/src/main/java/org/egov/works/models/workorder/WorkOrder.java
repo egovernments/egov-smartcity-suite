@@ -44,10 +44,26 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -66,451 +82,522 @@ import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "EGW_WORKORDER")
+@Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({
+		@NamedQuery(name = WorkOrder.GETCONTRACTORSWITHWO, query = " select distinct wo.contractor from WorkOrder wo where wo.parent is null "),
+		@NamedQuery(name = WorkOrder.GETUNIQUEWO, query = " select distinct wo from WorkOrder wo where wo.parent is null "),
+		@NamedQuery(name = WorkOrder.GETAPPROVEDCONTRACTORSWITHWO, query = " select distinct wo.contractor from WorkOrder wo where wo.parent is null and wo.egwStatus.code='APPROVED' "),
+		@NamedQuery(name = WorkOrder.GET_All_CONTRACTORS, query = " select distinct wo.contractor from WorkOrder wo join wo.contractor.contractorDetails as detail where wo.parent is null and detail.status.description = ? and current_date >= detail.validity.startDate and (detail.validity.endDate is null or detail.validity.endDate >= current_date )") })
+@SequenceGenerator(name = WorkOrder.SEQ_EGW_WORKORDER, sequenceName = WorkOrder.SEQ_EGW_WORKORDER, allocationSize = 1)
 public class WorkOrder extends StateAware implements Auditable {
 
-    private static final long serialVersionUID = -3955155765490287178L;
+	private static final long serialVersionUID = -3955155765490287178L;
 
-    private Long id;
+	public static final String SEQ_EGW_WORKORDER = "SEQ_EGW_WORKORDER";
+	public static final String GETCONTRACTORSWITHWO = "getContractorsWithWO";
+	public static final String GETUNIQUEWO = "getUniqueWO";
+	public static final String GET_All_CONTRACTORS = "GET_All_CONTRACTORS";
+	public static final String GETAPPROVEDCONTRACTORSWITHWO = "getApprovedContractorsWithWO";
 
-    @NotNull
-    private Contractor contractor;
+	@Id
+	@GeneratedValue(generator = SEQ_EGW_WORKORDER, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Required(message = "workOrder.workOrderDate.null")
-    @DateFormat(message = "invalid.fieldvalue.workOrderDate")
-    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.workOrderDate")
-    private Date workOrderDate;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CONTRACTOR_ID", nullable = false)
+	private Contractor contractor;
 
-    @NotNull
-    private String workOrderNumber;
+	@Required(message = "workOrder.workOrderDate.null")
+	@DateFormat(message = "invalid.fieldvalue.workOrderDate")
+	@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.workOrderDate")
+	@Length(max = 7)
+	@Column(name = "WORKORDER_DATE")
+	private Date workOrderDate;
 
-    private String packageNumber;
-    private String tenderNumber;
-    private String negotiationNumber;
+	@NotNull
+	@Length(max = 256)
+	@Column(name = "WORKORDER_NUMBER")
+	private String workOrderNumber;
 
-    @Length(max = 1024, message = "workOrderDetails.length")
-    private String workOrderDetails;
+	@Column(name = "WP_NUMBER")
+	private String packageNumber;
 
-    private Integer contractPeriod;
+	@Column(name = "TENDER_NUMBER")
+	private String tenderNumber;
 
-    @Length(max = 1024, message = "agreementDetails.length")
-    private String agreementDetails;
+	@Column(name = "NEGOTIATION_NUMBER")
+	private String negotiationNumber;
 
-    @Length(max = 1024, message = "paymentTerms.length")
-    private String paymentTerms;
+	@Column(name = "WORK_ORDER_DETAILS")
+	@Length(max = 1024, message = "workOrderDetails.length")
+	private String workOrderDetails;
 
-    @Min(value = 0, message = "workorder.emdAmountDeposited.non.negative")
-    private double emdAmountDeposited;
+	@Column(name = "CONTRACT_PERIOD")
+	private Integer contractPeriod;
 
-    @Min(value = 0, message = "workorder.non.negative")
-    private double securityDeposit;
+	@Column(name = "AGREEMENT_DETAILS")
+	@Length(max = 1024, message = "agreementDetails.length")
+	private String agreementDetails;
 
-    @Min(value = 0, message = "workorder.non.negative")
-    private double labourWelfareFund;
+	@Column(name = "PAYMENT_TERMS")
+	@Length(max = 1024, message = "paymentTerms.length")
+	private String paymentTerms;
 
-    @Required(message = "workorder.engineerIncharge.null")
-    private Employee engineerIncharge;
+	@Column(name = "EMD_AMOUNT_DEPOSITED")
+	@Min(value = 0, message = "workorder.emdAmountDeposited.non.negative")
+	private double emdAmountDeposited;
 
-    @Min(value = 0, message = "workorder.non.negative")
-    private double defectLiabilityPeriod;
+	@Column(name = "SECURITY_DEPOSIT")
+	@Min(value = 0, message = "workorder.non.negative")
+	private double securityDeposit;
 
-    @NotNull
-    @Min(value = 1)
-    private double workOrderAmount;
+	@Column(name = "LABOUR_WELFARE_FUND")
+	@Min(value = 0, message = "workorder.non.negative")
+	private double labourWelfareFund;
 
-    @NotNull
-    private EgwStatus egwStatus;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ENGINEERINCHARGE", nullable = false)
+	@Required(message = "workorder.engineerIncharge.null")
+	private Employee engineerIncharge;
 
-    private double tenderFinalizedPercentage;
+	@Column(name = "DEFECT_LIABILITY_PERIOD")
+	@Min(value = 0, message = "workorder.non.negative")
+	private double defectLiabilityPeriod;
 
-    @DateFormat(message = "invalid.fieldvalue.workOrderDate")
-    private Date approvedDate;
+	@NotNull
+	@Min(value = 1)
+	@Column(name = "WORKORDER_AMOUNT")
+	private double workOrderAmount;
 
-    private String fileNumber;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STATUS_ID", nullable = false)
+	private EgwStatus egwStatus;
 
-    @DateFormat(message = "invalid.fieldvalue.fileDate")
-    private Date fileDate;
+	private double tenderFinalizedPercentage;
 
-    @Length(max = 1024, message = "bankguarantee.length")
-    private String bankGuarantee;
+	@Column(name = "APPROVED_DATE")
+	@DateFormat(message = "invalid.fieldvalue.workOrderDate")
+	private Date approvedDate;
 
-    private String estimateNumber;
+	@Length(max = 100)
+	private String fileNumber;
 
-    private WorkOrder parent;
+	@DateFormat(message = "invalid.fieldvalue.fileDate")
+	private Date fileDate;
 
-    private Date expectedCompletionDate;
-    private String tenderType;
-    private String owner;
-    private String status;
-    private transient String percentageSign;
+	@Length(max = 1024, message = "bankguarantee.length")
+	private String bankGuarantee;
 
-    private List<WorkOrderEstimate> workOrderEstimates = new LinkedList<WorkOrderEstimate>();
-    private Set<OfflineStatus> offlineStatuses = new HashSet<OfflineStatus>();
-    private List<String> workOrderActions = new ArrayList<String>();
-    private Set<WorkOrder> revisionWOs = new HashSet<WorkOrder>();
-    private Set<MBHeader> mbHeaders = new HashSet<MBHeader>();
+	@Length(max = 100)
+	private String estimateNumber;
 
-    private transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PARENTID")
+	private WorkOrder parent;
 
-    private String cancellationReason;
+	@Transient
+	private Date expectedCompletionDate;
 
-    private String cancellationRemarks;
+	@Transient
+	private String tenderType;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Transient
+	private String owner;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Transient
+	private String status;
 
-    public Contractor getContractor() {
-        return contractor;
-    }
+	@Transient
+	private String percentageSign;
 
-    public void setContractor(final Contractor contractor) {
-        this.contractor = contractor;
-    }
+	@JsonIgnore
+	@OneToMany(mappedBy = "workOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = WorkOrderEstimate.class)
+	private List<WorkOrderEstimate> workOrderEstimates = new ArrayList<WorkOrderEstimate>(0);
 
-    public Date getWorkOrderDate() {
-        return workOrderDate;
-    }
+	@JsonIgnore
+	@Transient
+	private Set<OfflineStatus> offlineStatuses = new HashSet<OfflineStatus>();
 
-    public void setWorkOrderDate(final Date workOrderDate) {
-        this.workOrderDate = workOrderDate;
-    }
+	@Transient
+	private List<String> workOrderActions = new ArrayList<String>();
 
-    public String getWorkOrderNumber() {
-        return workOrderNumber;
-    }
+	@JsonIgnore
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = WorkOrder.class)
+	private Set<WorkOrder> revisionWOs = new HashSet<WorkOrder>();
 
-    public void setWorkOrderNumber(final String workOrderNumber) {
-        this.workOrderNumber = workOrderNumber;
-    }
+	@JsonIgnore
+	@OneToMany(mappedBy = "workOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MBHeader.class)
+	private Set<MBHeader> mbHeaders = new HashSet<MBHeader>();
 
-    public String getPackageNumber() {
-        return packageNumber;
-    }
+	@Transient
+	private List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
-    public void setPackageNumber(final String packageNumber) {
-        this.packageNumber = packageNumber;
-    }
+	@Length(max = 50)
+	private String cancellationReason;
 
-    public String getTenderNumber() {
-        return tenderNumber;
-    }
+	@Length(max = 256)
+	private String cancellationRemarks;
 
-    public void setTenderNumber(final String tenderNumber) {
-        this.tenderNumber = tenderNumber;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public String getNegotiationNumber() {
-        return negotiationNumber;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public void setNegotiationNumber(final String negotiationNumber) {
-        this.negotiationNumber = negotiationNumber;
-    }
+	public Contractor getContractor() {
+		return contractor;
+	}
 
-    public String getWorkOrderDetails() {
-        return workOrderDetails;
-    }
+	public void setContractor(final Contractor contractor) {
+		this.contractor = contractor;
+	}
 
-    public void setWorkOrderDetails(final String workOrderDetails) {
-        this.workOrderDetails = workOrderDetails;
-    }
+	public Date getWorkOrderDate() {
+		return workOrderDate;
+	}
 
-    public Integer getContractPeriod() {
-        return contractPeriod;
-    }
+	public void setWorkOrderDate(final Date workOrderDate) {
+		this.workOrderDate = workOrderDate;
+	}
 
-    public void setContractPeriod(final Integer contractPeriod) {
-        this.contractPeriod = contractPeriod;
-    }
+	public String getWorkOrderNumber() {
+		return workOrderNumber;
+	}
 
-    public String getAgreementDetails() {
-        return agreementDetails;
-    }
+	public void setWorkOrderNumber(final String workOrderNumber) {
+		this.workOrderNumber = workOrderNumber;
+	}
 
-    public void setAgreementDetails(final String agreementDetails) {
-        this.agreementDetails = agreementDetails;
-    }
+	public String getPackageNumber() {
+		return packageNumber;
+	}
 
-    public String getPaymentTerms() {
-        return paymentTerms;
-    }
+	public void setPackageNumber(final String packageNumber) {
+		this.packageNumber = packageNumber;
+	}
 
-    public void setPaymentTerms(final String paymentTerms) {
-        this.paymentTerms = paymentTerms;
-    }
+	public String getTenderNumber() {
+		return tenderNumber;
+	}
 
-    public double getEmdAmountDeposited() {
-        return emdAmountDeposited;
-    }
+	public void setTenderNumber(final String tenderNumber) {
+		this.tenderNumber = tenderNumber;
+	}
 
-    public void setEmdAmountDeposited(final double emdAmountDeposited) {
-        this.emdAmountDeposited = emdAmountDeposited;
-    }
+	public String getNegotiationNumber() {
+		return negotiationNumber;
+	}
 
-    public double getSecurityDeposit() {
-        return securityDeposit;
-    }
+	public void setNegotiationNumber(final String negotiationNumber) {
+		this.negotiationNumber = negotiationNumber;
+	}
 
-    public void setSecurityDeposit(final double securityDeposit) {
-        this.securityDeposit = securityDeposit;
-    }
+	public String getWorkOrderDetails() {
+		return workOrderDetails;
+	}
 
-    public double getLabourWelfareFund() {
-        return labourWelfareFund;
-    }
+	public void setWorkOrderDetails(final String workOrderDetails) {
+		this.workOrderDetails = workOrderDetails;
+	}
 
-    public void setLabourWelfareFund(final double labourWelfareFund) {
-        this.labourWelfareFund = labourWelfareFund;
-    }
+	public Integer getContractPeriod() {
+		return contractPeriod;
+	}
 
-    public Employee getEngineerIncharge() {
-        return engineerIncharge;
-    }
+	public void setContractPeriod(final Integer contractPeriod) {
+		this.contractPeriod = contractPeriod;
+	}
 
-    public void setEngineerIncharge(final Employee engineerIncharge) {
-        this.engineerIncharge = engineerIncharge;
-    }
+	public String getAgreementDetails() {
+		return agreementDetails;
+	}
 
-    public double getDefectLiabilityPeriod() {
-        return defectLiabilityPeriod;
-    }
+	public void setAgreementDetails(final String agreementDetails) {
+		this.agreementDetails = agreementDetails;
+	}
 
-    public void setDefectLiabilityPeriod(final double defectLiabilityPeriod) {
-        this.defectLiabilityPeriod = defectLiabilityPeriod;
-    }
+	public String getPaymentTerms() {
+		return paymentTerms;
+	}
 
-    public double getWorkOrderAmount() {
-        return workOrderAmount;
-    }
+	public void setPaymentTerms(final String paymentTerms) {
+		this.paymentTerms = paymentTerms;
+	}
 
-    public void setWorkOrderAmount(final double workOrderAmount) {
-        this.workOrderAmount = workOrderAmount;
-    }
+	public double getEmdAmountDeposited() {
+		return emdAmountDeposited;
+	}
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
-    }
+	public void setEmdAmountDeposited(final double emdAmountDeposited) {
+		this.emdAmountDeposited = emdAmountDeposited;
+	}
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
-    }
+	public double getSecurityDeposit() {
+		return securityDeposit;
+	}
 
-    public WorkOrder getParent() {
-        return parent;
-    }
+	public void setSecurityDeposit(final double securityDeposit) {
+		this.securityDeposit = securityDeposit;
+	}
 
-    public void setParent(final WorkOrder parent) {
-        this.parent = parent;
-    }
+	public double getLabourWelfareFund() {
+		return labourWelfareFund;
+	}
 
-    public String getEstimateNumber() {
-        return estimateNumber;
-    }
+	public void setLabourWelfareFund(final double labourWelfareFund) {
+		this.labourWelfareFund = labourWelfareFund;
+	}
 
-    public void setEstimateNumber(final String estimateNumber) {
-        this.estimateNumber = estimateNumber;
-    }
+	public Employee getEngineerIncharge() {
+		return engineerIncharge;
+	}
 
-    public double getTenderFinalizedPercentage() {
-        return tenderFinalizedPercentage;
-    }
+	public void setEngineerIncharge(final Employee engineerIncharge) {
+		this.engineerIncharge = engineerIncharge;
+	}
 
-    public void setTenderFinalizedPercentage(final double tenderFinalizedPercentage) {
-        this.tenderFinalizedPercentage = tenderFinalizedPercentage;
-    }
+	public double getDefectLiabilityPeriod() {
+		return defectLiabilityPeriod;
+	}
 
-    public Date getApprovedDate() {
-        return approvedDate;
-    }
+	public void setDefectLiabilityPeriod(final double defectLiabilityPeriod) {
+		this.defectLiabilityPeriod = defectLiabilityPeriod;
+	}
 
-    public void setApprovedDate(final Date approvedDate) {
-        this.approvedDate = approvedDate;
-    }
+	public double getWorkOrderAmount() {
+		return workOrderAmount;
+	}
 
-    public String getTenderType() {
-        return tenderType;
-    }
+	public void setWorkOrderAmount(final double workOrderAmount) {
+		this.workOrderAmount = workOrderAmount;
+	}
 
-    public void setTenderType(final String tenderType) {
-        this.tenderType = tenderType;
-    }
-
-    public String getFileNumber() {
-        return fileNumber;
-    }
-
-    public void setFileNumber(final String fileNumber) {
-        this.fileNumber = fileNumber;
-    }
-
-    public Date getFileDate() {
-        return fileDate;
-    }
-
-    public void setFileDate(final Date fileDate) {
-        this.fileDate = fileDate;
-    }
-
-    public String getBankGuarantee() {
-        return bankGuarantee;
-    }
-
-    public void setBankGuarantee(final String bankGuarantee) {
-        this.bankGuarantee = bankGuarantee;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(final String owner) {
-        this.owner = owner;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(final String status) {
-        this.status = status;
-    }
-
-    public List<WorkOrderEstimate> getWorkOrderEstimates() {
-        return workOrderEstimates;
-    }
-
-    public void setWorkOrderEstimates(final List<WorkOrderEstimate> workOrderEstimates) {
-        this.workOrderEstimates = workOrderEstimates;
-    }
-
-    public Set<OfflineStatus> getOfflineStatuses() {
-        return offlineStatuses;
-    }
-
-    public void setOfflineStatuses(final Set<OfflineStatus> offlineStatuses) {
-        this.offlineStatuses = offlineStatuses;
-    }
-
-    public List<String> getWorkOrderActions() {
-        return workOrderActions;
-    }
-
-    public void setWorkOrderActions(final List<String> workOrderActions) {
-        this.workOrderActions = workOrderActions;
-    }
-
-    public Set<WorkOrder> getRevisionWOs() {
-        return revisionWOs;
-    }
-
-    public void setRevisionWOs(final Set<WorkOrder> revisionWOs) {
-        this.revisionWOs = revisionWOs;
-    }
-
-    public void setExpectedCompletionDate(final Date expectedCompletionDate) {
-        this.expectedCompletionDate = expectedCompletionDate;
-    }
-
-    public void addWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
-        workOrderEstimates.add(workOrderEstimate);
-    }
-
-    public Set<MBHeader> getMbHeaders() {
-        return mbHeaders;
-    }
-
-    public void setMbHeaders(final Set<MBHeader> mbHeaders) {
-        this.mbHeaders = mbHeaders;
-    }
-
-    public String getFormattedString(final double value) {
-        final double rounded = Math.round(value * 100) / 100.0;
-        final DecimalFormat formatter = new DecimalFormat("0.00");
-        formatter.setDecimalSeparatorAlwaysShown(true);
-        return formatter.format(rounded);
-    }
-
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (contractor != null && (contractor.getId() == null || contractor.getId() == 0 || contractor.getId() == -1))
-            validationErrors.add(new ValidationError("contractor", "workOrder.contractor.null"));
-        else if (contractor == null)
-            validationErrors.add(new ValidationError("contractor", "workOrder.contractor.null"));
-        return validationErrors;
-    }
-
-    @Override
-    public String getStateDetails() {
-        return "Work Order: " + getWorkOrderNumber();
-    }
-
-    public Money getTotalWorkOrderQuantity() {
-        Money totalWorkOrderQuantity;
-        double qty = 0;
-        for (final WorkOrderEstimate workOrderEstimate : workOrderEstimates)
-            for (final WorkOrderActivity woa : workOrderEstimate.getWorkOrderActivities())
-                if (woa.getActivity() != null && woa.getActivity().getRevisionType() != null
-                        && woa.getActivity().getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
-                    qty -= woa.getApprovedQuantity();
-                else
-                    qty += woa.getApprovedQuantity();
-        totalWorkOrderQuantity = new Money(qty);
-        return totalWorkOrderQuantity;
-    }
-
-    public Date getExpectedCompletionDate() {
-        if (getContractPeriod() > 0) {
-            final Date date = DateUtils.add(getWorkOrderDate(), Calendar.DAY_OF_MONTH,
-                    getContractPeriod());
-            expectedCompletionDate = date;
-        }
-
-        return expectedCompletionDate;
-    }
-
-    @Override
-    public String toString() {
-        return "WorkOrder ( Id : " + getId() + "Work Order No: " + workOrderNumber + ")";
-    }
-
-    public String getPercentageSign() {
-        return percentageSign;
-    }
-
-    public void setPercentageSign(final String percentageSign) {
-        this.percentageSign = percentageSign;
-    }
-
-    public List<DocumentDetails> getDocumentDetails() {
-        return documentDetails;
-    }
-
-    public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
-        this.documentDetails = documentDetails;
-    }
-
-    public String getCancellationReason() {
-        return cancellationReason;
-    }
-
-    public void setCancellationReason(final String cancellationReason) {
-        this.cancellationReason = cancellationReason;
-    }
-
-    public String getCancellationRemarks() {
-        return cancellationRemarks;
-    }
-
-    public void setCancellationRemarks(final String cancellationRemarks) {
-        this.cancellationRemarks = cancellationRemarks;
-    }
+	public EgwStatus getEgwStatus() {
+		return egwStatus;
+	}
+
+	public void setEgwStatus(final EgwStatus egwStatus) {
+		this.egwStatus = egwStatus;
+	}
+
+	public WorkOrder getParent() {
+		return parent;
+	}
+
+	public void setParent(final WorkOrder parent) {
+		this.parent = parent;
+	}
+
+	public String getEstimateNumber() {
+		return estimateNumber;
+	}
+
+	public void setEstimateNumber(final String estimateNumber) {
+		this.estimateNumber = estimateNumber;
+	}
+
+	public double getTenderFinalizedPercentage() {
+		return tenderFinalizedPercentage;
+	}
+
+	public void setTenderFinalizedPercentage(final double tenderFinalizedPercentage) {
+		this.tenderFinalizedPercentage = tenderFinalizedPercentage;
+	}
+
+	public Date getApprovedDate() {
+		return approvedDate;
+	}
+
+	public void setApprovedDate(final Date approvedDate) {
+		this.approvedDate = approvedDate;
+	}
+
+	public String getTenderType() {
+		return tenderType;
+	}
+
+	public void setTenderType(final String tenderType) {
+		this.tenderType = tenderType;
+	}
+
+	public String getFileNumber() {
+		return fileNumber;
+	}
+
+	public void setFileNumber(final String fileNumber) {
+		this.fileNumber = fileNumber;
+	}
+
+	public Date getFileDate() {
+		return fileDate;
+	}
+
+	public void setFileDate(final Date fileDate) {
+		this.fileDate = fileDate;
+	}
+
+	public String getBankGuarantee() {
+		return bankGuarantee;
+	}
+
+	public void setBankGuarantee(final String bankGuarantee) {
+		this.bankGuarantee = bankGuarantee;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(final String owner) {
+		this.owner = owner;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(final String status) {
+		this.status = status;
+	}
+
+	public List<WorkOrderEstimate> getWorkOrderEstimates() {
+		return workOrderEstimates;
+	}
+
+	public void setWorkOrderEstimates(final List<WorkOrderEstimate> workOrderEstimates) {
+		this.workOrderEstimates = workOrderEstimates;
+	}
+
+	public Set<OfflineStatus> getOfflineStatuses() {
+		return offlineStatuses;
+	}
+
+	public void setOfflineStatuses(final Set<OfflineStatus> offlineStatuses) {
+		this.offlineStatuses = offlineStatuses;
+	}
+
+	public List<String> getWorkOrderActions() {
+		return workOrderActions;
+	}
+
+	public void setWorkOrderActions(final List<String> workOrderActions) {
+		this.workOrderActions = workOrderActions;
+	}
+
+	public Set<WorkOrder> getRevisionWOs() {
+		return revisionWOs;
+	}
+
+	public void setRevisionWOs(final Set<WorkOrder> revisionWOs) {
+		this.revisionWOs = revisionWOs;
+	}
+
+	public void setExpectedCompletionDate(final Date expectedCompletionDate) {
+		this.expectedCompletionDate = expectedCompletionDate;
+	}
+
+	public void addWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
+		workOrderEstimates.add(workOrderEstimate);
+	}
+
+	public Set<MBHeader> getMbHeaders() {
+		return mbHeaders;
+	}
+
+	public void setMbHeaders(final Set<MBHeader> mbHeaders) {
+		this.mbHeaders = mbHeaders;
+	}
+
+	public String getFormattedString(final double value) {
+		final double rounded = Math.round(value * 100) / 100.0;
+		final DecimalFormat formatter = new DecimalFormat("0.00");
+		formatter.setDecimalSeparatorAlwaysShown(true);
+		return formatter.format(rounded);
+	}
+
+	public List<ValidationError> validate() {
+		final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+		if (contractor != null && (contractor.getId() == null || contractor.getId() == 0 || contractor.getId() == -1))
+			validationErrors.add(new ValidationError("contractor", "workOrder.contractor.null"));
+		else if (contractor == null)
+			validationErrors.add(new ValidationError("contractor", "workOrder.contractor.null"));
+		return validationErrors;
+	}
+
+	@Override
+	public String getStateDetails() {
+		return "Work Order: " + getWorkOrderNumber();
+	}
+
+	public Money getTotalWorkOrderQuantity() {
+		Money totalWorkOrderQuantity;
+		double qty = 0;
+		for (final WorkOrderEstimate workOrderEstimate : workOrderEstimates)
+			for (final WorkOrderActivity woa : workOrderEstimate.getWorkOrderActivities())
+				if (woa.getActivity() != null && woa.getActivity().getRevisionType() != null
+						&& woa.getActivity().getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+					qty -= woa.getApprovedQuantity();
+				else
+					qty += woa.getApprovedQuantity();
+		totalWorkOrderQuantity = new Money(qty);
+		return totalWorkOrderQuantity;
+	}
+
+	public Date getExpectedCompletionDate() {
+		if (getContractPeriod() > 0) {
+			final Date date = DateUtils.add(getWorkOrderDate(), Calendar.DAY_OF_MONTH, getContractPeriod());
+			expectedCompletionDate = date;
+		}
+
+		return expectedCompletionDate;
+	}
+
+	@Override
+	public String toString() {
+		return "WorkOrder ( Id : " + getId() + "Work Order No: " + workOrderNumber + ")";
+	}
+
+	public String getPercentageSign() {
+		return percentageSign;
+	}
+
+	public void setPercentageSign(final String percentageSign) {
+		this.percentageSign = percentageSign;
+	}
+
+	public List<DocumentDetails> getDocumentDetails() {
+		return documentDetails;
+	}
+
+	public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
+		this.documentDetails = documentDetails;
+	}
+
+	public String getCancellationReason() {
+		return cancellationReason;
+	}
+
+	public void setCancellationReason(final String cancellationReason) {
+		this.cancellationReason = cancellationReason;
+	}
+
+	public String getCancellationRemarks() {
+		return cancellationRemarks;
+	}
+
+	public void setCancellationRemarks(final String cancellationRemarks) {
+		this.cancellationRemarks = cancellationRemarks;
+	}
 
 }

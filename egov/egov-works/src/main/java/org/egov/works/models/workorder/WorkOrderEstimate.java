@@ -39,15 +39,6 @@
  */
 package org.egov.works.models.workorder;
 
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.milestone.entity.Milestone;
-import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
-import org.egov.works.models.measurementbook.MBHeader;
-
-import javax.validation.Valid;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -56,124 +47,200 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class WorkOrderEstimate extends BaseModel {
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-    private static final long serialVersionUID = 2083096871794612166L;
-    private WorkOrder workOrder;
-    private AbstractEstimate estimate;
-    private Date workCompletionDate;
-    private double estimateWOAmount;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
+import org.egov.works.models.measurementbook.MBHeader;
 
-    private List<WorkOrderActivity> workOrderActivities = new LinkedList<WorkOrderActivity>();
-    @Valid
-    private List<AssetsForWorkOrder> assetValues = new LinkedList<AssetsForWorkOrder>();
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    private Set<Milestone> milestone = new HashSet<Milestone>();
+@Entity
+@Table(name = "EGW_WORKORDER_ESTIMATE")
+@NamedQueries({
+		@NamedQuery(name = WorkOrderEstimate.GETWORKORDERESTIMATEBYWORKORDERID, query = " from WorkOrderEstimate woe where woe.workOrder.id = ? "),
+		@NamedQuery(name = WorkOrderEstimate.GETWORKORDERESTIMATEBYID, query = " from WorkOrderEstimate woe where woe.estimate.id = ? "),
+		@NamedQuery(name = WorkOrderEstimate.GETWORKORDERESTIMATEBYESTANDWO, query = "  from WorkOrderEstimate woe where woe.estimate.id = ? and woe.workOrder.id = ? ") })
+@SequenceGenerator(name = WorkOrderEstimate.SEQ_WORKORDER_ESTIMATE, sequenceName = WorkOrderEstimate.SEQ_WORKORDER_ESTIMATE, allocationSize = 1)
+public class WorkOrderEstimate extends AbstractAuditable {
 
-    private Milestone latestMilestone;
+	private static final long serialVersionUID = 2083096871794612166L;
 
-    private Set<ContractorAdvanceRequisition> contractorAdvanceRequisitions = new HashSet<ContractorAdvanceRequisition>();
+	public static final String SEQ_WORKORDER_ESTIMATE = "SEQ_WORKORDER_ESTIMATE";
+	public static final String GETWORKORDERESTIMATEBYWORKORDERID = "getWorkOrderEstimateByWorkOrderId";
+	public static final String GETWORKORDERESTIMATEBYID = "getWorkOrderEstimateById";
+	public static final String GETWORKORDERESTIMATEBYESTANDWO = "getWorkOrderEstimateByEstAndWO";
 
-    public WorkOrder getWorkOrder() {
-        return workOrder;
-    }
+	@Id
+	@GeneratedValue(generator = SEQ_WORKORDER_ESTIMATE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public void setWorkOrder(final WorkOrder workOrder) {
-        this.workOrder = workOrder;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "WORKORDER_ID", nullable = false)
+	private WorkOrder workOrder;
 
-    public AbstractEstimate getEstimate() {
-        return estimate;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ABSTRACTESTIMATE_ID", nullable = false)
+	private AbstractEstimate estimate;
 
-    public void setEstimate(final AbstractEstimate estimate) {
-        this.estimate = estimate;
-    }
+	@Column(name = "WORK_COMPLETION_DATE")
+	private Date workCompletionDate;
 
-    public List<WorkOrderActivity> getWorkOrderActivities() {
-        return workOrderActivities;
-    }
+	@NotNull
+	@Column(name = "ESTIMATE_WO_AMOUNT")
+	private double estimateWOAmount;
 
-    public void setWorkOrderActivities(final List<WorkOrderActivity> workOrderActivities) {
-        this.workOrderActivities = workOrderActivities;
-    }
+	@JsonIgnore
+	@OneToMany(mappedBy = "workOrderEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = WorkOrderActivity.class)
+	private List<WorkOrderActivity> workOrderActivities = new LinkedList<WorkOrderActivity>();
 
-    public void addWorkOrderActivity(final WorkOrderActivity workOrderActivity) {
-        workOrderActivities.add(workOrderActivity);
-    }
+	@Valid
+	@JsonIgnore
+	@OneToMany(mappedBy = "workOrderEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssetsForWorkOrder.class)
+	private List<AssetsForWorkOrder> assetValues = new LinkedList<AssetsForWorkOrder>();
 
-    public Money getTotalWorkValue() {
-        double amt = 0;
-        for (final WorkOrderActivity workOrderActivity : workOrderActivities)
-            amt += workOrderActivity.getApprovedAmount();
-        return new Money(amt);
-    }
+	@JsonIgnore
+	@OneToMany(mappedBy = "workOrderEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Milestone.class)
+	private Set<Milestone> milestone = new HashSet<Milestone>(0);
 
-    private Set<MBHeader> mbHeaders = new HashSet<MBHeader>();
+	@Transient
+	private Milestone latestMilestone;
 
-    public Set<MBHeader> getMbHeaders() {
-        return mbHeaders;
-    }
+	@JsonIgnore
+	@OneToMany(mappedBy = "workOrderEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ContractorAdvanceRequisition.class)
+	private Set<ContractorAdvanceRequisition> contractorAdvanceRequisitions = new HashSet<ContractorAdvanceRequisition>();
 
-    public void setMbHeaders(final Set<MBHeader> mbHeaders) {
-        this.mbHeaders = mbHeaders;
-    }
+	@JsonIgnore
+	@OneToMany(mappedBy = "workOrderEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MBHeader.class)
+	private Set<MBHeader> mbHeaders = new HashSet<MBHeader>(0);
 
-    public Date getWorkCompletionDate() {
-        return workCompletionDate;
-    }
+	public WorkOrder getWorkOrder() {
+		return workOrder;
+	}
 
-    public void setWorkCompletionDate(final Date workCompletionDate) {
-        this.workCompletionDate = workCompletionDate;
-    }
+	public void setWorkOrder(final WorkOrder workOrder) {
+		this.workOrder = workOrder;
+	}
 
-    public List<AssetsForWorkOrder> getAssetValues() {
-        return assetValues;
-    }
+	public AbstractEstimate getEstimate() {
+		return estimate;
+	}
 
-    public void setAssetValues(final List<AssetsForWorkOrder> assetValues) {
-        this.assetValues = assetValues;
-    }
+	public void setEstimate(final AbstractEstimate estimate) {
+		this.estimate = estimate;
+	}
 
-    public void addAssetValue(final AssetsForWorkOrder assetValue) {
-        assetValues.add(assetValue);
-    }
+	public List<WorkOrderActivity> getWorkOrderActivities() {
+		return workOrderActivities;
+	}
 
-    public Set<Milestone> getMilestone() {
-        return milestone;
-    }
+	public void setWorkOrderActivities(final List<WorkOrderActivity> workOrderActivities) {
+		this.workOrderActivities = workOrderActivities;
+	}
 
-    public void setMilestone(final Set<Milestone> milestone) {
-        this.milestone = milestone;
-    }
+	public void addWorkOrderActivity(final WorkOrderActivity workOrderActivity) {
+		workOrderActivities.add(workOrderActivity);
+	}
 
-    public Milestone getLatestMilestone() {
-        final List<Milestone> milestoneList = new ArrayList<Milestone>();
-        milestoneList.addAll(getMilestone());
-        if (!milestoneList.isEmpty()) {
-            Collections.sort(milestoneList, Milestone.milestoneComparator);
-            latestMilestone = milestoneList.get(milestoneList.size() - 1);
-        }
-        return latestMilestone;
-    }
+	public Money getTotalWorkValue() {
+		double amt = 0;
+		for (final WorkOrderActivity workOrderActivity : workOrderActivities)
+			amt += workOrderActivity.getApprovedAmount();
+		return new Money(amt);
+	}
 
-    public void setLatestMilestone(final Milestone latestMilestone) {
-        this.latestMilestone = latestMilestone;
-    }
+	public Set<MBHeader> getMbHeaders() {
+		return mbHeaders;
+	}
 
-    public Set<ContractorAdvanceRequisition> getContractorAdvanceRequisitions() {
-        return contractorAdvanceRequisitions;
-    }
+	public void setMbHeaders(final Set<MBHeader> mbHeaders) {
+		this.mbHeaders = mbHeaders;
+	}
 
-    public void setContractorAdvanceRequisitions(final Set<ContractorAdvanceRequisition> contractorAdvanceRequisitions) {
-        this.contractorAdvanceRequisitions = contractorAdvanceRequisitions;
-    }
+	public Date getWorkCompletionDate() {
+		return workCompletionDate;
+	}
 
-    public double getEstimateWOAmount() {
-        return estimateWOAmount;
-    }
+	public void setWorkCompletionDate(final Date workCompletionDate) {
+		this.workCompletionDate = workCompletionDate;
+	}
 
-    public void setEstimateWOAmount(final double estimateWOAmount) {
-        this.estimateWOAmount = estimateWOAmount;
-    }
+	public List<AssetsForWorkOrder> getAssetValues() {
+		return assetValues;
+	}
+
+	public void setAssetValues(final List<AssetsForWorkOrder> assetValues) {
+		this.assetValues = assetValues;
+	}
+
+	public void addAssetValue(final AssetsForWorkOrder assetValue) {
+		assetValues.add(assetValue);
+	}
+
+	public Set<Milestone> getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(final Set<Milestone> milestone) {
+		this.milestone = milestone;
+	}
+
+	public Milestone getLatestMilestone() {
+		final List<Milestone> milestoneList = new ArrayList<Milestone>();
+		milestoneList.addAll(getMilestone());
+		if (!milestoneList.isEmpty()) {
+			Collections.sort(milestoneList, Milestone.milestoneComparator);
+			latestMilestone = milestoneList.get(milestoneList.size() - 1);
+		}
+		return latestMilestone;
+	}
+
+	public void setLatestMilestone(final Milestone latestMilestone) {
+		this.latestMilestone = latestMilestone;
+	}
+
+	public Set<ContractorAdvanceRequisition> getContractorAdvanceRequisitions() {
+		return contractorAdvanceRequisitions;
+	}
+
+	public void setContractorAdvanceRequisitions(
+			final Set<ContractorAdvanceRequisition> contractorAdvanceRequisitions) {
+		this.contractorAdvanceRequisitions = contractorAdvanceRequisitions;
+	}
+
+	public double getEstimateWOAmount() {
+		return estimateWOAmount;
+	}
+
+	public void setEstimateWOAmount(final double estimateWOAmount) {
+		this.estimateWOAmount = estimateWOAmount;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 }

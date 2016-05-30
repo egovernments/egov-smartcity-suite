@@ -39,117 +39,152 @@
  */
 package org.egov.works.models.masters;
 
-import org.egov.commons.ContractorGrade;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.utils.WorksConstants;
-import org.hibernate.validator.constraints.Length;
-
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContractorDetail extends BaseModel {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3375445155375225162L;
+import org.egov.commons.ContractorGrade;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.component.Period;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.works.utils.WorksConstants;
+import org.hibernate.validator.constraints.Length;
 
-    private Contractor contractor;
+@Entity
+@Table(name = "EGW_CONTRACTOR_DETAIL")
+@SequenceGenerator(name = ContractorDetail.SEQ_EGW_CONTRACTOR_DETAIL, sequenceName = ContractorDetail.SEQ_EGW_CONTRACTOR_DETAIL, allocationSize = 1)
+public class ContractorDetail extends AbstractAuditable {
 
-    private Department department;
+	private static final long serialVersionUID = -3375445155375225162L;
+	public static final String SEQ_EGW_CONTRACTOR_DETAIL = "SEQ_EGW_CONTRACTOR_DETAIL";
 
-    @Length(max = 50, message = "contractorDetail.registrationNumber.length")
-    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractorDetail.registrationNumber.alphaNumeric")
-    private String registrationNumber;
+	@Id
+	@GeneratedValue(generator = SEQ_EGW_CONTRACTOR_DETAIL, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    private EgwStatus status;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CONTRACTOR_ID", nullable = false)
+	private Contractor contractor;
 
-    private ContractorGrade grade;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DEPARTMENT_ID")
+	@Required(message="contractorDetails.department.required")
+	private Department department;
 
-    @Valid
-    private Period validity;
+	@Column(name = "REGISTRATION_NUMBER")
+	@Length(max = 50, message = "contractorDetail.registrationNumber.length")
+	@OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractorDetail.registrationNumber.alphaNumeric")
+	private String registrationNumber;
 
-    public Contractor getContractor() {
-        return contractor;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STATUS_ID")
+	@Required(message="contractorDetails.status.required")
+	private EgwStatus status;
 
-    public void setContractor(final Contractor contractor) {
-        this.contractor = contractor;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CONTRACTOR_GRADE_ID")
+	private ContractorGrade grade;
 
-    public Department getDepartment() {
-        return department;
-    }
+	@Valid
+	private Period validity;
 
-    public void setDepartment(final Department department) {
-        this.department = department;
-    }
+	public Contractor getContractor() {
+		return contractor;
+	}
 
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
+	public void setContractor(final Contractor contractor) {
+		this.contractor = contractor;
+	}
 
-    public void setRegistrationNumber(final String registrationNumber) {
-        this.registrationNumber = registrationNumber;
-    }
+	public Department getDepartment() {
+		return department;
+	}
 
-    public EgwStatus getStatus() {
-        return status;
-    }
+	public void setDepartment(final Department department) {
+		this.department = department;
+	}
 
-    public void setStatus(final EgwStatus status) {
-        this.status = status;
-    }
+	public String getRegistrationNumber() {
+		return registrationNumber;
+	}
 
-    public ContractorGrade getGrade() {
-        return grade;
-    }
+	public void setRegistrationNumber(final String registrationNumber) {
+		this.registrationNumber = registrationNumber;
+	}
 
-    public void setGrade(final ContractorGrade grade) {
-        this.grade = grade;
-    }
+	public EgwStatus getStatus() {
+		return status;
+	}
 
-    public Period getValidity() {
-        return validity;
-    }
+	public void setStatus(final EgwStatus status) {
+		this.status = status;
+	}
 
-    public void setValidity(final Period validity) {
-        this.validity = validity;
-    }
+	public ContractorGrade getGrade() {
+		return grade;
+	}
 
-    @Override
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (department == null || department.getId() == null)
-            validationErrors.add(new ValidationError("department", "contractorDetails.department.required"));
-        if (status == null || status.getId() == null)
-            validationErrors.add(new ValidationError("status", "contractorDetails.status.required"));
-        if (validity == null || validity != null && validity.getStartDate() == null)
-            validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
-        else if (validity == null
-                || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
-            validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
-        if (validationErrors.isEmpty())
-            return null;
-        else
-            return validationErrors;
-    }
+	public void setGrade(final ContractorGrade grade) {
+		this.grade = grade;
+	}
 
-    public static boolean compareDates(final java.util.Date startDate, final java.util.Date endDate) {
-        if (startDate == null)
-            return false;
+	public Period getValidity() {
+		return validity;
+	}
 
-        if (endDate == null)
-            return true;
+	public void setValidity(final Period validity) {
+		this.validity = validity;
+	}
 
-        if (endDate.before(startDate))
-            return false;
-        return true;
-    }
+	public List<ValidationError> validate() {
+		final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+		if (department == null || department.getId() == null)
+			validationErrors.add(new ValidationError("department", "contractorDetails.department.required"));
+		if (status == null || status.getId() == null)
+			validationErrors.add(new ValidationError("status", "contractorDetails.status.required"));
+		if (validity == null || validity != null && validity.getStartDate() == null)
+			validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
+		else if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
+			validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
+		if (validationErrors.isEmpty())
+			return null;
+		else
+			return validationErrors;
+	}
+
+	public static boolean compareDates(final java.util.Date startDate, final java.util.Date endDate) {
+		if (startDate == null)
+			return false;
+
+		if (endDate == null)
+			return true;
+
+		if (endDate.before(startDate))
+			return false;
+		return true;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 }

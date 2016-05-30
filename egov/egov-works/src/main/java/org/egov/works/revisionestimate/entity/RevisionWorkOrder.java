@@ -39,14 +39,24 @@
  */
 package org.egov.works.revisionestimate.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
 import org.egov.works.models.workorder.WorkOrder;
 
+@Entity
+@Table(name = "EGW_REVISION_WORKORDER")
+@NamedQueries({
+		@NamedQuery(name = RevisionWorkOrder.GET_REVISION_WORKORDER, query = " from RevisionWorkOrder rwo where rwo.parent.id=? and rwo.egwStatus.code='APPROVED' order by rwo.id ") })
 public class RevisionWorkOrder extends WorkOrder {
 
-    private static final long serialVersionUID = 6435969238603453193L;
+	private static final long serialVersionUID = 6435969238603453193L;
+	public static final String GET_REVISION_WORKORDER = "GET_REVISION_WORKORDER";
 
-    @Override
-    public String getStateDetails() {
-        return "Revision WorkOrder : " + getWorkOrderNumber();
-    }
+	@Override
+	public String getStateDetails() {
+		return "Revision WorkOrder : " + getWorkOrderNumber();
+	}
 }

@@ -39,37 +39,70 @@
  */
 package org.egov.works.models.workorder;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import org.egov.asset.model.Asset;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-public class AssetsForWorkOrder extends BaseModel {
+@Entity
+@Table(name = "EGW_WORKORDER_ASSETS")
+@SequenceGenerator(name = AssetsForWorkOrder.SEQ_EGW_WORKORDER_ASSETS, sequenceName = AssetsForWorkOrder.SEQ_EGW_WORKORDER_ASSETS, allocationSize = 1)
+public class AssetsForWorkOrder extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1921548931869645727L;
-    private Asset asset;
-    private WorkOrderEstimate workOrderEstimate;
+	private static final long serialVersionUID = 1921548931869645727L;
 
-    public AssetsForWorkOrder() {
-    }
+	public static final String SEQ_EGW_WORKORDER_ASSETS = "SEQ_EGW_WORKORDER_ASSETS";
 
-    public AssetsForWorkOrder(final WorkOrderEstimate workOrderEstimate, final Asset asset) {
-        this.workOrderEstimate = workOrderEstimate;
-        this.asset = asset;
-    }
+	@Id
+	@GeneratedValue(generator = SEQ_EGW_WORKORDER_ASSETS, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public Asset getAsset() {
-        return asset;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ASSET_ID", nullable = false)
+	private Asset asset;
 
-    public void setAsset(final Asset asset) {
-        this.asset = asset;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "WORKORDER_ESTIMATE_ID", nullable = false)
+	private WorkOrderEstimate workOrderEstimate;
 
-    public WorkOrderEstimate getWorkOrderEstimate() {
-        return workOrderEstimate;
-    }
+	public AssetsForWorkOrder() {
+	}
 
-    public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
-        this.workOrderEstimate = workOrderEstimate;
-    }
+	public AssetsForWorkOrder(final WorkOrderEstimate workOrderEstimate, final Asset asset) {
+		this.workOrderEstimate = workOrderEstimate;
+		this.asset = asset;
+	}
+
+	public Asset getAsset() {
+		return asset;
+	}
+
+	public void setAsset(final Asset asset) {
+		this.asset = asset;
+	}
+
+	public WorkOrderEstimate getWorkOrderEstimate() {
+		return workOrderEstimate;
+	}
+
+	public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
+		this.workOrderEstimate = workOrderEstimate;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 }

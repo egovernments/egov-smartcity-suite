@@ -39,6 +39,30 @@
  */
 package org.egov.works.models.measurementbook;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
@@ -51,253 +75,318 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Entity
+@Table(name = "EGW_MB_HEADER")
+@NamedQueries({
+		@NamedQuery(name = MBHeader.GETAPPROVEDMBLIST, query = " select distinct mbh from MBHeader mbh where mbh.egwStatus.code = ? and trunc(mbh.state.createdDate) <= ? and mbh.isLegacyMB!=1 and mbh.workOrder.id = ? and mbh.workOrderEstimate.id = ? "),
+		@NamedQuery(name = MBHeader.GETPARTBILLLIST, query = " select distinct mbh from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and mbh.workOrder.id = ? and (reg is not null or reg.status.code != ?) and reg.billtype=? "),
+		@NamedQuery(name = MBHeader.GETALLBILLEDMBS, query = " select eb1.billdate from EgBillregister eb1 where exists(select mbh.egBillregister.id from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and mbh.workOrder.id = ? and reg is not null  and  upper(reg.status.code)!='CANCELLED' and eb1.id=mbh.egBillregister.id order by reg.billdate desc) and rownum=1 "),
+		@NamedQuery(name = MBHeader.GETALLBILLEDMBSFORWOESTIMATE, query = " select eb1.billdate from EgBillregister eb1 where exists(select mbh.egBillregister.id from MBHeader mbh left join mbh.egBillregister as reg where mbh.egwStatus.code = ? and mbh.workOrderEstimate.id = ? and reg is not null and  upper(reg.status.code)!='CANCELLED' and eb1.id=mbh.egBillregister.id order by reg.billdate desc) and rownum=1 "),
+		@NamedQuery(name = MBHeader.GETALLMBSFORBILLID, query = " from MBHeader mbh where mbh.egwStatus.code = ? and mbh.egBillregister is not null and mbh.egBillregister.id = ? "),
+		@NamedQuery(name = MBHeader.GETMBBYWORKORDERESTID, query = " from MBHeader mbh where mbh.workOrderEstimate.id=? and mbh.egwStatus.code!=? and mbh.workOrderEstimate.id not in (select mb.workOrderEstimate.id from MBHeader mb where mb.egBillregister.billtype=? and mb.egBillregister.status.code!=? ) "),
+		@NamedQuery(name = MBHeader.GETMBWITHOUTLEGACYBYWOESTID, query = " from MBHeader mbh where mbh.workOrderEstimate.id=? and mbh.egwStatus.code!=? and mbh.isLegacyMB!=1 and mbh.workOrderEstimate.id not in (select mb.workOrderEstimate.id from MBHeader mb where mb.egBillregister.billtype=? and mb.egBillregister.status.code!=?)  "),
+		@NamedQuery(name = MBHeader.GETALLMBHEADERSBYBILLID, query = " Select distinct mbHeader from MBHeader mbHeader where mbHeader.egBillregister.id=?  "),
+		@NamedQuery(name = MBHeader.GETALLMBNOSBYWORKESTIMATE, query = " Select distinct mbHeader.mbRefNo from MBHeader mbHeader where mbHeader.egwStatus.code = ? and mbHeader.workOrderEstimate.id=? "),
+		@NamedQuery(name = MBHeader.TOTALMBAMOUNTOFMBS, query = " select sum(mbAmount) from MBHeader where egwStatus.code != 'CANCELLED' and  workOrderEstimate.workOrder.id=? and  workOrderEstimate.estimate.id= ? "),
+		@NamedQuery(name = MBHeader.TOTALMBAMOUNTOFMBSFORREVISIONWO, query = " select sum(mbAmount) from MBHeader where egwStatus.code != 'CANCELLED' and  workOrderEstimate.workOrder.parent.id=? and  workOrderEstimate.estimate.parent.id= ?  "),
+		@NamedQuery(name = MBHeader.GETAMOUNTFORAPPROVEDREVISIONWO, query = " select sum(wo.workOrderAmount) from WorkOrder wo where wo.parent is not null and wo.egwStatus.code='APPROVED' and wo.parent.id=? "),
+		@NamedQuery(name = MBHeader.GETALLAPPROVEDMBHEADERS, query = " select distinct mbh from MBHeader mbh where mbh.egwStatus.code = ? and mbh.workOrder.id = ? and mbh.workOrderEstimate.estimate.id = ? ") })
+@SequenceGenerator(name = MBHeader.SEQ_EGW_MB_HEADER, sequenceName = MBHeader.SEQ_EGW_MB_HEADER, allocationSize = 1)
 public class MBHeader extends StateAware {
 
-    private static final long serialVersionUID = 121631467636260459L;
+	private static final long serialVersionUID = 121631467636260459L;
 
-    public enum MeasurementBookStatus {
-        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
-    }
+	public enum MeasurementBookStatus {
+		NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
+	}
 
-    public enum Actions {
-        SAVE, SUBMIT_FOR_APPROVAL, REJECT, CANCEL, APPROVAL;
+	public enum Actions {
+		SAVE, SUBMIT_FOR_APPROVAL, REJECT, CANCEL, APPROVAL;
 
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
+		@Override
+		public String toString() {
+			return name().toLowerCase();
+		}
+	}
 
-    private Long id;
+	public static final String SEQ_EGW_MB_HEADER = "SEQ_EGW_MB_HEADER";
 
-    @Required(message = "mbheader.workorder.null")
-    private WorkOrder workOrder;
-    @Required(message = "mbheader.mbrefno.null")
-    @Length(max = 50, message = "mbheader.mbrefno.length")
-    private String mbRefNo;
+	public static final String GETAPPROVEDMBLIST = "getApprovedMBList";
+	public static final String GETPARTBILLLIST = "getPartBillList";
+	public static final String GETALLBILLEDMBS = "getAllBilledMBs";
+	public static final String GETALLBILLEDMBSFORWOESTIMATE = "getAllBilledMBsForWOEstimate";
+	public static final String GETALLMBSFORBILLID = "getAllMBsForBillId";
+	public static final String GETMBBYWORKORDERESTID = "getMBbyWorkOrderEstID";
+	public static final String GETMBWITHOUTLEGACYBYWOESTID = "getMBWithoutLegacyByWOEstID";
+	public static final String GETALLMBHEADERSBYBILLID = "getAllMBHeadersbyBillId";
+	public static final String GETALLMBNOSBYWORKESTIMATE = "getAllMBNosbyWorkEstimate";
+	public static final String TOTALMBAMOUNTOFMBS = "totalMBAmountOfMBs";
+	public static final String TOTALMBAMOUNTOFMBSFORREVISIONWO = "totalMBAmountOfMBsForRevisionWO";
+	public static final String GETAMOUNTFORAPPROVEDREVISIONWO = "getAmountForApprovedRevisionWO";
+	public static final String GETALLAPPROVEDMBHEADERS = "getAllApprovedMBHeaders";
 
-    @Length(max = 400, message = "mbheader.contractorComments.length")
-    private String contractorComments;
-    @Required(message = "mbheader.mbdate.null")
-    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "mbheader.mbDate.futuredate")
-    @DateFormat(message = "invalid.fieldvalue.mbDate")
-    private Date mbDate;
-    // @Required(message = "mbheader.mbabstract.null")
-    @Length(max = 400, message = "mbheader.mbabstract.length")
-    private String mbAbstract;
-    @Required(message = "mbheader.fromPageNo.null")
-    @GreaterThan(value = 0, message = "mbheader.fromPageNo.non.negative")
-    private Integer fromPageNo;
-    @Min(value = 0, message = "mbheader.toPageNo.non.negative")
-    private Integer toPageNo;
+	@Id
+	@GeneratedValue(generator = SEQ_EGW_MB_HEADER, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    private WorkOrderEstimate workOrderEstimate;
-    private Integer approverUserId;
-    private ContractorBillRegister egBillregister;
-    @Valid
-    private List<MBDetails> mbDetails = new LinkedList<MBDetails>();
-    private String owner;
-    private List<String> mbActions = new ArrayList<String>();
-    private EgwStatus egwStatus;
-    private boolean isLegacyMB;
-    private BigDecimal mbAmount;
-    private Date approvedDate;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "WORKORDER_ID")
+	@Required(message = "mbheader.workorder.null")
+	private WorkOrder workOrder;
 
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (workOrder != null && (workOrder.getId() == null || workOrder.getId() == 0 || workOrder.getId() == -1))
-            validationErrors.add(new ValidationError("workOrder", "mbheader.workorder.null"));
+	@Required(message = "mbheader.mbrefno.null")
+	@Length(max = 50, message = "mbheader.mbrefno.length")
+	@Column(name = "MB_REFNO")
+	private String mbRefNo;
 
-        if (fromPageNo != null && toPageNo != null && fromPageNo > toPageNo)
-            validationErrors.add(new ValidationError("toPageNo", "mbheader.toPageNo.invalid"));
-        if (mbDate != null && workOrder != null && workOrder.getWorkOrderDate() != null
-                && mbDate.before(workOrder.getWorkOrderDate()))
-            validationErrors.add(new ValidationError("mbDate", "mbheader.mbDate.invalid"));
+	@Length(max = 400, message = "mbheader.contractorComments.length")
+	@Column(name = "CONTRACTOR_COMMENTS")
+	private String contractorComments;
 
-        return validationErrors;
-    }
+	@Required(message = "mbheader.mbdate.null")
+	@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "mbheader.mbDate.futuredate")
+	@DateFormat(message = "invalid.fieldvalue.mbDate")
+	@Column(name = "MB_DATE")
+	private Date mbDate;
 
-    public void setWorkOrder(final WorkOrder workOrder) {
-        this.workOrder = workOrder;
-    }
+	// @Required(message = "mbheader.mbabstract.null")
+	@Length(max = 400, message = "mbheader.mbabstract.length")
+	@Column(name = "ABSTRACT")
+	private String mbAbstract;
 
-    public WorkOrder getWorkOrder() {
-        return workOrder;
-    }
+	@Required(message = "mbheader.fromPageNo.null")
+	@GreaterThan(value = 0, message = "mbheader.fromPageNo.non.negative")
+	@Column(name = "FROM_PAGE_NO")
+	private Integer fromPageNo;
 
-    public void setMbRefNo(final String mbRefNo) {
-        this.mbRefNo = mbRefNo;
-    }
+	@Min(value = 0, message = "mbheader.toPageNo.non.negative")
+	@Column(name = "TO_PAGE_NO")
+	private Integer toPageNo;
 
-    public String getMbRefNo() {
-        return mbRefNo;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "WORKORDER_ESTIMATE_ID")
+	private WorkOrderEstimate workOrderEstimate;
 
-    public void setMbDate(final Date mbDate) {
-        this.mbDate = mbDate;
-    }
+	@Transient
+	private Integer approverUserId;
 
-    public Date getMbDate() {
-        return mbDate;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BILLREGISTER_ID")
+	private ContractorBillRegister egBillregister;
 
-    public void setMbAbstract(final String mbAbstract) {
-        this.mbAbstract = mbAbstract;
-    }
+	@Valid
+	@JsonIgnore
+	@OneToMany(mappedBy = "mbHeader", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MBDetails.class)
+	private List<MBDetails> mbDetails = new LinkedList<MBDetails>();
 
-    public String getMbAbstract() {
-        return mbAbstract;
-    }
+	@Transient
+	private String owner;
 
-    public Integer getFromPageNo() {
-        return fromPageNo;
-    }
+	@Transient
+	private List<String> mbActions = new ArrayList<String>();
 
-    public void setFromPageNo(final Integer fromPageNo) {
-        this.fromPageNo = fromPageNo;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STATUS_ID")
+	private EgwStatus egwStatus;
 
-    public Integer getToPageNo() {
-        return toPageNo;
-    }
+	@Column(name = "IS_LEGACY_MB")
+	private boolean isLegacyMB;
 
-    public void setToPageNo(final Integer toPageNo) {
-        this.toPageNo = toPageNo;
-    }
+	@Column(name = "MB_AMOUNT")
+	private BigDecimal mbAmount;
 
-    public String getContractorComments() {
-        return contractorComments;
-    }
+	@Column(name = "APPROVED_DATE")
+	private Date approvedDate;
 
-    public void setContractorComments(final String contractorComments) {
-        this.contractorComments = contractorComments;
-    }
+	public List<ValidationError> validate() {
+		final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+		if (workOrder != null && (workOrder.getId() == null || workOrder.getId() == 0 || workOrder.getId() == -1))
+			validationErrors.add(new ValidationError("workOrder", "mbheader.workorder.null"));
 
-    public List<MBDetails> getMbDetails() {
-        return mbDetails;
-    }
+		if (fromPageNo != null && toPageNo != null && fromPageNo > toPageNo)
+			validationErrors.add(new ValidationError("toPageNo", "mbheader.toPageNo.invalid"));
+		if (mbDate != null && workOrder != null && workOrder.getWorkOrderDate() != null
+				&& mbDate.before(workOrder.getWorkOrderDate()))
+			validationErrors.add(new ValidationError("mbDate", "mbheader.mbDate.invalid"));
 
-    public void setMbDetails(final List<MBDetails> mbDetails) {
-        this.mbDetails = mbDetails;
-    }
+		return validationErrors;
+	}
 
-    public void addMbDetails(final MBDetails mbDetails) {
-        this.mbDetails.add(mbDetails);
-    }
+	public void setWorkOrder(final WorkOrder workOrder) {
+		this.workOrder = workOrder;
+	}
 
-    // to show in inbox
-    @Override
-    public String getStateDetails() {
-        return "MbHeader : " + getMbRefNo();
-    }
+	public WorkOrder getWorkOrder() {
+		return workOrder;
+	}
 
-    public ContractorBillRegister getEgBillregister() {
-        return egBillregister;
-    }
+	public void setMbRefNo(final String mbRefNo) {
+		this.mbRefNo = mbRefNo;
+	}
 
-    public void setEgBillregister(final ContractorBillRegister egBillregister) {
-        this.egBillregister = egBillregister;
-    }
+	public String getMbRefNo() {
+		return mbRefNo;
+	}
 
-    public Integer getApproverUserId() {
-        return approverUserId;
-    }
+	public void setMbDate(final Date mbDate) {
+		this.mbDate = mbDate;
+	}
 
-    public void setApproverUserId(final Integer approverUserId) {
-        this.approverUserId = approverUserId;
-    }
+	public Date getMbDate() {
+		return mbDate;
+	}
 
-    public WorkOrderEstimate getWorkOrderEstimate() {
-        return workOrderEstimate;
-    }
+	public void setMbAbstract(final String mbAbstract) {
+		this.mbAbstract = mbAbstract;
+	}
 
-    public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
-        this.workOrderEstimate = workOrderEstimate;
-    }
+	public String getMbAbstract() {
+		return mbAbstract;
+	}
 
-    public String getOwner() {
-        return owner;
-    }
+	public Integer getFromPageNo() {
+		return fromPageNo;
+	}
 
-    public void setOwner(final String owner) {
-        this.owner = owner;
-    }
+	public void setFromPageNo(final Integer fromPageNo) {
+		this.fromPageNo = fromPageNo;
+	}
 
-    public List<String> getMbActions() {
-        return mbActions;
-    }
+	public Integer getToPageNo() {
+		return toPageNo;
+	}
 
-    public void setMbActions(final List<String> mbActions) {
-        this.mbActions = mbActions;
-    }
+	public void setToPageNo(final Integer toPageNo) {
+		this.toPageNo = toPageNo;
+	}
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
-    }
+	public String getContractorComments() {
+		return contractorComments;
+	}
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
-    }
+	public void setContractorComments(final String contractorComments) {
+		this.contractorComments = contractorComments;
+	}
 
-    public boolean getIsLegacyMB() {
-        return isLegacyMB;
-    }
+	public List<MBDetails> getMbDetails() {
+		return mbDetails;
+	}
 
-    public void setIsLegacyMB(final boolean isLegacyMB) {
-        this.isLegacyMB = isLegacyMB;
-    }
+	public void setMbDetails(final List<MBDetails> mbDetails) {
+		this.mbDetails = mbDetails;
+	}
 
-    public BigDecimal getMbAmount() {
-        return mbAmount;
-    }
+	public void addMbDetails(final MBDetails mbDetails) {
+		this.mbDetails.add(mbDetails);
+	}
 
-    public void setMbAmount(final BigDecimal mbAmount) {
-        this.mbAmount = mbAmount;
-    }
+	// to show in inbox
+	@Override
+	public String getStateDetails() {
+		return "MbHeader : " + getMbRefNo();
+	}
 
-    @Override
-    public String toString() {
-        return "MBHeader ( Id : " + getId() + "MB Ref No: " + mbRefNo + ")";
-    }
+	public ContractorBillRegister getEgBillregister() {
+		return egBillregister;
+	}
 
-    public BigDecimal getTotalMBAmount() {
-        double amount = 0.0;
-        BigDecimal resultAmount = BigDecimal.ZERO;
-        for (final MBDetails mbd : mbDetails) {
-            if (mbd.getWorkOrderActivity().getActivity().getNonSor() == null)
-                amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity()
-                        * mbd.getWorkOrderActivity().getConversionFactor();
-            else
-                amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity();
-            resultAmount = resultAmount.add(BigDecimal.valueOf(amount));
-        }
-        return resultAmount;
-    }
+	public void setEgBillregister(final ContractorBillRegister egBillregister) {
+		this.egBillregister = egBillregister;
+	}
 
-    public Date getApprovedDate() {
-        return approvedDate;
-    }
+	public Integer getApproverUserId() {
+		return approverUserId;
+	}
 
-    public void setApprovedDate(final Date approvedDate) {
-        this.approvedDate = approvedDate;
-    }
+	public void setApproverUserId(final Integer approverUserId) {
+		this.approverUserId = approverUserId;
+	}
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	public WorkOrderEstimate getWorkOrderEstimate() {
+		return workOrderEstimate;
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
+		this.workOrderEstimate = workOrderEstimate;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(final String owner) {
+		this.owner = owner;
+	}
+
+	public List<String> getMbActions() {
+		return mbActions;
+	}
+
+	public void setMbActions(final List<String> mbActions) {
+		this.mbActions = mbActions;
+	}
+
+	public EgwStatus getEgwStatus() {
+		return egwStatus;
+	}
+
+	public void setEgwStatus(final EgwStatus egwStatus) {
+		this.egwStatus = egwStatus;
+	}
+
+	public boolean getIsLegacyMB() {
+		return isLegacyMB;
+	}
+
+	public void setIsLegacyMB(final boolean isLegacyMB) {
+		this.isLegacyMB = isLegacyMB;
+	}
+
+	public BigDecimal getMbAmount() {
+		return mbAmount;
+	}
+
+	public void setMbAmount(final BigDecimal mbAmount) {
+		this.mbAmount = mbAmount;
+	}
+
+	@Override
+	public String toString() {
+		return "MBHeader ( Id : " + getId() + "MB Ref No: " + mbRefNo + ")";
+	}
+
+	public BigDecimal getTotalMBAmount() {
+		double amount = 0.0;
+		BigDecimal resultAmount = BigDecimal.ZERO;
+		for (final MBDetails mbd : mbDetails) {
+			if (mbd.getWorkOrderActivity().getActivity().getNonSor() == null)
+				amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity()
+						* mbd.getWorkOrderActivity().getConversionFactor();
+			else
+				amount = mbd.getWorkOrderActivity().getApprovedRate() * mbd.getQuantity();
+			resultAmount = resultAmount.add(BigDecimal.valueOf(amount));
+		}
+		return resultAmount;
+	}
+
+	public Date getApprovedDate() {
+		return approvedDate;
+	}
+
+	public void setApprovedDate(final Date approvedDate) {
+		this.approvedDate = approvedDate;
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
 }

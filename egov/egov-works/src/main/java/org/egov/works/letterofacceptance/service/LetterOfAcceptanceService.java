@@ -195,9 +195,9 @@ public class LetterOfAcceptanceService {
         workOrderEstimate.setEstimate(estimateService.getAbstractEstimateByEstimateNumberAndStatus(workOrder.getEstimateNumber()));
         workOrderEstimate.setEstimateWOAmount(workOrder.getWorkOrderAmount());
         workOrderEstimate.setCreatedBy(securityUtils.getCurrentUser());
-        workOrderEstimate.setModifiedBy(securityUtils.getCurrentUser());
+        workOrderEstimate.setLastModifiedBy(securityUtils.getCurrentUser());
         workOrderEstimate.setCreatedDate(new Date());
-        workOrderEstimate.setModifiedDate(new Date());
+        workOrderEstimate.setLastModifiedDate(new Date());
         workOrder.addWorkOrderEstimate(workOrderEstimate);
     }
 

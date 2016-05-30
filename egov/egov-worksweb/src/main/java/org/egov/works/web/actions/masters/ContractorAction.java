@@ -41,6 +41,7 @@ package org.egov.works.web.actions.masters;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -60,6 +61,8 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.services.PersistenceService;
@@ -178,6 +181,7 @@ public class ContractorAction extends SearchFormAction {
     @Action(value = "/masters/contractor-save")
     public String save() {
         populateContractorDetails(mode);
+        contractorService.applyAuditing(contractor);
         contractor = contractorService.persist(contractor);
         if (mode == null || mode.equals(""))
             contractorService.createAccountDetailKey(contractor);
@@ -217,7 +221,13 @@ public class ContractorAction extends SearchFormAction {
     protected void populateContractorDetails(final String mode) {
         contractor.getContractorDetails().clear();
 
-        for (final ContractorDetail contractorDetail : actionContractorDetails)
+        for (final ContractorDetail contractorDetail : actionContractorDetails){
+        	if(contractorDetail!=null){
+        		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        		validationErrors = contractorDetail.validate();
+        		if(validationErrors!=null)
+        			throw new ValidationException(validationErrors);
+        	}
             if (validContractorDetail(contractorDetail)) {
                 contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 contractorDetail.setStatus(egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
@@ -228,6 +238,7 @@ public class ContractorAction extends SearchFormAction {
                 contractorDetail.setContractor(contractor);
                 if (mode.equals("edit"))
                     setPrimaryDetails(contractorDetail);
+                contractorService.applyAuditing(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
             } else if (contractorDetail != null) {
                 if (contractorDetail.getDepartment() == null || contractorDetail.getDepartment().getId() == null)
@@ -245,8 +256,10 @@ public class ContractorAction extends SearchFormAction {
                 contractorDetail.setContractor(contractor);
                 if (mode.equals("edit"))
                     setPrimaryDetails(contractorDetail);
+                contractorService.applyAuditing(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
             }
+        }
     }
 
     protected boolean validContractorDetail(final ContractorDetail contractorDetail) {

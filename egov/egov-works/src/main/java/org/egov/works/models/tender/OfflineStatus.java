@@ -39,56 +39,104 @@
  */
 package org.egov.works.models.tender;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
-import org.egov.infstr.models.BaseModel;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-public class OfflineStatus extends BaseModel {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-    private static final long serialVersionUID = -1056415004063322298L;
-    @NotEmpty(message = "ws.name.is.null")
-    private String objectType;
-    @NotNull(message = "ws.status.is.null")
-    private EgwStatus egwStatus;
-    @NotNull(message = "ws.statusDate.is.null")
-    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.statusDate")
-    private Date statusDate;
-    @NotNull(message = "ws.objectId.is.null")
-    private Long objectId;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.ValidateDate;
+import org.hibernate.validator.constraints.NotEmpty;
 
-    public String getObjectType() {
-        return objectType;
-    }
+@Entity
+@Table(name = "EGW_OFFLINE_STATUS")
+@NamedQueries({
+		@NamedQuery(name = OfflineStatus.GETSTATUSBYOBJECTID, query = " from OfflineStatus st where st.objectId=? and st.objectType=? order by id "),
+		@NamedQuery(name = OfflineStatus.GETSTATUSDATEBYOBJECTID_TYPE_DESC, query = " from OfflineStatus st where st.objectId=? and st.objectType=? and st.egwStatus.description=? order by id "),
+		@NamedQuery(name = OfflineStatus.GETMAXSTATUSBYOBJECTID, query = " from OfflineStatus st where st.objectId=? and st.id=(select max(id) from OfflineStatus where objectId=?) and st.objectType=? "),
+		@NamedQuery(name = OfflineStatus.GETMAXSTATUSBYOBJECTID_TYPE, query = " from OfflineStatus st where st.objectId=? and st.id=(select max(id) from OfflineStatus where objectId=? and objectType=?) and st.objectType=? ") })
+@SequenceGenerator(name = OfflineStatus.SEQ_EGW_OFFLINE_STATUS, sequenceName = OfflineStatus.SEQ_EGW_OFFLINE_STATUS, allocationSize = 1)
+public class OfflineStatus extends AbstractAuditable {
 
-    public void setObjectType(final String objectType) {
-        this.objectType = objectType;
-    }
+	private static final long serialVersionUID = -1056415004063322298L;
+	public static final String SEQ_EGW_OFFLINE_STATUS = "SEQ_EGW_OFFLINE_STATUS";
+	public static final String GETSTATUSBYOBJECTID = "getStatusByObjectId";
+	public static final String GETSTATUSDATEBYOBJECTID_TYPE_DESC = "getStatusDateByObjectId_Type_Desc";
+	public static final String GETMAXSTATUSBYOBJECTID = "getmaxStatusByObjectId";
+	public static final String GETMAXSTATUSBYOBJECTID_TYPE = "getmaxStatusByObjectId_Type";
 
-    public Date getStatusDate() {
-        return statusDate;
-    }
+	@Id
+	@GeneratedValue(generator = SEQ_EGW_OFFLINE_STATUS, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public void setStatusDate(final Date statusDate) {
-        this.statusDate = statusDate;
-    }
+	@NotEmpty(message = "ws.name.is.null")
+	@Column(name = "OBJECT_TYPE")
+	private String objectType;
 
-    public Long getObjectId() {
-        return objectId;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STATUS_ID")
+	@NotNull(message = "ws.status.is.null")
+	private EgwStatus egwStatus;
 
-    public void setObjectId(final Long objectId) {
-        this.objectId = objectId;
-    }
+	@Column(name = "STATUS_DATE")
+	@NotNull(message = "ws.statusDate.is.null")
+	@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.statusDate")
+	private Date statusDate;
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
-    }
+	@Column(name = "OBJECT_ID")
+	@NotNull(message = "ws.objectId.is.null")
+	private Long objectId;
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
-    }
+	public String getObjectType() {
+		return objectType;
+	}
+
+	public void setObjectType(final String objectType) {
+		this.objectType = objectType;
+	}
+
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(final Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	public Long getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(final Long objectId) {
+		this.objectId = objectId;
+	}
+
+	public EgwStatus getEgwStatus() {
+		return egwStatus;
+	}
+
+	public void setEgwStatus(final EgwStatus egwStatus) {
+		this.egwStatus = egwStatus;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 }
