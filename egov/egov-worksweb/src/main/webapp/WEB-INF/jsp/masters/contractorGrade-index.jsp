@@ -111,8 +111,7 @@
 	
 <div class="row text-center">
 	<div class="add-margin">
-		<input type="submit" name="MODIFY" Class="btn btn-primary" value="MODIFY" id="MODIFY" onclick="modifyGradeData();" /> &nbsp;
-		<input type="submit" name="VIEW" Class="btn btn-primary" value="VIEW" id="MODIFY" onclick="viewGradeData();" /> &nbsp;
+		<input type="submit" name="createNewGrade" Class="btn btn-primary" value="Create new Grade" id="createNewGrade" onclick="createNewContractorGrade();" /> &nbsp;
 		<input type="submit" name="closeButton" id="closeButton" value="Close" class="btn btn-default" onclick="window.close();" />
 	</div>
 </div>

@@ -84,3 +84,7 @@ function validateContractorGradeFormAndSubmit(){
     }
     return true;
 }
+
+function createNewContractorGrade() {
+	window.location = "/egworks/masters/contractorGrade-newform.action";
+}

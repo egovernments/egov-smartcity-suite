@@ -46,16 +46,15 @@
 <script type="text/javascript">
      
 	function validate(){	
-		
-		document.forms[0].action='<%=request.getContextPath()%>/masters/contractorGrade-searchGradeDetails.action?mode=search';
-		
-		document.forms[0].submit();
+		var mode=document.getElementById('mode').value;
+		document.searchGradeForm.action = '${pageContext.request.contextPath}/masters/contractorGrade-searchGradeDetails.action?mode='+mode;
+		document.searchGradeForm.submit();
 		
 	}
 	</script>
 <body >
        <div class="new-page-header">
-			Search Contractor Grade
+			<s:text name="contractorgrade.search.contractorgrade" />
 		</div>
 		<s:if test="%{hasErrors()}">
        		 <div class="alert alert-danger">
@@ -68,7 +67,7 @@
         		<s:actionmessage theme="simple"/>
         	</div>
     	</s:if>
-    	
+    	<input type="hidden" id="mode" value="${mode}" />
 		 <s:form name="searchGradeForm" id="searchGradeForm" cssClass="form-horizontal form-groups-bordered" action="/masters/contractorGrade-searchGradeDetails.action" theme="simple">			
 			
 			  <div class="panel panel-primary" data-collapsed="0"	style="text-align: left">
@@ -117,18 +116,16 @@
 					</div>
 			</div>
 			
-			
 			<s:if test="%{searchResult.fullListSize != 0 && displData=='yes'}">
 				<div class="row report-section">
 				<div class="col-md-12 table-header text-left">
 				  <s:text name="title.search.result" />
 				</div>
-				
 				<div class="col-md-12 report-table-container">
 				<display:table name="searchResult" pagesize="30" uid="currentRow"
 					cellpadding="0" cellspacing="0" requestURI=""
 					class="table table-hover">
-					
+					<input type="hidden" id="mode" name="mode">
 					<display:column headerClass="pagetableth" class="pagetabletd" 
 						title="Sl.No" titleKey="column.title.SLNo"
 						style="width:4%;text-align:right" >
@@ -156,20 +153,25 @@
 						<s:text name="contractor.format.number" >
 				   	<s:param name="rate" value='%{#attr.currentRow.maxAmount}' /></s:text>
 					</display:column>
-					
-					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Edit/View" style="width:13%;text-align:left" >
-						
-									<a class="btn btn-default" href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-										<s:text name="sor.edit" /></a>
-									
-									<a class="btn btn-default" href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-										<s:text name="sor.view" />
-									</a>
-							
-					</display:column>
-					
-				</display:table>
+					<s:if test="%{mode == 'view'}">
+						<display:column headerClass="pagetableth" class="pagetabletd"
+							title="View" style="width:13%;text-align:left">
+							<a class="btn btn-default"
+								href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
+								<s:text name="sor.view" />
+							</a>
+						</display:column>
+					</s:if>
+					<s:else>
+						<display:column headerClass="pagetableth" class="pagetabletd"
+							title="Edit" style="width:13%;text-align:left">
+							<a class="btn btn-default"
+								href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+								<s:text name="sor.edit" />
+							</a>
+						</display:column>
+					</s:else>
+					</display:table>
 				</div>
 				</div>
 				</s:if>
