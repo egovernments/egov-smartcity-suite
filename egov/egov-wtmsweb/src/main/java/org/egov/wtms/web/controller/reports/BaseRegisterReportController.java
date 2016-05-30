@@ -133,15 +133,11 @@ public class BaseRegisterReportController {
                 .findByApplicationNumberOrConsumerCode(consumerCode);
         Installment currInstallment = null;
         if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
-        {
             currInstallment = connectionDemandService.getCurrentInstallment(
                     WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-        }
         else
-        {
             currInstallment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                     WaterTaxConstants.MONTHLY, new Date());
-        }
 
         return currInstallment.getDescription();
     }

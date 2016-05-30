@@ -39,8 +39,9 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import org.egov.wtms.application.entity.BaseRegisterResult;
 import java.lang.reflect.Type;
+
+import org.egov.wtms.application.entity.BaseRegisterResult;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,19 +51,20 @@ import com.google.gson.JsonSerializer;
 public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterResult> {
 
     @Override
-    public JsonElement serialize(BaseRegisterResult baseRegisterResultObj, Type type, JsonSerializationContext jsc) {
-        // TODO Auto-generated method stub
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("consumerNo", null!=baseRegisterResultObj.getConsumerNo()?baseRegisterResultObj.getConsumerNo().toString():"");
-        jsonObject.addProperty("assessmentNo", null!=baseRegisterResultObj.getAssementNo()?baseRegisterResultObj.getAssementNo().toString():"");
-        jsonObject.addProperty("ownerName", null!=baseRegisterResultObj.getOwnerName()?baseRegisterResultObj.getOwnerName().toString():"");
-        jsonObject.addProperty("doorNo", null!=baseRegisterResultObj.getDoorNo()?baseRegisterResultObj.getDoorNo().toString():"");
-        jsonObject.addProperty("categoryType", null!=baseRegisterResultObj.getCategoryType()?baseRegisterResultObj.getCategoryType().toString():"");
-        jsonObject.addProperty("period", null!=baseRegisterResultObj.getPeriod()?baseRegisterResultObj.getPeriod().toString():"");
+    public JsonElement serialize(final BaseRegisterResult baseRegisterResultObj, final Type type,
+            final JsonSerializationContext jsc) {
+       
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("consumerNo", null != baseRegisterResultObj.getConsumerNo() ? baseRegisterResultObj.getConsumerNo() : "");
+        jsonObject.addProperty("assessmentNo", null != baseRegisterResultObj.getAssementNo() ? baseRegisterResultObj.getAssementNo() : "");
+        jsonObject.addProperty("ownerName", null != baseRegisterResultObj.getOwnerName() ? baseRegisterResultObj.getOwnerName(): "");
+        jsonObject.addProperty("doorNo", null != baseRegisterResultObj.getDoorNo() ? baseRegisterResultObj.getDoorNo().toString(): "");
+        jsonObject.addProperty("categoryType", null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getCategoryType() : "");
+        jsonObject.addProperty("period", null != baseRegisterResultObj.getPeriod() ? baseRegisterResultObj.getPeriod() : "");
         jsonObject.addProperty("arrears", baseRegisterResultObj.getArrears());
         jsonObject.addProperty("current", baseRegisterResultObj.getCurrent());
-        jsonObject.addProperty("penalty",null!= baseRegisterResultObj.getPenalty()?baseRegisterResultObj.getPenalty().toString():"");
-        jsonObject.addProperty("totalDemand",baseRegisterResultObj.getTotalDemand());
+        jsonObject.addProperty("penalty", null != baseRegisterResultObj.getPenalty() ? baseRegisterResultObj.getPenalty().toString() : "");
+        jsonObject.addProperty("totalDemand", baseRegisterResultObj.getTotalDemand());
         return jsonObject;
     }
 

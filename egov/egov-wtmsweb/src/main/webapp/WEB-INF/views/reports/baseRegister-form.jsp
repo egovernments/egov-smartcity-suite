@@ -53,7 +53,7 @@
 
 		<form:form class="form-horizontal form-groups-bordered"
 			id="baseregisterform" modelAttribute="baseRegisterResult"
-			method="post" >
+			method="post">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -66,7 +66,8 @@
 								code="lbl.revenueWard" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select id="ward" name="ward" path=""
-								cssClass="form-control" cssErrorClass="form-control error" required="required">
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -93,8 +94,7 @@
 		<div id="baseRegister-header" class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
-			<spring:message code="lbl.baseRegister.report.details" />
-			:
+			<spring:message code="lbl.baseRegister.report.details" />:
 			<c:out value="${currDate}"></c:out>
 		</div>
 		<table
@@ -118,7 +118,8 @@
 <script type="text/javascript"
 	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"
+	type="text/javascript"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script

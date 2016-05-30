@@ -86,7 +86,11 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "period", "title": "Period"},
 						  { "data" : "arrears", "title": "Arrears", class : 'text-right'},
 						  { "data" : "current", "title": "Current", class : 'text-right'},
-						  { "data" : "penalty", "title": "Penalty"},
+						  { "data" : "penalty", "title": "Penalty", class : 'text-center',
+							  "render": function(data, type, row){
+								  return (!data || parseInt(data)==0 ? "-" : data);
+							  }
+						  },
 						  { "data" : "totalDemand", "title": "Total Demand", class : 'text-right'},
 						  ],
 						  "aaSorting": [] 
