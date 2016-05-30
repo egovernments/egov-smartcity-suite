@@ -89,7 +89,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -355,7 +354,7 @@ public class CollectionCommon {
 
         final String templateName = getReceiptTemplateName(receiptType, serviceCode);
         LOGGER.info(" template name : " + templateName);
-        final Map reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<String, Object>(0);
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
 
         if (receiptType == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
@@ -400,7 +399,7 @@ public class CollectionCommon {
                 persistenceService));
 
         final String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
-        final Map reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<String, Object>(0);
         reportParams.put("EGOV_COMMON", egovCommon);
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
