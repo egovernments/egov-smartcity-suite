@@ -46,6 +46,17 @@ jQuery(document).ready(function(){
 		jQuery('#sorSearch').val('');
 	});
 	
+	$isServiceVATRequired = $('#isServiceVATRequired').val();
+	
+	if($isServiceVATRequired == 'true') {
+		$('#serviceVatHeader').removeAttr('hidden');
+		$('#vatAmountHeader').removeAttr('hidden');
+		$('.serviceTaxPerc').removeAttr('hidden');
+		$('.vatAmount').removeAttr('hidden');
+		$('.emptytd').removeAttr('hidden');
+		$('.serviceVatAmt').removeAttr('hidden');
+	}
+	
 	var sorSearch = new Bloodhound({
 	    datumTokenizer: function (datum) {
 	        return Bloodhound.tokenizers.whitespace(datum.value);
@@ -91,7 +102,7 @@ jQuery(document).ready(function(){
 			}
 		});
 		if(flag) {
-			bootbox.alert("Sor Already added.", function() {
+			bootbox.alert("The SOR is already added", function() {
 				jQuery('#sorSearch').val('');
 			});
 		}
@@ -198,6 +209,11 @@ function deleteLineEstimate(obj) {
 
 	if(rowcount==2) {
 		jQuery('.hidden-input').val('');
+		$('#quantity_0').val('');
+		$('.amount_0').html('');
+		$('#vat_0').val('');
+		$('.vatAmount_0').html('');
+		$('.total_0').html('');
 		jQuery('#estimateRow').hide();
 		jQuery('#message').show();
 	} else {
@@ -235,30 +251,57 @@ function deleteLineEstimate(obj) {
 		idx++;
 	});
 	calculateEstimateAmountTotal();
+	calculateVatAmountTotal();
+	total();
 	return true;
 }
 
 function calculateEstimateAmount(currentObj) {
 	rowcount = getRow(currentObj).rowIndex - 2;
 	var rate = parseFloat($('.rate_' + rowcount).html().trim());
-	$('.amount_' + rowcount).html(parseFloat($(currentObj).val() * rate).toFixed(2));
-	$('.total_' + rowcount).html(parseFloat($(currentObj).val() * rate).toFixed(2));
+	var amount = parseFloat($(currentObj).val() * rate).toFixed(2);
+	var vatAmount = parseFloat(($('#vat_' + rowcount).val() * amount) / 100).toFixed(2);
+	$('.amount_' + rowcount).html(amount);
+	$('.vatAmount_' + rowcount).html(vatAmount);
+	$('.total_' + rowcount).html(parseFloat(parseFloat(amount) + parseFloat(vatAmount)).toFixed(2));
 	calculateEstimateAmountTotal();
+	calculateVatAmountTotal();
+	total();
+}
+
+function calculateVatAmount(currentObj) {
+	rowcount = getRow(currentObj).rowIndex - 2;
+	var estimatedAmount = parseFloat($('.amount_' + rowcount).html().trim());
+	var vatAmount = parseFloat(($(currentObj).val() * estimatedAmount) / 100).toFixed(2);
+	$('.vatAmount_' + rowcount).html(vatAmount);
+	$('.total_' + rowcount).html(parseFloat(parseFloat(estimatedAmount) + parseFloat(vatAmount)).toFixed(2));
+	calculateVatAmountTotal();
 	total();
 }
 
 function calculateEstimateAmountTotal() {
 	var total = 0;
 	$('.amount').each(function() {
-		total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
 	});
 	$('#sorEstimateTotal').html(total);
+}
+
+function calculateVatAmountTotal() {
+	var total = 0;
+	$('.vatAmt').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+	});
+	$('#serviceVatAmtTotal').html(total);
 }
 
 function total() {
 	var total = 0.0;
 	$('.total').each(function() {
-		total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
 	});
 	$('#sorTotal').html(total);
 }

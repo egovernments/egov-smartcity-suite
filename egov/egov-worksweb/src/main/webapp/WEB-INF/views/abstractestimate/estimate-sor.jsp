@@ -42,6 +42,7 @@
   --%>
   
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
+	<input type="hidden" id="isServiceVATRequired" value="${isServiceVATRequired }">
 	<div class="panel-heading">
 		<div class="panel-title"><spring:message code="title.sor" />
 			<div class="pull-right mb-5 small-note-title"><s:text name="estimate.rate.disclaimer"/></div>
@@ -92,23 +93,28 @@
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.uom" /></th>
 					<th><spring:message code="lbl.rate" /></th>
-					<th><spring:message code="lbl.estimatedquantity" /></th>
+					<th><spring:message code="lbl.estimatedquantity" /><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.estimatedamount" /></th>
-					<th hidden="true"><spring:message code="lbl.service.vat" /></th>
-					<th hidden="true"><spring:message code="lbl.service.vat.amount" /></th>
+					<th hidden="true" id="serviceVatHeader"><spring:message code="lbl.service.vat" /></th>
+					<th hidden="true" id="vatAmountHeader"><spring:message code="lbl.service.vat.amount" /></th>
 					<th><spring:message code="lbl.total" /></th>
 					<th><spring:message code="lbl.delete" /></th>
 				</tr>
 			</thead>
 			<tbody id="sorTable">
 				<tr id="message">
-					<td colspan="9"><spring:message code="msg.sor.table"/></td>
+					<c:if test="${isServiceVATRequired == true }">
+						<td colspan="11"><spring:message code="msg.sor.table"/></td>
+					</c:if>
+					<c:if test="${isServiceVATRequired == false }">
+						<td colspan="9"><spring:message code="msg.sor.table"/></td>
+					</c:if>
 				</tr>
 				<tr id="estimateRow" hidden="true" align="center">
 					<td>
 						<span class="spansno">1</span>
 						<!-- <input type="hidden" id="id_0" name="id_0" class="form-control table-input hidden-input"/> -->
-						<form:hidden path="activities[0].schedule" id="id_0" />
+						<form:hidden path="activities[0].schedule.id" id="id_0" />
 					</td>
 					<td>
 						<span class="code_0"></span>
@@ -129,11 +135,11 @@
 					<td align="right">
 						<span class="amount_0 amount"></span>
 					</td>
-					<td hidden="true">
-						<form:input path="activities[0].serviceTaxPerc" id="vat_0" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right" maxlength="64"/>
+					<td hidden="true" class="serviceTaxPerc">
+						<form:input path="activities[0].serviceTaxPerc" id="vat_0" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right" maxlength="64" onblur="calculateVatAmount(this);"/>
 					</td>
-					<td hidden="true" align="right">
-						<span class="vatAmount_0"></span>
+					<td hidden="true" align="right" class="vatAmount">
+						<span class="vatAmount_0 vatAmt"></span>
 					</td>
 					<td align="right">
 						<span class="total_0 total"></span>
@@ -153,6 +159,8 @@
 				<tr>
 					<td colspan="6" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="sorEstimateTotal">0.00</span> </td>
+					<td hidden="true" class="emptytd"></td>
+					<td hidden="true" class="text-right serviceVatAmt"> <span id="serviceVatAmtTotal">0.00</span> </td>
 					<td class="text-right"> <span id="sorTotal">0.00</span> </td>
 					<td></td>
 				</tr>

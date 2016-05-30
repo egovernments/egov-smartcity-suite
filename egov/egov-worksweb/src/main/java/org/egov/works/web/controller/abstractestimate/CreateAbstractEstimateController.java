@@ -1,8 +1,11 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.util.Date;
+import java.util.List;
 
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -33,6 +36,9 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     
     @Autowired
     private ScheduleCategoryService scheduleCategoryService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final String estimateNumber, final Model model) {
@@ -42,6 +48,14 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("abstractEstimate", new AbstractEstimate());
         model.addAttribute("currentDate", currentDate);
+        
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isServiceVATRequired", true);
+        else
+            model.addAttribute("isServiceVATRequired", false);
 
         setDropDownValues(model);
         return "newAbstractEstimate-form";

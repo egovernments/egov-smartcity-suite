@@ -278,6 +278,8 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY = "DESIGNATION_TECHSANCTION_AUTHORITY";
 
     public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
+    
+    public static final String APPCONFIG_KEY_SHOW_SERVICE_FIELDS = "SHOW_SERVICE_FIELDS";
 
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
 
