@@ -409,7 +409,7 @@ public class BudgetLoadAction extends BaseFormAction {
             List<Fund> fundList = fundDAO.findAllActiveIsLeafFunds();
             List<CFunction> functionList = functionDAO.getAllActiveFunctions();
             List<Department> departmentList = departmentService.getAllDepartments();
-            List<CChartOfAccounts> coaList = chartOfAccountsService.getActiveCodeList();
+            List<CChartOfAccounts> coaList = chartOfAccountsService.findAll();
             for (Fund fund : fundList)
                 fundMap.put(fund.getCode(), fund);
             for (CFunction function : functionList)
