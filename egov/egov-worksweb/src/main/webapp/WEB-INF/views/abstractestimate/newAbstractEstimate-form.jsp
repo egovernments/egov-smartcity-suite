@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<form:form name="abstractEstimateForm" role="form" action="create" modelAttribute="abstractEstimate" id="abstractEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<form:form name="abstractEstimateForm" role="form" modelAttribute="abstractEstimate" id="abstractEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	    
 <div class="new-page-header">
 	Create Abstract Estimate
@@ -53,8 +53,22 @@
 <div id="estimate_header">
 	<%@ include file="estimate-header.jsp"%>            
 	<%@ include file="estimate-multiYearEstimate.jsp"%>  
+	<%@ include file="uploadDocuments.jsp"%>
 	<%@ include file="estimate-sor.jsp"%>
 	<%@ include file="estimate-overheads.jsp"%>    
 </div> 	
+
+<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type="submit" name="submit" id="save"
+				class="btn btn-primary" value="Save">
+				<spring:message code="lbl.save" />
+			</button>
+			<button type="button" class="btn btn-default" id="button2"
+				onclick="window.close();">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
 </form:form>
 <script type="text/javascript" src="<c:url value='/resources/js/abstractestimate.js?rnd=${app_release_no}'/>"></script>

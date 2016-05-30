@@ -271,4 +271,9 @@
         <put-attribute name="body" value="/WEB-INF/views/master/overhead/searchOverhead-header.jsp"/>
     </definition>
     
+   	<definition name="abstractEstimate-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createae" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/abstractEstimate-success.jsp"/>
+    </definition>
+    
 </tiles-definitions>

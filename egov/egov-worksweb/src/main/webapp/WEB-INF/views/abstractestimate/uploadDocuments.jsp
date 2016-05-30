@@ -38,56 +38,68 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<style>
-#warning {
-  display:none;
-  color:blue;
-}
-</style>
-
+<%@ include file="/includes/taglibs.jsp" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<div class="panel panel-primary" data-collapsed="0">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<script src="<egov:url path='resources/js/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<style>
+	.file-ellipsis {
+		width : auto !Important;
+	}
+	
+	.padding-10
+	{
+	  padding:10px;
+	}
+</style>
+<div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 	<div class="panel-heading">
-		<div class="panel-title" style="text-align: left;">
-			<spring:message code="lbl.header" />
+		<div class="panel-title">
+			<c:if test="${mode != 'view' }">
+				<spring:message code="lbl.upload.document" />
+			</c:if>
+			<c:if test="${mode == 'view' }">
+				<spring:message code="lbl.documents" />
+			</c:if>
 		</div>
 	</div>
-	<div class="panel-body custom-form">
-	   <%@ include file="lineEstimateDetails.jsp"%>   
-	   <div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.userdepartment" /> 
-			</label>
-			<div class="col-sm-3 add-margin">
-				<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required">
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${departments}" itemValue="id"	itemLabel="name" />
-				</form:select>
-				<form:errors path="executingDepartment" cssClass="add-margin error-msg" />
-			</div>
-			
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.workdescription" /><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-3 add-margin view-content">
-				<form:textarea path="description" name="description" class="form-control"  maxlength="1024" required="required"/>
-				<form:errors path="lineEstimateDetails" cssClass="add-margin error-msg" />
-			</div>
+	<c:if test="${abstractEstimate.documentDetails != null &&  !abstractEstimate.documentDetails.isEmpty()}">
+		<c:forEach items="${abstractEstimate.documentDetails}" var="documentDetials">
+			<a href="/egi/downloadfile?fileStoreId=${documentDetials.fileStore.fileStoreId}&moduleName=WMS">${documentDetials.fileStore.fileName }</a><br />
+		</c:forEach>
+	</c:if>
+	<c:if test="${mode == 'view' && abstractEstimate.documentDetails.isEmpty()}">
+		<spring:message code="msg.no.documents" />
+	</c:if>
+	<input type="hidden" value="${fn:length(abstractEstimate.documentDetails)}" id="documentsSize">
+	<c:if test="${mode != 'view' }">
+		<div>
+			<table width="100%">
+				<c:if test="${abstractEstimate.documentDetails != null &&  fn:length(abstractEstimate.documentDetails) lt 4}">
+				<tbody>
+					<tr>
+						<td valign="top">
+						 	<table id="uploadertbl" width="100%"><tbody>
+						 		<tr id="row1">			 				
+									<td>
+										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
+									</td>
+								</tr>									 										
+						 	</tbody></table>
+						</td>
+					</tr>
+					<tr>
+						<td align="center">
+							<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
+						</td>
+					</tr>
+				</tbody>
+				</c:if>
+			</table>
 		</div>
-		
-			<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.estimate.value" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
-			<form:input path="estimateValue" class="form-control" name="estimateValue"/>
-			</div>
-		</div>
-		
-</div>   
-</div>
+	</c:if>
+ </div>

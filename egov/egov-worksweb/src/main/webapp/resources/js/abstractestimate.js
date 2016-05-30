@@ -244,3 +244,87 @@ function calculateOverheadTotalAmount(){
 	
 	document.getElementById('overheadTotalAmount').value = total;
 }
+
+function addMultiyearEstimate() {
+	var tbl = document.getElementById('multiYeaeEstimateTbl');
+    var rowO=tbl.rows.length;
+    alert("Hi");
+    if(document.getElementById('yearEstimateRow') != null)
+	{
+    		//get Next Row Index to Generate
+    		var nextIdx = tbl.rows.length-1;
+    		
+    		//validate status variable for exiting function
+    		var isValid=1;//for default have success value 0  
+    		
+    		//validate existing rows in table
+    		jQuery("#multiYeaeEstimateTbl tr:not(:first)").find('input, select').each(function(){
+    			if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
+    			{
+    				jQuery(this).focus();
+    				console.log('called =>' + jQuery(this).attr('id'));
+    				bootbox.alert(jQuery(this).data('errormsg'));
+    				isValid=0;//set validation failure
+    				return false;
+    			}
+    		});
+    		
+    		
+    		// Generate all textboxes Id and name with new index
+			jQuery("#yearEstimateRow").clone().find("input, select").each(function() {
+				     
+					jQuery(this).attr({
+				      'id': function(_, id) { 
+				    	  return id.replace('[0]', '['+ nextIdx +']'); 
+				       },
+				      'name': function(_, name) { 
+				    	  return name.replace('[0]', '['+ nextIdx +']'); 
+				      }
+				    }).val('');
+					
+					 
+		    }).end().appendTo("#multiYeaeEstimateTbl");
+			
+	}
+    
+}
+
+function deleteMultiYearEstimate(obj) {
+	
+	rIndex = getRow(obj).rowIndex;
+	var tbl=document.getElementById('multiYeaeEstimateTbl');
+	var rowo=tbl.rows.length;
+	if(rowo<=1)
+	{
+		bootbox.alert("This row cannot be deleted");
+		return false;
+	}
+	else
+	{	
+		tbl.deleteRow(rIndex);	
+		
+		//starting index for table fields
+		var idx=0;
+		
+		//regenerate index existing inputs in table row
+		jQuery("#multiYeaeEstimateTbl tr:not(:first)").each(function() {
+			jQuery(this).find("input, select").each(function() {
+			   jQuery(this).attr({
+			      'id': function(_, id) {  
+			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+			       },
+			      'name': function(_, name) {
+			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+			      },
+			   });
+		
+		    });
+			
+		
+			idx++;
+		});
+		
+		return true;
+	}	
+
+}

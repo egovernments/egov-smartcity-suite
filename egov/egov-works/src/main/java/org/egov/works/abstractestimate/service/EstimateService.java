@@ -87,6 +87,10 @@ public class EstimateService {
         return abstractEstimateRepository.findOne(id);
     }
 
+    public AbstractEstimate createAbstractEstimate(AbstractEstimate abstractEstimate) {
+        return abstractEstimateRepository.save(abstractEstimate);
+        
+    }
     @Transactional
     public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(final LineEstimateDetails lineEstimateDetails,
             final int i) {

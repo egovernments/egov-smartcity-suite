@@ -83,6 +83,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.masters.DepositCode;
@@ -219,6 +220,12 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @Transient
     private Integer approverUserId;
+    
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
 
     @Valid
     @OrderBy("id")
@@ -255,6 +262,8 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateTechnicalSanction.class)
     private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new ArrayList<EstimateTechnicalSanction>(0);
+    
+    private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @Override
     public Long getId() {
@@ -705,6 +714,26 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setEstimateTechnicalSanctions(final List<EstimateTechnicalSanction> estimateTechnicalSanctions) {
         this.estimateTechnicalSanctions = estimateTechnicalSanctions;
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
+
+    public List<DocumentDetails> getDocumentDetails() {
+        return documentDetails;
     }
 
 }
