@@ -1125,7 +1125,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long>
             if (null != voucherTypeBean.getBillNum() && StringUtils.isNotEmpty(voucherTypeBean.getBillNum()))
                 egBillregister.setBillnumber(voucherTypeBean.getBillNum());
             else {
-                JVBillNumberGenerator b = (JVBillNumberGenerator) beanResolver.getBean(JVBillNumberGenerator.class);
+                JVBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(JVBillNumberGenerator.class);
                 final String billNumber = b.getNextNumber(egBillregister);
 
                 egBillregister.setBillnumber(billNumber);

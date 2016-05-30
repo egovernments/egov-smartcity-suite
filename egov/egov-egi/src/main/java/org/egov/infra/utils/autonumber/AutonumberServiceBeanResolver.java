@@ -1,7 +1,46 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.infra.utils.autonumber;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,44 +48,24 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AutonumberServiceBeanResolver { 
+public class AutonumberServiceBeanResolver {
 
-	@Autowired
-	private ApplicationContext context;
+    @Autowired
+    private ApplicationContext context;
 
-	public Object getBean(Class  autonumberInterface)
-	{
+    public <T> T getAutoNumberServiceFor(Class<T> autoNumberInterface) {
 
-		Object autonumberBean=null;
-
-		Map beansOfType = context.getBeansOfType(autonumberInterface);
-		if(beansOfType.isEmpty())
-		{
-			throw new ApplicationRuntimeException("Could not find any implementation bean for interface "+autonumberInterface.getSimpleName());
-		}
-		if(beansOfType.size()==1)
-		{
-			autonumberBean=beansOfType.get(beansOfType.keySet().toArray()[0]);
-		}else
-		{
-			Object tempBean;
-			Set<String> keySet = beansOfType.keySet();
-			for(String s:keySet )
-			{
-				tempBean=beansOfType.get(s);
-				if(tempBean.getClass().isAnnotationPresent(org.egov.infra.utils.autonumber.OverrideImpl.class))
-				{
-				autonumberBean=tempBean;
-				break;
-				}
-			}
-			if(autonumberBean==null)
-			{
-				autonumberBean=beansOfType.get(beansOfType.keySet().toArray()[0]);
-			}
-
-		}
-
-		return autonumberBean;		
-	}
+        Map<String, T> autoNumberImpls = context.getBeansOfType(autoNumberInterface);
+        if (autoNumberImpls.isEmpty()) {
+            throw new ApplicationRuntimeException("Could not find any implementation bean for interface " + autoNumberInterface.getSimpleName());
+        }
+        if (autoNumberImpls.size() > 1) {
+            for (T autoNumberImpl : autoNumberImpls.values()) {
+                if (autoNumberImpl.getClass().isAnnotationPresent(OverrideImpl.class)) {
+                    return autoNumberImpl;
+                }
+            }
+        }
+        return autoNumberImpls.values().iterator().next();
+    }
 }

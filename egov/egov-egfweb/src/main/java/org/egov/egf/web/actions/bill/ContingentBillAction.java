@@ -1205,7 +1205,7 @@ public class ContingentBillAction extends BaseBillAction {
      */
     private String getNextBillNumber(final EgBillregister bill) {
         
-       ExpenseBillNumberGenerator b = (ExpenseBillNumberGenerator) beanResolver.getBean(ExpenseBillNumberGenerator.class);
+       ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
         final String billNumber = b.getNextNumber(bill);
 
         return billNumber;

@@ -54,6 +54,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.autonumber.BudgetReAppropriationSequenceNumberGenerator;
+import org.egov.egf.autonumber.VouchernumberGenerator;
 import org.egov.egf.model.BudgetReAppropriationView;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -368,8 +369,8 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     }
 
     protected String getSequenceNumber(final BudgetDetail detail) {
-        BudgetReAppropriationSequenceNumberGenerator b = (BudgetReAppropriationSequenceNumberGenerator) beanResolver
-                .getBean(BudgetReAppropriationSequenceNumberGenerator.class);
+        BudgetReAppropriationSequenceNumberGenerator b = beanResolver.getAutoNumberServiceFor(BudgetReAppropriationSequenceNumberGenerator.class);
+
         final String sequenceNumber = b.getNextNumber(detail);
         final ScriptContext scriptContext = ScriptService.createContext("wfItem", detail, "sequenceGenerator", sequenceGenerator);
         return sequenceNumber;
