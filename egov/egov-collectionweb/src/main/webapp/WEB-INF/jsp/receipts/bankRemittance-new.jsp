@@ -97,6 +97,30 @@
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
 			}
 		}
+
+		//TODO: uncomment the validation after go live
+		/* var receiptDateArray=document.getElementsByName('receiptDateArray');
+		for(j=0; j<receiptDateArray.length; j++)
+		{
+			if(document.getElementsByName('receiptDateArray')[j].value!="")
+			{
+				for (k = 0; k < isSelected.length; k++)
+				{
+					if (isSelected[k].checked == true)
+					{
+						if((document.getElementsByName('receiptDateArray')[j].value==document.getElementsByName('receiptDateArray')[k].value)){}
+						else
+						{
+							dom.get("multipleserviceselectionerror").style.display="block";
+							dom.get("button32").disabled=true;
+							dom.get("button32").className="button";
+							window.scroll(0,0);
+							return false;
+						}
+					}
+				}
+			}
+		} */
 	}
 
 	// Check if at least one receipt is selected
