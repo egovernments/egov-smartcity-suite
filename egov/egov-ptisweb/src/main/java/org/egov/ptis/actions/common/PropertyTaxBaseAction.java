@@ -128,6 +128,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private MessagingService messagingService;

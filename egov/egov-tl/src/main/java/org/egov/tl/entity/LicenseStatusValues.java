@@ -47,9 +47,6 @@ import java.util.Date;
 
 public class LicenseStatusValues extends BaseModel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 162960890241085573L;
     private License license;
     private LicenseStatus licenseStatus;
@@ -59,16 +56,10 @@ public class LicenseStatusValues extends BaseModel {
     private boolean active;
     private String docNumber;
 
-    /**
-     * @return the active
-     */
     public boolean isActive() {
         return active;
     }
 
-    /**
-     * @param active the active to set
-     */
     public void setActive(final boolean active) {
         this.active = active;
     }
@@ -78,10 +69,6 @@ public class LicenseStatusValues extends BaseModel {
     private String extraField3;
     private LicenseStatusValues previousStatusVal;
     private Integer reason;
-
-    /**
-     * @return Returns if the given Object is equal to PropertyStatusValues
-     */
 
     @Override
     public boolean equals(final Object that) {
@@ -109,9 +96,6 @@ public class LicenseStatusValues extends BaseModel {
             return false;
     }
 
-    /**
-     * @return Returns the hashCode
-     */
     @Override
     public int hashCode() {
         int hashCode = 0;
@@ -122,9 +106,6 @@ public class LicenseStatusValues extends BaseModel {
         return hashCode;
     }
 
-    /**
-     * @return Returns the boolean after validating the current object
-     */
     public boolean validatePropStatusValues() {
         if (getLicense() == null)
             throw new ApplicationRuntimeException(
@@ -199,30 +180,18 @@ public class LicenseStatusValues extends BaseModel {
         this.extraField3 = extraField3;
     }
 
-    /**
-     * @return the previousStatusVal
-     */
     public LicenseStatusValues getPreviousStatusVal() {
         return previousStatusVal;
     }
 
-    /**
-     * @param previousStatusVal the previousStatusVal to set
-     */
     public void setPreviousStatusVal(final LicenseStatusValues previousStatusVal) {
         this.previousStatusVal = previousStatusVal;
     }
 
-    /**
-     * @return the reason
-     */
     public Integer getReason() {
         return reason;
     }
 
-    /**
-     * @param reason the reason to set
-     */
     public void setReason(final Integer reason) {
         this.reason = reason;
     }
@@ -233,25 +202,5 @@ public class LicenseStatusValues extends BaseModel {
 
     public void setDocNumber(final String docNumber) {
         this.docNumber = docNumber;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseStatusValues={");
-        str.append("license=").append(license == null ? "null" : license.toString());
-        str.append("licenseStatus=").append(licenseStatus == null ? "null" : licenseStatus.toString());
-        str.append("referenceDate=").append(referenceDate == null ? "null" : referenceDate.toString());
-        str.append("referenceNo=").append(referenceNo == null ? "null" : referenceNo.toString());
-        str.append("remarks=").append(remarks == null ? "null" : remarks.toString());
-        str.append("active=").append(active);
-        str.append("docNumber=").append(docNumber == null ? "null" : docNumber.toString());
-        str.append("extraField1=").append(extraField1 == null ? "null" : extraField1.toString());
-        str.append("extraField2=").append(extraField2 == null ? "null" : extraField2.toString());
-        str.append("extraField3=").append(extraField3 == null ? "null" : extraField3.toString());
-        str.append("previousStatusVal=").append(previousStatusVal == null ? "null" : previousStatusVal.toString());
-        str.append("reason=").append(reason == null ? "null" : reason.toString());
-        str.append("}");
-        return str.toString();
     }
 }

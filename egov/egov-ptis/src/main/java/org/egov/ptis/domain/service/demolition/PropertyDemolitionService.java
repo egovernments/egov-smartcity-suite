@@ -107,6 +107,7 @@ import org.hibernate.FlushMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -135,6 +136,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     private PositionMasterService positionMasterService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
 
     @Autowired

@@ -78,13 +78,7 @@
                 <column name="filestoreid" />
         </many-to-one>
 		<property  name="address" column="address" type="java.lang.String"  length="250" not-null="true" />
-		<bag name="objections" inverse="true" table="EGTL_OBJECTION" fetch="select">
-			<key>
-				<column name="ID_LICENSE"></column>
-			</key>
-			<one-to-many class="org.egov.tl.entity.objection.LicenseObjection" />
-		</bag>
-		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" column="egwStatusId" fetch="select" />		
+		<many-to-one name="egwStatus" class="org.egov.commons.EgwStatus" column="egwStatusId" fetch="select" />
 		<property name="createdDate" type="java.util.Date">
 			<column name="CREATEDDATE" not-null="true" />
 		</property>
@@ -112,10 +106,6 @@
 		<many-to-one name="parentBoundary" class="org.egov.infra.admin.master.entity.Boundary" column="ID_PARENT_BNDRY"  unique="true" />
 		<many-to-one name="tradeName" class="org.egov.tl.entity.LicenseSubCategory" fetch="select" unique="true" not-null="true">
 			<column name="ID_SUB_CATEGORY" precision="22" scale="0" />
-		</many-to-one>
-		<many-to-one name="licenseTransfer" class="org.egov.tl.entity.transfer.LicenseTransfer" fetch="select"
-					 cascade="all">
-			<column name="ID_LICENSETRANSFER" precision="22" scale="0" />
 		</many-to-one>
 		<property name="nameOfEstablishment" column="NAME_OF_ESTAB" />
 		
@@ -160,7 +150,6 @@
 
 			<join table="EGTL_TRADE_LICENSE">
 				<key column="ID" />
-				<property name="hotelGrade" column="HOTEL_GRADE" type="java.lang.String" />
 				<property name="sandBuckets" column="SAND_BUCKETS"  />
 				<property name="waterBuckets" column="WATER_BUCKETS"  />
 				<property name="dcpExtinguisher" column="DCP_EXTINGUISHER"  />

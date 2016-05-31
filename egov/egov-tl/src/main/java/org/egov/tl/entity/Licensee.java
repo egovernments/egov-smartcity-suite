@@ -46,16 +46,12 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
 public class Licensee extends BaseModel {
-    /**
-     *
-     */
     private static final long serialVersionUID = 6723590685484215531L;
     @Required(message = "licensee.name.err.required")
     @Length(min = 1, max = 256, message = "licensee.name.err.maxlength")
     private String applicantName;
     private String nationality;
     private String fatherOrSpouseName;
-    // private String spouseName;
     private String qualification;
     private Integer age;
     private String gender;
@@ -171,24 +167,6 @@ public class Licensee extends BaseModel {
 
     public void setPanNumber(final String panNumber) {
         this.panNumber = panNumber;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("Licensee={");
-        str.append("  applicantName=").append(applicantName == null ? "null" : applicantName.toString());
-        str.append("  address=").append(address == null ? "null" : address.toString());
-        str.append("  nationality=").append(nationality == null ? "null" : nationality.toString());
-        str.append("  fatherOrSpouseName=").append(fatherOrSpouseName == null ? "null" : fatherOrSpouseName.toString());
-        str.append("  qualification=").append(qualification == null ? "null" : qualification.toString());
-        str.append("  age=").append(age == null ? "null" : age.toString());
-        str.append("  gender=").append(gender == null ? "null" : gender.toString());
-        str.append("  panNumber=").append(panNumber == null ? "null" : panNumber.toString());
-        str.append("  phoneNumber=").append(phoneNumber == null ? "null" : phoneNumber.toString());
-        str.append("  boundary=").append(boundary == null ? "null" : boundary.toString());
-        str.append("}");
-        return str.toString();
     }
 
     public String getAddress() {

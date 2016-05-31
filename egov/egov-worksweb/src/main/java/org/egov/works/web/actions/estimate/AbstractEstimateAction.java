@@ -109,6 +109,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jasperreports.engine.JRException;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = AbstractEstimateAction.PRINT, type = "stream", location = "XlsInputStream", params = {
@@ -190,6 +191,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<AbstractEstimate> abstractEstimateWorkflowService;
     private Long stateId;
     private final List<StateHistory> workflowHistory = new LinkedList<StateHistory>();

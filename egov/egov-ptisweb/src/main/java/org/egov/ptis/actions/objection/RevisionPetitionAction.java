@@ -105,6 +105,7 @@ import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -191,6 +192,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private BasicPropertyDAO basicPropertyDAO;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     @Autowired
+    @Qualifier("workflowService")
     protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
 
     private boolean isShowAckMessage;

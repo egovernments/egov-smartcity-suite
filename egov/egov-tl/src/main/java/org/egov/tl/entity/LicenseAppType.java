@@ -45,9 +45,6 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * The Class LicenseAppType.
- */
 @Unique(fields = { "licenseApplicationType" }, id = "id", tableName = "EGTL_MSTR_APP_TYPE", columnName = { "name" }, message = "masters.licenseApplicationType.isunique")
 public class LicenseAppType extends BaseModel {
 	private static final long serialVersionUID = 1L;
@@ -55,12 +52,7 @@ public class LicenseAppType extends BaseModel {
 	
 	@Required(message = "masters.licenseApplicationType.name.null")
 	@Length(max = 256, message = "masters.licenseApplicationType.name.length")
-	//@OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "tradelicense.error.licenseapptype.text")
 	private String name;
-
-	public LicenseAppType() {
-		super();
-	}
 
 	public String getName() {
 		return name;

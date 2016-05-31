@@ -60,11 +60,7 @@ public class FeeType extends AbstractAuditable {
 
     public static final String SEQ = "seq_egtl_mstr_fee_type";
 
-    /**
-     * 
-     * Will be RANGE, FLAT, PERCENTAGE actually but as of now code is not written and no usecases fixing to RANGE only
-     */
-    public static enum FeeProcessType {
+    public enum FeeProcessType {
         RANGE
     }
 

@@ -83,14 +83,12 @@ import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 })
 public class EditTradeLicenseAction extends BaseLicenseAction {
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(EditTradeLicenseAction.class);
 
     private TradeLicense tradeLicense = new TradeLicense();
     private boolean isOldLicense;
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private String mode;
     private Map<String, String> ownerShipTypeMap;
-    private BigDecimal totalAmount = BigDecimal.ZERO;
     private Long id;
 
     @Autowired
@@ -190,14 +188,6 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
         this.tradeLicense.setLicenseAppType(newAppType);
 
         this.tradeLicense = (TradeLicense) this.persistenceService.update(this.tradeLicense);
-        List<FeeMatrixDetail> feeList = this.feeMatrixService.findFeeList(this.tradeLicense);
-        this.totalAmount = this.tradeLicenseService.recalculateDemand(feeList, this.tradeLicense);
-
-		/*
-         * if (tradeLicense.getOldLicenseNumber() != null) doAuditing(AuditModule.TL, AuditEntity.TL_LIC, AuditEvent.MODIFIED,
-		 * tradeLicense.getAuditDetails());
-		 */
-        this.LOGGER.debug("Exiting from the edit method:<<<<<<<<<<>>>>>>>>>>>>>:");
         return Constants.MESSAGE;
 
     }

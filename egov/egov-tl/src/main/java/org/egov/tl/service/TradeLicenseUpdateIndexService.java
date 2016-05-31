@@ -79,10 +79,8 @@ public class TradeLicenseUpdateIndexService
     private AssignmentService assignmentService;
 
     @Autowired
-    private EisCommonService eisCommonService;
-
-    @Autowired
     private SecurityUtils securityUtils;
+
     @Autowired
     private UserService userService;
 

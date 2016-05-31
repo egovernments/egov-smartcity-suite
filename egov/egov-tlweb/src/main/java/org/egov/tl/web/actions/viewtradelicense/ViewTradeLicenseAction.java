@@ -40,23 +40,13 @@
 
 package org.egov.tl.web.actions.viewtradelicense;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
-import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
@@ -65,27 +55,16 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
+
 @ParentPackage("egov")
-@Results({
-        @Result(name = "auditReport", type = "redirectAction", location = "auditReport", params = { "moduleName", "TL",
-                "namespace",
-                "/egi/auditing", "method", "searchForm", "actionName", "auditReport", "prependServletContext", "false" }),
-        @Result(name = "duplicate", location = "viewTradeLicense-duplicate.jsp"),
-        @Result(name = Constants.CNCCERTIFICATE, location = "viewTradeLicense-" + Constants.CNCCERTIFICATE + ".jsp"),
-        @Result(name = Constants.PFACERTIFICATE, location = "viewTradeLicense-" + Constants.PFACERTIFICATE + ".jsp"),
-        @Result(name = "report", location = "viewTradeLicense-report.jsp")
-})
-public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> implements ServletRequestAware {
+@Result(name = "report", location = "viewTradeLicense-report.jsp")
+public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense>  {
     private static final long serialVersionUID = 1L;
 
-    private final String CITIZENUSER = "citizenUser";
     protected TradeLicense tradeLicense = new TradeLicense();
-    private String rejectreason;
-    private HttpSession session;
-    private HttpServletRequest requestObj;
     protected String reportId;
     private String applicationNo;
-    private Long userId;
 
     @Autowired
     private ReportService reportService;
@@ -93,20 +72,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     private TradeLicenseService tradeLicenseService;
     @Autowired
     private ReportViewerUtil reportViewerUtil;
-
-    /**
-     * @return the rejectreason
-     */
-    public String getRejectreason() {
-        return rejectreason;
-    }
-
-    /**
-     * @param rejectreason the rejectreason to set
-     */
-    public void setRejectreason(final String rejectreason) {
-        this.rejectreason = rejectreason;
-    }
 
     @Override
     public TradeLicense getModel() {
@@ -130,66 +95,13 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
         return Constants.VIEW;
     }
 
-    @Action(value = "/viewtradelicense/viewTradeLicense-viewCitizen")
-    public String viewCitizen() {
-        session = requestObj.getSession();
-        final User user = userService.getUserByUsername(CITIZENUSER);
-        userId = user.getId();
-        ApplicationThreadLocals.setUserId(userId);
-        session.setAttribute("com.egov.user.LoginUserName", user.getName());
-        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        return Constants.VIEW;
-    }
-
     @Action(value = "/viewtradelicense/viewTradeLicense-generateCertificate")
     public String generateCertificate() {
         setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        /*
-         * if (this.documentManagerService.getDocumentObject(this.tradeLicense.getApplicationNumber(), "egtradelicense") == null)
-         * { ViewTradeLicenseAction.LOGGER.debug("Creating Certificate object for DMS"); final Notice notice = new Notice();
-         * notice.setDocumentNumber(this.tradeLicense.getApplicationNumber());
-         * notice.setDomainName(EGOVThreadLocals.getDomainName()); notice.setModuleName("egtradelicense");
-         * notice.setNoticeType(this.license().getClass().getSimpleName() + "-Certificate"); notice.setNoticeDate(new Date());
-         * this.request.put("noticeObject", notice); }
-         */
         reportId = reportViewerUtil
                 .addReportToTempCache(reportService.createReport(tradeLicenseService.prepareReportInputData(license())));
         return "report";
-    }
-
-    public String generateNoc() {
-        setLicenseIdIfServletRedirect();
-        tradeLicense = tradeLicenseService.getLicenseById(tradeLicense.getId());
-        return "noc";
-    }
-
-    public String createNoc() {
-        setLicenseIdIfServletRedirect();
-        final TradeLicense modifiedTL = tradeLicense;
-        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        tradeLicense.setSandBuckets(modifiedTL.getSandBuckets());
-        tradeLicense.setWaterBuckets(modifiedTL.getWaterBuckets());
-        tradeLicense.setDcpExtinguisher(modifiedTL.getDcpExtinguisher());
-        final String runningNumber = tradeLicenseService.getNextRunningLicenseNumber(Constants.TL_PROVISIONAL_NOC_NUMBER)
-                .toString();
-        tradeLicense.generateNocNumber(runningNumber);
-        // this.service().endWorkFlowForLicense(tradeLicense);
-        final LicenseStatus activeStatus = (LicenseStatus) persistenceService
-                .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-        tradeLicense.setStatus(activeStatus);
-        tradeLicenseService.licensePersitenceService().update(tradeLicense);
-        return "createnoc";
-    }
-
-    public String duplicateNoc() {
-        return "duplicatenoc";
-    }
-
-    public String generateDuplicateNoc() {
-        setLicenseIdIfServletRedirect();
-        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        return "createnoc";
     }
 
     private void setLicenseIdIfServletRedirect() {
@@ -254,12 +166,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
 
     public void setWorkflowBean(final WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
-    }
-
-    @Override
-    @SkipValidation
-    public void setServletRequest(final HttpServletRequest arg0) {
-        requestObj = arg0;
     }
 
     public String getApplicationNo() {

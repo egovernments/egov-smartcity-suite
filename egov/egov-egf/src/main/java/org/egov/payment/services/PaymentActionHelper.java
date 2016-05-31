@@ -119,6 +119,7 @@ public class PaymentActionHelper {
     protected AssignmentService assignmentService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
 
     @Autowired

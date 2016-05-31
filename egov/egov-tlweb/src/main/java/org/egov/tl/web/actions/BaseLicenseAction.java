@@ -40,19 +40,6 @@
 
 package org.egov.tl.web.actions;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -104,6 +91,18 @@ import org.egov.tl.web.actions.domain.CommonAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @ParentPackage("egov")
 @Results({
         @Result(name = "collection", type = "redirectAction", location = "licenseBillCollect", params = { "namespace",
@@ -116,12 +115,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
                 "namespace", "/viewtradelicense", "method", "generateRejCertificate" }),
         @Result(name = "tl_generateCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
                 "namespace", "/viewtradelicense", "method", "generateCertificate" }),
-        @Result(name = "tl_generateNoc", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense", "method", "generateNoc" }),
-        @Result(name = "transfertl_editlicense", type = "redirectAction", location = "transferTradeLicense", params = {
-                "namespace", "/transfer", "method", "beforeEdit" }),
-        @Result(name = "transfertl_approve", type = "redirectAction", location = "transferTradeLicense", params = {
-                "namespace", "/transfer", "method", "showForApproval" }),
         @Result(name = "approve", location = "newTradeLicense-new.jsp"),
         @Result(name = "report", location = "newTradeLicense-report.jsp"),
         @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp") })

@@ -59,6 +59,7 @@ import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author mani
@@ -90,6 +91,7 @@ public class BasePaymentAction extends BaseVoucherAction {
     EisCommonService eisCommonService;
     private static Logger LOGGER = Logger.getLogger(BasePaymentAction.class);
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;

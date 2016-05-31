@@ -40,26 +40,6 @@
 
 package org.egov.tl.service;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
-import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-
-import java.io.File;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
@@ -92,7 +72,6 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseChecklistHelper;
 import org.elasticsearch.common.joda.time.DateTime;
@@ -103,13 +82,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author mani
- */
+import java.io.File;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.GENERATECERTIFICATE;
+import static org.egov.tl.utils.Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+
 @Transactional(readOnly = true)
 public abstract class AbstractLicenseService<T extends License> {
-
-    protected static final Logger LOGGER = Logger.getLogger(AbstractLicenseService.class);
 
     @Autowired
     @Qualifier("entityQueryService")
@@ -151,8 +144,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     protected SimpleWorkflowService<T> licenseWorkflowService;
 
-    protected SimpleWorkflowService<LicenseTransfer> transferWorkflowService;
-
     protected PersistenceService<T, Long> licensePersitenceService;
 
     public AbstractLicenseService(final PersistenceService<T, Long> licensePersitenceService) {
@@ -160,9 +151,6 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
-
-    protected abstract License additionalOperations(T license, Set<EgDemandReasonMaster> egDemandReasonMasters,
-            Installment installment);
 
     protected abstract LicenseAppType getLicenseApplicationType();
 
@@ -178,10 +166,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     public void setLicenseWorkflowService(final SimpleWorkflowService<T> licenseWorkflowService) {
         this.licenseWorkflowService = licenseWorkflowService;
-    }
-
-    public void setTransferWorkflowService(final SimpleWorkflowService<LicenseTransfer> transferWorkflowService) {
-        this.transferWorkflowService = transferWorkflowService;
     }
 
     public T getLicenseById(final Long id) {
@@ -399,30 +383,10 @@ public abstract class AbstractLicenseService<T extends License> {
         }
     }
 
-    public List<Installment> getCurrAndPreviousInstallment() {
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), new Date());
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(installment.getInstallmentYear());
-        calendar.add(Calendar.YEAR, -1);
-        final Date previousInstallmentDate = calendar.getTime();
-        final Installment previousInstallment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(),
-                previousInstallmentDate);
-        final List<Installment> installmentList = new ArrayList<Installment>();
-        installmentList.add(installment);
-        installmentList.add(previousInstallment);
-        return installmentList;
-    }
-
     public Serializable getNextRunningLicenseNumber(final String sequenceName) {
         return sequenceNumberGenerator.getNextSequence(sequenceName);
     }
 
-    /**
-     * method to get checklist details
-     *
-     * @param license
-     * @return checkList
-     */
     public List<LicenseChecklistHelper> getLicenseChecklist(final T license) {
         final List<LicenseChecklistHelper> checkList = new ArrayList<LicenseChecklistHelper>();
         if (license.getLicenseCheckList() != null) {
@@ -599,14 +563,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
         return outstandingFee;
 
-    }
-
-    public TradeLicenseUpdateIndexService getUpdateIndexService() {
-        return updateIndexService;
-    }
-
-    public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
-        this.updateIndexService = updateIndexService;
     }
 
     public List<T> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {

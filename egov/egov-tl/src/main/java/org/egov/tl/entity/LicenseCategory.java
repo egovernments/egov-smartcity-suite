@@ -44,9 +44,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * The Class TradeCategory.
- */
 public class LicenseCategory extends AbstractAuditable {
     private static final long serialVersionUID = 1L;
     private Long id;

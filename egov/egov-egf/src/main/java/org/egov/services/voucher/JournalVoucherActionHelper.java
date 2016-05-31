@@ -88,6 +88,7 @@ public class JournalVoucherActionHelper {
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService;
     @Autowired
     @Qualifier("persistenceService")

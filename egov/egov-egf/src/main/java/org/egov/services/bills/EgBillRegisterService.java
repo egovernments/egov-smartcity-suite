@@ -81,6 +81,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<EgBillregister> billRegisterWorkflowService;
     @Autowired
     @Qualifier("persistenceService")

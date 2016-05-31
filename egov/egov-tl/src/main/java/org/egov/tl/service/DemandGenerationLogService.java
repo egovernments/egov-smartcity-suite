@@ -57,7 +57,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class DemandGenerationLogService {
     private final DemandGenerationLogRepository demandGenerationLogRepository;
     private final DemandGenerationLogDetailRepository demandGenerationLogDetailRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemandGenerationLogService.class);
 
     @Autowired
     public DemandGenerationLogService(final DemandGenerationLogRepository demandGenerationLogRepository,

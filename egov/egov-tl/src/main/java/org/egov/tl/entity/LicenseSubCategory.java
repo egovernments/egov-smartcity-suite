@@ -70,7 +70,6 @@ public class LicenseSubCategory extends AbstractAuditable {
     private LicenseType licenseType;
     private NatureOfBusiness natureOfBusiness;
     private boolean pfaApplicable;
-    private Schedule scheduleMaster;
     private String sectionApplicable;
     private LicenseSubType licenseSubType;
     private Boolean nocApplicable;
@@ -154,14 +153,6 @@ public class LicenseSubCategory extends AbstractAuditable {
 
     public void setPfaApplicable(boolean pfaApplicable) {
         this.pfaApplicable = pfaApplicable;
-    }
-
-    public Schedule getScheduleMaster() {
-        return scheduleMaster;
-    }
-
-    public void setScheduleMaster(Schedule scheduleMaster) {
-        this.scheduleMaster = scheduleMaster;
     }
 
     public String getSectionApplicable() {

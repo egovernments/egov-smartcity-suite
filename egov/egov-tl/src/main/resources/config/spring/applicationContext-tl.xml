@@ -50,14 +50,6 @@
 
 	<bean id="workflowBean" class="org.egov.tl.entity.WorkflowBean" scope="prototype" />
 
-    <bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
-        <constructor-arg name="stateAwarePersistenceService" ref="tradeLicensePersistenceService"/>
-    </bean>
-
-    <bean id="transferWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
-        <constructor-arg name="stateAwarePersistenceService" ref="licenseTransferPersistenceService"/>
-    </bean>
-
 	<bean id="baseLicenseService" class="org.egov.tl.service.AbstractLicenseService" scope="prototype" abstract="true"/>
 
 	<bean id="licenseReportService" class="org.egov.tl.service.LicenseReportService" scope="prototype"/>
@@ -65,7 +57,6 @@
 	<bean id="tradeLicenseService" class="org.egov.tl.service.TradeLicenseService" parent="baseLicenseService">
 		<constructor-arg name="licensePersitenceService" ref="tradeLicensePersistenceService"/>
         <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
-        <property name="transferWorkflowService" ref="transferWorkflowService"/>
 	</bean>
 
 	<bean id="licenseBill" class="org.egov.tl.service.integration.LicenseBill" scope="prototype">

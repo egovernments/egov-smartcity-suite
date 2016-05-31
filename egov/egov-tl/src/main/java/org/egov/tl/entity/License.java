@@ -46,8 +46,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.tl.entity.objection.LicenseObjection;
-import org.egov.tl.entity.transfer.LicenseTransfer;
 import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -68,7 +66,6 @@ public abstract class License extends StateAware {
     protected EgwStatus egwStatus;
     protected Boundary boundary;
     protected Boundary parentBoundary;
-    // this should be NatureOfBusiness only which means it is Permanent or temporary.
     protected NatureOfBusiness natureOfBusiness;
     protected Date dateOfExpiry;
     protected String feeTypeStr;
@@ -82,7 +79,7 @@ public abstract class License extends StateAware {
     protected String nameOfEstablishment;
     protected Integer noOfRooms;
     protected String oldLicenseNumber;
-    protected BigDecimal otherCharges;// will be stored in demand
+    protected BigDecimal otherCharges;
     protected String phoneNumber;
     protected String remarks;
     protected boolean rentalAgreement;
@@ -91,9 +88,7 @@ public abstract class License extends StateAware {
     protected String tempLicenseNumber;
     @NotNull
     protected LicenseSubCategory tradeName;
-    protected List<LicenseObjection> objections;
     protected Set<LicenseStatusValues> licenseStatusValuesSet;
-    protected LicenseTransfer licenseTransfer;
     protected String licenseCheckList;
     protected BigDecimal deduction;
     protected BigDecimal swmFee;
@@ -380,14 +375,6 @@ public abstract class License extends StateAware {
         this.licenseCheckList = licenseCheckList;
     }
 
-    public LicenseTransfer getLicenseTransfer() {
-        return licenseTransfer;
-    }
-
-    public void setLicenseTransfer(final LicenseTransfer licenseTransfer) {
-        this.licenseTransfer = licenseTransfer;
-    }
-
     public BigDecimal getSwmFee() {
         return swmFee;
     }
@@ -466,14 +453,6 @@ public abstract class License extends StateAware {
 
     public void setOfficeEmailId(final String officeEmailId) {
         this.officeEmailId = officeEmailId;
-    }
-
-    public List<LicenseObjection> getObjections() {
-        return objections;
-    }
-
-    public void setObjections(final List<LicenseObjection> objections) {
-        this.objections = objections;
     }
 
     public BigDecimal getViolationFee() {

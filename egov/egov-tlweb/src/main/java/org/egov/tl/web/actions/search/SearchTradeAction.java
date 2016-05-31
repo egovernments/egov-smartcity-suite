@@ -72,9 +72,6 @@ import java.util.List;
 
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 
-/**
- * The Class TradeSearchAction.
- */
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = NEW, location = "searchTrade-new.jsp") })

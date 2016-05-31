@@ -149,6 +149,7 @@ public class WaterConnectionDetailsService {
     private ApplicationTypeService applicationTypeService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
 
     @Autowired

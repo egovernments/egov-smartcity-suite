@@ -47,13 +47,9 @@ import org.hibernate.validator.constraints.Length;
 
 @Unique(fields = { "name" }, id = "id", tableName = "EGTL_MSTR_BUSINESS_NATURE", columnName = { "NAME" }, message = "masters.tradenature.isunique")
 public class NatureOfBusiness extends BaseModel {
-    /**
-     *
-     */
     private static final long serialVersionUID = 5631753833454331638L;
     @Required(message = "tradelic.master.tradenature.null")
     @Length(max = 256, message = "masters.tradenature.length")
-    //@OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "tradelicense.error.tradenature.text")
     private String name;
     public static final String BY_NAME = "NATUREOFBUSINESS_BY_NAME";
 
@@ -65,12 +61,4 @@ public class NatureOfBusiness extends BaseModel {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("NatureOfBusiness={");
-        str.append("  name=").append(name == null ? "null" : name.toString());
-        str.append("}");
-        return str.toString();
-    }
 }

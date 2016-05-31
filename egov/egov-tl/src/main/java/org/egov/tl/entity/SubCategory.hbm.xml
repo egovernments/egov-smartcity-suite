@@ -68,9 +68,6 @@
 		<many-to-one class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" fetch="select" name="lastModifiedBy"
 			not-null="true" />
 			
-		<many-to-one class="org.egov.tl.entity.Schedule" fetch="select" name="scheduleMaster">
-			<column name="ID_SCHEDULE" />
-		</many-to-one>
 		<many-to-one class="org.egov.tl.entity.NatureOfBusiness" fetch="select" name="natureOfBusiness">
 			<column name="ID_NATURE" />
 		</many-to-one>	

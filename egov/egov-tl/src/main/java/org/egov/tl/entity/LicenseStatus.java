@@ -46,9 +46,6 @@ import java.util.Date;
 
 public class LicenseStatus implements java.io.Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 22395010799520683L;
 
     private Integer ID = null;
@@ -61,93 +58,54 @@ public class LicenseStatus implements java.io.Serializable {
     private boolean active;
     private Integer orderId;
 
-    /**
-     * @return Returns the iD.
-     */
     public Integer getID() {
         return ID;
     }
 
-    /**
-     * @param id The iD to set.
-     */
     public void setID(final Integer id) {
         ID = id;
     }
 
-    /**
-     * @return Returns the name.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name The name to set.
-     */
     public void setName(final String name) {
         this.name = name;
     }
 
-    /**
-     * @return Returns the lastUpdatedTimeStamp.
-     */
     public Date getLastUpdatedTimeStamp() {
         return lastUpdatedTimeStamp;
     }
 
-    /**
-     * @param lastUpdatedTimeStamp The lastUpdatedTimeStamp to set.
-     */
     public void setLastUpdatedTimeStamp(final Date lastUpdatedTimeStamp) {
         this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
     }
 
-    /**
-     * @return the statusCode
-     */
     public String getStatusCode() {
         return statusCode;
     }
 
-    /**
-     * @param statusCode the statusCode to set
-     */
     public void setStatusCode(final String statusCode) {
         this.statusCode = statusCode;
     }
 
-    /**
-     * @return the active
-     */
     public boolean isActive() {
         return active;
     }
 
-    /**
-     * @param active the active to set
-     */
     public void setActive(final boolean active) {
         this.active = active;
     }
 
-    /**
-     * @return the orderId
-     */
     public Integer getOrderId() {
         return orderId;
     }
 
-    /**
-     * @param orderId the orderId to set
-     */
     public void setOrderId(final Integer orderId) {
         this.orderId = orderId;
     }
 
-    /**
-     * @return Returns if the given Object is equal to PropertyStatus
-     */
     @Override
     public boolean equals(final Object that)
     {
@@ -202,19 +160,4 @@ public class LicenseStatus implements java.io.Serializable {
             throw new ApplicationRuntimeException("In LicenseStatus Validate : 'Status Name' Attribute is Not Set, Please Check !!");
         return true;
     }
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseStatus={");
-        str.append("ID=").append(ID);
-        str.append("name=").append(name == null ? "null" : name.toString());
-        str.append("lastUpdatedTimeStamp=").append(lastUpdatedTimeStamp == null ? "null" : lastUpdatedTimeStamp.toString());
-        str.append("statusCode=").append(statusCode == null ? "null" : statusCode.toString());
-        str.append("active=").append(active);
-        str.append("orderId=").append(orderId == null ? "null" : orderId.toString());
-        str.append("}");
-        return str.toString();
-    }
-
 }

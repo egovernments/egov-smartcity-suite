@@ -172,6 +172,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private UserService userService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
 
     @Autowired

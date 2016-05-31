@@ -185,6 +185,7 @@ public class PropertyExternalService {
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private UserService userService;

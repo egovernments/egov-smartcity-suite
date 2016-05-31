@@ -196,6 +196,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long>
     private SecurityUtils securityUtils;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
 
     public PaymentService(Class<Paymentheader> type) {
