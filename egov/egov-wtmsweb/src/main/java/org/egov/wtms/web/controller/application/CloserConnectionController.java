@@ -221,7 +221,7 @@ public class CloserConnectionController extends GenericConnectionController {
         }
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        if (request.getParameter("closeConnectionType").equals(WaterTaxConstants.PERMENENTCLOSE))
+        if (request.getParameter("closeConnectionType").equals(WaterTaxConstants.PERMENENTCLOSE) ||request.getParameter("closeConnectionType").equals(WaterTaxConstants.PERMENENTCLOSECODE))
             waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
         else
             waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
