@@ -1,0 +1,19 @@
+CREATE INDEX INDX_propertyusage_usagetype ON egwtr_property_usage (usagetype);
+CREATE INDEX INDX_propertyusage_propertytype ON egwtr_property_usage (propertytype);
+
+CREATE INDEX INDX_propertycategory_categorytype ON egwtr_property_category (categorytype);
+CREATE INDEX INDX_propertycategory_propertytype ON egwtr_property_category (propertytype);
+
+CREATE INDEX INDX_propertypipesize_pipesize ON egwtr_property_pipe_size (pipesize);
+CREATE INDEX INDX_propertypipesize_propertytype ON egwtr_property_pipe_size (propertytype);
+
+CREATE INDEX INDX_demandconnection_demand ON egwtr_demand_connection (demand);
+CREATE INDEX INDX_demandconnection_connectiondetails ON egwtr_demand_connection (connectiondetails);
+
+CREATE INDEX INDX_existingconnectiondetails_connectiondetailsid ON egwtr_existing_connection_details (connectiondetailsid);
+
+CREATE INDEX INDX_nonmeteredbilldetails_connectiondetailsid ON egwtr_nonmetered_billdetails (connectiondetailsid);
+CREATE INDEX INDX_nonmeteredbilldetails_installmentid ON egwtr_nonmetered_billdetails (installmentid);
+
+CREATE INDEX INDX_documents_filestoreid ON egwtr_documents (filestoreid);
+CREATE INDEX INDX_documents_applicationdocumentsid ON egwtr_documents (applicationdocumentsid);
