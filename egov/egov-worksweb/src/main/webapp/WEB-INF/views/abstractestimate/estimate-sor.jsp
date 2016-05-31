@@ -45,7 +45,7 @@
 	<input type="hidden" id="isServiceVATRequired" value="${isServiceVATRequired }">
 	<div class="panel-heading">
 		<div class="panel-title"><spring:message code="title.sor" />
-			<div class="pull-right mb-5 small-note-title"><s:text name="estimate.rate.disclaimer"/></div>
+			<div class="pull-right mb-5 small-note-title"><spring:message code="estimate.rate.disclaimer" /></div>
 		</div>
 	</div>
 	<div class="panel-body" id="sorHeaderTable">
@@ -85,7 +85,7 @@
 			</div>
 		</div>
 		
-		<table class="table table-bordered" id="tblestimate">
+		<table class="table table-bordered" id="tblsor">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slNo" /></th>
@@ -110,9 +110,9 @@
 						<td colspan="9"><spring:message code="msg.sor.table"/></td>
 					</c:if>
 				</tr>
-				<tr id="estimateRow" hidden="true" align="center">
+				<tr id="sorRow" hidden="true" align="center">
 					<td>
-						<span class="spansno">1</span>
+						<span class="spansorslno">1</span>
 						<!-- <input type="hidden" id="id_0" name="id_0" class="form-control table-input hidden-input"/> -->
 						<form:hidden path="activities[0].schedule.id" id="id_0" />
 					</td>
@@ -145,17 +145,11 @@
 						<span class="total_0 total"></span>
 					</td>
 					<td>
-						<span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+						<span class="add-padding" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 					</td>
 				</tr>
 			</tbody>
 			<tfoot>
-				<%-- <c:set var="total" value="${0}" scope="session"/>
-				<c:if test="${lineEstimate.getLineEstimateDetails() != null}">
-					<c:forEach items="${lineEstimate.getLineEstimateDetails()}" var="lineEstimateDtls">
-						<c:set var="total" value="${total + lineEstimateDtls.estimateAmount}"/>
-					</c:forEach>
-				</c:if> --%>
 				<tr>
 					<td colspan="6" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="sorEstimateTotal">0.00</span> </td>

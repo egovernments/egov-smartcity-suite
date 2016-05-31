@@ -107,13 +107,14 @@ jQuery(document).ready(function(){
 			});
 		}
 		else {
-			var hiddenRowCount = jQuery("#tblestimate tbody tr:hidden[id='estimateRow']").length;
+			var hiddenRowCount = jQuery("#tblsor tbody tr:hidden[id='sorRow']").length;
 			if(hiddenRowCount == 0) {
-				addLineEstimate();
+				addSor();
 			} else {
-				jQuery('#estimateRow').show();
+				jQuery('#message').hide();
+				jQuery('#sorRow').show();
 			}
-			var rowcount = jQuery("#tblestimate tbody tr").length;
+			var rowcount = jQuery("#tblsor tbody tr").length;
 			var key = parseInt(rowcount) - 2;
 			jQuery.each(data, function(id, val) {
 				if(id == "id")
@@ -125,7 +126,6 @@ jQuery(document).ready(function(){
 				else
 					jQuery('.' + id + "_" + key).html(val);
 			});
-			jQuery('#message').hide();
 		}
 		jQuery('#sorSearch').val('');
     });
@@ -142,15 +142,15 @@ function getRow(obj) {
 	return null;
 }
 
-function addLineEstimate() {
-	var rowcount = jQuery("#tblestimate tbody tr").length;
+function addSor() {
+	var rowcount = jQuery("#tblsor tbody tr").length;
 	if (rowcount < 31) {
-		if (document.getElementById('estimateRow') != null) {
+		if (document.getElementById('sorRow') != null) {
 			// get Next Row Index to Generate
-			var nextIdx = jQuery("#tblestimate tbody tr").length - 1;
+			var nextIdx = jQuery("#tblsor tbody tr").length - 1;
 
 			// Generate all textboxes Id and name with new index
-			jQuery("#estimateRow").clone().find("input, span").each(
+			jQuery("#sorRow").clone().find("input, span").each(
 					function() {
 
 						if(!jQuery(this).is('span')) {
@@ -173,7 +173,7 @@ function addLineEstimate() {
 								}
 							});
 						}
-					}).end().appendTo("#tblestimate tbody");
+					}).end().appendTo("#tblsor tbody");
 			$('#quantity_' + nextIdx).val('');
 			$('.amount_' + nextIdx).html('');
 			$('#vat_' + nextIdx).val('');
@@ -191,21 +191,21 @@ function addLineEstimate() {
 function generateSno()
 {
 	var idx=1;
-	jQuery(".spansno").each(function(){
+	jQuery(".spansorslno").each(function(){
 		jQuery(this).text(idx);
 		idx++;
 	});
 }
 
-function deleteLineEstimate(obj) {
+function deleteSor(obj) {
     var rIndex = getRow(obj).rowIndex;
     
     var id = jQuery(getRow(obj)).children('td:first').children('input:first').val();
     //To get all the deleted rows id
     var aIndex = rIndex - 1;
 
-	var tbl=document.getElementById('tblestimate');	
-	var rowcount=jQuery("#tblestimate tbody tr").length;
+	var tbl=document.getElementById('tblsor');	
+	var rowcount=jQuery("#tblsor tbody tr").length;
 
 	if(rowcount==2) {
 		jQuery('.hidden-input').val('');
@@ -214,7 +214,7 @@ function deleteLineEstimate(obj) {
 		$('#vat_0').val('');
 		$('.vatAmount_0').html('');
 		$('.total_0').html('');
-		jQuery('#estimateRow').hide();
+		jQuery('#sorRow').hide();
 		jQuery('#message').show();
 	} else {
 		tbl.deleteRow(rIndex);
@@ -225,21 +225,20 @@ function deleteLineEstimate(obj) {
 	var idx = -1;
 	
 	//regenerate index existing inputs in table row
-	jQuery("#tblestimate tbody tr").each(function() {
+	jQuery("#tblsor tbody tr").each(function() {
 		jQuery(this).find("input, span").each(function() {
-			if(!jQuery(this).is('span')) {
-			   jQuery(this).attr({
-			      'name': function(_, name) {
-			    	  return name.replace(/\d+/, idx); 
-			      },
-			      'id' : function(_, id) {
+			if (!jQuery(this).is('span')) {
+				jQuery(this).attr({
+					'name' : function(_, name) {
+						return name.replace(/\d+/, idx);
+					},
+					'id' : function(_, id) {
 						return id.replace(/\d+/, idx);
 					},
-					'data-idx' : function(_,dataIdx)
-					{
+					'data-idx' : function(_, dataIdx) {
 						return idx;
 					}
-			   });
+				});
 			} else {
 				jQuery(this).attr({
 					'class' : function(_, name) {
@@ -247,7 +246,7 @@ function deleteLineEstimate(obj) {
 					}
 				});
 			}
-	    });
+		});
 		idx++;
 	});
 	calculateEstimateAmountTotal();
