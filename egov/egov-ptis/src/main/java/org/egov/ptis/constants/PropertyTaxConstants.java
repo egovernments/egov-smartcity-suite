@@ -353,8 +353,8 @@ public interface PropertyTaxConstants {
     };
     // Un authorized penalty percentages on property tax
     public static final BigDecimal BPA_DEVIATION_TAXPERC_1_10 = new BigDecimal(0.25);// 25%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_11_25 = new BigDecimal(0.5);// 50%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_26_100 = new BigDecimal(1);// 100%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_ABOVE_11 = new BigDecimal(0.5);// 50%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_NOT_DEFINED = new BigDecimal(1);// 100%
 
     // TreeMap for Guardian Relation
     public static final TreeMap<String, String> GUARDIAN_RELATION = new TreeMap<String, String>() {

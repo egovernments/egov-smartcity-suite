@@ -41,6 +41,7 @@ package org.egov.ptis.actions.common;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -341,6 +342,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             final Property property, final String areaOfPlot, final Date regDocDate, final String modifyRsn,
             final Date propCompletionDate) {
         Installment currentInstallment=null;
+        boolean buildingPlanNoValidationAdded;
+        boolean buildingPlanDateValidationAdded;
+        boolean buildingPlanPlinthAreaValidationAdded;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
                     + (floorList != null ? floorList : ZERO));
@@ -356,6 +360,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 for (final Floor floor : floorList) {
                     List<String> msgParams = null;
                     if (floor != null) {
+                    	buildingPlanNoValidationAdded = false;
+                        buildingPlanDateValidationAdded = false;
+                        buildingPlanPlinthAreaValidationAdded = false;
                         msgParams = new ArrayList<String>();
                         if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10))
                             addActionError(getText("mandatory.floorNO"));
@@ -381,6 +388,34 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
                                 || floor.getPropertyUsage().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.usage", msgParams));
+                        
+                        if(StringUtils.isNotBlank(floor.getBuildingPermissionNo())){
+                        	if(floor.getBuildingPermissionDate() == null){
+                        		addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
+                        		buildingPlanDateValidationAdded = true;
+                        	}
+                        	if(floor.getBuildingPlanPlinthArea().getArea() == null){
+                        		addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
+                        		buildingPlanPlinthAreaValidationAdded = true;
+                        	}
+                        }
+                        if(floor.getBuildingPermissionDate() !=null ){
+                        	if(StringUtils.isBlank(floor.getBuildingPermissionNo())){
+                       			addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
+                       			buildingPlanNoValidationAdded = true;
+                        	}
+                        	if(floor.getBuildingPlanPlinthArea().getArea() == null)
+                        		if(!buildingPlanPlinthAreaValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
+                        }
+                        if(floor.getBuildingPlanPlinthArea().getArea() != null){
+                        	if(floor.getBuildingPermissionDate() == null)
+                        		if(!buildingPlanDateValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
+                        	if(StringUtils.isBlank(floor.getBuildingPermissionNo()))
+                        		if(!buildingPlanNoValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
+                        }
 
                         if (floor.getFirmName() == null || floor.getFirmName().isEmpty()
                                 || floor.getFirmName().equals("")) {

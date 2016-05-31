@@ -80,9 +80,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private static final Logger LOGGER = Logger.getLogger(APTaxCalculator.class);
     private static BigDecimal RESD_OWNER_DEPRECIATION = new BigDecimal(40);
     private static BigDecimal SEASHORE_RESD_OWNER_DEPRECIATION = new BigDecimal(45);
-    // private static BigDecimal BUIULDING_VALUE = new BigDecimal(0.67);
-    // private static BigDecimal SITE_VALUE = new BigDecimal(0.33);
-
     private BigDecimal BUIULDING_VALUE = new BigDecimal(2).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private BigDecimal SITE_VALUE = new BigDecimal(1).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private BigDecimal totalTaxPayable = BigDecimal.ZERO;
@@ -478,21 +475,26 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             deviationPerc = new BigDecimal(100);
         } else if (plinthArea.compareTo(buildingPlanPlinthArea) == 1) {
             diffArea = plinthArea.subtract(buildingPlanPlinthArea);
-            deviationPerc = diffArea.divide(plinthArea, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
+            deviationPerc = diffArea.divide(buildingPlanPlinthArea, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
         }
         return deviationPerc;
     }
 
     private BigDecimal calculateUnAuthPenalty(BigDecimal deviationPerc, BigDecimal totalPropertyTax) {
         BigDecimal unAuthPenalty = BigDecimal.ZERO;
+        /*
+         * deviationPerc between 1-10, Penalty perc = 25%, 
+         * deviationPerc > 10, Penalty perc = 50%, 
+         * no Building plan details, Penalty perc = 100%
+         */
         if (deviationPerc != null && !deviationPerc.equals("0")) {
             if (deviationPerc.compareTo(BigDecimal.ZERO) == 1 && deviationPerc.compareTo(BigDecimal.TEN) == -1) {
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_1_10);
             } else if (deviationPerc.compareTo(new BigDecimal(11)) == 1
-                    && deviationPerc.compareTo(new BigDecimal(25)) == -1) {
-                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_11_25);
+            		&& deviationPerc.compareTo(BIGDECIMAL_100) != 0) {
+                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_ABOVE_11);
             } else {
-                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_26_100);
+                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_NOT_DEFINED);
             }
         }
         return unAuthPenalty;
