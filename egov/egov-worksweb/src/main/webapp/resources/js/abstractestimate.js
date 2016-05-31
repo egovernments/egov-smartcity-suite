@@ -248,7 +248,6 @@ function calculateOverheadTotalAmount(){
 function addMultiyearEstimate() {
 	var tbl = document.getElementById('multiYeaeEstimateTbl');
     var rowO=tbl.rows.length;
-    alert("Hi");
     if(document.getElementById('yearEstimateRow') != null)
 	{
     		//get Next Row Index to Generate

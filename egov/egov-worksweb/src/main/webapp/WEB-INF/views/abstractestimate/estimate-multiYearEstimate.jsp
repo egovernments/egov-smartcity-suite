@@ -47,7 +47,7 @@
 	</div>
 	<input type="hidden" value="${abstractEstimate.multiYearEstimates.size() }" id="detailsSize" />
 	<div class="panel-body">
-		<table class="table table-bordered" id="tblestimate">
+		<table class="table table-bordered" id="tblyearestimate">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slno"/></th>

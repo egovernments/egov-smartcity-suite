@@ -40,7 +40,41 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
+
+
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="form-group">
+
+		<label class="col-sm-2 control-label text-right"> <spring:message
+				code="lbl.typeofwork" />
+		</label>
+		<div class="col-sm-3 add-margin">
+			<form:select path="parentCategory" data-first-option="false" id="parentCategory" disabled="true" class="form-control"
+				required="required">
+				<form:option value="">
+					<spring:message code="lbl.select" />
+				</form:option>
+				<form:options items="${typeOfWork}" itemValue="id"
+					itemLabel="description" />
+			</form:select>
+		</div>
+
+		<label class="col-sm-2 control-label text-right"> <spring:message
+				code="lbl.subtypeofwork" />
+		</label>
+		<div class="col-sm-3 add-margin">
+
+			<form:select path="category" data-first-option="false" id="category" class="form-control" disabled="true" required="required">
+				<form:option value="">
+					<spring:message code="lbl.select" />
+				</form:option>
+				<form:options items="${typeOfWork}" itemValue="id"
+					itemLabel="description" />
+			</form:select>
+		</div>
+
+	</div>
+</div>
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="isServiceVATRequired" value="${isServiceVATRequired }">
 	<div class="panel-heading">

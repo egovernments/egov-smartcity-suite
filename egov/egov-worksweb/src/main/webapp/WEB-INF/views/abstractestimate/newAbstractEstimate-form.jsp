@@ -37,31 +37,49 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<form:form name="abstractEstimateForm" role="form" modelAttribute="abstractEstimate" id="abstractEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	    
-<div class="new-page-header">
-	Create Abstract Estimate
-</div>
+<form:form name="abstractEstimateForm" role="form"	modelAttribute="abstractEstimate" id="abstractEstimate"	class="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
 
-<div id="estimate_header">
-	<%@ include file="estimate-header.jsp"%>            
-	<%@ include file="estimate-multiYearEstimate.jsp"%>  
-	<%-- <%@ include file="uploadDocuments.jsp"%> --%>
-	<%@ include file="estimate-sor.jsp"%>
-	<%@ include file="estimate-overheads.jsp"%>    
-</div> 	
+	<div class="new-page-header">Create Abstract Estimate</div>
 
-<div class="row">
+	<div class="panel-heading">
+		<ul class="nav nav-tabs" id="settingstab">
+			<li class="active"><a data-toggle="tab" href="#estimateheader" data-tabidx=0><spring:message code="lbl.header" /></a></li>
+			<li><a data-toggle="tab" href="#workdetails" data-tabidx=1><spring:message code="lbl.workdetails" /> </a></li>
+			<li><a data-toggle="tab" href="#overheads" data-tabidx=1><spring:message code="tab.header.overhead" /> </a></li>
+			<li><a data-toggle="tab" href="#assetandfinancials" data-tabidx=2> <spring:message	code="tab.header.assetandfinancials" />
+			</a></li>
+		</ul>
+	</div>
+	<div class="tab-content">
+		<div class="tab-pane fade in active" id="estimateheader">
+			<%@ include file="estimate-header.jsp"%>
+			<%@ include file="estimate-multiYearEstimate.jsp"%>
+			<%@ include file="uploadDocuments.jsp"%>
+		</div>
+		<div class="tab-pane fade" id="workdetails">
+			<%@ include file="estimate-sor.jsp"%>
+		</div>
+		<div class="tab-pane fade" id="overheads">
+			<%@ include file="estimate-overheads.jsp"%>
+		</div>
+		<div class="tab-pane fade" id="assetandfinancials">
+			<%@ include file="estimate-asset.jsp"%>
+			<%@ include file="estimate-financialdetails.jsp"%>
+		</div>
+	</div>
+
+	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type="submit" name="submit" id="save"
-				class="btn btn-primary" value="Save">
+			<button type="submit" name="submit" id="save" class="btn btn-primary"
+				value="Save">
 				<spring:message code="lbl.save" />
 			</button>
 			<button type="button" class="btn btn-default" id="button2"
@@ -71,4 +89,5 @@
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript" src="<c:url value='/resources/js/abstractestimate.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/abstractestimate.js?rnd=${app_release_no}'/>"></script>

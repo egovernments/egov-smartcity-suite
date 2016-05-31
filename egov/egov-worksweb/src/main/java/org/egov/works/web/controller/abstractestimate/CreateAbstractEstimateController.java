@@ -102,9 +102,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
         abstractEstimate.setLocation(lineEstimate.getLocation().getName());
         abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
+        abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
+        abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("currentDate", currentDate);
+        model.addAttribute("lineEstimate", lineEstimate);
         
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
@@ -126,14 +129,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
-        model.addAttribute("workCategory", WorkCategory.values());
-        model.addAttribute("typeOfSlum", TypeOfSlum.values());
-        model.addAttribute("beneficiary", Beneficiary.values());
-        model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
-        model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
         model.addAttribute("finYear", cFinancialYearService.findAll());
     }
     

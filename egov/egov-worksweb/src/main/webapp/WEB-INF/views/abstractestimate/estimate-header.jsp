@@ -59,7 +59,7 @@
 	   <%@ include file="lineEstimateDetails.jsp"%>   
 	   <div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.userdepartment" /> 
+			    <spring:message code="lbl.department" /> 
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required">

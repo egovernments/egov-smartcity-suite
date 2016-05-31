@@ -38,68 +38,67 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<style type="text/css">
+.yui-dt table {
+	width: 100%;
+}
+
+.yui-dt-col-Add {
+	width: 5%;
+}
+
+.yui-dt-col-Delete {
+	width: 5%;
+}
+</style>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<script src="<egov:url path='resources/js/documentsupload.js?rnd=${app_release_no}'/>"></script>
-<style>
-	.file-ellipsis {
-		width : auto !Important;
-	}
-	
-	.padding-10
-	{
-	  padding:10px;
-	}
-</style>
-<div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<div class="panel panel-primary" data-collapsed="0"
+	style="text-align: left">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<c:if test="${mode != 'view' && mode != 'readOnly'}">
-				<spring:message code="lbl.upload.document" />
-			</c:if>
-			<c:if test="${mode == 'view' || mode == 'readOnly' }">
-				<spring:message code="lbl.documents" />
-			</c:if>
+			<spring:message code="lbl.financialdetails" />
 		</div>
 	</div>
-	<c:if test="${lineEstimate.documentDetails != null &&  !lineEstimate.documentDetails.isEmpty()}">
-		<c:forEach items="${lineEstimate.documentDetails }" var="documentDetials">
-			<a href="/egworks/lineestimate/downloadLineEstimateDoc?lineEstimateId=${lineEstimate.id }&fileStoreId=${documentDetials.fileStore.fileStoreId }">${documentDetials.fileStore.fileName }</a><br />
-		</c:forEach>
-	</c:if>
-	<c:if test="${mode == 'view' && lineEstimate.documentDetails.isEmpty()}">
-		<spring:message code="msg.no.documents" />
-	</c:if>
-	<input type="hidden" value="${fn:length(lineEstimate.documentDetails)}" id="documentsSize">
-	<c:if test="${mode != 'view' && mode != 'readOnly' }">
-		<div>
-			<table width="100%">
-				<%-- <c:if test="${lineEstimate.documentDetails != null &&  fn:length(lineEstimate.documentDetails) lt 4}">
-				<tbody>
-					<tr>
-						<td valign="top">
-						 	<table id="uploadertbl" width="100%"><tbody>
-						 		<tr id="row1">			 				
-									<td>
-										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
-									</td>
-								</tr>									 										
-						 	</tbody></table>
-						</td>
-					</tr>
-					<tr>
-						<td align="center">
-							<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
-						</td>
-					</tr>
-				</tbody>
-				</c:if> --%>
-			</table>
+	<div class="panel-body">
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.fund" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<c:out default="N/A" value="${lineEstimate.fund.name}"></c:out>
+			</div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.function" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<c:out default="N/A" value="${lineEstimate.function.name}"></c:out>
+			</div>
 		</div>
-	</c:if>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.budgethead" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<c:out default="N/A" value="${lineEstimate.budgetHead.name}" />
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.scheme" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<c:out default="N/A" value="${lineEstimate.scheme.name}" />
+			</div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.subscheme" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<c:out default="N/A" value="${lineEstimate.subScheme.name}"></c:out>
+			</div>
+		</div>
+	</div>
 </div>

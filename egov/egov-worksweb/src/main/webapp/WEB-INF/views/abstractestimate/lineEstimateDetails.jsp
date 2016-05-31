@@ -23,7 +23,7 @@
 			    <spring:message code="lbl.userdepartment" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="executingDepartment" data-first-option="false" readonly="true" id="executingDepartments" class="form-control" required="required">
+				<form:select path="executingDepartment" data-first-option="false" disabled="true" id="executingDepartments" class="form-control" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -54,13 +54,7 @@
 			    <spring:message code="lbl.locality" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:select path="location" data-first-option="false" id="locationBoundary" cssClass="form-control">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-							<form:options items="${locations}" itemValue="id" itemLabel="name" />
-						</form:option>
-					</form:select>
-					<form:errors path="location" cssClass="add-margin error-msg" />
+			<form:input path="" class="form-control" name="location" readonly="true" value="${lineEstimateDetails.lineEstimate.location.name}"/>
 			</div>
 		</div>
 		
@@ -69,7 +63,7 @@
 			    <spring:message code="lbl.natureofwork" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork"  readonly="true" class="form-control" required="required">
+			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork"  disabled="true" class="form-control" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
