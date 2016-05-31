@@ -53,7 +53,7 @@
 <div id="estimate_header">
 	<%@ include file="estimate-header.jsp"%>            
 	<%@ include file="estimate-multiYearEstimate.jsp"%>  
-	<%@ include file="uploadDocuments.jsp"%>
+	<%-- <%@ include file="uploadDocuments.jsp"%> --%>
 	<%@ include file="estimate-sor.jsp"%>
 	<%@ include file="estimate-overheads.jsp"%>    
 </div> 	
