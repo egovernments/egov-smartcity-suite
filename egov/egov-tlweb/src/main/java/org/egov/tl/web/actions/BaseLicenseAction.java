@@ -40,6 +40,19 @@
 
 package org.egov.tl.web.actions;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -90,17 +103,6 @@ import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.web.actions.domain.CommonAjaxAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({
@@ -178,7 +180,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    
+
     @Autowired
     private ReportViewerUtil reportViewerUtil;
 
@@ -205,7 +207,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     @ValidationErrorPage(Constants.NEW)
-    public String enterExisting(final T license, final Map<Integer, Integer> legacyInstallmentwiseFees, 
+    public String enterExisting(final T license, final Map<Integer, Integer> legacyInstallmentwiseFees,
             final Map<Integer, Boolean> legacyFeePayStatus) {
         this.setCheckList();
         licenseService().createLegacyLicense(license, legacyInstallmentwiseFees, legacyFeePayStatus);
@@ -215,8 +217,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     // sub class should get the object of the model and set to license()
-    public String approve() {
-        
+    public String approve(){
+
         if (workFlowAction.equals(Constants.WF_PREVIEW_BUTTON))
             return redirectToPrintCertificate();
         if (workFlowAction.equals(Constants.SIGNWORKFLOWACTION))
@@ -294,7 +296,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     @SkipValidation
-    public String beforeRenew() {
+    public String beforeRenew() throws IOException {
         return Constants.BEFORE_RENEWAL;
     }
 
@@ -406,25 +408,25 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             if (!Constants.BUTTONSUBMIT.equals(workFlowAction))
                 licenseService().transitionWorkFlow(license(), workflowBean);
         User user = null;
-        Long createrPosition=null;
+        Long createrPosition = null;
         for (final StateHistory state : license().getState().getHistory())
             if (state != null && state.getCreatedBy() != null)
                 if (state.getValue().contains(Constants.WORKFLOW_STATE_NEW)) {
                     user = state.getCreatedBy();
-                     createrPosition=state.getOwnerPosition().getId();
+                    createrPosition = state.getOwnerPosition().getId();
                     break;
                 }
         if (user == null)
             user = license().getCreatedBy();
-        if(createrPosition==null)
-            createrPosition=license().getState().getOwnerPosition().getId();
-        String nextDesgn="";
-       Assignment assignObj = assignmentService.getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId());
-       if(assignObj!=null)
-            nextDesgn=assignObj.getDesignation().getName();
+        if (createrPosition == null)
+            createrPosition = license().getState().getOwnerPosition().getId();
+        String nextDesgn = "";
+        final Assignment assignObj = assignmentService.getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId());
+        if (assignObj != null)
+            nextDesgn = assignObj.getDesignation().getName();
         if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONAPPROVE)) {
             if (license().getTradeName().isNocApplicable() != null && license().getTradeName().isNocApplicable())
-                addActionMessage(this.getText("license.approved.and.sent.to") + nextDesgn + " - " +user.getName() + " "
+                addActionMessage(this.getText("license.approved.and.sent.to") + nextDesgn + " - " + user.getName() + " "
                         + this.getText("license.for.noc.generation"));
             else
                 addActionMessage(this.getText("license.approved.success"));
@@ -434,11 +436,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                     .getPrimaryAssignmentForPositon(workflowBean.getApproverPositionId()).getEmployee().getName();
             addActionMessage(this.getText("license.sent") + " " + nextDesgn + " - " + userName);
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONREJECT)) {
-           String creatorDesgn= assignmentService
-            .getPrimaryAssignmentForPositon(createrPosition).getDesignation().getName();
+            final String creatorDesgn = assignmentService
+                    .getPrimaryAssignmentForPositon(createrPosition).getDesignation().getName();
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-                addActionMessage(this.getText("license.rejectedfirst") +   (creatorDesgn!=null ?creatorDesgn+ " - " :"")+ " " +user.getName() 
-                        );
+                addActionMessage(this.getText("license.rejectedfirst") + (creatorDesgn != null ? creatorDesgn + " - " : "") + " "
+                        + user.getName());
             else
                 addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
         } else if (workflowBean.getWorkFlowAction().equalsIgnoreCase(Constants.BUTTONGENERATEDCERTIFICATE))
@@ -480,7 +482,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     // viewTradeLicense!showForApproval is picking id and gets Objects and
     // forwards here
     @SkipValidation
-    public String showForApproval() {
+    public String showForApproval() throws IOException {
         getSession().put("model.id", license().getId());
         String result = "approve";
         setRoleName(securityUtils.getCurrentUser().getRoles().toString());

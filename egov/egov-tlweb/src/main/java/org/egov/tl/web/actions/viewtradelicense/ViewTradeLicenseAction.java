@@ -40,6 +40,11 @@
 
 package org.egov.tl.web.actions.viewtradelicense;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -47,11 +52,10 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
-import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -61,14 +65,11 @@ import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 @ParentPackage("egov")
 @Results({
-        @Result(name = "auditReport", type = "redirectAction", location = "auditReport", params = {"moduleName", "TL",
+        @Result(name = "auditReport", type = "redirectAction", location = "auditReport", params = { "moduleName", "TL",
                 "namespace",
-                "/egi/auditing", "method", "searchForm", "actionName", "auditReport", "prependServletContext", "false"}),
+                "/egi/auditing", "method", "searchForm", "actionName", "auditReport", "prependServletContext", "false" }),
         @Result(name = "duplicate", location = "viewTradeLicense-duplicate.jsp"),
         @Result(name = Constants.CNCCERTIFICATE, location = "viewTradeLicense-" + Constants.CNCCERTIFICATE + ".jsp"),
         @Result(name = Constants.PFACERTIFICATE, location = "viewTradeLicense-" + Constants.PFACERTIFICATE + ".jsp"),
@@ -85,7 +86,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     protected String reportId;
     private String applicationNo;
     private Long userId;
- 
+
     @Autowired
     private ReportService reportService;
     @Autowired
@@ -97,55 +98,53 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
      * @return the rejectreason
      */
     public String getRejectreason() {
-        return this.rejectreason;
+        return rejectreason;
     }
 
     /**
      * @param rejectreason the rejectreason to set
      */
-    public void setRejectreason(String rejectreason) {
+    public void setRejectreason(final String rejectreason) {
         this.rejectreason = rejectreason;
     }
 
     @Override
     public TradeLicense getModel() {
-        return this.tradeLicense;
+        return tradeLicense;
 
     }
 
     @Override
     @Action(value = "/viewtradelicense/viewTradeLicense-showForApproval")
-    public String showForApproval() {
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
+    public String showForApproval() throws IOException {
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         return super.showForApproval();
     }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-view")
     public String view() {
-        if (this.license() !=null && this.license().getId() != null ){
-            this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
-            }
-            else if (applicationNo != null && !applicationNo.isEmpty()) {
-                this.tradeLicense=this.tradeLicenseService.getLicenseByApplicationNumber(applicationNo);
-             }
-            return Constants.VIEW;
+        if (license() != null && license().getId() != null)
+            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        else if (applicationNo != null && !applicationNo.isEmpty())
+            tradeLicense = tradeLicenseService.getLicenseByApplicationNumber(applicationNo);
+        return Constants.VIEW;
     }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-viewCitizen")
     public String viewCitizen() {
-        this.session = this.requestObj.getSession();
-        User user = this.userService.getUserByUsername(this.CITIZENUSER);
-        this.userId = user.getId();
-        ApplicationThreadLocals.setUserId(this.userId);
-        this.session.setAttribute("com.egov.user.LoginUserName", user.getName());
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
+        session = requestObj.getSession();
+        final User user = userService.getUserByUsername(CITIZENUSER);
+        userId = user.getId();
+        ApplicationThreadLocals.setUserId(userId);
+        session.setAttribute("com.egov.user.LoginUserName", user.getName());
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         return Constants.VIEW;
     }
-    
+
     @Action(value = "/viewtradelicense/viewTradeLicense-generateCertificate")
     public String generateCertificate() {
-       this.setLicenseIdIfServletRedirect();
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
+        setLicenseIdIfServletRedirect();
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         /*
          * if (this.documentManagerService.getDocumentObject(this.tradeLicense.getApplicationNumber(), "egtradelicense") == null)
          * { ViewTradeLicenseAction.LOGGER.debug("Creating Certificate object for DMS"); final Notice notice = new Notice();
@@ -154,31 +153,32 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
          * notice.setNoticeType(this.license().getClass().getSimpleName() + "-Certificate"); notice.setNoticeDate(new Date());
          * this.request.put("noticeObject", notice); }
          */
-        reportId = reportViewerUtil.addReportToTempCache(reportService.createReport(tradeLicenseService.prepareReportInputData((License)license())));
+        reportId = reportViewerUtil
+                .addReportToTempCache(reportService.createReport(tradeLicenseService.prepareReportInputData(license())));
         return "report";
     }
 
     public String generateNoc() {
-        this.setLicenseIdIfServletRedirect();
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.tradeLicense.getId());
+        setLicenseIdIfServletRedirect();
+        tradeLicense = tradeLicenseService.getLicenseById(tradeLicense.getId());
         return "noc";
     }
 
-    
     public String createNoc() {
-        this.setLicenseIdIfServletRedirect();
-        TradeLicense modifiedTL = this.tradeLicense;
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
-        this.tradeLicense.setSandBuckets(modifiedTL.getSandBuckets());
-        this.tradeLicense.setWaterBuckets(modifiedTL.getWaterBuckets());
-        this.tradeLicense.setDcpExtinguisher(modifiedTL.getDcpExtinguisher());
-        String runningNumber = this.tradeLicenseService.getNextRunningLicenseNumber(Constants.TL_PROVISIONAL_NOC_NUMBER).toString();
-        this.tradeLicense.generateNocNumber(runningNumber);
+        setLicenseIdIfServletRedirect();
+        final TradeLicense modifiedTL = tradeLicense;
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        tradeLicense.setSandBuckets(modifiedTL.getSandBuckets());
+        tradeLicense.setWaterBuckets(modifiedTL.getWaterBuckets());
+        tradeLicense.setDcpExtinguisher(modifiedTL.getDcpExtinguisher());
+        final String runningNumber = tradeLicenseService.getNextRunningLicenseNumber(Constants.TL_PROVISIONAL_NOC_NUMBER)
+                .toString();
+        tradeLicense.generateNocNumber(runningNumber);
         // this.service().endWorkFlowForLicense(tradeLicense);
-        LicenseStatus activeStatus = (LicenseStatus) this.persistenceService
+        final LicenseStatus activeStatus = (LicenseStatus) persistenceService
                 .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-        this.tradeLicense.setStatus(activeStatus);
-        this.tradeLicenseService.licensePersitenceService().update(this.tradeLicense);
+        tradeLicense.setStatus(activeStatus);
+        tradeLicenseService.licensePersitenceService().update(tradeLicense);
         return "createnoc";
     }
 
@@ -187,14 +187,14 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     }
 
     public String generateDuplicateNoc() {
-        this.setLicenseIdIfServletRedirect();
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
+        setLicenseIdIfServletRedirect();
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         return "createnoc";
     }
 
     private void setLicenseIdIfServletRedirect() {
-        if (this.tradeLicense.getId() == null)
-            if (this.getSession().get("model.id") != null) {
+        if (tradeLicense.getId() == null)
+            if (getSession().get("model.id") != null) {
                 tradeLicense.setId(Long.valueOf((Long) getSession().get("model.id")));
                 getSession().remove("model.id");
             }
@@ -203,16 +203,16 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
     @SkipValidation
     @Action(value = "/viewtradelicense/viewTradeLicense-generateRejCertificate")
     public String generateRejCertificate() {
-        this.setLicenseIdIfServletRedirect();
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
+        setLicenseIdIfServletRedirect();
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         return "rejCertificate";
     }
 
     @SkipValidation
     @Action(value = "/viewtradelicense/viewTradeLicense-certificateForRej")
     public String certificateForRej() {
-        this.getSession().get("model.id");
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
+        getSession().get("model.id");
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         return "certificateForRej";
     }
 
@@ -223,56 +223,56 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> impl
 
     @Override
     protected TradeLicense license() {
-        return this.tradeLicense;
+        return tradeLicense;
     }
 
     @Override
     @SkipValidation
     @ValidationErrorPageExt(action = "approve", makeCall = true, toMethod = "setupWorkflowDetails")
     public String approve() {
-        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
+        setRoleName(securityUtils.getCurrentUser().getRoles().toString());
         return super.approve();
     }
 
     @Override
     @SkipValidation
-    @ValidationErrorPageExt(
-            action = "approveRenew", makeCall = true, toMethod = "setupWorkflowDetails")
+    @ValidationErrorPageExt(action = "approveRenew", makeCall = true, toMethod = "setupWorkflowDetails")
     public String approveRenew() {
-        this.setRoleName(this.securityUtils.getCurrentUser().getRoles().toString());
-        this.tradeLicense = this.tradeLicenseService.getLicenseById(this.license().getId());
+        setRoleName(securityUtils.getCurrentUser().getRoles().toString());
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         return super.approveRenew();
     }
 
     @Override
     protected AbstractLicenseService<TradeLicense> licenseService() {
-        return this.tradeLicenseService;
+        return tradeLicenseService;
     }
 
     public WorkflowBean getWorkflowBean() {
-        return this.workflowBean;
+        return workflowBean;
     }
 
-    public void setWorkflowBean(WorkflowBean workflowBean) {
+    public void setWorkflowBean(final WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
     }
 
     @Override
     @SkipValidation
-    public void setServletRequest(HttpServletRequest arg0) {
-        this.requestObj = arg0;
+    public void setServletRequest(final HttpServletRequest arg0) {
+        requestObj = arg0;
     }
-    
+
     public String getApplicationNo() {
         return applicationNo;
     }
 
-    public void setApplicationNo(String applicationNo) {
+    public void setApplicationNo(final String applicationNo) {
         this.applicationNo = applicationNo;
     }
 
+    @Override
     public String getReportId() {
         return reportId;
     }
-    
+
 }
