@@ -322,7 +322,8 @@ function modifyContractorDataOnSearch() {
     return true;
 }
 function validate(){
-	document.searchContractorForm.action='contractor-viewResult.action'; 
+	var mode=document.getElementById('mode').value;
+	document.searchContractorForm.action="contractor-viewResult.action?mode="+mode; 
    	document.searchContractorForm.submit();
 	
 }
@@ -344,7 +345,7 @@ function createNewEsimate() {
 }
 
 function modifyEstimate() {
-	var id=document.getElementById('id')
+	var id=document.getElementById('id').value;
 	window.location = "estimateTemplate-edit.action?mode=edit&id="+ id;
 }
 
@@ -377,6 +378,7 @@ function modifyScheduleData() {
 }		
 
 function validateSOR(){	
-	document.searchSORForm.action='scheduleOfRate-searchSorDetails.action';
+	var mode=document.getElementById('mode').value;
+	document.searchSORForm.action='scheduleOfRate-searchSorDetails.action?mode='+mode; 
 	document.searchSORForm.submit();
 }

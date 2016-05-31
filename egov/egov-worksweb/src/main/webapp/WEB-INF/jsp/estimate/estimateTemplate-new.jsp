@@ -50,10 +50,10 @@
 <script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 <script>
 function enableFieldsForModify(){
-    id=dom.get('id').value;
+    var id=dom.get('id').value;
     document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=edit&id='+id;
     document.estimateTemplateForm.submit();
-}
+} 
 
 function validateCancel() {
 	var msg='<s:text name="estimate.template.modify.confirm"/>';
@@ -125,7 +125,7 @@ function validateEstimateTemplateFormAndSubmit() {
 <s:if test="%{model.id!=null}">
 	<s:hidden name="id" value="%{id}" id="id"/>
     <s:hidden name="mode" value="%{mode}" id="mode"/>
-    <s:hidden  name="model.id" value="%{model.id}"id="id"/> 
+    <s:hidden  name="model.id" value="%{model.id}" id="modelId"/> 
 </s:if> 
 <s:else>
     <s:hidden name="id" value="%{null}" id="mode" />
@@ -142,7 +142,7 @@ function validateEstimateTemplateFormAndSubmit() {
 		</s:if>
 		<egov-authz:authorize actionName="editEstimateTemplate">
 		<s:if test="%{mode=='view'}">
-			<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify()"/>&nbsp;
+			<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify();"/>&nbsp;
 		</s:if>
 		</egov-authz:authorize>
 		<s:if test="%{model.id==null}" >
