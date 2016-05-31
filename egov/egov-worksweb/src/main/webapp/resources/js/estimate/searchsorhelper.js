@@ -40,7 +40,7 @@
 
 jQuery(document).ready(function(){
 	
-	var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egworks/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
+	var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>'
 	
 	jQuery('#sorSearch').blur(function() {
 		jQuery('#sorSearch').val('');
@@ -67,7 +67,7 @@ jQuery(document).ready(function(){
 	        replace: function (url, query) {
 	        		var scheduleCategories = jQuery('#scheduleCategory').val();
 	        		if(scheduleCategories == null)
-	        			bootbox.alert("Please select Schedule Of Category");
+	        			bootbox.alert($('#msgschedulecategory').val());
 	        	    return url + query + '&scheduleCategories=' + scheduleCategories;
 	        	},
 	        filter: function (data) {
@@ -96,13 +96,13 @@ jQuery(document).ready(function(){
 		source : sorSearch.ttAdapter()
 	}).on('typeahead:selected', function (event, data) {
 		var flag = false;
-		jQuery('.hidden-input').each(function() {
+		jQuery('.sorhiddenid').each(function() {
 			if(jQuery(this).val() == data.id) {
 				flag = true;
 			}
 		});
 		if(flag) {
-			bootbox.alert("The SOR is already added", function() {
+			bootbox.alert($('#erroradded').val(), function() {
 				jQuery('#sorSearch').val('');
 			});
 		}
@@ -111,6 +111,8 @@ jQuery(document).ready(function(){
 			if(hiddenRowCount == 0) {
 				addSor();
 			} else {
+				$('#quantity_0').val('');
+				$('#vat_0').val('');
 				jQuery('#message').hide();
 				jQuery('#sorRow').show();
 			}
@@ -180,7 +182,9 @@ function addSor() {
 			$('.vatAmount_' + nextIdx).html('');
 			$('.total_' + nextIdx).html('');
 			
-			generateSno();
+			generateSorSno();
+			
+			resetIndexes();
 			
 		}
 	} else {
@@ -188,7 +192,7 @@ function addSor() {
 	}
 }
 
-function generateSno()
+function generateSorSno()
 {
 	var idx=1;
 	jQuery(".spansorslno").each(function(){
@@ -198,17 +202,13 @@ function generateSno()
 }
 
 function deleteSor(obj) {
-    var rIndex = getRow(obj).rowIndex;
-    
-    var id = jQuery(getRow(obj)).children('td:first').children('input:first').val();
-    //To get all the deleted rows id
-    var aIndex = rIndex - 1;
-
+	var rIndex = getRow(obj).rowIndex;
+	
 	var tbl=document.getElementById('tblsor');	
 	var rowcount=jQuery("#tblsor tbody tr").length;
 
 	if(rowcount==2) {
-		jQuery('.hidden-input').val('');
+		jQuery('.sorhiddenid').val('');
 		$('#quantity_0').val('');
 		$('.amount_0').html('');
 		$('#vat_0').val('');
@@ -220,35 +220,10 @@ function deleteSor(obj) {
 		tbl.deleteRow(rIndex);
 	}
 	//starting index for table fields
-	generateSno();
+	generateSorSno();
 	
-	var idx = -1;
+	resetIndexes();
 	
-	//regenerate index existing inputs in table row
-	jQuery("#tblsor tbody tr").each(function() {
-		jQuery(this).find("input, span").each(function() {
-			if (!jQuery(this).is('span')) {
-				jQuery(this).attr({
-					'name' : function(_, name) {
-						return name.replace(/\d+/, idx);
-					},
-					'id' : function(_, id) {
-						return id.replace(/\d+/, idx);
-					},
-					'data-idx' : function(_, dataIdx) {
-						return idx;
-					}
-				});
-			} else {
-				jQuery(this).attr({
-					'class' : function(_, name) {
-						return name.replace(/\d+/, idx);
-					}
-				});
-			}
-		});
-		idx++;
-	});
 	calculateEstimateAmountTotal();
 	calculateVatAmountTotal();
 	total();
@@ -303,6 +278,7 @@ function total() {
 			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
 	});
 	$('#sorTotal').html(total);
+	calculateEstimateValue();
 }
 
 var ie=document.all

@@ -79,15 +79,5 @@
 				<form:errors path="lineEstimateDetails" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-		
-			<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.estimate.value" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
-			<form:input path="estimateValue" class="form-control" name="estimateValue"/>
-			</div>
-		</div>
-		
 </div>   
 </div>

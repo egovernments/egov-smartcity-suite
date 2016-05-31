@@ -30,6 +30,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleCategoryService;
+import org.egov.works.master.service.UOMService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -90,6 +91,9 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     
     @Autowired
     private LineEstimateService lineEstimateService;
+    
+    @Autowired
+    private UOMService uomService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final String estimateNumber, final Model model) {
@@ -100,7 +104,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         LineEstimate lineEstimate  = lineEstimateDetails.getLineEstimate();
         abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
-        abstractEstimate.setLocation(lineEstimate.getLocation().getName());
+        if(lineEstimate.getLocation() != null)
+            abstractEstimate.setLocation(lineEstimate.getLocation().getName());
         abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
         abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
         abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
@@ -132,6 +137,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("finYear", cFinancialYearService.findAll());
+        model.addAttribute("uoms", uomService.getAllUOMs());
     }
     
     @RequestMapping(value = "/newform", method = RequestMethod.POST)

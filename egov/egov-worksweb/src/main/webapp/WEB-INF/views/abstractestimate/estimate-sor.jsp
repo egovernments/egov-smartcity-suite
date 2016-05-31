@@ -44,7 +44,8 @@
 
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="form-group">
-
+		<input type="hidden" id="msgschedulecategory" value="<spring:message code='msg.select.scheduleofcategory' />">
+		<input type="hidden" id="erroradded" value="<spring:message code='error.sor.added' />">
 		<label class="col-sm-2 control-label text-right"> <spring:message
 				code="lbl.typeofwork" />
 		</label>
@@ -88,7 +89,7 @@
 			    <spring:message code="lbl.schedulecategory" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<select multiple="true" name="scheduleCategory" data-first-option="false" id="scheduleCategory" class="form-control" required="required">
+				<select multiple="true" name="scheduleCategory" data-first-option="false" id="scheduleCategory" class="form-control">
 					<c:forEach items="${scheduleCategories }" var="scheduleCategory">
 						<option value="${scheduleCategory.id }" label="${scheduleCategory.code }" />
 					</c:forEach>
@@ -144,11 +145,10 @@
 						<td colspan="9"><spring:message code="msg.sor.table"/></td>
 					</c:if>
 				</tr>
-				<tr id="sorRow" hidden="true" align="center">
+				<tr id="sorRow" class="sorRow" hidden="true" align="center">
 					<td>
 						<span class="spansorslno">1</span>
-						<!-- <input type="hidden" id="id_0" name="id_0" class="form-control table-input hidden-input"/> -->
-						<form:hidden path="activities[0].schedule.id" id="id_0" />
+						<form:hidden path="activities[0].schedule.id" id="id_0" class="sorhiddenid" />
 					</td>
 					<td>
 						<span class="code_0"></span>
@@ -164,13 +164,13 @@
 						<span class="rate_0"></span>
 					</td>
 					<td>
-						<form:input path="activities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" maxlength="64" required="required" onblur="calculateEstimateAmount(this);"/>
+						<form:input path="activities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" maxlength="64" required="required" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
 					</td>
 					<td align="right">
 						<span class="amount_0 amount"></span>
 					</td>
 					<td hidden="true" class="serviceTaxPerc">
-						<form:input path="activities[0].serviceTaxPerc" id="vat_0" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right" maxlength="64" onblur="calculateVatAmount(this);"/>
+						<form:input path="activities[0].serviceTaxPerc" id="vat_0" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right" maxlength="64" onblur="calculateVatAmount(this);" onkeyup="validateInput(this);"/>
 					</td>
 					<td hidden="true" align="right" class="vatAmount">
 						<span class="vatAmount_0 vatAmt"></span>

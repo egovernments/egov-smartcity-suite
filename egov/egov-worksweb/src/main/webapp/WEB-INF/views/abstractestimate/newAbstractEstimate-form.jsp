@@ -48,7 +48,6 @@
 	enctype="multipart/form-data">
 
 	<div class="new-page-header">Create Abstract Estimate</div>
-
 	<div class="panel-heading">
 		<ul class="nav nav-tabs" id="settingstab">
 			<li class="active"><a data-toggle="tab" href="#estimateheader" data-tabidx=0><spring:message code="lbl.header" /></a></li>
@@ -66,6 +65,7 @@
 		</div>
 		<div class="tab-pane fade" id="workdetails">
 			<%@ include file="estimate-sor.jsp"%>
+			<%@ include file="estimate-nonsor.jsp"%>
 		</div>
 		<div class="tab-pane fade" id="overheads">
 			<%@ include file="estimate-overheads.jsp"%>
@@ -73,6 +73,18 @@
 		<div class="tab-pane fade" id="assetandfinancials">
 			<%@ include file="estimate-asset.jsp"%>
 			<%@ include file="estimate-financialdetails.jsp"%>
+		</div>
+		<div class="panel-body">
+			<div class="form-group" style="margin-bottom: 5px;">
+				<label class="col-sm-2 control-label text-right"> <spring:message
+						code="lbl.estimate.value" />
+				</label>
+				<div class="col-sm-3 add-margin">
+					<form:input path="estimateValue" id="estimateValue"
+						cssClass="form-control" readonly="true" align="right"
+						tabindex="-1" />
+				</div>
+			</div>
 		</div>
 	</div>
 
