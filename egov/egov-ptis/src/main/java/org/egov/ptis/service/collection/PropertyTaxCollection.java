@@ -297,7 +297,7 @@ public class PropertyTaxCollection extends TaxCollection {
         final EgDemandDetails penaltyDmdDet = ptBillServiceImpl.getDemandDetail(demand, currInstallment,
                 DEMANDRSN_STR_CHQ_BOUNCE_PENALTY);
         if (penaltyDmdDet == null)
-            dmdDet = ptBillServiceImpl.insertPenalty(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty,
+            dmdDet = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty,
                     currInstallment);
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();

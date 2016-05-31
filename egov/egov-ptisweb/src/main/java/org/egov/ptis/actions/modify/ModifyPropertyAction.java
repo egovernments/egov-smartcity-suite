@@ -897,6 +897,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         Property modProperty = null;
         try {
             modProperty = propService.modifyDemand(propertyModel, oldProperty);
+            if (PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
+                propService.caluculateGrpPenalty(modProperty);
+            }
         } catch (TaxCalculatorExeption e) {
             throw new TaxCalculatorExeption();
         }

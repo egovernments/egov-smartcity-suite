@@ -39,6 +39,78 @@
  */
 package org.egov.ptis.domain.service.property;
 
+import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDEPARTEMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDESIGNATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_IS_DEFAULT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -46,6 +118,7 @@ import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
@@ -61,6 +134,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.rest.client.SimpleRestClient;
@@ -70,7 +144,7 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.MoneyUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
@@ -78,7 +152,9 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.pims.commons.service.EisCommonsService;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
+import org.egov.ptis.client.service.PenaltyCalculationService;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -90,7 +166,31 @@ import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
-import org.egov.ptis.domain.entity.property.*;
+import org.egov.ptis.domain.entity.property.Apartment;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.Floor;
+import org.egov.ptis.domain.entity.property.FloorType;
+import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
+import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyOccupation;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertySource;
+import org.egov.ptis.domain.entity.property.PropertyStatus;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.RoofType;
+import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.WallType;
+import org.egov.ptis.domain.entity.property.WoodType;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -102,33 +202,10 @@ import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import static java.lang.Boolean.FALSE;
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * Service class to perform services related to an Assessment
@@ -194,6 +271,10 @@ public class PropertyService {
     private PropertyTaxCollection propertyTaxCollection;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PenaltyCalculationService penaltyCalculationService;
+    @Autowired
+    private PTBillServiceImpl ptBillServiceImpl;
 
     private BigDecimal totalAlv = BigDecimal.ZERO;
 
@@ -2832,6 +2913,185 @@ public class PropertyService {
 		taxValues.put(PropertyTaxConstants.ARR_BAL_STR,((propertyTaxDetails.get(PropertyTaxConstants.ARREARS)).get(PropertyTaxConstants.ARR_DMD_STR))
 				.subtract((propertyTaxDetails.get(PropertyTaxConstants.ARREARS)).get(PropertyTaxConstants.ARR_COLL_STR)));
 	}
+    
+    /**
+     * Calculates penalty for General Revision Petition
+     * 
+     * @param modProperty
+     */
+    public void caluculateGrpPenalty(Property modProperty) {
+        currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
+        Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        EgDemand currentDemand = null;
+        for (EgDemand egDemand : modProperty.getPtDemandSet()) {
+            if (egDemand.getEgInstallmentMaster().equals(currentInstall)) {
+                currentDemand = egDemand;
+                break;
+            }
+        }
+
+        Map<Installment, BigDecimal> installmentWiseDemand = getInstallmentWiseDemand(currentDemand);
+        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = penaltyCalculationService
+                .getInstallmentWisePenaltyDemandDetails(
+                        null, currentDemand);
+        List<EgDemandDetails> penaltyList = new ArrayList<>();
+        DateTime nagarPanchayatPenDate = DateTime.now().withDate(2016, 1, 1);
+        final Installment nagarPanchayatPenEndInstallment = installmentDao.getInsatllmentByModuleForGivenDate(
+                module, nagarPanchayatPenDate.toDate());
+        BigDecimal tax = BigDecimal.ZERO;
+        Installment installment = null;
+        BigDecimal excessPenalty = BigDecimal.ZERO;
+        for (final Map.Entry<Installment, BigDecimal> mapEntry : installmentWiseDemand.entrySet()) {
+            installment = mapEntry.getKey();
+            tax = mapEntry.getValue();
+            EgDemandDetails existingPenaltyDemandDetail = installmentWisePenaltyDemandDetail.get(installment);
+            Date penaltyEffectiveDate = null;
+            if (propertyTaxUtil.checkIsNagarPanchayat() && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {
+                penaltyEffectiveDate = nagarPanchayatPenDate.toDate();
+            } else {
+                penaltyEffectiveDate = getPenaltyEffectiveDate(installment);
+            }
+            if (penaltyEffectiveDate.before(new Date())) {
+                BigDecimal penaltyAmount = calculatePenalty(null, penaltyEffectiveDate, tax);
+                if (existingPenaltyDemandDetail == null) {
+                    EgDemandDetails penaltyDemandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_PENALTY_FINES,
+                            penaltyAmount,
+                            installment);
+                    penaltyList.add(penaltyDemandDetails);
+                } else {
+                    if (existingPenaltyDemandDetail.getAmtCollected().compareTo(penaltyAmount) > 0) {
+                        excessPenalty = existingPenaltyDemandDetail.getAmtCollected().subtract(penaltyAmount);
+                        existingPenaltyDemandDetail.setAmtCollected(penaltyAmount);
+                    }
+                    existingPenaltyDemandDetail.setAmount(penaltyAmount);
+                }
+            }
+
+        }
+        currentDemand.getEgDemandDetails().addAll(penaltyList);
+        List<Installment> installments = new ArrayList<Installment>(installmentWiseDemand.keySet());
+        Collections.sort(installments);
+        if (excessPenalty.compareTo(BigDecimal.ZERO) > 0) {
+            adjustExcessPenalty(currentDemand, installments, excessPenalty);
+        }
+    }
+
+    /**
+     * Adjusts excess penalty collection amount 
+     * 
+     * @param currentDemand
+     * @param installments
+     * @param excessPenalty
+     */
+    private void adjustExcessPenalty(EgDemand currentDemand, List<Installment> installments, BigDecimal excessPenalty) {
+        final Set<String> demandReasons = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+                DEMANDRSN_CODE_GENERAL_TAX,
+                DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS,
+                DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+        List<EgDemandDetails> demandDetailsList = new ArrayList<EgDemandDetails>(currentDemand.getEgDemandDetails());
+        final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetAsMap(
+                demandDetailsList, installments);
+        for (Installment installment : installments) {
+            Set<EgDemandDetails> demandDetailsSet = installmentWiseDemandDetails.get(installment);
+            for (String demandReason : demandReasons) {
+                EgDemandDetails demandDetails = getEgDemandDetailsForReason(demandDetailsSet, demandReason);
+                if (demandDetails != null) {
+                    BigDecimal balance = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
+                    if (balance.compareTo(BigDecimal.ZERO) > 0) {
+                        if (excessPenalty.compareTo(BigDecimal.ZERO) > 0) {
+                            if (excessPenalty.compareTo(balance) <= 0) {
+                                demandDetails.setAmtCollected(demandDetails.getAmtCollected().add(excessPenalty));
+                                demandDetails.setModifiedDate(new Date());
+                                excessPenalty = BigDecimal.ZERO;
+                            } else {
+                                demandDetails.setAmtCollected(demandDetails.getAmtCollected().add(balance));
+                                demandDetails.setModifiedDate(new Date());
+                                excessPenalty = excessPenalty.subtract(balance);
+                            }
+                        }
+                    }
+                }
+                if (excessPenalty.compareTo(BigDecimal.ZERO) == 0) {
+                    break;
+                }
+            }
+            if (excessPenalty.compareTo(BigDecimal.ZERO) == 0) {
+                break;
+            }
+        }
+        if (excessPenalty.compareTo(BigDecimal.ZERO) > 0) {
+            EgDemandDetails advanceDemandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE, excessPenalty,
+                    currentInstall);
+            currentDemand.getEgDemandDetails().add(advanceDemandDetails);
+        }
+    }
+
+    /**
+     * Returns installment wise demand amount
+     * 
+     * @param currentDemand
+     * @return
+     */
+    private Map<Installment, BigDecimal> getInstallmentWiseDemand(EgDemand currentDemand) {
+        final Map<Installment, BigDecimal> installmentWiseDemand = new TreeMap<Installment, BigDecimal>();
+        String demandReason = "";
+        Installment installment = null;
+        final List<String> demandReasonExcludeList = Arrays
+                .asList(DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
+        for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails()) {
+            demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
+            if (!demandReasonExcludeList.contains(demandReason)) {
+                installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
+                if (installmentWiseDemand.get(installment) == null)
+                    installmentWiseDemand.put(installment, dmdDet.getAmount());
+                else
+                    installmentWiseDemand.put(installment,
+                            installmentWiseDemand.get(installment).add(dmdDet.getAmount()));
+
+            }
+        }
+        return installmentWiseDemand;
+    }
+    
+    /**
+     * Calculates penalty on tax amount
+     * 
+     * @param latestCollReceiptDate
+     * @param fromDate
+     * @param amount
+     * @return
+     */
+    public BigDecimal calculatePenalty(final Date latestCollReceiptDate, final Date fromDate, final BigDecimal amount) {
+        BigDecimal penalty = BigDecimal.ZERO;
+        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
+        penalty = amount.multiply(PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths))).divide(
+                BIGDECIMAL_100);
+        return MoneyUtils.roundOff(penalty);
+    }
+    
+    /**
+     * Returns penalty effective date for an installment
+     * 
+     * @param installment
+     * @return
+     */
+    private Date getPenaltyEffectiveDate(final Installment installment) {
+        return penalyDateWithThreeMonths(installment.getFromDate());
+    }
+
+    /**
+     * Returns date by adding three months
+     * 
+     * @param date
+     * @return
+     */
+    private Date penalyDateWithThreeMonths(final Date date) {
+        final Calendar penalyDate = Calendar.getInstance();
+        penalyDate.setTime(date);
+        penalyDate.add(Calendar.MONTH, 3);
+        penalyDate.set(Calendar.DAY_OF_MONTH, 1);
+        return penalyDate.getTime();
+    }
     
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;

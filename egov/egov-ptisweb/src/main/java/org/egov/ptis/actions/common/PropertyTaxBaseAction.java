@@ -41,7 +41,6 @@ package org.egov.ptis.actions.common;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -341,7 +340,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
             final Property property, final String areaOfPlot, final Date regDocDate, final String modifyRsn,
             final Date propCompletionDate) {
-        Installment currentInstallment=null;
         boolean buildingPlanNoValidationAdded;
         boolean buildingPlanDateValidationAdded;
         boolean buildingPlanPlinthAreaValidationAdded;
@@ -351,12 +349,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
             if (floorList != null && floorList.size() > 0){
-                
-                if (modifyRsn != null
-                        && modifyRsn.equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)
-                        && propertyTaxUtil.checkIsNagarPanchayat()) {
-                    currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-                }
                 for (final Floor floor : floorList) {
                     List<String> msgParams = null;
                     if (floor != null) {
@@ -456,16 +448,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                     && !floor.getOccupancyDate().equals("")) {
                                 if (DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
                                     addActionError(getText("regDate.notgreaterthan.occDate", msgParams));
-                            }
-                        }
-                        if (modifyRsn != null
-                                && modifyRsn
-                                        .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)
-                                && propertyTaxUtil.checkIsNagarPanchayat()) {
-                            if (currentInstallment != null && null != floor.getOccupancyDate()
-                                    && !floor.getOccupancyDate().equals("")) {
-                                if (!DateUtils.compareDates(floor.getOccupancyDate(), currentInstallment.getFromDate()))
-                                    addActionError(getText("occDate.within.currentInstallment", msgParams));
                             }
                         }
                         if (null != modifyRsn && null != propCompletionDate) {
