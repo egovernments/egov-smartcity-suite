@@ -840,10 +840,9 @@ public class CollectionsUtil {
                 receiptHeader.getTotalAmount(), receiptDetailList);
     }
 
-    public Date getRemittanceVoucherDate(final String receiptDate) {
+    public Date getRemittanceVoucherDate(final Date receiptDate) {
         Boolean useReceiptDateAsContraVoucherDate = false;
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date voucherDate = null;
         Date rcptDate = null;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -852,8 +851,8 @@ public class CollectionsUtil {
 
         try {
             Date finDate = null;
-            if (!receiptDate.isEmpty()) {
-                rcptDate = dateFomatter.parse(receiptDate);
+            if (receiptDate!=null) {
+                rcptDate = receiptDate;
                 finDate = financialYearDAO.getFinancialYearByDate(rcptDate).getStartingDate();
             }
             if (finDate != null && finDate.toString().equals(financialYearDAO.getCurrYearStartDate())) {

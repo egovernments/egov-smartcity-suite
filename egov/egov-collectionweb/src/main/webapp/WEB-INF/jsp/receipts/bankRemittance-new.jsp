@@ -159,6 +159,13 @@
 		dom.get("selectremittanceerror").style.display = "none";
 		dom.get("approvalSelectionError").style.display = "none";
 
+		<s:if test="showRemittanceDate">
+		if(dom.get("remittanceDate")!=null && dom.get("remittanceDate").value=="")
+			{
+			bootbox.alert("Please Enter Date of Remittance");
+			return false;
+			}
+		</s:if>
 		if (!isChecked(document.getElementsByName('receiptIds'))) {
 			dom.get("selectremittanceerror").style.display = "block";
 			return false;
@@ -167,6 +174,7 @@
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			document.bankRemittanceForm.submit();
 		}
+		
 
 	}
 
@@ -265,6 +273,26 @@
 			deSelectAll();
 		}
 	}
+
+	var isDatepickerOpened=false;
+	jQuery(document).ready(function() {
+	var nowTemp = new Date();
+    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+    
+     jQuery( "#remittanceDate" ).datepicker({ 
+   	 format: 'dd/mm/yyyy',
+   	 endDate: nowTemp, 
+   	 autoclose:true,
+        onRender: function(date) {
+     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+     	  }
+	  }).on('changeDate', function(ev) {
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  isDatepickerOpened=false; 
+		  }
+	  }).data('datepicker');
+	 });
 </script>
 </head>
 <body>
@@ -290,6 +318,7 @@
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
 	<s:form theme="simple" name="bankRemittanceForm">
+	<s:push value="model">
 			<s:token />
 		<s:if test="%{hasErrors()}">
 	    <div id="actionErrorMessages" class="errorstyle">
@@ -459,7 +488,17 @@
 						<img src="/collection/resources/images/bar_loader.gif" alt=""/> <span
 							style="color: red">Please wait....</span>
 					</div>
-
+					<s:if test="showRemittanceDate">
+					<div align="center">
+					<table>
+					<tr>
+					<td class="bluebox" colspan="7"> &nbsp;</td>
+					<td class="bluebox" ><s:text name="bankremittance.remittancetdate"/><span class="mandatory"/></td>
+					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" value="%{remittanceDate}" readonly="readonly" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
+					</tr>
+					</table>
+					</div>
+					</s:if>
 					<div align="left" class="mandatorycoll">
 						<s:text name="common.mandatoryfields" />
 					</div>
@@ -491,6 +530,7 @@
 					</logic:empty>
 					</s:if>
 		</div>
+		</s:push>
 	</s:form>
 </body>
 </html>
