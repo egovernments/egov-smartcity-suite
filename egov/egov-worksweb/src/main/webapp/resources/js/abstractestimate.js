@@ -37,6 +37,122 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+$(document).ready(function(){
+	
+	var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>'
+	
+	$('#sorSearch').blur(function() {
+		$('#sorSearch').val('');
+	});
+	
+	$isServiceVATRequired = $('#isServiceVATRequired').val();
+	
+	if($isServiceVATRequired == 'true') {
+		//For Sor Screen
+		$('#serviceVatHeader').removeAttr('hidden');
+		$('#vatAmountHeader').removeAttr('hidden');
+		$('.serviceTaxPerc').removeAttr('hidden');
+		$('.vatAmount').removeAttr('hidden');
+		$('.emptytd').removeAttr('hidden');
+		$('.serviceVatAmt').removeAttr('hidden');
+		
+		//For Non-Sor Screen
+		$('#nonSorServiceVatHeader').removeAttr('hidden');
+		$('#nonSorVatAmountHeader').removeAttr('hidden');
+		$('.nonSorServiceTaxPerc').removeAttr('hidden');
+		$('.nonSorVatAmount').removeAttr('hidden');
+		$('.emptytd').removeAttr('hidden');
+		$('.nonSorServiceVatAmt').removeAttr('hidden');
+	}
+	
+	$('#addnonSorRow').click(function() {
+		var hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+		if(hiddenRowCount == 0) {
+			addNonSor();
+		} else {
+			$('.nonSorRate').val('');
+			$('.nonSorQuantity').val('');
+			$('.nonSorServiceTaxPerc').val('');
+			$('#nonSorMessage').hide();
+			$('#nonSorRow').show();
+		}
+	});
+	
+	var sorSearch = new Bloodhound({
+	    datumTokenizer: function (datum) {
+	        return Bloodhound.tokenizers.whitespace(datum.value);
+	    },
+	    queryTokenizer: Bloodhound.tokenizers.whitespace,
+	    remote: {
+	        url: '/egworks/abstractestimate/ajaxsor-byschedulecategories?code=',
+	        replace: function (url, query) {
+	        		var scheduleCategories = $('#scheduleCategory').val();
+	        		if(scheduleCategories == null)
+	        			bootbox.alert($('#msgschedulecategory').val());
+	        	    return url + query + '&scheduleCategories=' + scheduleCategories;
+	        	},
+	        filter: function (data) {
+	            return $.map(data, function (ct) {
+	                return {
+	                	id: ct.id,
+	                    code: ct.code,
+	                    description: ct.description,
+	                    uom: ct.uom.uom,
+	                    rate: ct.sorRates[0].rate.value,
+	                    summary: ct.summary,
+	                    displayResult: ct.code+' : '+ct.summary
+	                };
+	            });
+	        }
+	    }
+	});
+
+	sorSearch.initialize();
+	var sorSearch_typeahead = $('#sorSearch').typeahead({
+		hint : true,
+		highlight : true,
+		minLength : 2
+	}, {
+		displayKey : 'displayResult',
+		source : sorSearch.ttAdapter()
+	}).on('typeahead:selected', function (event, data) {
+		var flag = false;
+		$('.sorhiddenid').each(function() {
+			if($(this).val() == data.id) {
+				flag = true;
+			}
+		});
+		if(flag) {
+			bootbox.alert($('#erroradded').val(), function() {
+				$('#sorSearch').val('');
+			});
+		}
+		else {
+			var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+			if(hiddenRowCount == 0) {
+				addSor();
+			} else {
+				$('#quantity_0').val('');
+				$('#vat_0').val('');
+				$('#message').hide();
+				$('#sorRow').show();
+			}
+			var rowcount = $("#tblsor tbody tr").length;
+			var key = parseInt(rowcount) - 2;
+			$.each(data, function(id, val) {
+				if(id == "id")
+					$('#' + id + "_" + key).val(val);
+				if(id == 'description') {
+					$('.' + id + "_" + key).html(hint.replace(/@fulldescription@/g, val));
+				}
+					
+				else
+					$('.' + id + "_" + key).html(val);
+			});
+		}
+		$('#sorSearch').val('');
+    });
+});
 
 $overheadRowCount = 0;
 function addOverheadRow() { 
@@ -326,4 +442,393 @@ function deleteMultiYearEstimate(obj) {
 		return true;
 	}	
 
+}
+
+function addSor() {
+	var rowcount = $("#tblsor tbody tr").length;
+	if (rowcount < 31) {
+		if (document.getElementById('sorRow') != null) {
+			// get Next Row Index to Generate
+			var nextIdx = $("#tblsor tbody tr").length - 1;
+
+			// Generate all textboxes Id and name with new index
+			$("#sorRow").clone().find("input, span").each(
+					function() {
+
+						if(!$(this).is('span')) {
+							$(this).attr({
+								'name' : function(_, name) {
+									return name.replace(/\d+/,nextIdx);
+								},
+								'id' : function(_, id) {
+									return id.replace(/\d+/, nextIdx);
+								},
+								'data-idx' : function(_,dataIdx)
+								{
+									return nextIdx;
+								}
+							});
+						} else {
+							$(this).attr({
+								'class' : function(_, name) {
+									return name.replace(/\d+/, nextIdx);
+								}
+							});
+						}
+					}).end().appendTo("#tblsor tbody");
+			$('#quantity_' + nextIdx).val('');
+			$('.amount_' + nextIdx).html('');
+			$('#vat_' + nextIdx).val('');
+			$('.vatAmount_' + nextIdx).html('');
+			$('.total_' + nextIdx).html('');
+			
+			generateSorSno();
+			
+			resetIndexes();
+			
+		}
+	} else {
+		  bootbox.alert('limit reached!');
+	}
+}
+
+function generateSorSno()
+{
+	var idx=1;
+	$(".spansorslno").each(function(){
+		$(this).text(idx);
+		idx++;
+	});
+}
+
+function deleteSor(obj) {
+	var rIndex = getRow(obj).rowIndex;
+	
+	var tbl=document.getElementById('tblsor');	
+	var rowcount=$("#tblsor tbody tr").length;
+
+	if(rowcount==2) {
+		$('.sorhiddenid').val('');
+		$('#quantity_0').val('');
+		$('.amount_0').html('');
+		$('#vat_0').val('');
+		$('.vatAmount_0').html('');
+		$('.total_0').html('');
+		$('#sorRow').hide();
+		$('#message').show();
+	} else {
+		tbl.deleteRow(rIndex);
+	}
+	//starting index for table fields
+	generateSorSno();
+	
+	resetIndexes();
+	
+	calculateEstimateAmountTotal();
+	calculateVatAmountTotal();
+	total();
+	return true;
+}
+
+function calculateEstimateAmount(currentObj) {
+	rowcount = getRow(currentObj).rowIndex - 2;
+	var rate = parseFloat($('.rate_' + rowcount).html().trim());
+	var amount = parseFloat($(currentObj).val() * rate).toFixed(2);
+	var vatAmount = parseFloat(($('#vat_' + rowcount).val() * amount) / 100).toFixed(2);
+	$('.amount_' + rowcount).html(amount);
+	$('.vatAmount_' + rowcount).html(vatAmount);
+	$('.total_' + rowcount).html(parseFloat(parseFloat(amount) + parseFloat(vatAmount)).toFixed(2));
+	calculateEstimateAmountTotal();
+	calculateVatAmountTotal();
+	total();
+}
+
+function calculateVatAmount(currentObj) {
+	rowcount = getRow(currentObj).rowIndex - 2;
+	var estimatedAmount = parseFloat($('.amount_' + rowcount).html().trim());
+	var vatAmount = parseFloat(($(currentObj).val() * estimatedAmount) / 100).toFixed(2);
+	$('.vatAmount_' + rowcount).html(vatAmount);
+	$('.total_' + rowcount).html(parseFloat(parseFloat(estimatedAmount) + parseFloat(vatAmount)).toFixed(2));
+	calculateVatAmountTotal();
+	total();
+}
+
+function calculateEstimateAmountTotal() {
+	var total = 0;
+	$('.amount').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+	});
+	$('#sorEstimateTotal').html(total);
+}
+
+function calculateVatAmountTotal() {
+	var total = 0;
+	$('.vatAmt').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+	});
+	$('#serviceVatAmtTotal').html(total);
+}
+
+function total() {
+	var total = 0.0;
+	$('.total').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+	});
+	$('#sorTotal').html(total);
+	calculateEstimateValue();
+}
+
+function addNonSor() {
+	var rowcount = $("#tblNonSor tbody tr").length;
+	if (rowcount < 31) {
+		if (document.getElementById('nonSorRow') != null) {
+			// get Next Row Index to Generate
+			var nextIdx = $("#tblNonSor tbody tr").length - 1;
+
+			// Generate all textboxes Id and name with new index
+			$("#nonSorRow").clone().find("input, span, select").each(
+					function() {
+
+						if(!$(this).is('span')) {
+							$(this).attr({
+								'name' : function(_, name) {
+									return name.replace(/\d+/,nextIdx);
+								},
+								'id' : function(_, id) {
+									return id.replace(/\d+/, nextIdx);
+								},
+								'data-idx' : function(_,dataIdx)
+								{
+									return nextIdx;
+								}
+							});
+						} else {
+							$(this).attr({
+								'class' : function(_, name) {
+									return name.replace(/\d+/, nextIdx);
+								}
+							});
+						}
+					}).end().appendTo("#tblNonSor tbody");
+			$('#nonSorId_' + nextIdx).val('');
+			$('#nonSorDesc_' + nextIdx).val('');
+			$('#nonSorUom_' + nextIdx).val('');
+			$('#nonSorRate_' + nextIdx).val('');
+			$('#nonSorQuantity_' + nextIdx).val('');
+			$('.nonSorAmount_' + nextIdx).html('');
+			$('#nonSorServiceTaxPerc_' + nextIdx).val('');
+			$('.nonSorVatAmt_' + nextIdx).html('');
+			$('.nonSorTotal_' + nextIdx).html('');
+			
+			generateSlno();
+			
+			resetIndexes();
+			
+		}
+	} else {
+		  bootbox.alert('limit reached!');
+	}
+}
+
+function generateSlno()
+{
+	var idx=1;
+	$(".spannonsorslno").each(function(){
+		$(this).text(idx);
+		idx++;
+	});
+}
+
+function deleteNonSor(obj) {
+    var rIndex = getRow(obj).rowIndex;
+    
+	var tbl=document.getElementById('tblNonSor');	
+	var rowcount=$("#tblNonSor tbody tr").length;
+
+	if(rowcount==2) {
+		$('#nonSorId_1').val('');
+		$('#nonSorId_1').val('');
+		$('#nonSorDesc_1').val('');
+		$('#nonSorUom_1').val('');
+		$('#nonSorRate_1').val('');
+		$('#nonSorQuantity_1').val('');
+		$('.nonSorAmount_1').html('');
+		$('#nonSorServiceTaxPerc_1').val('');
+		$('.nonSorVatAmt_1').html('');
+		$('.nonSorTotal_1').html('');
+		$('#nonSorRow').hide();
+		$('#nonSorMessage').show();
+	} else {
+		tbl.deleteRow(rIndex);
+	}
+	//starting index for table fields
+	generateSlno();
+	
+	resetIndexes();
+	
+	calculateNonSorEstimateAmountTotal();
+	calculateNonSorVatAmountTotal();
+	nonSorTotal();
+	return true;
+}
+
+function resetIndexes() {
+	var idx = 0;
+	
+	//regenerate index existing inputs in table row
+	$(".sorRow").each(function() {
+		$(this).find("input, span").each(function() {
+			if (!$(this).is('span')) {
+				$(this).attr({
+					'name' : function(_, name) {
+						return name.replace(/\d+/, idx);
+					},
+					'id' : function(_, id) {
+						return id.replace(/\d+/, idx);
+					},
+					'data-idx' : function(_, dataIdx) {
+						return idx;
+					}
+				});
+			} else {
+				$(this).attr({
+					'class' : function(_, name) {
+						return name.replace(/\d+/, idx);
+					}
+				});
+			}
+		});
+		idx++;
+	});
+	
+	var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+	if(hiddenRowCount == 1)
+		idx = 0;
+	
+	$(".nonSorRow").each(function() {
+		$(this).find("input, span, select").each(function() {
+			if (!$(this).is('span')) {
+				$(this).attr({
+					'name' : function(_, name) {
+						return name.replace(/\d+/, idx);
+					},
+					'id' : function(_, id) {
+						return id.replace(/\d+/, idx);
+					},
+					'data-idx' : function(_, dataIdx) {
+						return idx;
+					}
+				});
+			} else {
+				$(this).attr({
+					'class' : function(_, name) {
+						return name.replace(/\d+/, idx);
+					}
+				});
+			}
+		});
+		idx++;
+	});
+}
+
+function calculateNonSorEstimateAmount(currentObj) {
+	var rowcount = $(currentObj).attr('id').split('_').pop();
+	var description = $('#nonSorDesc_' + rowcount).val();
+	var uom = $('#nonSorUom_' + rowcount).val();
+	var flag = false;
+	if(description == '') {
+		bootbox.alert($('#errordescription').val());
+		$('#nonSorDesc_' + rowcount).val('');
+		flag = true;
+	}
+	if(!flag && uom == '') {
+		bootbox.alert($('#erroruom').val());
+		$('#nonSorUom_' + rowcount).val('');
+		flag = true;
+	}
+	if(!flag) {
+		var rate = $('#nonSorRate_' + rowcount).val();
+		if(rate == "")
+			rate = 0.0;
+		var quantity = $('#nonSorQuantity_' + rowcount).val();
+		if(quantity == "")
+			quantity = 0.0;
+		var amount = parseFloat(parseFloat(quantity) * parseFloat(rate)).toFixed(2);
+		var vatAmount = parseFloat(($('#nonSorServiceTaxPerc_' + rowcount).val() * amount) / 100).toFixed(2);
+		$('.nonSorAmount_' + rowcount).html(amount);
+		$('.nonSorVatAmount_' + rowcount).html(vatAmount);
+		$('.nonSorTotal_' + rowcount).html(parseFloat(parseFloat(amount) + parseFloat(vatAmount)).toFixed(2));
+		calculateNonSorEstimateAmountTotal();
+		calculateNonSorVatAmountTotal();
+		nonSorTotal();
+	}
+}
+
+function calculateNonSorVatAmount(currentObj) {
+	var rowcount = $(currentObj).attr('id').split('_').pop();
+	var estimatedAmount = $('.nonSorAmount_' + rowcount).html();
+	if(estimatedAmount == "")
+		estimatedAmount = 0.0;
+	var serviceTaxPerc = $('#nonSorServiceTaxPerc_' + rowcount).val();
+	if(serviceTaxPerc == "")
+		serviceTaxPerc = 0.0;
+	var vatAmount = parseFloat((serviceTaxPerc * estimatedAmount) / 100).toFixed(2);
+	$('.nonSorVatAmount_' + rowcount).html(vatAmount);
+	$('.nonSorTotal_' + rowcount).html(parseFloat(parseFloat(estimatedAmount) + parseFloat(vatAmount)).toFixed(2));
+	calculateNonSorVatAmountTotal();
+	nonSorTotal();
+}
+
+function calculateNonSorEstimateAmountTotal() {
+	var total = 0;
+	$('.nonsoramount').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+	});
+	$('#nonSorEstimateTotal').html(total);
+}
+
+function calculateNonSorVatAmountTotal() {
+	var total = 0;
+	$('.nonSorVatAmt').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+	});
+	$('#nonSorServiceVatAmtTotal').html(total);
+}
+
+function nonSorTotal() {
+	var total = 0.0;
+	$('.nonSorTotal').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().trim())).toFixed(2);
+	});
+	$('#nonSorTotal').html(total);
+	calculateEstimateValue();
+}
+
+function calculateEstimateValue() {
+	var sorTotal = $('#sorTotal').html();
+	var nonSorTotal = $('#nonSorTotal').html();
+	if(sorTotal == '')
+		sorTotal = 0.0;
+	if(nonSorTotal == '')
+		nonSorTotal = 0.0;
+	
+	var estimateValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2);
+	
+	$('#estimateValue').val(estimateValue);
+}
+
+function validateInput(object) {
+    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test($(object).val()),
+        val = $(object).val();
+    
+    if(!valid){
+        console.log("Invalid input!");
+        $(object).val(val.substring(0, val.length - 1));
+    }
 }

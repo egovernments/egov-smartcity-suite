@@ -133,4 +133,3 @@
 		</table>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/estimate/searchnonsorhelper.js?rnd=${app_release_no}'/>"></script>

@@ -196,4 +196,3 @@
 		</table>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/estimate/searchsorhelper.js?rnd=${app_release_no}'/>"></script>
