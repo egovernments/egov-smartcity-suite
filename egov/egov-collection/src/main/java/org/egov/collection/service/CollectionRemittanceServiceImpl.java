@@ -160,21 +160,19 @@ public class CollectionRemittanceServiceImpl extends CollectionRemittanceService
 
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
-
+        Date voucherDate = null;
         for (int i = 0; i < serviceNameArr.length; i++) {
             final String serviceName = serviceNameArr[i].trim();
-            Date remittanceVoucherDate = null;
             if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE).equals(
                             CollectionConstants.YES) && remittanceDate!=null)
-                remittanceVoucherDate = remittanceDate;
+                voucherDate = remittanceDate;
             else
                 try {
-                    remittanceVoucherDate = dateFomatter.parse(receiptDateArray[i]);
+                    voucherDate = collectionsUtil.getRemittanceVoucherDate(dateFomatter.parse(receiptDateArray[i]));
                 } catch (ParseException e) {
                     LOGGER.error("Error Parsing Date",e);
                 }
-            final Date voucherDate = collectionsUtil.getRemittanceVoucherDate(remittanceVoucherDate);
             if (serviceName != null && serviceName.length() > 0) {
                 final Bankaccount depositedBankAccount = (Bankaccount) persistenceService.find(
                         "from Bankaccount where id=?", Long.valueOf(accountNumberId.longValue()));
