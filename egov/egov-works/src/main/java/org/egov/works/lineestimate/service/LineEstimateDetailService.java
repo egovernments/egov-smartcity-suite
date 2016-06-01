@@ -39,6 +39,8 @@
  */
 package org.egov.works.lineestimate.service;
 
+import java.util.List;
+
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
@@ -56,8 +58,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -195,5 +195,15 @@ public class LineEstimateDetailService {
 
         return flag;
     }
+    
+    public LineEstimateDetails getLineEstimateDetailsByProjectCode(final String workIdentificationNumber) {
+        return lineEstimateDetailsRepository.findByProjectCode_codeAndLineEstimate_Status_CodeNotLike(workIdentificationNumber,
+                WorksConstants.CANCELLED_STATUS);
+    }
 
+    public LineEstimateDetails getLineEstimateDetailsByEstimateNumber(final String estimateNumber) {
+        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeNot(estimateNumber,
+                WorksConstants.CANCELLED_STATUS);
+    }
+    
 }

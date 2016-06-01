@@ -907,8 +907,9 @@ public class LineEstimateService {
         return lineEstimateRepository.save(lineEstimate);
     }
     
-    public LineEstimateDetails getEstimateNumbersToSearch(final String estimateNumber) {
-        return lineEstimateDetailsRepository.findByEstimateNumber(estimateNumber);
+    public LineEstimate getLineEstimateByCouncilResolutionNumber(final String councilResolutionNumber) {
+        return lineEstimateRepository.findByCouncilResolutionNumberIgnoreCaseAndStatus_codeNotLike(councilResolutionNumber,
+                WorksConstants.CANCELLED_STATUS);
     }
     
 }

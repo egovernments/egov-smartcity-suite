@@ -39,18 +39,18 @@
  */
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchContractorBillJsonAdaptor implements JsonSerializer<ContractorBillRegister> {
@@ -78,15 +78,15 @@ public class SearchContractorBillJsonAdaptor implements JsonSerializer<Contracto
                 jsonObject.addProperty("billType", contractorBillRegister.getBilltype());
             else
                 jsonObject.addProperty("billType", "");
-            if (contractorBillRegister.getWorkOrder().getEstimateNumber() != null) {
-                final LineEstimateDetails led = lineEstimateService.getEstimateNumbersToSearch(contractorBillRegister.getWorkOrder()
-                        .getEstimateNumber());
-                final String adminSanctionNumber = led.getLineEstimate().getAdminSanctionNumber();
-                jsonObject.addProperty("adminSanctionNumber", adminSanctionNumber);
-                final String workIdentificationNumber = led.getProjectCode().getCode();
-                jsonObject.addProperty("workIdentificationNumber", workIdentificationNumber);
-                jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
-            }
+            if(contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate() != null)
+                jsonObject.addProperty("adminSanctionNumber", contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
+            else
+                jsonObject.addProperty("adminSanctionNumber", "");
+            
+            if(contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getProjectCode() != null)
+                jsonObject.addProperty("workIdentificationNumber", contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getProjectCode().getCode());
+            else
+                jsonObject.addProperty("workIdentificationNumber", "");
             if (contractorBillRegister.getWorkOrder() != null)
                 jsonObject.addProperty("workOrderNumber", contractorBillRegister.getWorkOrder().getWorkOrderNumber());
             else
@@ -114,7 +114,7 @@ public class SearchContractorBillJsonAdaptor implements JsonSerializer<Contracto
                         worksUtils.getApproverName(contractorBillRegister.getState().getOwnerPosition().getId()));
             else
                 jsonObject.addProperty("owner", "");
-
+            jsonObject.addProperty("lineEstimateId", contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getId());
             jsonObject.addProperty("id", contractorBillRegister.getId());
             jsonObject.addProperty("workOrderId", contractorBillRegister.getWorkOrder().getId());
 

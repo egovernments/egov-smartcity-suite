@@ -64,4 +64,7 @@ public interface LineEstimateRepository extends JpaRepository<LineEstimate, Long
 
     @Query("select distinct(createdBy) from LineEstimate as le where le.status.code = :status")
     List<User> getLineEstimateCreatedByUsers(@Param("status") String status);
+    
+    LineEstimate findByCouncilResolutionNumberIgnoreCaseAndStatus_codeNotLike(String councilResolutionNumber, String status);
+    
 }

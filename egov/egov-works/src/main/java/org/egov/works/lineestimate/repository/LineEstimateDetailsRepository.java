@@ -90,6 +90,6 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
     @Query("select distinct(led.lineEstimate.createdBy) from LineEstimateDetails as led where led.lineEstimate.executingDepartment.id = :department and led.lineEstimate.status.code = :lineEstimateStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) = :workOrderStatus)")
     List<User> findCreatedByForCancelLineEstimateByDepartment(@Param("department") Long department,@Param("lineEstimateStatus") String lineEstimateStatus,@Param("workOrderStatus") String workOrderStatus);
 
-    LineEstimateDetails findByEstimateNumber(String estimateNumber);
+    LineEstimateDetails findByProjectCode_codeAndLineEstimate_Status_CodeNotLike(String workIdentificationNumber, String status);
     
 }
