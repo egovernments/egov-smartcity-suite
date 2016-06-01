@@ -79,7 +79,7 @@ public class SearchContractorBillJsonAdaptor implements JsonSerializer<Contracto
             else
                 jsonObject.addProperty("billType", "");
             if (contractorBillRegister.getWorkOrder().getEstimateNumber() != null) {
-                final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(contractorBillRegister.getWorkOrder()
+                final LineEstimateDetails led = lineEstimateService.getEstimateNumbersToSearch(contractorBillRegister.getWorkOrder()
                         .getEstimateNumber());
                 final String adminSanctionNumber = led.getLineEstimate().getAdminSanctionNumber();
                 jsonObject.addProperty("adminSanctionNumber", adminSanctionNumber);

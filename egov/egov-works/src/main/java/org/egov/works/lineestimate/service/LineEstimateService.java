@@ -906,4 +906,9 @@ public class LineEstimateService {
         }
         return lineEstimateRepository.save(lineEstimate);
     }
+    
+    public LineEstimateDetails getEstimateNumbersToSearch(final String estimateNumber) {
+        return lineEstimateDetailsRepository.findByEstimateNumber(estimateNumber);
+    }
+    
 }
