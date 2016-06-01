@@ -136,7 +136,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         if (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
             message = "Pending for Collection";
         if (!license().getState().getOwnerPosition().getId()
-                .equals(positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()))) {
+                .equals(positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId())) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
                     .write("<center style='color:red;font-weight:bolder'>Workflow item is in "
