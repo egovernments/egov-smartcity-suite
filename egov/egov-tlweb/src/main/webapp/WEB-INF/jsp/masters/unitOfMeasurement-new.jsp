@@ -59,11 +59,15 @@
 	<script>
 
 	function bodyOnLoad(){
+		checkOrUncheck();
 		if(document.getElementById("userMode").value=='view' || document.getElementById("userMode").value=='success'){
 			 document.getElementById("code").readOnly=true;
 			 document.getElementById("name").readOnly=true;
 			 document.getElementById("active").disabled=true;
 			 jQuery("span").remove(".mandatory");
+		}
+		if(document.getElementById("userMode").value=='edit'){
+			document.getElementById("code").readOnly=true;
 		}
 		if(document.getElementById("userMode").value=='new'){
 			 document.getElementById("active").checked=true;
