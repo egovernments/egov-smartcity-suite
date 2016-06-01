@@ -90,7 +90,7 @@ $(document).ready(function () {
 				$('#fav-name').val(favouriteName);
 			} else{
 				var itemHref = $item.find( 'a:first' ).attr( 'href' );
-				var windowObjectReference = window.open(itemHref, ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
+				var windowObjectReference = window.open(enhanceURLForPopUp(itemHref), ''+$item.attr('id')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes');
 				openedWindows.push(windowObjectReference);
 				windowObjectReference.focus();
 			}
@@ -213,24 +213,27 @@ $(document).ready(function () {
 	});
 	
 	$("a.open-popup").click(function(e) {
-		// to open in good size for user
-		//var width = window.innerWidth /0.66 ; 
-		// define the height in 
-		//var height = width * window.innerWidth / window.innerHeight; 
-		// Ratio the hight to the width as the user screen ratio
-		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
+		var windowObjectReference = window.open(enhanceURLForPopUp(this.href), ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes');
 		openedWindows.push(windowObjectReference);
 		windowObjectReference.focus();
 		return false;
 	});
 	
 	$(document).on('click', 'a.open-popup', function() {
-		var windowObjectReference = window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
+		var windowObjectReference = window.open(enhanceURLForPopUp(this.href), ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes');
 		openedWindows.push(windowObjectReference);
 		windowObjectReference.focus();
 		return false;
 	});
-	
+
+	function enhanceURLForPopUp(url) {
+		if (url.indexOf("?") == -1)	{
+			return url+'?up_';
+		} else {
+			return url+'&up_';
+		}
+	}
+
 	$('.signout').click(function(){
 		$.each( openedWindows, function( i, val ) {
 			var window = val;
