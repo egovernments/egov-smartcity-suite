@@ -2918,8 +2918,9 @@ public class PropertyService {
      * Calculates penalty for General Revision Petition
      * 
      * @param modProperty
+     * @param propCompletionDate 
      */
-    public void caluculateGrpPenalty(Property modProperty) {
+    public void calculateGrpPenalty(Property modProperty, Date propCompletionDate) {
         currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
         Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
         EgDemand currentDemand = null;
@@ -2943,30 +2944,32 @@ public class PropertyService {
         BigDecimal excessPenalty = BigDecimal.ZERO;
         for (final Map.Entry<Installment, BigDecimal> mapEntry : installmentWiseDemand.entrySet()) {
             installment = mapEntry.getKey();
-            tax = mapEntry.getValue();
-            EgDemandDetails existingPenaltyDemandDetail = installmentWisePenaltyDemandDetail.get(installment);
-            Date penaltyEffectiveDate = null;
-            if (propertyTaxUtil.checkIsNagarPanchayat() && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {
-                penaltyEffectiveDate = nagarPanchayatPenDate.toDate();
-            } else {
-                penaltyEffectiveDate = getPenaltyEffectiveDate(installment);
-            }
-            if (penaltyEffectiveDate.before(new Date())) {
-                BigDecimal penaltyAmount = calculatePenalty(null, penaltyEffectiveDate, tax);
-                if (existingPenaltyDemandDetail == null) {
-                    EgDemandDetails penaltyDemandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_PENALTY_FINES,
-                            penaltyAmount,
-                            installment);
-                    penaltyList.add(penaltyDemandDetails);
+            if (installment.getFromDate().compareTo(propCompletionDate) >= 0) {
+                tax = mapEntry.getValue();
+                EgDemandDetails existingPenaltyDemandDetail = installmentWisePenaltyDemandDetail.get(installment);
+                Date penaltyEffectiveDate = null;
+                if (propertyTaxUtil.checkIsNagarPanchayat() && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {
+                    penaltyEffectiveDate = nagarPanchayatPenDate.toDate();
                 } else {
-                    if (existingPenaltyDemandDetail.getAmtCollected().compareTo(penaltyAmount) > 0) {
-                        excessPenalty = existingPenaltyDemandDetail.getAmtCollected().subtract(penaltyAmount);
-                        existingPenaltyDemandDetail.setAmtCollected(penaltyAmount);
+                    penaltyEffectiveDate = getPenaltyEffectiveDate(installment);
+                }
+                if (penaltyEffectiveDate.before(new Date())) {
+                    BigDecimal penaltyAmount = calculatePenalty(null, penaltyEffectiveDate, tax);
+                    if (existingPenaltyDemandDetail == null) {
+                        EgDemandDetails penaltyDemandDetails = ptBillServiceImpl.insertDemandDetails(
+                                DEMANDRSN_CODE_PENALTY_FINES,
+                                penaltyAmount,
+                                installment);
+                        penaltyList.add(penaltyDemandDetails);
+                    } else {
+                        if (existingPenaltyDemandDetail.getAmtCollected().compareTo(penaltyAmount) > 0) {
+                            excessPenalty = existingPenaltyDemandDetail.getAmtCollected().subtract(penaltyAmount);
+                            existingPenaltyDemandDetail.setAmtCollected(penaltyAmount);
+                        }
+                        existingPenaltyDemandDetail.setAmount(penaltyAmount);
                     }
-                    existingPenaltyDemandDetail.setAmount(penaltyAmount);
                 }
             }
-
         }
         currentDemand.getEgDemandDetails().addAll(penaltyList);
         List<Installment> installments = new ArrayList<Installment>(installmentWiseDemand.keySet());
