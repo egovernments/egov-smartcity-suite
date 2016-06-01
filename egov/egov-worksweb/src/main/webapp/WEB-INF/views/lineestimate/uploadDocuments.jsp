@@ -79,7 +79,7 @@
 	<c:if test="${mode != 'view' && mode != 'readOnly' }">
 		<div>
 			<table width="100%">
-				<%-- <c:if test="${lineEstimate.documentDetails != null &&  fn:length(lineEstimate.documentDetails) lt 4}">
+				<c:if test="${lineEstimate.documentDetails != null &&  fn:length(lineEstimate.documentDetails) lt 4}">
 				<tbody>
 					<tr>
 						<td valign="top">
@@ -98,7 +98,7 @@
 						</td>
 					</tr>
 				</tbody>
-				</c:if> --%>
+				</c:if>
 			</table>
 		</div>
 	</c:if>

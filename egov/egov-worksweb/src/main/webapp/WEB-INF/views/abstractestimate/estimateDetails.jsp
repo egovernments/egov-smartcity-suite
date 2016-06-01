@@ -149,7 +149,5 @@
 				<form:errors path="lineEstimateDetails" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-		<div class="panel panel-primary" data-collapsed="0">
-</div>
 		
 		
