@@ -85,10 +85,10 @@
 						<form:hidden path="activities[0].nonSor.id" id="nonSorId_0" />
 					</td>
 					<td>
-						<form:input path="activities[0].nonSor.description" id="nonSorDesc_0" class="form-control table-input text-left" maxlength="256" required="required"/>
+						<form:input path="activities[0].nonSor.description" id="nonSorDesc_0" class="form-control table-input text-left" maxlength="256"/>
 					</td>
 					<td>
-						<form:select path="activities[0].nonSor.uom" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control" required="required">
+						<form:select path="activities[0].nonSor.uom.id" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control">
 							<form:option value="">
 								<spring:message code="lbl.select" />
 							</form:option>
@@ -98,10 +98,10 @@
 						</form:select>
 					</td>
 					<td align="right">
-						<form:input path="activities[0].rate" id="nonSorRate_0" data-pattern="decimalvalue" class="form-control table-input text-right nonSorRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);" required="required"/>
+						<form:input path="activities[0].rate" id="nonSorRate_0" data-pattern="decimalvalue" class="form-control table-input text-right nonSorRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
 					</td>
 					<td>
-						<form:input path="activities[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" required="required" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
+						<form:input path="activities[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
 					</td>
 					<td align="right">
 						<span class="nonSorAmount_0 nonsoramount"></span>

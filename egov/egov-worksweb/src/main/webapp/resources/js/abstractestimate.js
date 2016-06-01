@@ -74,12 +74,17 @@ $(document).ready(function(){
 		if(hiddenRowCount == 0) {
 			addNonSor();
 		} else {
+			$('#nonSorDesc_0').attr('required', 'required');
+			$('#nonSorUom_0').attr('required', 'required');
+			$('#nonSorRate_0').attr('required', 'required');
+			$('#nonSorQuantity_0').attr('required', 'required');
 			$('.nonSorRate').val('');
 			$('.nonSorQuantity').val('');
 			$('.nonSorServiceTaxPerc').val('');
-			$('#nonSorMessage').hide();
-			$('#nonSorRow').show();
+			$('#nonSorMessage').attr('hidden', 'true');
+			$('#nonSorRow').removeAttr('hidden');
 		}
+		resetIndexes();
 	});
 	
 	var sorSearch = new Bloodhound({
@@ -138,8 +143,8 @@ $(document).ready(function(){
 			} else {
 				$('#quantity_0').val('');
 				$('#vat_0').val('');
-				$('#message').hide();
-				$('#sorRow').show();
+				$('#message').attr('hidden', 'true');;
+				$('#sorRow').removeAttr('hidden');
 			}
 			var rowcount = $("#tblsor tbody tr").length;
 			var key = parseInt(rowcount) - 2;
@@ -155,6 +160,7 @@ $(document).ready(function(){
 			});
 		}
 		$('#sorSearch').val('');
+		resetIndexes();
     });
 	
 	
@@ -550,8 +556,8 @@ function deleteSor(obj) {
 		$('#vat_0').val('');
 		$('.vatAmount_0').html('');
 		$('.total_0').html('');
-		$('#sorRow').hide();
-		$('#message').show();
+		$('#sorRow').attr('hidden', 'true');;
+		$('#message').removeAttr('hidden');
 	} else {
 		tbl.deleteRow(rIndex);
 	}
@@ -695,8 +701,8 @@ function deleteNonSor(obj) {
 		$('#nonSorServiceTaxPerc_1').val('');
 		$('.nonSorVatAmt_1').html('');
 		$('.nonSorTotal_1').html('');
-		$('#nonSorRow').hide();
-		$('#nonSorMessage').show();
+		$('#nonSorRow').attr('hidden', 'true');;
+		$('#nonSorMessage').removeAttr('hidden');
 	} else {
 		tbl.deleteRow(rIndex);
 	}
@@ -891,7 +897,23 @@ function enableFileds() {
 	jQuery("#natureOfWork").removeAttr('disabled');
 	jQuery("#category").removeAttr('disabled');
 	jQuery("#parentCategory").removeAttr('disabled');
-	return true; 
+	
+	if($('#abstractEstimate').valid()) {
+		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+		if(hiddenRowCount == 1) {
+			var tbl=document.getElementById('tblsor');
+			tbl.deleteRow(2);
+		}
+		
+		hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+		if(hiddenRowCount == 1) {
+			var tbl=document.getElementById('tblNonSor');
+			tbl.deleteRow(2);
+		}
+		return true;
+	}
+		
+	return false; 
 }
 
 

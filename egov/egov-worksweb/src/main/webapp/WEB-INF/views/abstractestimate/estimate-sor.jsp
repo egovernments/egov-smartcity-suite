@@ -164,7 +164,7 @@
 						<span class="rate_0"></span>
 					</td>
 					<td>
-						<form:input path="activities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
+						<form:input path="activities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
 					</td>
 					<td align="right">
 						<span class="amount_0 amount"></span>
