@@ -2944,7 +2944,7 @@ public class PropertyService {
         BigDecimal excessPenalty = BigDecimal.ZERO;
         for (final Map.Entry<Installment, BigDecimal> mapEntry : installmentWiseDemand.entrySet()) {
             installment = mapEntry.getKey();
-            if (installment.getFromDate().compareTo(propCompletionDate) >= 0) {
+            if (installment.getToDate().compareTo(propCompletionDate) >= 0) {
                 tax = mapEntry.getValue();
                 EgDemandDetails existingPenaltyDemandDetail = installmentWisePenaltyDemandDetail.get(installment);
                 Date penaltyEffectiveDate = null;
