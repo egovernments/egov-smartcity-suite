@@ -65,6 +65,7 @@ public class AjaxMasterAction extends BaseFormAction {
 	private String name;
 	private String errorMsg = "";
 	private String code;
+	private Long categoryid;
 	public static final String UNIQUECHECK = "uniqueCheck";
 	private static final String UOM_MASTER = "uomMaster";
 	private static final String CATEGORY_MASTER = "categoryMaster";
@@ -110,7 +111,7 @@ public class AjaxMasterAction extends BaseFormAction {
 			else if (screenType != null && screenType.equalsIgnoreCase(CATEGORY_MASTER)) {
 				paramType = NAME;
 				final LicenseCategory licenseCategory = licenseCategoryService.findCategoryByName(name);
-				if (licenseCategory != null) {
+				if (licenseCategory != null && licenseCategory.getId() != categoryid) {
 					errorMsg = getText("lc.validate.duplicateName", new String[] { name });
 					isUnique = Boolean.FALSE;
 				} else
@@ -207,5 +208,15 @@ public class AjaxMasterAction extends BaseFormAction {
 	public void setIsUnique(final Boolean isUnique) {
 		this.isUnique = isUnique;
 	}
+
+        public Long getCategoryid() {
+            return categoryid;
+        }
+    
+        public void setCategoryid(Long categoryid) {
+            this.categoryid = categoryid;
+        }
+
+    
 
 }
