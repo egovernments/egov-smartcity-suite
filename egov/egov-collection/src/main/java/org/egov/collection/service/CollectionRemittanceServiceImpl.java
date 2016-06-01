@@ -587,7 +587,7 @@ public class CollectionRemittanceServiceImpl extends CollectionRemittanceService
      */
     @Override
     public List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(final String boundaryIdList,
-            final String serviceCodes, final String fundCodes) {
+            final String serviceCodes, final String fundCodes, Date startDate, Date endDate) {
 
         final List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
         // TODO: Fix the sum(ih.instrumentamount) the amount is wrong because of
@@ -605,13 +605,15 @@ public class CollectionRemittanceServiceImpl extends CollectionRemittanceService
         final String whereClauseForServiceAndFund = " sd.code in (" + serviceCodes + ")" + " and fnd.code in ("
                 + fundCodes + ")" + " and ";
 
-        final String whereClause = " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
+        String whereClause = " AND ih.ID_STATUS=(select id from egw_status where moduletype='"
                 + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER + "' " + "and description='"
                 + CollectionConstants.INSTRUMENT_NEW_STATUS
                 + "') and ih.ISPAYCHEQUE='0' and ch.STATUS=(select id from egw_status where " + "moduletype='"
                 + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
                 + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') "
-                        + "AND ch.source='" + Source.SYSTEM + "' ";
+                        + " AND ch.source='" + Source.SYSTEM + "' ";
+                if(startDate!=null && endDate!=null )
+                    whereClause = whereClause + " AND ch.receiptdate between '" + startDate + "' and '"+ endDate + "' ";
 
         final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
         final String orderBy = " order by RECEIPTDATE";

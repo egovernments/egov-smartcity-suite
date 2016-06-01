@@ -57,5 +57,5 @@ public abstract class CollectionRemittanceService implements Serializable {
             final String[] receiptNumberArray, final Date remittanceDate);
     
     public abstract List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(final String boundaryIdList,
-            final String serviceCodes, final String fundCodes);
+            final String serviceCodes, final String fundCodes, Date startDate, Date endDate);
 }

@@ -65,6 +65,7 @@ import org.egov.collection.service.CollectionRemittanceService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.entity.Employee;
@@ -135,6 +136,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private ApplicationContext beanProvider;
     private Boolean showCardAndOnlineColumn = false;
     private Boolean showRemittanceDate = false;
+    private Long finYearId;
 
     /**
      * @param collectionsUtil
@@ -162,6 +164,7 @@ public class BankRemittanceAction extends BaseFormAction {
             addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
         } else
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.EMPTY_LIST);
+        addDropdownData("financialYearList", financialYearDAO.getAllPriorFinancialYears(new Date()));
     }
 
     public String getJurisdictionBoundary() {
@@ -200,11 +203,12 @@ public class BankRemittanceAction extends BaseFormAction {
             serviceCodeList.add(arrayObjectInitialIndex[0].toString());
             fundCodeList.add(arrayObjectInitialIndex[1].toString());
         }
+        final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
         final CollectionRemittanceService collectionRemittanceService = getServiceForRemittance();
-        paramList = collectionRemittanceService
-                .findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(),
-                        "'" + StringUtils.join(serviceCodeList, "','") + "'",
-                        "'" + StringUtils.join(fundCodeList, "','") + "'");
+        paramList = collectionRemittanceService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(),
+                "'" + StringUtils.join(serviceCodeList, "','") + "'",
+                "'" + StringUtils.join(fundCodeList, "','") + "'", financialYear.getStartingDate(),
+                financialYear.getEndingDate());
         return NEW;
     }
 
@@ -334,6 +338,34 @@ public class BankRemittanceAction extends BaseFormAction {
             if (!num.isEmpty())
                 sum = sum + Double.valueOf(num);
         return sum;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        populateBankAccountList();
+        final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        if (receiptDateArray != null) {
+            final String[] filterReceiptDateArray = removeNullValue(receiptDateArray);
+            final String receiptEndDate = filterReceiptDateArray[filterReceiptDateArray.length - 1];
+            if (!receiptEndDate.isEmpty())
+                try {
+                    if (remittanceDate != null && remittanceDate.before(dateFomatter.parse(receiptEndDate)))
+                        addActionError(getText("bankremittance.before.receiptdate"));
+                } catch (final ParseException e) {
+                    LOGGER.debug("Exception in parsing date  " + receiptEndDate + " - " + e.getMessage());
+                    throw new ApplicationRuntimeException("Exception while parsing receiptEndDate date", e);
+                }
+        }
+    }
+
+    private String[] removeNullValue(String[] receiptDateArray) {
+        final List<String> list = new ArrayList<String>();
+        for (final String s : receiptDateArray)
+            if (s != null && s.length() > 0)
+                list.add(s);
+        receiptDateArray = list.toArray(new String[list.size()]);
+        return receiptDateArray;
     }
 
     @Override
@@ -628,25 +660,11 @@ public class BankRemittanceAction extends BaseFormAction {
         this.remittanceDate = remittanceDate;
     }
 
-    @Override
-    public void validate() {
-        super.validate();
-        populateBankAccountList();
-        final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        if (getReceiptDateArray() != null)
-            for (final String date : receiptDateArray) {
-                final String receiptDate = date;
-                Date formatReceiptDate = null;
-                if (!receiptDate.isEmpty()) {
-                    try {
-                        formatReceiptDate = dateFomatter.parse(receiptDate);
-                    } catch (final ParseException e) {
-                        LOGGER.debug("Exception in parsing date  " + receiptDate + " - " + e.getMessage());
-                        throw new ApplicationRuntimeException("Exception while parsing date", e);
-                    }
-                    if (remittanceDate != null && formatReceiptDate.after(remittanceDate))
-                        addActionError(getText("bankremittance.before.receiptdate"));
-                }
-            }
+    public Long getFinYearId() {
+        return finYearId;
+    }
+
+    public void setFinYearId(final Long finYearId) {
+        this.finYearId = finYearId;
     }
 }

@@ -362,6 +362,18 @@
 								value="%{accountNumberId}" /></td>
 								</tr>
 						<tr>
+						<td width="4%" class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text
+								name="bankremittance.financialyear" />:</td>
+						<td class="bluebox"><s:select
+								headerKey="-1"
+								list="dropdownData.financialYearList" listKey="id"
+								id="finYearId" listValue="finYearRange"
+								label="finYearRange" name="finYearId"
+								value="%{finYearId}"
+								 /> 
+								</td>
+						</tr>
 					</table>
 					<div class="buttonbottom">
 							<input name="search" type="button" class="buttonsubmit"
@@ -494,7 +506,7 @@
 					<tr>
 					<td class="bluebox" colspan="7"> &nbsp;</td>
 					<td class="bluebox" ><s:text name="bankremittance.remittancetdate"/><span class="mandatory"/></td>
-					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" value="%{remittanceDate}" readonly="readonly" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
+					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" value="%{remittanceDate}" readonly="true" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
 					</tr>
 					</table>
 					</div>

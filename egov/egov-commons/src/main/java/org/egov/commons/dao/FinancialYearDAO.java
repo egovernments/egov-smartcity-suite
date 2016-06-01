@@ -84,4 +84,6 @@ public interface FinancialYearDAO {
     CFinancialYear update(CFinancialYear entity);
 
     void delete(CFinancialYear entity);
+    
+    public List<CFinancialYear> getAllPriorFinancialYears(Date date);
 }
