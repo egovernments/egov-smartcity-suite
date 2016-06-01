@@ -125,21 +125,13 @@ public class Position extends AbstractAuditable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Position)) return false;
-        if (!super.equals(o)) return false;
-
         Position position = (Position) o;
-
-        if (!this.getId().equals(position.getId())) return false;
         return this.getName().equals(position.getName());
-
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + this.getId().hashCode();
-        result = 31 * result + this.getName().hashCode();
-        return result;
+        return 31 * this.getName().hashCode();
     }
 
 }

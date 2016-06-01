@@ -73,29 +73,6 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (null == obj)
-            return false;
-
-        if (this == obj)
-            return true;
-
-        if (!getClass().equals(obj.getClass()))
-            return false;
-
-        final AbstractPersistable<?> that = (AbstractPersistable<?>) obj;
-
-        return null == this.getId() ? false : this.getId().equals(that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        int hashCode = 17;
-        hashCode += null == getId() ? 0 : getId().hashCode() * 31;
-        return hashCode;
-    }
-
-    @Override
     public String getIndexId() {
         return ApplicationThreadLocals.getCityCode()+"-"+getId().toString();
     }
