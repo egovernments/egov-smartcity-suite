@@ -58,7 +58,6 @@
 					<th><spring:message code="lbl.createdby" /></th>
 					<th><spring:message code="lbl.adminsanctionby" /></th>
 					<th><spring:message code="lbl.adminsanctionedamount" /></th>
-					<th><spring:message code="lbl.actualamount" /></th>
 				</tr>
 			</thead>
 			<tbody class="no-pointer">

@@ -125,7 +125,7 @@ function validateEstimateTemplateFormAndSubmit() {
 <s:if test="%{model.id!=null}">
 	<s:hidden name="id" value="%{id}" id="id"/>
     <s:hidden name="mode" value="%{mode}" id="mode"/>
-    <s:hidden  name="model.id" value="%{model.id}" id="modelId"/> 
+    <s:hidden name="model.id" value="%{model.id}" id="modelId"/> 
 </s:if> 
 <s:else>
     <s:hidden name="id" value="%{null}" id="mode" />

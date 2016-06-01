@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
@@ -102,8 +101,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     public String showAbstractEstimateForm(@RequestParam final String estimateNumber, final Model model) {
         Date currentDate = new Date();
         AbstractEstimate abstractEstimate = new AbstractEstimate();
-        LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.findLineEstimateByEstimateNumber(
-                estimateNumber, WorksConstants.STATUS_TECHNICAL_SANCTIONED);
+        LineEstimateDetails lineEstimateDetails = new LineEstimateDetails();
+        lineEstimateDetails = lineEstimateDetailService.findLineEstimateByEstimateNumber(
+                estimateNumber, LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString());
+        if (lineEstimateDetails == null)
+            lineEstimateDetails = lineEstimateDetailService.findLineEstimateByEstimateNumber(
+                    estimateNumber, LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
         LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
         abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());

@@ -43,6 +43,11 @@
 
 
 <div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="title.estimatetemplate" />
+		</div>
+	</div>
 	<div class="form-group">
 		<input type="hidden" id="msgschedulecategory" value="<spring:message code='msg.select.scheduleofcategory' />">
 		<input type="hidden" id="erroradded" value="<spring:message code='error.sor.added' />">
@@ -74,6 +79,21 @@
 			</form:select>
 		</div>
 
+	</div>
+	<div class="panel-body custom-form">
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatecode" /></label>
+			<div class="col-sm-3 add-margin">
+			<input name="code" id="templateCode" class="form-control" placeholder="Type first 3 letters of Template Code" />
+			<input type="hidden" value="" id="templateId" />	
+			</div>
+		</div>
+	</div>
+	
+	<div align="center">
+		<button type='button' class='btn btn-primary' id="searchTemplate">
+			<spring:message code='lbl.searchestimatetemplate' />
+		</button>
 	</div>
 </div>
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">

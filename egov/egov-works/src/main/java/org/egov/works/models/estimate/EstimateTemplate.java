@@ -47,6 +47,8 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,6 +73,7 @@ public class EstimateTemplate extends BaseModel {
     private EgwTypeOfWork subType;
 
     @Valid
+    @JsonIgnore
     private List<EstimateTemplateActivity> estimateTemplateActivities = new LinkedList<EstimateTemplateActivity>();
 
     public String getCode() {
@@ -132,12 +135,12 @@ public class EstimateTemplate extends BaseModel {
     public void addActivity(final EstimateTemplateActivity estimateTemplateActivity) {
         estimateTemplateActivities.add(estimateTemplateActivity);
     }
-
+    @JsonIgnore
     public Collection<EstimateTemplateActivity> getSORActivities() {
         return CollectionUtils.select(estimateTemplateActivities,
                 activity -> ((EstimateTemplateActivity) activity).getSchedule() != null);
     }
-
+    @JsonIgnore
     public Collection<EstimateTemplateActivity> getNonSORActivities() {
         return CollectionUtils.select(estimateTemplateActivities,
                 activity -> ((EstimateTemplateActivity) activity).getNonSor() != null);

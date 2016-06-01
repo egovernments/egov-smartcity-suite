@@ -148,7 +148,7 @@ for(i=0;i<document.estimateTemplateForm.elements.length;i++){
 				<s:textarea name="name" cols="35" rows="2" cssClass="form-control" id="name" maxlength="250" onkeyup="return ismaxlength(this)" value="%{name}"/>
 			</div>
 			<label class="col-sm-2 control-label text-right">
-			    <s:text name="estimate.template.description" />
+			    <s:text name="estimate.template.description" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textarea name="description" cols="35" rows="2" cssClass="form-control" id="description" maxlength="250" onkeyup="return ismaxlength(this)" value="%{description}"/>

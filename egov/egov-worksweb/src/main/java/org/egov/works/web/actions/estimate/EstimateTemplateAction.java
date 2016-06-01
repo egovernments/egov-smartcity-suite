@@ -56,7 +56,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.service.EstimateTemplateService;
 import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.estimate.EstimateTemplateActivity;
 import org.egov.works.models.masters.ScheduleOfRate;
@@ -83,7 +83,8 @@ public class EstimateTemplateAction extends SearchFormAction {
     private WorksService worksService;
     // @Autowired
     /* private PersonalInformationService personalInformationService; */
-    private PersistenceService<EstimateTemplate, Long> estimateTemplateService;
+    @Autowired
+    private EstimateTemplateService estimateTemplateService;
     private String mode = null;
     private Long id;
     private String sourcePage = null;
@@ -118,7 +119,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     @Override
     public void prepare() {
         if (id != null)
-            estimateTemplate = estimateTemplateService.findById(id, false);
+            estimateTemplate = estimateTemplateService.getEstimateTemplateById(id);
         final AjaxEstimateAction ajaxEstimateAction = new AjaxEstimateAction();
         ajaxEstimateAction.setPersistenceService(getPersistenceService());
         ajaxEstimateAction.setAssignmentService(assignmentService);
@@ -160,7 +161,7 @@ public class EstimateTemplateAction extends SearchFormAction {
             estimateTemplate.setStatus(1);
         else
             setMode("edit");
-        estimateTemplate = estimateTemplateService.persist(estimateTemplate);
+        estimateTemplateService.create(estimateTemplate);
         return SUCCESS;
     }
 
@@ -256,14 +257,6 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     public void setNonSorActivities(final List<EstimateTemplateActivity> nonSorActivities) {
         this.nonSorActivities = nonSorActivities;
-    }
-
-    public PersistenceService<EstimateTemplate, Long> getEstimateTemplateService() {
-        return estimateTemplateService;
-    }
-
-    public void setEstimateTemplateService(final PersistenceService<EstimateTemplate, Long> estimateTemplateService) {
-        this.estimateTemplateService = estimateTemplateService;
     }
 
     public String getMode() {

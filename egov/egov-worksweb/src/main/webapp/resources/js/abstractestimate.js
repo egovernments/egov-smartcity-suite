@@ -947,3 +947,159 @@ $('#parentCategory').blur(function(){
 			});
 		}
 	});
+
+var templateCode = new Bloodhound({
+    datumTokenizer: function (datum) {
+        return Bloodhound.tokenizers.whitespace(datum.value);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+        url: '/egworks/abstractestimate/ajaxestimatetemplatebycode?code=%QUERY', 
+        filter: function (data) {
+            return $.map(data, function (ct) {
+                return {
+                    code: ct.code,
+                    id:ct.id
+                };
+            });
+        }
+    }
+});
+
+templateCode.initialize();
+var templateCode_typeahead = $('#templateCode').typeahead({
+	hint : true,
+	highlight : true,
+	minLength : 3
+}, {
+	displayKey : 'code',
+	source : templateCode.ttAdapter()
+}).on('typeahead:selected typeahead:autocompleted', function(event, data){            
+	$("#templateId").val(data.id);   
+});
+
+
+$('#searchTemplate').click(function() {
+	var templateCode = $('#templateCode').val();
+	var typeOfWork =$('#parentCategory').val();
+	var subTypeOfWork = $('#category').val();
+	if(templateCode=="")
+		window.open("/egworks/estimate/estimateTemplate-search.action?sourcePage=searchForEstimate&typeOfWork="+typeOfWork+"&subTypeOfWork="+subTypeOfWork,'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+});
+
+
+function resetTemplate(id){
+	var sorrowcount = jQuery("#tblsor tbody tr").length-1;
+	var nonsorrowcount = jQuery("#tblNonSor tbody tr").length-1;
+	if(id!="" && (sorrowcount>0 || nonsorrowcount>0)){ 
+		var ans=confirm('Change in Estimate template will reset the data. Would you like to Proceed?');	
+		if(ans) {
+			clearActivities();
+			getActivitiesForTemplate(id);
+		}
+		else {
+			return false;		
+		}
+	}
+	else{
+		getActivitiesForTemplate(id);
+	}
+}
+
+function clearActivities(){
+	var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+	if(hiddenRowCount == 0) {
+		var sorrowcount = jQuery("#tblsor tbody tr").length;
+		var sortbl=document.getElementById('tblsor');
+		for(rowcount=2;rowcount<=sorrowcount;rowcount++){
+			if(rowcount==2) {
+				$('.sorhiddenid').val('');
+				$('#quantity_0').val('');
+				$('.amount_0').html('');
+				$('#vat_0').val('');
+				$('.vatAmount_0').html('');
+				$('.total_0').html('');
+				$('.code_0').html('');
+				$('.summary_0').html('');
+				$('.uom_0').html('');
+				$('.rate_0').html('');
+				$('.description_0').html('');
+				$('#sorRow').prop("hidden",true);
+			} else {
+				sortbl.deleteRow(rowcount);
+			}
+		}
+		resetIndexes();
+	}
+	
+	hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+	if(hiddenRowCount == 0) {
+		var nonsorrowcount = jQuery("#tblNonSor tbody tr").length;
+		var nonsortbl=document.getElementById('tblNonSor');
+		for(rowcount=2;rowcount<=nonsorrowcount;rowcount++){
+			if(rowcount==2) {
+				$('#nonSorId_1').val('');
+				$('#nonSorId_1').val('');
+				$('#nonSorDesc_1').val('');
+				$('#nonSorUom_1').val('');
+				$('#nonSorRate_1').val('');
+				$('#nonSorQuantity_1').val('');
+				$('.nonSorAmount_1').html('');
+				$('#nonSorServiceTaxPerc_1').val('');
+				$('.nonSorVatAmt_1').html('');
+				$('.nonSorTotal_1').html('');
+				$('#nonSorRow').prop("hidden",true);
+			} else {
+				nonsortbl.deleteRow(rowcount);
+			}
+		}
+		resetIndexes();
+	}
+}
+
+function getActivitiesForTemplate(id){
+	var nonSorCheck  = false;
+	$.ajax({
+		url: "/egworks/abstractestimate/ajaxgetestimatetemplatebyid/"+id,     
+		type: "GET",
+		dataType: "json",
+		success: function (estimateTemplateActivities) {
+			$.each(estimateTemplateActivities, function(index,estimateTemplateActivity){
+				
+				if(index==0){
+					$('#message').prop("hidden",true);
+					$('#sorRow').removeAttr("hidden");
+					$('#nonSorMessage').prop("hidden",true);
+					$('#nonSorRow').removeAttr("hidden");
+					
+				}else{
+					if(estimateTemplateActivity.schedule != null){
+						addSor();	
+					}else{
+						if(nonSorCheck)
+							addNonSor();
+						nonSorCheck = true;
+					}
+				}
+				if(estimateTemplateActivity.schedule != null){
+					$('.code_0').html(estimateTemplateActivity.schedule.code);
+					$('.summary_0').html(estimateTemplateActivity.schedule.summary);
+					$('.description_0').html(estimateTemplateActivity.schedule.description);
+					$('.uom_0').html(estimateTemplateActivity.schedule.uom.uom);
+				}else{
+					$('#nonSorDesc_0').val(estimateTemplateActivity.nonSor.description);
+					$('#nonSorUom_0').val(estimateTemplateActivity.uom.id);
+					$('#nonSorRate_0').val(estimateTemplateActivity.rate.formattedString);
+				}
+			});
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+	
+	resetIndexes();
+	calculateNonSorEstimateAmountTotal();
+	calculateNonSorVatAmountTotal();
+	nonSorTotal();
+}

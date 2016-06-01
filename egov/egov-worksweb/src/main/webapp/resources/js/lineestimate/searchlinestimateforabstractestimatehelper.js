@@ -120,9 +120,8 @@ function callAjaxSearch() {
 					"data" : "workIdentificationNumber", "sClass" : "text-center"} ,{
 					"data" : "createdBy", "sClass" : "text-center"} ,{
 					"data" : "adminSanctionBy", "sClass" : "text-center"}, {
-					"data" : "", "sClass" : "text-right", "sType" : "decimal"}, {
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"
-					}]				
+						}]				
 				});
 			}
 

@@ -42,14 +42,20 @@ package org.egov.works.web.controller.abstractestimate;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.master.service.EstimateTemplateService;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleOfRateService;
+import org.egov.works.models.estimate.EstimateTemplate;
+import org.egov.works.models.estimate.EstimateTemplateActivity;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,12 +67,12 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private OverheadService overheadService;
-    
-    @Autowired
-    private EstimateService estimateService;
-    
+
     @Autowired
     private ScheduleOfRateService scheduleOfRateService;
+
+    @Autowired
+    private EstimateTemplateService estimateTemplateService;
 
     @RequestMapping(value = "/getpercentageorlumpsumbyoverheadid", method = RequestMethod.GET)
     public @ResponseBody OverheadRate getPercentageOrLumpsumByOverhead(@RequestParam("overheadId") final Long overheadId) {
@@ -88,14 +94,24 @@ public class AjaxAbstractEstimateController {
 
         return overheadRate;
     }
-    
+
     @RequestMapping(value = "/ajaxsor-byschedulecategories", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody List<ScheduleOfRate> findSorByScheduleCategories(@RequestParam("code") final String code,
             @RequestParam("scheduleCategories") final String scheduleCategories) {
-        if(!scheduleCategories.equals("null")) {
+        if (!scheduleCategories.equals("null")) {
             return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(code, scheduleCategories);
         }
         return null;
     }
 
+    @RequestMapping(value = "/ajaxestimatetemplatebycode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<EstimateTemplate> getEstimateTemplateByCodeIgnoreCase(@RequestParam final String code) {
+        return estimateTemplateService.getEstimateTemplateByCodeIgnoreCase(code);
+    }
+
+    @RequestMapping(value = "/ajaxgetestimatetemplatebyid/{id}", method = RequestMethod.GET)
+    public @ResponseBody List<EstimateTemplateActivity> populateMilestoneTemplateActivity(@PathVariable final String id, final Model model)
+            throws ApplicationException {
+        return estimateTemplateService.getEstimateTemplateById(Long.valueOf(id)).getEstimateTemplateActivities();
+    }
 }

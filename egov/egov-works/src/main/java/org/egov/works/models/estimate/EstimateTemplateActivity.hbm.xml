@@ -59,7 +59,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         <many-to-one name="schedule" class="org.egov.works.models.masters.ScheduleOfRate" fetch="join">
             <column name="SCHEDULEOFRATE_ID" precision="22" scale="0" />
         </many-to-one>
-        <many-to-one name="uom" class="org.egov.common.entity.UOM" fetch="select">
+        <many-to-one name="uom" class="org.egov.common.entity.UOM" fetch="join">
 	    	<column name="UOM_ID" />
 		</many-to-one>
         <many-to-one name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor" fetch="join" cascade="all">

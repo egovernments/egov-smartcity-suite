@@ -39,27 +39,6 @@
   --%>
 
 <%-- <%@ taglib uri="/egov-authz.tld" prefix="egov-authz" %> --%>
-<script type="text/javascript">
-function setTemplateCode(obj){
-document.getElementById('selectedCode').value=obj.value;
-}
-
-function setEstimateTemplateId(id){
-	document.getElementById('estimateTemplateId').value=id;	
-}
-function selectTemplate(){
-var code=document.getElementById('selectedCode').value;
-var estimateTemplateId =document.getElementById('estimateTemplateId').value;
-
-if(code==""){
- 	dom.get("estimateTemplate_error").style.display='block';
-	document.getElementById("estimateTemplate_error").innerHTML='Please select at least one template';
-	return false;
- }
- window.opener.resetTemplate(code,document.getElementById('workType').value,document.getElementById('subType').value);
- window.close();
-}
-</script>
 
 <div>
      <s:if test="%{searchResult.fullListSize != 0}">
@@ -138,7 +117,7 @@ if(code==""){
 	   </display:table> 
 	    <s:if test="%{sourcePage.equals('searchForEstimate')}">
 	    	<input type="button" class="buttonadd"
-										value="Select Template" id="addButton"
+										value="Add Template" id="addButton"
 										name="selectTemplateButton" onclick="selectTemplate()"
 										align="center" />
 	     </s:if>
@@ -150,3 +129,5 @@ if(code==""){
 			</div>
 	</s:elseif>   
  </div>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/searchestimatetemplate.js?rnd=${app_release_no}'/>"></script>

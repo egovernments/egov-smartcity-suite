@@ -363,11 +363,6 @@
 		<property name="type"
 			value="org.egov.works.models.measurementbook.MBForCancelledBill" />
 	</bean>
-	<bean id="estimateTemplateService" parent="persistenceService"
-		scope="prototype">
-		<property name="type"
-			value="org.egov.works.models.estimate.EstimateTemplate" />
-	</bean>
 	<bean id="estimateAppropriationService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
