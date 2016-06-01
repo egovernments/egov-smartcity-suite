@@ -242,8 +242,11 @@ public class PTBillServiceImpl extends BillServiceInterface {
         		currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
         	}
         }
-        createAdvanceBillDetails(billDetails, currentInstDemand, orderMap, ptDemand,billable,
-        		advanceInstallments,currInstallments.get(CURRENTYEAR_SECOND_HALF));
+        //Advance Bill details only if current tax is greater than zero.
+        if (currentInstDemand.compareTo(BigDecimal.ZERO) > 0) {
+            createAdvanceBillDetails(billDetails, currentInstDemand, orderMap, ptDemand, billable,
+                    advanceInstallments, currInstallments.get(CURRENTYEAR_SECOND_HALF));
+        }
         
         LOGGER.debug("Exiting method getBilldetails : " + billDetails);
         return billDetails;
