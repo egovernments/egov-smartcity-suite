@@ -38,39 +38,10 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<style>
-#warning {
-  display:none;
-  color:blue;
-}
-</style>
-
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title" style="text-align: left;">
-			<spring:message code="lbl.header" />
-		</div>
-	</div>
-	<div class="panel-body custom-form">
-	   <%@ include file="estimateDetails.jsp"%>   
-	   <div class="form-group">
-			<%-- <label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.department" /> 
-			</label>
-			<div class="col-sm-3 add-margin">
-				<form:select path="userDepartment" data-first-option="false" id="userDepartment" class="form-control" required="required">
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${departments}" itemValue="id"	itemLabel="name" />
-				</form:select>
-				<form:errors path="userDepartment" cssClass="add-margin error-msg" />
-			</div> --%>
-			
-		</div>
-</div>   
-</div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+Success

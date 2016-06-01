@@ -64,8 +64,8 @@
 				code="lbl.subtypeofwork" />
 		</label>
 		<div class="col-sm-3 add-margin">
-
-			<form:select path="category" data-first-option="false" id="category" class="form-control" disabled="true" required="required">
+            <input type="hidden" id="subTypeOfWorkValue" value="${lineEstimate.subTypeOfWork.id }"/>
+			<form:select path="category" data-first-option="false" id="category" class="form-control" disabled="true" >
 				<form:option value="">
 					<spring:message code="lbl.select" />
 				</form:option>
@@ -164,7 +164,7 @@
 						<span class="rate_0"></span>
 					</td>
 					<td>
-						<form:input path="activities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" maxlength="64" required="required" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
+						<form:input path="activities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
 					</td>
 					<td align="right">
 						<span class="amount_0 amount"></span>

@@ -44,6 +44,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
@@ -73,6 +74,9 @@ public class EstimateService {
 
     @Autowired
     private EstimateTechnicalSanctionService estimateTechnicalSanctionService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -87,10 +91,16 @@ public class EstimateService {
         return abstractEstimateRepository.findOne(id);
     }
 
+    @Transactional
     public AbstractEstimate createAbstractEstimate(AbstractEstimate abstractEstimate) {
+        abstractEstimate.setWard(boundaryService.getBoundaryByName(abstractEstimate.getWard().getName()));
+        for(MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates()) {
+            multiYearEstimate.setAbstractEstimate(abstractEstimate);
+        }
         return abstractEstimateRepository.save(abstractEstimate);
         
     }
+    
     @Transactional
     public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(final LineEstimateDetails lineEstimateDetails,
             final int i) {

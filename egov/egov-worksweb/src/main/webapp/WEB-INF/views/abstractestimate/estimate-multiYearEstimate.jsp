@@ -60,6 +60,7 @@
 				<c:choose>
 					<c:when test="${abstractEstimate.multiYearEstimates.size() == 0}">
 						<tr id="yearEstimateRow">
+						<form:hidden path="multiYearEstimates[0].id" name="multiYearEstimates[0].id" value="${multiYearEstimates[0].id}" class="form-control table-input hidden-input"/>
 							<td>
 								<span class="spansno">1</span>
 								<form:hidden path="multiYearEstimates[0].id" name="multiYearEstimates[0].id" value="${multiYearEstimates[0].id}" class="form-control table-input hidden-input"/>
@@ -81,14 +82,20 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<c:forEach items="${abstractEstimate.getmultiYearEstimates()}" var="yearEstimateDtls" varStatus="item">
+						<c:forEach items="${abstractEstimate.getMultiYearEstimates()}" var="yearEstimateDtls" varStatus="item">
 							<tr id="yearEstimateRow">
+							<form:hidden path="multiYearEstimates[${item.index}].id" name="multiYearEstimates[${item.index}].id" value="${multiYearEstimates.id}" class="form-control table-input hidden-input"/>
 								<td> 
 									<span class="spansno"><c:out value="${item.index + 1}" /></span>
 									<form:hidden path="multiYearEstimates[${item.index}].id" name="multiYearEstimates[${item.index}].id" value="${multiYearEstimates.id}" class="form-control table-input hidden-input"/>
 								</td>
 								<td>
-									<form:input path="multiYearEstimates[${item.index}].financialYear.finYearRange" name="multiYearEstimates[${item.index}].financialYear.finYearRange" value="${multiYearEstimates.financialYear.finYearRange}"  data-idx="0" data-optional="0" class="form-control table-input"/>
+								<form:select path="multiYearEstimates[${item.index}].financialYear" data-first-option="false" id="multiYearEstimates[${item.index}].financialYear" class="form-control" required="required">
+					            <form:option value="">
+						          <spring:message code="lbl.select" />
+					           </form:option>
+					            <form:options items="${finYear}" itemValue="id"	itemLabel="finYearRange" />
+				              </form:select>
 									<form:errors path="multiYearEstimates[${item.index}].financialYear.finYearRange" cssClass="add-margin error-msg" />
 								</td>
 								<td>

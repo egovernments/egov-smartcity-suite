@@ -87,10 +87,9 @@
 			</div>
 		</div>
 	</div>
-
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary"
+			<button type="submit" name="submit" id="save" class="btn btn-primary" onclick="return enableFileds();"
 				value="Save">
 				<spring:message code="lbl.save" />
 			</button>

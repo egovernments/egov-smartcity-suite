@@ -37,8 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
+$subTypeOfWorkId = 0;
 $(document).ready(function(){
 	
+	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
+	getAbstractEstimateDate();
 	var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>'
 	
 	$('#sorSearch').blur(function() {
@@ -152,6 +156,38 @@ $(document).ready(function(){
 		}
 		$('#sorSearch').val('');
     });
+	
+	
+	var ward = new Bloodhound({
+        datumTokenizer: function (datum) {
+            return Bloodhound.tokenizers.whitespace(datum.value);
+        },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/egworks/lineestimate/ajax-getward?name=%QUERY',
+            filter: function (data) {
+                return $.map(data, function (ct) {
+                    return {
+                        name: ct.name,
+                        value: ct.id
+                    };
+                });
+            }
+        }
+    });
+    
+    ward.initialize();
+	var ward_typeahead = $('#wardInput').typeahead({
+		hint : false,
+		highlight : false,
+		minLength : 3
+	}, {
+		displayKey : 'name',
+		source : ward.ttAdapter(),
+	});
+	
+	typeaheadWithEventsHandling(ward_typeahead,
+	'#ward');
 });
 
 $overheadRowCount = 0;
@@ -832,3 +868,60 @@ function validateInput(object) {
         $(object).val(val.substring(0, val.length - 1));
     }
 }
+
+
+function getAbstractEstimateDate() {
+	var dt = new Date(); 
+	var dd = dt.getDate() < 10 ? "0" + dt.getDate() : dt.getDate(); 
+	var mm = dt.getMonth() + 1;
+	var mm = mm < 10 ? "0" + mm : mm;
+	var yy = 1900 + dt.getYear();
+	jQuery('[name="estimateDate"]').val(dd+"/"+mm+"/"+yy);
+}
+
+
+function enableFileds() {
+	console.log('submit called!');
+	jQuery("#estimateNumber").removeAttr('disabled');
+	jQuery("#projectCode").removeAttr('disabled');
+	jQuery("#executingDepartment").removeAttr('disabled');
+	jQuery("#estimateDate").removeAttr('disabled');
+	jQuery("#wardInput").removeAttr('disabled');
+	jQuery("#wardInput").removeAttr('disabled');
+	jQuery("#natureOfWork").removeAttr('disabled');
+	jQuery("#category").removeAttr('disabled');
+	jQuery("#parentCategory").removeAttr('disabled');
+	return true; 
+}
+
+
+$('#parentCategory').blur(function(){
+	 if ($('#parentCategory').val() === '') {
+		   $('#category').empty();
+		   $('#category').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/getsubtypeofwork",
+				cache: true,
+				dataType: "json",
+				data:{'id' : $('#parentCategory').val()}
+			}).done(function(value) {
+				console.log(value);
+				$('#category').empty();
+				$('#category').append($("<option value=''>Select from below</option>"));
+				$.each(value, function(index, val) {
+					var selected="";
+					if($subTypeOfWorkId)
+					{
+						if($subTypeOfWorkId==val.id)
+						{
+							selected="selected";
+						}
+					}
+				     $('#category').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+				});
+			});
+		}
+	});
