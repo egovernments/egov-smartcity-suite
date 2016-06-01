@@ -323,7 +323,8 @@ public interface PropertyTaxConstants {
 
         {
             put("VACANTLAND", "Private Land");
-            put("GOVTLAND", "Government Land");
+            put("STATE_GOVT", "State Government Land");
+            put("CENTRAL_GOVT", "Central Government Land");
         }
     };
 
@@ -1390,6 +1391,6 @@ public interface PropertyTaxConstants {
 
     public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
-    
+
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
 }
