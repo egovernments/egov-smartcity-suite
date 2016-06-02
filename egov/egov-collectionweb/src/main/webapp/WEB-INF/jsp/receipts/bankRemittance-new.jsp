@@ -46,7 +46,7 @@
 <script type="text/javascript">
 	jQuery.noConflict();
 	jQuery(document).ready(function() {
-
+		jQuery('#finYearId').prop("disabled", true); 
 		jQuery(" form ").submit(function(event) {
 			doLoadingMask();
 		});
@@ -194,6 +194,7 @@
 			dom.get("accountselectionerror").style.display = "block";
 			return false;
 		}
+		jQuery('#finYearId').prop("disabled", false);
 		document.bankRemittanceForm.action = "bankRemittance-listData.action?bankAccountId="+dom.get("accountNumberId").value;
 		document.bankRemittanceForm.submit();
 		}
@@ -369,7 +370,7 @@
 								headerKey="-1"
 								list="dropdownData.financialYearList" listKey="id"
 								id="finYearId" listValue="finYearRange"
-								label="finYearRange" name="finYearId"
+								label="finYearRange" name="finYearId" 
 								value="%{finYearId}"
 								 /> 
 								</td>
