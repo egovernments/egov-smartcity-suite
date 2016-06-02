@@ -66,6 +66,7 @@ public class AjaxMasterAction extends BaseFormAction {
 	private String errorMsg = "";
 	private String code;
 	private Long categoryid;
+	private Long uomid;
 	public static final String UNIQUECHECK = "uniqueCheck";
 	private static final String UOM_MASTER = "uomMaster";
 	private static final String CATEGORY_MASTER = "categoryMaster";
@@ -102,7 +103,7 @@ public class AjaxMasterAction extends BaseFormAction {
 			if (screenType != null && screenType.equalsIgnoreCase(UOM_MASTER)) {
 				paramType = NAME;
 				final UnitOfMeasurement unitOfMeasurement = unitOfMeasurementService.findUOMByName(name);
-				if (unitOfMeasurement != null) {
+				if (unitOfMeasurement != null && unitOfMeasurement.getId() != uomid) {
 					errorMsg = getText("uom.validate.duplicateName", new String[] { name });
 					isUnique = Boolean.FALSE;
 				} else
@@ -217,6 +218,12 @@ public class AjaxMasterAction extends BaseFormAction {
             this.categoryid = categoryid;
         }
 
-    
+        public Long getUomid() {
+            return uomid;
+        }
+
+        public void setUomid(Long uomid) {
+            this.uomid = uomid;
+        }
 
 }

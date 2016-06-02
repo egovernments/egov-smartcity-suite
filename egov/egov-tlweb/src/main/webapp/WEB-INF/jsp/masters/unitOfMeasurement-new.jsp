@@ -113,12 +113,13 @@
 		var screenType="uomMaster";
 		var name="";
 		var code="";
+		var uomid=document.getElementById("unitOfMeasurement_id").value;
 		if(param=="name")
 			name=obj.value;
 		else if(param=="code")
 			code=obj.value;
 		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
-		    	{name:name,code:code,screenType:screenType},uomSuccessHandler,uomFailureHandler);
+		    	{name:name,code:code,screenType:screenType,uomid:uomid},uomSuccessHandler,uomFailureHandler);
 	}
 
 	uomFailureHandler=function(){
@@ -182,7 +183,7 @@
 					</div>
 					<div class="panel-body custom-form">
 					
-						<s:hidden name="id"/> 
+						<s:hidden name="id" value="%{id}"/> 
 						<s:hidden name="userMode" id="userMode"/>
 						<s:hidden name="uomActive" id="uomActive"/>
 					
