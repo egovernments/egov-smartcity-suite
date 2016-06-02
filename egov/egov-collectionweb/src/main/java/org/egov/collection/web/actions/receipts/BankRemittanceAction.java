@@ -229,6 +229,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     @Action(value = "/receipts/bankRemittance-printBankChallan")
+    @SkipValidation
     public String printBankChallan() {
         return PRINT_BANK_CHALLAN;
     }
@@ -317,16 +318,18 @@ public class BankRemittanceAction extends BaseFormAction {
             while (itr.hasNext()) {
                 final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
                 final InstrumentHeader instHead = (InstrumentHeader) itr.next();
-                collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
-                collBankRemitReport.setBranchName(instHead.getBankBranchName());
-                collBankRemitReport.setBankName(instHead.getBankId() != null ? instHead.getBankId().getName() : "");
-                collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
-                collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
-                collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
-                collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
-                collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
-                collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
-                reportList.add(collBankRemitReport);
+                if (!instHead.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
+                    collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
+                    collBankRemitReport.setBranchName(instHead.getBankBranchName());
+                    collBankRemitReport.setBankName(instHead.getBankId() != null ? instHead.getBankId().getName() : "");
+                    collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
+                    collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
+                    collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
+                    collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
+                    collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
+                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
+                    reportList.add(collBankRemitReport);
+                }
             }
         }
         return reportList;
