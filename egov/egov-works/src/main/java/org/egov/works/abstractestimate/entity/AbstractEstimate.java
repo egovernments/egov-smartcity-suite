@@ -735,5 +735,11 @@ public class AbstractEstimate extends StateAware implements Auditable {
     public List<DocumentDetails> getDocumentDetails() {
         return documentDetails;
     }
+    
+    public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
+        this.documentDetails.clear();
+        if (documentDetails != null)
+            this.documentDetails.addAll(documentDetails);
+    }
 
 }
