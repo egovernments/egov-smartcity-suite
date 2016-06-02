@@ -50,8 +50,8 @@
 <input type="hidden" id="errorPartyBillDateBillDate" value="<spring:message code='error.partybilldate.billdate' />" />
 <input type="hidden" id="hiddenbilldate" value='<fmt:formatDate value="${contractorBillRegister.billdate }"/>'/>
 <div class="form-group">
-	<c:choose>
 	<!-- TODO: remove this condition to make billdate editable after user finishes data entry -->
+	<c:choose>
 		<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag }">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
