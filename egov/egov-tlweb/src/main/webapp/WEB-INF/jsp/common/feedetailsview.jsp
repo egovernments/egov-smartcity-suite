@@ -48,7 +48,7 @@
 				<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
 			</div>
 			<div class="headplacer">
-				<s:text name='license.title.feedetails' />
+				<s:text name='license.title.feedetail' />
 			</div>
 		</td>
 	</tr>

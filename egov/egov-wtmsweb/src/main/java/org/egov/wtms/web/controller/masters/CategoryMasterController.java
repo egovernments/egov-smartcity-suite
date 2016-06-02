@@ -40,6 +40,10 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +56,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 @RequestMapping(value = "/masters")
 public class CategoryMasterController {
@@ -64,33 +63,42 @@ public class CategoryMasterController {
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
 
-    @RequestMapping(value = "/categoryMaster", method = GET)
+    @RequestMapping(value = "/categoryMaster", method = RequestMethod.GET)
     public String viewForm(final Model model) {
         final ConnectionCategory connectionCategory = new ConnectionCategory();
         model.addAttribute("connectionCategory", connectionCategory);
         model.addAttribute("reqAttr", false);
+        model.addAttribute("mode", "create");
         return "category-master";
     }
 
     @RequestMapping(value = "/categoryMaster", method = RequestMethod.POST)
-    public String addCategoryMasterData(@Valid @ModelAttribute final ConnectionCategory connectionCategory,final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model ) {
+    public String createCategoryMasterData(@Valid @ModelAttribute final ConnectionCategory connectionCategory,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "category-master";
-                    connectionCategoryService.createConnectionCategory(connectionCategory);
-                    redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);
-                    return getCategoryMasterList(model);
-            
- }
+        connectionCategoryService.createConnectionCategory(connectionCategory);
+        redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);
+        model.addAttribute("message", "Category created successfully");
+        model.addAttribute("mode", "create");
+        return "category-master-success";
 
-    @RequestMapping(value = "/categoryMaster/list", method = GET)
+    }
+
+    @RequestMapping(value = "/categoryMaster/list", method = RequestMethod.GET)
     public String getCategoryMasterList(final Model model) {
         final List<ConnectionCategory> connectionCategoryList = connectionCategoryService.findAll();
         model.addAttribute("connectionCategoryList", connectionCategoryList);
         return "category-master-list";
     }
 
-    @RequestMapping(value = "/categoryMaster/{connectionCategoryId}", method = GET)
+    @RequestMapping(value = "/categoryMaster/edit", method = RequestMethod.GET)
+    public String getUsageTypeDetails(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getCategoryMasterList(model);
+    }
+
+    @RequestMapping(value = "/categoryMaster/edit/{connectionCategoryId}", method = RequestMethod.GET)
     public String getCategoryMasterDetails(final Model model, @PathVariable final String connectionCategoryId) {
         final ConnectionCategory connectionCategory = connectionCategoryService
                 .findOne(Long.parseLong(connectionCategoryId));
@@ -99,14 +107,16 @@ public class CategoryMasterController {
         return "category-master";
     }
 
-    @RequestMapping(value = "/categoryMaster/{connectionCategoryId}", method = RequestMethod.POST)
-    public String editCategoryMasterData(@Valid @ModelAttribute final ConnectionCategory connectionCategory, final BindingResult errors
-            , final RedirectAttributes redirectAttrs, final Model model,@PathVariable final long connectionCategoryId) {
+    @RequestMapping(value = "/categoryMaster/edit/{connectionCategoryId}", method = RequestMethod.POST)
+    public String editCategoryMasterData(@Valid @ModelAttribute final ConnectionCategory connectionCategory,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
+            @PathVariable final long connectionCategoryId) {
         if (errors.hasErrors())
             return "category-master";
         connectionCategoryService.updateConnectionCategory(connectionCategory);
         redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);
-        return getCategoryMasterList(model);
+        model.addAttribute("message", "Category updated successfully");
+        return "category-master-success";
 
     }
 

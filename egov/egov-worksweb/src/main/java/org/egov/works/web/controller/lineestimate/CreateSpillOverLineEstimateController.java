@@ -39,6 +39,14 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
@@ -47,7 +55,6 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.DesignationService;
-import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -65,10 +72,9 @@ import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
-import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,14 +89,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -124,9 +122,6 @@ public class CreateSpillOverLineEstimateController {
     private DesignationService designationService;
 
     @Autowired
-    private LineEstimateDetailsRepository lineEstimateDetailsRepository;
-
-    @Autowired
     private ProjectCodeService projectCodeService;
 
     @Autowired
@@ -140,6 +135,9 @@ public class CreateSpillOverLineEstimateController {
     
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private LineEstimateDetailService lineEstimateDetailService;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -208,12 +206,20 @@ public class CreateSpillOverLineEstimateController {
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            final LineEstimateDetails details = lineEstimateDetailsRepository
-                    .findByEstimateNumberAndLineEstimate_Status_CodeNot(led.getEstimateNumber(), WorksConstants.CANCELLED_STATUS);
-            final ProjectCode projectCode = projectCodeService.findByCode(led.getProjectCode().getCode().toUpperCase());
-            if (details != null)
+            
+            final LineEstimateDetails estimateNumber = lineEstimateDetailService
+                    .getLineEstimateDetailsByEstimateNumber(led.getEstimateNumber());
+            if(lineEstimate.getCouncilResolutionNumber() != null){
+            final LineEstimate councilResolutionNumber = lineEstimateService
+                    .getLineEstimateByCouncilResolutionNumber(lineEstimate.getCouncilResolutionNumber());
+            if (councilResolutionNumber != null)
+                errors.rejectValue("lineEstimateDetails[" + index + "].lineEstimate.councilResolutionNumber", "error.councilresolutionnumber.unique");
+            }
+            final LineEstimateDetails workIdentificationNumber = lineEstimateDetailService
+                    .getLineEstimateDetailsByProjectCode(led.getProjectCode().getCode());
+            if (estimateNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
-            if (projectCode != null)
+            if (workIdentificationNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
             index++;
         }

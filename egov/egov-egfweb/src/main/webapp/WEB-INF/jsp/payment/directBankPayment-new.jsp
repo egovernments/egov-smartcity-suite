@@ -433,7 +433,7 @@ function onSubmit()
 		return false;
 	}
 	else if(!balanceCheck()){
-		 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+		 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
 		 if (msg == true) {
 		   	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
 			return true;

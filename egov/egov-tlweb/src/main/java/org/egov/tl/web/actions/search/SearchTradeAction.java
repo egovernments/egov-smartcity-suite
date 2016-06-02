@@ -72,9 +72,6 @@ import java.util.List;
 
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
 
-/**
- * The Class TradeSearchAction.
- */
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = NEW, location = "searchTrade-new.jsp") })
@@ -167,7 +164,6 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setSubCategoryName(license.getTradeName().getName());
             searchFormInfo.setTradeTitle(license.getNameOfEstablishment());
             searchFormInfo.setTradeOwnerName(license.getLicensee().getApplicantName());
-            searchFormInfo.setPropertyAssessmentNo(license.getPropertyNo());
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
             licenseActions = new ArrayList<String>();
             licenseActions.add("View Trade");

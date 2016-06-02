@@ -88,7 +88,7 @@ public class FeeTypeController {
 
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute final FeeType feeType,
-			final BindingResult errors, final Model model) {
+			final BindingResult errors) {
 		if (errors.hasErrors())
 			return FEETYPE_RESULT;
 		feeTypeService.update(feeType);

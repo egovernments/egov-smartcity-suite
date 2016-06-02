@@ -88,6 +88,7 @@ public class JournalVoucherActionHelper {
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService;
     @Autowired
     @Qualifier("persistenceService")
@@ -206,6 +207,12 @@ public class JournalVoucherActionHelper {
             }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        	final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
+                    null, null, voucherHeader.getCurrentState().getValue(), null);
+            voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withStateValue(wfmatrix.getCurrentDesignation()+" Approved").withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction());
+            
             voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
             voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());

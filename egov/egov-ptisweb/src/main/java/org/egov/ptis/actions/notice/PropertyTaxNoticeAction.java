@@ -86,7 +86,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -132,9 +131,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private static final String CREATE = "create";
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
     private static final String PREVIEW = "Preview";
-    /**
-     *
-     */
     private static final long serialVersionUID = -396864022983903198L;
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxNoticeAction.class);
     public static final String NOTICE = "notice";
@@ -142,7 +138,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private ReportService reportService;
     private NoticeService noticeService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-    private Integer reportId = -1;
+    private String reportId;
     private String noticeType;
     private InputStream NoticePDF;
     private Long basicPropId;
@@ -176,6 +172,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     public PropertyTaxNoticeAction() {
     }
@@ -318,8 +317,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(FileFormat.PDF);
-            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             endWorkFlow(basicProperty);
         } else {
             PropertyNoticeInfo propertyNotice = null;
@@ -343,8 +341,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 noticeService.getSession().flush();
                 return DIGITAL_SIGNATURE_REDIRECTION;
             } else {
-                getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-                reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+                reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }
         }
         if (!PREVIEW.equals(actionType)) {
@@ -371,8 +368,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         propertyNotice = new PropertyNoticeInfo(property, noticeNo);
         reportInput = generateNoticeReportRequest(basicProperty, propertyNotice);
         reportOutput = reportService.createReport(reportInput);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
         noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(), noticeNo, noticeType,
@@ -395,8 +391,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ReportOutput reportOutput = new ReportOutput();
         reportOutput.setReportOutputData(bFile);
         reportOutput.setReportFormat(FileFormat.PDF);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
     }
 
@@ -628,12 +623,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         this.reportService = reportService;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     @Override

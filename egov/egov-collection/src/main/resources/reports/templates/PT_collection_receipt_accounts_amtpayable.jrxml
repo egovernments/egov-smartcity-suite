@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-17T15:34:07 -->
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-05-25T18:17:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PT_collection_receipt_accounts_amtpayable" language="groovy" pageWidth="257" pageHeight="802" columnWidth="257" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="d6dde3bd-46d2-4d95-aed5-b446b5d9af4e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -78,7 +78,7 @@
 	</field>
 	<sortField name="orderNumber"/>
 	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{creditAmountToBePaid}]]></variableExpression>
+		<variableExpression><![CDATA[(!"3504102".equals($F{glCode})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="arrearFrom" class="java.lang.String" calculation="Lowest">
@@ -92,7 +92,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="currentTotal" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode}) && !"3504102".equals($F{glCode})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="currentInst" class="java.lang.String">
 		<variableExpression><![CDATA[(!"4311004".equals($F{glCode}) && !"1402002".equals($F{glCode}) && ($V{currentInst} == null || $V{currentInst} == "")) ? $F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length()) : $V{currentInst}]]></variableExpression>
@@ -120,10 +120,10 @@
 		<variableExpression><![CDATA[$V{to_date}.substring($V{to_date}.length()-1)]]></variableExpression>
 	</variable>
 	<variable name="totalamounttobepaid" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{creditAmountToBePaid}]]></variableExpression>
+		<variableExpression><![CDATA[(!"3504102".equals($F{glCode})) ? ($F{creditAmountToBePaid}) : BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="totalpaid" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{crAmount}]]></variableExpression>
+		<variableExpression><![CDATA[(!"3504102".equals($F{glCode})) ? ($F{crAmount}) : BigDecimal.ZERO]]></variableExpression>
 	</variable>
 	<variable name="rebate" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA["2202103".equals($F{glCode}) ? ($F{drAmount}) : BigDecimal.ZERO]]></variableExpression>
@@ -265,7 +265,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} + $V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="37" y="57" width="218" height="20" isPrintWhenDetailOverflows="true" uuid="73c20945-d099-4509-a893-a3f3cba1fc0b">
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -279,7 +279,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Paid From "+(($V{from_which_half}=="1")?"01-04-"+$V{from_year}:"01-10-"+$V{from_year})+" to "+($V{to_which_half}=="1"?("30-09-"+((Integer.parseInt($V{to_date}.substring(0,$V{to_date}.indexOf('-'))))-1)):"31-03-"+$V{to_date}.substring(0,$V{to_date}.indexOf('-')))+(($V{totalamounttobepaid}-$V{totalpaid})>0?"(Partially)":"")]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Paid From "+(($V{from_which_half}=="1")?"01-04-"+$V{from_year}:"01-10-"+$V{from_year})+" to "+($V{to_which_half}=="1"?("30-09-"+((Integer.parseInt($V{to_date}.substring(0,$V{to_date}.indexOf('-'))))-1)):"31-03-"+$V{to_date}.substring(0,$V{to_date}.indexOf('-')))+(($V{totalamounttobepaid}-$V{totalpaid})>0 ?"(Partially)":"")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement positionType="Float" x="3" y="58" width="32" height="15" isPrintWhenDetailOverflows="true" uuid="7d8e32dd-c298-45bc-a2c1-12e1b1aa4849">

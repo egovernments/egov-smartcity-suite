@@ -424,7 +424,7 @@ $( ".workflow-submit" ).click(function( e ) {
 				e.preventDefault();
 				return false;
 			}else{ 
-				document.forms['advertisementform'].submit();
+				return true;
 			}
 		}else{
 			e.preventDefault();

@@ -356,17 +356,18 @@ public class WaterTaxExternalService {
         for (final EgBillDetails billDet : billDetails)
             receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
                     billDet.getCrAmount(), billDet.getDrAmount(), billDet.getDescription()));
-
+        Boolean isActualDemand=false;
         new WaterTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid, receiptDetails);
-
+        
         for (final EgBillDetails billDet : bill.getEgBillDetails())
             for (final ReceiptDetail rd : receiptDetails)
                 // FIX ME
                 if (billDet.getGlcode().equals(rd.getAccounthead().getGlcode())
                         && billDet.getDescription().equals(rd.getDescription())) {
+                    isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
                     final BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
                             billDet.getOrderNo(), rd.getCramount(), rd.getDramount(),
-                            billDet.getFunctionCode(), billDet.getDescription(), null);
+                            billDet.getFunctionCode(), billDet.getDescription(), isActualDemand);
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
                     break;
                 }

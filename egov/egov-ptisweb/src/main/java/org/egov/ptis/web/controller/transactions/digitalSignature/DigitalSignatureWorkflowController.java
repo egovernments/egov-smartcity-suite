@@ -131,6 +131,7 @@ public class DigitalSignatureWorkflowController {
     private PropertyService propertyService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
 
     @Autowired
@@ -140,9 +141,11 @@ public class DigitalSignatureWorkflowController {
     private RevisionPetitionService revisionPetitionService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
 
     @Autowired
+    @Qualifier("workflowService")
     protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
 
     @Autowired

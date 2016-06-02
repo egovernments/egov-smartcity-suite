@@ -48,8 +48,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 
@@ -58,8 +56,6 @@ import java.util.List;
 public class NatureOfBusinessService  {
 
 	private final NatureOfBusinessRepository natureOfBusinessRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
 
 	@Autowired
 	public NatureOfBusinessService(final NatureOfBusinessRepository natureOfBusinessRepository) {
@@ -76,8 +72,5 @@ public class NatureOfBusinessService  {
 	} 
 	public List<NatureOfBusiness> findAll() {
 		return natureOfBusinessRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-	}
-	public NatureOfBusiness findByName(String name){
-		return natureOfBusinessRepository.findByName(name);
 	}
 }

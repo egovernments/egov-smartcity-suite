@@ -45,6 +45,7 @@ import java.util.List;
 
 import org.egov.ptis.bean.DemandDetail;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyReceipt;
 
 /**
  * 
@@ -54,7 +55,7 @@ import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 public class DemandDetailBeansForm {
     private List<DemandDetail> demandDetailBeans = new ArrayList<DemandDetail>();
     private BasicPropertyImpl basicProperty;
-    private String remarks;
+    private PropertyReceipt propertyReceipt;
 
     public List<DemandDetail> getDemandDetailBeans() {
         return demandDetailBeans;
@@ -72,12 +73,12 @@ public class DemandDetailBeansForm {
         this.basicProperty = basicProperty;
     }
 
-    public String getRemarks() {
-        return remarks;
+    public PropertyReceipt getPropertyReceipt() {
+        return propertyReceipt;
     }
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
+    public void setPropertyReceipt(PropertyReceipt propertyReceipt) {
+        this.propertyReceipt = propertyReceipt;
     }
 
 }

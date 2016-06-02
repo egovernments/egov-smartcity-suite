@@ -265,8 +265,8 @@ function fillNeibrAfterSplitGlcode(obj) {
 			check();
 		} else if (temp != "" && (accCodeid == null || accCodeid == "")
 				&& (glcodeid == null || glcodeid == "")) {
-			bootbox
-					.alert("Invalid Account Code selected .Please select code from auto complete.");
+			/*bootbox
+					.alert("Invalid Account Code selected .Please select code from auto complete.");*/
 			obj.value = "";
 			document.getElementById('transactionSummaryList[' + $currRow
 					+ '].glcodeid.id').value = "";

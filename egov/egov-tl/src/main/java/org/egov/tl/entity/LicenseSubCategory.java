@@ -48,10 +48,7 @@ import org.hibernate.validator.constraints.Length;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The Class TradeSubCategory.
- */
-@Unique(fields = { "code" }, id = "id", tableName = "EGTL_MSTR_SUB_CATEGORY", columnName = { "code" }, message = "masters.code.isunique")
+@Unique(fields = { "code" }, tableName = "EGTL_MSTR_SUB_CATEGORY", columnName = { "code" }, message = "masters.code.isunique")
 public class LicenseSubCategory extends AbstractAuditable {
     private static final long serialVersionUID = 1L;
     private Long id;
@@ -63,18 +60,10 @@ public class LicenseSubCategory extends AbstractAuditable {
     @Required(message = "tradelic.master.tradesubcategoryname.null")
     @Length(max = 256, message = "tradelic.master.tradesubcategoryname.length")
     private String name;
-    
-    private boolean approvalrequired;
-    
-    private String feeBasedOn;
     private LicenseType licenseType;
     private NatureOfBusiness natureOfBusiness;
-    private boolean pfaApplicable;
-    private Schedule scheduleMaster;
-    private String sectionApplicable;
     private LicenseSubType licenseSubType;
-    private Boolean nocApplicable;
-    
+
     private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<LicenseSubCategoryDetails>();
 
     public LicenseCategory getCategory() {
@@ -85,11 +74,9 @@ public class LicenseSubCategory extends AbstractAuditable {
         return code;
     }
 
- 
     public String getName() {
         return name;
     }
-
 
     public void setCategory(final LicenseCategory category) {
         this.category = category;
@@ -99,37 +86,8 @@ public class LicenseSubCategory extends AbstractAuditable {
         this.code = code;
     }
 
-
     public void setName(final String name) {
         this.name = name;
-    }
-
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseSubCategory={");
-        str.append("  name=").append(name == null ? "null" : name.toString());
-        str.append("  code=").append(code == null ? "null" : code.toString());
-        str.append("  category=").append(category == null ? "null" : category.toString());
-        str.append("}");
-        return str.toString();
-    }
-
-    public boolean isApprovalrequired() {
-        return approvalrequired;
-    }
-
-    public void setApprovalrequired(boolean approvalrequired) {
-        this.approvalrequired = approvalrequired;
-    }
-
-    public String getFeeBasedOn() {
-        return feeBasedOn;
-    }
-
-    public void setFeeBasedOn(String feeBasedOn) {
-        this.feeBasedOn = feeBasedOn;
     }
 
     public LicenseType getLicenseType() {
@@ -148,30 +106,6 @@ public class LicenseSubCategory extends AbstractAuditable {
         this.natureOfBusiness = natureOfBusiness;
     }
 
-    public boolean isPfaApplicable() {
-        return pfaApplicable;
-    }
-
-    public void setPfaApplicable(boolean pfaApplicable) {
-        this.pfaApplicable = pfaApplicable;
-    }
-
-    public Schedule getScheduleMaster() {
-        return scheduleMaster;
-    }
-
-    public void setScheduleMaster(Schedule scheduleMaster) {
-        this.scheduleMaster = scheduleMaster;
-    }
-
-    public String getSectionApplicable() {
-        return sectionApplicable;
-    }
-
-    public void setSectionApplicable(String sectionApplicable) {
-        this.sectionApplicable = sectionApplicable;
-    }
-
     public LicenseSubType getLicenseSubType() {
         return licenseSubType;
     }
@@ -180,17 +114,7 @@ public class LicenseSubCategory extends AbstractAuditable {
         this.licenseSubType = licenseSubType;
     }
 
-    public Boolean isNocApplicable() {
-        return nocApplicable;
-    }
-
-    public void setNocApplicable(Boolean nocApplicable) {
-        this.nocApplicable = nocApplicable;
-    }
-
-   
-    public void addLicenseSubCategoryDetails(LicenseSubCategoryDetails licenseSubCategoryDetail)
-    {                       
+    public void addLicenseSubCategoryDetails(LicenseSubCategoryDetails licenseSubCategoryDetail) {
         getLicenseSubCategoryDetails().add(licenseSubCategoryDetail); 
     }
 

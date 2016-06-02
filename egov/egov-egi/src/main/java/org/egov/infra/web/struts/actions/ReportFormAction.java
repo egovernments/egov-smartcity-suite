@@ -41,13 +41,13 @@
 package org.egov.infra.web.struts.actions;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +76,7 @@ public abstract class ReportFormAction extends BaseFormAction {
 	/**
 	 * The ID of created report
 	 */
-	private Integer reportId = -1;
+	private String reportId;
 
 	/**
 	 * The result code for report action
@@ -98,6 +98,8 @@ public abstract class ReportFormAction extends BaseFormAction {
 	 */
 	private Object reportData = null;
 
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 	/*
 	 * (non-Javadoc)
 	 * @see com.opensymphony.xwork2.ModelDriven#getModel()
@@ -183,7 +185,7 @@ public abstract class ReportFormAction extends BaseFormAction {
 	/**
 	 * @return the reportId
 	 */
-	public Integer getReportId() {
+	public String getReportId() {
 		return this.reportId;
 	}
 
@@ -209,8 +211,7 @@ public abstract class ReportFormAction extends BaseFormAction {
 
 		// Create the report and add to session
 		final ReportOutput reportOutput = this.reportService.createReport(reportInput);
-		getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-		this.reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+		this.reportId = reportViewerUtil.addReportToTempCache(reportOutput);
 		return REPORT;
 	}
 

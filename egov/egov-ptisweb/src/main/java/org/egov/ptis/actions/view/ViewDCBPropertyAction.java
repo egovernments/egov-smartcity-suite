@@ -372,7 +372,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
                 propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));
+                if(propReceipt.getFromDate()!=null)
                 propReceipt.setFromDate(sdf.parse(sdf.format(propReceipt.getFromDate())));
+                if(propReceipt.getToDate()!=null)
                 propReceipt.setToDate(sdf.parse(sdf.format(propReceipt.getToDate())));
             } catch (ParseException e) {
                 LOGGER.error("ParseException in getPropertyArrears method for Property" + propertyId, e);

@@ -110,7 +110,7 @@
 					<tr>
 						<td><s:property value="%{stageOrderNo}" /></td>
 						<td><s:property value="%{description}" /></td>
-						<td><s:property value="%{percentage}" /></td>
+						<td align="right"><s:property value="%{percentage}" /></td>
 					</tr>
 				</s:iterator>
 			</tbody>

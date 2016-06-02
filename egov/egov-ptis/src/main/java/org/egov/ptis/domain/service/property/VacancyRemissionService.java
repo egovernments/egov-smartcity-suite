@@ -73,6 +73,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -117,6 +118,7 @@ public class VacancyRemissionService {
     private SecurityUtils securityUtils;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<VacancyRemission> vacancyRemissionWorkflowService;
 
     @Autowired

@@ -40,6 +40,7 @@
 
 package org.egov.egf.web.controller;
 
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetUploadReport;
 import org.egov.services.budget.BudgetDetailService;
@@ -64,6 +65,9 @@ public class ApproveBudgetController {
     @Autowired
     @Qualifier("budgetDetailService")
     private BudgetDetailService budgetDetailService;
+    @Autowired
+    @Qualifier("chartOfAccountsService")
+    private ChartOfAccountsService chartOfAccountsService;
 
     private void prepareNewForm(Model model) {
         model.addAttribute("budgets", budgetService.getBudgetsForUploadReport());
@@ -88,6 +92,7 @@ public class ApproveBudgetController {
         budgetDetailService.updateByMaterializedPath(reBudget.getMaterializedPath());
         budgetService.updateByMaterializedPath(beBudget.getMaterializedPath());
         budgetDetailService.updateByMaterializedPath(beBudget.getMaterializedPath());
+        chartOfAccountsService.updateActiveForPostingByMaterializedPath(reBudget.getMaterializedPath());
         redirectAttrs.addFlashAttribute("message", "msg.uploaded.budget.success");
 
         return "redirect:/approvebudget/search";

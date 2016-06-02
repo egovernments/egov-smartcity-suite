@@ -100,6 +100,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -138,6 +139,7 @@ public class LineEstimateService {
     private EisCommonService eisCommonService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<LineEstimate> lineEstimateWorkflowService;
 
     @Autowired
@@ -904,4 +906,10 @@ public class LineEstimateService {
         }
         return lineEstimateRepository.save(lineEstimate);
     }
+    
+    public LineEstimate getLineEstimateByCouncilResolutionNumber(final String councilResolutionNumber) {
+        return lineEstimateRepository.findByCouncilResolutionNumberIgnoreCaseAndStatus_codeNotLike(councilResolutionNumber,
+                WorksConstants.CANCELLED_STATUS);
+    }
+    
 }

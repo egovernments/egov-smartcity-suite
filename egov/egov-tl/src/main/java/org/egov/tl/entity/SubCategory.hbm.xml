@@ -68,27 +68,12 @@
 		<many-to-one class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" fetch="select" name="lastModifiedBy"
 			not-null="true" />
 			
-		<many-to-one class="org.egov.tl.entity.Schedule" fetch="select" name="scheduleMaster">
-			<column name="ID_SCHEDULE" />
-		</many-to-one>
 		<many-to-one class="org.egov.tl.entity.NatureOfBusiness" fetch="select" name="natureOfBusiness">
 			<column name="ID_NATURE" />
 		</many-to-one>	
 		<many-to-one class="org.egov.tl.entity.LicenseType" fetch="select" name="licenseType">
 			<column name="ID_LICENSE_TYPE" />
 		</many-to-one>
-		<property generated="never" lazy="false" name="approvalrequired" type="boolean">
-			<column name="APPROVAL_REQUIRED" />
-		</property>
-		<property generated="never" lazy="false" name="pfaApplicable" type="boolean">
-			<column name="PFA_APPLICABLE" />
-		</property>
-		<property generated="never"  name="nocApplicable" type="boolean">
-			<column name="NOC_APPLICABLE" />
-		</property>
-		<property generated="never" lazy="false" name="feeBasedOn" type="java.lang.String">
-			<column length="40" name="FEE_BASED_ON"  />
-		</property>
 		<many-to-one name="licenseSubType" class="org.egov.tl.entity.LicenseSubType"
 			cascade="all">
 			<column name="ID_LICENSE_SUB_TYPE" />

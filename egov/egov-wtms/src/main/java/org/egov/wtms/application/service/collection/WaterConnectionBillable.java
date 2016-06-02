@@ -99,7 +99,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Autowired
     private ModuleService moduleService;
     @Autowired
-    private ConnectionDemandService connectioDemanService;
+    private ConnectionDemandService connectionDemandService;
     
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -226,7 +226,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public BigDecimal getTotalAmount() {
         final EgDemand currentDemand = getCurrentDemand();
-        final List instVsAmt = connectioDemanService.getDmdCollAmtInstallmentWise(currentDemand);
+        final List instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
         BigDecimal balance = BigDecimal.ZERO;
         for (final Object object : instVsAmt) {
             final Object[] ddObject = (Object[]) object;

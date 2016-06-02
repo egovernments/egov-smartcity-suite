@@ -230,16 +230,30 @@ function callAjaxByBoundary(event) {
 						'connectionType' : connectiontype,
 						'selectedModeBndry' : selectedModeBndry,
 						'reportType' : reportType
-					}
+					},
+					
+					dataSrc: function ( json ) {  
+						jQuery('.loader-class').modal('hide'); 
+						return json.data;
+					}       
 				},
 				"sPaginationType" : "bootstrap",
 				"autoWidth" : false,
 				"bDestroy" : true,
+				"bProcessing" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [ "xls"
+					               , {
+							             "sExtends": "pdf",
+							             "mColumns": [0, 2, 3, 4,5,6,7,8,9,10],
+		                                
+		                                 
+		                                 "sPdfOrientation": "landscape"
+						                },
+					               "print" ]
 				},
 				columns : [
 						{
@@ -331,7 +345,6 @@ function callAjaxByBoundary(event) {
 					}
 				} ]
 			});
-	    jQuery('.loader-class').modal('hide');
 	
 	    if ($('#mode').val() == 'property') {
 	    	reportdatatable.fnSetColumnVis(1, false);

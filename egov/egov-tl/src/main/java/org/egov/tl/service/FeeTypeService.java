@@ -48,8 +48,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 
@@ -58,8 +56,6 @@ import java.util.List;
 public class FeeTypeService  {
 
 	private final FeeTypeRepository feeTypeRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
 
 	@Autowired
 	public FeeTypeService(final FeeTypeRepository feeTypeRepository) {
@@ -79,9 +75,6 @@ public class FeeTypeService  {
 	}
 	public FeeType findByName(String name){
 		return feeTypeRepository.findByName(name);
-	}
-	public FeeType findByCode(String code){
-		return feeTypeRepository.findByCode(code);
 	}
 	public FeeType findById(Long id){
             return feeTypeRepository.findOne(id);

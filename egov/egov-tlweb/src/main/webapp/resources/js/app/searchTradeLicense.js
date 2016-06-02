@@ -323,20 +323,20 @@ function goToView(obj) {
 } 
 
 function goToAction(obj){
-	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
-	.val(jQuery(obj).data('eleval')); 
+	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']').val(jQuery(obj).data('eleval')); 
+	
 	if(obj.options[obj.selectedIndex].innerHTML=='View Trade')
-		window.open("../viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("../viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(),  'vt'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Modify Legacy License')
-		window.open("../entertradelicense/update-form.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("../entertradelicense/update-form.action?model.id="+jQuery('#licenseId').val(), 'mll'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Collect Fees')
-		window.open("/tl/integration/licenseBillCollect.action?licenseId="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("/tl/integration/licenseBillCollect.action?licenseId="+jQuery('#licenseId').val(), 'cf'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Print Certificate')
-		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(),  'gc'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renewal Notice')
-		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(),  'rn'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renew License')
-		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(),  'rl'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
   

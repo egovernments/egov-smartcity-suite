@@ -104,22 +104,13 @@ $('#buttonid').click(function() {
 			  $('.loader-class').modal('hide');
 		  }
 });
-	
-$('#listid').click(function() {
-	 window.open("/wtms/masters/pipesizeMaster/list", "_self");
-	});
 
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/pipesizeMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/pipesizeMaster/", "_self");
-}
-
 function edit(pipeSize)
 {
-	window.open("/wtms/masters/pipesizeMaster/"+pipeSize, "_self");
+	window.open("/wtms/masters/pipesizeMaster/edit/"+pipeSize, "_self");
 	
 }

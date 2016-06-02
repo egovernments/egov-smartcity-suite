@@ -39,11 +39,11 @@
  */
 package org.egov.commons.service;
 
+import java.util.List;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Transactional(readOnly = true)
 public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts, Long>
@@ -56,6 +56,14 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
         return findAllBy("select acc from CChartOfAccounts acc where acc.isActiveForPosting=true order by acc.glcode");
 
+    }
+
+    @Transactional
+    public void updateActiveForPostingByMaterializedPath(final String materializedPath) {
+        getSession()
+                .createSQLQuery(
+                        "update chartofaccounts set isactiveforposting = true where isactiveforposting = false and id in (select distinct bg.mincode from egf_budgetgroup bg,egf_budgetdetail bd where bd.budgetgroup = bg.id  and bd.materializedpath like'"
+                                + materializedPath + "%') ").executeUpdate();
     }
 
 }

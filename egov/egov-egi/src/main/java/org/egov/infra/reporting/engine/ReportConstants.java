@@ -78,9 +78,6 @@ public class ReportConstants {
 	// UTF-8 character encoding
 	public static final String CHARACTER_ENCODING_UTF8 = "UTF-8";
 
-	// Session attributes
-	public static final String ATTRIB_EGOV_REPORT_OUTPUT_MAP = "EGOV_REPORT_OUTPUT_MAP";
-
 	// Request parameters
 	public static final String REQ_PARAM_REPORT_ID = "reportId";
 

@@ -47,16 +47,11 @@ import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.sql.SQLException;
 
 @Service
 public class LicenseNumberGenerator {
-
-	@PersistenceContext
-	private EntityManager entityManager;
 
 	@Autowired
 	private DBSequenceGenerator dbSequenceGenerator;
@@ -66,21 +61,16 @@ public class LicenseNumberGenerator {
 
 	public String generateBillNumber(final String installmentYear) {
 		try {
-			final String sequenceName = Constants.LICENSE_BILLNO_SEQ
-					+ installmentYear;
+			final String sequenceName = Constants.LICENSE_BILLNO_SEQ+ installmentYear;
 			Serializable sequenceNumber;
 			try {
-				sequenceNumber = sequenceNumberGenerator
-						.getNextSequence(sequenceName);
+				sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
 			} catch (final SQLGrammarException e) {
-				sequenceNumber = dbSequenceGenerator
-						.createAndGetNextSequence(sequenceName);
+				sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
 			}
 			return String.format("%s%06d", "", sequenceNumber);
 		} catch (final SQLException e) {
-			throw new ApplicationRuntimeException(
-					"Error occurred while generating water connection charges bill Number ",
-					e);
+			throw new ApplicationRuntimeException("Error occurred while generating water connection charges bill Number ", e);
 		}
 	}
 

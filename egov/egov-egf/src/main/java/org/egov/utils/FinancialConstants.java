@@ -232,7 +232,6 @@ public interface FinancialConstants {
     public static final String MODULE_NAME_APPCONFIG = "EGF";
     public static final String WORKFLOWENDSTATE = "END";
     public static final String KEY_BILLNUMBER_APPCONFIG = "Bill_Number_Geneartion_Auto";
-    public static final String BILLNUMBER_GENERATION_SCRIPT = "egf.bill.number.generator";
 
     public static final String TYPEOFACCOUNT_PAYMENTS = "PAYMENTS";
     public static final String TYPEOFACCOUNT_RECEIPTS = "RECEIPTS";

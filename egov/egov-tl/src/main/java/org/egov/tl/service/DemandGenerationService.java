@@ -169,17 +169,6 @@ public class DemandGenerationService {
         }
     }
 
-    public EgDemandDetails getDemandDetailByDemandReason(final EgDemand currentDemand, final String demandReasonCode) {
-        EgDemandDetails demandDetail = null;
-        if (currentDemand == null) {
-        } else
-            for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails())
-                if (dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(demandReasonCode))
-                    demandDetail = dmdDet;
-
-        return demandDetail;
-    }
-
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
     public DemandGenerationLog demandRegeneration(final DemandGenerationLog demandGenerationLog) {
         final CFinancialYear financialYear = cFinancialYearRepository

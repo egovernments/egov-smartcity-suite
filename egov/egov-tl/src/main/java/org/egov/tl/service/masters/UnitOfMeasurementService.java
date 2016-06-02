@@ -60,27 +60,14 @@ public class UnitOfMeasurementService{
         return  unitOfMeasurementRepository.save(unitOfMeasurement);
     }
 
-    /**
-     * @Description returns unitofmeasurement object that matches param name
-     * @param name
-     * @return
-     */
     public UnitOfMeasurement findUOMByName(final String name) {
         return  unitOfMeasurementRepository.findByNameIgnoreCase(name);
     }
 
-    /**
-     * @Description returns unitofmeasurement object that matches param code
-     * @param code
-     * @return
-     */
     public UnitOfMeasurement findUOMByCode(final String code) {
         return  unitOfMeasurementRepository.findByCodeIgnoreCase(code);
     }
 
-    /**
-     * @return list of active UOM's
-     */
     public List<UnitOfMeasurement> findAllActiveUOM() {
         return unitOfMeasurementRepository.findAllByActiveTrue();
     }

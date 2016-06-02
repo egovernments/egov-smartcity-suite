@@ -51,7 +51,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,7 +80,6 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
@@ -450,8 +448,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         }
         return check;
     }
-   
-      public List<ReceiptHeader> setVoucherNumber(final List<ReceiptHeader> receiptHeaders,
+
+    public List<ReceiptHeader> setVoucherNumber(final List<ReceiptHeader> receiptHeaders,
             final CVoucherHeader voucherHeader) {
         final List<ReceiptHeader> receiptHeaderList = new ArrayList<ReceiptHeader>(0);
         for (final ReceiptHeader receiptHeader : receiptHeaders) {
@@ -468,19 +466,25 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             final List<InstrumentHeader> instrumentHeaderListCheque, final CVoucherHeader voucherHeaderCheque) {
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
-        for (final InstrumentHeader instrumentHeader : instrumentHeaderListCheque) {
-            final InstrumentHeader instrumentHeaderObj = financialsUtil.updateInstrumentHeaderStatus(instrumentHeader,
+        int counter = 1;
+        for (InstrumentHeader instrumentHeader : instrumentHeaderListCheque) {
+            instrumentHeader = financialsUtil.updateInstrumentHeaderStatus(instrumentHeader,
                     instrumentStatusDeposited, depositedBankAccount);
             if (voucherHeaderCheque.getId() != null && serviceGlCode != null) {
                 final Map<String, Object> chequeMap = constructInstrumentMap(instrumentDepositeMap,
-                        depositedBankAccount, instrumentHeaderObj, voucherHeaderCheque, voucherDate);
+                        depositedBankAccount, instrumentHeader, voucherHeaderCheque, voucherDate);
                 if (voucherTypeForChequeDDCard)
                     financialsUtil.updateCheque_DD_Card_Deposit_Receipt(voucherHeaderCheque.getId(), serviceGlCode,
-                            instrumentHeaderObj, chequeMap);
+                            instrumentHeader, chequeMap);
                 else
                     financialsUtil.updateCheque_DD_Card_Deposit(voucherHeaderCheque.getId(), serviceGlCode,
-                            instrumentHeaderObj, chequeMap);
+                            instrumentHeader, chequeMap);
             }
+            if (counter % 20 == 0) {
+                this.getSession().flush();
+                this.getSession().clear();
+            }
+            counter++;
         }
     }
 
@@ -490,15 +494,22 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             final List<InstrumentHeader> instrumentHeaderListCash, final CVoucherHeader voucherHeaderCash) {
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
-        for (final InstrumentHeader instrumentHeader : instrumentHeaderListCash)
+        int counter = 1;
+        for (InstrumentHeader instrumentHeader : instrumentHeaderListCash) {
             if (voucherHeaderCash.getId() != null && serviceGlCode != null) {
                 final Map<String, Object> cashMap = constructInstrumentMap(instrumentDepositeMap, depositedBankAccount,
                         instrumentHeader, voucherHeaderCash, voucherDate);
-                final InstrumentHeader instrumentHeaderObj = financialsUtil.updateInstrumentHeaderStatus(
+                instrumentHeader = financialsUtil.updateInstrumentHeaderStatus(
                         instrumentHeader, instrumentStatusDeposited, depositedBankAccount);
                 financialsUtil
-                        .updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode, instrumentHeaderObj, cashMap);
+                        .updateCashDeposit(voucherHeaderCash.getId(), serviceGlCode, instrumentHeader, cashMap);
             }
+            if (counter % 20 == 0) {
+                this.getSession().flush();
+                this.getSession().clear();
+            }
+            counter++;
+        }
     }
 
     /**
@@ -603,8 +614,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     @Transactional
     public ReceiptHeader persist(final ReceiptHeader receiptHeader) throws ApplicationRuntimeException {
         if (receiptHeader.getReceipttype() != CollectionConstants.RECEIPT_TYPE_CHALLAN
-                && (!CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode()) || !CollectionConstants.RECEIPT_STATUS_CODE_FAILED
-                        .equals(receiptHeader.getStatus().getCode())) && receiptHeader.getReceiptnumber() == null)
+                && !CollectionConstants.RECEIPT_STATUS_CODE_PENDING.equals(receiptHeader.getStatus().getCode())
+                && !CollectionConstants.RECEIPT_STATUS_CODE_FAILED.equals(receiptHeader.getStatus().getCode())
+                && receiptHeader.getReceiptnumber() == null)
             setReceiptNumber(receiptHeader);
 
         if (receiptHeader.getChallan() != null) {

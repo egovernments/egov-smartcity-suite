@@ -293,4 +293,20 @@
         <put-attribute name="page-title" value="title.dataentry.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dataentry-report.jsp"/>
     </definition>
+    <definition name="baseRegister-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.baseregister.report" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/reports/baseRegister-form.jsp" />
+	</definition>
+	 <definition name="usage-type-sucess" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-sucess.jsp"/>
+    </definition>
+    <definition name="category-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
+    </definition>
+    <definition name="pipesize-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-success.jsp"/>
+    </definition>
 </tiles-definitions>

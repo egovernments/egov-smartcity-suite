@@ -55,7 +55,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,7 +84,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
     private TradeLicenseService tradeLicenseService;
 
     @Override
-    public String execute() throws UnsupportedEncodingException, IOException {
+    public String execute() throws IOException {
         final License license = tradeLicenseService.licensePersitenceService().findById(licenseId, false);
         if (license.isPaid()) {
             ServletActionContext.getResponse().setContentType("text/html");
@@ -103,7 +102,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
         return SUCCESS;
     }
 
-    public String renew() throws UnsupportedEncodingException, IOException {
+    public String renew() throws IOException {
         if (getSession().get("model.id") != null) {
             licenseId = Long.valueOf((Long) getSession().get("model.id"));
             getSession().remove("model.id");

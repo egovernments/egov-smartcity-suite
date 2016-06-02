@@ -103,9 +103,9 @@
 		</s:if>
 		<s:if test="%{basicProperty== null}">
 			<div class="headermessage" align="center">
-				Property does not exists with given Assessment Number : 
+				Property does not exists with given Assessment Number :
 				<s:property value="%{propertyId}" />
-				 , Please Enter a Valid Assessment Number.<span class="bold"></span>
+				, Please Enter a Valid Assessment Number.<span class="bold"></span>
 			</div>
 		</s:if>
 		<s:else>
@@ -677,11 +677,7 @@
 														<tr>
 															<td class="blueborderfortd">
 																<div align="center">
-																	<a
-																		href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT"
-																		target="_blank"> <s:property
-																			value="#rcpt.getReceiptNumber()" />
-																	</a>
+																	<s:property value="#rcpt.getReceiptNumber()" />
 																</div>
 															</td>
 															<td class="blueborderfortd">

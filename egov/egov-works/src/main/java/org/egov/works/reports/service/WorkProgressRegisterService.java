@@ -336,7 +336,7 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" 0                             AS billValueInCrores ");
                 workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
                 workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" details.workordercreated  = true ");
+                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(" GROUP BY details.departmentName ");
@@ -358,7 +358,7 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" 0                             AS billValueInCrores ");
                 workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
                 workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" details.workordercreated  = true ");
+                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(" AND details.spilloverflag  = true ");
                 workInProgessCondition.append(filterConditions.toString());
@@ -595,7 +595,7 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" 0                             AS billValueInCrores ");
                 workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
                 workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" details.workordercreated  = true ");
+                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(groupByQuery.toString());
@@ -617,7 +617,7 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" 0                             AS billValueInCrores ");
                 workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
                 workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" details.workordercreated  = true ");
+                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(" AND details.spilloverflag  = true ");
                 workInProgessCondition.append(filterConditions.toString());

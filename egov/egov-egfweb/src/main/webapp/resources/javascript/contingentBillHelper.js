@@ -108,7 +108,7 @@ function netglcodeFormatter(tableName,columnName,type){
 return function(el, oRecord, oColumn, oData) {
 var table_name=eval(tableName);
 var value = (YAHOO.lang.isValue(oData))?oData:"";
-el.innerHTML = "<select   id='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' name='"+tableName+"["+billDetailTableIndex+"]"+columnName+"'   onchange='splitNetGlCode(this)' style='width:250px'/>";
+el.innerHTML = "<select   id='"+tableName+"["+billDetailTableIndex+"]"+columnName+"' name='"+tableName+"["+billDetailTableIndex+"]"+columnName+"'   onchange='splitNetGlCode(this)' style='width:123px'/>";
 el.innerHTML =el.innerHTML + "<input type='hidden'   id='"+tableName+"["+billDetailTableIndex+"].isSubledger' name='"+tableName+"["+billDetailTableIndex+"].isSubledger'/>";
 el.innerHTML =el.innerHTML + "<input type='hidden'   id='"+tableName+"["+billDetailTableIndex+"].glcodeIdDetail' name='"+tableName+"["+billDetailTableIndex+"].glcodeIdDetail' />";
 el.innerHTML =el.innerHTML + "<input type='hidden'   id='"+tableName+"["+billDetailTableIndex+"].detailTypes' name='"+tableName+"["+billDetailTableIndex+"].detailTypes' />";

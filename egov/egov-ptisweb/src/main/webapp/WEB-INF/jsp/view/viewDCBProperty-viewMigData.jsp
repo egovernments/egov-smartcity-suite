@@ -120,12 +120,12 @@
 							</td>
 							<td class="blueborderfortd" colspan="1">
 								<div align="center">
-									<s:property value="fromDate" />
+									<s:property value="fromDate" default="N/A" />
 								</div>
 							</td>
 							<td class="blueborderfortd" colspan="1">
 								<div align="center">
-									<s:property value="toDate" />
+									<s:property value="toDate" default="N/A" />
 								</div>
 							</td>
 							<td class="blueborderfortd" colspan="1">

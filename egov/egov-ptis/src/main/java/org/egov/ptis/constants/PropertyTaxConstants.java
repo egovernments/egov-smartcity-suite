@@ -116,6 +116,7 @@ public interface PropertyTaxConstants {
     public static final String CURR_FIRSTHALF_COLL_STR = "CURR_FIRSTHALF_COLL";
     public static final String CURR_SECONDHALF_DMD_STR = "CURR_SECONDHALF_DMD";
     public static final String CURR_SECONDHALF_COLL_STR = "CURR_SECONDHALF_COLL";
+    public static final String ADVANCE_COLLECTION_STR = "ADVANCECOLLECTION";
 
     public static final String BUILT_UP_PROPERTY = "BuiltUpProperty";
     public static final String VACANT_PROPERTY = "VacantProperty";
@@ -322,7 +323,8 @@ public interface PropertyTaxConstants {
 
         {
             put("VACANTLAND", "Private Land");
-            put("GOVTLAND", "Government Land");
+            put("STATE_GOVT", "State Government Land");
+            put("CENTRAL_GOVT", "Central Government Land");
         }
     };
 
@@ -352,8 +354,8 @@ public interface PropertyTaxConstants {
     };
     // Un authorized penalty percentages on property tax
     public static final BigDecimal BPA_DEVIATION_TAXPERC_1_10 = new BigDecimal(0.25);// 25%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_11_25 = new BigDecimal(0.5);// 50%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_26_100 = new BigDecimal(1);// 100%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_ABOVE_11 = new BigDecimal(0.5);// 50%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_NOT_DEFINED = new BigDecimal(1);// 100%
 
     // TreeMap for Guardian Relation
     public static final TreeMap<String, String> GUARDIAN_RELATION = new TreeMap<String, String>() {
@@ -452,7 +454,7 @@ public interface PropertyTaxConstants {
     public static final String DEMANDRSN_STR_UNAUTHORIZED_PENALTY = "Unauthorized Penalty";
     public static final String DEMANDRSN_STR_CHQ_BOUNCE_PENALTY = "Cheque Bounce Penalty";
     public static final String DEMANDRSN_STR_PENALTY_FINES = "Penalty Fines";
-    public static final String DEMANDRSN_STR_ADVANCE = "ADVANCE";
+    public static final String DEMANDRSN_STR_ADVANCE = "Advance";
     public static final String DEMANDRSN_STR_ADVANCE_REBATE = "ADVANCE_REBATE";
 
     // Tax Payable constants
@@ -482,6 +484,7 @@ public interface PropertyTaxConstants {
             put(DEMANDRSN_CODE_EDUCATIONAL_CESS, 5);
             put(DEMANDRSN_CODE_SEWERAGE_TAX, 6);
             put(DEMANDRSN_CODE_REBATE, 7);
+            put(DEMANDRSN_CODE_ADVANCE, 8);
         }
     };
 
@@ -1030,7 +1033,7 @@ public interface PropertyTaxConstants {
     public static final String STRING_EMPTY = new String();
 
     public static final BigDecimal ADVANCE_REBATE_PERCENTAGE = new BigDecimal(5);
-    public static final Integer MAX_ADVANCES_ALLOWED = 5;
+    public static final Integer MAX_ADVANCES_ALLOWED = 10;
 
     public static final String MUTATIONRS_OBJECTION_CODE = "OBJ";
     public static final String MUTATIONRS_OTHERS = "OTHERS";
@@ -1388,6 +1391,6 @@ public interface PropertyTaxConstants {
 
     public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
-    
+
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
 }

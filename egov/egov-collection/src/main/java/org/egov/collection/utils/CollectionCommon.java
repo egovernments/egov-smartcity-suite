@@ -89,7 +89,6 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -125,6 +124,8 @@ public class CollectionCommon {
     private EgwStatusHibernateDAO statusDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     /**
      * @param receiptHeaderService the receipt header Service to be set
@@ -307,11 +308,10 @@ public class CollectionCommon {
                     final CChartOfAccounts account = chartOfAccountsHibernateDAO.getCChartOfAccountsByGlCode(billAccount
                             .getGlCode());
                     final CFunction function = functionDAO.getFunctionByCode(billAccount.getFunctionCode());
-                    // TODO: Need to check for getIsActualDemand()
-                    /* if (billAccount.getIsActualDemand()) { */
-                    totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(
+                    if (billAccount.getIsActualDemand()) { 
+                    	totalAmountToBeCollected = totalAmountToBeCollected.add(billAccount.getCrAmount()).subtract(
                             billAccount.getDrAmount());
-                    /* } */
+                    } 
                     final ReceiptDetail receiptDetail = new ReceiptDetail(account, function, billAccount.getCrAmount()
                             .subtract(billAccount.getDrAmount()), billAccount.getDrAmount(), billAccount.getCrAmount(),
                             Long.valueOf(billAccount.getOrder()), billAccount.getDescription(),
@@ -344,18 +344,17 @@ public class CollectionCommon {
      * This method generates a report for the given array of receipts
      *
      * @param receipts an array of <code>ReceiptHeader</code> objects for which the report is to be generated
-     * @param session a <code>Map</code> of String and Object key- value pairs containing the session information
      * @param flag a boolean value indicating if the generated report should also have the print option
      * @return an integer representing the report id
      */
-    public Integer generateReport(final ReceiptHeader[] receipts, final Map<String, Object> session, final boolean flag) {
+    public String generateReport(final ReceiptHeader[] receipts, final boolean flag) {
         final String serviceCode = receipts[0].getService().getCode();
         final char receiptType = receipts[0].getReceipttype();
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
 
         final String templateName = getReceiptTemplateName(receiptType, serviceCode);
         LOGGER.info(" template name : " + templateName);
-        final Map reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<String, Object>(0);
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
 
         if (receiptType == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
@@ -384,33 +383,30 @@ public class CollectionCommon {
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-        session.remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
+        return reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
     }
 
     /**
      * This method generates a challan for the given receipt
      *
      * @param receipt <code>ReceiptHeader</code> object for which the report is to be generated
-     * @param session a <code>Map</code> of String and Object key- value pairs containing the session information
      * @param flag a boolean value indicating if the generated challan should also have the print option
      * @return an integer representing the report id
      */
-    public Integer generateChallan(final ReceiptHeader receipt, final Map<String, Object> session, final boolean flag) {
+    public String generateChallan(final ReceiptHeader receipt, final boolean flag) {
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
         receiptList.add(new BillReceiptInfoImpl(receipt, egovCommon, new ReceiptHeader(), chartOfAccountsHibernateDAO,
                 persistenceService));
 
         final String templateName = CollectionConstants.CHALLAN_TEMPLATE_NAME;
-        final Map reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<String, Object>(0);
         reportParams.put("EGOV_COMMON", egovCommon);
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-        session.remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        return ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), session);
+        return reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
     }
 
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails,

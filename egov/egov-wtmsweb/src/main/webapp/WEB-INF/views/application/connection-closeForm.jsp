@@ -77,9 +77,18 @@
 <div class="form-group">
 										<label class="col-sm-3 col-xs-12 control-label text-right"><spring:message  code="lbl.connectiontype"/><span class="mandatory"></span>
                                         </label>
-						<div class="col-sm-6 add-margin dynamic-span capitalize">
+						<%-- <div class="col-sm-6 add-margin dynamic-span capitalize">
 							<form:radiobuttons path="closeConnectionType" items="${radioButtonMap}"  required="required" name="closeConnectionType" element="span"  /> 
-						</div>
+						</div> --%>
+						<label class="col-sm-2 col-xs-4 control-label text-right"><spring:message code="lbl.temporary" /></label>
+			<div class="col-sm-2 col-xs-4 add-margin">
+				<form:radiobutton path="closeConnectionType" id="temporary" value="T" />
+			</div>
+			<label class="col-sm-2 col-xs-4 control-label "><spring:message code="lbl.permanent" />
+			</label>
+			<div class="col-sm-2 col-xs-4 add-margin">
+				<form:radiobutton path="closeConnectionType" id="permanent" value="P" />
+			</div>
 					</div>
 									</div>
 									

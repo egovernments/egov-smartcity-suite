@@ -40,8 +40,6 @@
 
 package org.egov.adtax.workflow;
 
-import java.util.Date;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.service.AdvertisementDemandService;
@@ -62,7 +60,10 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * The Class ApplicationCommonWorkflow.
@@ -78,6 +79,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
     private PositionMasterService positionMasterService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<AdvertisementPermitDetail> advertisementPermitDetailWorkflowService;
 
     @Autowired

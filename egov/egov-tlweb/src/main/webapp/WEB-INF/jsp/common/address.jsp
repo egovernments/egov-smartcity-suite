@@ -101,7 +101,7 @@ function getZoneWard(){
     </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.ward.lbl' /><span class="mandatory"></span></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.division' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="ward" id="wardName" value="%{parentBoundary.name}"  readOnly="true" class="form-control"/>
         <s:hidden name="parentBoundary" id="parentBoundary" value="%{parentBoundary.id}"/>
@@ -114,7 +114,7 @@ function getZoneWard(){
 										id="ownershipType" listKey="key" listValue="value"
 										list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}"  />
     </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.address.lbl' /><span class="mandatory"></span></label>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.address' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
          <s:textarea name="address" id="address" maxlength="250" onBlur="checkLength(this,250)" class="form-control"  />
     </div>

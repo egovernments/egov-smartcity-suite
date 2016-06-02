@@ -70,10 +70,6 @@ import java.util.List;
 @RequestMapping(value = "/tlreports")
 public class DCBReportController {
 
-    public static final String ZONEWISE = "zone";
-    public static final String WARDWISE = "ward";
-    public static final String BLOCKWISE = "block";
-    public static final String LOCALITYWISE = "locality";
     public static final String PROPERTY = "property";
 
     @PersistenceContext

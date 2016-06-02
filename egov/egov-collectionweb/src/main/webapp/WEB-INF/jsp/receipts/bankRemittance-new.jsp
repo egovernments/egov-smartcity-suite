@@ -45,11 +45,29 @@
 <title><s:text name="bankRemittance.title" /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
+	var isDatepickerOpened=false;
 	jQuery(document).ready(function() {
-
+		jQuery('#remittanceDate').val("");
+		jQuery('#finYearId').prop("disabled", true); 
 		jQuery(" form ").submit(function(event) {
 			doLoadingMask();
 		});
+		var nowTemp = new Date();
+	    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+	    
+	     jQuery( "#remittanceDate" ).datepicker({ 
+	   	 format: 'dd/mm/yyyy',
+	   	 endDate: nowTemp, 
+	   	 autoclose:true,
+	        onRender: function(date) {
+	     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+	     	  }
+		  }).on('changeDate', function(ev) {
+			  var string=jQuery(this).val();
+			  if(!(string.indexOf("_") > -1)){
+				  isDatepickerOpened=false; 
+			  }
+		  }).data('datepicker');
 		doLoadingMask();
 	});
 
@@ -97,6 +115,30 @@
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
 			}
 		}
+
+		//TODO: uncomment the validation after go live
+		/* var receiptDateArray=document.getElementsByName('receiptDateArray');
+		for(j=0; j<receiptDateArray.length; j++)
+		{
+			if(document.getElementsByName('receiptDateArray')[j].value!="")
+			{
+				for (k = 0; k < isSelected.length; k++)
+				{
+					if (isSelected[k].checked == true)
+					{
+						if((document.getElementsByName('receiptDateArray')[j].value==document.getElementsByName('receiptDateArray')[k].value)){}
+						else
+						{
+							dom.get("multipleserviceselectionerror").style.display="block";
+							dom.get("button32").disabled=true;
+							dom.get("button32").className="button";
+							window.scroll(0,0);
+							return false;
+						}
+					}
+				}
+			}
+		} */
 	}
 
 	// Check if at least one receipt is selected
@@ -135,14 +177,23 @@
 		dom.get("selectremittanceerror").style.display = "none";
 		dom.get("approvalSelectionError").style.display = "none";
 
+		<s:if test="showRemittanceDate">
+		if(dom.get("remittanceDate")!=null && dom.get("remittanceDate").value=="")
+			{
+			bootbox.alert("Please Enter Date of Remittance");
+			return false;
+			}
+		</s:if>
 		if (!isChecked(document.getElementsByName('receiptIds'))) {
 			dom.get("selectremittanceerror").style.display = "block";
 			return false;
 		} else {
 			doLoadingMask('#loadingMask');
+			jQuery('#finYearId').prop("disabled", false);
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			document.bankRemittanceForm.submit();
 		}
+		
 
 	}
 
@@ -162,6 +213,7 @@
 			dom.get("accountselectionerror").style.display = "block";
 			return false;
 		}
+		jQuery('#finYearId').prop("disabled", false);
 		document.bankRemittanceForm.action = "bankRemittance-listData.action?bankAccountId="+dom.get("accountNumberId").value;
 		document.bankRemittanceForm.submit();
 		}
@@ -266,6 +318,7 @@
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
 	<s:form theme="simple" name="bankRemittanceForm">
+	<s:push value="model">
 			<s:token />
 		<s:if test="%{hasErrors()}">
 	    <div id="actionErrorMessages" class="errorstyle">
@@ -309,6 +362,18 @@
 								value="%{accountNumberId}" /></td>
 								</tr>
 						<tr>
+						<td width="4%" class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text
+								name="bankremittance.financialyear" />:</td>
+						<td class="bluebox"><s:select
+								headerKey="-1"
+								list="dropdownData.financialYearList" listKey="id"
+								id="finYearId" listValue="finYearRange"
+								label="finYearRange" name="finYearId" 
+								value="%{finYearId}"
+								 /> 
+								</td>
+						</tr>
 					</table>
 					<div class="buttonbottom">
 							<input name="search" type="button" class="buttonsubmit"
@@ -435,7 +500,17 @@
 						<img src="/collection/resources/images/bar_loader.gif" alt=""/> <span
 							style="color: red">Please wait....</span>
 					</div>
-
+					<s:if test="showRemittanceDate">
+					<div align="center">
+					<table>
+					<tr>
+					<td class="bluebox" colspan="7"> &nbsp;</td>
+					<td class="bluebox" ><s:text name="bankremittance.remittancetdate"/><span class="mandatory"/></td>
+					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" readonly="true" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
+					</tr>
+					</table>
+					</div>
+					</s:if>
 					<div align="left" class="mandatorycoll">
 						<s:text name="common.mandatoryfields" />
 					</div>
@@ -467,6 +542,7 @@
 					</logic:empty>
 					</s:if>
 		</div>
+		</s:push>
 	</s:form>
 </body>
 </html>

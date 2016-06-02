@@ -97,7 +97,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private final BigDecimal TOTAL_MONTHS = new BigDecimal("12");
 	private ReportService reportService;
-	private Integer reportId = -1;
+	private String reportId;
 	private String indexNum;
 	private PropertyTaxUtil propertyTaxUtil;
 	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -108,6 +108,9 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 
 	@Override
 	public Object getModel() {
@@ -128,7 +131,7 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 			} else {
 				reportInput = getReportInputData(property);
 			}
-			reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), getSession());
+			reportId = reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
 			LOGGER.debug("Exit from generateCalSheet method");
 			return "calsheet";
 		} catch (Exception e) {
@@ -444,12 +447,8 @@ public class PropertyIndividualCalSheetAction extends BaseFormAction {
 		this.reportService = reportService;
 	}
 
-	public Integer getReportId() {
+	public String getReportId() {
 		return reportId;
-	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
 	}
 
 	public PropertyTaxUtil getPropertyTaxUtil() {

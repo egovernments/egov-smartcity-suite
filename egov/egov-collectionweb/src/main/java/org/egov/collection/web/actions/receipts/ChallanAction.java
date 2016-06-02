@@ -195,7 +195,7 @@ public class ChallanAction extends BaseFormAction {
 
     List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
-    private Integer reportId = -1;
+    private String reportId;
 
     Position position = null;
 
@@ -446,7 +446,7 @@ public class ChallanAction extends BaseFormAction {
             receipts[0] = receiptHeader;
 
             try {
-                reportId = collectionCommon.generateReport(receipts, getSession(), true);
+                reportId = collectionCommon.generateReport(receipts, true);
             } catch (final Exception e) {
                 LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
                 throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
@@ -472,7 +472,7 @@ public class ChallanAction extends BaseFormAction {
     public String printChallan() {
 
         try {
-            reportId = collectionCommon.generateChallan(receiptHeader, getSession(), true);
+            reportId = collectionCommon.generateChallan(receiptHeader, true);
         } catch (final Exception e) {
             LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
             throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
@@ -1305,7 +1305,7 @@ public class ChallanAction extends BaseFormAction {
         this.actionName = actionName;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
     }
 

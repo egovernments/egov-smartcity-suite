@@ -63,7 +63,7 @@
         <property name="jobFactory" ref="jobFactory"/>
         <property name="taskExecutor" ref="taskExecutor" />
         <property name="waitForJobsToCompleteOnShutdown" value="false"/>
-        <property name="startupDelay" value="120"/>
+        <property name="startupDelay" value="1500"/>
         <property name="quartzProperties">
         	<props>
         		<!-- Scheduler Properties -->

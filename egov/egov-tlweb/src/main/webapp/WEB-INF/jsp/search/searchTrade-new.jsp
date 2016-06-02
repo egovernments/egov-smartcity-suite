@@ -108,7 +108,7 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 							    <div class="col-sm-3 add-margin">
 							       <s:textfield name="tradeTitle" id="tradeTitle" value="%{tradeTitle}" cssClass="form-control" />
 							    </div>
-							    <label class="col-sm-2 control-label text-right"><s:text name='search.licensee.applicantname' /></label>
+							    <label class="col-sm-2 control-label text-right"><s:text name='licensee.applicantname' /></label>
 							    <div class="col-sm-3 add-margin">
 							      	<s:textfield name="tradeOwnerName" id="tradeOwnerName"  value="%{tradeOwnerName}"  cssClass="form-control"/>
 							    </div>
