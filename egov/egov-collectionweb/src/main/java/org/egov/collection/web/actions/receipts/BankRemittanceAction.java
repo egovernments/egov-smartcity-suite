@@ -344,6 +344,7 @@ public class BankRemittanceAction extends BaseFormAction {
     public void validate() {
         super.validate();
         populateBankAccountList();
+        listData();
         final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         if (receiptDateArray != null) {
             final String[] filterReceiptDateArray = removeNullValue(receiptDateArray);

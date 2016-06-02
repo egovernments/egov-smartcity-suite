@@ -45,11 +45,29 @@
 <title><s:text name="bankRemittance.title" /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
+	var isDatepickerOpened=false;
 	jQuery(document).ready(function() {
+		jQuery('#remittanceDate').val("");
 		jQuery('#finYearId').prop("disabled", true); 
 		jQuery(" form ").submit(function(event) {
 			doLoadingMask();
 		});
+		var nowTemp = new Date();
+	    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+	    
+	     jQuery( "#remittanceDate" ).datepicker({ 
+	   	 format: 'dd/mm/yyyy',
+	   	 endDate: nowTemp, 
+	   	 autoclose:true,
+	        onRender: function(date) {
+	     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+	     	  }
+		  }).on('changeDate', function(ev) {
+			  var string=jQuery(this).val();
+			  if(!(string.indexOf("_") > -1)){
+				  isDatepickerOpened=false; 
+			  }
+		  }).data('datepicker');
 		doLoadingMask();
 	});
 
@@ -171,6 +189,7 @@
 			return false;
 		} else {
 			doLoadingMask('#loadingMask');
+			jQuery('#finYearId').prop("disabled", false);
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			document.bankRemittanceForm.submit();
 		}
@@ -274,26 +293,6 @@
 			deSelectAll();
 		}
 	}
-
-	var isDatepickerOpened=false;
-	jQuery(document).ready(function() {
-	var nowTemp = new Date();
-    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-    
-     jQuery( "#remittanceDate" ).datepicker({ 
-   	 format: 'dd/mm/yyyy',
-   	 endDate: nowTemp, 
-   	 autoclose:true,
-        onRender: function(date) {
-     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
-     	  }
-	  }).on('changeDate', function(ev) {
-		  var string=jQuery(this).val();
-		  if(!(string.indexOf("_") > -1)){
-			  isDatepickerOpened=false; 
-		  }
-	  }).data('datepicker');
-	 });
 </script>
 </head>
 <body>
@@ -507,7 +506,7 @@
 					<tr>
 					<td class="bluebox" colspan="7"> &nbsp;</td>
 					<td class="bluebox" ><s:text name="bankremittance.remittancetdate"/><span class="mandatory"/></td>
-					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" value="%{remittanceDate}" readonly="true" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
+					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" readonly="true" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
 					</tr>
 					</table>
 					</div>
