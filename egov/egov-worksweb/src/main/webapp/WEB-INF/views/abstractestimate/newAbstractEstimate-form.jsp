@@ -56,6 +56,7 @@
 	<div class="new-page-header">Create Abstract Estimate</div>
 
 	<div class="main-content">
+	<input type="hidden" id="estimateValue" name="estimateValue" value="${estimateValue}"/>
 		<div class="position_alert">
 			Estimate Value : &#8377 <span>56321.05</span>
 		</div>

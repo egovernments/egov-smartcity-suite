@@ -142,7 +142,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         financialDetails.setBudgetGroup(lineEstimate.getBudgetHead());
         financialDetailList.add(financialDetails);
         abstractEstimate.setFinancialDetails(financialDetailList);
-        
+        //TO-DO Need to get this value of totalbillpaidsofar from egw_mv_work_progress_register
+        model.addAttribute("estimateValue", "56321.05");
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("lineEstimate", lineEstimate);

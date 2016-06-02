@@ -69,9 +69,41 @@
 										<spring:message code="lbl.select" />
 									</form:option>
 									<c:forEach var="overhead" items="${overheads}">
-										<form:option value="${overhead.id}">
-											<c:out value="${overhead.name}" />
-										</form:option>
+										<c:forEach var="overheadrate" items="${overhead.overheadRates}">
+										<c:set var="estDate" value="<%=new java.util.Date()%>" scope="session"/>
+										<c:set var="fromDate" value="${overheadrate.validity.startDate}" scope="session"/>
+										<c:set var="toDate" value="${overheadrate.validity.endDate}" scope="session"/>
+										<c:choose>
+											<c:when  test="${overheadrate.validity != null}">
+												<c:choose>
+													<c:when  test="${fromDate <= estDate && (estDate <= toDate || toDate == null || toDate == '')}">
+														<c:choose>
+															<c:when test="${overheadrate.percentage > 0}">
+																<form:option value="${overhead.id}">
+																	<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
+																</form:option>
+															</c:when>
+															<c:otherwise>
+																<form:option value="${overhead.id}">
+																	<c:out value="${overhead.name}" /> 
+																</form:option>
+															</c:otherwise>
+														</c:choose>
+													</c:when>
+													<c:otherwise>
+															<form:option value="${overhead.id}">
+																<c:out value="${overhead.name}" /> 
+															</form:option>
+													</c:otherwise>
+												</c:choose>
+											</c:when>
+											<c:otherwise>
+														<form:option value="${overhead.id}">
+															<c:out value="${overhead.name}" /> 
+														</form:option>
+											</c:otherwise>
+										</c:choose>
+										</c:forEach>
 									</c:forEach>
 								</form:select> 
 								<form:hidden path="overheadValues[0].overhead.id"  name="overheadValues[0].overhead.id" id="overheadValues[0].overhead.id"  class="form-control table-input hidden-input"/> 
@@ -84,8 +116,9 @@
 								<form:input path="overheadValues[0].amount" id="overheadValues[0].amount" name="overheadValues[0].amount"  data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" onblur="calculateOverheadTotalAmount();"  maxlength="12" />
 								<form:errors path="overheadValues[0].amount" cssClass="add-margin error-msg" /> 
 							</td> 
-							<td class="text-center"><span style="cursor:pointer;" onclick="addOverheadRow();"><i class="fa fa-plus"></i></span>
-							 <span class="add-padding" onclick="deleteOverheadRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							<td class="text-center">
+								<button type="button" onclick="deleteOverheadRow(this);" class="btn btn-xs btn-secondary delete-row"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+							 </td>
 						</tr>
 			</tbody>
 		</table>
@@ -98,6 +131,13 @@
 				<td width="7.5%"></td>
 			</tr>
 		</table>
+		<div class="panel-title">
+			<div class="text-center">
+				<a id="addOverheadRow" href="javascript:void(0);" class="btn btn-primary">
+					<i class="fa fa-plus"></i><spring:message code="lbl.addrow" />
+				</a>
+			</div>
+		</div>
 </div>
 
 </div>
