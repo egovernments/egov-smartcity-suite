@@ -73,19 +73,32 @@
 								<table class="table table-bordered table-hover">
 									<thead>
 										<tr>
-											<th>Tax</th>
+										    <th >SI.No</th>
+											<th class="text-left">Tax Type</th>
 											<th class="text-right">Rate</th>
+											<th >Period</th>
 										</tr>
 									</thead>
 									<tbody>
+									    <c:set var="count" value="1" />
 										<c:forEach var="taxRate" items="${taxRates}">
-											<tr>
+											<tr>									   
+                                                    <td><c:out value="${count}" /></td>
 												<td><c:out value="${taxRate.key}" /></td>
 												<td class="text-right"><fmt:formatNumber
 														var="formattedRate" type="number" minFractionDigits="2"
 														maxFractionDigits="2" value="${taxRate.value}" /> <c:out
 														value="${formattedRate}" /></td>
+														<c:choose>
+														<c:when test="${taxRate.key!='Vacant Land Tax'}">
+												<td>HALF YEARLY</td>
+												
+												</c:when>
+												<c:otherwise><td>YEARLY</td></c:otherwise>
+												</c:choose>
+																						
 											</tr>
+											<c:set var="count" value="${count+1}" />
 										</c:forEach>
 									</tbody>
 								</table>
