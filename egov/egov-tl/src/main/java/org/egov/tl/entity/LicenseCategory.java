@@ -71,17 +71,6 @@ public class LicenseCategory extends AbstractAuditable {
         this.code = code;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseCategory={");
-        str.append("serialVersionUID=").append(serialVersionUID);
-        str.append("name=").append(name == null ? "null" : name.toString());
-        str.append("code=").append(code == null ? "null" : code.toString());
-        str.append("}");
-        return str.toString();
-    }
-
     public Long getId() {
         return id;
     }

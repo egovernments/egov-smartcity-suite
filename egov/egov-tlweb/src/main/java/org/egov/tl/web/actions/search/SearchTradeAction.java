@@ -164,7 +164,6 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setSubCategoryName(license.getTradeName().getName());
             searchFormInfo.setTradeTitle(license.getNameOfEstablishment());
             searchFormInfo.setTradeOwnerName(license.getLicensee().getApplicantName());
-            searchFormInfo.setPropertyAssessmentNo(license.getPropertyNo());
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
             licenseActions = new ArrayList<String>();
             licenseActions.add("View Trade");

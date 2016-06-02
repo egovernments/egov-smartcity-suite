@@ -78,11 +78,10 @@ import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
 
 @ParentPackage("egov")
 @Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT + ".jsp"),
-        @Result(name = Constants.MESSAGE, location = "newTradeLicense-" + Constants.MESSAGE + ".jsp"),
-        @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-" + Constants.BEFORE_RENEWAL + ".jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT_RENEW
-                + ".jsp") })
+        @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
+        @Result(name = Constants.MESSAGE, location = "newTradeLicense-message.jsp"),
+        @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
+        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-acknowledgement_renew.jsp") })
 public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     private static final long serialVersionUID = 1L;
@@ -135,8 +134,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             mode = "disableApprover";
         if (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
             message = "Pending for Collection";
-        if (!license().getState().getOwnerPosition().getId()
-                .equals(positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId())) {
+        if (!license().getState().getOwnerPosition()
+                .equals(positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()))) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
                     .write("<center style='color:red;font-weight:bolder'>Workflow item is in "

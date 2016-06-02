@@ -52,7 +52,6 @@ import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseStatus;
-import org.egov.tl.entity.LicenseStatusValues;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -196,16 +195,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return new ReportRequest("licenseCertificate", license, reportParams);
     }
 
-    public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
-            final String cityMunicipalityName) {
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
-        final Map<String, Object> reportParams = getReportParamsForCertificate(license, districtName,
-                cityMunicipalityName);
-        reportInput = new ReportRequest("licenseCertificate", license, reportParams);
-
-        reportOutput = reportService.createReport(reportInput);
-        return reportOutput;
+    public ReportOutput prepareReportInputDataForDig(final License license, final String districtName, final String cityMunicipalityName) {
+        return reportService.createReport(new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
+                cityMunicipalityName)));
     }
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
@@ -240,27 +232,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", license.getCurrentLicenseFee());
         return reportParams;
-    }
-
-    @Transactional
-    public void revokeSuspendedLicense(final TradeLicense license, final LicenseUtils licenseUtils,
-            final LicenseStatusValues licenseStatusValues) {
-        license.setActive(false);
-        license.setStatus(licenseUtils.getLicenseStatusbyCode("ACT"));
-        licenseStatusValues.setLicense(license);
-        licenseStatusValues.setLicenseStatus(licenseUtils.getLicenseStatusbyCode("ACT"));
-        licenseStatusValues.setActive(true);
-        licenseStatusValues.setReason(Integer.valueOf(Constants.REASON_REVOKESUSPENTION_NO_4));
-        license.addLicenseStatusValuesSet(licenseStatusValues);
-        licensePersitenceService.update(license);
-        return;
-    }
-
-    public List getHotelCategoriesForTrade() {
-        final List subCategory = persistenceService
-                .findAllBy(
-                        "select id from org.egov.tl.entity.LicenseSubCategory where upper(name) like '%HOTEL%' and licenseType.id= (select id from org.egov.tl.entity.LicenseType where name='TradeLicense')");
-        return subCategory;
     }
 
     public List<TradeLicense> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {

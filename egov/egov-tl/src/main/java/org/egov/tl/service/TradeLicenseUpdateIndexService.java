@@ -42,7 +42,6 @@ package org.egov.tl.service;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
@@ -67,8 +66,8 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class TradeLicenseUpdateIndexService
-{
+public class TradeLicenseUpdateIndexService {
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -89,25 +88,22 @@ public class TradeLicenseUpdateIndexService
     }
 
     public void updateTradeLicenseIndexes(final License license) {
-
-        Assignment assignment = null;
         User user = null;
-        List<Assignment> asignList = null;
+
         if (license.getState() != null && license.getState().getOwnerPosition() != null) {
-            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(license.getState().getOwnerPosition()
+            Assignment assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(license.getState().getOwnerPosition()
                     .getId(), new Date());
+            List<Assignment> asignList = null;
             if (assignment != null) {
-                asignList = new ArrayList<Assignment>();
+                asignList = new ArrayList<>();
                 asignList.add(assignment);
             } else if (assignment == null)
-                asignList = assignmentService.getAssignmentsForPosition(license.getState().getOwnerPosition().getId(),
-                        new Date());
+                asignList = assignmentService.getAssignmentsForPosition(license.getState().getOwnerPosition().getId(), new Date());
             if (!asignList.isEmpty())
                 user = userService.getUserById(asignList.get(0).getEmployee().getId());
         } else
             user = securityUtils.getCurrentUser();
-        ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license
-                .getApplicationNumber());
+        ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license.getApplicationNumber());
         if (applicationIndex != null) {
             if (applicationIndex != null && null != license.getId() && license.getEgwStatus() != null
                     && license.getEgwStatus() != null

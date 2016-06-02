@@ -45,8 +45,6 @@ import org.egov.tl.entity.License;
 import org.egov.tl.entity.enums.ProcessStatus;
 import org.egov.tl.repository.DemandGenerationLogDetailRepository;
 import org.egov.tl.repository.DemandGenerationLogRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

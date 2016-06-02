@@ -62,13 +62,4 @@ public class LicenseAppType extends BaseModel {
 		this.name = name;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder str = new StringBuilder();
-		str.append("LicenseAppType={");
-		str.append("serialVersionUID=").append(serialVersionUID);
-		str.append("name=").append(name == null ? "null" : name.toString());
-		str.append("}");
-		return str.toString();
-	}
 }

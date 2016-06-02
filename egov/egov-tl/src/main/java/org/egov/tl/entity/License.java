@@ -42,8 +42,6 @@ package org.egov.tl.entity;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.utils.Constants;
@@ -55,11 +53,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public abstract class License extends StateAware {
 
     private static final long serialVersionUID = 1L;
+
+    protected Long id;
     @Required(message = "license.applicationdate.err.required")
     protected Date applicationDate;
     protected String applicationNumber;
@@ -68,67 +67,45 @@ public abstract class License extends StateAware {
     protected Boundary parentBoundary;
     protected NatureOfBusiness natureOfBusiness;
     protected Date dateOfExpiry;
-    protected String feeTypeStr;
-    protected String inspectionDetails;
     protected boolean isActive;
     protected LicenseDemand licenseDemand;
     protected Licensee licensee;
-    protected Long licenseeZoneId;
     protected String licenseNumber;
-    protected Long licenseZoneId;
     protected String nameOfEstablishment;
-    protected Integer noOfRooms;
     protected String oldLicenseNumber;
-    protected BigDecimal otherCharges;
-    protected String phoneNumber;
     protected String remarks;
-    protected boolean rentalAgreement;
-    protected BigDecimal rentPaid;
     protected LicenseStatus status;
     protected String tempLicenseNumber;
     @NotNull
     protected LicenseSubCategory tradeName;
-    protected Set<LicenseStatusValues> licenseStatusValuesSet;
-    protected String licenseCheckList;
-    protected BigDecimal deduction;
-    protected BigDecimal swmFee;
-    protected String servicetaxNumber;
-    @OptionalPattern(regex = Constants.alphaNumericwithspecialchar, message = "license.tin.number.alphaNumeric")
-    protected String tinNumber;
-    protected String companyPanNumber;
-    protected String vatNumber;
-    protected String companyDetails;
-    protected String namePowerOfAttorney;
-    protected String bankIfscCode;
-    protected BigDecimal minSolvency;
-    protected BigDecimal avgAnnualTurnover;
-    protected String feeExemption;
-    protected BigDecimal violationFee;
-    private String docImageNumber;
-    private LicenseAppType licenseAppType;
-    private String officeEmailId;
-    private String propertyNo;
-    private String ownershipType;
-    private String address;
+    protected LicenseAppType licenseAppType;
+    protected String ownershipType;
+    protected String address;
     @NotNull
     private LicenseCategory category;
-
     private BigDecimal tradeArea_weight;
-
     private boolean legacy;
     private Date commencementDate;
 
     private Date agreementDate;
     private String agreementDocNo;
-    private FileStoreMapper fileStore;
-
-    public abstract String generateApplicationNumber(String runningNumber);
+    private String digiSignedCertFileStoreId;
 
     public abstract String generateLicenseNumber(Serializable runningNumber);
 
     public abstract List<LicenseDocument> getDocuments();
 
     public abstract void setDocuments(List<LicenseDocument> documents);
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public LicenseDemand getLicenseDemand() {
         return licenseDemand;
@@ -164,44 +141,12 @@ public abstract class License extends StateAware {
         this.boundary = boundary;
     }
 
-    public String getCompanyDetails() {
-        return companyDetails;
-    }
-
-    public void setCompanyDetails(final String companyDetails) {
-        this.companyDetails = companyDetails;
-    }
-
     public Date getDateOfExpiry() {
         return dateOfExpiry;
     }
 
     public void setDateOfExpiry(final Date dateOfExpiry) {
         this.dateOfExpiry = dateOfExpiry;
-    }
-
-    public BigDecimal getDeduction() {
-        return deduction;
-    }
-
-    public void setDeduction(final BigDecimal deduction) {
-        this.deduction = deduction;
-    }
-
-    public String getFeeTypeStr() {
-        return feeTypeStr;
-    }
-
-    public void setFeeTypeStr(final String feeTypeStr) {
-        this.feeTypeStr = feeTypeStr;
-    }
-
-    public String getInspectionDetails() {
-        return inspectionDetails;
-    }
-
-    public void setInspectionDetails(final String inspectionDetails) {
-        this.inspectionDetails = inspectionDetails;
     }
 
     public boolean getIsActive() {
@@ -220,28 +165,12 @@ public abstract class License extends StateAware {
         this.licensee = licensee;
     }
 
-    public Long getLicenseeZoneId() {
-        return licenseeZoneId;
-    }
-
-    public void setLicenseeZoneId(final Long licenseeZoneId) {
-        this.licenseeZoneId = licenseeZoneId;
-    }
-
     public String getLicenseNumber() {
         return licenseNumber;
     }
 
     public void setLicenseNumber(final String licenseNumber) {
         this.licenseNumber = licenseNumber;
-    }
-
-    public Long getLicenseZoneId() {
-        return licenseZoneId;
-    }
-
-    public void setLicenseZoneId(final Long licenseZoneId) {
-        this.licenseZoneId = licenseZoneId;
     }
 
     @Audited
@@ -253,14 +182,6 @@ public abstract class License extends StateAware {
         this.nameOfEstablishment = nameOfEstablishment;
     }
 
-    public Integer getNoOfRooms() {
-        return noOfRooms;
-    }
-
-    public void setNoOfRooms(final Integer noOfRooms) {
-        this.noOfRooms = noOfRooms;
-    }
-
     public String getOldLicenseNumber() {
         return oldLicenseNumber;
     }
@@ -269,45 +190,12 @@ public abstract class License extends StateAware {
         this.oldLicenseNumber = oldLicenseNumber;
     }
 
-    public BigDecimal getOtherCharges() {
-        return otherCharges;
-    }
-
-    public void setOtherCharges(final BigDecimal otherCharges) {
-        this.otherCharges = otherCharges;
-    }
-
-    @Audited
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(final String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     public String getRemarks() {
         return remarks;
     }
 
     public void setRemarks(final String remarks) {
         this.remarks = remarks;
-    }
-
-    public BigDecimal getRentPaid() {
-        return rentPaid;
-    }
-
-    public void setRentPaid(final BigDecimal rentPaid) {
-        this.rentPaid = rentPaid;
-    }
-
-    public String getServicetaxNumber() {
-        return servicetaxNumber;
-    }
-
-    public void setServicetaxNumber(final String servicetaxNumber) {
-        this.servicetaxNumber = servicetaxNumber;
     }
 
     public LicenseStatus getStatus() {
@@ -326,14 +214,6 @@ public abstract class License extends StateAware {
         this.tempLicenseNumber = tempLicenseNumber;
     }
 
-    public String getTinNumber() {
-        return tinNumber;
-    }
-
-    public void setTinNumber(final String tinNumber) {
-        this.tinNumber = tinNumber;
-    }
-
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public LicenseSubCategory getTradeName() {
         return tradeName;
@@ -343,132 +223,8 @@ public abstract class License extends StateAware {
         this.tradeName = tradeName;
     }
 
-    public boolean isRentalAgreement() {
-        return rentalAgreement;
-    }
-
-    public void setRentalAgreement(final boolean rentalAgreement) {
-        this.rentalAgreement = rentalAgreement;
-    }
-
     public void setActive(final boolean isActive) {
         this.isActive = isActive;
-    }
-
-    public Set<LicenseStatusValues> getLicenseStatusValuesSet() {
-        return licenseStatusValuesSet;
-    }
-
-    public void setLicenseStatusValuesSet(final Set<LicenseStatusValues> licenseStatusValuesSet) {
-        this.licenseStatusValuesSet = licenseStatusValuesSet;
-    }
-
-    public void addLicenseStatusValuesSet(final LicenseStatusValues licenseStatusValues) {
-        licenseStatusValuesSet.add(licenseStatusValues);
-    }
-
-    public String getLicenseCheckList() {
-        return licenseCheckList;
-    }
-
-    public void setLicenseCheckList(final String licenseCheckList) {
-        this.licenseCheckList = licenseCheckList;
-    }
-
-    public BigDecimal getSwmFee() {
-        return swmFee;
-    }
-
-    public void setSwmFee(final BigDecimal swmFee) {
-        this.swmFee = swmFee;
-    }
-
-    public String getDocImageNumber() {
-        return docImageNumber;
-    }
-
-    public void setDocImageNumber(final String docImageNumber) {
-        this.docImageNumber = docImageNumber;
-    }
-
-    public String getCompanyPanNumber() {
-        return companyPanNumber;
-    }
-
-    public void setCompanyPanNumber(final String companyPanNumber) {
-        this.companyPanNumber = companyPanNumber;
-    }
-
-    public String getVatNumber() {
-        return vatNumber;
-    }
-
-    public void setVatNumber(final String vatNumber) {
-        this.vatNumber = vatNumber;
-    }
-
-    public String getNamePowerOfAttorney() {
-        return namePowerOfAttorney;
-    }
-
-    public void setNamePowerOfAttorney(final String namePowerOfAttorney) {
-        this.namePowerOfAttorney = namePowerOfAttorney;
-    }
-
-    public String getFeeExemption() {
-        return feeExemption;
-    }
-
-    public void setFeeExemption(final String feeExemption) {
-        this.feeExemption = feeExemption;
-    }
-
-    public BigDecimal getMinSolvency() {
-        return minSolvency;
-    }
-
-    public void setMinSolvency(final BigDecimal minSolvency) {
-        this.minSolvency = minSolvency;
-    }
-
-    public BigDecimal getAvgAnnualTurnover() {
-        return avgAnnualTurnover;
-    }
-
-    public void setAvgAnnualTurnover(final BigDecimal avgAnnualTurnover) {
-        this.avgAnnualTurnover = avgAnnualTurnover;
-    }
-
-    public String getBankIfscCode() {
-        return bankIfscCode;
-    }
-
-    public void setBankIfscCode(final String bankIfscCode) {
-        this.bankIfscCode = bankIfscCode;
-    }
-
-    public String getOfficeEmailId() {
-        return officeEmailId;
-    }
-
-    public void setOfficeEmailId(final String officeEmailId) {
-        this.officeEmailId = officeEmailId;
-    }
-
-    public BigDecimal getViolationFee() {
-        return violationFee;
-    }
-
-    public void setViolationFee(final BigDecimal violationFee) {
-        this.violationFee = violationFee;
-    }
-
-    public String getPropertyNo() {
-        return propertyNo;
-    }
-
-    public void setPropertyNo(final String propertyNo) {
-        this.propertyNo = propertyNo;
     }
 
     @Audited
@@ -506,8 +262,6 @@ public abstract class License extends StateAware {
     public void setTradeArea_weight(final BigDecimal tradeArea_weight) {
         this.tradeArea_weight = tradeArea_weight;
     }
-
-    
 
     public NatureOfBusiness getNatureOfBusiness() {
         return natureOfBusiness;
@@ -576,18 +330,12 @@ public abstract class License extends StateAware {
         this.agreementDocNo = agreementDocNo;
     }
 
-    public FileStoreMapper getFileStore() {
-        return fileStore;
+    public String getDigiSignedCertFileStoreId() {
+        return this.digiSignedCertFileStoreId;
     }
 
-    public void setFileStore(final FileStoreMapper fileStore) {
-        this.fileStore = fileStore;
-    }
-    
-    public void updateStatus(final LicenseStatus currentStatus) {
-        setStatus(currentStatus);
-        final LicenseStatusValues statusValues = new LicenseStatusValues();
-        statusValues.setLicenseStatus(currentStatus);
+    public void setDigiSignedCertFileStoreId(String digiSignedCertFileStoreId) {
+        this.digiSignedCertFileStoreId = digiSignedCertFileStoreId;
     }
 
     public LicenseDemand getCurrentDemand() {

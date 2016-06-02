@@ -40,48 +40,24 @@
 
 package org.egov.tl.entity;
 
-import org.apache.log4j.Logger;
 import org.egov.infra.utils.DateUtils;
-import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {
-    private static final Logger LOGGER = Logger.getLogger(TradeLicense.class);
-    private List licenseZoneList;
-    private BigDecimal sandBuckets;
-    private BigDecimal waterBuckets;
-    private BigDecimal dcpExtinguisher;
-    private String nocNumber;
-    private Boolean isCertificateGenerated;
-    
-    private Long id;
-    
     private List<LicenseDocument> documents = new ArrayList<>();
-
-
-    @Override
-    public String generateApplicationNumber(final String runningNumber) {
-        setApplicationNumber("TL-APPL" + runningNumber);
-        return getApplicationNumber();
-    }
 
     @Override
     public String generateLicenseNumber(final Serializable runningNumber) {
-        this.licenseNumber = String.format("TL/%05d/%s", runningNumber, DateUtils.currentDateToYearFormat());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Generated License Number : "+this.licenseNumber);
-        return this.licenseNumber;
+        return this.licenseNumber = String.format("TL/%05d/%s", runningNumber, DateUtils.currentDateToYearFormat());
     }
 
     @Override
@@ -95,69 +71,6 @@ public class TradeLicense extends License {
         return details.toString();
     }
     
-    public List getLicenseZoneList() {
-        return licenseZoneList;
-    }
-
-    public void setLicenseZoneList(final List licenseZoneList) {
-        this.licenseZoneList = licenseZoneList;
-    }
-
-    @NotAudited
-    public BigDecimal getSandBuckets() {
-        return sandBuckets;
-    }
-
-    public void setSandBuckets(final BigDecimal sandBuckets) {
-        this.sandBuckets = sandBuckets;
-    }
-
-    @NotAudited
-    public BigDecimal getWaterBuckets() {
-        return waterBuckets;
-    }
-
-    public void setWaterBuckets(final BigDecimal waterBuckets) {
-        this.waterBuckets = waterBuckets;
-    }
-
-    @NotAudited
-    public BigDecimal getDcpExtinguisher() {
-        return dcpExtinguisher;
-    }
-
-    public void setDcpExtinguisher(final BigDecimal dcpExtinguisher) {
-        this.dcpExtinguisher = dcpExtinguisher;
-    }
-
-    @NotAudited
-    public String getNocNumber() {
-        return nocNumber;
-    }
-
-    public void setNocNumber(final String nocNumber) {
-        this.nocNumber = nocNumber;
-    }
-
-    @NotAudited
-    public Boolean getIsCertificateGenerated() {
-        return isCertificateGenerated;
-    }
-
-    public void setIsCertificateGenerated(final Boolean isCertificateGenerated) {
-        this.isCertificateGenerated = isCertificateGenerated;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
     @Override
     @NotAudited
     public List<LicenseDocument> getDocuments() {

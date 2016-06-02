@@ -60,30 +60,14 @@ public class LicenseSubCategoryService {
         return  licenseSubCategoryRepository.save(licenseSubCategory);
     }
 
-    /**
-     * @Description returns SubCategory object that matches param name
-     * @param name
-     * @return
-     */
     public List<LicenseSubCategory> findAllSubCategoryByCategory(final Long categoryId) {
         return licenseSubCategoryRepository.findAllByCategoryId(categoryId);
     }
     
-    
-    /**
-     * @Description returns subcategory object that matches param name
-     * @param name
-     * @return
-     */
     public LicenseSubCategory findSubCategoryByName(final String name) {
         return licenseSubCategoryRepository.findByName(name);
     }
 
-    /**
-     * @Description returns subcategory object that matches param code
-     * @param code
-     * @return
-     */
     public LicenseSubCategory findSubCategoryByCode(final String code) {
         return licenseSubCategoryRepository.findByCode(code);
     }

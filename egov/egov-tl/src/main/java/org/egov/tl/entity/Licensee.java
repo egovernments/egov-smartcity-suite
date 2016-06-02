@@ -50,34 +50,12 @@ public class Licensee extends BaseModel {
     @Required(message = "licensee.name.err.required")
     @Length(min = 1, max = 256, message = "licensee.name.err.maxlength")
     private String applicantName;
-    private String nationality;
     private String fatherOrSpouseName;
-    private String qualification;
-    private Integer age;
-    private String gender;
-    private String panNumber;
-    private String phoneNumber;
     private String mobilePhoneNumber;
     private String uid;
     private String emailId;
-    private Boundary boundary;
     private String address;
-
-    public Boundary getBoundary() {
-        return boundary;
-    }
-
-    public void setBoundary(final Boundary boundary) {
-        this.boundary = boundary;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(final String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+    private License license;
 
     public String getMobilePhoneNumber() {
         return mobilePhoneNumber;
@@ -103,8 +81,6 @@ public class Licensee extends BaseModel {
         this.emailId = emailId;
     }
 
-    private License license;
-
     public License getLicense() {
         return license;
     }
@@ -121,52 +97,12 @@ public class Licensee extends BaseModel {
         this.applicantName = applicantName;
     }
 
-    public String getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(final String nationality) {
-        this.nationality = nationality;
-    }
-
     public String getFatherOrSpouseName() {
         return fatherOrSpouseName;
     }
 
     public void setFatherOrSpouseName(final String fatherOrSpouseName) {
         this.fatherOrSpouseName = fatherOrSpouseName;
-    }
-
-    public String getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(final String qualification) {
-        this.qualification = qualification;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(final Integer age) {
-        this.age = age;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(final String gender) {
-        this.gender = gender;
-    }
-
-    public String getPanNumber() {
-        return panNumber;
-    }
-
-    public void setPanNumber(final String panNumber) {
-        this.panNumber = panNumber;
     }
 
     public String getAddress() {
