@@ -132,7 +132,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         model.addAttribute("mode", "edit");
 
-        contractorBillRegister.setBilldate(new Date());
+        //TODO: remove this condition to check if spillover
+        if(!lineEstimateDetails.getLineEstimate().isSpillOverFlag())
+            contractorBillRegister.setBilldate(new Date());
+        
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
@@ -336,6 +339,28 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         if (StringUtils.isBlank(request.getParameter("netPayableAmount"))
                 || Double.valueOf(request.getParameter("netPayableAmount").toString()) < 0)
             resultBinder.reject("error.netpayable.amount.required", "error.netpayable.amount.required");
+        
+        //TODO: from this line code should be removed after user data entry is finished.
+        if(contractorBillRegister.getEgBillregistermis() != null
+                && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null
+                && contractorBillRegister.getEgBillregistermis().getPartyBillDate()
+                        .after(contractorBillRegister.getBilldate())) {
+            resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.partybilldate.billdate");
+        }
+        
+        if (lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {
+            final Date currentDate = new Date();
+            final Date currentFinYear = lineEstimateService.getCurrentFinancialYear(currentDate).getStartingDate();
+            if (contractorBillRegister.getBilldate().after(currentDate)) {
+                resultBinder.rejectValue("billdate", "error.billdate.futuredate");
+            }
+            if (contractorBillRegister.getBilldate().before(contractorBillRegister.getWorkOrder().getWorkOrderDate())) {
+                resultBinder.rejectValue("billdate", "error.billdate.workorderdate");
+            }
+            if (contractorBillRegister.getBilldate().before(currentFinYear)) {
+                resultBinder.rejectValue("billdate", "error.billdate.finyear");
+            }
+        }
     }
 
     private void validateTotalDebitAndCreditAmount(final ContractorBillRegister contractorBillRegister,

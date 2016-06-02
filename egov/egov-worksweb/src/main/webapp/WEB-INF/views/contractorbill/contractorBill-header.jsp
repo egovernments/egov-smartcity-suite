@@ -45,12 +45,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <form:hidden path="billamount" name="billamount" id="billamount" />
+<input type="hidden" id="errorBillDateFinYear" value="<spring:message code='error.billdate.finyear' />" />
+<input type="hidden" id="errorBillDateWorkOrder" value="<spring:message code='error.billdate.workorderdate' />" />
+<input type="hidden" id="errorPartyBillDateBillDate" value="<spring:message code='error.partybilldate.billdate' />" />
+<input type="hidden" id="hiddenbilldate" value='<fmt:formatDate value="${contractorBillRegister.billdate }"/>'/>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:input id="billdate" path="billdate" class="form-control" data-date-end-date="0d" required="required" readonly="true" />
-		<form:errors path="billdate" cssClass="add-margin error-msg" />
-	</div>
+	<c:choose>
+	<!-- TODO: remove this condition to make billdate editable after user finishes data entry -->
+		<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag }">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-format="dd/mm/yyyy" data-date-end-date="0d" required="required" />
+				<form:errors path="billdate" cssClass="add-margin error-msg" />
+			</div>
+		</c:when>
+		<c:otherwise>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:input id="billdate" path="billdate" class="form-control" data-date-format="dd/mm/yyyy" data-date-end-date="0d" required="required" readonly="true" />
+				<form:errors path="billdate" cssClass="add-margin error-msg" />
+			</div>
+		</c:otherwise>
+	</c:choose>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billtype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:select path="billtype" data-first-option="false" id="billtype" class="form-control" required="required">
