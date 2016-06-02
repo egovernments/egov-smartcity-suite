@@ -590,7 +590,7 @@ function populateapportioningamount()
 	if(document.getElementById("callbackForApportioning").value=="true")
 	{
 		document.getElementById("amountoverrideerror").style.display="none";
-		if(collectiontotal > billingtotal && zeroAccHeads==false)
+		if(collectiontotal > billingtotal &&  zeroAccHeads==false)
 		{
 			document.getElementById("amountoverrideerror").style.display="block";
 			return false;
@@ -762,7 +762,6 @@ function validate()
 				zeroAccHeads=true;
 			}
 		}
-
 		if(document.getElementById("callbackForApportioning").value=="false")	
 		{	
  			billingtotal=document.forms[0].totalAmountToBeCollected.value;
@@ -928,8 +927,9 @@ function validate()
 	    advancePaymentAllowed=true;
 	}
 	if(collectiontotal!=0){
+		var billingTotalNumberFormat=Number(billingtotal);
 	    //display error if actual payment amt > original billed amt, and there is no 'zero' account head.
-		if(collectiontotal>billingtotal  && advancePaymentAllowed!=true)
+	    if(billingTotalNumberFormat < collectiontotal && advancePaymentAllowed==false)
 		{
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.greatercollectionamounterror.errormessage" />' + '<br>';
 			validation=false;
@@ -941,8 +941,7 @@ function validate()
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.incorrectaccountheadamt.errormessage" />' + '<br>';
 			validation=false;
 		}
-	    // display error if actual payt amt < original billed amt and system has not done apportioning(part payt is false)
-		if(collectiontotal < billingtotal && checkpartpaymentvalue==false){
+		if(collectiontotal < billingTotalNumberFormat && checkpartpaymentvalue==='false'){
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.total.errormessage" />' + '<br>';
 			validation=false;
 		}
