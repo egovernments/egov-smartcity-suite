@@ -82,22 +82,11 @@ $(document).ready(function(){
 	
  });
 
-
-	
-$('#listid').click(function() {
-	window.open("/wtms/masters/categoryMaster/list", "_self");
- });
-
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/categoryMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/categoryMaster/", "_self");
-}
-
 function edit(connectionCategory)
 {
-	window.open("/wtms/masters/categoryMaster/"+connectionCategory, "_self");
+	window.open("/wtms/masters/categoryMaster/edit/"+connectionCategory, "_self");
 }

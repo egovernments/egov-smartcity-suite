@@ -93,22 +93,14 @@ $(document).ready(function(){
 	});
 	
  });
-$('#listid').click(function() {
-	window.open("/wtms/masters/usageTypeMaster/list", "_self");
- });
 
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/usageTypeMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/usageTypeMaster/", "_self");
-}
-
 function edit(usageType)
 {
-	
-	window.open("/wtms/masters/usageTypeMaster/"+usageType, "_self");
-	
+       
+       window.open("/wtms/masters/usageTypeMaster/edit/"+usageType, "_self");
+       
 }

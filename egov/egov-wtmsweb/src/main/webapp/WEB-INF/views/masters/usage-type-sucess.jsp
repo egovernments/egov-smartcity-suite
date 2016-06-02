@@ -38,59 +38,32 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
-<form:form method="post" action="" class="form-horizontal form-groups-bordered" id="usagetype-view" 
- cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<input type="hidden" name="usageTypeList" id="usageTypeList" value="${usageTypeList}">
-	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usageType}" />
-	<input type="hidden" value="${mode}" id="mode" />
-	<c:if test="${not empty message}">
-                <div role="alert">${message}</div>
-             </c:if>
-			<c:choose>
-				<c:when test="${usageTypeList.isEmpty()}">
-					<div class="form-group" align="center">No Master Data</div>
-				</c:when>
-			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="usageTypeTbl">
-					<thead>
-						<tr>
-							<th colspan="1" class="text-center">
-								<spring:message code="lbl.code" />
-							</th>
-							<th colspan="1" class="text-center">
-								<spring:message code="lbl.usagetype" />
-							</th>
-							<th align="center" colspan="1" class="text-center">
-								<spring:message code="lbl.status"/>
-							</th>
-							
-							 <c:if test="${mode == 'edit'}"> 
-							<th colspan="1" class="text-center">
-								<spring:message code="lbl.edit" />
-							</th>
-							 </c:if> 
-						</tr>
-					</thead>
-					<c:forEach var="usageType" items="${usageTypeList}">
-						<tr>
-							<td colspan="1">
-								<div align="center">
-									<c:out value="${usageType.code}" />
-								</div>
-							</td>
-							<td colspan="1">
-								<div align="center">
-									<c:out value="${usageType.name}" />
-								</div>
-							</td>
-							<td colspan="1">
-								<div align="center">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="usageType" id="usageTypeMasterform" >
+<div class="row">
+	<div class="col-md-12">
+		<c:if test="${not empty message}">
+            <div class= role="alert">${message}</div>
+        </c:if>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title"><spring:message code="title.usage.master.details"/></div>
+	</div>
+<div class="panel-body">
+	<div class="row add-border">
+		<div class="col-md-3 col-xs-3 add-margin"><spring:message code="lbl.code"/> </div>
+			<div class="col-md-3 col-xs-3 add-margin view-content"><c:out value="${usageType.code}"/></div>
+				<div class="col-md-3 col-xs-3 add-margin"><spring:message code="lbl.usagetype"/></div>
+						<div class="col-md-3 col-xs-3 add-margin view-content">
+							<c:out value="${usageType.name}"/>
+						</div>
+						 <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.status"/></div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
 								<c:choose>
 									<c:when test="${usageType.active == 'true'}">
 										<c:out value="ACTIVE" />
@@ -99,24 +72,22 @@
 										<c:out value="INACTIVE" />
 									</c:otherwise>
 								</c:choose>
-								</div>
-							</td>
-							 <c:if test="${mode == 'edit'}">
-							<td colspan="1">
-								<div align="center">
-									<a href="javascript:void(0);" onclick="edit('<c:out value="${usageType.id}" />');">Edit</a>
-								</div>
-							</td>
-							</c:if>
-						</tr>
-					</c:forEach>
-				</table>
-			</c:otherwise>
-			</c:choose>
-			<div class="form-group text-center">
-				 <a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a> 
+							</div> 
+						</div>
+					</div>
+				</div>
 			</div>
-		
+		</div>
+<input type="hidden" value="${mode}" id="mode" />
+				<div class="row text-center">
+					<div class="row">
+						<c:if test="${mode == 'create'}"> 
+							<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
+						</c:if>
+						<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+					</div>
+				</div>
+					
 </form:form>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">

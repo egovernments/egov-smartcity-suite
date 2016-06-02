@@ -40,6 +40,10 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +56,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 @RequestMapping(value = "/masters")
 public class UsageTypeMasterController {
@@ -64,11 +63,12 @@ public class UsageTypeMasterController {
     @Autowired
     private UsageTypeService usageTypeService;
 
-    @RequestMapping(value = "/usageTypeMaster", method = GET)
+    @RequestMapping(value = "/usageTypeMaster", method = RequestMethod.GET)
     public String viewForm(final Model model) {
         final UsageType usagetype = new UsageType();
         model.addAttribute("usageType", usagetype);
         model.addAttribute("reqAttr", false);
+        model.addAttribute("mode", "create");
         return "usage-type-master";
     }
 
@@ -79,10 +79,12 @@ public class UsageTypeMasterController {
             return "usage-type-master";
         usageTypeService.createUsageType(usageType);
         redirectAttrs.addFlashAttribute("usageType", usageType);
-        return getUsageTypeList(model);
+        model.addAttribute("message", "Usage Type created successfully");
+        model.addAttribute("mode", "create");
+        return "usage-type-sucess";
     }
 
-    @RequestMapping(value = "/usageTypeMaster/list", method = GET)
+    @RequestMapping(value = "/usageTypeMaster/list", method = RequestMethod.GET)
     public String getUsageTypeList(final Model model) {
         final List<UsageType> usageTypeList = usageTypeService.findAll();
         model.addAttribute("usageTypeList", usageTypeList);
@@ -90,7 +92,13 @@ public class UsageTypeMasterController {
 
     }
 
-    @RequestMapping(value = "/usageTypeMaster/{usageTypeId}", method = GET)
+    @RequestMapping(value = "/usageTypeMaster/edit", method = RequestMethod.GET)
+    public String getUsageTypeDetails(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getUsageTypeList(model);
+    }
+
+    @RequestMapping(value = "/usageTypeMaster/edit/{usageTypeId}", method = RequestMethod.GET)
     public String getUsageTypeDetails(final Model model, @PathVariable final String usageTypeId) {
         final UsageType usageType = usageTypeService.findOne(Long.parseLong(usageTypeId));
         model.addAttribute("usageType", usageType);
@@ -98,14 +106,16 @@ public class UsageTypeMasterController {
         return "usage-type-master";
     }
 
-    @RequestMapping(value = "/usageTypeMaster/{usageTypeId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/usageTypeMaster/edit/{usageTypeId}", method = RequestMethod.POST)
     public String editUsageTypeData(@Valid @ModelAttribute final UsageType usageType, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, @PathVariable final long usageTypeId) {
         if (errors.hasErrors())
             return "usage-type-master";
         usageTypeService.updateUsageType(usageType);
         redirectAttrs.addFlashAttribute("UsageType", usageType);
-        return getUsageTypeList(model);
+        model.addAttribute("message", "Usage Type updated successfully");
+        model.addAttribute("mode", "edit");
+        return "usage-type-sucess";
 
     }
 
