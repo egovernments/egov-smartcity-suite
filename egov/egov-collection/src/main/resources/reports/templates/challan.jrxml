@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-24T17:17:44 -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-06-02T12:28:07 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="challan_receipt" language="groovy" pageWidth="546" pageHeight="802" columnWidth="546" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e4312988-b816-4aef-b2b1-6b6b0e6a9351">
 	<import value="org.egov.collection.constants.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -65,7 +104,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Challan No:]]></text>
 			</staticText>
@@ -79,7 +118,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{challanNumber}]]></textFieldExpression>
 			</textField>
@@ -93,7 +132,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Challan Date:]]></text>
 			</staticText>
@@ -107,7 +146,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" isUnderline="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" isUnderline="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{challanDate}]]></textFieldExpression>
 			</textField>
@@ -121,7 +160,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{payeeName}]]></textFieldExpression>
 			</textField>
@@ -135,7 +174,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Payee Name:]]></text>
 			</staticText>
@@ -149,7 +188,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Department:]]></text>
 			</staticText>
@@ -163,7 +202,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{receiptMisc}.department.name]]></textFieldExpression>
 			</textField>
@@ -180,7 +219,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Payee Address:]]></text>
 			</staticText>
@@ -194,7 +233,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{payeeAddress}]]></textFieldExpression>
 			</textField>
@@ -210,7 +249,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Narration:]]></text>
 			</staticText>
@@ -224,7 +263,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
@@ -243,7 +282,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Details of the receipt:]]></text>
 			</staticText>
@@ -254,7 +293,7 @@
 				</reportElement>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Service Name:]]></text>
 			</staticText>
@@ -270,7 +309,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{serviceName}]]></textFieldExpression>
 			</textField>
@@ -289,7 +328,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Link Reference No:]]></text>
 			</staticText>
@@ -305,7 +344,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{challanVoucherNum}]]></textFieldExpression>
 			</textField>
@@ -323,7 +362,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Receipt amount (Rs):]]></text>
 			</staticText>
@@ -339,7 +378,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{totalAmount}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
 			</textField>
@@ -359,7 +398,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Amount in words :]]></text>
 			</staticText>
@@ -375,7 +414,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[ReportUtil.amountInWords($F{totalAmount})]]></textFieldExpression>
 			</textField>
