@@ -82,13 +82,13 @@
 				<tr id="nonSorRow" class="nonSorRow" hidden="true" align="center">
 					<td>
 						<span class="spannonsorslno">1</span>
-						<form:hidden path="activities[0].nonSor.id" id="nonSorId_0" />
+						<form:hidden path="activities[0].nonSor.id" id="nonSorId_0" class="nonSorId"/>
 					</td>
 					<td>
-						<form:input path="activities[0].nonSor.description" id="nonSorDesc_0" class="form-control table-input text-left" maxlength="256"/>
+						<form:input path="activities[0].nonSor.description" id="nonSorDesc_0" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
 					</td>
 					<td>
-						<form:select path="activities[0].nonSor.uom.id" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control">
+						<form:select path="activities[0].nonSor.uom.id" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control nonSorUom">
 							<form:option value="">
 								<spring:message code="lbl.select" />
 							</form:option>

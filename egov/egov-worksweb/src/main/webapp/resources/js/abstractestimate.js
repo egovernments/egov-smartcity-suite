@@ -40,13 +40,14 @@
 
 $subTypeOfWorkId = 0;
 $subSchemeId = 0;
+var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
 	
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$('#scheme').trigger('change');
 	getAbstractEstimateDate();
-	var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>'
+	
 	
 	$('#sorSearch').blur(function() {
 		$('#sorSearch').val('');
@@ -985,7 +986,9 @@ var templateCode_typeahead = $('#templateCode').typeahead({
 }).on('typeahead:selected typeahead:autocompleted', function(event, data){            
 	$("#templateId").val(data.id);   
 });
-
+$('#templateCode').blur(function() {
+	
+});
 
 $('#searchTemplate').click(function() {
 	var templateCode = $('#templateCode').val();
@@ -993,14 +996,32 @@ $('#searchTemplate').click(function() {
 	var subTypeOfWork = $('#category').val();
 	if(templateCode=="")
 		window.open("/egworks/estimate/estimateTemplate-search.action?sourcePage=searchForEstimate&typeOfWork="+typeOfWork+"&subTypeOfWork="+subTypeOfWork,'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	else{
+		var templateId = $('#templateId').val();
+		var sorHiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+		var nonSorHiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+		if(templateId!="" && (sorHiddenRowCount !=1 || nonSorHiddenRowCount!=1)){ 
+			var ans=confirm($("#estimateTemplateConfirmMsg").val());	
+			if(ans) {
+				clearActivities();
+				getActivitiesForTemplate(templateId);
+			}
+			else {
+				return false;		
+			}
+		}else{
+			getActivitiesForTemplate(templateId);
+		}
+	}
+	
 });
 
 
 function resetTemplate(id){
-	var sorrowcount = jQuery("#tblsor tbody tr").length-1;
-	var nonsorrowcount = jQuery("#tblNonSor tbody tr").length-1;
-	if(id!="" && (sorrowcount>0 || nonsorrowcount>0)){ 
-		var ans=confirm('Change in Estimate template will reset the data. Would you like to Proceed?');	
+	var sorHiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+	var nonSorHiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+	if(id!="" && (sorHiddenRowCount !=1 || nonSorHiddenRowCount!=1)){ 
+		var ans=confirm($("#estimateTemplateConfirmMsg").val());	
 		if(ans) {
 			clearActivities();
 			getActivitiesForTemplate(id);
@@ -1046,17 +1067,17 @@ function clearActivities(){
 		var nonsortbl=document.getElementById('tblNonSor');
 		for(rowcount=2;rowcount<=nonsorrowcount;rowcount++){
 			if(rowcount==2) {
-				$('#nonSorId_1').val('');
-				$('#nonSorId_1').val('');
-				$('#nonSorDesc_1').val('');
-				$('#nonSorUom_1').val('');
-				$('#nonSorRate_1').val('');
-				$('#nonSorQuantity_1').val('');
-				$('.nonSorAmount_1').html('');
-				$('#nonSorServiceTaxPerc_1').val('');
-				$('.nonSorVatAmt_1').html('');
-				$('.nonSorTotal_1').html('');
+				$('.nonSorId').val('');
+				$('.nonSorDesc').val('');
+				$('.nonSorUom').val('');
+				$('.nonSorRate').val('');
+				$('.nonSorQuantity').val('');
+				$('.nonSorAmount').html('');
+				$('.nonSorServiceTaxPerc').val('');
+				$('.nonSorVatAmt').html('');
+				$('.nonSorTotal').html('');
 				$('#nonSorRow').prop("hidden",true);
+				$('#nonSorMessage').removeAttr("hidden");
 			} else {
 				nonsortbl.deleteRow(rowcount);
 			}
@@ -1077,28 +1098,30 @@ function getActivitiesForTemplate(id){
 				if(index==0){
 					$('#message').prop("hidden",true);
 					$('#sorRow').removeAttr("hidden");
-					$('#nonSorMessage').prop("hidden",true);
-					$('#nonSorRow').removeAttr("hidden");
-					
 				}else{
 					if(estimateTemplateActivity.schedule != null){
 						addSor();	
 					}else{
+						if(!nonSorCheck){
+							$('#nonSorMessage').prop("hidden",true);
+							$('#nonSorRow').removeAttr("hidden");
+						}
 						if(nonSorCheck)
 							addNonSor();
 						nonSorCheck = true;
 					}
 				}
 				if(estimateTemplateActivity.schedule != null){
-					$('.code_0').html(estimateTemplateActivity.schedule.code);
-					$('.summary_0').html(estimateTemplateActivity.schedule.summary);
-					$('.description_0').html(estimateTemplateActivity.schedule.description);
-					$('.uom_0').html(estimateTemplateActivity.schedule.uom.uom);
+					$('.code_'+index).html(estimateTemplateActivity.schedule.code);
+					$('.summary_'+index).html(estimateTemplateActivity.schedule.summary);
+					$('.description_'+index).html(hint.replace(/@fulldescription@/g, estimateTemplateActivity.schedule.description));
+					$('.uom_'+index).html(estimateTemplateActivity.schedule.uom.uom);
 				}else{
-					$('#nonSorDesc_0').val(estimateTemplateActivity.nonSor.description);
-					$('#nonSorUom_0').val(estimateTemplateActivity.uom.id);
-					$('#nonSorRate_0').val(estimateTemplateActivity.rate.formattedString);
+					$('#nonSorDesc_'+index).val(estimateTemplateActivity.nonSor.description);
+					$('#nonSorUom_'+index).val(estimateTemplateActivity.uom.id);
+					$('#nonSorRate_'+index).val(estimateTemplateActivity.rate.formattedString);
 				}
+				resetIndexes();
 			});
 		}, 
 		error: function (response) {
@@ -1110,6 +1133,7 @@ function getActivitiesForTemplate(id){
 	calculateNonSorEstimateAmountTotal();
 	calculateNonSorVatAmountTotal();
 	nonSorTotal();
+	resetIndexes();
 }
 
 function getSubSchemsBySchemeId(schemeId) {

@@ -34,11 +34,11 @@ import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.master.service.UOMService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -100,6 +100,9 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
         Date currentDate = new Date();
@@ -124,7 +127,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         multiYearEstimate.setPercentage(100d);
         multiYearEstimateList.add(multiYearEstimate);
         abstractEstimate.setMultiYearEstimates(multiYearEstimateList);
-        
+
         List<FinancialDetail> financialDetailList = new ArrayList<FinancialDetail>();
         FinancialDetail financialDetails = new FinancialDetail();
         financialDetails.setFund(lineEstimate.getFund());
@@ -134,12 +137,13 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         financialDetails.setBudgetGroup(lineEstimate.getBudgetHead());
         financialDetailList.add(financialDetails);
         abstractEstimate.setFinancialDetails(financialDetailList);
-        
+
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("currentDate", currentDate);
         model.addAttribute("lineEstimate", lineEstimate);
-
+        model.addAttribute("estimateTemplateConfirmMsg",
+                messageSource.getMessage("masg.estimate.template.confirm.reset", null, null));
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);
@@ -171,11 +175,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     public String saveAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) throws IOException {
-            if (abstractEstimate.getState() == null)
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.CREATED.toString()));
-            estimateService.createAbstractEstimate(abstractEstimate,files);
-            return "abstractEstimate-success";
+        if (abstractEstimate.getState() == null)
+            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                    LineEstimateStatus.CREATED.toString()));
+        estimateService.createAbstractEstimate(abstractEstimate, files);
+        return "abstractEstimate-success";
     }
 
 }

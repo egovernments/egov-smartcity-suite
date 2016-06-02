@@ -80,12 +80,13 @@
 		</div>
 
 	</div>
-	<div class="panel-body custom-form">
+	<div class="panel-body custom-form">  
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatecode" /></label>
 			<div class="col-sm-3 add-margin">
 			<input name="code" id="templateCode" class="form-control" placeholder="Type first 3 letters of Template Code" />
 			<input type="hidden" value="" id="templateId" />	
+			<input type="hidden" id="estimateTemplateConfirmMsg"  value="<spring:message code='masg.estimate.template.confirm.reset' />"/>
 			</div>
 		</div>
 	</div>
