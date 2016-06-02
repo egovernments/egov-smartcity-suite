@@ -44,61 +44,112 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<form:form name="abstractEstimateForm" role="form"	modelAttribute="abstractEstimate" id="abstractEstimate"	class="form-horizontal form-groups-bordered"
+<form:form name="abstractEstimateForm" role="form"
+	modelAttribute="abstractEstimate" id="abstractEstimate"
+	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 
 	<div class="new-page-header">Create Abstract Estimate</div>
-	<div class="panel-heading">
-		<ul class="nav nav-tabs" id="settingstab">
-			<li class="active"><a data-toggle="tab" href="#estimateheader" data-tabidx=0><spring:message code="lbl.header" /></a></li>
-			<li><a data-toggle="tab" href="#workdetails" data-tabidx=1><spring:message code="lbl.workdetails" /> </a></li>
-			<li><a data-toggle="tab" href="#overheads" data-tabidx=1><spring:message code="tab.header.overhead" /> </a></li>
-			<li><a data-toggle="tab" href="#assetandfinancials" data-tabidx=2> <spring:message	code="tab.header.assetandfinancials" />
-			</a></li>
-		</ul>
-	</div>
-	<div class="tab-content">
-		<div class="tab-pane fade in active" id="estimateheader">
-			<%@ include file="estimate-header.jsp"%>
-			<%@ include file="estimate-multiYearEstimate.jsp"%>
-			<%@ include file="uploadDocuments.jsp"%>
+
+	<div class="main-content">
+		<div class="position_alert">
+			Estimate Value : &#8377 <span>56321.05</span>
 		</div>
-		<div class="tab-pane fade" id="workdetails">
-			<%@ include file="estimate-sor.jsp"%>
-			<%@ include file="estimate-nonsor.jsp"%>
-		</div>
-		<div class="tab-pane fade" id="overheads">
-			<%@ include file="estimate-overheads.jsp"%>
-		</div>
-		<div class="tab-pane fade" id="assetandfinancials">
-			<%@ include file="estimate-asset.jsp"%>
-			<%@ include file="estimate-financialdetails.jsp"%>
-		</div>
-		<div class="panel-body">
-			<div class="form-group" style="margin-bottom: 5px;">
-				<label class="col-sm-2 control-label text-right"> <spring:message
-						code="lbl.estimate.value" />
-				</label>
-				<div class="col-sm-3 add-margin">
-					<form:input path="estimateValue" id="estimateValue"
-						cssClass="form-control" readonly="true" align="right"
-						tabindex="-1" />
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading"></div>
+					<div class="panel-body">
+						<div class="row add-border">
+							<div class="col-md-2 col-xs-6 add-margin">Estimate No.</div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">
+							<c:out value="${lineEstimateDetails.estimateNumber}"></c:out>
+							</div>
+								
+							<form:hidden path="estimateNumber" name="estimateNumber" value="${lineEstimateDetails.estimateNumber}"/>
+							<div class="col-md-2 col-xs-6 add-margin">Line Estimate No.
+							</div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">
+								<a href='javascript:void(0)' onclick='renderPdf()'><c:out value="${lineEstimate.lineEstimateNumber}"/></a>
+							</div>
+							<div class="col-md-2 col-xs-6 add-margin">Work Identification No.</div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">${lineEstimateDetails.projectCode.code}</div>
+							<form:hidden path="" name="code" id="code" value="${lineEstimateDetails.projectCode.code}"/>
+						</div>
+						<div class="row add-border">
+							<div class="col-md-2 col-xs-6 add-margin">LOA No.</div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">
+								<a href="javascript:void(0)">LOA/00002/05/2016-17</a>
+							</div>
+							<div class="col-md-2 col-xs-6 add-margin">Payments
+								Released.</div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">
+								&#8377 20000.00</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary" onclick="return enableFileds();"
-				value="Save">
-				<spring:message code="lbl.save" />
-			</button>
-			<button type="button" class="btn btn-default" id="button2"
-				onclick="window.close();">
-				<spring:message code="lbl.close" />
-			</button>
+
+		<div class="panel-heading">
+			<ul class="nav nav-tabs" id="settingstab">
+				<li class="active"><a data-toggle="tab" href="#estimateheader"
+					data-tabidx=0><spring:message code="lbl.header" /></a></li>
+				<li><a data-toggle="tab" href="#workdetails" data-tabidx=1><spring:message
+							code="lbl.workdetails" /> </a></li>
+				<li><a data-toggle="tab" href="#overheads" data-tabidx=1><spring:message
+							code="tab.header.overhead" /> </a></li>
+				<li><a data-toggle="tab" href="#assetandfinancials"
+					data-tabidx=2> <spring:message
+							code="tab.header.assetandfinancials" />
+				</a></li>
+			</ul>
+		</div>
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="estimateheader">
+				<%@ include file="estimate-header.jsp"%>
+				<%@ include file="estimate-multiYearEstimate.jsp"%>
+				<%@ include file="uploadDocuments.jsp"%>
+			</div>
+			<div class="tab-pane fade" id="workdetails">
+				<%@ include file="estimate-sor.jsp"%>
+			  <%@ include file="estimate-nonsor.jsp"%>
+			</div>
+			<div class="tab-pane fade" id="overheads">
+				<%@ include file="estimate-overheads.jsp"%>
+			</div>
+			<div class="tab-pane fade" id="assetandfinancials">
+				<%@ include file="estimate-financialdetails.jsp"%>
+				<%@ include file="estimate-asset.jsp"%>
+			</div>
+			<div class="panel-body">
+				<div class="form-group" style="margin-bottom: 5px;">
+					<label class="col-sm-2 control-label text-right"> <spring:message
+							code="lbl.estimate.value" />
+					</label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="estimateValue" id="estimateValue"
+							cssClass="form-control" readonly="true" align="right"
+							tabindex="-1" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<button type="submit" name="submit" id="save"
+					class="btn btn-primary" onclick="return enableFileds();"
+					value="Save">
+					<spring:message code="lbl.save" />
+				</button>
+				<button type="button" class="btn btn-default" id="button2"
+					onclick="window.close();">
+					<spring:message code="lbl.close" />
+				</button>
+			</div>
 		</div>
 	</div>
 </form:form>
+
 <script type="text/javascript"
 	src="<c:url value='/resources/js/abstractestimate.js?rnd=${app_release_no}'/>"></script>

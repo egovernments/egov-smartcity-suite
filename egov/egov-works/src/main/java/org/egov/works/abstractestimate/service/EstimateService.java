@@ -39,6 +39,9 @@
  */
 package org.egov.works.abstractestimate.service;
 
+import java.io.IOException;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -50,12 +53,16 @@ import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
+import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -74,9 +81,12 @@ public class EstimateService {
 
     @Autowired
     private EstimateTechnicalSanctionService estimateTechnicalSanctionService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
+
+    @Autowired
+    private WorksUtils worksUtils;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -92,18 +102,30 @@ public class EstimateService {
     }
 
     @Transactional
-    public AbstractEstimate createAbstractEstimate(AbstractEstimate abstractEstimate) {
+    public AbstractEstimate createAbstractEstimate(AbstractEstimate abstractEstimate , final MultipartFile[] files) throws IOException {
         abstractEstimate.setWard(boundaryService.getBoundaryByName(abstractEstimate.getWard().getName()));
         for(MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates()) {
             multiYearEstimate.setAbstractEstimate(abstractEstimate);
         }
-        return abstractEstimateRepository.save(abstractEstimate);
+        
+        for(FinancialDetail financialDetail:abstractEstimate.getFinancialDetails()) {
+            financialDetail.setAbstractEstimate(abstractEstimate);
+        }
+        
+        final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedAbstractEstimate,
+                WorksConstants.ABSTRACTESTIMATE);
+        if (!documentDetails.isEmpty()) {
+            abstractEstimate.setDocumentDetails(documentDetails);
+            worksUtils.persistDocuments(documentDetails);
+        }
+        return savedAbstractEstimate;
         
     }
-    
+
     @Transactional
-    public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(final LineEstimateDetails lineEstimateDetails,
-            final int i) {
+    public AbstractEstimate createAbstractEstimateOnLineEstimateTechSanction(
+            final LineEstimateDetails lineEstimateDetails, final int i) {
         final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository
                 .save(populateAbstractEstimate(lineEstimateDetails));
         saveTechnicalSanction(savedAbstractEstimate, i);
@@ -118,7 +140,7 @@ public class EstimateService {
         abstractEstimate.setDescription(lineEstimateDetails.getNameOfWork());
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
         abstractEstimate.setNatureOfWork(lineEstimateDetails.getLineEstimate().getNatureOfWork());
-        if(lineEstimateDetails.getLineEstimate().getLocation() != null)
+        if (lineEstimateDetails.getLineEstimate().getLocation() != null)
             abstractEstimate.setLocation(lineEstimateDetails.getLineEstimate().getLocation().getName());
         abstractEstimate.setParentCategory(lineEstimateDetails.getLineEstimate().getTypeOfWork());
         abstractEstimate.setCategory(lineEstimateDetails.getLineEstimate().getSubTypeOfWork());
@@ -149,7 +171,8 @@ public class EstimateService {
     private MultiYearEstimate populateMultiYearEstimate(final AbstractEstimate abstractEstimate) {
         final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
         multiYearEstimate.setAbstractEstimate(abstractEstimate);
-        multiYearEstimate.setFinancialYear(financialYearHibernateDAO.getFinYearByDate(abstractEstimate.getEstimateDate()));
+        multiYearEstimate.setFinancialYear(financialYearHibernateDAO.getFinYearByDate(abstractEstimate
+                .getEstimateDate()));
         multiYearEstimate.setPercentage(100);
         return multiYearEstimate;
     }
@@ -164,12 +187,13 @@ public class EstimateService {
             stringBuilder.append(i);
         }
         estimateTechnicalSanction.setTechnicalSanctionNumber(stringBuilder.toString());
-        estimateTechnicalSanction
-                .setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
-        estimateTechnicalSanction
-                .setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionBy());
+        estimateTechnicalSanction.setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate()
+                .getTechnicalSanctionDate());
+        estimateTechnicalSanction.setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate()
+                .getTechnicalSanctionBy());
 
-        // TODO: move to cascade save with AbstractEstimate object once AbstractEstimate entity converted to JPA
+        // TODO: move to cascade save with AbstractEstimate object once
+        // AbstractEstimate entity converted to JPA
         return estimateTechnicalSanctionService.save(estimateTechnicalSanction);
     }
 
@@ -179,10 +203,10 @@ public class EstimateService {
     }
 
     public AbstractEstimate getAbstractEstimateByEstimateNumberAndStatus(final String estimateNumber) {
-        return abstractEstimateRepository.findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(estimateNumber,
-                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+        return abstractEstimateRepository.findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(
+                estimateNumber, AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
     }
-    
+
     public AbstractEstimate getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(final Long id) {
         return abstractEstimateRepository.findByLineEstimateDetails_IdAndEgwStatus_codeEquals(id,
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());

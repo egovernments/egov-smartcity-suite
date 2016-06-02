@@ -1,5 +1,6 @@
 package org.egov.works.web.controller.abstractestimate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -36,6 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,15 +101,10 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
-    public String showAbstractEstimateForm(@RequestParam final String estimateNumber, final Model model) {
+    public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
         Date currentDate = new Date();
         AbstractEstimate abstractEstimate = new AbstractEstimate();
-        LineEstimateDetails lineEstimateDetails = new LineEstimateDetails();
-        lineEstimateDetails = lineEstimateDetailService.findLineEstimateByEstimateNumber(
-                estimateNumber, LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString());
-        if (lineEstimateDetails == null)
-            lineEstimateDetails = lineEstimateDetailService.findLineEstimateByEstimateNumber(
-                    estimateNumber, LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
+        LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
         LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
         abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
@@ -126,6 +124,17 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         multiYearEstimate.setPercentage(100d);
         multiYearEstimateList.add(multiYearEstimate);
         abstractEstimate.setMultiYearEstimates(multiYearEstimateList);
+        
+        List<FinancialDetail> financialDetailList = new ArrayList<FinancialDetail>();
+        FinancialDetail financialDetails = new FinancialDetail();
+        financialDetails.setFund(lineEstimate.getFund());
+        financialDetails.setFunction(lineEstimate.getFunction());
+        financialDetails.setScheme(lineEstimate.getScheme());
+        financialDetails.setSubScheme(lineEstimate.getSubScheme());
+        financialDetails.setBudgetGroup(lineEstimate.getBudgetHead());
+        financialDetailList.add(financialDetails);
+        abstractEstimate.setFinancialDetails(financialDetailList);
+        
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("currentDate", currentDate);
@@ -155,16 +164,17 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("finYear", financialYearDAO.findAll());
         model.addAttribute("uoms", uomService.getAllUOMs());
+        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
     }
 
     @RequestMapping(value = "/newform", method = RequestMethod.POST)
     public String saveAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
-            @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) {
+            @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) throws IOException {
             if (abstractEstimate.getState() == null)
                 abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CREATED.toString()));
-            estimateService.createAbstractEstimate(abstractEstimate);
+            estimateService.createAbstractEstimate(abstractEstimate,files);
             return "abstractEstimate-success";
     }
 

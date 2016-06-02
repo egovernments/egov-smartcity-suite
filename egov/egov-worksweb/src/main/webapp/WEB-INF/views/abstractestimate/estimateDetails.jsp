@@ -2,20 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			   <spring:message code="lbl.estimatenumber" />
-			</label>
-			<div class="col-sm-3 add-margin">
-			<form:input path="estimateNumber" class="form-control" id="estimateNumber" name="estimateNumber" disabled="true" value="${lineEstimateDetails.estimateNumber}"/>
-			</div>
-			<%-- 	<label class="col-sm-2 control-label text-right">
-			 <spring:message code="lbl.workidentificationnumber" />
-			</label>
-			<div class="col-sm-3 add-margin">
-			<form:input path="projectCode.code" class="form-control" name="projectCode.code" id="projectCode" disabled="true" value="${lineEstimateDetails.projectCode.code}"/>
-			</div> --%>
-		</div>
+
 	  <div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.department" />
@@ -134,7 +121,7 @@
 		</div> --%>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.nameofwork" /><span class="mandatory"></span>
+			    <spring:message code="lbl.nameofwork" />
 			</label>
 			<div class="col-sm-3 add-margin ">
 			<form:textarea path="name" name="name" class="form-control" value="${lineEstimateDetails.nameOfWork}"/>

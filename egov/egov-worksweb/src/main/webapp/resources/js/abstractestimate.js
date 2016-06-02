@@ -39,9 +39,12 @@
  */
 
 $subTypeOfWorkId = 0;
+$subSchemeId = 0;
 $(document).ready(function(){
 	
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
+	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
+	$('#scheme').trigger('change');
 	getAbstractEstimateDate();
 	var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>'
 	
@@ -897,6 +900,11 @@ function enableFileds() {
 	jQuery("#natureOfWork").removeAttr('disabled');
 	jQuery("#category").removeAttr('disabled');
 	jQuery("#parentCategory").removeAttr('disabled');
+	jQuery("#fund").removeAttr('disabled');
+	jQuery("#function").removeAttr('disabled');
+	jQuery("#budgethead").removeAttr('disabled');
+	jQuery("#scheme").removeAttr('disabled');
+	jQuery("#subScheme").removeAttr('disabled');
 	
 	if($('#abstractEstimate').valid()) {
 		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
@@ -1102,4 +1110,30 @@ function getActivitiesForTemplate(id){
 	calculateNonSorEstimateAmountTotal();
 	calculateNonSorVatAmountTotal();
 	nonSorTotal();
+}
+
+function getSubSchemsBySchemeId(schemeId) {
+	if ($('#scheme').val() === '') {
+		   $('#subScheme').empty();
+		   $('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				$.ajax({
+					url: "/egworks/lineestimate/getsubschemesbyschemeid/"+schemeId,     
+					type: "GET",
+					dataType: "json",
+					success: function (response) {
+						$('#subScheme').empty();
+						$('#subScheme').append($("<option value=''>Select from below</option>"));
+						var responseObj = JSON.parse(response);
+						$.each(responseObj, function(index, value) {
+							$('#subScheme').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+							$('#subScheme').val($subSchemeId);
+						});
+					}, 
+					error: function (response) {
+						console.log("failed");
+					}
+				});
+			}
 }

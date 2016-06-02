@@ -56,79 +56,33 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<div class="panel panel-primary" data-collapsed="0"
-	style="text-align: left">
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message code="lbl.financialdetails" />
-		</div>
-	</div>
-	<div class="panel-body">
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.fund" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.fund.name}"></c:out>
-			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.function" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.function.name}"></c:out>
-			</div>
-		</div>
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.budgethead" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.budgetHead.name}" />
-			</div>
-		</div>
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.scheme" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.scheme.name}" />
-			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.subscheme" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.subScheme.name}"></c:out>
-			</div>
-		</div>
-	</div>
-</div>
-
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
 			<spring:message code="header.assetDetails" />
 		</div>
 	</div>
+	<div class="alert alert-danger">Select the nature of work before adding asset details</div>
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblassetdetails">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.search" /></th>
 					<th><spring:message code="lbl.nameofasset" /></th>
 					<th><spring:message code="lbl.assetcode" /></th>
-					<th><spring:message code="lbl.search" /></th>
-					<th><spring:message code="lbl.adddel" /></th>
+					<th><spring:message code="lbl.actions" /></th>
 				</tr>
 			</thead>
-			<tbody id="multiYeaeEstimateTbl">
-				<tr id="yearEstimateRow">
-					<c:choose>
-						<c:when test="${abstractEstimate.assetValues.size() == 0}">
-							<td><span class="spansno">1</span></td>
-							<td><form:input path="assetValues[0].asset.name" name="assetValues[0].asset.name" /></td>
-							<td><form:input path="assetValues[0].asset.name" name="assetValues[0].asset.code" /></td>
-						</c:when>
-					</c:choose>
+			<tbody id="assetDetailsTbl">
+				<tr id="assetDetailRow">
+					<td>1</td>
+					<td><button type="button" class="btn btn-xs btn-secondary"><span class="glyphicon glyphicon-search"></span> Search
+						</button></td>
+					<td></td>
+					<td></td>
+					<td><button type="button" class="btn btn-xs btn-secondary delete-row"><span class="glyphicon glyphicon-trash"></span> Delete
+						</button></td>
 			</tbody>
 		</table>
 		<div class="col-sm-12 text-center">

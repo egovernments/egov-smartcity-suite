@@ -58,13 +58,13 @@ jQuery('#btnsearch').click(function(e) {
 });
 
 jQuery('#btncreateae').click(function(e) {
-	var lineEstimateNumber = $('input[name=selectCheckbox]:checked').val();
-	if(lineEstimateNumber == null) {
+	var lineEstimateDetailId = $('input[name=selectCheckbox]:checked').val();
+	if(lineEstimateDetailId == null) {
 		var message = $('#errorMessage').html();
 		bootbox.alert(message);
 	}
 	else {
-		window.location = "/egworks/abstractestimate/newform?estimateNumber=" + lineEstimateNumber;
+		window.location = "/egworks/abstractestimate/newform?lineEstimateDetailId="+lineEstimateDetailId;
 	}
 });
 	
@@ -99,7 +99,7 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.estimateNumber +'"/>');
+					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');
 					$('td:eq(1)',row).html(index+1);
 					if(data.adminSanctionNumber != null)
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.id +'\')">' + data.adminSanctionNumber + '</a>');

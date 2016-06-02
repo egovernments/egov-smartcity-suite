@@ -78,7 +78,8 @@
 								<form:input path="multiYearEstimates[0].percentage" name="multiYearEstimates[0].percentage" value="${multiYearEstimates[0].percentage}" data-errormsg="Estimated amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateEstimatedAmountTotal();" onblur="calculateEstimatedAmountTotal();" required="required"/>
 								<form:errors path="multiYearEstimates[0].percentage" cssClass="add-margin error-msg" />
 							</td>
-							<td> <span class="add-padding" onclick="deleteMultiYearEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							<!-- <td> <span class="add-padding" onclick="deleteMultiYearEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td> -->
+							<td><button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteMultiYearEstimate(this);"><span class="glyphicon glyphicon-trash"></span> Delete</button></td>
 						</tr>
 					</c:when>
 					<c:otherwise>

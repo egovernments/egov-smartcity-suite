@@ -63,42 +63,74 @@
 			<spring:message code="lbl.financialdetails" />
 		</div>
 	</div>
-	<div class="panel-body">
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.fund" />
+
+	<div class="panel-body custom-form">
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <spring:message
+					code="lbl.fund" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund" disabled="true" class="form-control" required="required">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${funds}" itemValue="id" itemLabel="name" />
+				</form:select>
+				<form:errors path="financialDetails[0].fund"
+					cssClass="add-margin error-msg" />
 			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.fund.name}"></c:out>
-			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.function" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.function.name}"></c:out>
+
+			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.function" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control" disabled="true" required="required">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${functions}" itemValue="id" itemLabel="name" />
+				</form:select>
+				<form:errors path="financialDetails[0].function" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.budgethead" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.budgetHead.name}" />
-			</div>
-		</div>
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.scheme" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.scheme.name}" />
-			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.subscheme" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:out default="N/A" value="${lineEstimate.subScheme.name}"></c:out>
+		<div class="form-group">
+				<label class="col-sm-2 control-label text-right">
+					<spring:message code="lbl.budgethead" />
+				</label>
+				<div class="col-xs-3 add-margin">
+					<form:select path="financialDetails[0].budgetGroup" data-first-option="false" id="budgethead" class="form-control" disabled="true" >
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${budgetHeads}" itemValue="id" itemLabel="name" />
+					</form:select>
+					<form:errors path="financialDetails[0].budgetGroup"	cssClass="add-margin error-msg" />
+				</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right">
+					<spring:message code="lbl.scheme" />
+				</label>
+				<div class="col-sm-3 add-margin">
+					<form:select path="financialDetails[0].scheme" data-first-option="false" id="scheme" class="form-control" disabled="true" onchange="getSubSchemsBySchemeId(this.value);" >
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${schemes}" itemValue="id" itemLabel="name" />
+					</form:select>
+					<form:errors path="financialDetails[0].scheme"	cssClass="add-margin error-msg" />
+				</div>
+				<label class="col-sm-2 control-label text-right">
+					<spring:message code="lbl.subscheme" />
+				</label>
+				<input type="hidden" id="subSchemeValue" value="${lineEstimate.subScheme.id }" />
+				<div class="col-sm-3 add-margin">
+					<form:select path="financialDetails[0].subScheme" data-first-option="false" id="subScheme" disabled="true" class="form-control">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+					</form:select>
+				</div>
+				
+				
 			</div>
 		</div>
 	</div>
-</div>
