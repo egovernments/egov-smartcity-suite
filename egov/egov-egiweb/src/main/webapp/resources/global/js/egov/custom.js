@@ -127,18 +127,10 @@ $(document).ready(function()
 	}
 	
 	$("a.open-popup").click(function(e) {
-		window.open(enhanceURLForPopUp(this.href), ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes');
+		window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
 		return false;
 	});
-
-	function enhanceURLForPopUp(url) {
-		if (url.indexOf("?") == -1)	{
-			return url+'?up_';
-		} else {
-			return url+'&up_';
-		}
-	}
-
+	
 	$("form.form-horizontal[data-ajaxsubmit!='true']").submit(function( event ) {
 		$('.loader-class').modal('show', {backdrop: 'static'});
 	});

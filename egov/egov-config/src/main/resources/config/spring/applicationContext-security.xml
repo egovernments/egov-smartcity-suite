@@ -108,7 +108,7 @@
 		<property name="useForward" value="false" />
 	</bean>
 	
-	<bean id="authenticationSuccessHandler" class="org.egov.infra.config.security.authentication.LastRequestAwareAuthenticationSuccessHandler">
+	<bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
 		<property name="alwaysUseDefaultTargetUrl" value="false" />
 		<property name="defaultTargetUrl" value="/home" />
 	</bean>
