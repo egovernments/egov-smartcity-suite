@@ -43,7 +43,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
+<style>
+      .position_alert{
+        position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+      }
+    </style>
 <form:form name="abstractEstimateForm" role="form"
 	modelAttribute="abstractEstimate" id="abstractEstimate"
 	class="form-horizontal form-groups-bordered"
@@ -70,17 +74,19 @@
 							<div class="col-md-2 col-xs-6 add-margin">Line Estimate No.
 							</div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href='javascript:void(0)' onclick='renderPdf()'><c:out value="${lineEstimate.lineEstimateNumber}"/></a>
+								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${lineEstimate.id}"/>')"><c:out value="${lineEstimate.lineEstimateNumber}"/></a>
 							</div>
 							<div class="col-md-2 col-xs-6 add-margin">Work Identification No.</div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">${lineEstimateDetails.projectCode.code}</div>
-							<form:hidden path="" name="code" id="code" value="${lineEstimateDetails.projectCode.code}"/>
+							<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
+							<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
 						</div>
 						<div class="row add-border">
+						<c:if test="workOrder != null && workOrder.id != null">
 							<div class="col-md-2 col-xs-6 add-margin">LOA No.</div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href="javascript:void(0)">LOA/00002/05/2016-17</a>
+								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="%{workOrder.id"/>)'><c:out value="%{workOrder.workOrderNumber}"/></a>
 							</div>
+						</c:if>
 							<div class="col-md-2 col-xs-6 add-margin">Payments
 								Released.</div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">
@@ -96,9 +102,9 @@
 				<li class="active"><a data-toggle="tab" href="#estimateheader"
 					data-tabidx=0><spring:message code="lbl.header" /></a></li>
 				<li><a data-toggle="tab" href="#workdetails" data-tabidx=1><spring:message
-							code="lbl.workdetails" /> </a></li>
+							code="tab.header.scheduleA" /> </a></li>
 				<li><a data-toggle="tab" href="#overheads" data-tabidx=1><spring:message
-							code="tab.header.overhead" /> </a></li>
+							code="tab.header.scheduleA" /> </a></li>
 				<li><a data-toggle="tab" href="#assetandfinancials"
 					data-tabidx=2> <spring:message
 							code="tab.header.assetandfinancials" />
@@ -121,18 +127,6 @@
 			<div class="tab-pane fade" id="assetandfinancials">
 				<%@ include file="estimate-financialdetails.jsp"%>
 				<%@ include file="estimate-asset.jsp"%>
-			</div>
-			<div class="panel-body">
-				<div class="form-group" style="margin-bottom: 5px;">
-					<label class="col-sm-2 control-label text-right"> <spring:message
-							code="lbl.estimate.value" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<form:input path="estimateValue" id="estimateValue"
-							cssClass="form-control" readonly="true" align="right"
-							tabindex="-1" />
-					</div>
-				</div>
 			</div>
 		</div>
 		<div class="row">

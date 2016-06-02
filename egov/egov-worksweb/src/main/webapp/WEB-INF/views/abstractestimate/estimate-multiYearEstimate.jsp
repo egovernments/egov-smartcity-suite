@@ -66,7 +66,7 @@
 								<form:hidden path="multiYearEstimates[0].id" name="multiYearEstimates[0].id" value="${multiYearEstimates[0].id}" class="form-control table-input hidden-input"/>
 							</td>
 							<td>
-							<form:select path="multiYearEstimates[0].financialYear" data-first-option="false" id="multiYearEstimates[0].financialYear" class="form-control" required="required">
+							<form:select path="multiYearEstimates[0].financialYear" data-first-option="false" id="multiYearEstimates[0].financialYear" data-errormsg="Financial Year is mandatory!" class="form-control dropdownYear" data-idx="0" data-optional="0" required="required">
 					            <form:option value="">
 						          <spring:message code="lbl.select" />
 					           </form:option>
@@ -75,10 +75,9 @@
 								<form:errors path="multiYearEstimates[0].financialYear" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="multiYearEstimates[0].percentage" name="multiYearEstimates[0].percentage" value="${multiYearEstimates[0].percentage}" data-errormsg="Estimated amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateEstimatedAmountTotal();" onblur="calculateEstimatedAmountTotal();" required="required"/>
+								<form:input path="multiYearEstimates[0].percentage" name="multiYearEstimates[0].percentage" value="${multiYearEstimates[0].percentage}" data-errormsg="Percentage is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right inputYearEstimatePercentage" required="required"/>
 								<form:errors path="multiYearEstimates[0].percentage" cssClass="add-margin error-msg" />
 							</td>
-							<!-- <td> <span class="add-padding" onclick="deleteMultiYearEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td> -->
 							<td><button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteMultiYearEstimate(this);"><span class="glyphicon glyphicon-trash"></span> Delete</button></td>
 						</tr>
 					</c:when>
@@ -91,7 +90,7 @@
 									<form:hidden path="multiYearEstimates[${item.index}].id" name="multiYearEstimates[${item.index}].id" value="${multiYearEstimates.id}" class="form-control table-input hidden-input"/>
 								</td>
 								<td>
-								<form:select path="multiYearEstimates[${item.index}].financialYear" data-first-option="false" id="multiYearEstimates[${item.index}].financialYear" class="form-control" required="required">
+								<form:select path="multiYearEstimates[${item.index}].financialYear" data-first-option="false" id="multiYearEstimates[${item.index}].financialYear" data-errormsg="Financial Year is mandatory!" data-idx="0" data-optional="0" class="form-control dropdownYear" required="required">
 					            <form:option value="">
 						          <spring:message code="lbl.select" />
 					           </form:option>
@@ -100,10 +99,12 @@
 									<form:errors path="multiYearEstimates[${item.index}].financialYear.finYearRange" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:input path="multiYearEstimates[${item.index}].percentage" name="multiYearEstimates[${item.index}].percentage" value="${multiYearEstimates.percentage}"  data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateEstimatedAmountTotal();" required="required"/>
+									<form:input path="multiYearEstimates[${item.index}].percentage" name="multiYearEstimates[${item.index}].percentage" value="${multiYearEstimates.percentage}"  data-errormsg="Percentage is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control inputYearEstimatePercentage table-input text-right 
+									"  required="required"/>
 									<form:errors path="multiYearEstimates[${item.index}].percentage" cssClass="add-margin error-msg" />
 								</td>
-								<td> <span class="add-padding" onclick="deleteMultiYearEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+								<td> <button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteMultiYearEstimate(this);"> Delete
+						</button></td>
 							</tr>
 						</c:forEach>
 					</c:otherwise>
@@ -112,7 +113,7 @@
 			<tfoot>
 				<c:set var="total" value="${0}" scope="session"/> 
 				<c:if test="${abstractEstimate.getMultiYearEstimates() != null}">
-					<c:forEach items="${abstractEstimate.getMultiYearEstimates()}" var="lineEstimateDtls">
+					<c:forEach items="${abstractEstimate.getMultiYearEstimates()}" var="multiYearEstimates">
 						<c:set var="total" value="${total + multiYearEstimates.percentage}"/>
 					</c:forEach>
 				</c:if>

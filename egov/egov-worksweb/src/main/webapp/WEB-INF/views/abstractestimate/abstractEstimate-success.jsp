@@ -44,4 +44,16 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-Success
+<div id="main">
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title text-center">
+					<c:out value="${message}" /><br />
+				</div>
+			</div>
+		</div>
+	</div>					
+</div>					
+</div>

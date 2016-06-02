@@ -23,6 +23,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
@@ -102,13 +103,16 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private MessageSource messageSource;
+    
+    @Autowired
+    private LetterOfAcceptanceService letterOfAcceptanceService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
-        Date currentDate = new Date();
         AbstractEstimate abstractEstimate = new AbstractEstimate();
         LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
         LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
+        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
         abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
         if (lineEstimate.getLocation() != null)
@@ -116,6 +120,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
         abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
         abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
+        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
         if (lineEstimate.getWorkCategory().equals(WorksConstants.SLUM_WORK)) {
             model.addAttribute("workCategory", "Slum Work");
         } else {
@@ -137,11 +142,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         financialDetails.setBudgetGroup(lineEstimate.getBudgetHead());
         financialDetailList.add(financialDetails);
         abstractEstimate.setFinancialDetails(financialDetailList);
-
+        
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("abstractEstimate", abstractEstimate);
-        model.addAttribute("currentDate", currentDate);
         model.addAttribute("lineEstimate", lineEstimate);
+        model.addAttribute("workOrder", letterOfAcceptanceService.getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber()));
         model.addAttribute("estimateTemplateConfirmMsg",
                 messageSource.getMessage("masg.estimate.template.confirm.reset", null, null));
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -171,7 +176,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
     }
 
-    @RequestMapping(value = "/newform", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public String saveAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) throws IOException {
@@ -179,6 +184,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                     LineEstimateStatus.CREATED.toString()));
         estimateService.createAbstractEstimate(abstractEstimate, files);
+        model.addAttribute("message", "Abstract Estimate created successfully");
         return "abstractEstimate-success";
     }
 

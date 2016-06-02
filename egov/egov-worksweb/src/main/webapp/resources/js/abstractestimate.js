@@ -45,6 +45,8 @@ $(document).ready(function(){
 	
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
+	var nameOfWork = $('#nameOfWork').val();
+	$('#workName').val(nameOfWork);
 	$('#scheme').trigger('change');
 	getAbstractEstimateDate();
 	
@@ -409,40 +411,52 @@ function calculateOverheadTotalAmount(){
 
 function addMultiyearEstimate() {
 	var tbl = document.getElementById('multiYeaeEstimateTbl');
-    var rowO=tbl.rows.length;
+    var rowO = tbl.rows.length;
     if(document.getElementById('yearEstimateRow') != null)
 	{
     		//get Next Row Index to Generate
-    		var nextIdx = tbl.rows.length-1;
-    		
+    		var nextIdx = tbl.rows.length;
+    		var sno = 1;
+    		sno = nextIdx + 1;
     		//validate status variable for exiting function
     		var isValid=1;//for default have success value 0  
     		
     		//validate existing rows in table
-    		jQuery("#multiYeaeEstimateTbl tr:not(:first)").find('input, select').each(function(){
+    		jQuery("#tblyearestimate tbody tr").find('input, select').each(function(){
     			if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
     			{
+    				console.log('calling :)');
     				jQuery(this).focus();
-    				console.log('called =>' + jQuery(this).attr('id'));
     				bootbox.alert(jQuery(this).data('errormsg'));
     				isValid=0;//set validation failure
     				return false;
     			}
     		});
     		
-    		
+    		if (isValid === 0) {
+				return false;
+			}
     		// Generate all textboxes Id and name with new index
-			jQuery("#yearEstimateRow").clone().find("input, select").each(function() {
+			jQuery("#yearEstimateRow").clone().find("input, select ,span").each(function() {
 				     
-					jQuery(this).attr({
-				      'id': function(_, id) { 
-				    	  return id.replace('[0]', '['+ nextIdx +']'); 
-				       },
-				      'name': function(_, name) { 
-				    	  return name.replace('[0]', '['+ nextIdx +']'); 
-				      }
-				    }).val('');
-					
+					if($(this).is('span')) {
+						jQuery(this).text(sno);
+						sno++;
+					} else {
+						jQuery(this).attr({
+						      'id': function(_, id) { 
+						    	  return id.replace('[0]', '['+ nextIdx +']'); 
+						       },
+						      'name': function(_, name) { 
+						    	  return name.replace('[0]', '['+ nextIdx +']'); 
+						      },
+								'data-idx' : function(_,dataIdx)
+								{
+									return nextIdx;
+								}
+						       
+						    }).val('');
+					}
 					 
 		    }).end().appendTo("#multiYeaeEstimateTbl");
 			
@@ -452,7 +466,7 @@ function addMultiyearEstimate() {
 
 function deleteMultiYearEstimate(obj) {
 	
-	rIndex = getRow(obj).rowIndex;
+	rIndex = getRow(obj).rowIndex - 1;
 	var tbl=document.getElementById('multiYeaeEstimateTbl');
 	var rowo=tbl.rows.length;
 	if(rowo<=1)
@@ -468,22 +482,28 @@ function deleteMultiYearEstimate(obj) {
 		var idx=0;
 		
 		//regenerate index existing inputs in table row
-		jQuery("#multiYeaeEstimateTbl tr:not(:first)").each(function() {
-			jQuery(this).find("input, select").each(function() {
-			   jQuery(this).attr({
-			      'id': function(_, id) {  
-			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
-			       },
-			      'name': function(_, name) {
-			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
-			      },
-			   });
-		
+		$("#tblyearestimate tbody tr").each(function() {
+			$(this).find("input, select, span").each(function() {
+					if(!$(this).is('span')) {
+					   $(this).attr({
+					      'id': function(_, id) {  
+					    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					       },
+					      'name': function(_, name) {
+					    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					   });
+					}
+					else{
+						$(this).text((idx+1));
+					}
 		    });
 			
-		
 			idx++;
+			
 		});
+		
+		calculatePercentage('#estimateTotal', '.inputYearEstimatePercentage');
 		
 		return true;
 	}	
@@ -905,7 +925,8 @@ function enableFileds() {
 	jQuery("#function").removeAttr('disabled');
 	jQuery("#budgethead").removeAttr('disabled');
 	jQuery("#scheme").removeAttr('disabled');
-	jQuery("#subScheme").removeAttr('disabled');
+	jQuery("#subScheme").removeAttr('disabled'); 
+	jQuery("#workName").removeAttr('disabled');
 	
 	if($('#abstractEstimate').valid()) {
 		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
@@ -1160,4 +1181,68 @@ function getSubSchemsBySchemeId(schemeId) {
 					}
 				});
 			}
+}
+
+
+$(document).on('blur', '.inputYearEstimatePercentage', function(e){
+	calculatePercentage('#estimateTotal', '.inputYearEstimatePercentage');
+});
+
+$(document).on('paste', '.inputYearEstimatePercentage', function(e){
+	calculatePercentage('#estimateTotal', '.inputYearEstimatePercentage');
+});
+
+function calculatePercentage(displayElem, classname)
+{
+	var percentage=0;
+	$(classname).each(function(idx, elem){
+	   if($(elem).val()){
+		   percentage = percentage + parseFloat($(elem).val());
+		   if(percentage > 100) {
+			   bootbox.alert("Total percentage should not be greater than 100 ");
+			   $(elem).val("");
+		   } else
+		    $(displayElem).text(percentage);
+	   }
+	});
+}
+
+$(document).on('change', '.dropdownYear', function(e){
+	validateDuplicateYear();
+});
+
+function validateDuplicateYear()
+{
+
+	var isValidationSuccess=true;
+	var selectedYearCollection=[];
+	
+	$(".dropdownYear").each(function(idx, elem){
+		
+		var selectedYear=jQuery(this).find("option:selected").text();
+		
+		if(selectedYearCollection.indexOf(selectedYear) === -1)
+		{
+			selectedYearCollection.push(selectedYear);
+		}
+		else
+		{
+			//duplicate value handling statement
+			isValidationSuccess=false;
+			$(this).prop('selectedIndex', 0);
+			bootbox.alert("The year "+ selectedYear +" already selected!");
+			return false;
+		}
+	});
+	
+	return isValidationSuccess;
+	
+}
+
+function viewLineEstimate(id) {
+	window.open("/egworks/lineestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function viewLOA(id) {
+	window.open("/egworks/letterofacceptance/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

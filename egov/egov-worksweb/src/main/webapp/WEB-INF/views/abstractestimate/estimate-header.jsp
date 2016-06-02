@@ -58,6 +58,7 @@
 	</div>
 	<div class="panel-body custom-form">
 	   <%@ include file="estimateDetails.jsp"%>   
+	   <form:hidden path="lineEstimateDetails" value="${lineEstimateDetails.id}"/>
 	   <div class="form-group">
 			<%-- <label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.department" /> 
@@ -73,7 +74,5 @@
 			</div> --%>
 			
 		</div>
-		<div class="panel panel-primary" data-collapsed="0">
 </div>
 </div>   
-</div>

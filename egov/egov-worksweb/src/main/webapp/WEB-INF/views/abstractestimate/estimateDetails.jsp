@@ -124,7 +124,8 @@
 			    <spring:message code="lbl.nameofwork" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:textarea path="name" name="name" class="form-control" value="${lineEstimateDetails.nameOfWork}"/>
+			<form:textarea path="name" name="name" id="workName"  disabled="true" class="form-control" />
+			<input type="hidden" id="nameOfWork" name="nameOfWork" value="${lineEstimateDetails.nameOfWork}"/>
 			<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
 			
