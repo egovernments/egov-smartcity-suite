@@ -630,7 +630,7 @@
 	<pageFooter>
 		<band height="100" splitType="Prevent">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
-			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
+			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement x="343" y="0" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>

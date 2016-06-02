@@ -432,7 +432,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ownerAddress}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
+			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement x="369" y="7" width="171" height="51" uuid="adec0340-85ea-48f6-a847-51aa1e187146"/>
 				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
