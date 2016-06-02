@@ -46,9 +46,9 @@ jQuery(document).ready(function(){
 	jQuery('.upload-file').change(function(e){		
 		/*validation for file upload*/
 		myfile= jQuery( this ).val();
-		var docname = jQuery(this).parent().parent().parent().parent().find('.docname').html();
+		var docname = jQuery(this).parent().parent().find('.docname').html();
 		var ext = myfile.split('.').pop();
-		
+
 		if(docname == 'photo'){
 			validate_file(fileformatsincludeforimage, ext, jQuery( this ));	
 		}else{
