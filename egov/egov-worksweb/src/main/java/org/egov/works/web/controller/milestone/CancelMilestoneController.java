@@ -48,7 +48,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.service.MilestoneService;
-import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;

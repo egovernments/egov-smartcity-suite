@@ -44,7 +44,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrder;
 
 @Entity
 @Table(name = "EGW_REVISION_WORKORDER")

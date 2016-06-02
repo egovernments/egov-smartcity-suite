@@ -37,35 +37,54 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.workorder;
+package org.egov.works.mb.entity;
 
-public class AbstractEstimateForWp {
-    private Integer srlNo;
-    private String aeWorkNameForWp;
-    private double negotiatedAmtForWp;
+import java.util.Date;
 
-    public Integer getSrlNo() {
-        return srlNo;
+public class ApprovalDetails {
+    private String statusDesc;
+    private String emplName;
+    private String desgName;
+    private Date date;
+    private String text;
+
+    public String getStatusDesc() {
+        return statusDesc;
     }
 
-    public void setSrlNo(final Integer srlNo) {
-        this.srlNo = srlNo;
+    public String getEmplName() {
+        return emplName;
     }
 
-    public String getAeWorkNameForWp() {
-        return aeWorkNameForWp;
+    public String getDesgName() {
+        return desgName;
     }
 
-    public void setAeWorkNameForWp(final String aeWorkNameForWp) {
-        this.aeWorkNameForWp = aeWorkNameForWp;
+    public Date getDate() {
+        return date;
     }
 
-    public double getNegotiatedAmtForWp() {
-        return negotiatedAmtForWp;
+    public String getText() {
+        return text;
     }
 
-    public void setNegotiatedAmtForWp(final double negotiatedAmtForWp) {
-        this.negotiatedAmtForWp = negotiatedAmtForWp;
+    public void setStatusDesc(final String statusDesc) {
+        this.statusDesc = statusDesc;
     }
 
+    public void setEmplName(final String emplName) {
+        this.emplName = emplName;
+    }
+
+    public void setDesgName(final String desgName) {
+        this.desgName = desgName;
+    }
+
+    public void setDate(final Date date) {
+        this.date = date;
+    }
+
+    public void setText(final String text) {
+        this.text = text;
+    }
 }

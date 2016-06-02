@@ -82,19 +82,19 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.AssetsForWorkOrder;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.AssetsForWorkOrder;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxContractorBillAction extends BaseFormAction {

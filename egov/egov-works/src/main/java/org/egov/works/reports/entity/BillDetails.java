@@ -55,7 +55,7 @@ import javax.persistence.Table;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.hibernate.validator.constraints.Length;
 
 @Entity

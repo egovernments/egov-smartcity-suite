@@ -41,7 +41,7 @@ package org.egov.works.services;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.measurementbook.MBHeader;
+import org.egov.works.mb.entity.MBHeader;
 
 public class MeasurementBookWFService extends PersistenceService<MBHeader, Long> {
     private static final Logger logger = Logger.getLogger(MeasurementBookWFService.class);

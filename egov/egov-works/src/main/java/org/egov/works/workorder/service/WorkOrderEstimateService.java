@@ -37,72 +37,32 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.workorder;
+package org.egov.works.workorder.service;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.repository.WorkOrderEstimateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import org.egov.asset.model.Asset;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+@Service
+@Transactional(readOnly = true)
+public class WorkOrderEstimateService {
 
-@Entity
-@Table(name = "EGW_WORKORDER_ASSETS")
-@SequenceGenerator(name = AssetsForWorkOrder.SEQ_EGW_WORKORDER_ASSETS, sequenceName = AssetsForWorkOrder.SEQ_EGW_WORKORDER_ASSETS, allocationSize = 1)
-public class AssetsForWorkOrder extends AbstractAuditable {
+    private final WorkOrderEstimateRepository workOrderEstimateRepository;
+    
+    @Autowired
+    public WorkOrderEstimateService(final WorkOrderEstimateRepository workOrderEstimateRepository) {
+        this.workOrderEstimateRepository = workOrderEstimateRepository;
+    }
 
-	private static final long serialVersionUID = 1921548931869645727L;
-
-	public static final String SEQ_EGW_WORKORDER_ASSETS = "SEQ_EGW_WORKORDER_ASSETS";
-
-	@Id
-	@GeneratedValue(generator = SEQ_EGW_WORKORDER_ASSETS, strategy = GenerationType.SEQUENCE)
-	private Long id;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ASSET_ID", nullable = false)
-	private Asset asset;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WORKORDER_ESTIMATE_ID", nullable = false)
-	private WorkOrderEstimate workOrderEstimate;
-
-	public AssetsForWorkOrder() {
-	}
-
-	public AssetsForWorkOrder(final WorkOrderEstimate workOrderEstimate, final Asset asset) {
-		this.workOrderEstimate = workOrderEstimate;
-		this.asset = asset;
-	}
-
-	public Asset getAsset() {
-		return asset;
-	}
-
-	public void setAsset(final Asset asset) {
-		this.asset = asset;
-	}
-
-	public WorkOrderEstimate getWorkOrderEstimate() {
-		return workOrderEstimate;
-	}
-
-	public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
-		this.workOrderEstimate = workOrderEstimate;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+    public WorkOrderEstimate getEstimateByWorkOrderAndEstimateAndStatus(final Long workOrderId, final Long estimateId) {
+        return workOrderEstimateRepository.findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(workOrderId, estimateId,
+                WorksConstants.APPROVED);
+    }
+    
+    public WorkOrderEstimate getWorkOrderEstimateById(final Long id) {
+        return workOrderEstimateRepository.findOne(id);
+    }
 }

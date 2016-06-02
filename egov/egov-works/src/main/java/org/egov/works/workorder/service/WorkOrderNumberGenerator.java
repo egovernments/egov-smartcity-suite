@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.workorder;
+package org.egov.works.workorder.service;
 
 import javax.script.ScriptContext;
 
@@ -49,6 +49,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.WorksPackage;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorkOrderNumberGenerator {

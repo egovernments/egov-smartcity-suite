@@ -67,14 +67,14 @@ import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
-import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.TenderResponseActivity;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AjaxWorkOrderAction extends BaseFormAction {

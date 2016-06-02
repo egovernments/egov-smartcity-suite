@@ -73,25 +73,25 @@ import org.egov.utils.FinancialConstants;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
+import org.egov.works.mb.entity.MBDetails;
+import org.egov.works.mb.entity.MBForCancelledBill;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
-import org.egov.works.models.measurementbook.MBDetails;
-import org.egov.works.models.measurementbook.MBForCancelledBill;
-import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderResponse;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderActivity;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.TenderResponseService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -885,7 +885,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         if (paramsMap.get(CONTRACTOR_ID) != null && !"-1".equals(paramsMap.get(CONTRACTOR_ID))) {
             commonQry = commonQry
                     .append(" and (cbr.id in (select mbh.egBillregister.id from MBHeader mbh where mbh.egBillregister.id=cbr.id and mbh.workOrder.contractor.id = ?)"
-                            + " OR cbr.id in (select mbcb.egBillregister.id from MBForCancelledBill mbcb where mbcb.egBillregister.id=cbr.id and mbcb.mbHeader.workOrder.contractor.id = ?))");
+                            + " OR cbr.id in (select mbcb.contractorBillRegister.id from MBForCancelledBill mbcb where mbcb.contractorBillRegister.id=cbr.id and mbcb.mbHeader.workOrder.contractor.id = ?))");
             paramList.add(paramsMap.get(CONTRACTOR_ID));
             paramList.add(paramsMap.get(CONTRACTOR_ID));
 
@@ -918,8 +918,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         if (paramsMap.get(EXEC_DEPT_ID) != null && !"-1".equals(paramsMap.get(EXEC_DEPT_ID))) {
             commonQry = commonQry
                     .append(" and (cbr.id in (select mbh.egBillregister.id from MBHeader mbh where mbh.egBillregister.id=cbr.id "
-                            + "and mbh.workOrderEstimate.estimate.executingDepartment.id = ?) OR cbr.id in (select mbcb.egBillregister.id from MBForCancelledBill mbcb where"
-                            + " mbcb.egBillregister.id=cbr.id and mbcb.mbHeader.workOrderEstimate.estimate.executingDepartment.id = ?))");
+                            + "and mbh.workOrderEstimate.estimate.executingDepartment.id = ?) OR cbr.id in (select mbcb.contractorBillRegister.id from MBForCancelledBill mbcb where"
+                            + " mbcb.contractorBillRegister.id=cbr.id and mbcb.mbHeader.workOrderEstimate.estimate.executingDepartment.id = ?))");
             paramList.add(paramsMap.get(EXEC_DEPT_ID));
             paramList.add(paramsMap.get(EXEC_DEPT_ID));
 
@@ -927,8 +927,8 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
         if (paramsMap.get(EST_NO) != null) {
             commonQry = commonQry
                     .append(" and (EXISTS (select mbh.egBillregister.id from MBHeader mbh where mbh.egBillregister.id=cbr.id "
-                            + "and mbh.workOrderEstimate.estimate.estimateNumber like ? ) OR EXISTS (select mbcb.egBillregister.id from MBForCancelledBill mbcb where"
-                            + " mbcb.egBillregister.id=cbr.id and mbcb.mbHeader.workOrderEstimate.estimate.estimateNumber like ? ))");
+                            + "and mbh.workOrderEstimate.estimate.estimateNumber like ? ) OR EXISTS (select mbcb.contractorBillRegister.id from MBForCancelledBill mbcb where"
+                            + " mbcb.contractorBillRegister.id=cbr.id and mbcb.mbHeader.workOrderEstimate.estimate.estimateNumber like ? ))");
             paramList.add("%" + paramsMap.get(EST_NO) + "%");
             paramList.add("%" + paramsMap.get(EST_NO) + "%");
 
@@ -1081,7 +1081,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public List<MBForCancelledBill> getMbListForCancelBill(final Long billId) {
         final List<MBForCancelledBill> list = genericService.findAllBy(
-                "from MBForCancelledBill mbcb where  mbcb.egBillregister.id=?", billId);
+                "from MBForCancelledBill mbcb where  mbcb.contractorBillRegister.id=?", billId);
         return list;
 
     }

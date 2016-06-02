@@ -37,54 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.measurementbook;
+package org.egov.works.workorder.repository;
 
-import java.util.Date;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public class ApprovalDetails {
-    private String statusDesc;
-    private String emplName;
-    private String desgName;
-    private Date date;
-    private String text;
+@Repository
+public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEstimate, Long> {
 
-    public String getStatusDesc() {
-        return statusDesc;
-    }
+    WorkOrderEstimate findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(final Long workOrderId, final Long estimateId,
+            final String status);
 
-    public String getEmplName() {
-        return emplName;
-    }
-
-    public String getDesgName() {
-        return desgName;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setStatusDesc(final String statusDesc) {
-        this.statusDesc = statusDesc;
-    }
-
-    public void setEmplName(final String emplName) {
-        this.emplName = emplName;
-    }
-
-    public void setDesgName(final String desgName) {
-        this.desgName = desgName;
-    }
-
-    public void setDate(final Date date) {
-        this.date = date;
-    }
-
-    public void setText(final String text) {
-        this.text = text;
-    }
 }

@@ -53,11 +53,11 @@ import org.egov.pims.commons.dao.DesignationMasterDAO;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderActivity;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorksService;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.script.ScriptContext;

@@ -39,10 +39,10 @@
  */
 package org.egov.works.services;
 
-import org.egov.works.models.measurementbook.MBDetails;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.mb.entity.MBDetails;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 import java.math.BigDecimal;
 import java.util.Date;

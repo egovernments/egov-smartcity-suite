@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.workorder;
+package org.egov.works.workorder.entity;
 
 import java.util.Date;
 

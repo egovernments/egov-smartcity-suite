@@ -63,7 +63,7 @@ import javax.persistence.Transient;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 @Entity
 @Table(name = "EGW_MILESTONE")

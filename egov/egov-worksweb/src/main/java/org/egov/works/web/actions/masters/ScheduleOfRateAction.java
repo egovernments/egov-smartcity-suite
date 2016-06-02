@@ -69,9 +69,9 @@ import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({

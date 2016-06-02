@@ -40,15 +40,15 @@
 package org.egov.works.services;
 
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.models.masters.Contractor;
-import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.EstimateLineItemsForWP;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.models.workorder.AbstractEstimateForWp;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderActivity;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.workorder.entity.AbstractEstimateForWp;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 import java.util.Collection;
 import java.util.Date;

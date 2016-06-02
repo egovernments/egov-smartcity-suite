@@ -41,7 +41,7 @@ package org.egov.works.models.contractoradvance;
 
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.model.advance.EgAdvanceRequisition;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 public class ContractorAdvanceRequisition extends EgAdvanceRequisition {
 

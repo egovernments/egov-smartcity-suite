@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 public class WorkCompletionInfo {
 

@@ -168,7 +168,7 @@
 		<constructor-arg>
 			<bean parent="persistenceService">
 				<property name="type"
-					value="org.egov.works.models.measurementbook.MBHeader" />
+					value="org.egov.works.mb.entity.MBHeader" />
 			</bean>
 		</constructor-arg>
 		<property name="genericService" ref="persistenceService" />
@@ -187,7 +187,7 @@
 	</bean>
 
 	<!-- on dec14th -->
-	<bean class="org.egov.works.models.workorder.WorkOrderNumberGenerator"
+	<bean class="org.egov.works.workorder.service.WorkOrderNumberGenerator"
 		id="workOrderNumberGenerators">
 	</bean>
 
@@ -205,7 +205,7 @@
 		id="workOrderService" scope="prototype">
 		<constructor-arg>
 			<bean parent="persistenceService">
-				<property name="type" value="org.egov.works.models.workorder.WorkOrder" />
+				<property name="type" value="org.egov.works.workorder.entity.WorkOrder" />
 			</bean>
 		</constructor-arg>
 		<property name="contractorService" ref="contractorService" />
@@ -223,7 +223,7 @@
 	<bean id="measurementBookWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="measurementBookWFService" />
-		<constructor-arg value="org.egov.works.models.measurementbook.MBHeader" />
+		<constructor-arg value="org.egov.works.mb.entity.MBHeader" />
 	</bean>
 	<bean class="org.egov.works.services.ContractorBillWFService" id="contractorBillWFService"
 		parent="persistenceService" scope="prototype">
@@ -310,7 +310,7 @@
 	<!-- <bean id="workOrderWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService"
 		scope="prototype">
 		<constructor-arg ref="workOrderWFService" />
-		<constructor-arg value="org.egov.works.models.workorder.WorkOrder" />
+		<constructor-arg value="org.egov.works.workorder.entity.WorkOrder" />
 	</bean> -->
 	<bean id="voucherService" class="org.egov.services.voucher.VoucherService"
 		parent="persistenceService" scope="prototype">
@@ -361,7 +361,7 @@
 	</bean>
 	<bean id="cancelBillService" parent="persistenceService" scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.measurementbook.MBForCancelledBill" />
+			value="org.egov.works.mb.entity.MBForCancelledBill" />
 	</bean>
 	<bean id="estimateAppropriationService" parent="persistenceService"
 		scope="prototype">

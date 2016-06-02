@@ -39,7 +39,7 @@
  */
 package org.egov.works.letterofacceptance.repository;
 
-import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

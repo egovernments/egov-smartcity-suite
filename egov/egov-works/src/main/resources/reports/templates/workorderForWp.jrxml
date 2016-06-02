@@ -49,7 +49,7 @@
 	<parameter name="deptAddress" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="contractorAddress" class="java.lang.String"/>
-	<parameter name="WorkOrderObj" class="org.egov.works.models.workorder.WorkOrder" isForPrompting="false"/>
+	<parameter name="WorkOrderObj" class="org.egov.works.workorder.entity.WorkOrder" isForPrompting="false"/>
 	<parameter name="projectCodeList" class="java.lang.String"/>
 	<parameter name="workPackageDate" class="java.util.Date"/>
 	<parameter name="workPackageNo" class="java.lang.String"/>

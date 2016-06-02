@@ -39,7 +39,7 @@
  */
 package org.egov.works.models.contractorBill;
 
-import org.egov.works.models.workorder.WorkOrderActivity;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 
 public class WorkCompletionDetailInfo {
 

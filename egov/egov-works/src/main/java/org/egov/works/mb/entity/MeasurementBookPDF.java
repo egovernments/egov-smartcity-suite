@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.measurementbook;
+package org.egov.works.mb.entity;
 
 public class MeasurementBookPDF {
     private String scheduleNo;

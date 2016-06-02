@@ -37,16 +37,60 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.measurementbook;
+package org.egov.works.mb.entity;
 
-import org.egov.infstr.models.BaseModel;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 
-public class MBForCancelledBill extends BaseModel {
+@Entity
+@Table(name = "EGW_CANCELLED_BILL")
+@NamedQueries({
+        @NamedQuery(name = MBForCancelledBill.MBLIST_FOR_CANCELLEDBILL, query = " select mbcb.mbHeader from MBForCancelledBill mbcb where  mbcb.mbHeader.isLegacyMB = false and  mbcb.contractorBillRegister.id = ? and mbcb.contractorBillRegister.status.code = ? ") })
+@SequenceGenerator(name = MBForCancelledBill.SEQ_EGW_CANCELLEDBILL, sequenceName = MBForCancelledBill.SEQ_EGW_CANCELLEDBILL, allocationSize = 1)
+public class MBForCancelledBill extends AbstractAuditable {
 
     private static final long serialVersionUID = -6540546979562987332L;
+
+    public static final String SEQ_EGW_CANCELLEDBILL = "SEQ_EGW_CANCELLED_BILL";
+
+    public static final String MBLIST_FOR_CANCELLEDBILL = "getMBListForCancelledBill";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_CANCELLEDBILL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mbheader", nullable = false)
     private MBHeader mbHeader;
-    private ContractorBillRegister egBillregister;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contractorbillregister", nullable = false)
+    private ContractorBillRegister contractorBillRegister;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public MBHeader getMbHeader() {
         return mbHeader;
@@ -56,12 +100,12 @@ public class MBForCancelledBill extends BaseModel {
         this.mbHeader = mbHeader;
     }
 
-    public ContractorBillRegister getEgBillregister() {
-        return egBillregister;
+    public ContractorBillRegister getContractorBillRegister() {
+        return contractorBillRegister;
     }
 
-    public void setEgBillregister(final ContractorBillRegister egBillregister) {
-        this.egBillregister = egBillregister;
+    public void setContractorBillRegister(final ContractorBillRegister contractorBillRegister) {
+        this.contractorBillRegister = contractorBillRegister;
     }
 
 }

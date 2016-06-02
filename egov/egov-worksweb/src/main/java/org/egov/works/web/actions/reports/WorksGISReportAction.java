@@ -56,10 +56,10 @@ import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.TenderResponseActivity;
 import org.egov.works.models.tender.WorksPackageDetails;
-import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.WorkOrderService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;

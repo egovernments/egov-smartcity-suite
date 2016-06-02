@@ -40,8 +40,8 @@
 package org.egov.works.mb.repository;
 
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -37,16 +37,35 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.workorderestimate.repository;
+package org.egov.works.workorder.entity;
 
-import org.egov.works.models.workorder.WorkOrderEstimate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public class AbstractEstimateForWp {
+    private Integer srlNo;
+    private String aeWorkNameForWp;
+    private double negotiatedAmtForWp;
 
-@Repository
-public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEstimate, Long> {
+    public Integer getSrlNo() {
+        return srlNo;
+    }
 
-    WorkOrderEstimate findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(final Long workOrderId, final Long estimateId,
-            final String status);
+    public void setSrlNo(final Integer srlNo) {
+        this.srlNo = srlNo;
+    }
+
+    public String getAeWorkNameForWp() {
+        return aeWorkNameForWp;
+    }
+
+    public void setAeWorkNameForWp(final String aeWorkNameForWp) {
+        this.aeWorkNameForWp = aeWorkNameForWp;
+    }
+
+    public double getNegotiatedAmtForWp() {
+        return negotiatedAmtForWp;
+    }
+
+    public void setNegotiatedAmtForWp(final double negotiatedAmtForWp) {
+        this.negotiatedAmtForWp = negotiatedAmtForWp;
+    }
 
 }

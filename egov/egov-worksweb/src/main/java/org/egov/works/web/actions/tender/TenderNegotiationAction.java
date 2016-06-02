@@ -92,7 +92,6 @@ import org.egov.works.models.tender.TenderResponseActivity;
 import org.egov.works.models.tender.TenderResponseContractors;
 import org.egov.works.models.tender.TenderResponseQuotes;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.TenderResponseService;
 import org.egov.works.services.WorksPackageService;
@@ -100,6 +99,7 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")

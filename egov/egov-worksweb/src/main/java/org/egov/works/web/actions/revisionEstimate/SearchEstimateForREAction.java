@@ -52,15 +52,15 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.NatureOfWork;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorkOrderService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
+import org.egov.works.workorder.entity.WorkOrder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

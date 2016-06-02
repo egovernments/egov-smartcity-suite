@@ -49,7 +49,7 @@
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="workCompletionInfo" class="org.egov.works.models.contractorBill.WorkCompletionInfo"/>
 	<field name="executionQuantity" class="java.lang.Double"/>
-	<field name="workOrderActivity" class="org.egov.works.models.workorder.WorkOrderActivity"/>
+	<field name="workOrderActivity" class="org.egov.works.workorder.entity.WorkOrderActivity"/>
 	<field name="tenderAmount" class="java.lang.Double"/>
 	<field name="executionAmount" class="java.lang.Double"/>
 	<field name="executionRate" class="java.lang.Double"/>

@@ -51,13 +51,13 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 import org.egov.works.models.masters.Contractor;
-import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.TenderResponse;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.TenderResponseService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 

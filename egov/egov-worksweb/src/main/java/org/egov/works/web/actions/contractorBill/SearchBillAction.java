@@ -53,16 +53,16 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.mb.entity.MBForCancelledBill;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.models.masters.Contractor;
-import org.egov.works.models.measurementbook.MBForCancelledBill;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorkOrderService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.impl.ContractorBillServiceImpl;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -229,7 +229,7 @@ public class SearchBillAction extends BaseFormAction {
                 MBHeader.MeasurementBookStatus.APPROVED.toString(), contractorBillRegister.getId());
         for (final MBHeader mbObj : mbHeaderListForBillId) {
             final MBForCancelledBill mbCB = new MBForCancelledBill();
-            mbCB.setEgBillregister(mbObj.getEgBillregister());
+            mbCB.setContractorBillRegister(mbObj.getEgBillregister());
             mbCB.setMbHeader(mbObj);
             cancelBillService.persist(mbCB);
         }

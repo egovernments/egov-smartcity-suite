@@ -115,23 +115,23 @@ import org.egov.services.recoveries.RecoveryService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.mb.entity.MBForCancelledBill;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
-import org.egov.works.models.measurementbook.MBForCancelledBill;
-import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.TenderResponse;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -899,7 +899,7 @@ public class ContractorBillAction extends BaseFormAction {
                 contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
             for (final MBHeader mbObj : mbHeaderListForBillIdForCancellingBill) {
                 final MBForCancelledBill mbCB = new MBForCancelledBill();
-                mbCB.setEgBillregister(mbObj.getEgBillregister());
+                mbCB.setContractorBillRegister(mbObj.getEgBillregister());
                 mbCB.setMbHeader(mbObj);
                 cancelBillService.persist(mbCB);
 

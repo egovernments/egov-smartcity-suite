@@ -53,11 +53,11 @@ import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.models.tender.EstimateLineItemsForWP;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorkOrderService;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.services.WorksService;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;

@@ -37,82 +37,56 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.contractorBill;
+package org.egov.works.workorder.entity;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.workorder.entity.WorkOrder;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import java.math.BigDecimal;
+import org.egov.asset.model.Asset;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-public class DeductionTypeForBill extends BaseModel {
+@Entity
+@Table(name = "EGW_WORKORDER_ASSETS")
+@SequenceGenerator(name = AssetsForWorkOrder.SEQ_EGW_WORKORDER_ASSETS, sequenceName = AssetsForWorkOrder.SEQ_EGW_WORKORDER_ASSETS, allocationSize = 1)
+public class AssetsForWorkOrder extends AbstractAuditable {
 
-    private static final long serialVersionUID = 2230319773656392789L;
-    private String deductionType;
-    private WorkOrder workOrder;
+    private static final long serialVersionUID = 1921548931869645727L;
+
+    public static final String SEQ_EGW_WORKORDER_ASSETS = "SEQ_EGW_WORKORDER_ASSETS";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_WORKORDER_ASSETS, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ASSET_ID", nullable = false)
+    private Asset asset;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WORKORDER_ESTIMATE_ID", nullable = false)
     private WorkOrderEstimate workOrderEstimate;
-    private ContractorBillRegister egbill;
-    private BigDecimal glcodeid;
-    private BigDecimal creditamount;
-    private String narration;
-    private CChartOfAccounts coa;
 
-    public WorkOrder getWorkOrder() {
-        return workOrder;
+    public AssetsForWorkOrder() {
     }
 
-    public void setWorkOrder(final WorkOrder workOrder) {
-        this.workOrder = workOrder;
+    public AssetsForWorkOrder(final WorkOrderEstimate workOrderEstimate, final Asset asset) {
+        this.workOrderEstimate = workOrderEstimate;
+        this.asset = asset;
     }
 
-    public String getDeductionType() {
-        return deductionType;
+    public Asset getAsset() {
+        return asset;
     }
 
-    public void setDeductionType(final String deductionType) {
-        this.deductionType = deductionType;
-    }
-
-    public BigDecimal getGlcodeid() {
-        return glcodeid;
-    }
-
-    public void setGlcodeid(final BigDecimal glcodeid) {
-        this.glcodeid = glcodeid;
-    }
-
-    public BigDecimal getCreditamount() {
-        return creditamount;
-    }
-
-    public void setCreditamount(final BigDecimal creditamount) {
-        this.creditamount = creditamount;
-    }
-
-    public String getNarration() {
-        return narration;
-    }
-
-    public void setNarration(final String narration) {
-        this.narration = narration;
-    }
-
-    public ContractorBillRegister getEgbill() {
-        return egbill;
-    }
-
-    public void setEgbill(final ContractorBillRegister egbill) {
-        this.egbill = egbill;
-    }
-
-    public CChartOfAccounts getCoa() {
-        return coa;
-    }
-
-    public void setCoa(final CChartOfAccounts coa) {
-        this.coa = coa;
+    public void setAsset(final Asset asset) {
+        this.asset = asset;
     }
 
     public WorkOrderEstimate getWorkOrderEstimate() {
@@ -121,6 +95,16 @@ public class DeductionTypeForBill extends BaseModel {
 
     public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
         this.workOrderEstimate = workOrderEstimate;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
 }

@@ -41,14 +41,14 @@ package org.egov.works.services.impl;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.measurementbook.MBDetails;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderActivity;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.mb.entity.MBDetails;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

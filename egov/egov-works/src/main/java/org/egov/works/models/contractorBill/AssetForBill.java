@@ -43,7 +43,7 @@ import org.egov.asset.model.Asset;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 import java.math.BigDecimal;
 

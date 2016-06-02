@@ -51,10 +51,10 @@
 		</id>
 		<many-to-one name="egbill" column="BILLREGISTER_ID" not-null="true" insert="false" update="false"/>
 		<many-to-one name="workOrder"
-			class="org.egov.works.models.workorder.WorkOrder" column="WORKORDER_ID"
+			class="org.egov.works.workorder.entity.WorkOrder" column="WORKORDER_ID"
 			not-null="true" fetch="select" />
 		<many-to-one name="workOrderEstimate"
-			class="org.egov.works.models.workorder.WorkOrderEstimate" column="WORKORDER_ESTIMATE_ID"
+			class="org.egov.works.workorder.entity.WorkOrderEstimate" column="WORKORDER_ESTIMATE_ID"
 			fetch="select" />		
 		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" column="COA_ID" not-null="true" fetch="select" />
 		<property name="deductionType">

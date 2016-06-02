@@ -50,7 +50,7 @@ import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
-import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

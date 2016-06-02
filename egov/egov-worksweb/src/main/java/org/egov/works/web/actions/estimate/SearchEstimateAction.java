@@ -81,16 +81,16 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.models.masters.NatureOfWork;
-import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.workorder.AjaxWorkOrderAction;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")

@@ -51,7 +51,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -91,6 +90,7 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.PaymentDetail;
@@ -99,15 +99,14 @@ import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.milestone.entity.WorkProgressRegister;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.NatureOfWork;
-import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
+import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -282,7 +281,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
             AbstractEstimate estimate = null;
             Milestone milestone = null;
             TrackMilestone trackMilestone = null;
-            Set<MBHeader> mbHeaders = null;
+            List<MBHeader> mbHeaders = null;
 
             workOrder = workOrderEstimate.getWorkOrder();
             estimate = workOrderEstimate.getEstimate();
@@ -498,7 +497,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         return tenderDates;
     }
 
-    public Map<String, Object> getPaymentDetail(final Set<MBHeader> mbHeaders) {
+    public Map<String, Object> getPaymentDetail(final List<MBHeader> mbHeaders) {
         BigDecimal totalBillAmount = BigDecimal.ZERO;
         BigDecimal totalReleasedAmt = BigDecimal.ZERO;
         BigDecimal totalOutstandingAmt = BigDecimal.ZERO;
@@ -689,7 +688,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
         final StringBuffer orderQry = new StringBuffer(100);
         srchCrit.append("Report");
         query.append(
-                "from org.egov.works.models.workorder.WorkOrderEstimate as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone ");
+                "from org.egov.works.workorder.entity.WorkOrderEstimate as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone ");
         query.append("where woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ");
         query.append("and milestone.egwStatus.code='APPROVED' and trackMilestone.egwStatus.code='APPROVED' ");
         if (sourcePage == null || StringUtils.isEmpty(sourcePage)) {
@@ -704,7 +703,7 @@ public class WorkProgressRegisterAction extends SearchFormAction {
                 } else {
                     query.delete(0, query.length() - 1);
                     query.append(
-                            "from org.egov.works.models.workorder.WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone,org.egov.works.models.tender.OfflineStatus st");
+                            "from org.egov.works.workorder.entity.WorkOrderEstimate  as woe left outer join woe.milestone milestone left outer join milestone.trackMilestone trackMilestone,org.egov.works.models.tender.OfflineStatus st");
                     query.append(
                             " where st.objectId=woe.workOrder.id and st.id=(select max(id) from org.egov.works.models.tender.OfflineStatus where objectId=woe.workOrder.id and objectType=?) and st.objectType=? and st.egwStatus.code=?");
                     query.append(" and woe.workOrder.parent is null and woe.workOrder.egwStatus.code='APPROVED' ");

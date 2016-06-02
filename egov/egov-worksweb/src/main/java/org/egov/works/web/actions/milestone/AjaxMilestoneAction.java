@@ -45,8 +45,8 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.masters.MilestoneTemplate;
-import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
 
 import java.util.ArrayList;
 import java.util.Collection;
