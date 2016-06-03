@@ -125,6 +125,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     @Qualifier("budgetReAppropriationService")
     private BudgetReAppropriationService budgetReAppropriationService;
     @Autowired
+    @Qualifier("workflowService")
     private WorkflowService<BudgetReAppropriation> budgetReAppropriationWorkflowService;
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
