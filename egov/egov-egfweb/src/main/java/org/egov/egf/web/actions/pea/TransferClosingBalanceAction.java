@@ -60,143 +60,152 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
-@Results({
-        @Result(name = TransferClosingBalanceAction.NEW, location = "transferClosingBalance-new.jsp")
-})
+@Results({ @Result(name = TransferClosingBalanceAction.NEW, location = "transferClosingBalance-new.jsp") })
 public class TransferClosingBalanceAction extends BaseFormAction {
 
-    private static final long serialVersionUID = 7217194113772563333L;
+	private static final long serialVersionUID = 7217194113772563333L;
 
-    @Autowired
-    @Qualifier("financialYearDAO")
-    private FinancialYearHibernateDAO financialYearDAO;
+	@Autowired
+	@Qualifier("financialYearDAO")
+	private FinancialYearHibernateDAO financialYearDAO;
 
-    @Autowired
-    private TransferClosingBalanceService transferClosingBalanceService;
+	@Autowired
+	@Qualifier("transferClosingBalanceService")
+	private TransferClosingBalanceService transferClosingBalanceService;
 
-    private Long financialYear;
+	private Long financialYear;
 
-    @Override
-    public StateAware getModel() {
-        return null;
+	@Override
+	public StateAware getModel() {
+		return null;
 
-    }
+	}
 
-    private CFinancialYear fy;
-    private CFinancialYear previousFinancialYear;
-    private CFinancialYear nextFinancialYear;
+	private CFinancialYear fy;
+	private CFinancialYear previousFinancialYear;
+	private CFinancialYear nextFinancialYear;
 
-    @Override
-    public void prepare() {
-        super.prepare();
-        addDropdownData("financialYearList", financialYearDAO.getAllNotClosedFinancialYears());
-    }
+	@Override
+	public void prepare() {
+		super.prepare();
+		addDropdownData("financialYearList",
+				financialYearDAO.getAllNotClosedFinancialYears());
+	}
 
-    public void prepareNewform() {
+	public void prepareNewform() {
 
-    }
+	}
 
-    @SkipValidation
-    @Action(value = "/pea/transferClosingBalance-new")
-    public String newform() {
-        return NEW;
-    }
+	@SkipValidation
+	@Action(value = "/pea/transferClosingBalance-new")
+	public String newform() {
+		return NEW;
+	}
 
-    @SkipValidation
-    @ValidationErrorPage(value = NEW)
-    @Action(value = "/pea/transferClosingBalance-transfer")
-    public String transfer() {
-        try {
+	@SkipValidation
+	@ValidationErrorPage(value = NEW)
+	@Action(value = "/pea/transferClosingBalance-transfer")
+	public String transfer() {
+		try {
 
-            fy = financialYearDAO.getFinancialYearById(financialYear);
+			fy = financialYearDAO.getFinancialYearById(financialYear);
 
-            try {
-                previousFinancialYear = financialYearDAO.getPreviousFinancialYearByDate(fy.getStartingDate());
-            } catch (final ApplicationRuntimeException e) {
-                // Ignore
+			try {
+				previousFinancialYear = financialYearDAO
+						.getPreviousFinancialYearByDate(fy.getStartingDate());
+			} catch (final ApplicationRuntimeException e) {
+				// Ignore
 
-            } catch (final Exception e) {
-                e.printStackTrace();
-                final List<ValidationError> errors = new ArrayList<ValidationError>();
-                errors.add(new ValidationError("exp", e.getMessage()));
-                throw new ValidationException(errors);
-            }
+			} catch (final Exception e) {
+				e.printStackTrace();
+				final List<ValidationError> errors = new ArrayList<ValidationError>();
+				errors.add(new ValidationError("exp", e.getMessage()));
+				throw new ValidationException(errors);
+			}
 
-            try {
-                nextFinancialYear = financialYearDAO.getNextFinancialYearByDate(fy.getStartingDate());
-            } catch (final ApplicationRuntimeException e) {
-                throw new ValidationException("Next Financial Year does not exist in system.",
-                        "Next Financial Year does not exist in system.");
+			try {
+				nextFinancialYear = financialYearDAO
+						.getNextFinancialYearByDate(fy.getStartingDate());
+			} catch (final ApplicationRuntimeException e) {
+				throw new ValidationException(
+						"Next Financial Year does not exist in system.",
+						"Next Financial Year does not exist in system.");
 
-            } catch (final Exception e) {
-                e.printStackTrace();
-                final List<ValidationError> errors = new ArrayList<ValidationError>();
-                errors.add(new ValidationError("exp", e.getMessage()));
-                throw new ValidationException(errors);
-            }
+			} catch (final Exception e) {
+				e.printStackTrace();
+				final List<ValidationError> errors = new ArrayList<ValidationError>();
+				errors.add(new ValidationError("exp", e.getMessage()));
+				throw new ValidationException(errors);
+			}
 
-            /*if (!validatePreviousFinancialYear())
-                throw new ValidationException("Previous Financial Year is Open, it can not be transferred",
-                        "Previous Financial Year is Open, it can not be transferred");*/
+			/*
+			 * if (!validatePreviousFinancialYear()) throw new
+			 * ValidationException
+			 * ("Previous Financial Year is Open, it can not be transferred",
+			 * "Previous Financial Year is Open, it can not be transferred");
+			 */
 
-            
-            if (nextFinancialYear == null || !nextFinancialYear.getIsActive())
-                throw new ValidationException("Next Financial Year is not active",
-                        "Next Financial Year is not active");
+			if (nextFinancialYear == null || !nextFinancialYear.getIsActive())
+				throw new ValidationException(
+						"Next Financial Year is not active",
+						"Next Financial Year is not active");
 
-            transferClosingBalanceService.transfer(financialYear, fy, nextFinancialYear);
+			transferClosingBalanceService.transfer(financialYear, fy,
+					nextFinancialYear);
 
-            addActionMessage("Transfer Closing Balance Successful");
-        } catch (final ValidationException e) {
-            e.printStackTrace();
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
-            throw new ValidationException(errors);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exp", e.getMessage()));
-            throw new ValidationException(errors);
-        }
-        return NEW;
-    }
+			addActionMessage("Transfer Closing Balance Successful");
+		} catch (final ValidationException e) {
+			e.printStackTrace();
+			final List<ValidationError> errors = new ArrayList<ValidationError>();
+			errors.add(new ValidationError("exp", e.getErrors().get(0)
+					.getMessage()));
+			throw new ValidationException(errors);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			final List<ValidationError> errors = new ArrayList<ValidationError>();
+			errors.add(new ValidationError("exp", e.getMessage()));
+			throw new ValidationException(errors);
+		}
+		return NEW;
+	}
 
-    private boolean validatePreviousFinancialYear() {
+	private boolean validatePreviousFinancialYear() {
 
-        return previousFinancialYear != null ? previousFinancialYear.getIsClosed() : true;
+		return previousFinancialYear != null ? previousFinancialYear
+				.getIsClosed() : true;
 
-    }
+	}
 
-    public Long getFinancialYear() {
-        return financialYear;
-    }
+	public Long getFinancialYear() {
+		return financialYear;
+	}
 
-    public void setFinancialYear(Long financialYear) {
-        this.financialYear = financialYear;
-    }
+	public void setFinancialYear(Long financialYear) {
+		this.financialYear = financialYear;
+	}
 
-    public CFinancialYear getFy() {
-        return fy;
-    }
+	public CFinancialYear getFy() {
+		return fy;
+	}
 
-    public void setFy(CFinancialYear fy) {
-        this.fy = fy;
-    }
+	public void setFy(CFinancialYear fy) {
+		this.fy = fy;
+	}
 
-    public CFinancialYear getPreviousFinancialYear() {
-        return previousFinancialYear;
-    }
+	public CFinancialYear getPreviousFinancialYear() {
+		return previousFinancialYear;
+	}
 
-    public void setPreviousFinancialYear(CFinancialYear previousFinancialYear) {
-        this.previousFinancialYear = previousFinancialYear;
-    }
+	public void setPreviousFinancialYear(CFinancialYear previousFinancialYear) {
+		this.previousFinancialYear = previousFinancialYear;
+	}
 
-    public CFinancialYear getNextFinancialYear() {
-        return nextFinancialYear;
-    }
+	public CFinancialYear getNextFinancialYear() {
+		return nextFinancialYear;
+	}
 
-    public void setNextFinancialYear(CFinancialYear nextFinancialYear) {
-        this.nextFinancialYear = nextFinancialYear;
-    }
+	public void setNextFinancialYear(CFinancialYear nextFinancialYear) {
+		this.nextFinancialYear = nextFinancialYear;
+	}
 
 }

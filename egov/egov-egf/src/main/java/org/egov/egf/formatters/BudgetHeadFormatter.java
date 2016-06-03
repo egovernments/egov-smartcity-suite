@@ -39,6 +39,8 @@
  */
 package org.egov.egf.formatters;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
@@ -52,16 +54,19 @@ import java.util.Locale;
 @Component("budgetHeadFormatter")
 public class BudgetHeadFormatter implements Formatter<BudgetGroup> {
 
-    @Autowired
-    private PersistenceService<BudgetGroup, Long> persistenceService;
+	@Autowired
+	@Qualifier("persistenceService")
+	private PersistenceService<BudgetGroup, Long> persistenceService;
 
-    @Override
-    public String print(final BudgetGroup object, final Locale locale) {
-        return object.getName();
-    }
+	@Override
+	public String print(final BudgetGroup object, final Locale locale) {
+		return object.getName();
+	}
 
-    @Override
-    public BudgetGroup parse(final String id, final Locale locale) throws ParseException {
-        return StringUtils.isNotBlank(id) ? persistenceService.load(Long.valueOf(id), BudgetGroup.class) : null;
-    }
+	@Override
+	public BudgetGroup parse(final String id, final Locale locale)
+			throws ParseException {
+		return StringUtils.isNotBlank(id) ? persistenceService.load(
+				Long.valueOf(id), BudgetGroup.class) : null;
+	}
 }
