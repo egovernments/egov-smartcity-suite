@@ -334,11 +334,8 @@ function submitButton()
 	        				   && full.resource.clauses.applicationcode == 'NEWCONNECTION') {
 	        			   if (full.resource.clauses.status == 'ACTIVE') {
 	        				   if ( citizenRole== 'true'   ) { 
-	        					   if(full.resource.clauses.waterTaxDue > 0)
 	        					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
-	        					   else{
-	        						   return ('');   
-	        					   }
+	        					  
 	        				   }
 	        				   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole==""))    && full.resource.clauses.waterTaxDue > 0  ) {
 	        					  
@@ -401,11 +398,8 @@ function submitButton()
 	        				   full.resource.clauses.applicationcode == 'CHANGEOFUSE') {
 	        			  
 	        			   if ( citizenRole== 'true'   ) { 
-        					   if(full.resource.clauses.waterTaxDue > 0)
-        					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
-        					   else{
-        						   return ('');   
-        					   }
+        					  return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+        					   
         				   }
 	        			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.resource.clauses.waterTaxDue > 0  ) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
@@ -458,11 +452,8 @@ function submitButton()
 	        		   if (full != null&& full.resource != undefined && full.resource.clauses.applicationcode != undefined &&
 	        				   full.resource.clauses.applicationcode == 'RECONNECTION') {
 	        			   if ( citizenRole== 'true'   ) { 
-        					   if(full.resource.clauses.waterTaxDue > 0)
         					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
-        					   else{
-        						   return ('');   
-        					   }
+        					   
         				   }
 	        			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.resource.clauses.waterTaxDue > 0  ) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
