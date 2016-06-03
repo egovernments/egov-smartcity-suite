@@ -150,7 +150,7 @@ public class ScheduleOfRate extends BaseModel {
     }
     
     public String getSorRate() {
-        return sorRateValue.toString();
+        return sorRateValue != null ? sorRateValue.toString() : "";
     }
 
     public String getScheduleCategorId() {

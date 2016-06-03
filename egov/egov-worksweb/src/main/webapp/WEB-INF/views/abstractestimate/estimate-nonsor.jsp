@@ -116,7 +116,7 @@
 						<span class="nonSorTotal_0 nonSorTotal"></span>
 					</td>
 					<td>
-						<span class="add-padding" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+						<span class="add-padding delete_0" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 					</td>
 				</tr>
 			</tbody>

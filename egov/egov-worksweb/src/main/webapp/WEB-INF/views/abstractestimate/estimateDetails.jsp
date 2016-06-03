@@ -44,8 +44,8 @@
 			    <spring:message code="lbl.estimate.ward" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:hidden path="ward" class="form-control" name="ward" disabled="true" value="${lineEstimateDetails.lineEstimate.ward.id}"/>
-			<form:input id="wardInput" path="ward.name" class="form-control" type="text" disabled="true" required="required"/>
+			<form:hidden path="ward" class="form-control" name="ward" value="${lineEstimateDetails.lineEstimate.ward.id}"/>
+			<form:input id="wardInput" path="ward.name" class="form-control disablefield" type="text" required="required"/>
 			</div>
 			
 		</div>

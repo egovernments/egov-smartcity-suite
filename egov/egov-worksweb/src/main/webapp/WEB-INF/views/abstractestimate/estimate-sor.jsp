@@ -182,6 +182,8 @@
 					</td>
 					<td align="right">
 						<span class="rate_0"></span>
+						<form:hidden path="activities[0].rate" id="rate_0" />
+						<form:hidden path="activities[0].sorRate" id="sorRate_0" />
 					</td>
 					<td>
 						<form:input path="activities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>

@@ -81,10 +81,12 @@ $(document).ready(function(){
 		if(hiddenRowCount == 0) {
 			addNonSor();
 		} else {
-			$('#nonSorDesc_0').attr('required', 'required');
-			$('#nonSorUom_0').attr('required', 'required');
-			$('#nonSorRate_0').attr('required', 'required');
-			$('#nonSorQuantity_0').attr('required', 'required');
+			var visibleSorCount = $("#tblsor tbody tr:visible[id='sorRow']").length;
+			
+			$('#nonSorDesc_' + visibleSorCount).attr('required', 'required');
+			$('#nonSorUom_' + visibleSorCount).attr('required', 'required');
+			$('#nonSorRate_' + visibleSorCount).attr('required', 'required');
+			$('#nonSorQuantity_' + visibleSorCount).attr('required', 'required');
 			$('.nonSorRate').val('');
 			$('.nonSorQuantity').val('');
 			$('.nonSorServiceTaxPerc').val('');
@@ -158,11 +160,19 @@ $(document).ready(function(){
 			$.each(data, function(id, val) {
 				if(id == "id")
 					$('#' + id + "_" + key).val(val);
-				if(id == 'description') {
+				else if(id == 'description') {
 					$('.' + id + "_" + key).html(hint.replace(/@fulldescription@/g, val));
-				}
-					
-				else
+				} else if(id == 'rate') {
+					if(val != null) {
+						$('.' + id + "_" + key).html(val);
+						$('#' + id + "_" + key).val(val);
+						$('#sorRate_' + key).val(val);
+					} else {
+						$('.' + id + "_" + key).html(0);
+						$('#' + id + "_" + key).val(0);
+						$('#sorRate_' + key).val(0);
+					}
+				}else
 					$('.' + id + "_" + key).html(val);
 			});
 		}
@@ -677,7 +687,8 @@ function addNonSor() {
 	if (rowcount < 31) {
 		if (document.getElementById('nonSorRow') != null) {
 			// get Next Row Index to Generate
-			var nextIdx = $("#tblNonSor tbody tr").length - 1;
+			var visibleSorCount = $("#tblsor tbody tr:visible[id='sorRow']").length;
+			var nextIdx = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length + visibleSorCount;
 
 			// Generate all textboxes Id and name with new index
 			$("#nonSorRow").clone().find("input, span, select").each(
@@ -736,20 +747,22 @@ function generateSlno()
 function deleteNonSor(obj) {
     var rIndex = getRow(obj).rowIndex;
     
+    var rowId = $(obj).attr('class').split('_').pop();
+    
 	var tbl=document.getElementById('tblNonSor');	
 	var rowcount=$("#tblNonSor tbody tr").length;
 
 	if(rowcount==2) {
-		$('#nonSorId_1').val('');
-		$('#nonSorId_1').val('');
-		$('#nonSorDesc_1').val('');
-		$('#nonSorUom_1').val('');
-		$('#nonSorRate_1').val('');
-		$('#nonSorQuantity_1').val('');
-		$('.nonSorAmount_1').html('');
-		$('#nonSorServiceTaxPerc_1').val('');
-		$('.nonSorVatAmt_1').html('');
-		$('.nonSorTotal_1').html('');
+		$('#nonSorId_' + rowId).val('');
+		$('#nonSorId_' + rowId).val('');
+		$('#nonSorDesc_' + rowId).val('');
+		$('#nonSorUom_' + rowId).val('');
+		$('#nonSorRate_' + rowId).val('');
+		$('#nonSorQuantity_' + rowId).val('');
+		$('.nonSorAmount_' + rowId).html('');
+		$('#nonSorServiceTaxPerc_' + rowId).val('');
+		$('.nonSorVatAmount_' + rowId).html('');
+		$('.nonSorTotal_' + rowId).html('');
 		$('#nonSorRow').attr('hidden', 'true');;
 		$('#nonSorMessage').removeAttr('hidden');
 	} else {
@@ -1172,14 +1185,21 @@ function getActivitiesForTemplate(id){
 					}
 				}
 				if(estimateTemplateActivity.schedule != null){
+					$('#id_'+index).val(estimateTemplateActivity.schedule.id);
 					$('.code_'+index).html(estimateTemplateActivity.schedule.code);
 					$('.summary_'+index).html(estimateTemplateActivity.schedule.summary);
 					$('.description_'+index).html(hint.replace(/@fulldescription@/g, estimateTemplateActivity.schedule.description));
 					$('.uom_'+index).html(estimateTemplateActivity.schedule.uom.uom);
-					if(estimateTemplateActivity.schedule.sorRate!=null)
+					if(estimateTemplateActivity.schedule.sorRate!=null) {
 						$('.rate_'+index).html(estimateTemplateActivity.schedule.sorRate);
-					else
+						$('#rate_'+index).val(estimateTemplateActivity.schedule.sorRate);
+						$('#sorRate_'+index).val(estimateTemplateActivity.schedule.sorRate);
+					}
+					else {
 						$('.rate_'+index).html(0);
+						$('#rate_'+index).val(0);
+						$('#sorRate_'+index).val(0);
+					}
 				}else{
 					$('#nonSorDesc_'+index).val(estimateTemplateActivity.nonSor.description);
 					$('#nonSorUom_'+index).val(estimateTemplateActivity.uom.id);

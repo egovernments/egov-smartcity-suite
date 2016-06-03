@@ -113,7 +113,7 @@ public class Activity extends AbstractAuditable {
     private double quantity;
 
     @Min(value = 0, message = "activity.servicetax.non.negative")
-    private double serviceTaxPerc;
+    private Double serviceTaxPerc;
 
     @Enumerated(EnumType.STRING)
     private RevisionType revisionType;
@@ -187,11 +187,11 @@ public class Activity extends AbstractAuditable {
         this.quantity = quantity;
     }
 
-    public double getServiceTaxPerc() {
+    public Double getServiceTaxPerc() {
         return serviceTaxPerc;
     }
 
-    public void setServiceTaxPerc(final double serviceTaxPerc) {
+    public void setServiceTaxPerc(final Double serviceTaxPerc) {
         this.serviceTaxPerc = serviceTaxPerc;
     }
 

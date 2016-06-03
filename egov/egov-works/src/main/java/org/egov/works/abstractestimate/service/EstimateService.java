@@ -53,6 +53,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
@@ -122,7 +123,6 @@ public class EstimateService {
     @Transactional
     public AbstractEstimate createAbstractEstimate(final AbstractEstimate abstractEstimate, final MultipartFile[] files)
             throws IOException {
-        abstractEstimate.setWard(boundaryService.getBoundaryByName(abstractEstimate.getWard().getName()));
         AbstractEstimate newAbstractEstimate = null;
         final AbstractEstimate abstractEstimateFromDB = getAbstractEstimateByEstimateNumber(abstractEstimate
                 .getEstimateNumber());
@@ -134,6 +134,9 @@ public class EstimateService {
             for (final OverheadValue obj : abstractEstimate.getOverheadValues()) {
                 obj.setAbstractEstimate(abstractEstimate);
                 obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
+            }
+            for(Activity act : abstractEstimate.getActivities()) {
+                act.setAbstractEstimate(abstractEstimate);
             }
             newAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
         } else

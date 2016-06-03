@@ -22,8 +22,10 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
+import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -50,7 +52,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/abstractestimate/create")
+@RequestMapping(value = "/abstractestimate")
 public class CreateAbstractEstimateController extends GenericWorkFlowController {
 
     @Autowired
@@ -107,7 +109,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
         final AbstractEstimate abstractEstimate = new AbstractEstimate();
         LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
@@ -139,7 +141,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
     }
 
-    @RequestMapping(value = "/newform",method = RequestMethod.POST)
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String saveAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) throws IOException {
