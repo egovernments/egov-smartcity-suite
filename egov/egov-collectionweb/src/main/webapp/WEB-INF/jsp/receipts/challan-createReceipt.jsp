@@ -51,10 +51,8 @@
 	#bankcodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
 </style>
 <script type="text/javascript">
-
 jQuery.noConflict();
 jQuery(document).ready(function() {
-  	 
      jQuery(" form ").submit(function( event ) {
     	 doLoadingMask();
     });
@@ -75,7 +73,37 @@ jQuery(document).ready(function() {
      	  }
      	  
       }).data('datepicker');
+     
+     var nowTemp = new Date();
+     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+      jQuery( "#challanDate").datepicker({ 
+     	 format: 'dd/mm/yyyy',
+     	 endDate: nowTemp, 
+     	 autoclose:true,
+         onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+       }).on('changeDate', function(ev) {
+     	  var string=jQuery(this).val();
+     	  if(!(string.indexOf("_") > -1)){
+     		  isDatepickerOpened=false; 
+     	  }
+       }).data('datepicker');
       
+      jQuery( "#receiptdate").datepicker({ 
+      	 format: 'dd/mm/yyyy',
+      	 endDate: nowTemp, 
+      	 autoclose:true,
+          onRender: function(date) {
+       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+       	  }
+        }).on('changeDate', function(ev) {
+      	  var string=jQuery(this).val();
+      	  if(!(string.indexOf("_") > -1)){
+      		  isDatepickerOpened=false; 
+      	  }
+        }).data('datepicker');
  });
 
 
@@ -496,6 +524,11 @@ function checkForCurrentDate(obj)
 
 function onBodyLoad()
 {
+	<s:if test="%{model.id!=null}">
+	if(document.getElementById('challanDate').value!=""){
+		document.getElementById("challanDate").disabled=true;
+	}
+    </s:if>
 	<s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
 		loadDropDownCodesBank();
 	
@@ -920,6 +953,10 @@ function validate()
 			validation=false;
 		}
 	}
+	if(document.getElementById("receiptdate")!=null && document.getElementById("receiptdate").value==""){
+		document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.error.receiptdate" />' + '<br>';
+		validation=false;
+	}
     
 	if(validation==false){
 		dom.get("challan_error_area").style.display="block";
@@ -1023,6 +1060,18 @@ function validate()
     		<div class="subheadnew">
     		<span class="subheadsmallnew"><s:text name="challan.receipt.title.createReceipt"/></span>
     		</div>
+    		</td>
+    	</tr>
+    	<tr>
+    		<div class="billhead2" align="center">
+         	<td  class="bluebox"><s:text name="viewReceipt.receiptdate" /><span class="mandatory"/>
+                  <s:date name="receiptdate" var="cdFormat" format="dd/MM/yyyy"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <s:textfield id="receiptdate" name="receiptdate" value="%{cdFormat}" data-inputmask="'mask': 'd/m/y'"/></td>
+                </div>            
+            </td>
+          </tr>
+    	<tr>
+    	<td>
       		<div class="subheadsmallnew"><s:text name="challan.receipt.payment.details"/>  
       		</div>
       	</td>

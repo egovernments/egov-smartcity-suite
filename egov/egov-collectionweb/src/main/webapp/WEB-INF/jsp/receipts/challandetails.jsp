@@ -48,7 +48,7 @@
 			        <td width="19%" class="bluebox"><s:text name="challan.date"/></td>
 			        <td width="22%" class="bluebox">
 			        	<s:date name="challan.challanDate" var="challanDateFormat" format="dd/MM/yyyy"/>
-			        	<s:textfield id="challanDate" name="challan.challanDate" value="%{challanDateFormat}"  readonly="true" /></td>
+			        	<s:textfield id="challanDate" name="challan.challanDate" value="%{challanDateFormat}" data-inputmask="'mask': 'd/m/y'"/></td>
 			        <td width="17%" class="bluebox"><s:text name="challan.validuptodate"/></td>
 			        <td width="33%" class="bluebox">
 			        	<s:date name="challan.validUpto" var="challanDateFormat" format="dd/MM/yyyy"/>
