@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.master.service.EstimateTemplateService;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleOfRateService;
@@ -53,7 +54,6 @@ import org.egov.works.models.estimate.EstimateTemplate;
 import org.egov.works.models.estimate.EstimateTemplateActivity;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
-import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -117,23 +117,15 @@ public class AjaxAbstractEstimateController {
     public @ResponseBody List<EstimateTemplateActivity> populateMilestoneTemplateActivity(@PathVariable final String id,
             final Model model)
             throws ApplicationException {
-        List<Long> sorIds = new ArrayList<Long>();
-        Map<Long, Double> sorIdRateMap = new HashMap<Long, Double>();
         List<EstimateTemplateActivity> activities = estimateTemplateService.getEstimateTemplateById(Long.valueOf(id))
                 .getEstimateTemplateActivities();
         for (EstimateTemplateActivity activity : activities) {
-            if (activity.getSchedule() != null)
-                sorIds.add(activity.getSchedule().getId());
-        }
-        List<SORRate> rates = scheduleOfRateService.getScheduleOfRatesByIds(sorIds);
-        for (SORRate rate : rates) {
-            if (sorIdRateMap.get(rate.getScheduleOfRate().getId()) == null) {
-                sorIdRateMap.put(rate.getScheduleOfRate().getId(), rate.getRate().getValue());
+            try {
+                if (activity.getSchedule() != null)
+                    activity.getSchedule().setSorRateValue(activity.getSchedule().getRateOn(new Date()).getRate().getValue());
+            } catch (final ApplicationRuntimeException e) {
+                activity.getSchedule().setSorRateValue((double) 0);
             }
-        }
-        for (EstimateTemplateActivity activity : activities) {
-            if (activity.getSchedule() != null)
-                activity.getSchedule().setSorRateValue(sorIdRateMap.get(activity.getSchedule().getId()));
         }
         return activities;
     }

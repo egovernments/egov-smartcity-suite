@@ -51,7 +51,6 @@ import javax.persistence.Query;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.master.repository.ScheduleOfRateRepository;
-import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,7 +134,4 @@ public class ScheduleOfRateService {
                 scheduleOfCategoryIds, new Date());
     }
 
-    public List<SORRate> getScheduleOfRatesByIds(final List<Long> ids) {
-        return scheduleOfRateRepository.findByIdsInOrderById(ids, new Date());
-    }
 }

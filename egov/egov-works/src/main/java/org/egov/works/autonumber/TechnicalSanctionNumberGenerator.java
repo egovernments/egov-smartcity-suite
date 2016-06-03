@@ -37,22 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.repository;
 
-import java.util.Date;
-import java.util.List;
+package org.egov.works.autonumber;
 
-import org.egov.works.models.masters.ScheduleOfRate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.springframework.stereotype.Service;
 
-@Repository
-public interface ScheduleOfRateRepository extends JpaRepository<ScheduleOfRate, Long> {
-
-    @Query("from ScheduleOfRate as sch inner join fetch sch.sorRates as rates inner join fetch sch.uom as uom where (upper(sch.code) like concat ('%', :code, '%') or upper(sch.description) like concat ('%', :code, '%')) and sch.scheduleCategory.id in :ids  and  ((:currentDate between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:currentDate and rates.validity.endDate is null)) order by sch.code")
-    List<ScheduleOfRate> findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(@Param("code") final String code,
-            @Param("ids") final List<Long> ids, @Param("currentDate") final Date currentDate);
+@Service
+public interface TechnicalSanctionNumberGenerator {
+    public String getNextNumber(AbstractEstimate abstractEstimate);
 
 }

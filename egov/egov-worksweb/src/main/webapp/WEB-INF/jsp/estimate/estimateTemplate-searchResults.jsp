@@ -116,8 +116,10 @@
 	          	                                      
 	   </display:table> 
 	    <s:if test="%{sourcePage.equals('searchForEstimate')}">
-	    	<input type="button" class="buttonadd" value="Add Template" id="addButton" name="selectTemplateButton" onclick="selectTemplate()" align="center" />
-			<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+	    	<div id="buttons" class="buttonbottom">
+		    	<input type="button" class="buttonadd" value="Add Template" id="addButton" name="selectTemplateButton" onclick="selectTemplate()" align="center" />
+				<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+			</div>
 	     </s:if>
 	 </s:if> 
 	 <s:elseif test="%{searchResult.fullListSize == 0}">

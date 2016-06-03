@@ -37,22 +37,51 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.master.repository;
 
+package org.egov.works.autonumber.impl;
+
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import org.egov.works.models.masters.ScheduleOfRate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.FinancialYearService;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.autonumber.TechnicalSanctionNumberGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
-@Repository
-public interface ScheduleOfRateRepository extends JpaRepository<ScheduleOfRate, Long> {
+@Service
+public class TechnicalSanctionNumberGeneratorImpl implements TechnicalSanctionNumberGenerator {
 
-    @Query("from ScheduleOfRate as sch inner join fetch sch.sorRates as rates inner join fetch sch.uom as uom where (upper(sch.code) like concat ('%', :code, '%') or upper(sch.description) like concat ('%', :code, '%')) and sch.scheduleCategory.id in :ids  and  ((:currentDate between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:currentDate and rates.validity.endDate is null)) order by sch.code")
-    List<ScheduleOfRate> findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(@Param("code") final String code,
-            @Param("ids") final List<Long> ids, @Param("currentDate") final Date currentDate);
+    @Autowired
+    @Qualifier("financialYearService")
+    private FinancialYearService financialYearService;
 
+    @Autowired
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+
+    /**
+     * 
+     * Format TS/seqnumber/month/financialyear but sequence is running number for a year
+     *
+     */
+    public String getNextNumber(AbstractEstimate abstractEstimate) {
+
+        CFinancialYear fy = financialYearService.getCurrentFinancialYear();
+
+        Date currnetDate = new Date();
+
+        String technicalSanctionNumber = "";
+
+        String sequenceName = "seq_estimate_technicalsanctionnumber_" + fy.getFinYearRange();
+
+        Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+
+        technicalSanctionNumber = String.format("%s/%05d/%02d/%s", "TS", nextSequence, currnetDate.getMonth() + 1,
+                fy.getFinYearRange());
+
+        return technicalSanctionNumber;
+    }
 }
