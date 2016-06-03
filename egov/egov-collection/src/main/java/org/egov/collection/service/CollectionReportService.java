@@ -130,7 +130,7 @@ public class CollectionReportService {
     }
 
     public CollectionSummaryReportResult getCollectionSummaryReport(final Date fromDate, final Date toDate,
-            final String paymentMode, final String source, final Long serviceId) {
+            final String paymentMode, final String source, final Long serviceId, final int status) {
         final SimpleDateFormat fromDateFormatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
         final SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
         final StringBuilder defaultQueryStr = new StringBuilder(500);
@@ -195,6 +195,11 @@ public class CollectionReportService {
         if (serviceId != null && serviceId != -1) {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.SERVICEDETAILS =:serviceId");
             onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.SERVICEDETAILS =:serviceId");
+        }
+        
+        if (status != -1 ) {
+            queryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
+            onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
         }
 
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
@@ -262,6 +267,11 @@ public class CollectionReportService {
             query.setLong("serviceId", serviceId);
             aggrQuery.setLong("serviceId", serviceId);
         }
+        if (status != -1 ) {
+            query.setLong("searchStatus", status);
+            aggrQuery.setLong("searchStatus", status);
+        }
+      
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL))
             if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
                 query.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
