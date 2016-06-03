@@ -1053,7 +1053,6 @@ function validate()
 		<%@ include file='challandetails.jsp'%>
 		</td>
 		</tr>
-		<s:if test="%{!hasErrors()}" >
 		<div>
  		<tr>
     	<td>
@@ -1266,7 +1265,6 @@ function validate()
 			</table> <!-- End of mode of payments table -->
      </td></tr>
      </div>
-     </s:if>
 </table> <!--  main table ends -->
 <s:if test="%{!hasErrors()}" >
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
