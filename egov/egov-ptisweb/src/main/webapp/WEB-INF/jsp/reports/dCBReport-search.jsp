@@ -112,6 +112,7 @@
                              <th rowspan="2">Name</th>
                              <th rowspan="2">Door No</th>
 							 <th rowspan="2">Owner Name</th>
+							 <th rowspan="2">Assessment Count</th>
                              <th colspan="7">Demand</th>
                              <th colspan="7">Collection</th>
                              <th colspan="5">Balance</th>
@@ -166,6 +167,7 @@
 						 <tfoot id="report-footer">
 							<tr>
 								<td>Total</td>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>
