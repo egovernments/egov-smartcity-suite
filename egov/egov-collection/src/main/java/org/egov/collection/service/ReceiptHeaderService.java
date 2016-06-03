@@ -132,7 +132,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @return List of all receipts created by given user from given counter id and having given status
      */
     public List<ReceiptHeader> findAllByPositionAndInboxItemDetails(final Long positionId, final String groupingCriteria) {
-        final StringBuilder query = new StringBuilder("from org.egov.collection.entity.ReceiptHeader where 1=1");
+        final StringBuilder query = new StringBuilder("from org.egov.collection.entity.ReceiptHeader where 1=1 and state.value != 'END' and state.status != 2");
         String wfAction = null, serviceCode = null, userName = null, receiptDate = null, receiptType = null;
         Integer counterId = null;
         final String params[] = groupingCriteria.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
