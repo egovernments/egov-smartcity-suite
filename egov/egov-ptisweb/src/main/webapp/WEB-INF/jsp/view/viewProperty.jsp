@@ -420,8 +420,7 @@
 <table class="table-fixed">
 	<tr class="floordetails">
 		<td colspan="5" width="5%">
-			<div class="overflow-x-scroll"
-				style="font-size: 19px; font-family: regular;">
+		    <div class="headingsmallbg" style="font-size: 19px; font-family: regular;">
 				<span><s:text name="FloorDetailsHeader" /> </span>
 			</div>
 		</td>
@@ -429,7 +428,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div class="overflow-x-scroll">
 				<%@ include file="../common/FloorView.jsp"%>
 			</div>
 		</td>

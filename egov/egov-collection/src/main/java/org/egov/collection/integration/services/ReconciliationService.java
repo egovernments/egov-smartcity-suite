@@ -54,7 +54,6 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,8 +62,6 @@ public class ReconciliationService {
     private static final Logger LOGGER = Logger.getLogger(ReconciliationService.class);
     public ReceiptHeaderService receiptHeaderService;
     private CollectionsUtil collectionsUtil;
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private CollectionCommon collectionCommon;
@@ -137,10 +134,10 @@ public class ReconciliationService {
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
         EgwStatus paymentStatus;
         if (CollectionConstants.AXIS_ABORTED_STATUS_CODE.equals(paymentResponse.getAuthStatus()))
-            paymentStatus = egwStatusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+            paymentStatus = collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_ABORTED);
         else
-            paymentStatus = egwStatusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+            paymentStatus = collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
         receiptHeader.getOnlinePayment().setStatus(paymentStatus);
         receiptHeader.getOnlinePayment().setAuthorisationStatusCode(paymentResponse.getAuthStatus());

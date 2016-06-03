@@ -48,12 +48,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 
-@Repository 
-public interface UnitOfMeasurementRepository extends JpaRepository<UnitOfMeasurement,Long> {
+@Repository
+public interface UnitOfMeasurementRepository extends JpaRepository<UnitOfMeasurement, Long> {
 
-UnitOfMeasurement findByNameIgnoreCase(String name);
+    UnitOfMeasurement findByNameIgnoreCase(String name);
 
-UnitOfMeasurement findByCodeIgnoreCase(String code);
+    UnitOfMeasurement findByCodeIgnoreCase(String code);
 
-List<UnitOfMeasurement> findAllByActiveTrue();
+    List<UnitOfMeasurement> findAllByActiveTrue();
 }

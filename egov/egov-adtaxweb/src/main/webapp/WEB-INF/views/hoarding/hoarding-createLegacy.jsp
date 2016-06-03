@@ -87,7 +87,7 @@ $('#submit').click(function(e){
 				bootbox.alert('Please enter valid measurement');
 				e.preventDefault();
 			}else 
-				document.forms['hoardingform'].submit();
+				return true;
 	}
 	else 
 		return false;

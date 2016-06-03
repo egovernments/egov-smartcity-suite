@@ -148,7 +148,7 @@ public class CommonAjaxAction extends BaseFormAction {
             returnStream = result.toString();
         } catch (final Exception e) {
             LOGGER.error("populateLocations() - Error while loading locations." + e.getMessage());
-            addFieldError(CommonAjaxAction.LOCATION, "Unable to load location information");
+            addFieldError(LOCATION, "Unable to load location information");
             throw new ApplicationRuntimeException("Unable to load location information", e);
         }
         return "AJAX_RESULT";
@@ -164,10 +164,10 @@ public class CommonAjaxAction extends BaseFormAction {
             streetList = boundaryService.getChildBoundariesByBoundaryId(Long.valueOf(locationId));
         } catch (final Exception e) {
             LOGGER.error("populateStreets() - Error while loading streets.", e);
-            addFieldError(CommonAjaxAction.LOCATION, "Unable to load street information");
+            addFieldError(LOCATION, "Unable to load street information");
             throw new ApplicationRuntimeException("Unable to load street information", e);
         }
-        return CommonAjaxAction.STREETS;
+        return STREETS;
     }
 
     /**
@@ -184,7 +184,7 @@ public class CommonAjaxAction extends BaseFormAction {
                 divisionList = boundaryService.getChildBoundariesByBoundaryId(Long.valueOf(zoneId));
         } catch (final Exception e) {
             LOGGER.error("populateDivisions() - Error while loading divisions ." + e.getMessage());
-            addFieldError(CommonAjaxAction.LOCATION, "Unable to load division information");
+            addFieldError(LOCATION, "Unable to load division information");
             throw new ApplicationRuntimeException("Unable to load division information", e);
         }
         return "ward";
@@ -198,7 +198,7 @@ public class CommonAjaxAction extends BaseFormAction {
                     new Date());
         } catch (final Exception e) {
             LOGGER.error("populateDesignationsByDept() - Error while loading divisions ." + e.getMessage());
-            addFieldError(CommonAjaxAction.LOCATION, "Unable to load Designation information");
+            addFieldError(LOCATION, "Unable to load Designation information");
             throw new ApplicationRuntimeException("Unable to load Designation information", e);
         }
         return "designation";
@@ -211,7 +211,7 @@ public class CommonAjaxAction extends BaseFormAction {
             allActiveUsersByGivenDesg = eisCommonService.getAllActiveUsersByGivenDesig(Long.valueOf(designationId));
         } catch (final Exception e) {
             LOGGER.error("populateUsersByDept() - Error while loading divisions ." + e.getMessage());
-            addFieldError(CommonAjaxAction.LOCATION, "Unable to load User information");
+            addFieldError(LOCATION, "Unable to load User information");
             throw new ApplicationRuntimeException("Unable to load User information", e);
         }
         return "users";
@@ -356,7 +356,7 @@ public class CommonAjaxAction extends BaseFormAction {
     }
 
     public static String getAREA() {
-        return CommonAjaxAction.AREA;
+        return AREA;
     }
 
     public Integer getDesignationId() {

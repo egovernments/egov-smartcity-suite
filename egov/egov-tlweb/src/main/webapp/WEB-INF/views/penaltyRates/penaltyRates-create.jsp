@@ -117,13 +117,7 @@ function checkValue(obj){
 		getControlInBranch(tbl.rows[rowobj.rowIndex],'toRange').value="";
 		return false;
 	} 
-  	var lastRow = (tbl.rows.length)-1;
-    var curRow=rowobj.rowIndex; 
-    if(curRow!=lastRow){
-		var uomFromVal1=getControlInBranch(tbl.rows[rowobj.rowIndex+1],'fromRange').value;
-		if(uomToval!=uomFromVal1)
-			getControlInBranch(tbl.rows[rowobj.rowIndex+1],'fromRange').value=uomToval; 
-    }
+	$(obj).closest('tr').next('tr').find('td:eq(0) input').val(toRange);
 }
 
 function deleteThisRow(obj){
@@ -173,6 +167,12 @@ function validateDetailsBeforeSubmit(){
     	rate=getControlInBranch(tbl.rows[i],'rate').value;
     	if(fromRange!='' && toRange!='' && (eval(fromRange)>=eval(toRange))){
     		bootbox.alert("\"To Range\" should be greater than \"From Range\" for row "+(i)+".");
+    		getControlInBranch(tbl.rows[i],'toRange').value="";
+    		getControlInBranch(tbl.rows[i],'toRange').focus();
+    		return false;
+    	}
+    	if(!toRange){
+    		bootbox.alert("Please enter \"To(days)\" for row "+(i)+".");
     		getControlInBranch(tbl.rows[i],'toRange').value="";
     		getControlInBranch(tbl.rows[i],'toRange').focus();
     		return false;

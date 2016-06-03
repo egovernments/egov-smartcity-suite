@@ -80,6 +80,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     protected EisCommonService eisCommonService;
     protected WorkflowService<Budget> budgetWorkflowService;
     @Autowired
+    @Qualifier("workflowService")
     protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
     
     @Autowired

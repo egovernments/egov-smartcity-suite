@@ -121,4 +121,17 @@ public class Position extends AbstractAuditable {
         this.deptDesig = deptDesig;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Position)) return false;
+        Position position = (Position) o;
+        return this.getName().equals(position.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * this.getName().hashCode();
+    }
+
 }

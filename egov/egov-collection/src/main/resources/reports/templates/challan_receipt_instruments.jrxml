@@ -38,10 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-07-08T11:37:34 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_instruments" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="948110f3-41ac-4ba1-9f7a-eed757f02e3a">
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-06-02T11:33:48 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_instruments" language="groovy" pageWidth="546" pageHeight="802" columnWidth="546" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="948110f3-41ac-4ba1-9f7a-eed757f02e3a">
 	<import value="org.egov.collection.constants.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<parameter name="TOTAL_AMOUNT" class="java.math.BigDecimal">
@@ -74,7 +73,7 @@
 	<detail>
 		<band height="15" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="15" isRemoveLineWhenBlank="true" uuid="1a01a4d1-af9b-4059-a019-7233a6d60473"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="546" height="15" isRemoveLineWhenBlank="true" uuid="1a01a4d1-af9b-4059-a019-7233a6d60473"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -83,7 +82,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CASH ? "Received a sum of Rs. " + ($P{TOTAL_AMOUNT}.setScale(2, BigDecimal.ROUND_UP)) + " (" + ReportUtil.amountInWords($F{instrumentAmount}) + ") through cash" :
 $F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque No " + $F{instrumentNumber} + " Drawn on " +  $F{bankName} + ", " + $V{branchname}+ " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) +"\nCheque payments are subject to realisation.":

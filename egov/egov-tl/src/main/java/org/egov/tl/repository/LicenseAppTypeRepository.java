@@ -49,8 +49,6 @@ import java.util.List;
 @Repository
 public interface LicenseAppTypeRepository extends JpaRepository<LicenseAppType, Long> {
 
-    LicenseAppType findByName(String name);
-
     @Override
     List<LicenseAppType> findAll();
 }

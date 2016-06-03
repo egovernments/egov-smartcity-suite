@@ -38,10 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-02-02T17:00:26 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="challan_receipt" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e4312988-b816-4aef-b2b1-6b6b0e6a9351">
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-06-02T12:28:07 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="challan_receipt" language="groovy" pageWidth="546" pageHeight="802" columnWidth="546" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e4312988-b816-4aef-b2b1-6b6b0e6a9351">
 	<import value="org.egov.collection.constants.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -105,7 +104,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Challan No:]]></text>
 			</staticText>
@@ -119,7 +118,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{challanNumber}]]></textFieldExpression>
 			</textField>
@@ -133,12 +132,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Challan Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy">
-				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="180" height="15" uuid="b7c8f4b0-7940-4397-a871-351530eb16df"/>
+				<reportElement stretchType="RelativeToTallestObject" x="375" y="0" width="171" height="15" uuid="b7c8f4b0-7940-4397-a871-351530eb16df"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -147,12 +146,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" isUnderline="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" isUnderline="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{challanDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="15" width="175" height="15" uuid="62555b96-2707-4b8c-9a52-6962ad9ae03f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="15" width="175" height="15" uuid="62546b96-2707-4b8c-9a52-6962ad9ae03f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -161,7 +160,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{payeeName}]]></textFieldExpression>
 			</textField>
@@ -175,7 +174,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Payee Name:]]></text>
 			</staticText>
@@ -189,12 +188,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Department:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="375" y="15" width="180" height="15" uuid="4f7befa4-255e-45d4-81cb-2c1c55d6863f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="375" y="15" width="171" height="15" uuid="4f7befa4-255e-45d4-81cb-2c1c55d6863f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -203,7 +202,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{receiptMisc}.department.name]]></textFieldExpression>
 			</textField>
@@ -220,12 +219,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Payee Address:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15" uuid="a47dabf0-9c82-4443-bd7f-df62f96b859c"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="446" height="15" uuid="a47dabf0-9c82-4443-bd7f-df62f96b859c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -234,7 +233,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{payeeAddress}]]></textFieldExpression>
 			</textField>
@@ -250,12 +249,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Narration:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15" uuid="53c527cf-c5bd-4d68-8df9-976ed706d517"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="446" height="15" uuid="53c527cf-c5bd-4d68-8df9-976ed706d517"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -264,7 +263,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="false" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
@@ -283,7 +282,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Details of the receipt:]]></text>
 			</staticText>
@@ -294,12 +293,12 @@
 				</reportElement>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Service Name:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="0" width="355" height="15" uuid="da75dfd7-2346-4508-ab7a-2a2f22920e0f">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="0" width="346" height="15" uuid="da75dfd7-2346-4508-ab7a-2a2f22920e0f">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -310,7 +309,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{serviceName}]]></textFieldExpression>
 			</textField>
@@ -329,12 +328,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Link Reference No:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15" uuid="f07e3ea7-0ae8-4318-bb90-67517462ef5b">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="446" height="15" uuid="f07e3ea7-0ae8-4318-bb90-67517462ef5b">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -345,7 +344,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{challanVoucherNum}]]></textFieldExpression>
 			</textField>
@@ -363,12 +362,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Receipt amount (Rs):]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15" uuid="370460c9-09a2-4eba-baf3-95c03ec07df2">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="446" height="15" uuid="370460c9-09a2-4eba-baf3-95c03ec07df2">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -379,7 +378,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{totalAmount}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
 			</textField>
@@ -399,12 +398,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Amount in words :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="455" height="15" uuid="ae7c2395-292f-4216-8441-721662a83b5d">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="446" height="15" uuid="ae7c2395-292f-4216-8441-721662a83b5d">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -415,7 +414,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
+					<font fontName="Times New Roman" size="10" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[ReportUtil.amountInWords($F{totalAmount})]]></textFieldExpression>
 			</textField>

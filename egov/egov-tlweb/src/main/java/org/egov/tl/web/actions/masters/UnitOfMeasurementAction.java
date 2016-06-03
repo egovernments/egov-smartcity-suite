@@ -64,9 +64,6 @@ import java.util.TreeMap;
     @Result(name = UnitOfMeasurementAction.EDIT, location = "unitOfMeasurement-edit.jsp") })
 public class UnitOfMeasurementAction extends BaseFormAction {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -5616536912073613646L;
     private UnitOfMeasurement unitOfMeasurement = new UnitOfMeasurement();
     private Long id;
@@ -79,31 +76,22 @@ public class UnitOfMeasurementAction extends BaseFormAction {
     private UnitOfMeasurementService unitOfMeasurementService;
 
     private static final Logger LOGGER = Logger.getLogger(UnitOfMeasurementAction.class);
-
-    // UI field
     private String userMode;
-    // used to persist active field in modify case
     private boolean uomActive;
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
         return unitOfMeasurement;
     }
 
     @Override
     public void prepare() {
-        // In Modify and View Mode Load UOM dropdown.
         if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
             setLicenseUomMap(getFormattedUOMMap(unitOfMeasurementService.findAll()));
         if (getId() != null)
             unitOfMeasurement = unitOfMeasurementService.findById(getId());
     }
 
-    /**
-     * @param unitOfMeasurementList
-     * @return
-     */
     public static Map<Long, String> getFormattedUOMMap(final List<UnitOfMeasurement> unitOfMeasurementList) {
         final Map<Long, String> uomMap = new TreeMap<Long, String>();
         for (final UnitOfMeasurement uom : unitOfMeasurementList)
@@ -112,11 +100,6 @@ public class UnitOfMeasurementAction extends BaseFormAction {
         return uomMap;
     }
 
-    /**
-     * This method is invoked to create a new form.
-     *
-     * @return a <code>String</code> representing the value 'NEW'
-     */
     @Action(value = "/masters/unitOfMeasurement-newform")
     public String newform() {
         if (userMode != null && !userMode.isEmpty()) {
@@ -130,11 +113,6 @@ public class UnitOfMeasurementAction extends BaseFormAction {
         return NEW;
     }
 
-    /**
-     * This method is invoked to Edit a form.
-     *
-     * @return a <code>String</code> representing the value 'SEARCH'
-     */
     @Action(value = "/masters/unitOfMeasurement-edit")
     public String edit() {
         if (userMode.equalsIgnoreCase(EDIT))
@@ -144,11 +122,6 @@ public class UnitOfMeasurementAction extends BaseFormAction {
         return SEARCH;
     }
 
-    /**
-     * @return
-     * @throws NumberFormatException
-     * @throws ApplicationException
-     */
     @ValidationErrorPage(value = EDIT)
     @Action(value = "/masters/unitOfMeasurement-save")
     public String save() throws NumberFormatException, ApplicationException {

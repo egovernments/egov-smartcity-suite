@@ -40,7 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 	<s:if test="modifyRsn=='AMALG'">
 		<tr>
 			<td class="bluebox2">
@@ -282,9 +282,8 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div class="overflow-x-scroll">
 				<%@ include file="../common/FloorView.jsp"%>
-				<br/>
 			</div>
 		</td>
 	</tr>

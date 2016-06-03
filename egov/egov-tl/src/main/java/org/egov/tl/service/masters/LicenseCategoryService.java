@@ -60,20 +60,10 @@ public class LicenseCategoryService {
         return licenseCategoryRepository.save(licenseCategory);
     }
 
-    /**
-     * @Description returns category object that matches param name
-     * @param name
-     * @return
-     */
     public LicenseCategory findCategoryByName(final String name) {
         return licenseCategoryRepository.findByNameIgnoreCase(name);
     }
 
-    /**
-     * @Description returns category object that matches param code
-     * @param code
-     * @return
-     */
     public LicenseCategory findCategoryByCode(final String code) {
         return licenseCategoryRepository.findByCodeIgnoreCase(code);
     }

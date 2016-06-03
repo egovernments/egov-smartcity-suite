@@ -211,6 +211,7 @@ loadFinAccSuccessHandler=function(req,res){
               
         }
 		 document.getElementById('totalcramount').value=totalcramt;
+		 updatetotalAmount();
     }
  loadFinAccFailureHandler=function(){
   bootbox.alert('unable to load Function');

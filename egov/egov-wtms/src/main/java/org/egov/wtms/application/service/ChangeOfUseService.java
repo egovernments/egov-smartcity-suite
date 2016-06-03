@@ -126,7 +126,7 @@ public class ChangeOfUseService {
                             parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "changeOfUsage" }, null);
 
             if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
-                final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
+                final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getCurrentDue(parentWaterConnectionDetail);
                 if (waterTaxDueforParent.doubleValue() > 0)
                     if (validationMessage.equalsIgnoreCase(""))
                         validationMessage = messageSource

@@ -52,6 +52,8 @@ public interface ApplicationSearchRepository extends JpaRepository<ApplicationIn
 
     @Query("select distinct ct.moduleName from ApplicationIndex ct order by ct.moduleName asc")
     List<ApplicationIndex> findApplicationIndexModules();
+    @Query("select distinct ct.channel from ApplicationIndex ct where ct.channel !=''  order by ct.channel asc")
+    List<ApplicationIndex> getSourceList();
 
     @Query("select distinct ct.applicationType from ApplicationIndex ct where ct.moduleName=:moduleName order by ct.applicationType asc")
     List<ApplicationIndex> findAllApplicationTypes(@Param("moduleName") String moduleName);

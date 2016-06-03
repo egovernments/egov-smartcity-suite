@@ -68,38 +68,63 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="274">
+		<band height="225">
 			<subreport>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="595" height="274" isRemoveLineWhenBlank="true" uuid="3c0c1d3f-fb6f-492f-9fac-8e58a81c4b4c"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="595" height="225" isRemoveLineWhenBlank="true" uuid="3c0c1d3f-fb6f-492f-9fac-8e58a81c4b4c"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="EGOV_COPY">
+					<subreportParameterExpression><![CDATA["Original Copy"]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_challan_single.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="274">
+		<band height="225">
 			<subreport>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="595" height="274" isRemoveLineWhenBlank="true" uuid="8d69aab0-0e60-4117-a31c-35e0021ed3d1"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="595" height="225" isRemoveLineWhenBlank="true" uuid="8d69aab0-0e60-4117-a31c-35e0021ed3d1"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="EGOV_COPY">
+					<subreportParameterExpression><![CDATA["Duplicate Copy"]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_challan_single.jasper")]]></subreportExpression>
 			</subreport>
+			<frame>
+				<reportElement x="0" y="0" width="595" height="2" uuid="e90d9345-c385-4d59-9dd7-0811cfb4d6d0">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dashed"/>
+				</box>
+			</frame>
 		</band>
-		<band height="274">
+		<band height="225">
 			<subreport>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="595" height="274" isRemoveLineWhenBlank="true" uuid="5d5b6b32-d0ae-4ff6-b6f9-43569cb30e03"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="595" height="225" isRemoveLineWhenBlank="true" uuid="5d5b6b32-d0ae-4ff6-b6f9-43569cb30e03"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="EGOV_COMMON">
 					<subreportParameterExpression><![CDATA[$P{EGOV_COMMON}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="EGOV_COPY">
+					<subreportParameterExpression><![CDATA["Triplicate Copy"]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{REPORT_DATA_SOURCE}.getData(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_challan_single.jasper")]]></subreportExpression>
 			</subreport>
+			<frame>
+				<reportElement x="0" y="0" width="595" height="2" uuid="e90d9345-c385-4d59-9dd7-0811cfb4d6d0">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dashed"/>
+				</box>
+			</frame>
 		</band>
 	</detail>
 </jasperReport>

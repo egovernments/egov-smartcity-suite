@@ -220,7 +220,7 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
                 if (function == null || function.getId() == null)
                     throw new ValidationException(EMPTY_STRING, "Function Code is not defined in the system");
 
-                qryStr.append("from BudgetGroup bg where  bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.function=:functionId ) order by bg.name");
+                qryStr.append("from BudgetGroup bg where  bg in ( select distinct bd.budgetGroup from BudgetDetail bd  where bd.function=:functionId ) order by bg.name");
             }
             session = getCurrentSession();
             final Query qry = session.createQuery(qryStr.toString());

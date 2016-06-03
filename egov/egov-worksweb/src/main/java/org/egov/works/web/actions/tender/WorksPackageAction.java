@@ -74,6 +74,7 @@ import org.egov.works.utils.DateConversionUtil;
 import org.egov.works.utils.WorksConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -121,6 +122,7 @@ public class WorksPackageAction extends GenericWorkFlowAction {
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<AbstractEstimate> worksPackageWorkflowService;
 
     public WorksPackageAction() {

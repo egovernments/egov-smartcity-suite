@@ -49,9 +49,6 @@ import org.springframework.stereotype.Repository;
 @Repository 
 public interface FeeTypeRepository extends JpaRepository<FeeType,Long> {
 
-public FeeType findByName(String name);
+    FeeType findByName(String name);
 
-public FeeType findByCode(String code);
-
-//public List<FeeType> findAllActive();
 }

@@ -59,46 +59,41 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+//Not Threadsafe
 public class LicenseReportService {
     @Autowired
-@Qualifier("persistenceService")
+    @Qualifier("persistenceService")
     protected PersistenceService persistenceService;
     protected List<Map<String, Object>> licenseList = new ArrayList<Map<String, Object>>();
     protected EgovPaginatedList paginateList;
     protected Integer pageNum = 1;
     protected Integer pageSize = Constants.PAGE_SIZE;
     protected List pageList = new ArrayList();
-    protected Map<String, Object> hashMap = null;
+    protected Map<String, Object> hashMap;
     @Autowired
     protected InstallmentHibDao installmentDao;
     protected String query;
 
-    public EgovPaginatedList getZoneWiseReportList(final String pageNo, final String moduleName, final String licenseType) {
-        final Installment currentInstallment = getCurrentInstallment(moduleName);
+    public EgovPaginatedList getZoneWiseReportList(String pageNo, String moduleName, String licenseType) {
+        Installment currentInstallment = getCurrentInstallment(moduleName);
         return populateZoneWiseReport(pageNo, licenseType, currentInstallment);
     }
 
-    public EgovPaginatedList getZoneWiseReportList(final String pageNo, final String moduleName, final String licenseType,
-            final Installment installment) {
-        return populateZoneWiseReport(pageNo, licenseType, installment);
-    }
-
-    private EgovPaginatedList populateZoneWiseReport(final String pageNo,
-            final String licenseType, final Installment installment) {
+    private EgovPaginatedList populateZoneWiseReport(String pageNo, String licenseType, Installment installment) {
         query = constructQuery(Constants.ZONE, null, licenseType, installment).toString();
-        final Query hibQuery = persistenceService.getSession().createSQLQuery(query);
+        Query hibQuery = persistenceService.getSession().createSQLQuery(query);
         if (pageNo == null)
             pageNum = 1;
         else
             pageNum = Integer.valueOf(pageNo);
-        final Integer fullSize = hibQuery.list().size();
-        final Page page = new Page(hibQuery, pageNum, pageSize);
+        Integer fullSize = hibQuery.list().size();
+        Page page = new Page(hibQuery, pageNum, pageSize);
         Object[] objects;
 
         pageList = page.getList();
         paginateList = new EgovPaginatedList(page, fullSize);
         if (pageList != null) {
-            final Iterator iterator = pageList.iterator();
+            Iterator iterator = pageList.iterator();
             while (iterator.hasNext()) {
                 objects = (Object[]) iterator.next();
                 hashMap = new HashMap<String, Object>();
@@ -125,35 +120,27 @@ public class LicenseReportService {
         return paginateList;
     }
 
-    public EgovPaginatedList getWardWiseReportList(final Integer zoneId, final String pageNo, final String moduleName,
-            final String licenseType) {
-        final Installment currentInstallment = getCurrentInstallment(moduleName);
+    public EgovPaginatedList getWardWiseReportList(Integer zoneId, String pageNo, String moduleName, String licenseType) {
+        Installment currentInstallment = getCurrentInstallment(moduleName);
         return populateZoneWiseReport(zoneId, pageNo, licenseType,
                 currentInstallment);
     }
 
-    public EgovPaginatedList getWardWiseReportList(final Integer zoneId, final String pageNo, final String moduleName,
-            final String licenseType, final Installment installment) {
-        return populateZoneWiseReport(zoneId, pageNo, licenseType,
-                installment);
-    }
-
-    private EgovPaginatedList populateZoneWiseReport(final Integer zoneId,
-            final String pageNo, final String licenseType, final Installment installment) {
+    private EgovPaginatedList populateZoneWiseReport(Integer zoneId, String pageNo, String licenseType, Installment installment) {
         query = constructQuery(Constants.DIVISION, zoneId, licenseType, installment).toString();
-        final Query hibQuery = persistenceService.getSession().createSQLQuery(query);
+        Query hibQuery = persistenceService.getSession().createSQLQuery(query);
         if (pageNo == null)
             pageNum = 1;
         else
             pageNum = Integer.valueOf(pageNo);
-        final Integer fullSize = hibQuery.list().size();
-        final Page page = new Page(hibQuery, pageNum, pageSize);
+        Integer fullSize = hibQuery.list().size();
+        Page page = new Page(hibQuery, pageNum, pageSize);
         Object[] objects;
 
         pageList = page.getList();
         paginateList = new EgovPaginatedList(page, fullSize);
         if (pageList != null) {
-            final Iterator iterator = pageList.iterator();
+            Iterator iterator = pageList.iterator();
             while (iterator.hasNext()) {
                 objects = (Object[]) iterator.next();
                 hashMap = new HashMap<String, Object>();
@@ -180,9 +167,9 @@ public class LicenseReportService {
         return paginateList;
     }
 
-    private StringBuilder constructQuery(final String boundaryType, final Integer id, final String licenseType,
-            final Installment currentInstallment) {
-        final StringBuilder query = new StringBuilder(
+    private StringBuilder constructQuery(String boundaryType, Integer id, String licenseType,
+                                         Installment currentInstallment) {
+        StringBuilder query = new StringBuilder(
                 " select NVL(act, 0) AS act, NVL(can, 0) AS can, NVL(obj, 0) AS obj, NVL(ren, 0) AS ren, NVL(totalamount, 0) AS totalamount,egb.id_bndry bb , egb.name from ")
                 .append
                 (" (select boundary.id_bndry, boundary.name from eg_boundary boundary , eg_boundary_type boundarytype ").append
@@ -235,35 +222,29 @@ public class LicenseReportService {
 
     }
 
-    public EgovPaginatedList getTradeWiseReportList(final String pageNo, final String moduleName, final String licenseType,
-            final String type) {
-        final Installment currentInstallment = getCurrentInstallment(moduleName);
+    public EgovPaginatedList getTradeWiseReportList(String pageNo, String moduleName, String licenseType,
+                                                    String type) {
+        Installment currentInstallment = getCurrentInstallment(moduleName);
         return populateTradeWiseReport(pageNo, moduleName, licenseType, type,
                 currentInstallment);
     }
 
-    public EgovPaginatedList getTradeWiseReportList(final String pageNo, final String moduleName, final String licenseType,
-            final String type, final Installment installment) {
-        return populateTradeWiseReport(pageNo, moduleName, licenseType, type,
-                installment);
-    }
-
-    private EgovPaginatedList populateTradeWiseReport(final String pageNo, final String moduleName,
-            final String licenseType, final String type, final Installment installment) {
+    private EgovPaginatedList populateTradeWiseReport(String pageNo, String moduleName,
+                                                      String licenseType, String type, Installment installment) {
         query = constructQueryForTradeList(moduleName, licenseType, installment, type).toString();
-        final Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
+        Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
         if (pageNo == null)
             pageNum = 1;
         else
             pageNum = Integer.valueOf(pageNo);
-        final Integer fullSize = hibQuery.list().size();
-        final Page page = new Page(hibQuery, pageNum, pageSize);
+        Integer fullSize = hibQuery.list().size();
+        Page page = new Page(hibQuery, pageNum, pageSize);
         Object[] objects;
 
         pageList = page.getList();
         paginateList = new EgovPaginatedList(page, fullSize);
         if (pageList != null) {
-            final Iterator iterator = pageList.iterator();
+            Iterator iterator = pageList.iterator();
             while (iterator.hasNext()) {
                 objects = (Object[]) iterator.next();
                 hashMap = new HashMap<String, Object>();
@@ -289,9 +270,9 @@ public class LicenseReportService {
         return paginateList;
     }
 
-    private StringBuilder constructQueryForTradeList(final String moduleName, final String licenseType,
-            final Installment currentInstallment, final String type) {
-        final StringBuilder query = new StringBuilder
+    private StringBuilder constructQueryForTradeList(String moduleName, String licenseType,
+                                                     Installment currentInstallment, String type) {
+        StringBuilder query = new StringBuilder
                 (
                         " select NVL(act, 0) AS act, NVL(can, 0) AS can, NVL(obj, 0) AS obj,NVL(ren, 0) AS ren, NVL(totalamount, 0) AS totalamount, scat.trade_name,scat.id from ")
                         .append
@@ -342,34 +323,27 @@ public class LicenseReportService {
         return query;
     }
 
-    public EgovPaginatedList getLateRenewalsListReport(final String pageNo, final String moduleName, final String licenseType) {
-        final Installment currentInstallment = getCurrentInstallment(moduleName);
+    public EgovPaginatedList getLateRenewalsListReport(String pageNo, String moduleName, String licenseType) {
+        Installment currentInstallment = getCurrentInstallment(moduleName);
         return populateLateRenewalsReport(pageNo, licenseType,
                 currentInstallment);
     }
 
-    public EgovPaginatedList getLateRenewalsListReport(final String pageNo, final String moduleName, final String licenseType,
-            final Installment installment) {
-        return populateLateRenewalsReport(pageNo, licenseType,
-                installment);
-    }
-
-    private EgovPaginatedList populateLateRenewalsReport(final String pageNo,
-            final String licenseType, final Installment installment) {
+    private EgovPaginatedList populateLateRenewalsReport(String pageNo, String licenseType, Installment installment) {
         query = constructQueryForLateRenewalsList(licenseType, installment).toString();
-        final Query hibQuery = persistenceService.getSession().createSQLQuery(query);
+        Query hibQuery = persistenceService.getSession().createSQLQuery(query);
         if (pageNo == null)
             pageNum = 1;
         else
             pageNum = Integer.valueOf(pageNo);
-        final Integer fullSize = hibQuery.list().size();
-        final Page page = new Page(hibQuery, pageNum, pageSize);
+        Integer fullSize = hibQuery.list().size();
+        Page page = new Page(hibQuery, pageNum, pageSize);
         Object[] objects;
 
         pageList = page.getList();
         paginateList = new EgovPaginatedList(page, fullSize);
         if (pageList != null) {
-            final Iterator iterator = pageList.iterator();
+            Iterator iterator = pageList.iterator();
             while (iterator.hasNext()) {
                 objects = (Object[]) iterator.next();
                 hashMap = new HashMap<String, Object>();
@@ -385,8 +359,8 @@ public class LicenseReportService {
         return paginateList;
     }
 
-    private StringBuilder constructQueryForLateRenewalsList(final String licenseType, final Installment installment) {
-        final StringBuilder query = new StringBuilder(
+    private StringBuilder constructQueryForLateRenewalsList(String licenseType, Installment installment) {
+        StringBuilder query = new StringBuilder(
                 " select NVL(lateren, 0) AS lateren, egb.bndry_num,egb.id_bndry bb , egb.name from ")
                 .append
                 (" (select boundary.id_bndry,boundary.bndry_num, boundary.name from eg_boundary boundary , eg_boundary_type boundarytype ")
@@ -398,13 +372,7 @@ public class LicenseReportService {
                 (" left outer join ").append
                 (" (select sum(laterenCount) as lateren ,bb from ").append
                 (" (select case when status.status_name='").append(Constants.LICENSE_STATUS_ACTIVE)
-                .append("' and ld.renewal_date is not null AND ld.is_laterenewal='1' and ld.id_installment=").append// for Lately
-                                                                                                                    // renewed
-                                                                                                                    // licenses in
-                                                                                                                    // the
-                                                                                                                    // installment
-                                                                                                                    // year which
-                                                                                                                    // is passed
+                .append("' and ld.renewal_date is not null AND ld.is_laterenewal='1' and ld.id_installment=").append
                 (installment.getId()).append(" then 1 else 0 end as laterenCount, boun.id_bndry as bb");
 
         query.append(
@@ -418,68 +386,45 @@ public class LicenseReportService {
         return query;
     }
 
-    public List<Map<String, Object>> getTotalsForWardWiseReport(final Integer zoneId, final String moduleName,
-            final String licenseType) {
-        final Installment currentInstallment = getCurrentInstallment(moduleName);
+    public List<Map<String, Object>> getTotalsForWardWiseReport(Integer zoneId, String moduleName, String licenseType) {
+        Installment currentInstallment = getCurrentInstallment(moduleName);
         return populateTotalsForWardWiseReport(zoneId, licenseType,
                 currentInstallment);
     }
 
-    public List<Map<String, Object>> getTotalsForWardWiseReport(final Integer zoneId, final String moduleName,
-            final String licenseType, final Installment installment) {
-        return populateTotalsForWardWiseReport(zoneId, licenseType,
-                installment);
-    }
-
-    private List<Map<String, Object>> populateTotalsForWardWiseReport(
-            final Integer zoneId, final String licenseType, final Installment installment) {
+    private List<Map<String, Object>> populateTotalsForWardWiseReport(Integer zoneId, String licenseType, Installment installment) {
         query = constructQuery(Constants.DIVISION, zoneId, licenseType, installment).toString();
         query = "Select sum(act),sum(can),sum(obj),sum(ren),sum(totalamount) from(" + query + ")";
         return getTotalList(query, licenseType, installment);
     }
 
-    public List<Map<String, Object>> getTotalForTradeWiseReport(final String moduleName, final String licenseType,
-            final String type) {
-        final Installment currentInstallment = getCurrentInstallment(moduleName);
+    public List<Map<String, Object>> getTotalForTradeWiseReport(String moduleName, String licenseType, String type) {
+        Installment currentInstallment = getCurrentInstallment(moduleName);
         return populateTotalForTradeWiseReport(moduleName, licenseType, type,
                 currentInstallment);
     }
 
-    public List<Map<String, Object>> getTotalForTradeWiseReport(final String moduleName, final String licenseType,
-            final String type, final Installment installment) {
-        return populateTotalForTradeWiseReport(moduleName, licenseType, type,
-                installment);
-    }
-
-    private List<Map<String, Object>> populateTotalForTradeWiseReport(
-            final String moduleName, final String licenseType, final String type,
-            final Installment currentInstallment) {
+    private List<Map<String, Object>> populateTotalForTradeWiseReport(String moduleName, String licenseType, String type,
+            Installment currentInstallment) {
         query = constructQueryForTradeList(moduleName, licenseType, currentInstallment, type).toString();
         query = "Select sum(act),sum(can),sum(obj),sum(ren),sum(totalamount) from(" + query + ")";
         return getTotalList(query, licenseType, currentInstallment);
     }
 
-    public List<Map<String, Object>> getTotalForLateRenewalsReport(final String moduleName, final String licenseType) {
-        final Installment currentInstallment = getCurrentInstallment(moduleName);
+    public List<Map<String, Object>> getTotalForLateRenewalsReport(String moduleName, String licenseType) {
+        Installment currentInstallment = getCurrentInstallment(moduleName);
         return populateTotalForLateRenewalsReport(licenseType,
                 currentInstallment);
     }
 
-    public List<Map<String, Object>> getTotalForLateRenewalsReport(final String moduleName, final String licenseType,
-            final Installment installment) {
-        return populateTotalForLateRenewalsReport(licenseType,
-                installment);
-    }
-
-    private List<Map<String, Object>> populateTotalForLateRenewalsReport(
-            final String licenseType, final Installment currentInstallment) {
+    private List<Map<String, Object>> populateTotalForLateRenewalsReport(String licenseType, Installment currentInstallment) {
         query = constructQueryForLateRenewalsList(licenseType, currentInstallment).toString();
         query = "Select sum(lateren) from(" + query + ")";
-        final Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
-        final List result = hibQuery.list();
+        Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
+        List result = hibQuery.list();
 
         HashMap<String, Object> totalHashMap;
-        final List<Map<String, Object>> totalList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> totalList = new ArrayList<Map<String, Object>>();
 
         totalHashMap = new HashMap<String, Object>();
         totalHashMap.put(Constants.TOTAL_LATEREN, result.get(0));
@@ -488,19 +433,18 @@ public class LicenseReportService {
         return totalList;
     }
 
-    protected List<Map<String, Object>> getTotalList(final String finalQuery, final String licenseType,
-            final Installment installment) {
-        final List<Map<String, Object>> totalList = populateTotalList(licenseType, installment);
+    protected List<Map<String, Object>> getTotalList(String finalQuery, String licenseType, Installment installment) {
+        List<Map<String, Object>> totalList = populateTotalList(licenseType, installment);
         return totalList;
     }
 
-    private List<Map<String, Object>> populateTotalList(final String licenseType, final Installment installment) {
-        final Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
-        final List result = hibQuery.list();
+    private List<Map<String, Object>> populateTotalList(String licenseType, Installment installment) {
+        Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
+        List result = hibQuery.list();
         Object[] objects;
-        final Iterator iterator = result.iterator();
+        Iterator iterator = result.iterator();
         HashMap<String, Object> totalHashMap;
-        final List<Map<String, Object>> totalList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> totalList = new ArrayList<Map<String, Object>>();
         while (iterator.hasNext()) {
             objects = (Object[]) iterator.next();
             totalHashMap = new HashMap<String, Object>();
@@ -521,13 +465,12 @@ public class LicenseReportService {
         return totalList;
     }
 
-    private Date getPendingRenewalsDate(final Installment installment)
-    {
+    private Date getPendingRenewalsDate(Installment installment) {
         return installment.getToDate().after(new Date()) ? new Date() : installment.getFromDate();
     }
 
-    private Object getPendingRenewals(final String licenseType, final Long boundaryId, final Long subcategoryId, final Date date) {
-        final StringBuilder query = new StringBuilder(
+    private Object getPendingRenewals(String licenseType, Long boundaryId, Long subcategoryId, Date date) {
+        StringBuilder query = new StringBuilder(
                 " select NVL(SUM(pren1)+SUM(pren2),0) from (SELECT ")
                 .append
                 (" CASE WHEN expired = 0 AND months_between(dateofexpiry, ?)<1 THEN 1 ELSE 0 END AS pren1 , ")
@@ -546,39 +489,27 @@ public class LicenseReportService {
             query.append(" and lic.id_sub_category=").append(subcategoryId);
         query.append(" )");
 
-        final Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
+        Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
         hibQuery.setDate(0, date);
         hibQuery.setDate(1, date);
         hibQuery.setDate(2, date);
-        final List result = hibQuery.list();
+        List result = hibQuery.list();
 
         return result.get(0);
 
     }
 
-    public String getParameterValue(final String field, final Map<String, String[]> parameters) {
-        final String[] fieldArray = parameters.get(field);
+    public String getParameterValue(String field, Map<String, String[]> parameters) {
+        String[] fieldArray = parameters.get(field);
         return fieldArray != null ? fieldArray[0] : null;
     }
 
-    public Installment getCurrentInstallment(final String moduleName) {
-        final Module module = (Module) persistenceService.find(
+    public Installment getCurrentInstallment(String moduleName) {
+        Module module = (Module) persistenceService.find(
                 "from org.egov.infra.admin.master.entity.Module where parent is null and moduleName=?", moduleName);
 
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
         return installment;
-    }
-
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
-    }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
-
-    public void setInstallmentDao(final InstallmentHibDao installmentDao) {
-        this.installmentDao = installmentDao;
     }
 
 }

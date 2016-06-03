@@ -67,18 +67,4 @@ public class LicenseType extends BaseModel {
         this.name = name;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.egov.infstr.models.BaseModel#toString()
-     */
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseType= { ");
-        str.append("serialVersionUID=").append(serialVersionUID);
-        str.append("name=").append(name == null ? "null" : name.toString());
-        str.append("module=").append(module == null ? "null" : module.toString());
-        str.append("}");
-        return str.toString();
-    }
 }

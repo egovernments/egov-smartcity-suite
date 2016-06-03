@@ -44,7 +44,7 @@ import org.egov.demand.model.EgDemandDetails;
 
 import java.util.Comparator;
 
-class DemandComparatorByOrderId implements Comparator<EgDemandDetails> {
+public class DemandComparatorByOrderId implements Comparator<EgDemandDetails> {
     @Override
     public int compare(final EgDemandDetails d1, final EgDemandDetails d2) {
         return d1.getEgDemandReason().getEgDemandReasonMaster().getOrderId().compareTo

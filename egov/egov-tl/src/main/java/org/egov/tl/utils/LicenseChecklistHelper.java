@@ -81,7 +81,6 @@ public class LicenseChecklistHelper {
 
 	public LicenseChecklistHelper(final String name, final String val,
 			final String checked) {
-		super();
 		this.name = name;
 		this.val = val;
 		this.checked = checked;

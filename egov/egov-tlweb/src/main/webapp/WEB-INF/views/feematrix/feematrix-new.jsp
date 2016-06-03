@@ -257,10 +257,15 @@ function deleteThisRow(obj){
 function validateDetailsBeforeSubmit(){
 	var tbl=document.getElementById("result");
     var tabLength = (tbl.rows.length)-1;
-    var uomFromval,uomToval;
+    var uomFromval,uomToval,amt;
     for(var i=1;i<=tabLength;i++){
     	uomFromval=getControlInBranch(tbl.rows[i],'uomFrom').value;
     	uomToval=getControlInBranch(tbl.rows[i],'uomTo').value;
+    	amt=getControlInBranch(tbl.rows[i],'amount').value;
+    	if(uomFromval=="" || uomToval=="" ||  amt == "" && i!=tabLength){
+    		bootbox.alert("\"UOM To\" or \"UOM From\" or \"Amount\" cannot be null for the row "+(i)+".");
+    		return false;
+    	}
     	if(uomFromval!='' && uomToval!='' && (eval(uomFromval)>=eval(uomToval))){
     		bootbox.alert("\"UOM To\" should be greater than \"UOM From\" for row "+(i)+".");
     		getControlInBranch(tbl.rows[i],'uomTo').value="";

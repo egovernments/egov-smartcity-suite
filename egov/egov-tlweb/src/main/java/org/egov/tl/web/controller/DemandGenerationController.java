@@ -65,13 +65,12 @@ public class DemandGenerationController {
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String newForm(@ModelAttribute DemandGenerationLog demandGenerationLog) {
-        demandGenerationLog = new DemandGenerationLog();
         return "demand-generate";
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public String demandGeneration(@ModelAttribute DemandGenerationLog demandGenerationLog,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes) {
+            final RedirectAttributes redirectAttributes) {
         demandGenerationLog = demandGenerationService.bulkDemandGeneration(demandGenerationLog);
         redirectAttributes.addFlashAttribute("demandGenerationLog", demandGenerationLog);
         redirectAttributes.addFlashAttribute("message",
@@ -80,7 +79,7 @@ public class DemandGenerationController {
     }
 
     @RequestMapping(value = "/regenerate", method = RequestMethod.POST)
-    public String demandRegeneration(@ModelAttribute DemandGenerationLog demandGenerationLog, final BindingResult resultBinder,
+    public String demandRegeneration(@ModelAttribute DemandGenerationLog demandGenerationLog,
             final RedirectAttributes redirectAttributes) {
         demandGenerationLog = demandGenerationService.demandRegeneration(demandGenerationLog);
         redirectAttributes.addFlashAttribute("demandGenerationLog", demandGenerationLog);

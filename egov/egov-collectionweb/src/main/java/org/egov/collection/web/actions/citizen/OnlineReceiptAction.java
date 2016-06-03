@@ -125,7 +125,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private Long receiptId;
     private ReceiptHeader[] receipts;
     private Integer paymentServiceId = -1;
-    private Integer reportId = -1;
+    private String reportId;
     private String serviceCode;
     private PaymentRequest paymentRequest;
     private PaymentResponse paymentResponse;
@@ -141,8 +141,6 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
     private ReceiptHeader receiptHeader;
     private String refNumber;
     private List<ServiceDetails> serviceDetailsList = new ArrayList<ServiceDetails>(0);
-    @Autowired
-    private EgwStatusHibernateDAO statusDAO;
     @Autowired
     private FundHibernateDAO fundDAO;
     private List<OnlinePayment> lastThreeOnlinePayments = new ArrayList<OnlinePayment>(0);
@@ -226,7 +224,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             else if (paymentService.getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
                     && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE.equals(paymentResponse
                             .getAuthStatus())) {
-                final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
+                final EgwStatus paymentStatus = collectionsUtil.getStatusForModuleAndCode(
                         CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
                 onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
@@ -278,7 +276,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         onlinePaymentReceiptHeader.setStatus(collectionsUtil
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_FAILED));
 
-        final EgwStatus paymentStatus = statusDAO.getStatusByModuleAndCode(
+        final EgwStatus paymentStatus = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_ONLINEPAYMENT, CollectionConstants.ONLINEPAYMENT_STATUS_CODE_FAILURE);
         onlinePaymentReceiptHeader.getOnlinePayment().setStatus(paymentStatus);
 
@@ -424,7 +422,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         receipts[0] = receiptHeaderService.findById(getReceiptId(), false);
 
         try {
-            setReportId(collectionCommon.generateReport(receipts, getSession(), true));
+            reportId = collectionCommon.generateReport(receipts, true);
         } catch (final Exception e) {
             LOGGER.error(CollectionConstants.REPORT_GENERATION_ERROR, e);
             throw new ApplicationRuntimeException(CollectionConstants.REPORT_GENERATION_ERROR, e);
@@ -574,7 +572,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             // created on successful online transaction
             receiptHeader.setIsReconciled(Boolean.TRUE);
             receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION);
-            receiptHeader.setStatus(statusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+            receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
                     CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
             receiptHeader.setSource(Source.SYSTEM.toString());
 
@@ -604,7 +602,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
             // Add Online Payment Details
             final OnlinePayment onlinePayment = new OnlinePayment();
 
-            onlinePayment.setStatus(statusDAO.getStatusByModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+            onlinePayment.setStatus(collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                     CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING));
             onlinePayment.setReceiptHeader(receiptHeader);
             onlinePayment.setService(paymentService);
@@ -679,12 +677,8 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
         this.statusCode = statusCode;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     public String getServiceCode() {

@@ -39,8 +39,6 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
@@ -104,14 +102,6 @@ public class LetterOfAcceptanceSearchController {
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "search-searchmilestone";
-    }
-
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder
-                .registerTypeAdapter(SearchRequestLetterOfAcceptance.class, new SearchLetterOfAcceptanceJsonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "/searchformloa-contractorbill", method = RequestMethod.GET)

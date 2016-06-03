@@ -47,10 +47,10 @@
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" id="usagetype-view" 
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<input type="hidden" name="usageTypeList" id="usageTypeList" value="${usageTypeList}">
-	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usageType.id}" />
-	
+	<input type="hidden" id="usagetypeid" name="usagetypeid" value="${usageType}" />
+	<input type="hidden" value="${mode}" id="mode" />
 	<c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert">${message}</div>
+                <div role="alert">${message}</div>
              </c:if>
 			<c:choose>
 				<c:when test="${usageTypeList.isEmpty()}">
@@ -69,9 +69,12 @@
 							<th align="center" colspan="1" class="text-center">
 								<spring:message code="lbl.status"/>
 							</th>
+							
+							 <c:if test="${mode == 'edit'}"> 
 							<th colspan="1" class="text-center">
 								<spring:message code="lbl.edit" />
 							</th>
+							 </c:if> 
 						</tr>
 					</thead>
 					<c:forEach var="usageType" items="${usageTypeList}">
@@ -98,19 +101,20 @@
 								</c:choose>
 								</div>
 							</td>
+							 <c:if test="${mode == 'edit'}">
 							<td colspan="1">
 								<div align="center">
 									<a href="javascript:void(0);" onclick="edit('<c:out value="${usageType.id}" />');">Edit</a>
 								</div>
 							</td>
+							</c:if>
 						</tr>
 					</c:forEach>
 				</table>
 			</c:otherwise>
 			</c:choose>
 			<div class="form-group text-center">
-				<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)"><spring:message code="lbl.addnew" /></a>
-				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+				 <a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a> 
 			</div>
 		
 </form:form>

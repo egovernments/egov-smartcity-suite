@@ -590,7 +590,7 @@ function populateapportioningamount()
 	if(document.getElementById("callbackForApportioning").value=="true")
 	{
 		document.getElementById("amountoverrideerror").style.display="none";
-		if(collectiontotal > billingtotal && zeroAccHeads==false)
+		if(collectiontotal > billingtotal &&  zeroAccHeads==false)
 		{
 			document.getElementById("amountoverrideerror").style.display="block";
 			return false;
@@ -762,7 +762,6 @@ function validate()
 				zeroAccHeads=true;
 			}
 		}
-
 		if(document.getElementById("callbackForApportioning").value=="false")	
 		{	
  			billingtotal=document.forms[0].totalAmountToBeCollected.value;
@@ -928,8 +927,9 @@ function validate()
 	    advancePaymentAllowed=true;
 	}
 	if(collectiontotal!=0){
+		var billingTotalNumberFormat=Number(billingtotal);
 	    //display error if actual payment amt > original billed amt, and there is no 'zero' account head.
-		if(collectiontotal>billingtotal  && advancePaymentAllowed!=true)
+	    if(billingTotalNumberFormat < collectiontotal && advancePaymentAllowed==false)
 		{
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.greatercollectionamounterror.errormessage" />' + '<br>';
 			validation=false;
@@ -941,8 +941,7 @@ function validate()
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.incorrectaccountheadamt.errormessage" />' + '<br>';
 			validation=false;
 		}
-	    // display error if actual payt amt < original billed amt and system has not done apportioning(part payt is false)
-		if(collectiontotal < billingtotal && checkpartpaymentvalue==false){
+		if(collectiontotal < billingTotalNumberFormat && checkpartpaymentvalue==='false'){
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.total.errormessage" />' + '<br>';
 			validation=false;
 		}
@@ -1924,7 +1923,7 @@ function showHideMandataryMark(obj){
 	   				<input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamounttobepaid" id="totalamounttobepaid" readonly="readonly" value='<s:property value="%{totalAmountToBeCollected}" />' >
 	   				</span>
 	   			</s:if>
-	   			<s:text name="billreceipt.payment.totalamt.received"/><span><input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamountdisplay" id="totalamountdisplay" readonly="readonly"></span>
+	   			<s:text name="billreceipt.payment.totalamt.received"/><span><input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamountdisplay" id="totalamountdisplay" readonly="readonly" tabindex='-1'></span>
    			</div>
    			<s:hidden label="totalAmountToBeCollected" name="totalAmountToBeCollected" value="%{totalAmountToBeCollected}"/>
     	</td></tr>
@@ -2155,11 +2154,13 @@ function showHideMandataryMark(obj){
 		</td></tr>
 		
 		<!-- Paid by details -->
+		<s:if test="%{!isBillSourcemisc()}">
 		<tr >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
+	    </s:if>
 		<table id="manualreceipt" style="display:none">
 		<s:if test="%{!isBillSourcemisc()}">
 					<tr>

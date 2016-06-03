@@ -145,6 +145,7 @@ public final class CollectionConstants {
 	public static final String APPCONFIG_VALUE_CREATEVOUCHER_FOR_REMITTANCE = "CREATEVOUCHER_FOR_REMITTANCE";
 	public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_FUNCTIONCODE = "COLLECTION_BANKREMITTANCE_FUNCTIONCODE";
 	public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE =  "COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE";
+	public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE = "COLLECTION_BANKREMITTANCE_SHOWREMITDATE";
 
 	// named queries (collections)
 	public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
@@ -546,5 +547,4 @@ public final class CollectionConstants {
 	public static final String REPORT_TEMPLATE_REMITTANCE_VOUCHER = "collection_remittancevoucher_report";
 	public static final String QUERY_REMITTANCEVOUCHER_CREATOR_LIST = "getAllRemittanceVoucherCreator";
 	public static final String SERVICETYPETOBANK_ID = "id";
-
 }

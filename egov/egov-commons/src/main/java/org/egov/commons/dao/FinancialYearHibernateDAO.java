@@ -308,6 +308,14 @@ public class FinancialYearHibernateDAO  implements FinancialYearDAO {
         }
 
     }
+    
+    public List<CFinancialYear> getAllPriorFinancialYears(Date date) {
+        Query query = getCurrentSession()
+                .createQuery(
+                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <:sDate and isActive=true order by finYearRange desc ");
+        query.setDate("sDate", date);
+       return query.list();
+    }
 
     
 }

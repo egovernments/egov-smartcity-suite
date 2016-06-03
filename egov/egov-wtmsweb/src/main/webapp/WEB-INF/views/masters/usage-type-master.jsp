@@ -51,6 +51,7 @@
 			<c:if test="${not empty message}">
                   <div role="alert">${message}</div>
              </c:if>
+             
 		<div class="panel-body custom-form">
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" />:<span class="mandatory"></span></label>
@@ -70,8 +71,8 @@
 				</div>
 				<div class="form-group">
 					<div class="form-group" id="statusdiv">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
-							<div class="col-sm-3 add-margin" >
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.active"/></label>
+							<div class="col-sm-4 add-margin" >
 								<form:checkbox id="activeid" path="active" value ="active" />
 								<form:errors path="active" />
 							</div>
@@ -80,10 +81,9 @@
 			
 			 <input type="hidden" name="usageType" value="${usageType.id}" />
 			<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
+			<input type="hidden" value="${mode}" id="mode" />
 	<div class="form-group text-center">
 				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
-				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
-				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
 				<button type="button" class="btn btn-default" value="Reset" id="resetid" ><spring:message code="lbl.reset"/></button>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>

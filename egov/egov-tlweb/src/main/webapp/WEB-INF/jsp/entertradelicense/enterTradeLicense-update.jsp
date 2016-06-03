@@ -88,7 +88,7 @@
                                     <div class="tab-pane fade active in" id="tradedetails">
 													
 											<div class="form-group">
-											    <label class="col-sm-3 control-label text-right"><s:text name='license.old.license.number' /><span class="mandatory"></span></label>
+											    <label class="col-sm-3 control-label text-right"><s:text name='license.oldlicensenum' /><span class="mandatory"></span></label>
 											    <div class="col-sm-3 add-margin">
 											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="50" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
 											    </div>

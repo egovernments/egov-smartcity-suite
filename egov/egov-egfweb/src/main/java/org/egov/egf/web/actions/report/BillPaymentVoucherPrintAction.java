@@ -437,22 +437,43 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-    void loadInboxHistoryData(final List<StateHistory> stateHistory, final Map<String, Object> paramMap) throws ApplicationRuntimeException {
-        final List<String> history = new ArrayList<String>();
-        final List<String> workFlowDate = new ArrayList<String>();
-        for (final StateHistory historyState : stateHistory)
-            if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
-                history.add(historyState.getSenderName());
-                workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(historyState.getLastModifiedDate()));
-            }
-        for (int i = 0; i < history.size(); i++) {
-            paramMap.put("workFlow_" + i, history.get(i));
-            paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
-        }
-    }
+	void loadInboxHistoryData(final List<StateHistory> stateHistory,
+			final Map<String, Object> paramMap)
+			throws ApplicationRuntimeException {
+		final List<String> history = new ArrayList<String>();
+		final List<String> workFlowDate = new ArrayList<String>();
+		if (!stateHistory.isEmpty()) {
+			for (final StateHistory historyState : stateHistory)
+				
+				if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
+					history.add(historyState.getSenderName());
+					workFlowDate.add(Constants.DDMMYYYYFORMAT2
+							.format(historyState.getLastModifiedDate()));
+					if (historyState.getValue().equalsIgnoreCase("Rejected"))
+					{
+						history.clear();
+						workFlowDate.clear();
+					}
+					
+				}
+			
+			history.add(paymentHeader.getState().getSenderName());
+			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(paymentHeader
+					.getState().getLastModifiedDate()));
+		} else {
+			history.add(paymentHeader.getState().getSenderName());
+			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(paymentHeader
+					.getState().getLastModifiedDate()));
+		}
+		for (int i = 0; i < history.size(); i++) {
+			paramMap.put("workFlow_" + i, history.get(i));
+			paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
+		}
+	}
 
-    String getVoucherDescription() {
-        return voucher == null || voucher.getDescription() == null ? "" : voucher.getDescription();
-    }
+	String getVoucherDescription() {
+		return voucher == null || voucher.getDescription() == null ? ""
+				: voucher.getDescription();
+	}
 
 }

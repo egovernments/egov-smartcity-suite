@@ -105,10 +105,6 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         this.moduleName = moduleName;
     }
 
-    public void setLicenseUtils(final LicenseUtils licenseUtils) {
-        this.licenseUtils = licenseUtils;
-    }
-
     @Override
     public Module getModule() {
         return licenseUtils.getModule(moduleName);
@@ -121,8 +117,8 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getBillAddress() {
-        return license.getLicensee().getAddress() + (StringUtils.isNotBlank(license.getLicensee().getPhoneNumber())
-                ? "\nPh : " + license.getLicensee().getPhoneNumber() : "");
+        return license.getLicensee().getAddress() + (StringUtils.isNotBlank(license.getLicensee().getMobilePhoneNumber())
+                ? "\nPh : " + license.getLicensee().getMobilePhoneNumber() : "");
     }
 
     @Override

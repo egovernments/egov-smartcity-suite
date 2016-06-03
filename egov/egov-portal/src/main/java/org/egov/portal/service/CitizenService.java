@@ -48,7 +48,6 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
 import org.egov.portal.utils.constants.CommonConstants;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -76,7 +75,7 @@ public class CitizenService {
     @Transactional
     public void create(final Citizen citizen) {
         citizen.addRole(roleService.getRoleByName(CommonConstants.CITIZEN_ROLE));
-        citizen.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
+        citizen.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
         citizenRepository.save(citizen);

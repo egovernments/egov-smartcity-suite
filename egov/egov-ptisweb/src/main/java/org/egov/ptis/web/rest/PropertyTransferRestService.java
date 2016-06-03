@@ -79,6 +79,7 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -126,6 +127,7 @@ public class PropertyTransferRestService {
     @Autowired
     private PropertyService propertyService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
     @Autowired
     private AadhaarInfoServiceClient aadhaarInfoServiceClient;

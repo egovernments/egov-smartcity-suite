@@ -136,6 +136,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 
 public class PropertyExternalService {
+    private static final String ASSESSMENT = "Assessment";
     public static final Integer FLAG_MOBILE_EMAIL = 0;
     public static final Integer FLAG_TAX_DETAILS = 1;
     public static final Integer FLAG_FULL_DETAILS = 2;
@@ -184,6 +185,7 @@ public class PropertyExternalService {
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private UserService userService;
@@ -390,6 +392,28 @@ public class PropertyExternalService {
             propertyTaxDetails.setErrorDetails(errorDetails);
         }
         return propertyTaxDetails;
+    }
+    
+    public List<PropertyTaxDetails> getPropertyTaxDetails(final String assessmentNo, final String ownerName,
+            final String mobileNumber) {
+        final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo, ownerName,
+                mobileNumber);
+        List<PropertyTaxDetails> propTxDetailsList = new ArrayList<PropertyTaxDetails>();
+        if (null != basicProperties && !basicProperties.isEmpty()) {
+            for (final BasicProperty basicProperty : basicProperties) {
+                final PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+                propTxDetailsList.add(propertyTaxDetails);
+            }
+        } else {
+            PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
+            final ErrorDetails errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
+            errorDetails.setErrorMessage(ASSESSMENT
+                    + PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
+            propertyTaxDetails.setErrorDetails(errorDetails);
+            propTxDetailsList.add(propertyTaxDetails);
+        }
+        return propTxDetailsList;
     }
 
     public List<PropertyTaxDetails> getPropertyTaxDetails(final String circleName, final String zoneName,

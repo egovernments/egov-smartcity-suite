@@ -240,7 +240,6 @@ public class UpdateConnectionController extends GenericConnectionController {
         }
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
-        model.addAttribute("closeConnectionType", waterConnectionDetails.getCloseConnectionType());
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         return "newconnection-edit";
     }
@@ -398,7 +397,7 @@ public class UpdateConnectionController extends GenericConnectionController {
             try {
                 // For Closure Connection
                 if (waterConnectionDetails.getCloseConnectionType() != null)
-                    if (waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSE) || waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE))
+                    if (waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE))
                         waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
                     else
                         waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());

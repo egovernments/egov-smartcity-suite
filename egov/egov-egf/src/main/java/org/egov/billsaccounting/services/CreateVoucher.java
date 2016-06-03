@@ -39,6 +39,7 @@
  */
 package org.egov.billsaccounting.services;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -88,9 +89,12 @@ import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
+import org.egov.commons.exception.NoSuchObjectException;
+import org.egov.commons.exception.TooManyValuesException;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.budget.BudgetUsageHibernateDAO;
+import org.egov.egf.autonumber.VouchernumberGenerator;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -105,8 +109,8 @@ import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.commons.exception.NoSuchObjectException;
-import org.egov.commons.exception.TooManyValuesException;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -185,6 +189,8 @@ public class CreateVoucher {
 	private PersistenceService persistenceService;
 	@Autowired
 	private EGovernCommon eGovernCommon;
+	@Autowired
+	private AutonumberServiceBeanResolver beanResolver;
 
 	// add here for other bills
 
@@ -241,6 +247,9 @@ public class CreateVoucher {
  
 	@Autowired
 	private BoundaryService boundaryService;
+	
+	 @Autowired
+	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
 	private static final String ERR = "Exception in CreateVoucher";
 	private static final String DEPTMISSINGMSG = "Department is missing in the Bill cannot proceed creating vouvher";
@@ -1248,31 +1257,8 @@ public class CreateVoucher {
 						"Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
 								+ fiscalPeriod);
 			vh.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));
-			final String fundIdentifier = vh.getFundId().getIdentifier()
-					.toString();
-			final String vType = fundIdentifier + "/"
-					+ getCgnType(vh.getType()) + "/CGVN";
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("vType" + vType);
-			String eg_voucher = null;
-			try {
-				eg_voucher = voucherHelper.getEg_Voucher(vType, fiscalPeriod);
-			} catch (final TaskFailedException e) {
-				LOGGER.error(ERR, e);
-				throw new ApplicationRuntimeException(e.getMessage());
-			} catch (final SQLException e) {
-				LOGGER.error(ERR, e);
-				throw new ApplicationRuntimeException(e.getMessage());
-			} catch (final Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			for (int i = eg_voucher.length(); i < 10; i++)
-				eg_voucher = "0" + eg_voucher;
-			final String cgNum = vType + eg_voucher;
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("cgNum------" + cgNum);
-			vh.setCgvn(cgNum);
+			
+			vh.setCgvn(getCGVNNumber(vh));
 
 			try {
 				if (!eGovernCommon.isUniqueVN(vh.getVoucherNumber(), vdt))
@@ -1516,30 +1502,8 @@ public class CreateVoucher {
 					"Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
 							+ fiscalPeriod);
 		vh.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));
-		final String fundIdentifier = vh.getFundId().getIdentifier().toString();
-		final String vType = fundIdentifier + "/" + getCgnType(vh.getType())
-				+ "/CGVN";
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("vType" + vType);
-		String eg_voucher = null;
-		try {
-			eg_voucher = voucherHelper.getEg_Voucher(vType, fiscalPeriod);
-		} catch (final TaskFailedException e) {
-			LOGGER.error(ERR, e);
-			throw new ApplicationRuntimeException(e.getMessage());
-		} catch (final SQLException e) {
-			LOGGER.error(ERR, e);
-			throw new ApplicationRuntimeException(e.getMessage());
-		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		for (int i = eg_voucher.length(); i < 10; i++)
-			eg_voucher = "0" + eg_voucher;
-		final String cgNum = vType + eg_voucher;
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("cgNum------" + cgNum);
-		vh.setCgvn(cgNum);
+		
+		vh.setCgvn(getCGVNNumber(vh));
 
 		try {
 			if (!eGovernCommon.isUniqueVN(vh.getVoucherNumber(), vdt))
@@ -1791,13 +1755,17 @@ public class CreateVoucher {
 						.get(VoucherConstant.VOUCHERNUMBER).toString();
 			if (null != headerdetails.get(VoucherConstant.MODULEID))
 				vNumGenMode = "Auto";
+			
+			cVoucherHeader.setFundId(fundByCode); 
+			if (vNumGenMode.equals("Auto")) {
+				cVoucherHeader.setVoucherNumberPrefix(voucherNumberPrefix);
+				VouchernumberGenerator v = beanResolver.getAutoNumberServiceFor(VouchernumberGenerator.class);
 
-			final String strVoucherNumber = voucherHelper
-					.getGeneratedVoucherNumber(fundByCode.getId(),
-							voucherNumberPrefix, voucherDate, vNumGenMode,
-							voucherNumber);
-			cVoucherHeader.setVoucherNumber(strVoucherNumber);
+				final String strVoucherNumber = v.getNextNumber(cVoucherHeader);
 
+				System.out.println(v.getClass().getSimpleName());
+				cVoucherHeader.setVoucherNumber(strVoucherNumber);
+			}
 			/*
 			 * if("Auto".equalsIgnoreCase(vNumGenMode) || null !=
 			 * headerdetails.get(VoucherConstant.MODULEID)){
@@ -1819,7 +1787,7 @@ public class CreateVoucher {
 			 * }
 			 */
 
-			cVoucherHeader.setFundId(fundByCode);
+		 
 			if (headerdetails.containsKey(VoucherConstant.MODULEID)
 					&& null != headerdetails.get(VoucherConstant.MODULEID)) {
 				cVoucherHeader.setModuleId(Integer.valueOf(headerdetails.get(
@@ -3176,6 +3144,25 @@ public class CreateVoucher {
 					.getVouchermis().getFunction().getCode());
 		return headerdetails;
 	}
+	
+	 public String getCGVNNumber(CVoucherHeader vh)
+	    {
+	        String cgvnNumber = "";
+
+	        String sequenceName = "";
+
+	        final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(vh.getVoucherDate());
+	        if (fiscalPeriod == null)
+	            throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
+	        sequenceName = "sq_" + vh.getFundId().getIdentifier() + "_" + getCgnType(vh.getType()).toLowerCase() + "_cgvn_"
+	                + fiscalPeriod.getName();
+	        Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+
+	        cgvnNumber = String.format("%s/%s/%s%010d", vh.getFundId().getIdentifier(), getCgnType(vh.getType()), "CGVN",
+	                nextSequence);
+
+	        return cgvnNumber;
+	    }
 
 	public AppConfigService getAppConfigService() {
 		return appConfigService;

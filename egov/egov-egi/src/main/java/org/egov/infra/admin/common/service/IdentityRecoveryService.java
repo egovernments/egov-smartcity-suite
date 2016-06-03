@@ -44,6 +44,7 @@ import org.egov.infra.admin.common.entity.IdentityRecovery;
 import org.egov.infra.admin.common.repository.IdentityRecoveryRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.messaging.MessagingService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,9 @@ public class IdentityRecoveryService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     public Optional<IdentityRecovery> getByToken(final String token) {
         return Optional.ofNullable(identityRecoveryRepository.findByToken(token));
@@ -104,6 +108,7 @@ public class IdentityRecoveryService {
             final IdentityRecovery idRecovery = identityRecovery.get();
             if (idRecovery.getExpiry().isAfterNow()) {
                 final User user = idRecovery.getUser();
+                user.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
                 user.setPassword(passwordEncoder.encode(newPassword));
                 userService.updateUser(user);
                 recoverd = true;

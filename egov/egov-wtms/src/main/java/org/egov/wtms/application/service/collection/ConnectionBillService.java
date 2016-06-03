@@ -39,6 +39,19 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.BillServiceInterface;
@@ -49,25 +62,15 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Service
 @Transactional(readOnly = true)
@@ -82,6 +85,9 @@ public class ConnectionBillService extends BillServiceInterface {
 
     @Autowired
     private ApplicationContext context;
+    
+    @Autowired
+    private ConnectionDemandService connectionDemandService;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -99,6 +105,9 @@ public class ConnectionBillService extends BillServiceInterface {
         final Set<Installment> sortedInstallmentSet = new TreeSet<Installment>();
         final DemandComparatorByOrderId demandComparatorByOrderId = new DemandComparatorByOrderId();
         final List<EgDemandDetails> orderedDetailsList = new ArrayList<EgDemandDetails>();
+        Installment currInstallment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY,
+                    new Date());
+      
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             if (installmentWise.get(installment) == null) {
@@ -143,6 +152,13 @@ public class ConnectionBillService extends BillServiceInterface {
                         reason.getEgDemandReasonMaster().getReasonMaster() + " - " + installment.getDescription() + " # "
                                 + billObj.getCurrentDemand().getEgInstallmentMaster().getDescription());
                 billdetail.setFunctionCode(STRING_WCMS_FUCNTION_CODE);
+                if(currInstallment!=null && (installment.getFromDate().before(currInstallment.getToDate())))
+                {
+                    billdetail.setAdditionalFlag(1);
+                }
+                else{
+                    billdetail.setAdditionalFlag(0);
+                }
                 billDetails.add(billdetail);
             }
         }

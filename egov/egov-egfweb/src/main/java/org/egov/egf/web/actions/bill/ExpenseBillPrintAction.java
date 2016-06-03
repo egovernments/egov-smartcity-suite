@@ -412,25 +412,47 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         return voucher == null || voucher.getDescription() == null ? "" : voucher.getDescription();
     }
 
-    void loadInboxHistoryData(List<StateHistory> stateHistory, final Map<String, Object> paramMap) throws ApplicationRuntimeException {
-        final List<String> history = new ArrayList<String>();
-        final List<String> workFlowDate = new ArrayList<String>();
+	void loadInboxHistoryData(List<StateHistory> stateHistory,
+			final Map<String, Object> paramMap)
+			throws ApplicationRuntimeException {
+		final List<String> history = new ArrayList<String>();
+		final List<String> workFlowDate = new ArrayList<String>();
 
-        for (final StateHistory historyState : stateHistory)
-            if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
-                history.add(historyState.getSenderName());
-                workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(historyState.getLastModifiedDate()));
-            }
-        for (int i = 0; i < history.size(); i++) {
-            paramMap.put("workFlow_" + i, history.get(i));
-            paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
-        }
-        /*
-         * if(cbill.getState()!=null && cbill.getState().getValue().equalsIgnoreCase("Closed")){ paramMap.put("workFlow_approver"
-         * ,eisCommonService.getUserForPosition(cbill.getState().getOwnerPosition().getId(), cbill.getCreatedDate()));
-         * paramMap.put("workFlowDate_approval_date" , cbill.getState().getLastModifiedDate() ); }
-         */
-    }
+		if (!stateHistory.isEmpty()) {
+			for (final StateHistory historyState : stateHistory)
+
+				if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
+					history.add(historyState.getSenderName());
+					workFlowDate.add(Constants.DDMMYYYYFORMAT2
+							.format(historyState.getLastModifiedDate()));
+					if (historyState.getValue().equalsIgnoreCase("Rejected")) {
+						history.clear();
+						workFlowDate.clear();
+					}
+				}
+
+			history.add(cbill.getState().getSenderName());
+			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(cbill.getState()
+					.getLastModifiedDate()));
+		} else {
+			history.add(cbill.getState().getSenderName());
+			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(cbill.getState()
+					.getLastModifiedDate()));
+		}
+		for (int i = 0; i < history.size(); i++) {
+			paramMap.put("workFlow_" + i, history.get(i));
+			paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
+		}
+		/*
+		 * if(cbill.getState()!=null &&
+		 * cbill.getState().getValue().equalsIgnoreCase("Closed")){
+		 * paramMap.put("workFlow_approver"
+		 * ,eisCommonService.getUserForPosition(
+		 * cbill.getState().getOwnerPosition().getId(),
+		 * cbill.getCreatedDate())); paramMap.put("workFlowDate_approval_date" ,
+		 * cbill.getState().getLastModifiedDate() ); }
+		 */
+	}
 
     private void prepareForPrint() {
 

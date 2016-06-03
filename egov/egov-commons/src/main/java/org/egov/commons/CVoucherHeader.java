@@ -55,6 +55,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
@@ -92,6 +93,8 @@ public class CVoucherHeader extends StateAware {
     private String voucherSubType;
     @Transient
     private Boolean isRestrictedtoOneFunctionCenter;
+    @Transient
+    private String voucherNumberPrefix;
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="voucherHeaderId",targetEntity=CGeneralLedger.class )
     private Set<CGeneralLedger> generalLedger;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid" , targetEntity=Vouchermis.class)
@@ -366,5 +369,15 @@ public class CVoucherHeader extends StateAware {
     public void setGeneralLedger(Set<CGeneralLedger> generalLedger) {
         this.generalLedger = generalLedger;
     }
+
+	public String getVoucherNumberPrefix() {
+		return voucherNumberPrefix;
+	}
+
+	public void setVoucherNumberPrefix(String voucherNumberPrefix) {
+		this.voucherNumberPrefix = voucherNumberPrefix;
+	}
+
+	
 
 }

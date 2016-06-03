@@ -43,6 +43,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
+<style>
+
+div.dataTables_processing { z-index: 1; }
+
+</style>
+
 <div class="row">
 	<div class="col-md-12">
 

@@ -51,6 +51,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.DemandCollInfo;
 import org.egov.ptis.bean.ReportInfo;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -93,7 +94,7 @@ public class EgsEduCessCollectionReportAction extends BaseFormAction {
 	private ReportService reportService;
 	private static final String SRCH_FORM = "searchForm";
 	private static final String REPORT = "report";
-	private Integer reportId;
+	private String reportId;
 	private Map<Integer, String> monthsMap;
 	private Date day;
 	private Integer month;
@@ -104,6 +105,9 @@ public class EgsEduCessCollectionReportAction extends BaseFormAction {
 	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
 	private List<Object[]> list;
 	private Boolean recordsExist = TRUE;
+
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 
 	public void validate() {
 		LOGGER.debug("Inside Validate Method, Day : " + day + "-Month : "
@@ -207,8 +211,8 @@ public class EgsEduCessCollectionReportAction extends BaseFormAction {
 		if (list != null && !list.isEmpty()) {
 			ReportRequest reportInput = prepareReportData();
 			reportInput.setPrintDialogOnOpenReport(true);
-			reportId = ReportViewerUtil.addReportToSession(
-					reportService.createReport(reportInput), getSession());
+			reportId = reportViewerUtil.addReportToTempCache(
+					reportService.createReport(reportInput));
 		} else {
 			recordsExist = FALSE;
 			return SRCH_FORM;
@@ -302,12 +306,8 @@ public class EgsEduCessCollectionReportAction extends BaseFormAction {
 		this.reportService = reportService;
 	}
 
-	public Integer getReportId() {
+	public String getReportId() {
 		return reportId;
-	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
 	}
 
 	public ReportInfo getReportInfo() {

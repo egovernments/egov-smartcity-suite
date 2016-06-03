@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-05-20T10:38:57 -->
+<!-- 2016-05-24T16:06:41 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Expense Bill Report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="657c7962-67c4-4dca-8469-260c6f3d4d22">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -470,7 +470,7 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{workFlow_approval_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{workFlowDate_2}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="358" y="94" width="75" height="19" uuid="084fb77a-c3a7-4313-904c-7beca53b9fcb"/>
@@ -568,7 +568,7 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{workFlow_approver}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{workFlow_2}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="164" y="113" width="76" height="23" uuid="b8377292-6fba-427d-9a1e-f1a70f1d8c75"/>

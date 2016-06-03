@@ -64,6 +64,7 @@ public class ApplicationSearchRequest {
     private String fromDate;
     private String toDate;
     private String ulbName;
+    private String source;
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -161,13 +162,23 @@ public class ApplicationSearchRequest {
     public void setSearchText(final String searchText) {
         this.searchText = searchText;
     }
+    
 
-    public Filters searchFilters() {
+    public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
         andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber));
         andFilters.add(termsStringFilter("clauses.modulename", moduleName));
         andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
+        andFilters.add(termsStringFilter("clauses.channel", source));
         andFilters.add(queryStringFilter("searchable.applicantname", applicantName));
         andFilters.add(queryStringFilter("searchable.consumercode", consumerCode));
         andFilters.add(queryStringFilter("searchable.mobilenumber", mobileNumber));

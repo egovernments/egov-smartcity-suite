@@ -128,6 +128,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private MessagingService messagingService;
@@ -340,22 +341,21 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
             final Property property, final String areaOfPlot, final Date regDocDate, final String modifyRsn,
             final Date propCompletionDate) {
-        Installment currentInstallment=null;
+        boolean buildingPlanNoValidationAdded;
+        boolean buildingPlanDateValidationAdded;
+        boolean buildingPlanPlinthAreaValidationAdded;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
                     + (floorList != null ? floorList : ZERO));
 
         if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
             if (floorList != null && floorList.size() > 0){
-                
-                if (modifyRsn != null
-                        && modifyRsn.equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)
-                        && propertyTaxUtil.checkIsNagarPanchayat()) {
-                    currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-                }
                 for (final Floor floor : floorList) {
                     List<String> msgParams = null;
                     if (floor != null) {
+                    	buildingPlanNoValidationAdded = false;
+                        buildingPlanDateValidationAdded = false;
+                        buildingPlanPlinthAreaValidationAdded = false;
                         msgParams = new ArrayList<String>();
                         if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10))
                             addActionError(getText("mandatory.floorNO"));
@@ -381,6 +381,34 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
                                 || floor.getPropertyUsage().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.usage", msgParams));
+                        
+                        if(StringUtils.isNotBlank(floor.getBuildingPermissionNo())){
+                        	if(floor.getBuildingPermissionDate() == null){
+                        		addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
+                        		buildingPlanDateValidationAdded = true;
+                        	}
+                        	if(floor.getBuildingPlanPlinthArea().getArea() == null){
+                        		addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
+                        		buildingPlanPlinthAreaValidationAdded = true;
+                        	}
+                        }
+                        if(floor.getBuildingPermissionDate() !=null ){
+                        	if(StringUtils.isBlank(floor.getBuildingPermissionNo())){
+                       			addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
+                       			buildingPlanNoValidationAdded = true;
+                        	}
+                        	if(floor.getBuildingPlanPlinthArea().getArea() == null)
+                        		if(!buildingPlanPlinthAreaValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
+                        }
+                        if(floor.getBuildingPlanPlinthArea().getArea() != null){
+                        	if(floor.getBuildingPermissionDate() == null)
+                        		if(!buildingPlanDateValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
+                        	if(StringUtils.isBlank(floor.getBuildingPermissionNo()))
+                        		if(!buildingPlanNoValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
+                        }
 
                         if (floor.getFirmName() == null || floor.getFirmName().isEmpty()
                                 || floor.getFirmName().equals("")) {
@@ -421,16 +449,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                     && !floor.getOccupancyDate().equals("")) {
                                 if (DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
                                     addActionError(getText("regDate.notgreaterthan.occDate", msgParams));
-                            }
-                        }
-                        if (modifyRsn != null
-                                && modifyRsn
-                                        .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)
-                                && propertyTaxUtil.checkIsNagarPanchayat()) {
-                            if (currentInstallment != null && null != floor.getOccupancyDate()
-                                    && !floor.getOccupancyDate().equals("")) {
-                                if (!DateUtils.compareDates(floor.getOccupancyDate(), currentInstallment.getFromDate()))
-                                    addActionError(getText("occDate.within.currentInstallment", msgParams));
                             }
                         }
                         if (null != modifyRsn && null != propCompletionDate) {

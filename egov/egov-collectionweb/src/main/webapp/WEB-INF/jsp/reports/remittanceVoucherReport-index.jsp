@@ -42,14 +42,6 @@
 <head>
 <title><s:text name="remittanceVoucherReport.title" /></title>
 <script>
-function clearErrors()
-{
-	// First clear all error messages 
-	dom.get("comparedatemessage").style.display="none";
-	dom.get("mandatoryfromdate").style.display="none";
-	dom.get("mandatorytodate").style.display="none";
-}
-
 function onChangeBankAccount(branchId) {
 	populatebankAccountId({
 		branchId : branchId,
@@ -62,56 +54,57 @@ function onChangeServiceList(bankAccountId) {
 	});
 }
 
+
 function validate()
 {
 	var fromdate=dom.get("fromDate").value;
 	var todate=dom.get("toDate").value;
 	var valSuccess = true;
-
-	clearErrors();
-
-	if(fromdate == "")
-	{
-		dom.get("mandatoryfromdate").style.display="block";
-		valSuccess = false;
-	}
+	document.getElementById("report_error_area").innerHTML = "";
+	document.getElementById("report_error_area").style.display="none"; 
 	
-	if(todate == "")
-	{
-		dom.get("mandatorytodate").style.display="block";
-		valSuccess = false;
-	}
-	
-	if(fromdate!="" && todate!="" && fromdate!=todate)
-	{
-		if(!checkFdateTdate(fromdate,todate))
-		{
-			dom.get("comparedatemessage").style.display="block";
+
+		if (fromdate == "") {
+			document.getElementById("report_error_area").style.display = "block";
+			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.fromdate" />'
+					+ '<br>';
 			valSuccess = false;
 		}
-	}
 
-	return valSuccess;
-}
+		if (todate == "") {
+			document.getElementById("report_error_area").style.display = "block";
+			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.todate" />'
+					+ '<br>';
+			valSuccess = false;
+		}
+
+		if (fromdate != "" && todate != "" && fromdate != todate) {
+			if (!checkFdateTdate(fromdate, todate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="common.comparedate.errormessage" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+			if (!validateNotFutureDate(fromdate, currDate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.fromdate.futuredate.message" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+			if (!validateNotFutureDate(todate, currDate)) {
+				document.getElementById("report_error_area").style.display = "block";
+				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.todate.futuredate.message" />'
+						+ '<br>';
+				valSuccess = false;
+			}
+		}
+
+		return valSuccess;
+	}
 </script>
 </head>
-<span align="center" style="display: none" id="mandatoryfromdate">
-<li><font size="2" color="red"><b> <s:text
-	name="common.datemandatory.fromdate" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="mandatorytodate">
-<li><font size="2" color="red"><b> <s:text
-	name="common.datemandatory.todate" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="invaliddateformat">
-<li><font size="2" color="red"><b> <s:text
-	name="common.dateformat.errormessage" /> </b></font></li>
-</span>
-<span align="center" style="display: none" id="comparedatemessage">
-<li><font size="2" color="red"><b> <s:text
-	name="common.comparedate.errormessage" /> </b></font></li>
-</span>
 <body>
+<div class="errorstyle" id="report_error_area" style="display:none;"></div>
 <s:form theme="simple" name="remittanceVoucherReportForm"
 	action="remittanceVoucherReport-report.action">
 	<div class="formmainbox">

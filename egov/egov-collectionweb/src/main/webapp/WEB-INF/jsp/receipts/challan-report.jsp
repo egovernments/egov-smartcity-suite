@@ -70,10 +70,6 @@ function refreshInbox() {
 	<br/>
 	<div class="buttonbottom">
 	<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close()" />
-	<s:if test="%{sourcePage=='viewChallan'}">
-		<input name="buttonBack" type="button" class="button"
-		id="buttonBack" value="Back" onclick="history.back()" /> &nbsp;
-	</s:if>
 	</div>
 </s:form>
 </body>

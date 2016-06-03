@@ -123,6 +123,18 @@ function validate(){
 			 valid=false;
 		 }            
 		</s:if>
+		if(document.getElementById('serviceType').value =="P" ){
+	        if(document.getElementById('serviceUrl').value =="" ){       
+	        document.getElementById("error_area").innerHTML+='<s:text name="service.serviceurl.null" />'+  "<br>";
+	        dom.get("error_area").style.display="block";
+	        valid=false;
+	    }
+	        if(document.getElementById('callBackurl').value ==""){       
+	            document.getElementById("error_area").innerHTML+='<s:text name="service.callbackurl.null" />'+  "<br>";
+	            dom.get("error_area").style.display="block";
+	            valid=false;
+	        }
+	 }
 		window.scroll(0,0);
 		return valid;
 }
@@ -140,6 +152,17 @@ function clearCodeIfExists(){
 	 if(dom.get("CodeUnique").style.display =="" ){
 		 document.getElementById('serviceCode').value="";
 	 }	
+}
+
+function enableUrl(obj) {
+	var selectedStatus = document.getElementById("serviceType").options[obj.selectedIndex].text;
+	if (selectedStatus == 'Payment') {
+		document.getElementById("urlDetails").style.display = "";
+	} else {
+		document.getElementById("serviceUrl").value="";
+		document.getElementById("callBackurl").value="";
+		document.getElementById("urlDetails").style.display = "none";
+	}
 }
 </script>
 
@@ -188,7 +211,7 @@ function clearCodeIfExists(){
 			<td class="bluebox"><s:text name="service.master.type" /> <span class="mandatory"></td>
 			<td class="bluebox"> 
 				<s:select list="#{'':'-----Select----','B':'Bill Based', 'C':'Collection', 'P':'Payment'}" 
-				name="serviceType" id="serviceType"></s:select>
+				name="serviceType" id="serviceType" onchange="return enableUrl(this)"></s:select>
 			</td>
 			
 		</tr>
@@ -207,7 +230,19 @@ function clearCodeIfExists(){
 			<td class="bluebox"></td>
 			<td class="bluebox"></td>
 		</tr>
-
+		<tr id="urlDetails">
+			<td></td>
+			<td class="bluebox"><s:text name="service.create.serviceurl"></s:text><span
+				class="mandatory1">*</span></td>
+			<td class="bluebox"><s:textarea name="serviceUrl"
+					id="serviceUrl" value="%{serviceUrl}" cols="18" rows="1"
+					maxlength="255" onkeyup="return ismaxlength(this)" /></td>
+			<td class="bluebox"><s:text name="service.create.callbackurl"></s:text><span
+				class="mandatory1">*</span></td>
+			<td class="bluebox"><s:textarea name="callBackurl"
+					id="callBackurl" value="%{callBackurl}" cols="18" rows="1"
+					maxlength="255" onkeyup="return ismaxlength(this)" /></td>
+		</tr>
 	</table>
 	
 	<div class="subheadsmallnew">

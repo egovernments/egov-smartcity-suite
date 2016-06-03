@@ -100,4 +100,6 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
     List<User> findCreatedByForCancelLineEstimateByDepartment(@Param("department") Long department,
             @Param("lineEstimateStatus") String lineEstimateStatus, @Param("workOrderStatus") String workOrderStatus);
 
+    LineEstimateDetails findByProjectCode_codeAndLineEstimate_Status_CodeNotLike(String workIdentificationNumber, String status);
+    
 }

@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +86,13 @@ public class ViewTaxRatesController {
             }
 
         }
-        model.addAttribute("taxRates", taxRatesMap);
+        Map<String, Double> taxRatesDisplayMap = new LinkedHashMap<String, Double>();
+        taxRatesDisplayMap.put("General Tax Residential", taxRatesMap.get("General Tax Residential"));
+        taxRatesDisplayMap.put("General Tax Non Residential", taxRatesMap.get("General Tax Non Residential"));
+        taxRatesDisplayMap.put("Education Cess", taxRatesMap.get("Education Cess"));
+        taxRatesDisplayMap.put("Vacant Land Tax", taxRatesMap.get("Vacant Land Tax"));
+        taxRatesDisplayMap.put("Library Cess", taxRatesMap.get("Library Cess"));
+        model.addAttribute("taxRates", taxRatesDisplayMap);
         return "taxRates-view";
     }
 

@@ -121,7 +121,7 @@ public class ReceiptAction extends BaseFormAction {
     private BillInfoImpl collDetails = new BillInfoImpl();
     private static final long serialVersionUID = 1L;
     private static final String CANCEL = "cancel";
-    private Integer reportId = -1;
+    private String reportId;
 
     /**
      * A <code>String</code> representing the input xml coming from the billing system
@@ -1061,7 +1061,7 @@ public class ReceiptAction extends BaseFormAction {
             }
 
         try {
-            reportId = collectionCommon.generateReport(receipts, getSession(), printReceipts);
+            reportId = collectionCommon.generateReport(receipts, printReceipts);
         } catch (final Exception e) {
             final String errMsg = "Error during report generation!";
             LOGGER.error(errMsg, e);
@@ -1477,7 +1477,7 @@ public class ReceiptAction extends BaseFormAction {
     /**
      * @return the reportId
      */
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
     }
 

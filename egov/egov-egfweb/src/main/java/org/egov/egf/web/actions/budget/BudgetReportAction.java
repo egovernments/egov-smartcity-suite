@@ -122,11 +122,11 @@ import java.util.TreeMap;
         @Result(name = "dept", location = "budgetReport-dept.jsp"),
 })
 public class BudgetReportAction extends BaseFormAction {
-    private static final String DEPTWISEPATH = "/org/egov/egf/web/actions/budget/departmentWiseBudgetReport.jasper";
-    private static final String FUNCTIONWISEPATH = "/org/egov/egf/web/actions/budget/budgetReportFunctionwise.jasper";
-    private static final String WORKINGCOPYFORFINALAPPROVER = "/org/egov/egf/web/actions/budget/budgetReportWorkingCopyForFinalApprover.jasper";
-    private static final String WORKINGCOPYWITHALLMOUNTS = "/org/egov/egf/web/actions/budget/budgetReportWorkingCopy.jasper";
-    private static final String WORKINGCOPYWITHONLYPROPOSALS = "/org/egov/egf/web/actions/budget/budgetReportWorkingCopyWithOnlyProposals.jasper";
+    private static final String DEPTWISEPATH = "/reports/templates/departmentWiseBudgetReport.jasper";
+    private static final String FUNCTIONWISEPATH = "/reports/templates/budgetReportFunctionwise.jasper";
+    private static final String WORKINGCOPYFORFINALAPPROVER = "/reports/templates/budgetReportWorkingCopyForFinalApprover.jasper";
+    private static final String WORKINGCOPYWITHALLMOUNTS = "/reports/templates/budgetReportWorkingCopy.jasper";
+    private static final String WORKINGCOPYWITHONLYPROPOSALS = "/reports/templates/budgetReportWorkingCopyWithOnlyProposals.jasper";
     private ReportHelper reportHelper;
     private static final long serialVersionUID = 1L;
     private InputStream inputStream;

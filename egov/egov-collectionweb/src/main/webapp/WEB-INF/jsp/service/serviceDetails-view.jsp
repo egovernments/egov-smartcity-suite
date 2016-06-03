@@ -44,14 +44,19 @@
  <meta http-equiv="Pragma" content="no-cache"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/finAccountsTable.js?rnd=${app_release_no}"></script>
 <script type="text/javascript">
-function onBodyLoad(){
-if(document.getElementById('voucherCreation').checked==false){
-	document.getElementById("voucherApprovedDetails").style.display="none";
+	function onBodyLoad() {
+		if (document.getElementById('voucherCreation').checked == false) {
+			document.getElementById("voucherApprovedDetails").style.display = "none";
+		} else {
+			document.getElementById("voucherApprovedDetails").style.display = "";
+		}
+		var selectedStatus = document.getElementById("serviceType").value;
+		if (selectedStatus == 'P') {
+			document.getElementById("urlDetails").style.display = "";
+		} else {
+			document.getElementById("urlDetails").style.display = "none";
+		}
 	}
-else{
-	document.getElementById("voucherApprovedDetails").style.display="";
-}
-}
 </script>
 <title> <s:text name="service.master.search.header"></s:text> </title>
 

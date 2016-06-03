@@ -40,12 +40,16 @@
 package org.egov.collection.web.actions.receipts;
 
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,6 +57,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
@@ -60,7 +65,9 @@ import org.egov.collection.service.CollectionRemittanceService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.BankaccountHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
@@ -79,11 +86,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 @Results({
-        @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
-                "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
-            "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
-                "${bankAccount}" }), @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+    @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
+    @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
+            "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
+                "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
+    "${bankAccount}" }), @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -111,7 +118,9 @@ public class BankRemittanceAction extends BaseFormAction {
     // Added for Manual Work Flow
     private Integer positionUser;
     private Integer designationId;
-
+    private Date remittanceDate;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     @Autowired
     private EmployeeService employeeService;
     @Autowired
@@ -126,6 +135,8 @@ public class BankRemittanceAction extends BaseFormAction {
     @Autowired
     private ApplicationContext beanProvider;
     private Boolean showCardAndOnlineColumn = false;
+    private Boolean showRemittanceDate = false;
+    private Long finYearId;
 
     /**
      * @param collectionsUtil
@@ -136,6 +147,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     @Action(value = "/receipts/bankRemittance-newform")
+    @SkipValidation
     public String newform() {
         populateBankAccountList();
         return NEW;
@@ -152,6 +164,7 @@ public class BankRemittanceAction extends BaseFormAction {
             addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
         } else
             addDropdownData(ACCOUNT_NUMBER_LIST, Collections.EMPTY_LIST);
+        addDropdownData("financialYearList", financialYearDAO.getAllPriorFinancialYears(new Date()));
     }
 
     public String getJurisdictionBoundary() {
@@ -172,6 +185,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     @Action(value = "/receipts/bankRemittance-listData")
+    @SkipValidation
     public String listData() {
         isListData = true;
         populateBankAccountList();
@@ -189,11 +203,12 @@ public class BankRemittanceAction extends BaseFormAction {
             serviceCodeList.add(arrayObjectInitialIndex[0].toString());
             fundCodeList.add(arrayObjectInitialIndex[1].toString());
         }
+        final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
         final CollectionRemittanceService collectionRemittanceService = getServiceForRemittance();
-        paramList = collectionRemittanceService
-                .findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(),
-                        "'" + StringUtils.join(serviceCodeList, "','") + "'",
-                        "'" + StringUtils.join(fundCodeList, "','") + "'");
+        paramList = collectionRemittanceService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(),
+                "'" + StringUtils.join(serviceCodeList, "','") + "'",
+                "'" + StringUtils.join(fundCodeList, "','") + "'", financialYear.getStartingDate(),
+                financialYear.getEndingDate());
         return NEW;
     }
 
@@ -214,6 +229,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     @Action(value = "/receipts/bankRemittance-printBankChallan")
+    @SkipValidation
     public String printBankChallan() {
         return PRINT_BANK_CHALLAN;
     }
@@ -233,6 +249,12 @@ public class BankRemittanceAction extends BaseFormAction {
                 CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE);
         if (!showColumn.isEmpty() && showColumn.equals(CollectionConstants.YES))
             showCardAndOnlineColumn = true;
+        final String showRemitDate = collectionsUtil.getAppConfigValue(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE);
+        if (!showRemitDate.isEmpty() && showRemitDate.equals(CollectionConstants.YES))
+            showRemittanceDate = true;
+
         addDropdownData("bankBranchList", Collections.EMPTY_LIST);
         addDropdownData("accountNumberList", Collections.EMPTY_LIST);
     }
@@ -272,7 +294,7 @@ public class BankRemittanceAction extends BaseFormAction {
         voucherHeaderValues = collectionRemittanceService.createBankRemittance(getServiceNameArray(),
                 getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
                 getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
-                accountNumberId, positionUser, getReceiptNumberArray());
+                accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate);
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         bankRemittanceList = prepareBankRemittanceReport(voucherHeaderValues);
@@ -296,16 +318,18 @@ public class BankRemittanceAction extends BaseFormAction {
             while (itr.hasNext()) {
                 final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
                 final InstrumentHeader instHead = (InstrumentHeader) itr.next();
-                collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
-                collBankRemitReport.setBranchName(instHead.getBankBranchName());
-                collBankRemitReport.setBankName(instHead.getBankId() != null ? instHead.getBankId().getName() : "");
-                collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
-                collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
-                collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
-                collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
-                collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
-                collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
-                reportList.add(collBankRemitReport);
+                if (!instHead.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
+                    collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
+                    collBankRemitReport.setBranchName(instHead.getBankBranchName());
+                    collBankRemitReport.setBankName(instHead.getBankId() != null ? instHead.getBankId().getName() : "");
+                    collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
+                    collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
+                    collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
+                    collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
+                    collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
+                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
+                    reportList.add(collBankRemitReport);
+                }
             }
         }
         return reportList;
@@ -317,6 +341,35 @@ public class BankRemittanceAction extends BaseFormAction {
             if (!num.isEmpty())
                 sum = sum + Double.valueOf(num);
         return sum;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        populateBankAccountList();
+        listData();
+        final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        if (receiptDateArray != null) {
+            final String[] filterReceiptDateArray = removeNullValue(receiptDateArray);
+            final String receiptEndDate = filterReceiptDateArray[filterReceiptDateArray.length - 1];
+            if (!receiptEndDate.isEmpty())
+                try {
+                    if (remittanceDate != null && remittanceDate.before(dateFomatter.parse(receiptEndDate)))
+                        addActionError(getText("bankremittance.before.receiptdate"));
+                } catch (final ParseException e) {
+                    LOGGER.debug("Exception in parsing date  " + receiptEndDate + " - " + e.getMessage());
+                    throw new ApplicationRuntimeException("Exception while parsing receiptEndDate date", e);
+                }
+        }
+    }
+
+    private String[] removeNullValue(String[] receiptDateArray) {
+        final List<String> list = new ArrayList<String>();
+        for (final String s : receiptDateArray)
+            if (s != null && s.length() > 0)
+                list.add(s);
+        receiptDateArray = list.toArray(new String[list.size()]);
+        return receiptDateArray;
     }
 
     @Override
@@ -593,5 +646,29 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setShowCardAndOnlineColumn(final Boolean showCardAndOnlineColumn) {
         this.showCardAndOnlineColumn = showCardAndOnlineColumn;
+    }
+
+    public Boolean getShowRemittanceDate() {
+        return showRemittanceDate;
+    }
+
+    public void setShowRemittanceDate(final Boolean showRemittanceDate) {
+        this.showRemittanceDate = showRemittanceDate;
+    }
+
+    public Date getRemittanceDate() {
+        return remittanceDate;
+    }
+
+    public void setRemittanceDate(final Date remittanceDate) {
+        this.remittanceDate = remittanceDate;
+    }
+
+    public Long getFinYearId() {
+        return finYearId;
+    }
+
+    public void setFinYearId(final Long finYearId) {
+        this.finYearId = finYearId;
     }
 }
