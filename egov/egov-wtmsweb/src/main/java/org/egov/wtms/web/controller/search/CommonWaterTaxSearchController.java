@@ -51,6 +51,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -205,14 +206,16 @@ public class CommonWaterTaxSearchController {
             }
         if (applicationType != null
                 && applicationType.equals(WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX)) {
-           /* BigDecimal amoutToBeCollected = BigDecimal.ZERO;
+            BigDecimal amoutToBeCollected = BigDecimal.ZERO;
             if (null != waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand())
                 amoutToBeCollected = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
-            */final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+           final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
             if (assessmentDetails != null)
-               if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+               if (((amoutToBeCollected.doubleValue() > 0 && waterConnectionDetails.getConnectionType().equals(ConnectionType.METERED)) 
+            		   ||(waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED)) ) 
+            		   && (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                             || waterConnectionDetails.getApplicationType().getCode()
                             .equals(WaterTaxConstants.ADDNLCONNECTION) || waterConnectionDetails
                             .getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
