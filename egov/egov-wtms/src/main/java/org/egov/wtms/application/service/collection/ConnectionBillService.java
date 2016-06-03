@@ -228,8 +228,9 @@ public class ConnectionBillService extends BillServiceInterface {
 
         if (advanceCollection.compareTo(BigDecimal.ZERO) < 0)
             advanceCollection = advanceCollection.abs();
-
-        final BigDecimal partiallyCollectedAmount = advanceCollection.remainder(currentInstallmentDemand);
+         BigDecimal partiallyCollectedAmount =BigDecimal.ZERO;
+        if(currentInstallmentDemand.compareTo(BigDecimal.ZERO)>0)
+        partiallyCollectedAmount = advanceCollection.remainder(currentInstallmentDemand);
 
         final Integer noOfAdvancesPaid = advanceCollection.subtract(partiallyCollectedAmount)
                 .divide(currentInstallmentDemand).intValue();

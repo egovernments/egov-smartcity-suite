@@ -247,7 +247,6 @@ public class WaterTaxConstants {
 
         {
             put(WATERTAXREASONCODE, NONMETEREDDEMANDREASON);
-
         }
     };
     public static final String TOTAL_AMOUNT = "amount";
@@ -271,7 +270,7 @@ public class WaterTaxConstants {
     public static final String DEMANDRSN_REASON_ADVANCE = "Advance";
     public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
-    public static final String GLCODE_FOR_ADVANCE = "3504102";
+    public static final String GLCODE_FOR_ADVANCE = "3504106";
 
 
     public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE, DEMANDRSN_CODE_ADVANCE);
