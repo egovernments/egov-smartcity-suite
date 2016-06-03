@@ -8,7 +8,7 @@
 			    <spring:message code="lbl.department" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="executingDepartment" data-first-option="false" disabled="true" id="executingDepartment" class="form-control" required="required">
+				<form:select path="executingDepartment" data-first-option="false" id="executingDepartment" class="form-control disablefield" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -21,7 +21,7 @@
 			    <spring:message code="lbl.abstractestimatedate" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="estimateDate" name="estimateDate" class="form-control" value="${estimateDate}" disabled="true"/>
+				<form:input path="estimateDate" name="estimateDate" class="form-control disablefield" value="${estimateDate}"/>
 				<form:errors path="estimateDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
@@ -31,7 +31,7 @@
 			    <spring:message code="lbl.natureofwork" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork"  disabled="true" class="form-control" required="required">
+			<form:select path="natureOfWork" data-first-option="false" id="natureOfWork" class="form-control disablefield" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -57,13 +57,13 @@
 			    <spring:message code="lbl.locality" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control" name="locality" disabled="true" id="" value="${lineEstimateDetails.lineEstimate.location.name}"/>
+			<input class="form-control disablefield" name="locality"  id="" value="${lineEstimateDetails.lineEstimate.location.name}"/>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.workcategory" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-				<input class="form-control" name="workCategory" disabled="true" value="${workCategory}"/>
+				<input class="form-control disablefield" name="workCategory"  value="${workCategory}"/>
 			</div>
 		</div>
 		
@@ -72,23 +72,14 @@
 			    <spring:message code="lbl.typeofslum" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control" name="" disabled="true" value="${lineEstimateDetails.lineEstimate.typeOfSlum}"/>
+			<input class="form-control disablefield" name="" value="${lineEstimateDetails.lineEstimate.typeOfSlum}"/>
 			</div>
 			
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.beneficiary" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control" name="" disabled="true" value="${lineEstimateDetails.lineEstimate.beneficiary}"/>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.locality" />
-			</label>
-			<div class="col-sm-3 add-margin ">
-			<input class="form-control" name="locality" disabled="true" id="" value="${lineEstimateDetails.lineEstimate.location.name}"/>
+			<input class="form-control disablefield" name=""  value="${lineEstimateDetails.lineEstimate.beneficiary}"/>
 			</div>
 		</div>
 		</c:if>
@@ -124,7 +115,7 @@
 			    <spring:message code="lbl.nameofwork" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:textarea path="name" name="name" id="workName"  disabled="true" class="form-control" />
+			<form:textarea path="name" name="name" id="workName" class="form-control disablefield" />
 			<input type="hidden" id="nameOfWork" name="nameOfWork" value="${lineEstimateDetails.nameOfWork}"/>
 			<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>

@@ -132,6 +132,7 @@ public class LineEstimateDetailService {
         projectCode.setActive(true);
         projectCode.setEgwStatus(lineEstimateAppropriationService.getStatusByModuleAndCode(
                 ProjectCode.class.getSimpleName(), WorksConstants.DEFAULT_PROJECTCODE_STATUS));
+        projectCodeService.applyAuditing(projectCode);
         projectCodeService.persist(projectCode);
         createAccountDetailKey(projectCode);
     }

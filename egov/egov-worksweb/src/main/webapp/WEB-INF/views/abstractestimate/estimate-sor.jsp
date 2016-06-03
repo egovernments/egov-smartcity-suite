@@ -51,11 +51,10 @@
 	<div class="form-group">
 		<input type="hidden" id="msgschedulecategory" value="<spring:message code='msg.select.scheduleofcategory' />">
 		<input type="hidden" id="erroradded" value="<spring:message code='error.sor.added' />">
-		<label class="col-sm-2 control-label text-right"> <spring:message
-				code="lbl.typeofwork" />
+		<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.typeofwork" />
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="parentCategory" data-first-option="false" id="parentCategory" disabled="true" class="form-control"
+			<form:select path="parentCategory" data-first-option="false" id="parentCategory" class="form-control disablefield"
 				required="required">
 				<form:option value="">
 					<spring:message code="lbl.select" />
@@ -70,7 +69,7 @@
 		</label>
 		<div class="col-sm-3 add-margin">
             <input type="hidden" id="subTypeOfWorkValue" value="${lineEstimate.subTypeOfWork.id }"/>
-			<form:select path="category" data-first-option="false" id="category" class="form-control" disabled="true" >
+			<form:select path="category" data-first-option="false" id="category" class="form-control disablefield">
 				<form:option value="">
 					<spring:message code="lbl.select" />
 				</form:option>

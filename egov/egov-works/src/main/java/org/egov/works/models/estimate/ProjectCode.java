@@ -39,29 +39,76 @@
  */
 package org.egov.works.models.estimate;
 
-import org.egov.commons.EgwStatus;
-import org.egov.commons.utils.EntityType;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.hibernate.validator.constraints.Length;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ProjectCode extends BaseModel implements EntityType {
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.commons.EgwStatus;
+import org.egov.commons.utils.EntityType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
+@Entity
+@Table(name = "EGW_PROJECTCODE")
+@NamedQueries({ 
+    @NamedQuery(name = ProjectCode.ALLACTIVEPROJECTCODES, query = " select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') order by pc.code "),
+    @NamedQuery(name = ProjectCode.GETPROJECTCODEBYCODE, query = " select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') and pc.code = ? ")
+})
+@SequenceGenerator(name = ProjectCode.SEQ_EGW_PROJECTCODE, sequenceName = ProjectCode.SEQ_EGW_PROJECTCODE, allocationSize = 1)
+public class ProjectCode extends AbstractAuditable implements EntityType {
 
     private static final long serialVersionUID = -1569796745047275070L;
+
+    public static final String SEQ_EGW_PROJECTCODE = "SEQ_EGW_PROJECTCODE";
+    public static final String ALLACTIVEPROJECTCODES = "ALL_ACTIVEPROJECTCODES";
+    public static final String GETPROJECTCODEBYCODE = "GET_ACTIVEPROJECTCODE_BY_CODE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_PROJECTCODE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     private String code;
+
+    @OneToMany(mappedBy = "projectCode", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AbstractEstimate.class)
     private Set<AbstractEstimate> estimates = new HashSet<AbstractEstimate>();
+
+    @Column(name = "ISACTIVE")
     private boolean active;
+
+    @SafeHtml
     @Length(max = 1024, message = "projectCode.description.length")
     private String description;
-    // @Required(message="projectCode.name.null")
+
+    @SafeHtml
     @Length(max = 1024, message = "projectCode.name.length")
+    @Column(name = "NAME")
     private String codeName;
+
+    @JoinColumn(name = "STATUS_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
     private EgwStatus egwStatus;
+
+    @Column(name = "PROJECT_VALUE")
     private Double projectValue;
+
+    @Column(name = "COMPLETION_DATE")
     private Date completionDate;
 
     public ProjectCode() {
@@ -192,6 +239,16 @@ public class ProjectCode extends BaseModel implements EntityType {
 
     public void setCompletionDate(final Date completionDate) {
         this.completionDate = completionDate;
+    }
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
 }

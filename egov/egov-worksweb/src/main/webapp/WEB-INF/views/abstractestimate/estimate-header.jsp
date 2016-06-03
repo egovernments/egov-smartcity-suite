@@ -59,6 +59,8 @@
 	<div class="panel-body custom-form">
 	   <%@ include file="estimateDetails.jsp"%>   
 	   <form:hidden path="lineEstimateDetails" value="${lineEstimateDetails.id}"/>
+	   <%-- <form:hidden path="projectCode.id" value="${abstractEstimate.projectCode.id}"/> --%>
+	   
 	   <div class="form-group">
 			<%-- <label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.department" /> 

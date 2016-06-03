@@ -40,13 +40,17 @@
 package org.egov.works.abstractestimate.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
@@ -54,8 +58,11 @@ import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -63,6 +70,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -85,12 +93,18 @@ public class EstimateService {
 
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private OverheadService overheadService;
 
     @Autowired
     private WorksUtils worksUtils;
+
+    @Autowired
+    private LetterOfAcceptanceService letterOfAcceptanceService;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -106,30 +120,53 @@ public class EstimateService {
     }
 
     @Transactional
-    public AbstractEstimate createAbstractEstimate(AbstractEstimate abstractEstimate , final MultipartFile[] files) throws IOException {
+    public AbstractEstimate createAbstractEstimate(final AbstractEstimate abstractEstimate, final MultipartFile[] files)
+            throws IOException {
         abstractEstimate.setWard(boundaryService.getBoundaryByName(abstractEstimate.getWard().getName()));
-        for(MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates()) {
-            multiYearEstimate.setAbstractEstimate(abstractEstimate);
-        }
-        
-        for(FinancialDetail financialDetail:abstractEstimate.getFinancialDetails()) {
-            financialDetail.setAbstractEstimate(abstractEstimate);
-        }
-        
-        for(OverheadValue obj:abstractEstimate.getOverheadValues()){
-            obj.setAbstractEstimate(abstractEstimate);
-            obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
-        }
-        
-        final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
-        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedAbstractEstimate,
+        AbstractEstimate newAbstractEstimate = null;
+        final AbstractEstimate abstractEstimateFromDB = getAbstractEstimateByEstimateNumber(abstractEstimate
+                .getEstimateNumber());
+        if (abstractEstimateFromDB == null) {
+            for (final MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates())
+                multiYearEstimate.setAbstractEstimate(abstractEstimate);
+            for (final FinancialDetail financialDetail : abstractEstimate.getFinancialDetails())
+                financialDetail.setAbstractEstimate(abstractEstimate);
+            for (final OverheadValue obj : abstractEstimate.getOverheadValues()) {
+                obj.setAbstractEstimate(abstractEstimate);
+                obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
+            }
+            newAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
+        } else
+            newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
             abstractEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
         }
-        return savedAbstractEstimate;
-        
+        return newAbstractEstimate;
+
+    }
+
+    @Transactional
+    public AbstractEstimate updateAbstractEstimate(final AbstractEstimate abstractEstimateFromDB,
+            final AbstractEstimate newAbstractEstimate) {
+        abstractEstimateFromDB.setEstimateDate(newAbstractEstimate.getEstimateDate());
+        abstractEstimateFromDB.setEstimateNumber(newAbstractEstimate.getEstimateNumber());
+        abstractEstimateFromDB.setName(newAbstractEstimate.getName());
+        abstractEstimateFromDB.setDescription(newAbstractEstimate.getDescription());
+        abstractEstimateFromDB.setWard(newAbstractEstimate.getWard());
+        abstractEstimateFromDB.setNatureOfWork(newAbstractEstimate.getNatureOfWork());
+        abstractEstimateFromDB.setLocation(newAbstractEstimate.getLocation());
+        abstractEstimateFromDB.setParentCategory(newAbstractEstimate.getParentCategory());
+        abstractEstimateFromDB.setCategory(newAbstractEstimate.getCategory());
+        abstractEstimateFromDB.setExecutingDepartment(newAbstractEstimate.getExecutingDepartment());
+        abstractEstimateFromDB.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                LineEstimateStatus.CREATED.toString()));
+        abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getProjectCode());
+        abstractEstimateFromDB.setLineEstimateDetails(newAbstractEstimate.getLineEstimateDetails());
+        abstractEstimateRepository.save(abstractEstimateFromDB);
+        return abstractEstimateFromDB;
     }
 
     @Transactional
@@ -219,6 +256,57 @@ public class EstimateService {
     public AbstractEstimate getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(final Long id) {
         return abstractEstimateRepository.findByLineEstimateDetails_IdAndEgwStatus_codeEquals(id,
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+    }
+
+    public Double getEstimateValueForLineEstimate(final LineEstimateDetails lineEstimateDetails) {
+        Double estimateValue = 0d;
+        final String qryStr = "select totalbillpaidsofar from egw_mv_work_progress_register where ledid =:ledid ";
+        final Query query = entityManager.createNativeQuery(qryStr).setParameter("ledid", lineEstimateDetails.getId());
+        estimateValue = query.getResultList() != null && !query.getResultList().isEmpty() ? (double) query
+                .getResultList().get(0) : 0d;
+                return estimateValue;
+    }
+
+    public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,
+            final AbstractEstimate abstractEstimate) {
+        final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
+        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
+        abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
+        abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
+        if (lineEstimate.getLocation() != null)
+            abstractEstimate.setLocation(lineEstimate.getLocation().getName());
+        abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
+        abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
+        abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
+        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
+        if (lineEstimate.getWorkCategory().equals(WorksConstants.SLUM_WORK))
+            model.addAttribute("workCategory", "Slum Work");
+        else
+            model.addAttribute("workCategory", "Non Slum Work");
+
+        final List<FinancialDetail> financialDetailList = new ArrayList<FinancialDetail>();
+        final FinancialDetail financialDetails = new FinancialDetail();
+        financialDetails.setFund(lineEstimate.getFund());
+        financialDetails.setFunction(lineEstimate.getFunction());
+        financialDetails.setScheme(lineEstimate.getScheme());
+        financialDetails.setSubScheme(lineEstimate.getSubScheme());
+        financialDetails.setBudgetGroup(lineEstimate.getBudgetHead());
+        financialDetailList.add(financialDetails);
+        abstractEstimate.setFinancialDetails(financialDetailList);
+        model.addAttribute("estimateValue", getEstimateValueForLineEstimate(lineEstimateDetails));
+        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+        model.addAttribute("abstractEstimate", abstractEstimate);
+        model.addAttribute("lineEstimate", lineEstimate);
+        model.addAttribute("workOrder",
+                letterOfAcceptanceService.getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber()));
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isServiceVATRequired", true);
+        else
+            model.addAttribute("isServiceVATRequired", false);
+
     }
 
 }

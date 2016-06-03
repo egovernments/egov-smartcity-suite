@@ -70,7 +70,7 @@
 					code="lbl.fund" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund" disabled="true" class="form-control" required="required">
+				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -82,7 +82,7 @@
 
 			<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.function" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control" disabled="true" required="required">
+				<form:select path="financialDetails[0].function" data-first-option="false" id="function" class="form-control disablefield"  required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -96,7 +96,7 @@
 					<spring:message code="lbl.budgethead" />
 				</label>
 				<div class="col-xs-3 add-margin">
-					<form:select path="financialDetails[0].budgetGroup" data-first-option="false" id="budgethead" class="form-control" disabled="true" >
+					<form:select path="financialDetails[0].budgetGroup" data-first-option="false" id="budgethead" class="form-control disablefield"  >
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
@@ -110,7 +110,7 @@
 					<spring:message code="lbl.scheme" />
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:select path="financialDetails[0].scheme" data-first-option="false" id="scheme" class="form-control" disabled="true" onchange="getSubSchemsBySchemeId(this.value);" >
+					<form:select path="financialDetails[0].scheme" data-first-option="false" id="scheme" class="form-control disablefield"  onchange="getSubSchemsBySchemeId(this.value);" >
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
@@ -123,7 +123,7 @@
 				</label>
 				<input type="hidden" id="subSchemeValue" value="${lineEstimate.subScheme.id }" />
 				<div class="col-sm-3 add-margin">
-					<form:select path="financialDetails[0].subScheme" data-first-option="false" id="subScheme" disabled="true" class="form-control">
+					<form:select path="financialDetails[0].subScheme" data-first-option="false" id="subScheme" class="form-control disablefield">
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>

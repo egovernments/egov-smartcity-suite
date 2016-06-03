@@ -7,9 +7,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
@@ -33,6 +35,7 @@ import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.master.service.UOMService;
+import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -47,7 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/abstractestimate")
+@RequestMapping(value = "/abstractestimate/create")
 public class CreateAbstractEstimateController extends GenericWorkFlowController {
 
     @Autowired
@@ -61,9 +64,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private ScheduleCategoryService scheduleCategoryService;
-
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
@@ -103,61 +103,23 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private MessageSource messageSource;
-    
-    @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
 
-    @RequestMapping(value = "/newform", method = RequestMethod.GET)
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
+
+    @RequestMapping(method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
-        AbstractEstimate abstractEstimate = new AbstractEstimate();
+        final AbstractEstimate abstractEstimate = new AbstractEstimate();
         LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
-        LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
-        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
-        abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
-        abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
-        if (lineEstimate.getLocation() != null)
-            abstractEstimate.setLocation(lineEstimate.getLocation().getName());
-        abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
-        abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
-        abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
-        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
-        if (lineEstimate.getWorkCategory().equals(WorksConstants.SLUM_WORK)) {
-            model.addAttribute("workCategory", "Slum Work");
-        } else {
-            model.addAttribute("workCategory", "Non Slum Work");
-        }
-        MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
-        List<MultiYearEstimate> multiYearEstimateList = new ArrayList<MultiYearEstimate>();
-        multiYearEstimate.setFinancialYear(financialYearDAO.getFinancialYearByDate(new Date()));
-        multiYearEstimate.setPercentage(100d);
+        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
+        final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
+        final List<MultiYearEstimate> multiYearEstimateList = new ArrayList<MultiYearEstimate>();
+        multiYearEstimate.setFinancialYear(financialYearHibernateDAO.getFinancialYearByDate(new Date()));
+        multiYearEstimate.setPercentage(100);
         multiYearEstimateList.add(multiYearEstimate);
         abstractEstimate.setMultiYearEstimates(multiYearEstimateList);
-
-        List<FinancialDetail> financialDetailList = new ArrayList<FinancialDetail>();
-        FinancialDetail financialDetails = new FinancialDetail();
-        financialDetails.setFund(lineEstimate.getFund());
-        financialDetails.setFunction(lineEstimate.getFunction());
-        financialDetails.setScheme(lineEstimate.getScheme());
-        financialDetails.setSubScheme(lineEstimate.getSubScheme());
-        financialDetails.setBudgetGroup(lineEstimate.getBudgetHead());
-        financialDetailList.add(financialDetails);
-        abstractEstimate.setFinancialDetails(financialDetailList);
-        //TO-DO Need to get this value of totalbillpaidsofar from egw_mv_work_progress_register
-        model.addAttribute("estimateValue", "56321.05");
-        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
-        model.addAttribute("abstractEstimate", abstractEstimate);
-        model.addAttribute("lineEstimate", lineEstimate);
-        model.addAttribute("workOrder", letterOfAcceptanceService.getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber()));
         model.addAttribute("estimateTemplateConfirmMsg",
                 messageSource.getMessage("masg.estimate.template.confirm.reset", null, null));
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
-        final AppConfigValues value = values.get(0);
-        if (value.getValue().equalsIgnoreCase("Yes"))
-            model.addAttribute("isServiceVATRequired", true);
-        else
-            model.addAttribute("isServiceVATRequired", false);
-
         setDropDownValues(model);
         return "newAbstractEstimate-form";
     }
@@ -179,14 +141,48 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @RequestMapping(value = "/newform",method = RequestMethod.POST)
     public String saveAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate,
-            final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
+            final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) throws IOException {
-        if (abstractEstimate.getState() == null)
-            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                    LineEstimateStatus.CREATED.toString()));
-        estimateService.createAbstractEstimate(abstractEstimate, files);
-        model.addAttribute("message", "Abstract Estimate created successfully");
-        return "abstractEstimate-success";
+        validateMultiYearEstimates(abstractEstimate, bindErrors);
+        if (bindErrors.hasErrors()) {
+            setDropDownValues(model);
+            estimateService.populateDataForAbstractEstimate(abstractEstimate.getLineEstimateDetails(), model,
+                    abstractEstimate);
+            return "newAbstractEstimate-form";
+        } else {
+            if (abstractEstimate.getState() == null)
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                        LineEstimateStatus.CREATED.toString()));
+            estimateService.createAbstractEstimate(abstractEstimate, files);
+            model.addAttribute("message", "Abstract Estimate created successfully");
+            return "abstractEstimate-success";
+        }
+
+    }
+
+    private void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
+        CFinancialYear cFinancialYear = null;
+        Double totalPercentage = 0d;
+        Integer index = 0;
+        for (final MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates()) {
+            totalPercentage = totalPercentage + multiYearEstimate.getPercentage();
+
+            if (multiYearEstimate.getFinancialYear() == null) {
+                bindErrors.rejectValue("multiYearEstimates[" + index + "].financialYear", "error.finyear.required");
+            }
+            if (multiYearEstimate.getPercentage() == 0) {
+                bindErrors.rejectValue("multiYearEstimates[" + index + "].percentage", "error.percentage.required");
+            }
+            if (cFinancialYear != null && cFinancialYear.equals(multiYearEstimate.getFinancialYear())) {
+                bindErrors.rejectValue("multiYearEstimates[" + index + "].financialYear", "error.financialYear.unique");
+            }
+            if (totalPercentage > 100) {
+                bindErrors.rejectValue("multiYearEstimates[" + index + "].percentage", "error.percentage.greater");
+            }
+            cFinancialYear = multiYearEstimate.getFinancialYear();
+            index++;
+        }
+
     }
 
 }

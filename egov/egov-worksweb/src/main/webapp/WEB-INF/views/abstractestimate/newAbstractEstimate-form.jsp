@@ -48,8 +48,7 @@
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
     </style>
-<form:form name="abstractEstimateForm" role="form"
-	modelAttribute="abstractEstimate" id="abstractEstimate"
+<form:form name="abstractEstimateForm" role="form" method="post" modelAttribute="abstractEstimate" id="abstractEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 
@@ -57,47 +56,7 @@
 
 	<div class="main-content">
 	<input type="hidden" id="estimateValue" name="estimateValue" value="${estimateValue}"/>
-		<div class="position_alert">
-			Estimate Value : &#8377 <span>56321.05</span>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading"></div>
-					<div class="panel-body">
-						<div class="row add-border">
-							<div class="col-md-2 col-xs-6 add-margin">Estimate No.</div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-							<c:out value="${lineEstimateDetails.estimateNumber}"></c:out>
-							</div>
-								
-							<form:hidden path="estimateNumber" name="estimateNumber" value="${lineEstimateDetails.estimateNumber}"/>
-							<div class="col-md-2 col-xs-6 add-margin">Line Estimate No.
-							</div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${lineEstimate.id}"/>')"><c:out value="${lineEstimate.lineEstimateNumber}"/></a>
-							</div>
-							<div class="col-md-2 col-xs-6 add-margin">Work Identification No.</div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
-							<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
-						</div>
-						<div class="row add-border">
-						<c:if test="workOrder != null && workOrder.id != null">
-							<div class="col-md-2 col-xs-6 add-margin">LOA No.</div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="%{workOrder.id"/>)'><c:out value="%{workOrder.workOrderNumber}"/></a>
-							</div>
-						</c:if>
-							<div class="col-md-2 col-xs-6 add-margin">Payments
-								Released.</div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-								&#8377 20000.00</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
+	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#estimateheader"

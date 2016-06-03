@@ -220,7 +220,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @Transient
     private Integer approverUserId;
-    
+
     @Transient
     private Long approvalDepartment;
 
@@ -249,7 +249,8 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AbstractEstimateAppropriation.class)
-    private List<AbstractEstimateAppropriation> abstractEstimateAppropriations = new ArrayList<AbstractEstimateAppropriation>(0);
+    private List<AbstractEstimateAppropriation> abstractEstimateAppropriations = new ArrayList<AbstractEstimateAppropriation>(
+            0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = FinancialDetail.class)
@@ -262,7 +263,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateTechnicalSanction.class)
     private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new ArrayList<EstimateTechnicalSanction>(0);
-    
+
     private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @Override
@@ -369,7 +370,8 @@ public class AbstractEstimate extends StateAware implements Auditable {
         double amt = 0;
         if (!activities.isEmpty()) {
             for (final Activity activity : activities)
-                if (activity.getRevisionType() != null && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                if (activity.getRevisionType() != null
+                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
                     amt -= activity.getAmount().getValue();
                 else
                     amt += activity.getAmount().getValue();
@@ -379,10 +381,12 @@ public class AbstractEstimate extends StateAware implements Auditable {
     }
 
     /**
-     * This method returns the grand total of the work value for all the activities ( both SOR and Non SOR combined)
-     *
-     * @return a double value representing the rounded figure of the total of the grand total of the work value for all the
+     * This method returns the grand total of the work value for all the
      * activities ( both SOR and Non SOR combined)
+     *
+     * @return a double value representing the rounded figure of the total of
+     *         the grand total of the work value for all the activities ( both
+     *         SOR and Non SOR combined)
      */
     public Money getWorkValueIncludingTaxes() {
         return new Money(getWorkValue() + getTotalTax().getValue());
@@ -548,9 +552,11 @@ public class AbstractEstimate extends StateAware implements Auditable {
     }
 
     /**
-     * This method returns the least of the financial years chosen from the multi year estimates
+     * This method returns the least of the financial years chosen from the
+     * multi year estimates
      *
-     * @return an instance of <code>CFinancialYear</code> representing the least financial year
+     * @return an instance of <code>CFinancialYear</code> representing the least
+     *         financial year
      */
     public CFinancialYear getLeastFinancialYearForEstimate() {
         CFinancialYear minfinYr = null;
@@ -720,7 +726,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return approvalDepartment;
     }
 
-    public void setApprovalDepartment(Long approvalDepartment) {
+    public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
@@ -728,14 +734,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return approvalComent;
     }
 
-    public void setApprovalComent(String approvalComent) {
+    public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
 
     public List<DocumentDetails> getDocumentDetails() {
         return documentDetails;
     }
-    
+
     public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
         this.documentDetails.clear();
         if (documentDetails != null)

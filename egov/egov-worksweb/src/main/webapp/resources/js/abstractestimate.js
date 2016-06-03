@@ -43,6 +43,7 @@ $subSchemeId = 0;
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
 	
+	$('.disablefield').attr('disabled', 'disabled');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	var nameOfWork = $('#nameOfWork').val();
@@ -476,7 +477,10 @@ function addMultiyearEstimate() {
 									return nextIdx;
 								}
 						       
-						    }).val('');
+						    }).val(''); 
+					}
+					if($(this).is('input')){
+						$(this).val(0);
 					}
 					 
 		    }).end().appendTo("#multiYeaeEstimateTbl");
@@ -932,22 +936,7 @@ function getAbstractEstimateDate() {
 
 
 function enableFileds() {
-	console.log('submit called!');
-	jQuery("#estimateNumber").removeAttr('disabled');
-	jQuery("#projectCode").removeAttr('disabled');
-	jQuery("#executingDepartment").removeAttr('disabled');
-	jQuery("#estimateDate").removeAttr('disabled');
-	jQuery("#wardInput").removeAttr('disabled');
-	jQuery("#wardInput").removeAttr('disabled');
-	jQuery("#natureOfWork").removeAttr('disabled');
-	jQuery("#category").removeAttr('disabled');
-	jQuery("#parentCategory").removeAttr('disabled');
-	jQuery("#fund").removeAttr('disabled');
-	jQuery("#function").removeAttr('disabled');
-	jQuery("#budgethead").removeAttr('disabled');
-	jQuery("#scheme").removeAttr('disabled');
-	jQuery("#subScheme").removeAttr('disabled'); 
-	jQuery("#workName").removeAttr('disabled');
+
 	if($('#abstractEstimate').valid()) {
 		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
 		if(hiddenRowCount == 1) {
@@ -970,10 +959,10 @@ function enableFileds() {
 		}
 		if(!validateOverheads())
 			return false;
+		$('.disablefield').removeAttr("disabled");
 		return true;
-	}else
+	} else
 		return false;
-	
 
 }
 
@@ -1299,4 +1288,16 @@ function viewLineEstimate(id) {
 
 function viewLOA(id) {
 	window.open("/egworks/letterofacceptance/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function validateQuantity() {
+	$( "input[name$='quantity']" ).on("keyup", function(){
+	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
+	        val = this.value;
+	    
+	    if(!valid){
+	        console.log("Invalid input!");
+	        this.value = val.substring(0, val.length - 1);
+	    }
+	});
 }
