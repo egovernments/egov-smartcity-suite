@@ -309,4 +309,40 @@
         <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-success.jsp"/>
     </definition>
+      <definition name="donation-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>
+    </definition>
+     <definition name="property-usage-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyUsage.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-usage-master-success.jsp"/>
+    </definition>
+    <definition name="property-category-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyCategory.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-category-master-success.jsp"/>
+    </definition>
+     <definition name="water-source-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master-success.jsp"/>
+    </definition>
+    <definition name="meter-cost-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.meterCost.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/meter-cost-master-success.jsp"/>
+    </definition>
+    <definition name="application-process-time-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master-success.jsp"/>
+    </definition>
+    <definition name="waterRates-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master-success.jsp"/>
+    </definition>
+    <definition name="document-name-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master-success.jsp"/>
+    </definition>
+      <definition name="property-pipesize-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyPipeSize.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-pipesize-master-success.jsp"/>
+    </definition>
 </tiles-definitions>

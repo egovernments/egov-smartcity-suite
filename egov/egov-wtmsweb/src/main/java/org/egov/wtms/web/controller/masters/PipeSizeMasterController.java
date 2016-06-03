@@ -81,7 +81,7 @@ public class PipeSizeMasterController {
             return "pipesize-master";
         pipeSizeService.createPipeSize(pipeSize);
         redirectAttrs.addFlashAttribute("pipeSize", pipeSize);
-        model.addAttribute("message", "PipeSize created successfully");
+        model.addAttribute("message", "PipeSize created successfully.");
         model.addAttribute("mode", "create");
         return "pipesize-master-success";
     }
@@ -94,7 +94,7 @@ public class PipeSizeMasterController {
     }
 
     @RequestMapping(value = "/pipesizeMaster/edit", method = RequestMethod.GET)
-    public String getUsageTypeDetails(final Model model) {
+    public String getPipeSizeMaster(final Model model) {
         model.addAttribute("mode", "edit");
         return getPipeSizeMasterList(model);
     }
@@ -114,7 +114,7 @@ public class PipeSizeMasterController {
             return "pipesize-master";
         pipeSizeService.updatePipeSize(pipeSize);
         redirectAttrs.addFlashAttribute("pipeSize", pipeSize);
-        model.addAttribute("message", "PipeSize updated successfully");
+        model.addAttribute("message", "PipeSize updated successfully.");
         return "pipesize-master-success";
 
     }

@@ -79,7 +79,7 @@ public class UsageTypeMasterController {
             return "usage-type-master";
         usageTypeService.createUsageType(usageType);
         redirectAttrs.addFlashAttribute("usageType", usageType);
-        model.addAttribute("message", "Usage Type created successfully");
+        model.addAttribute("message", "Usage Type created successfully.");
         model.addAttribute("mode", "create");
         return "usage-type-sucess";
     }
@@ -93,7 +93,7 @@ public class UsageTypeMasterController {
     }
 
     @RequestMapping(value = "/usageTypeMaster/edit", method = RequestMethod.GET)
-    public String getUsageTypeDetails(final Model model) {
+    public String getUsageTypeMaster(final Model model) {
         model.addAttribute("mode", "edit");
         return getUsageTypeList(model);
     }
@@ -113,7 +113,7 @@ public class UsageTypeMasterController {
             return "usage-type-master";
         usageTypeService.updateUsageType(usageType);
         redirectAttrs.addFlashAttribute("UsageType", usageType);
-        model.addAttribute("message", "Usage Type updated successfully");
+        model.addAttribute("message", "Usage Type updated successfully.");
         model.addAttribute("mode", "edit");
         return "usage-type-sucess";
 

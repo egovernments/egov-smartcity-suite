@@ -45,9 +45,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <form:form method ="post" action="" class="form-horizontal form-groups-bordered"  id="waterrates-view"
-			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+	cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 <input type="hidden" name="waterRatesHeaderList" id="waterRatesHeaderList" value="${waterRatesHeaderList}"> 
 <input type="hidden" id="waterratesid" name="waterratesid" value="${waterConnectionDetails.connection.consumerCode}" />
+<input type="hidden" value="${mode}" id="mode" />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading"></div>
 			<div class="panel-body custom-form ">
@@ -83,22 +84,20 @@
 						<th colspan="1" class="text-center">
 						   <spring:message code="lbl.status"/>
 						</th>
+						<c:if test="${mode == 'edit'}"> 
 						<th colspan="1" class="text-center">
 						    <spring:message code="lbl.edit" />
 						</th>
+						</c:if>
 					</tr>
 					</thead>
 					<c:forEach var="waterRatesHeader" items="${waterRatesHeaderList}" >
 					<tr>
 						<td  colspan="1" >
-							<div align="center">
-								<c:out value="${waterRatesHeader.waterSource.waterSourceType}" />
-							</div>
+							<div align="center"><c:out value="${waterRatesHeader.waterSource.waterSourceType}" /></div>
 						</td>
 						<td  colspan="1" >
-							<div align="center">
-								<c:out value="${waterRatesHeader.usageType.name}" />
-							</div>
+							<div align="center"><c:out value="${waterRatesHeader.usageType.name}" /></div>
 						</td>
 						<td colspan="1" >
 								<div align="center"><c:out value="${waterRatesHeader.pipeSize.code}"/></div>
@@ -124,31 +123,31 @@
 								</c:choose>
 								</div>
 							</td>
+							<c:if test="${mode == 'edit'}"> 
 							<td  colspan="1">
 								<div align="center">
 								  <a href="javascript:void(0);" onclick="edit('<c:out value="${waterRatesHeader.id}" />');">Edit</a>
 								</div>
 							</td>
+							</c:if>
 						</tr>
 				</c:forEach> 	
 		</table>
 	</c:otherwise>
 </c:choose>
      <div class="form-group text-center" >
-			<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)">Add New</a>
 			<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 	</div>
   </div>
 </div>
 </form:form>
-				<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
-	            type="text/javascript"></script>
-                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
-	            type="text/javascript"></script>
-                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
-	            type="text/javascript"></script>
-	           <script src="<c:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
-	           <script	src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	           <script src="<c:url value='/resources/js/app/waterRates.js?rnd=${app_release_no}'/>"></script>
-	           <script src="<c:url value='/resources/js/app/waterrates-view.js?rnd=${app_release_no}'/>"></script>						
+<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
+	 type="text/javascript"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+	   type="text/javascript"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
+	    type="text/javascript"></script>
+<script src="<c:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
+<script	src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/waterRates.js?rnd=${app_release_no}'/>"></script>					

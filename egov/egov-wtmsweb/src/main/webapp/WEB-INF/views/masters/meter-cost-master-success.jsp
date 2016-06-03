@@ -38,91 +38,67 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
-<form:form method="post" action="" class="form-horizontal form-groups-bordered" id="propertyPipeSize-view" 
- cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-<input type="hidden" name="propertyPipeSizeList" id="propertyPipeSizeList" value="${propertyPipeSizeList}">
-<input type="hidden" id="propertypipesizeid" name="propertypipesizeid" value="${propertyPipeSize.id}" />
-<input type="hidden" value="${mode}" id="mode" />
-	<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-body custom-form ">
-			<c:if test="${not empty message}">
-                <div role="alert">${message}</div>
-             </c:if>
-			<c:choose>
-				<c:when test="${propertyPipeSizeList.isEmpty()}">
-					<div class="form-group" align="center">No Master Data</div>
-				</c:when>
-			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="propertyPipeTbl">
-					<thead>
-						<tr>
-							<th colspan="1" class="text-center">
-									<spring:message code="lbl.propertytype" />
-							</th>
-							<th colspan="1" class="text-center">
-								<spring:message code="lbl.hscpipesize.mm" />
-							</th>
-							<th colspan="1" class="text-center">
-								<spring:message code="lbl.status"/>
-							</th>
-							<c:if test="${mode == 'edit'}"> 
-							<th colspan="1" class="text-center">
-								<spring:message code="lbl.edit" />
-							</th>
-							</c:if>
-						</tr>
-					</thead>
-					<c:forEach var="propertyPipeSize" items="${propertyPipeSizeList}">
-						<tr>
-							<td colspan="1">
-								<div align="center">
-									<c:out value="${propertyPipeSize.propertyType.name}" />
-								</div>
-							</td>
-							<td colspan="1">
-								<div align="center">
-								<c:out value="${propertyPipeSize.pipeSize.code}-${propertyPipeSize.pipeSize.sizeInMilimeter}" />
-								</div>
-							</td>
-							<td colspan="1">
-								<div align="center">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="meterCost" id="meterCostform" >
+<div class="row">
+	<div class="col-md-12">
+		<c:if test="${not empty message}">
+            <div class= role="alert">${message}</div>
+        </c:if>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title"><spring:message code="title.meterCost.master"/></div>
+	</div>
+<div class="panel-body">
+	<div class="row add-border">
+		<div class="col-md-3 col-xs-3 add-margin"><spring:message code="lbl.hscpipesize"/> </div>
+			<div class="col-md-3 col-xs-3 add-margin view-content">
+				<c:out value="${meterCost.pipeSize.code}"/>
+				</div>
+				<div class="col-md-3 col-xs-3 add-margin"><spring:message code="lbl.makeofthemeter"/></div>
+					<div class="col-md-3 col-xs-3 add-margin view-content">
+						<c:out value="${meterCost.meterMake}"/>
+					</div>
+					</div>
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-3 add-margin"><spring:message code="lbl.metercost"/></div>
+							<div class="col-md-3 col-xs-3 add-margin view-content">
+								<c:out value="${meterCost.amount}"/>
+							</div>
+						<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.status"/></div>
+							<div class="col-md-3 col-xs-6 add-margin view-content">
 								<c:choose>
-									<c:when test="${propertyPipeSize.active == 'true'}">
+									<c:when test="${meterCost.active == 'true'}">
 										<c:out value="ACTIVE" />
 									</c:when> 
 									<c:otherwise>
 										<c:out value="INACTIVE" />
 									</c:otherwise>
 								</c:choose>
-								</div>
-							</td>
-							<c:if test="${mode == 'edit'}"> 
-							<td colspan="1">
-								<div align="center">
-									<a href="javascript:void(0);" onclick="edit('<c:out value="${propertyPipeSize.id}" />');">Edit</a>
-								</div>
-							</td>
-							</c:if>
-						</tr>
-					</c:forEach>
-				</table>
-			</c:otherwise>
-			</c:choose>
-			<div class="form-group text-center">
-				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+							</div> 
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+<input type="hidden" value="${mode}" id="mode" />
+		<div class="row text-center">
+			<div class="row">
+				<c:if test="${mode == 'create'}"> 
+					<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
+				</c:if>
+				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>
-	</div>
 </form:form>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>" type="text/javascript"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>" type="text/javascript"></script>
-<script src="<c:url value='/resources/js/app/property-pipesize-master.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/app/meter-cost-master.js?rnd=${app_release_no}'/>"></script>

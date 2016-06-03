@@ -124,22 +124,14 @@ function overwriteprocesstime(res)
 	
 }
 
-$('#listid').click(function() {
-	window.open("/wtms/masters/applicationProcessTime/list", "_self");
- });
-
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/applicationProcessTime/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/applicationProcessTime/", "_self");
-}
 
 function edit(applicationProcessTime)
 {
 	
-	window.open("/wtms/masters/applicationProcessTime/"+applicationProcessTime, "_self");
+	window.open("/wtms/masters/applicationProcessTime/edit/"+applicationProcessTime, "_self");
 	
 }
