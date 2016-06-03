@@ -58,8 +58,8 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
 
     List<ContractorBillRegister> findByWorkOrder(final WorkOrder workOrder);
 
-    @Query("select max(billSequenceNumber) from ContractorBillRegister where workOrder.workOrderNumber =:workOrderNumber")
-    Integer findMaxBillSequenceNumberByWorkOrder(@Param("workOrderNumber") String workOrderNumber);
+    @Query("select max(billSequenceNumber) from ContractorBillRegister cbr where cbr.workOrderEstimate.estimate.lineEstimateDetails.projectCode.code = :workIdentificationNumber")
+    Integer findMaxBillSequenceNumberByWorkOrder(@Param("workIdentificationNumber") String workIdentificationNumber);
 
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(cbr.workOrder.estimateNumber) from ContractorBillRegister as cbr where led.estimateNumber = cbr.workOrder.estimateNumber)")
     List<String> findWorkIdentificationNumberToSearchContractorBill(@Param("code") String code);

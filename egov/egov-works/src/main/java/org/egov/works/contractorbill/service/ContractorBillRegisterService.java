@@ -76,6 +76,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.elasticsearch.common.joda.time.DateTime;
@@ -151,8 +152,8 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.findOne(id);
     }
 
-    public Integer getMaxSequenceNumberByWorkOrder(final WorkOrder workOrder) {
-        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrder.getWorkOrderNumber());
+    public Integer getMaxSequenceNumberByWorkOrder(final WorkOrderEstimate workOrderEstimate) {
+        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getCode());
     }
 
     public ContractorBillRegister getContractorBillByBillNumber(final String billNumber) {
