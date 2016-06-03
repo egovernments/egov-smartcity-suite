@@ -152,7 +152,7 @@ public class ContractorBillRegisterService {
     }
 
     public Integer getMaxSequenceNumberByWorkOrder(final WorkOrder workOrder) {
-        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrder);
+        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrder.getWorkOrderNumber());
     }
 
     public ContractorBillRegister getContractorBillByBillNumber(final String billNumber) {
