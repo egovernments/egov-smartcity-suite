@@ -263,6 +263,7 @@ public class WaterTaxConstants {
             put(WATERTAX_SECURITY_CHARGE, "1100201");
             put(WATERTAX_FIELDINSPECTION_CHARGE, "1407011");
             put(WATERTAXREASONCODE, "1405016");
+            put(DEMANDRSN_CODE_ADVANCE, "3504106");
 
         }
     };
