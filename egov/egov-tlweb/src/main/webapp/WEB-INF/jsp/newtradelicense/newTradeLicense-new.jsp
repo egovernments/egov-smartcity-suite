@@ -352,7 +352,7 @@
                                 <div class="tab-content">
                                     <div class="tab-pane fade active in" id="tradedetails">
 	                                         <%@ include file='../common/licensee.jsp'%>
-	                                          <%@ include file='../common/address.jsp'%>
+	                                         <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
 									</div>
                                     <div class="tab-pane fade" id="tradeattachments"> 
