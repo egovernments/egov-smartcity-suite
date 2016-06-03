@@ -212,12 +212,11 @@
 			
 		}
 
-		if((document.getElementById('billDateFrom').value)>(document.getElementById('billDateTo').value))
-			{
-			document.getElementById('lblError').innerHTML = "Bill date from should be less than Bill date to";
+		var fromDate=document.getElementById('billDateFrom').value;
+		var toDate=document.getElementById('billDateTo').value;
+		if(!DateValidation(fromDate,toDate))
 			return false;
-	
-			}
+		
 		 <s:if test="%{isFieldMandatory('fund')}"> 
 				 if(null != document.getElementById('fundId') && document.getElementById('fundId').value == -1){
 

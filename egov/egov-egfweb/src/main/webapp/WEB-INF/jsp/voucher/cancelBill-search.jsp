@@ -107,7 +107,7 @@ function validateCancel()
 }
 </script>
 <body onload="resetSelectedRows()">
-	<s:form name="billForm"action="cancelBill" theme="simple">
+	<s:form name="billForm" action="cancelBill" theme="simple">
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Bill Cancellation" />
 		</jsp:include>
