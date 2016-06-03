@@ -40,6 +40,7 @@
 package org.egov.wtms.utils.constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -266,7 +267,26 @@ public class WaterTaxConstants {
 
         }
     };
+    public static final String DEMANDRSN_CODE_ADVANCE = "WTADVANCE";
+    public static final String DEMANDRSN_REASON_ADVANCE = "Advance";
+    public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
+    public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
+    public static final String GLCODE_FOR_ADVANCE = "3504102";
+
+
+    public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE, DEMANDRSN_CODE_ADVANCE);
+
     // List for GLCodes for Current Taxes
+     
+    public static final HashMap<String, Integer> DEMAND_REASON_ORDER_MAP = new HashMap<String, Integer>() {
+    private static final long serialVersionUID = -376251525790947906L;
+
+        {
+            put(WATERTAXREASONCODE, 0);
+            put(DEMANDRSN_CODE_ADVANCE, 1);
+        }
+    };
+    public static final Integer MAX_ADVANCES_ALLOWED = 10;
     public static final List<String> GLCODES_FOR_CURRENTTAX = new ArrayList<String>() {
         /**
          *

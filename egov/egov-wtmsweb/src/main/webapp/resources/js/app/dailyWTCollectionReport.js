@@ -135,9 +135,10 @@ $('#dailyCollectionReportSearch').click(function(e){
 						{title: 'Paid To', data: 'resource.searchable.installmentto'},
 						{title: 'Arrear Total', data: 'resource.searchable.arrearamount',"className": "text-right"},
 						{title: 'Current Total', data: 'resource.searchable.currentamount',"className": "text-right"},
+						{title: 'Advance Total', data: 'resource.searchable.advanceamount',"className": "text-right"},
 						{title: 'Total Collection', data: 'resource.searchable.totalamount',"className": "text-right"}
 						],
-							  "aaSorting": [[3, 'desc']] ,
+							  "aaSorting": [[4, 'desc']] ,
 							  "footerCallback" : function(row, data, start, end, display) {
 									var api = this.api(), data;
 									if (data.length == 0) {
@@ -149,10 +150,11 @@ $('#dailyCollectionReportSearch').click(function(e){
 										updateTotalFooter(9, api);
 										updateTotalFooter(10, api);
 										updateTotalFooter(11, api);
+										updateTotalFooter(12, api);
 									}
 								},
 								"aoColumnDefs" : [ {
-									"aTargets" : [9,10,11],
+									"aTargets" : [9,10,11,12],
 									"mRender" : function(data, type, full) {
 										return formatNumberInr(data);    
 									}

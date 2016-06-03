@@ -174,7 +174,7 @@ public class CollectionApportioner {
             return isGreaterThan(BigDecimal.ZERO);
         }
 
-        private boolean isLessThanOrEqualTo(final BigDecimal bd) {
+        private boolean isLessThanOrEqualTo(BigDecimal bd) {
             return amount.compareTo(bd) <= 0;
         }
 

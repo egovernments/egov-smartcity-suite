@@ -193,7 +193,7 @@ public class RestWaterConnectionCollection {
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_VALID);
         	}
         }
-        if (waterConnDetailsObj != null) {
+        /*if (waterConnDetailsObj != null) {
             final BigDecimal totalAmountDue = waterConnectionDetailsService.getTotalAmount(waterConnDetailsObj);
             LOG.error("totalAmountDue:" + totalAmountDue);
 
@@ -209,7 +209,7 @@ public class RestWaterConnectionCollection {
                 errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_DEMAND_AMOUNT_VALID);
             }
 
-        }
+        }*/
         if (payWaterTaxDetails.getTransactionId() == null || "".equals(payWaterTaxDetails.getTransactionId())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_TRANSANCTIONID_REQUIRED);

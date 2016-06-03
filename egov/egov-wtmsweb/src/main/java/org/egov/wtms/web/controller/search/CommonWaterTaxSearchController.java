@@ -205,15 +205,14 @@ public class CommonWaterTaxSearchController {
             }
         if (applicationType != null
                 && applicationType.equals(WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX)) {
-            BigDecimal amoutToBeCollected = BigDecimal.ZERO;
+           /* BigDecimal amoutToBeCollected = BigDecimal.ZERO;
             if (null != waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand())
                 amoutToBeCollected = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
-            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+            */final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
             if (assessmentDetails != null)
-                if (amoutToBeCollected.doubleValue() > 0) {
-                    if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+               if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                             || waterConnectionDetails.getApplicationType().getCode()
                             .equals(WaterTaxConstants.ADDNLCONNECTION) || waterConnectionDetails
                             .getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
@@ -226,11 +225,7 @@ public class CommonWaterTaxSearchController {
                         return COMMON_FORM_SEARCH;
 
                     }
-                } else {
-                    model.addAttribute("mode", "errorMode");
-                    resultBinder.rejectValue("consumerCode", "invalid.collecttax");
-                    return COMMON_FORM_SEARCH;
-                }
+                
         }
         return "";
 

@@ -83,7 +83,10 @@
 	<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && ( citizenRole && !checkOperator) }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
 	</c:if>
-	<c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && checkOperator && waterTaxDueforParent > 0}">
+	<c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType =='METERED' && checkOperator && waterTaxDueforParent > 0}">
+		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+	</c:if>
+	<c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType !='METERED' && checkOperator }">
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 	</c:if>
 	<c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && (citizenRole && !checkOperator) }">
