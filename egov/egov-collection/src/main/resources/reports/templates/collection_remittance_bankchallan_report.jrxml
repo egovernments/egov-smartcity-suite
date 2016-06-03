@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-05-23T18:20:31 -->
+<!-- 2016-06-03T12:04:06 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -1015,7 +1015,8 @@
 		</band>
 		<band height="30">
 			<printWhenExpression><![CDATA[$F{collectionBankRemittanceReportList} != null &&
- $F{collectionBankRemittanceReportList}.size()>0]]></printWhenExpression>
+ $F{collectionBankRemittanceReportList}.size()>0 && 
+$P{EGOV_CHEQUE_AMOUNT}!=0]]></printWhenExpression>
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="1" y="1" width="820" height="29" isRemoveLineWhenBlank="true" uuid="813a390a-9520-4eac-a0c6-159327c254de"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{collectionBankRemittanceReportList}, false)]]></dataSourceExpression>

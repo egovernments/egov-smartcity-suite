@@ -330,6 +330,11 @@ public class BankRemittanceAction extends BaseFormAction {
                     collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
                     reportList.add(collBankRemitReport);
                 }
+                else
+                {
+                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
+                    reportList.add(collBankRemitReport);
+                }
             }
         }
         return reportList;
