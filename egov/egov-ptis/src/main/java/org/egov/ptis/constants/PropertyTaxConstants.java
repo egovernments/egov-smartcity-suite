@@ -1242,7 +1242,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
     public static final String PROPERTYTAX_WORKFLOWDESIGNATION = "PROPERTYTAXDESIGNATIONFORWORKFLOW";
     public static final String PROPERTYTAX_ROLEFORNONEMPLOYEE = "PROPERTYTAXROLEFORNONEMPLOYEE";
-    public static final String APPLICATION_TYPE_REVISION_PETITION = "Revision Petition";
+    public static final String APPLICATION_TYPE_REVISION_PETITION = "Revision_Petition";
 
     // Action targets
     public static final String TARGET_WORKFLOW_ERROR = "workFlowError";
