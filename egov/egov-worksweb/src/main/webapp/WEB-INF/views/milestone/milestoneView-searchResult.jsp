@@ -45,7 +45,7 @@
 		<spring:message code="title.searchresult" />
 	</div>
 	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
+		<table class="table table-bordered table-hover"
 			id="resultTable">
 			<thead>
 				<tr>

@@ -47,7 +47,7 @@
 	</div>
 	<div class="report-table-container">
 		<table
-			class="table table-bordered table-responsive table-hover multiheadertbl"
+			class="table table-bordered table-responsive table-hover"
 			id="resultTable">
 			<thead>
 				<tr>
