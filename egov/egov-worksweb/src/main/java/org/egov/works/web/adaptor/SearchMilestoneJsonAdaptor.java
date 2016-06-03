@@ -76,10 +76,10 @@ public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
                 jsonObject.addProperty("nameOfWork", led.getNameOfWork());
                 jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
                 if(led.getLineEstimate().getTypeOfWork() != null){
-                jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getCode());
+                jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getDescription());
                 }
                 if(led.getLineEstimate().getSubTypeOfWork() != null){
-                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode());
+                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getDescription());
                 }
                 jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
             }

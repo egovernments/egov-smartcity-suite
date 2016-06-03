@@ -91,14 +91,14 @@
 						<spring:message code="lbl.typeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${milestoneTemplate.typeOfWork.code}"></c:out>
+						<c:out default="N/A" value="${milestoneTemplate.typeOfWork.description}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${milestoneTemplate.subTypeOfWork.code}"></c:out>
+							value="${milestoneTemplate.subTypeOfWork.description}"></c:out>
 					</div>
 				</div>
 			</div>

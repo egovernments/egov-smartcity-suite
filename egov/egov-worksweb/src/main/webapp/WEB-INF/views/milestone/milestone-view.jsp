@@ -99,14 +99,14 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.typeOfWork.code}"></c:out>
+								value="${milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.typeOfWork.description}"></c:out>
 						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.subtypeofwork" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.subTypeOfWork.code}"></c:out>
+								value="${milestone.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.subTypeOfWork.description}"></c:out>
 						</div>
 					</div>
 					<div class="row add-border">
