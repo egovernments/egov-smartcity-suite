@@ -64,7 +64,6 @@ function resetOnPropertyNumChange(){
     	document.getElementById("boundary").disabled=false;  
     }
 	document.getElementById("boundary").value='-1';
-	document.getElementById("zoneName").value="";
 	document.getElementById("wardName").value="";
 	document.getElementById("address").value="";
 }
