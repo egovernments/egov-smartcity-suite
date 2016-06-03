@@ -162,7 +162,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         return "newAbstractEstimate-form";
     }
 
-    private void setDropDownValues(final Model model) {
+    private void setDropDownValues(final Model model) { 
         model.addAttribute("overheads", overheadService.getOverheadsByDate(new Date()));
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
@@ -177,7 +177,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/newform",method = RequestMethod.POST)
     public String saveAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) throws IOException {

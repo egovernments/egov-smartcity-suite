@@ -51,6 +51,7 @@ import javax.persistence.Query;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.master.repository.ScheduleOfRateRepository;
+import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,7 @@ public class ScheduleOfRateService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private ScheduleOfRateRepository scheduleOfRateRepository;
 
@@ -114,22 +115,27 @@ public class ScheduleOfRateService {
         final String countQuery = "select count(*) " + scheduleOfRateStr;
         return new SearchQueryHQL(scheduleOfRateStr, countQuery, paramList);
     }
-    
+
     @Transactional
     public ScheduleOfRate save(final ScheduleOfRate scheduleOfRate) {
         return scheduleOfRateRepository.save(scheduleOfRate);
     }
-    
+
     public ScheduleOfRate findById(Long id, boolean b) {
         return scheduleOfRateRepository.findOne(id);
     }
-    
+
     public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategories(final String code, final String ids) {
         List<Long> scheduleOfCategoryIds = new ArrayList<Long>();
         String[] split = ids.split(",");
-        for(String s : split)
+        for (String s : split)
             scheduleOfCategoryIds.add(Long.parseLong(s));
-        
-        return scheduleOfRateRepository.findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(code.toUpperCase(), scheduleOfCategoryIds, new Date());
+
+        return scheduleOfRateRepository.findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(code.toUpperCase(),
+                scheduleOfCategoryIds, new Date());
+    }
+
+    public List<SORRate> getScheduleOfRatesByIds(final List<Long> ids) {
+        return scheduleOfRateRepository.findByIdsInOrderById(ids, new Date());
     }
 }

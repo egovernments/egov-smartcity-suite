@@ -948,7 +948,6 @@ function enableFileds() {
 	jQuery("#scheme").removeAttr('disabled');
 	jQuery("#subScheme").removeAttr('disabled'); 
 	jQuery("#workName").removeAttr('disabled');
-	
 	if($('#abstractEstimate').valid()) {
 		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
 		if(hiddenRowCount == 1) {
@@ -1188,6 +1187,10 @@ function getActivitiesForTemplate(id){
 					$('.summary_'+index).html(estimateTemplateActivity.schedule.summary);
 					$('.description_'+index).html(hint.replace(/@fulldescription@/g, estimateTemplateActivity.schedule.description));
 					$('.uom_'+index).html(estimateTemplateActivity.schedule.uom.uom);
+					if(estimateTemplateActivity.schedule.sorRate!=null)
+						$('.rate_'+index).html(estimateTemplateActivity.schedule.sorRate);
+					else
+						$('.rate_'+index).html(0);
 				}else{
 					$('#nonSorDesc_'+index).val(estimateTemplateActivity.nonSor.description);
 					$('#nonSorUom_'+index).val(estimateTemplateActivity.uom.id);

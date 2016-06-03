@@ -42,6 +42,7 @@ package org.egov.works.master.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -54,4 +55,7 @@ public interface ScheduleOfRateRepository extends JpaRepository<ScheduleOfRate, 
     @Query("from ScheduleOfRate as sch inner join fetch sch.sorRates as rates inner join fetch sch.uom as uom where (upper(sch.code) like concat ('%', :code, '%') or upper(sch.description) like concat ('%', :code, '%')) and sch.scheduleCategory.id in :ids  and  ((:currentDate between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:currentDate and rates.validity.endDate is null)) order by sch.code")
     List<ScheduleOfRate> findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(@Param("code") final String code,
             @Param("ids") final List<Long> ids, @Param("currentDate") final Date currentDate);
+    
+    @Query("select rate from ScheduleOfRate as sch, SORRate rate where sch.id = rate.scheduleOfRate.id and sch.id in :ids  and  ((:currentDate between rate.validity.startDate and rate.validity.endDate ) or (rate.validity.startDate<=:currentDate and rate.validity.endDate is null)) order by sch.id")
+    List<SORRate> findByIdsInOrderById(@Param("ids") final List<Long> ids, @Param("currentDate") final Date currentDate);
 }

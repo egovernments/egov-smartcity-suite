@@ -52,10 +52,11 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
+import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.master.service.OverheadService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.hibernate.Session;
@@ -84,6 +85,9 @@ public class EstimateService {
 
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private OverheadService overheadService;
 
     @Autowired
     private WorksUtils worksUtils;
@@ -110,6 +114,11 @@ public class EstimateService {
         
         for(FinancialDetail financialDetail:abstractEstimate.getFinancialDetails()) {
             financialDetail.setAbstractEstimate(abstractEstimate);
+        }
+        
+        for(OverheadValue obj:abstractEstimate.getOverheadValues()){
+            obj.setAbstractEstimate(abstractEstimate);
+            obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
         }
         
         final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);

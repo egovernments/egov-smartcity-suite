@@ -134,7 +134,7 @@
 		<div class="panel-title">
 			<div class="text-center">
 				<a id="addOverheadRow" href="javascript:void(0);" class="btn btn-primary">
-					<i class="fa fa-plus"></i><spring:message code="lbl.addrow" />
+					<spring:message code="lbl.addrow" />
 				</a>
 			</div>
 		</div>
