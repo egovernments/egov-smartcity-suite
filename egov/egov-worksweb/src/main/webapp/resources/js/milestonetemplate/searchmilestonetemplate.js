@@ -37,7 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-$subTypeOfWorkId = 0;
+$typeOfWork=window.opener.$('#typeOfWork').val();
+$subTypeOfWork=window.opener.$('#subTypeOfWork').val();
+
+$(document).ready(function() {
+	jQuery("#typeOfWork option").each(function() {
+		if (jQuery(this).val() == $typeOfWork) {
+			jQuery(this).attr("selected", "selected");
+		}
+	});
+	//TODO Need To remove trigger 
+	$('#typeOfWork').trigger('change');
+});
+
 jQuery('#btnsearch').click(function(e) {
 	$('#selectMilestoneTemplate').hide();
 	if($('#milestoneTemplate').valid())
@@ -113,8 +125,8 @@ function openMilestoneTemplate(milestoneId) {
 	window.open("/egworks/milestone/viewmilestonetemplate/" + milestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-$('#typeofwork').blur(function(){
-	 if ($('#typeofwork').val() === '') {
+$('#typeOfWork').change(function(){
+	 if ($('#typeOfWork').val() === '') {
 		   $('#subTypeOfWork').empty();
 		   $('#subTypeOfWork').append($('<option>').text('Select from below').attr('value', ''));
 			return;
@@ -124,16 +136,16 @@ $('#typeofwork').blur(function(){
 				url: "/egworks/lineestimate/getsubtypeofwork",
 				cache: true,
 				dataType: "json",
-				data:{'id' : $('#typeofwork').val()}
+				data:{'id' : $('#typeOfWork').val()}
 			}).done(function(value) {
 				console.log(value);
 				$('#subTypeOfWork').empty();
 				$('#subTypeOfWork').append($("<option value=''>Select from below</option>"));
 				$.each(value, function(index, val) {
 					var selected="";
-					if($subTypeOfWorkId)
+					if($subTypeOfWork)
 					{
-						if($subTypeOfWorkId==val.id)
+						if($subTypeOfWork==val.id)
 						{
 							selected="selected";
 						}
@@ -145,8 +157,10 @@ $('#typeofwork').blur(function(){
 	});
 
 jQuery('#milestoneDetails').click(function(e) {
-	window.opener.$(".readonlyfields").prop("readonly", true);
 	var milestoneId = $('input[name=selectCheckbox]:checked').val();
+	var rowcounthidden = window.opener.$("#tblmilestone tbody tr:hidden[id='milestoneRow']").length;
+	if(rowcounthidden == 1)
+		window.opener.$('#tblmilestone tbody tr').show();
 	if(milestoneId == null)
 		bootbox.alert("Please select Atleast One Milestone Template");
 	else{
@@ -175,3 +189,4 @@ jQuery('#milestoneDetails').click(function(e) {
 		
 	}
 });
+

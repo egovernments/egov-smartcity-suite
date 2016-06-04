@@ -151,8 +151,9 @@
 							<spring:message code="lbl.workvalue" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out default="N/A"
-								value="${milestone.workOrderEstimate.workOrder.workOrderAmount}"></c:out>
+						<fmt:formatNumber groupingUsed="false"
+								maxFractionDigits="2" minFractionDigits="2"
+								value="${milestone.workOrderEstimate.workOrder.workOrderAmount}" />
 						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.contractor" />
