@@ -56,21 +56,21 @@
 				<tr>
 					<th><spring:message code="lbl.stageordernumber" /></th>
 					<th><spring:message code="lbl.stagedescription" /></th>
-					<th><spring:message code="lbl.percentage" /></th>
+					<th><spring:message code="lbl.percentage.stage" /></th>
 					<th><spring:message code="lbl.schedulestartdate" /></th>
 					<th><spring:message code="lbl.scheduleenddate" /></th>
-					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.completed.percentage" /></th>
-					<th><spring:message code="lbl.actual.percentage" /></th>
-					<th><spring:message code="lbl.remarks" /></th>
+					<th><spring:message code="lbl.currentstatus.stage" /></th>
+					<th><spring:message code="lbl.completed.percentage.stage" /></th>
+					<th><spring:message code="lbl.actual.percentage.stage" /></th>
 					<th><spring:message code="lbl.completion.date" /></th>
+					<th><spring:message code="lbl.reason.for.delay" /></th>
 				</tr>
 			</thead>
 			<tbody id="milestoneDetailsTbl">
 				<c:forEach items="${trackMilestone.getActivities()}" var="activity"
 					varStatus="item">
 					<tr id="milestoneRow">
-						<td><fmt:formatNumber pattern="###"
+						<td><fmt:formatNumber 
 								value="${activity.milestoneActivity.stageOrderNo}" /></td>
 						<td><c:out value="${activity.milestoneActivity.description}" />
 						</td>
@@ -94,9 +94,9 @@
 								value="${(activity.milestoneActivity.percentage/100) * activity.completedPercentage}" />
 							<%-- <c:out value="${ (activity.milestoneActivity.percentage/100) * activity.completedPercentage}" /> --%>
 						</td>
-						<td><c:out value="${activity.remarks}" /></td>
 						<td><fmt:formatDate value="${activity.completionDate}"
 								pattern="dd/MM/yyyy" /></td>
+						<td><c:out value="${activity.remarks}" /></td>
 					</tr>
 				</c:forEach>
 			</tbody>
