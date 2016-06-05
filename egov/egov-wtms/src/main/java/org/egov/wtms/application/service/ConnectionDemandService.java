@@ -56,7 +56,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ValidationException;
 
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
@@ -114,6 +116,9 @@ public class ConnectionDemandService {
 
     @Autowired
     private DonationHeaderService donationHeaderService;
+    
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     @Autowired
     private ModuleService moduleService;
@@ -442,6 +447,22 @@ public class ConnectionDemandService {
         final Query query = getCurrentSession().createSQLQuery(strBuf.toString())
                 .setParameter("dmdId", egDemand.getId())
                 .setParameter("currInstallmentDate", currInstallment.getToDate());
+        return query.list();
+    }
+    
+    public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentFinYear(final EgDemand egDemand,
+            final WaterConnectionDetails waterConnectionDetails) {
+       final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
+
+        final StringBuffer strBuf = new StringBuffer(2000);
+        strBuf.append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
+                + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
+                + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
+                + "and dmdDet.id_demand =:dmdId and inst.start_date<=:currFinEndDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
+                + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+        final Query query = getCurrentSession().createSQLQuery(strBuf.toString())
+                .setParameter("dmdId", egDemand.getId())
+                .setParameter("currFinEndDate", financialyear.getEndingDate());
         return query.list();
     }
 

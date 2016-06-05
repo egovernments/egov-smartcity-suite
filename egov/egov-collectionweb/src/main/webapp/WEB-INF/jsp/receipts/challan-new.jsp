@@ -68,10 +68,26 @@ display:none;
 <script type="text/javascript">
 jQuery.noConflict();
 jQuery(document).ready(function() {
-  	 
+
      jQuery(" form ").submit(function( event ) {
     	 doLoadingMask();
     });
+     var nowTemp = new Date();
+     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+      jQuery( "#challanDate").datepicker({ 
+     	 format: 'dd/mm/yyyy',
+     	 endDate: nowTemp, 
+     	 autoclose:true,
+         onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+       }).on('changeDate', function(ev) {
+     	  var string=jQuery(this).val();
+     	  if(!(string.indexOf("_") > -1)){
+     		  isDatepickerOpened=false; 
+     	  }
+       }).data('datepicker');
      doLoadingMask();
  });
 
@@ -86,12 +102,15 @@ path="${pageContext.request.contextPath}";
 <fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${now}" />
 var currDate = "${currDate}";
 
-
-
 function onBodyLoad(){
+	<s:if test="%{model.id!=null}">
+		if(document.getElementById('challanDate').value!=""){
+			document.getElementById("challanDate").disabled=true;
+		}
+	</s:if>
+	
 	if(document.getElementById('challanDate').value==""){
 		document.getElementById("challanDate").value=currDate;
-		document.getElementById("challanDate").disabled=true;
 	}
 	
 	if('<s:property value="designationId"/>'!=null && '<s:property value="designationId"/>'!="")
@@ -617,8 +636,7 @@ function populatepositionuseronload()
 	     <td width="21%" class="bluebox"><s:text name="challan.date"/><span class="mandatory"/></td>
 	      		  <s:date name="challan.challanDate" var="cdFormat" format="dd/MM/yyyy"/>
 	      <td width="24%" class="bluebox">
-	      		<s:textfield id="challanDate" name="challan.challanDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-	      		<div class="highlight2" style="width:80px">DD/MM/YYYY</div>				
+	      		<s:textfield id="challanDate" name="challan.challanDate" value="%{cdFormat}" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div>
 	      </td>
 	        
    		<s:if test="%{shouldShowHeaderField('billNumber')}">

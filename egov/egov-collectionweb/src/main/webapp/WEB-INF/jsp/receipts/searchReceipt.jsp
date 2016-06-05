@@ -403,7 +403,7 @@ function checkviewforselectedrecord()
 </display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Receipt No." style="width:8%;text-align:center" property="receiptnumber"/>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Manual receipt number" style="width:8%;text-align:center" property="manualreceiptnumber"/>
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptDate" title="Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" />
+<display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptdate" title="Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service" style="width:12%;text-align:center" property="service.name" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" style="width:8%;text-align:center" property="referencenumber" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Description" style="width:27%;text-align:center" property="referenceDesc" />

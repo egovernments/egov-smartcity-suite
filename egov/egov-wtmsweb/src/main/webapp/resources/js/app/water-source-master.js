@@ -91,9 +91,6 @@ $(document).ready(function(){
 	});
 	
  });
-$('#listid').click(function() {
-	window.open("/wtms/masters/waterSourceTypeMaster/list", "_self");
- });
 
 $("#resetid").click(function(){
 	$("#waterSourceMasterform")[0].reset();
@@ -105,13 +102,9 @@ $('#addnewid').click(function() {
 	window.open("/wtms/masters/waterSourceTypeMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/waterSourceTypeMaster/", "_self");
-}
 
 function edit(waterSource)
 {
-	window.open("/wtms/masters/waterSourceTypeMaster/"+waterSource, "_self");
+	window.open("/wtms/masters/waterSourceTypeMaster/edit/"+waterSource, "_self");
 	
 }

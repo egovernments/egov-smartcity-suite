@@ -74,21 +74,12 @@ $(document).ready(function(){
 		})
  });
 
-$('#listid').click(function() {
-	window.open("/wtms/masters/propertyCategoryMaster/list", "_self");
- });
-
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/propertyCategoryMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/propertyCategoryMaster/", "_self");
-}
-
 function edit(propertyCategory)
 {
-	window.open("/wtms/masters/propertyCategoryMaster/"+propertyCategory, "_self");
+	window.open("/wtms/masters/propertyCategoryMaster/edit/"+propertyCategory, "_self");
 	
 }

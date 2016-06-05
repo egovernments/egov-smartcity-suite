@@ -311,7 +311,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     private List<CollectionBankRemittanceReport> prepareBankRemittanceReport(final List<ReceiptHeader> receiptHeaders) {
-        final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>();
+        final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>(0);
         for (final ReceiptHeader receiptHead : receiptHeaders) {
             @SuppressWarnings("rawtypes")
             final Iterator itr = receiptHead.getReceiptInstrument().iterator();
@@ -327,6 +327,11 @@ public class BankRemittanceAction extends BaseFormAction {
                     collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
                     collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
                     collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
+                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
+                    reportList.add(collBankRemitReport);
+                }
+                else
+                {
                     collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
                     reportList.add(collBankRemitReport);
                 }

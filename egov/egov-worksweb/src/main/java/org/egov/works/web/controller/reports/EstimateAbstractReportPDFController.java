@@ -352,11 +352,11 @@ public class EstimateAbstractReportPDFController {
 
         if (typeOfWork != null)
             queryParameters += messageSource.getMessage("msg.typeofwork", null, null)
-                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getCode() + ", ";
+                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getDescription() + ", ";
 
         if (subTypeOfWork != null)
             queryParameters += messageSource.getMessage("msg.subtypeofwork", null, null)
-                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getCode() + ", ";
+                    + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getDescription() + ", ";
 
         if (departments != null && !departments.toString().equalsIgnoreCase("[null]")) {
             String departmentNames = "";

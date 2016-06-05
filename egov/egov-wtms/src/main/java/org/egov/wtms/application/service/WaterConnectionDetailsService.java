@@ -717,7 +717,7 @@ public class WaterConnectionDetailsService {
             LOG.debug(" updating Indexes Started... ");
         BigDecimal amountTodisplayInIndex = BigDecimal.ZERO;
         if (waterConnectionDetails.getConnection().getConsumerCode() != null)
-            amountTodisplayInIndex = getTotalAmount(waterConnectionDetails);
+            amountTodisplayInIndex = getTotalAmountTillCurrentFinYear(waterConnectionDetails);
         if (waterConnectionDetails.getLegacy()
                 && (null == waterConnectionDetails.getId() || null != waterConnectionDetails.getId()
                         && waterConnectionDetails.getStatus().getCode()
@@ -972,6 +972,25 @@ public class WaterConnectionDetailsService {
                 balance = balance.add(dmdAmt.subtract(collAmt));
             }
         }
+        return balance;
+    }
+
+    public BigDecimal getTotalAmountTillCurrentFinYear(final WaterConnectionDetails waterConnectionDetails) {
+        final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        BigDecimal balance = BigDecimal.ZERO;
+        if (currentDemand != null) {
+            final List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWiseUptoCurrentFinYear(currentDemand,waterConnectionDetails);
+            for (final Object object : instVsAmt) {
+                final Object[] ddObject = (Object[]) object;
+                final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
+                BigDecimal collAmt = BigDecimal.ZERO;
+                if (ddObject[2] != null)
+                    collAmt = new BigDecimal((Double) ddObject[3]);
+                balance = balance.add(dmdAmt.subtract(collAmt));
+            }
+        }
+        if (balance.compareTo(BigDecimal.ZERO) < 0)
+            balance=BigDecimal.ZERO;
         return balance;
     }
 

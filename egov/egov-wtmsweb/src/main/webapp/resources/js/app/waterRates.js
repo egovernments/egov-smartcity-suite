@@ -149,11 +149,6 @@ $(document).ready(function(){
 	  	    return false;
 	  	}
 	  }
-	  
-	  $('#listid').click(function() {
-			window.open("/wtms/masters/waterRatesMaster/list", "_self");
-			
-	  });
 	  $('#resetid').click(function() {
 		  document.forms[0].reset();
 		  window.open("/wtms/masters/waterRatesMaster/", "_self");
@@ -231,12 +226,7 @@ $(document).ready(function(){
 
 function edit(waterratesHeader)
 {
-	window.open("/wtms/masters/waterRatesMaster/"+waterratesHeader, "_self");
+	window.open("/wtms/masters/waterRatesMaster/edit/"+waterratesHeader, "_self");
 	console.log("Water Details ->"+waterratesHeader);
 	
-}
-
-function addNew()
-{
-	window.open("/wtms/masters/waterRatesMaster/", "_self");
 }

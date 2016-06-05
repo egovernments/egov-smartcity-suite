@@ -59,6 +59,7 @@
 		<property name="applicationDate" column="APPL_DATE" />
 		<property name="commencementDate" column="COMMENCEMENTDATE" />
 		<property name="ownershipType" column="OWNERSHIP_TYPE" type="java.lang.String" not-null="true" />
+		<property name="assessmentNo" column="ASSESSMENTNO" type="java.lang.String"/>
 		<many-to-one name="category" class="org.egov.tl.entity.LicenseCategory" fetch="select" not-null="true" >
 			<column name="ID_CATEGORY" precision="22" scale="0" />
 		</many-to-one>

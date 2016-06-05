@@ -48,11 +48,14 @@ import java.util.Set;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFunction;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.service.FinancialYearService;
+import org.egov.commons.service.FunctionService;
+import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -61,6 +64,8 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
@@ -123,6 +128,12 @@ public class AjaxLineEstimateController {
     @Autowired
     private FinancialYearService financialYearService;
 
+    @Autowired
+    private BudgetGroupDAO budgetGroupDAO;
+    
+    @Autowired
+    private FunctionService functionService;
+    
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
@@ -276,4 +287,15 @@ public class AjaxLineEstimateController {
         return message;
     }
 
+    @RequestMapping(value = "/getbudgetheadbyfunction", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<BudgetGroup> getBudgetHeadByFunction(@RequestParam("functionId") final Long functionId) {
+        List<BudgetGroup> budgetGroups = new ArrayList<BudgetGroup>();
+        final CFunction function = functionService.findOne(functionId);
+        try {
+            budgetGroups = budgetGroupDAO.getBudgetHeadByFunction(function.getCode());
+            return budgetGroups;
+        } catch (final ValidationException v) {
+            return budgetGroups;
+        }
+    }
 }

@@ -66,9 +66,9 @@ public class LetterOfAcceptanceForMilestoneJSONAdaptor implements JsonSerializer
             if (workOrder.getEstimateNumber() != null) {
                 jsonObject.addProperty("estimateNumber", workOrder.getEstimateNumber());
                 final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-                jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getCode());
+                jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getDescription());
                 if (led.getLineEstimate().getSubTypeOfWork() != null)
-                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getCode());
+                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getDescription());
                 else
                     jsonObject.addProperty("subTypeOfWork", "");
                 jsonObject.addProperty("estimateDate", led.getLineEstimate().getLineEstimateDate().toString());

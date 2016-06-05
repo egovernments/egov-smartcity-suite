@@ -40,6 +40,10 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.PropertyPipeSize;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyPipeSizeService;
@@ -52,11 +56,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -77,29 +77,33 @@ public class PropertyPipeSizeMasterController {
 
     }
 
-    @RequestMapping(value = "/propertyPipeSizeMaster", method = GET)
+    @RequestMapping(value = "/propertyPipeSizeMaster", method = RequestMethod.GET)
     public String viewForm(final Model model) {
         final PropertyPipeSize propertyPipeSize = new PropertyPipeSize();
         model.addAttribute("propertyPipeSize", propertyPipeSize);
         model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
         model.addAttribute("reqAttr", "false");
+        model.addAttribute("mode", "create");
         return "property-pipesize-master";
     }
 
     @RequestMapping(value = "/propertyPipeSizeMaster", method = RequestMethod.POST)
-    public String addpPropertyPipeSizeMasterData(@Valid @ModelAttribute final PropertyPipeSize propertyPipeSize,
-            final BindingResult errors, final Model model) {
+    public String createPropertyPipeSizeMasterData(@Valid @ModelAttribute final PropertyPipeSize propertyPipeSize,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
             return "property-pipesize-master";
         } else
             propertyPipeSizeService.createPropertyPipeSize(propertyPipeSize);
-        return getPropertyPipeSizeMasterList(model);
+        redirectAttrs.addFlashAttribute("propertyPipeSize", propertyPipeSize);
+        model.addAttribute("message", "Property PipeSize created successfully.");
+        model.addAttribute("mode", "create");
+        return "property-pipesize-master-success";
     }
 
-    @RequestMapping(value = "/propertyPipeSizeMaster/list", method = GET)
+    @RequestMapping(value = "/propertyPipeSizeMaster/list", method = RequestMethod.GET)
     public String getPropertyPipeSizeMasterList(final Model model) {
         final List<PropertyPipeSize> propertyPipeSizeList = propertyPipeSizeService.findAll();
         model.addAttribute("propertyPipeSizeList", propertyPipeSizeList);
@@ -107,7 +111,13 @@ public class PropertyPipeSizeMasterController {
 
     }
 
-    @RequestMapping(value = "/propertyPipeSizeMaster/{propertyPipeSizeId}", method = GET)
+    @RequestMapping(value = "/propertyPipeSizeMaster/edit", method = RequestMethod.GET)
+    public String getPropertyPipeSizeMaster(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getPropertyPipeSizeMasterList(model);
+    }
+
+    @RequestMapping(value = "/propertyPipeSizeMaster/edit/{propertyPipeSizeId}", method = RequestMethod.GET)
     public String getPropertyPipeSizeDetails(final Model model, @PathVariable final String propertyPipeSizeId) {
         final PropertyPipeSize propertyPipeSize = propertyPipeSizeService.findOne(Long.parseLong(propertyPipeSizeId));
         model.addAttribute("propertyPipeSize", propertyPipeSize);
@@ -117,16 +127,19 @@ public class PropertyPipeSizeMasterController {
         return "property-pipesize-master";
     }
 
-    @RequestMapping(value = "/propertyPipeSizeMaster/{propertyPipeSizeId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/propertyPipeSizeMaster/edit/{propertyPipeSizeId}", method = RequestMethod.POST)
     public String editPropertyPipeSizeData(@Valid @ModelAttribute final PropertyPipeSize propertyPipeSize,
-            final BindingResult errors, final Model model, @PathVariable final long propertyPipeSizeId) {
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
+            @PathVariable final long propertyPipeSizeId) {
         if (errors.hasErrors()) {
             model.addAttribute("propertyTypeList", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
             return "property-pipesize-master";
         } else
             propertyPipeSizeService.updatePropertyPipeSize(propertyPipeSize);
-        return getPropertyPipeSizeMasterList(model);
+        redirectAttrs.addFlashAttribute("propertyPipeSize", propertyPipeSize);
+        model.addAttribute("message", "Property PipeSize updated successfully.");
+        return "property-pipesize-master-success";
 
     }
 

@@ -1564,11 +1564,8 @@ function validateManualReceiptDate(obj)
 function checkForCurrentDate(obj)
 {
 	var receiptDate;
-	/* if(validateDateFormat(obj))
-	   { */
 	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
-	   //trim(obj,obj.value);
 	   <s:if test="%{!isBillSourcemisc()}">
 		   if (  document.getElementById('manualreceiptinfo').checked==true){
 			   if(document.getElementById("manualReceiptDate").value != null  && document.getElementById("manualReceiptDate").value != ''){
@@ -1583,7 +1580,7 @@ function checkForCurrentDate(obj)
 		</s:if>
 		<s:else>
 		{
-		receiptDate = "${currDate}"; 
+		receiptDate = document.getElementById("voucherDate").value; 
 		}
 		</s:else>
 	   var finDate = new Date('2012-04-01');
@@ -1621,7 +1618,6 @@ function checkForCurrentDate(obj)
 		   scrolltop();
 	       return false;
 		   }
-	   /* } */
 	   }
 }
 

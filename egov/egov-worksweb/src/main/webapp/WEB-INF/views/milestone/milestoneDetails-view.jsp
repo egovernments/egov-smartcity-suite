@@ -66,13 +66,14 @@
 					var="activity" varStatus="item">
 					<tr id="milestoneRow">
 						<td>
-							<fmt:formatNumber pattern="###" value="${activity.stageOrderNo}" />
+							<fmt:formatNumber value="${activity.stageOrderNo}" />
 						</td>
 						<td>
 							<c:out value="${activity.description}" />
 						</td>
 						<td align="right">
-							<c:out value="${activity.percentage}" />
+							<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${activity.percentage}" />
 						</td>
 						<td>
 							<fmt:formatDate
@@ -97,8 +98,10 @@
 				<tr>
 					<td colspan="2" class="text-right"><spring:message
 							code="lbl.total" /></td>
-					<td class="text-right"><span id="totalPercentage"><c:out
-								value="${percentage}" /></span></td>
+					<td class="text-right"><span id="totalPercentage">
+						<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${percentage}" /></span>
+					</td>
 					<td></td>
 				</tr>
 			</tfoot>

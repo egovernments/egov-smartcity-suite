@@ -54,6 +54,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.AccountPayeeDetail;
 import org.egov.collection.entity.Challan;
@@ -261,6 +262,7 @@ public class ChallanAction extends BaseFormAction {
      * @return
      */
     @Action(value = "/receipts/challan-newform")
+    @SkipValidation
     public String newform() {
         final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
         setDeptId(loginUserDepartment.getId().toString());
@@ -278,6 +280,7 @@ public class ChallanAction extends BaseFormAction {
      */
     @ValidationErrorPage(value = "view")
     @Action(value = "/receipts/challan-save")
+    @SkipValidation
     public String save() {
 
         if (!actionName.equals(CollectionConstants.WF_ACTION_NAME_REJECT_CHALLAN))
@@ -307,6 +310,7 @@ public class ChallanAction extends BaseFormAction {
      */
     @ValidationErrorPage(value = "createReceipt")
     @Action(value = "/receipts/challan-createReceipt")
+    @SkipValidation
     public String createReceipt() {
         if (challanNumber != null && !"".equals(challanNumber)) {
             receiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
@@ -375,6 +379,7 @@ public class ChallanAction extends BaseFormAction {
      * @return
      */
     @Action(value = "/receipts/challan-viewChallan")
+    @SkipValidation
     public String viewChallan() {
         if (challanId == null)
             receiptHeader = receiptHeaderService.findById(receiptId, false);
@@ -487,6 +492,7 @@ public class ChallanAction extends BaseFormAction {
      * @return
      */
     @Action(value = "/receipts/challan-cancelReceipt")
+    @SkipValidation
     public String cancelReceipt() {
         if (getSelectedReceipts() != null && getSelectedReceipts().length > 0) {
             receiptHeader = receiptHeaderService.findById(Long.valueOf(selectedReceipts[0]), false);
@@ -501,6 +507,7 @@ public class ChallanAction extends BaseFormAction {
      * @return
      */
     @Action(value = "/receipts/challan-saveOnCancel")
+    @SkipValidation
     public String saveOnCancel() {
         boolean isInstrumentDeposited = false;
         setSourcePage(CollectionConstants.CANCELRECEIPT);
@@ -977,6 +984,7 @@ public class ChallanAction extends BaseFormAction {
      * @see org.egov.infra.web.struts.actions.BaseFormAction#prepare()
      */
     @Override
+    @SkipValidation
     public void prepare() {
 
         setupChallanPage();
@@ -1429,5 +1437,16 @@ public class ChallanAction extends BaseFormAction {
 
     public void setFunctionId(final Long functionId) {
         this.functionId = functionId;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        if(receiptHeader.getReceiptdate().before(financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate())){
+            addActionError(getText("challan.error.receiptdate.lessthan.financialyear"));
+        }
+        if(receiptHeader.getReceiptdate().before(receiptHeader.getChallan().getChallanDate())){
+            addActionError(getText("challan.error.receiptdate.lessthan.challandate"));
+        }
     }
 }

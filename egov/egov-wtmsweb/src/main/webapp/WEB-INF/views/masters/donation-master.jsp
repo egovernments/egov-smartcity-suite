@@ -139,13 +139,11 @@
 					<form:errors path="donationHeader.active" />
 				</div>
 			</div>								
-					<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
-					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
-
+<form:hidden id="typeOfConnection" path="" value="${typeOfConnection}"/>
+<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
+<input type="hidden" value="${mode}" id="mode" />
 <div class="form-group text-center" >
 						<form:button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></form:button>
-						<form:button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew"/></form:button>
-						<form:button type="button" class="btn btn-primary" id="listid"><spring:message code="lbl.list"/></form:button>
 						<form:button type="button" class="btn btn-default"  id="resetid" ><spring:message code="lbl.reset"/></form:button>
 						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 					</div>

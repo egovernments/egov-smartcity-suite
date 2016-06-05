@@ -79,7 +79,7 @@ public class CategoryMasterController {
             return "category-master";
         connectionCategoryService.createConnectionCategory(connectionCategory);
         redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);
-        model.addAttribute("message", "Category created successfully");
+        model.addAttribute("message", "Category created successfully.");
         model.addAttribute("mode", "create");
         return "category-master-success";
 
@@ -93,7 +93,7 @@ public class CategoryMasterController {
     }
 
     @RequestMapping(value = "/categoryMaster/edit", method = RequestMethod.GET)
-    public String getUsageTypeDetails(final Model model) {
+    public String getCategoryMaster(final Model model) {
         model.addAttribute("mode", "edit");
         return getCategoryMasterList(model);
     }
@@ -115,7 +115,7 @@ public class CategoryMasterController {
             return "category-master";
         connectionCategoryService.updateConnectionCategory(connectionCategory);
         redirectAttrs.addFlashAttribute("connectionCategory", connectionCategory);
-        model.addAttribute("message", "Category updated successfully");
+        model.addAttribute("message", "Category updated successfully.");
         return "category-master-success";
 
     }

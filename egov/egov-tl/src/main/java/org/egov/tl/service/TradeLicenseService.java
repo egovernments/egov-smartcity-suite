@@ -252,7 +252,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             licenseList = licensePersitenceService.findAllBy(
                     "from License where  upper(licensee.applicantName) like ?", "%" + paramValue.toUpperCase() + "%");
         else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO))
-            licenseList = licensePersitenceService.findAllBy("from License where  upper(propertyNo) like ?", "%"
+            licenseList = licensePersitenceService.findAllBy("from License where  upper(assessmentNo) like ?", "%"
                     + paramValue.toUpperCase() + "%");
         else if (paramType.equals(Constants.SEARCH_BY_MOBILENO))
             licenseList = licensePersitenceService.findAllBy("from License where  licensee.mobilePhoneNumber like ?",
@@ -282,7 +282,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         if (StringUtils.isNotBlank(tradeOwnerName))
             searchCriteria.add(Restrictions.eq("licc.applicantName", tradeOwnerName).ignoreCase());
         if (StringUtils.isNotBlank(propertyAssessmentNo))
-            searchCriteria.add(Restrictions.eq("propertyNo", propertyAssessmentNo).ignoreCase());
+            searchCriteria.add(Restrictions.eq("assessmentNo", propertyAssessmentNo).ignoreCase());
         if (StringUtils.isNotBlank(mobileNo))
             searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", mobileNo));
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));

@@ -100,7 +100,6 @@ $('#addnewid').click(function() {
 
 function edit(usageType)
 {
-       
-       window.open("/wtms/masters/usageTypeMaster/edit/"+usageType, "_self");
+      window.open("/wtms/masters/usageTypeMaster/edit/"+usageType, "_self");
        
 }

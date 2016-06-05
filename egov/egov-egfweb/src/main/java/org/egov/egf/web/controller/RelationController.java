@@ -40,6 +40,8 @@
 
 package org.egov.egf.web.controller;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.egov.commons.Relation;
@@ -79,9 +81,8 @@ public class RelationController {
 	@Autowired
 	private SecurityUtils securityUtils;
 	@Autowired
+	@Qualifier("bankService")
 	private BankService bankService;
-	
-	
 
 	private void prepareNewForm(Model model) {
 		model.addAttribute("banks", bankService.findAll());
@@ -102,16 +103,18 @@ public class RelationController {
 			prepareNewForm(model);
 			return RELATION_NEW;
 		}
-	//this code is to handle non jpa object save since it dont have version once moved bank to jpa remove this
-		if(relation.getBank()!=null && relation.getBank().getId()!=null)
-			relation.setBank(bankService.findById(relation.getBank().getId(), false));
+		// this code is to handle non jpa object save since it dont have version
+		// once moved bank to jpa remove this
+		if (relation.getBank() != null && relation.getBank().getId() != null)
+			relation.setBank(bankService.findById(relation.getBank().getId(),
+					false));
 		else
 			relation.setBank(null);
 		relation.setCreatedby(securityUtils.getCurrentUser().getId());
 		relation.setCreateddate(new Date());
 		relation.setModifiedby(securityUtils.getCurrentUser().getId());
 		relation.setLastmodifieddate(new Date());
-			relationJpaService.create(relation);
+		relationJpaService.create(relation);
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.relation.success", null, null));
 		return "redirect:/relation/result/" + relation.getId();
@@ -136,7 +139,7 @@ public class RelationController {
 		relation.setModifiedby(securityUtils.getCurrentUser().getId());
 		relation.setLastmodifieddate(new Date());
 		relationJpaService.update(relation);
-		
+
 		redirectAttrs.addFlashAttribute("message",
 				messageSource.getMessage("msg.relation.success", null, null));
 		return "redirect:/relation/result/" + relation.getId();

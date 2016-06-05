@@ -62,6 +62,8 @@
 						<div class="col-md-3 col-xs-3 add-margin view-content">
 							<c:out value="${usageType.name}"/>
 						</div>
+					</div>
+					<div class="row add-border">
 						 <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.status"/></div>
 							<div class="col-md-3 col-xs-6 add-margin view-content">
 								<c:choose>

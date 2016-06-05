@@ -143,9 +143,10 @@ function callAjaxSearch() {
 									+ data.workOrderId + '\')">'
 									+ data.workOrderNumber + '</a>');
 					$('td:eq(5)',row).html(parseFloat(Math.round(data.agreementAmount * 100) / 100).toFixed(2));
+					$('td:eq(9)',row).html(parseFloat(Math.round(data.total * 100) / 100).toFixed(2));
 					$('td:eq(10)', row).html(
-							'<a href="javascript:void(0);" onclick="openMilestone(\''
-									+ data.id + '\')">View Milestone</a>');
+							'<a href="javascript:void(0);" onclick="openTrackMilestone(\''
+									+ data.id + '\')">View Tracked Milestone</a>');
 				},
 				"bPaginate": false,
 				"bDestroy" : true,
@@ -194,7 +195,7 @@ function callAjaxSearch() {
 					"sWidth" : "10%"
 				}, {
 					"data" : "total",
-					"sClass" : "text-center",
+					"sClass" : "text-right",
 					"sWidth" : "10%"
 				},{
 					"data" : "",
@@ -212,7 +213,6 @@ function openLOA(workOrderId) {
 	window.open("/egworks/letterofacceptance/view/" + workOrderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-function openMilestone(milestoneId) {
-	var id=milestoneId;
-	window.open("/egworks/milestone/viewtrackmilestone/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+function openTrackMilestone(trackMilestoneId) {
+	window.open("/egworks/milestone/viewtrackmilestone/" + trackMilestoneId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

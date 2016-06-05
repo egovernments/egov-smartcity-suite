@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+$budgetHeadId=0;
 jQuery('#btnsearch').click(function(e) {
 	$('#report-footer').hide();
 	$('#btndownloadpdf').hide();
@@ -170,3 +171,35 @@ function callAjaxSearch() {
 						} ]		
 					});
 	}
+
+$('#function').change(function(){
+	 if ($('#function').val() === '') {
+		   $('#budgetHead').empty();
+		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/getbudgetheadbyfunction",
+				cache: true,
+				dataType: "json",
+				data:{'functionId' : $('#function').val()}	
+			}).done(function(value) {
+				console.log(value);
+				$('#budgetHead').empty();
+				$('#budgetHead').append($("<option value=''>Select from below</option>"));
+				$.each(value, function(index, val) {
+					var selected="";
+					if($budgetHeadId)
+					{
+						if(budgetHeadId==val.id)
+						{
+							selected="selected";
+						}
+					}
+				     $('#budgetHead').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+				});
+			});
+		}
+	});
+

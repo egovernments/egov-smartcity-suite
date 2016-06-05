@@ -48,6 +48,7 @@
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<input type="hidden" name="waterPropertyUsageList" id="waterPropertyUsageList" value="${waterPropertyUsageList}">
 	<input type="hidden" id="waterPropertyUsageid" name="waterPropertyUsageid" value="${waterPropertyUsage.id}" />
+	<input type="hidden" value="${mode}" id="mode" />
 	<div class="panel panel-primary" data-collapsed="0">
 	<c:if test="${not empty message}">
                 <div role="alert">${message}</div>
@@ -70,9 +71,11 @@
 							<th colspan="1" class="text-center">
 								<spring:message code="lbl.status"/>
 							</th>
+							 <c:if test="${mode == 'edit'}"> 
 							<th colspan="1" class="text-center">
 								<spring:message code="lbl.edit" />
 							</th>
+							</c:if>
 						</tr>
 					</thead>
 					<c:forEach var="waterPropertyUsage" items="${waterPropertyUsageList}">
@@ -99,18 +102,19 @@
 								</c:choose>
 								</div>
 							</td>
+							 <c:if test="${mode == 'edit'}"> 
 							<td colspan="1">
 								<div align="center">
 									<a href="javascript:void(0);" onclick="edit('<c:out value="${waterPropertyUsage.id}" />');">Edit</a>
 								</div>
 							</td>
+							</c:if>
 						</tr>
 					</c:forEach>
 				</table>
 			</c:otherwise>
 			</c:choose>
 			<div class="form-group text-center">
-				<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)"><spring:message code="lbl.addnew" /></a>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>

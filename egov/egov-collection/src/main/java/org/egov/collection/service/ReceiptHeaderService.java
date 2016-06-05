@@ -94,6 +94,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -132,7 +133,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @return List of all receipts created by given user from given counter id and having given status
      */
     public List<ReceiptHeader> findAllByPositionAndInboxItemDetails(final Long positionId, final String groupingCriteria) {
-        final StringBuilder query = new StringBuilder("from org.egov.collection.entity.ReceiptHeader where 1=1");
+        final StringBuilder query = new StringBuilder("from org.egov.collection.entity.ReceiptHeader where 1=1 and state.value != 'END' and state.status != 2");
         String wfAction = null, serviceCode = null, userName = null, receiptDate = null, receiptType = null;
         Integer counterId = null;
         final String params[] = groupingCriteria.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
@@ -657,18 +658,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final Integer validUpto = Integer.valueOf(collectionsUtil.getAppConfigValue(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_CHALLANVALIDUPTO));
-
         final Challan challan = receiptHeader.getChallan();
-        /*
-         * challan.setValidUpto(eisService.getPriorOrAfterWorkingDate(challan. getChallanDate(), validUpto, DATE_ORDER.AFTER));
-         */
-        final Calendar c = new GregorianCalendar();
-        c.add(Calendar.DATE, validUpto);
-        challan.setValidUpto(c.getTime());
-
-        /* if (challan.getCreatedDate() == null) */
-        /* challan.setCreatedDate(new Date()); */
-
+        final Calendar date = new GregorianCalendar();
+        DateTime dateTime = new DateTime(challan.getChallanDate());
+        date.set(Calendar.YEAR, dateTime.getYear());
+        date.set(Calendar.MONTH, dateTime.getMonthOfYear());
+        date.set(Calendar.DAY_OF_MONTH, dateTime.getDayOfMonth());
+        date.add(Calendar.DATE, validUpto);
+        challan.setValidUpto(date.getTime());
         if (challan.getChallanNumber() == null)
             setChallanNumber(challan);
 

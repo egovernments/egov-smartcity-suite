@@ -40,6 +40,10 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.MeterCost;
 import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.PipeSizeService;
@@ -51,9 +55,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.Valid;
-import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -75,19 +77,23 @@ public class MeterCostMasterController {
         model.addAttribute("meterCost", meterCost);
         model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("reqAttr", "false");
+        model.addAttribute("mode", "create");
         return "meter-cost-master";
     }
 
     @RequestMapping(value = "/meterCostMaster", method = RequestMethod.POST)
-    public String addMeterCostMasterData(@Valid @ModelAttribute final MeterCost meterCost, final BindingResult errors,
-            final Model model) {
+    public String createMeterCostMasterData(@Valid @ModelAttribute final MeterCost meterCost,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
             return "meter-cost-master";
         } else
 
             meterCostService.createMeterCost(meterCost);
-        return getMeterCostMasterList(model);
+        redirectAttrs.addFlashAttribute("meterCost", meterCost);
+        model.addAttribute("message", "Meter Cost created successfully.");
+        model.addAttribute("mode", "create");
+        return "meter-cost-master-success";
     }
 
     @RequestMapping(value = "/meterCostMaster/list", method = RequestMethod.GET)
@@ -97,7 +103,13 @@ public class MeterCostMasterController {
         return "meter-cost-master-list";
     }
 
-    @RequestMapping(value = "/meterCostMaster/{meterCostId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/meterCostMaster/edit", method = RequestMethod.GET)
+    public String getMeterCostMaster(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getMeterCostMasterList(model);
+    }
+
+    @RequestMapping(value = "/meterCostMaster/edit/{meterCostId}", method = RequestMethod.GET)
     public String getMeterCostMasterDetails(final Model model, @PathVariable final String meterCostId) {
         final MeterCost meterCost = meterCostService.findOne(Long.parseLong(meterCostId));
         model.addAttribute("meterCost", meterCost);
@@ -106,14 +118,16 @@ public class MeterCostMasterController {
         return "meter-cost-master";
     }
 
-    @RequestMapping(value = "/meterCostMaster/{meterCostId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/meterCostMaster/edit/{meterCostId}", method = RequestMethod.POST)
     public String editMeterCostMasterData(@Valid @ModelAttribute final MeterCost meterCost, final BindingResult errors,
-            final Model model, @PathVariable final long meterCostId) {
+            final RedirectAttributes redirectAttrs, final Model model, @PathVariable final long meterCostId) {
         if (errors.hasErrors()) {
             model.addAttribute("pipeSize", pipeSizeService.getAllActivePipeSize());
             return "meter-cost-master";
         } else
             meterCostService.updateMeterCost(meterCost);
-        return getMeterCostMasterList(model);
+        redirectAttrs.addFlashAttribute("meterCost", meterCost);
+        model.addAttribute("message", "Meter Cost updated successfully.");
+        return "meter-cost-master-success";
     }
 }

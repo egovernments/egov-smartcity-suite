@@ -74,22 +74,14 @@ $(document).ready(function(){
 	
  });
 
-$('#listid').click(function() {
-	window.open("/wtms/masters/documentNamesMaster/list", "_self");
- });
 
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/documentNamesMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/documentNamesMaster/", "_self");
-}
-
 function edit(documentNames)
 {
 	
-	window.open("/wtms/masters/documentNamesMaster/"+documentNames, "_self");
+	window.open("/wtms/masters/documentNamesMaster/edit/"+documentNames, "_self");
 	
 }
