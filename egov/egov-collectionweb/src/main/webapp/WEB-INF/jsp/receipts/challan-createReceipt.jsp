@@ -510,9 +510,8 @@ function checkForCurrentDate(obj)
 	   //trim(obj,obj.value);
 	   dom.get("challan_dateerror_area").style.display="none";
 	   document.getElementById("challan_dateerror_area").innerHTML="";
-	   var currDate = "${currDate}";
 	   if(obj.value!="")
-	   if(!validateChequeDate(obj.value,currDate))
+	   if(!validateChequeDate(obj.value,document.getElementById('receiptdate').value))
 	   {
 	       dom.get("challan_dateerror_area").style.display="block";
 	       document.getElementById("challan_dateerror_area").innerHTML+=
