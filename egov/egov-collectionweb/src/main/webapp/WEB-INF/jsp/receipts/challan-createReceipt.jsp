@@ -1265,7 +1265,6 @@ function validate()
      </td></tr>
      </div>
 </table> <!--  main table ends -->
-<s:if test="%{!hasErrors()}" >
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
@@ -1280,12 +1279,6 @@ function validate()
       <input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
 </div>
 </s:if>
-</s:if>
-<s:if test="%{model.id==null || hasErrors()}" >
-		<div class="buttonbottom" >
-			<input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
-		</div>
-	</s:if>
 </div>
 
 
