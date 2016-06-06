@@ -135,9 +135,8 @@ public class EstimateService {
                 obj.setAbstractEstimate(abstractEstimate);
                 obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
             }
-            for(Activity act : abstractEstimate.getActivities()) {
+            for(Activity act : abstractEstimate.getActivities())
                 act.setAbstractEstimate(abstractEstimate);
-            }
             newAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
         } else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
@@ -168,6 +167,22 @@ public class EstimateService {
                 LineEstimateStatus.CREATED.toString()));
         abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getProjectCode());
         abstractEstimateFromDB.setLineEstimateDetails(newAbstractEstimate.getLineEstimateDetails());
+        
+        abstractEstimateFromDB.getActivities().clear();
+        for(Activity act : newAbstractEstimate.getActivities()) {
+            act.setAbstractEstimate(abstractEstimateFromDB);
+            abstractEstimateFromDB.addActivity(act);
+        }
+        abstractEstimateFromDB.setEstimateValue(newAbstractEstimate.getEstimateValue());
+        abstractEstimateFromDB.setWorkValue(newAbstractEstimate.getWorkValue());
+        
+        abstractEstimateFromDB.getOverheadValues().clear();
+        for(OverheadValue value : newAbstractEstimate.getOverheadValues()) {
+            value.setAbstractEstimate(abstractEstimateFromDB);
+            value.setOverhead(overheadService.getOverheadById(value.getOverhead().getId()));
+            abstractEstimateFromDB.addOverheadValue(value);
+        }
+        
         abstractEstimateRepository.save(abstractEstimateFromDB);
         return abstractEstimateFromDB;
     }

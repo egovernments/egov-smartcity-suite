@@ -179,6 +179,7 @@
 					</td>
 					<td>
 						<span class="uom_0"></span>
+						<form:hidden path="activities[0].uom.id" id="uomid_0" class="uomhiddenid"/>
 					</td>
 					<td align="right">
 						<span class="rate_0"></span>

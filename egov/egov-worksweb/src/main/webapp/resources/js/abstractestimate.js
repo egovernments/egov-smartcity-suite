@@ -116,6 +116,7 @@ $(document).ready(function(){
 	                    code: ct.code,
 	                    description: ct.description,
 	                    uom: ct.uom.uom,
+	                    uomid: ct.uom.id,
 	                    rate: ct.sorRates[0].rate.value,
 	                    summary: ct.summary,
 	                    displayResult: ct.code+' : '+ct.summary
@@ -158,7 +159,7 @@ $(document).ready(function(){
 			var rowcount = $("#tblsor tbody tr").length;
 			var key = parseInt(rowcount) - 2;
 			$.each(data, function(id, val) {
-				if(id == "id")
+				if(id == "id" || id == "uomid")
 					$('#' + id + "_" + key).val(val);
 				else if(id == 'description') {
 					$('.' + id + "_" + key).html(hint.replace(/@fulldescription@/g, val));
@@ -925,6 +926,8 @@ function calculateEstimateValue() {
 	var estimateValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2);
 	
 	$('#estimateValue').val(estimateValue);
+	$('#workValue').val(estimateValue);
+	$('#estimateValueTotal').html(estimateValue);
 }
 
 function validateInput(object) {
@@ -1190,6 +1193,7 @@ function getActivitiesForTemplate(id){
 					$('.summary_'+index).html(estimateTemplateActivity.schedule.summary);
 					$('.description_'+index).html(hint.replace(/@fulldescription@/g, estimateTemplateActivity.schedule.description));
 					$('.uom_'+index).html(estimateTemplateActivity.schedule.uom.uom);
+					$('#uomid_'+index).val(estimateTemplateActivity.schedule.uom.id);
 					if(estimateTemplateActivity.schedule.sorRate!=null) {
 						$('.rate_'+index).html(estimateTemplateActivity.schedule.sorRate);
 						$('#rate_'+index).val(estimateTemplateActivity.schedule.sorRate);
@@ -1203,6 +1207,7 @@ function getActivitiesForTemplate(id){
 				}else{
 					$('#nonSorDesc_'+index).val(estimateTemplateActivity.nonSor.description);
 					$('#nonSorUom_'+index).val(estimateTemplateActivity.uom.id);
+					$('#uomid_'+index).val(estimateTemplateActivity.uom.id);
 					$('#nonSorRate_'+index).val(estimateTemplateActivity.rate.formattedString);
 				}
 				resetIndexes();
@@ -1320,4 +1325,9 @@ function validateQuantity() {
 	        this.value = val.substring(0, val.length - 1);
 	    }
 	});
+}
+
+function updateUom(obj) {
+	var rowId = $(obj).attr('id').split('_').pop();
+	$('#uomid_' + rowId).val($(obj).val());
 }

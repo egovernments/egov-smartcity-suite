@@ -55,7 +55,8 @@
 	<div class="new-page-header">Create Abstract Estimate</div>
 
 	<div class="main-content">
-	<input type="hidden" id="estimateValue" name="estimateValue" value="${estimateValue}"/>
+	<input type="hidden" id="estimateValue" name="estimateValue" value="${abstractEstimate.estimateValue}"/>
+	<input type="hidden" id="workValue" name="workValue" value="${abstractEstimate.workValue}"/>
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
