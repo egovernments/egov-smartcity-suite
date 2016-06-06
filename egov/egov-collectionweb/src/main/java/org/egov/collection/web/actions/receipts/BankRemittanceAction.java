@@ -90,7 +90,7 @@ import org.springframework.context.ApplicationContext;
     @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
             "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
                 "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
-    "${bankAccount}" }), @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+    "${bankAccount}", "remittanceDate","${remittanceDate}"}), @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
