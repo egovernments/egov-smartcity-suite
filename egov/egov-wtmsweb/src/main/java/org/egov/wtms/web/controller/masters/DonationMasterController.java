@@ -106,36 +106,13 @@ public class DonationMasterController {
         model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
         model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
         model.addAttribute("reqAttr", "false");
+        model.addAttribute("mode", "create");
         return "donation-master";
-    }
-
-    @RequestMapping(value = "/donationMaster/list", method = RequestMethod.GET)
-    public String getdonationMasterList(final Model model) {
-
-        final List<DonationDetails> donationDetailsList = donationDetailsService.findAll();
-        model.addAttribute("donationDetailsList", donationDetailsList);
-        return "donation-master-list";
-
-    }
-
-    @RequestMapping(value = "/donationMaster/{donationDetailsId}", method = RequestMethod.GET)
-    public String getWaterRatesMasterData(final Model model, @PathVariable final Long donationDetailsId) {
-        final DonationDetails donationDetails = donationDetailsService.findBy(donationDetailsId);
-        model.addAttribute("donationDetails", donationDetails);
-        model.addAttribute("typeOfConnection", WaterTaxConstants.DONATIONMASTER);
-        model.addAttribute("categoryType", connectionCategoryService.getAllActiveConnectionCategory());
-        model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
-        model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
-        model.addAttribute("maxPipeSizeList", pipeSizeService.getAllActivePipeSize());
-        model.addAttribute("minPipeSizeList", pipeSizeService.getAllActivePipeSize());
-        model.addAttribute("reqAttr", "true");
-        return "donation-master";
-
     }
 
     @RequestMapping(value = "/donationMaster", method = RequestMethod.POST)
-    public String addDonationMasterDetails(@Valid @ModelAttribute final DonationDetails donationDetails,
-            final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
+    public String createDonationMasterDetails(@Valid @ModelAttribute final DonationDetails donationDetails,
+            final BindingResult resultBinder, final RedirectAttributes redirectAttrs, final Model model) {
         if (resultBinder.hasErrors())
             return "donation-master";
         final List<DonationHeader> donationHeaderTempList = donationHeaderService
@@ -158,23 +135,55 @@ public class DonationMasterController {
                 donationDetails.getDonationHeader().setActive(true);
                 donationHeaderService.persistDonationHeader(donationDetails.getDonationHeader());
                 donationDetailsService.persistDonationDetails(donationDetails);
+                model.addAttribute("mode", "create");
                 redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
-                model.addAttribute("message", "Donation Master Data created successfully");
+                model.addAttribute("message", "Donation Master Data created successfully.");
             }
         } else {
             donationDetails.getDonationHeader().setActive(true);
             donationHeaderService.persistDonationHeader(donationDetails.getDonationHeader());
             donationDetailsService.persistDonationDetails(donationDetails);
             redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
-            model.addAttribute("message", "Donation Master Data created successfully");
+            model.addAttribute("message", "Donation Master Data created successfully.");
+            model.addAttribute("mode", "create");
         }
+        return "donation-master-success";
+    }
+
+    @RequestMapping(value = "/donationMaster/list", method = RequestMethod.GET)
+    public String getdonationMasterList(final Model model) {
+
+        final List<DonationDetails> donationDetailsList = donationDetailsService.findAll();
+        model.addAttribute("donationDetailsList", donationDetailsList);
+        return "donation-master-list";
+
+    }
+
+    @RequestMapping(value = "/donationMaster/edit", method = RequestMethod.GET)
+    public String getDonationMaster(final Model model) {
+        model.addAttribute("mode", "edit");
         return getdonationMasterList(model);
     }
 
-    @RequestMapping(value = "/donationMaster/{donationDetailsId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/donationMaster/edit/{donationDetailsId}", method = RequestMethod.GET)
+    public String getWaterRatesMasterData(final Model model, @PathVariable final Long donationDetailsId) {
+        final DonationDetails donationDetails = donationDetailsService.findBy(donationDetailsId);
+        model.addAttribute("donationDetails", donationDetails);
+        model.addAttribute("typeOfConnection", WaterTaxConstants.DONATIONMASTER);
+        model.addAttribute("categoryType", connectionCategoryService.getAllActiveConnectionCategory());
+        model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
+        model.addAttribute("usageType", usageTypeService.getActiveUsageTypes());
+        model.addAttribute("maxPipeSizeList", pipeSizeService.getAllActivePipeSize());
+        model.addAttribute("minPipeSizeList", pipeSizeService.getAllActivePipeSize());
+        model.addAttribute("reqAttr", "true");
+        return "donation-master";
+
+    }
+
+    @RequestMapping(value = "/donationMaster/edit/{donationDetailsId}", method = RequestMethod.POST)
     public String editDonationMasterData(@Valid @ModelAttribute final DonationDetails donationDetails,
-            @PathVariable final Long donationDetailsId, final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
+            final BindingResult resultBinder, @PathVariable final Long donationDetailsId,
+            final RedirectAttributes redirectAttrs, final Model model) {
         if (resultBinder.hasErrors())
             return "donation-master";
         final DonationHeader donationheader = donationDetails.getDonationHeader();
@@ -215,8 +224,10 @@ public class DonationMasterController {
             donationdetails.setDonationHeader(donationHeader);
             donationHeaderService.persistDonationHeader(donationdetails.getDonationHeader());
             donationDetailsService.persistDonationDetails(donationdetails);
+            redirectAttrs.addFlashAttribute("donationDetails", donationDetails);
+            model.addAttribute("message", "Donation Master Data updated successfully.");
         }
-        return getdonationMasterList(model);
+        return "donation-master-success";
     }
 
 }

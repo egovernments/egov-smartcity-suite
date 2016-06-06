@@ -44,11 +44,11 @@
 	<div class="col-md-12 table-header text-left">
 		<spring:message code="title.lineestimate.search" /></div>
 	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-responsive table-hover multiheadertbl"
+		<table class="table table-bordered table-responsive table-hover"
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.select" /></th>
+					<th><spring:message code="lbl.selectonly" /></th>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.lineestimatenumber" /></th>
 					<th><spring:message code="lbl.estimatenumber" /></th>

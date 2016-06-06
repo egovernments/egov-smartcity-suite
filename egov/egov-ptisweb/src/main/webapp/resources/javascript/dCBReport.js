@@ -209,6 +209,9 @@ function callAjaxByBoundary() {
 							"data" : "ownerName",
 							"sTitle" : "Owner Name"
 						}, {
+							"data" : "assessmentCount",
+							"sTitle" : "Assessment Count"
+						}, {
 							"data" : "dmnd_arrearPT",
 							"sTitle" : "Arrear Property Tax"
 						}, {
@@ -292,6 +295,7 @@ function callAjaxByBoundary() {
 			{
 				reportdatatable.fnSetColumnVis( 1, true );
 				reportdatatable.fnSetColumnVis( 2, true );
+				reportdatatable.fnSetColumnVis( 3, false );
 			}
 			else
 			{

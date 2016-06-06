@@ -90,7 +90,7 @@ public abstract class License extends StateAware {
     private Date agreementDate;
     private String agreementDocNo;
     private String digiSignedCertFileStoreId;
-
+    private String assessmentNo;
     public abstract String generateLicenseNumber(Serializable runningNumber);
 
     public abstract List<LicenseDocument> getDocuments();
@@ -358,6 +358,14 @@ public abstract class License extends StateAware {
 
     public boolean isStateRejected() {
         return getState() != null && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
+    }
+
+    public String getAssessmentNo() {
+        return assessmentNo;
+    }
+
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
     }
 
 }

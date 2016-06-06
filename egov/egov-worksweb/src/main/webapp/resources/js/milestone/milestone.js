@@ -69,7 +69,6 @@ var templateCode_typeahead = $('#templateCode').typeahead({
 	$("#milestoneTemplateId").val(data.id);   
 });
 
-
 function initializeDatePicker()
 {
 	$('.datepicker').datepicker().off('changeDate');
@@ -115,8 +114,8 @@ function validateScheduleStartDate()
 			if(currentDate<workOrderDate)
 			{
 				isValidationSuccess=false;
-
-				bootbox.alert("Scheduled start date cannot be less than the LOA created date", function(){ 
+				var message = document.getElementById('errorScheduleLOADate').value;
+				bootbox.alert(message, function(){ 
 					setTimeout(function(){ textbox.focus(); }, 400);
 				});
 				
@@ -131,7 +130,8 @@ function validateScheduleStartDate()
 					if(dateObj.getTime() > currentDate.getTime())
 					{
 						isValidationSuccess=false;
-						bootbox.alert("Scheduled start date cannot be Less than the start date of previous stage", function(){ 
+						var message = document.getElementById('errorScheduleDates').value;
+						bootbox.alert(message, function(){ 
 							setTimeout(function(){ textbox.focus(); }, 400);
 						});
 						isExit=true;
@@ -153,16 +153,13 @@ function validateScheduleEndDate()
 {
 	var isSuccess=true;
 	$('.scheduleEndDate').each(function(i){
-		var idx=$(this).data('idx');
-		var scheduleStartDate=$('.scheduleStartDate[data-idx="'+ idx +'"]').data('datepicker').date;
+		var scheduleStartDate=$('.scheduleStartDate[data-idx="'+ i +'"]').data('datepicker').date;
 		var scheduleEndDate=$(this).data('datepicker').date;
 		if(scheduleStartDate>scheduleEndDate)
 		{
 			isSuccess=false;
-			bootbox.alert('Scheduled end date cannot be less than the scheduled start date', function(){ 
-				setTimeout(function(){ textbox.focus(); }, 400);
-			});
-			return false;
+			var message = document.getElementById('errorScheduleEndDates').value;
+			bootbox.alert(message);
 		}
 	});
 	return isSuccess;
@@ -189,7 +186,13 @@ function daydiff(first, second) {
 
 function addMilestone() {
 	var rowcount = $("#tblmilestone tbody tr").length;
+	var rowcounthidden = $("#tblmilestone tbody tr:hidden[id='milestoneRow']").length;
 	if (rowcount < 30) {
+		if(rowcounthidden == 1){
+			$('#tblmilestone tbody tr').show();
+			return true;
+		}
+			
 		if (document.getElementById('milestoneRow') != null) {
 			// get Next Row Index to Generate
 			var nextIdx = 0;
@@ -243,12 +246,8 @@ function addMilestone() {
 								}
 							}
 							
-							$(this).attr('readonly', false);
-							$(this).removeAttr('disabled');
-							$(this).prop('checked', false);
 
 			}).end().appendTo("#tblmilestone tbody");
-			generateSno();
 			initializeDatePicker();
 		}
 	} else {
@@ -275,11 +274,16 @@ function deleteMilestone(obj) {
 
 	var tbl=document.getElementById('tblmilestone');	
 	var rowcount=$("#tblmilestone tbody tr").length;
-
-    if(rowcount<=1) {
-		bootbox.alert("This row can not be deleted");
-		return false;
-	} else {
+	if(rowcount<=1) {
+		$('#tblmilestone tbody tr').hide();
+		$('.stageOrderNo').val('');
+		$('.description').val('');
+		$('.percentage').val('');
+		$('.scheduleStartDate').val('');
+		$('.scheduleEndDate').val('');
+		calculatePercentageTotal();
+		return true;
+	}
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
 		var idx=parseInt($detailsRowCount);
@@ -303,20 +307,9 @@ function deleteMilestone(obj) {
 			}
 		});
 		
-		generateSno();
 		calculatePercentageTotal();
 		return true;
 	}	
-}
-
-function generateSno()
-{
-	var idx=1;
-	$(".stageOrderNo").each(function(){
-		$(this).val(idx);
-		idx++;
-	});
-}
 
 function getRow(obj) {
 	if(!obj)return null;
@@ -383,8 +376,6 @@ function addMilestoneDetails() {
 									$(this).prop('selectedIndex', 0);
 								}
 							}
-							$(this).removeAttr('disabled');
-							$(this).prop('checked', false);
 
 					}).end().appendTo("#tblmilestone tbody");
 			        initializeDatePicker();
@@ -395,11 +386,16 @@ function addMilestoneDetails() {
 }
 
 jQuery('#submitMilestoneDetails').click(function(e) {
-	$(".readonlyfields").prop("readonly", true);
+	var rowcounthidden = $("#tblmilestone tbody tr:hidden[id='milestoneRow']").length;
+	if(rowcounthidden == 1)
+		$('#tblmilestone tbody tr').show();
 	var templateCode = $('#templateCode').val();
+	var rowcount = $("#tblmilestone tbody tr").length;
 	var milestoneId = $('#milestoneTemplateId').val();
-	if(templateCode == '')
-		bootbox.alert("Please Enter Template Code");
+	if(templateCode == ''){
+		var message = document.getElementById('errorTemplateCode').value;
+		bootbox.alert(message);
+	}
 	else{
 		$.ajax({
 			url: "/egworks/milestone/setmilestonetemplateactivities/"+milestoneId,
@@ -432,9 +428,16 @@ function openLetterOfAcceptance() {
 
 $('#save').click(function() {
 	if($('#milestone').valid()){
+	var rowcounthidden = $("#tblmilestone tbody tr:hidden[id='milestoneRow']").length;
+	if (rowcounthidden == 1) {
+		var message = document.getElementById('errorMilestoneDeatail').value;
+		bootbox.alert(message);
+		return false;
+	}
 	var totalPercentage = parseFloat($('#totalPercentage').html());
 	if (totalPercentage != 100) {
-		bootbox.alert("Sum of percentage of should be equal to 100 .");
+		var message = document.getElementById('errorTotalPercentage').value;
+		bootbox.alert(message);
 		return false;
 	}
 	if (validateScheduleStartDate()) {

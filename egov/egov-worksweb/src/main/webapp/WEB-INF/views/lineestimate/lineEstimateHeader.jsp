@@ -227,6 +227,7 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.budgethead" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
+				<input type="hidden" id="budgetHeadValue" value="${lineEstimate.budgetHead.id }"/>
 				<form:select path="budgetHead" data-first-option="false" id="budgetHead" class="form-control" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />

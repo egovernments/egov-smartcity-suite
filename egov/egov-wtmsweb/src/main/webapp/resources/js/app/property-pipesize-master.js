@@ -76,22 +76,14 @@ $(document).ready(function(){
 	
  });
 
-$('#listid').click(function() {
-	window.open("/wtms/masters/propertyPipeSizeMaster/list", "_self");
- });
-
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/propertyPipeSizeMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/propertyPipeSizeMaster/", "_self");
-}
 
 function edit(propertyPipeSize)
 {
 	
-	window.open("/wtms/masters/propertyPipeSizeMaster/"+propertyPipeSize, "_self");
+	window.open("/wtms/masters/propertyPipeSizeMaster/edit/"+propertyPipeSize, "_self");
 	
 }

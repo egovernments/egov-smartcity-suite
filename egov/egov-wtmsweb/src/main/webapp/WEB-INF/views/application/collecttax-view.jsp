@@ -63,7 +63,10 @@
 	<div class="row text-center">
 		<div class="add-margin">
 			<c:choose>
-				<c:when test="${null!=mode && mode=='waterTaxCollection' && waterTaxDueforParent >0}">
+				<c:when test="${null!=mode && mode=='waterTaxCollection' && waterConnectionDetails.connectionType == 'METERED' && waterTaxDueforParent >0}">
+					<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
+				</c:when>
+				<c:when test="${null!=mode && mode=='waterTaxCollection' && waterConnectionDetails.connectionType != 'METERED'}">
 					<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
 				</c:when>
 			</c:choose>

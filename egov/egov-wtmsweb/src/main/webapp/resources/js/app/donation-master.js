@@ -159,10 +159,6 @@ $(document).ready(function(){
 			  }
 		  		});
 	  
-	  $('#listid').click(function() {
-			window.open("/wtms/masters/donationMaster/list", "_self");
-		 });
-	  
 	  $("#resetid").click(function(){
 			$("#donationDetailsform")[0].reset();
 			window.open("/wtms/masters/donationMaster/", "_self");
@@ -275,16 +271,11 @@ function overwritedonation(res)
 
 function edit(donationHeader)
 {
-	window.open("/wtms/masters/donationMaster/"+donationHeader, "_self");
+	window.open("/wtms/masters/donationMaster/edit/"+donationHeader, "_self");
 	
 	
 }
 
-function addNew()
-{
-	window.open("/wtms/masters/donationMaster/", "_self");
-}
-	
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/donationMaster/", "_self");
 });

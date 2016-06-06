@@ -67,7 +67,7 @@
 		<tr>
 			<td width="5%"  class="blueborderfortd" align="center"> <s:property value="#s.index+1" />  </td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{receiptnumber}" /></div></td>
-			<td class="blueborderfortd"><div align="center"><s:date name="receiptDate" var="cdFormat" format="dd/MM/yyyy"/><s:property value="%{cdFormat}" /></div></td>
+			<td class="blueborderfortd"><div align="center"><s:date name="%{receiptdate}" format="dd/MM/yyyy" /></div></td>
 			<td class="blueborderfortd"><div align="center"><s:property value="%{service.name}" /></div></td>
 			
 		</s:iterator>
@@ -84,7 +84,7 @@
 <input name="button2" type="button" class="button" id="button" onclick="window.close()" value="Close"/>
 <input type="button" class="buttonsubmit" id="buttonCashReport"
 			value="<s:text name='bankremittance.print.bankchallan'/>"
-			onclick="window.open('${pageContext.request.contextPath}/receipts/bankRemittance-printBankChallan.action?totalCashAmount=<s:property value="%{totalCashAmount}"/>&totalChequeAmount=<s:property value="%{totalChequeAmount}"/>&totalOnlineAmount=<s:property value="%{totalOnlineAmount}"/>&bank=<s:property value="%{bank}"/>&bankAccount=<s:property value="%{bankAccount}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
+			onclick="window.open('${pageContext.request.contextPath}/receipts/bankRemittance-printBankChallan.action?totalCashAmount=<s:property value="%{totalCashAmount}"/>&totalChequeAmount=<s:property value="%{totalChequeAmount}"/>&totalOnlineAmount=<s:property value="%{totalOnlineAmount}"/>&bank=<s:property value="%{bank}"/>&bankAccount=<s:property value="%{bankAccount}"/>&remittanceDate=<s:property value="%{remittanceDate}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
 	
 </div>
 </s:form>

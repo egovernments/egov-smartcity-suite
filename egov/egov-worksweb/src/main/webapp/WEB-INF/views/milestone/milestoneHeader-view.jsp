@@ -91,14 +91,16 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${lineEstimateDetails.lineEstimate.typeOfWork.code}"></c:out>
+							value="${lineEstimateDetails.lineEstimate.typeOfWork.description}"></c:out>
+							<input type="hidden" id="typeOfWork" value="${lineEstimateDetails.lineEstimate.typeOfWork.id}"/>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${lineEstimateDetails.lineEstimate.subTypeOfWork.code}"></c:out>
+							value="${lineEstimateDetails.lineEstimate.subTypeOfWork.description}"></c:out>
+						<input type="hidden" id="subTypeOfWork" value="${lineEstimateDetails.lineEstimate.subTypeOfWork.id}"/>
 					</div>
 				</div>
 				<div class="row add-border">

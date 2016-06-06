@@ -273,12 +273,18 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Boolean isCallbackForApportion() {
-        return isCallbackForApportion;
+        if(getWaterConnectionDetails().getConnectionStatus() !=null && getWaterConnectionDetails().getConnectionStatus().equals(ConnectionStatus.ACTIVE)) 
+        {
+          return isCallbackForApportion=Boolean.TRUE;
+        }else
+        {
+            return isCallbackForApportion=Boolean.FALSE; 
+        }
     }
 
     @Override
     public void setCallbackForApportion(final Boolean b) {
-        isCallbackForApportion = b;
+       this.isCallbackForApportion=b;
     }
 
     public WaterConnectionDetails getWaterConnectionDetails() {

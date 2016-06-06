@@ -79,6 +79,7 @@ import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -155,8 +156,8 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.findOne(id);
     }
 
-    public Integer getMaxSequenceNumberByWorkOrder(final WorkOrder workOrder) {
-        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrder);
+    public Integer getMaxSequenceNumberByWorkOrder(final WorkOrderEstimate workOrderEstimate) {
+        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getCode());
     }
 
     public ContractorBillRegister getContractorBillByBillNumber(final String billNumber) {

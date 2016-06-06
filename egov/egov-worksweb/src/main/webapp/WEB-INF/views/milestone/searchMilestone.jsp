@@ -52,7 +52,7 @@
 		<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.typeofwork" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="typeOfWork" data-first-option="false" id="typeofwork" class="form-control" required="required"  >
+			<form:select path="typeOfWork" data-first-option="false" id="typeOfWork" class="form-control" required="required"  >
 				<form:option value="">
 					<spring:message code="lbl.select" />
 				</form:option>

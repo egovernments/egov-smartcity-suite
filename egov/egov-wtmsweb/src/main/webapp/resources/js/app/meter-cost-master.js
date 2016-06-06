@@ -107,24 +107,14 @@ $('#buttonid').click(function() {
 			  $('.loader-class').modal('hide');
 		  }
 });
-$('#listid').click(function() {
-	window.open("/wtms/masters/meterCostMaster/list", "_self");
- });
-
-
 
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/meterCostMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/meterCostMaster/", "_self");
-}
 
 function edit(meterCost)
 {
-	window.open("/wtms/masters/meterCostMaster/"+meterCost, "_self");
+	window.open("/wtms/masters/meterCostMaster/edit/"+meterCost, "_self");
 	
 }
-

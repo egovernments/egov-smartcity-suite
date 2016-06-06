@@ -202,7 +202,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
             Integer partBillCount = contractorBillRegisterService
-                    .getMaxSequenceNumberByWorkOrder(workOrder);
+                    .getMaxSequenceNumberByWorkOrder(workOrderEstimate);
             if (partBillCount == null || partBillCount == 0)
                 partBillCount = 1;
             else

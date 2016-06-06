@@ -283,12 +283,11 @@ function readOnlyCheckBox() {
 	<logic:notEmpty name="receiptHeaders">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
-			<s:hidden name="receiptDate" id="receiptDate" value="%{receiptDate}"/>	
 			<s:hidden name="inboxItemDetails" id="inboxItemDetails" value="%{inboxItemDetails}"/>	
 			<display:table name="receiptHeaders"
 				uid="currentRow" pagesize="30" style="border:1px;empty-cells:show;border-collapse:collapse;" cellpadding="0"
 				cellspacing="0" export="false" requestURI="">
-
+				<s:hidden name="receiptDate" id="receiptDate" value="%{receiptdate}"/>	
 				<s:if test="%{allowPartialSelection == true}">
 					<!--  Partial selection allowed. Enable the checkboxes -->
 					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
@@ -315,7 +314,7 @@ function readOnlyCheckBox() {
 					style="width:10%; text-align: center" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					property="receiptDate" title="Receipt Date"
+					property="receiptdate" title="Receipt Date"
 					format="{0,date,dd/MM/yyyy}" style="width:10%; text-align: center" />
 				
 

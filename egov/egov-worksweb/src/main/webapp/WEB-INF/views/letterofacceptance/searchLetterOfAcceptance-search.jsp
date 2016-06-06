@@ -128,11 +128,11 @@
 		<spring:message code='title.searchresult' />
 	</div>
 	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
+		<table class="table table-bordered table-hover"
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.select" /></th>
+					<th><spring:message code="lbl.selectonly" /></th>
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>

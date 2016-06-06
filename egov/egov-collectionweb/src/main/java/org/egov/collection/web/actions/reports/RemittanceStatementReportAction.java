@@ -97,7 +97,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private static final String EGOV_BANK = "EGOV_BANK";
     private static final String EGOV_BANK_ACCOUNT = "EGOV_BANK_ACCOUNT";
     private static final String EGOV_REMITTANCE_VOUCHER = "EGOV_REMITTANCE_VOUCHER";
-
+    private static final String EGOV_REMITTANCE_DATE="EGOV_REMITTANCE_DATE";
     private static final String PRINT_BANK_CHALLAN_TEMPLATE = "collection_remittance_bankchallan_report";
     private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     @Autowired
@@ -117,6 +117,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private Double totalOnlineAmount;
     private String bank;
     private String bankAccount;
+    private Date remittanceDate;
 
     @Override
     public void prepare() {
@@ -198,6 +199,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         critParams.put(EGOV_ONLINE_AMOUNT, totalOnlineAmount);
         critParams.put(EGOV_BANK, bank);
         critParams.put(EGOV_BANK_ACCOUNT, bankAccount);
+        critParams.put(EGOV_REMITTANCE_DATE, remittanceDate==null?new Date():remittanceDate);
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
         critParams.put(EGOV_REMITTANCE_VOUCHER, bankRemittanceList.isEmpty()?"":bankRemittanceList.get(0).getVoucherNumber());
@@ -363,5 +365,14 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     public void setBankAccount(final String bankAccount) {
         this.bankAccount = bankAccount;
     }
+
+    public Date getRemittanceDate() {
+        return remittanceDate;
+    }
+
+    public void setRemittanceDate(Date remittanceDate) {
+        this.remittanceDate = remittanceDate;
+    }
+
 
 }

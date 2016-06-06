@@ -41,6 +41,7 @@
 package org.egov.ptis.actions.reports;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class DCBReportResult {
 
@@ -82,6 +83,7 @@ public class DCBReportResult {
     private BigDecimal clctn_currentPSCT = BigDecimal.ZERO;
     private String houseNo;
     private String ownerName;
+    private BigInteger assessmentCount;
 
     public String getBoundaryName() {
         return boundaryName;
@@ -430,4 +432,13 @@ public class DCBReportResult {
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
     }
+
+	public BigInteger getAssessmentCount() {
+		return assessmentCount;
+	}
+
+	public void setAssessmentCount(BigInteger assessmentCount) {
+		this.assessmentCount = assessmentCount;
+	}
+
 }

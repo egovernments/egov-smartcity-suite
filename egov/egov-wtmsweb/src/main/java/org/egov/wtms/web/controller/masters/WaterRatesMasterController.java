@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.web.controller.masters;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -78,16 +76,14 @@ public class WaterRatesMasterController {
 
     @Autowired
     private WaterRatesHeaderService waterRatesHeaderService;
-    
+
     @Autowired
     private WaterRatesDetailsService waterRatesDetailsService;
-    
-    
 
     @Autowired
     private PipeSizeService pipeSizeService;
 
-    @RequestMapping(value = "/waterRatesMaster", method = GET)
+    @RequestMapping(value = "/waterRatesMaster", method = RequestMethod.GET)
     public String viewForm(final Model model) {
         final WaterRatesHeader waterRatesHeader = new WaterRatesHeader();
         if (waterRatesHeader.getWaterRatesDetails().isEmpty())
@@ -100,27 +96,28 @@ public class WaterRatesMasterController {
         model.addAttribute("maxPipeSize", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("waterSourceTypes", waterSourceService.getAllActiveWaterSourceTypes());
         model.addAttribute("reqAttr", "false");
+        model.addAttribute("mode", "create");
         return "waterRates-master";
     }
 
     @RequestMapping(value = "/waterRatesMaster", method = RequestMethod.POST)
-    public String addWaterRatesMasterDetails(@Valid @ModelAttribute WaterRatesHeader waterRatesHeader,
+    public String createWaterRatesMasterDetails(@Valid @ModelAttribute WaterRatesHeader waterRatesHeader,
             final RedirectAttributes redirectAttrs, final Model model, final BindingResult resultBinder) {
         if (resultBinder.hasErrors())
             return "waterRates-master";
         final List<WaterRatesHeader> waterRatesHeaderTempList = waterRatesHeaderService
                 .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(waterRatesHeader.getConnectionType(),
                         waterRatesHeader.getUsageType(), waterRatesHeader.getWaterSource(),
-                        waterRatesHeader.getPipeSize()); 
+                        waterRatesHeader.getPipeSize());
         WaterRatesDetails waterRatesDetailsTemp = null;
         WaterRatesHeader waterRatesHeaderTemp = null;
-        for(WaterRatesHeader waterRatesHeadertemp : waterRatesHeaderTempList)
-        {
-            waterRatesDetailsTemp = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(waterRatesHeadertemp,waterRatesHeader.getWaterRatesDetails().get(0).getFromDate(), waterRatesHeader.getWaterRatesDetails().get(0).getToDate());
-            if (waterRatesDetailsTemp != null)
-            {
-               waterRatesHeaderTemp = waterRatesHeaderTempList.get(0);
-               break;
+        for (final WaterRatesHeader waterRatesHeadertemp : waterRatesHeaderTempList) {
+            waterRatesDetailsTemp = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(
+                    waterRatesHeadertemp, waterRatesHeader.getWaterRatesDetails().get(0).getFromDate(),
+                    waterRatesHeader.getWaterRatesDetails().get(0).getToDate());
+            if (waterRatesDetailsTemp != null) {
+                waterRatesHeaderTemp = waterRatesHeaderTempList.get(0);
+                break;
             }
         }
         if (waterRatesDetailsTemp != null) {
@@ -132,12 +129,15 @@ public class WaterRatesMasterController {
             waterRatesHeader.setActive(true);
             waterRatesHeader = buildWaterRateDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
             waterRatesHeaderService.createWaterRatesHeader(waterRatesHeader);
+            model.addAttribute("mode", "create");
+            redirectAttrs.addFlashAttribute("waterRatesHeader", waterRatesHeader);
+            model.addAttribute("message", "Monthly Rent for Non-Meter Master Data created successfully.");
         }
 
-        return getWaterRatesMasterList(model);
+        return "waterRates-master-success";
     }
 
-    @RequestMapping(value = "/waterRatesMaster/list", method = GET)
+    @RequestMapping(value = "/waterRatesMaster/list", method = RequestMethod.GET)
     public String getWaterRatesMasterList(final Model model) {
 
         final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService.findAll();
@@ -146,7 +146,13 @@ public class WaterRatesMasterController {
 
     }
 
-    @RequestMapping(value = "/waterRatesMaster/{waterRatesHeaderid}", method = GET)
+    @RequestMapping(value = "/waterRatesMaster/edit", method = RequestMethod.GET)
+    public String getWaterRatesMaster(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getWaterRatesMasterList(model);
+    }
+
+    @RequestMapping(value = "/waterRatesMaster/edit/{waterRatesHeaderid}", method = RequestMethod.GET)
     public String getWaterRatesMasterData(final Model model, @PathVariable final String waterRatesHeaderid) {
         final WaterRatesHeader waterRatesHeader = waterRatesHeaderService.findBy(Long.parseLong(waterRatesHeaderid));
         waterRatesHeader.setConnectionType(ConnectionType.NON_METERED);
@@ -161,17 +167,19 @@ public class WaterRatesMasterController {
 
     }
 
-    @RequestMapping(value = "/waterRatesMaster/{waterRatesHeaderid}", method = RequestMethod.POST)
+    @RequestMapping(value = "/waterRatesMaster/edit/{waterRatesHeaderid}", method = RequestMethod.POST)
     public String editWaterRatesMasterData(@Valid @ModelAttribute WaterRatesHeader waterRatesHeader,
-            @PathVariable final Long waterRatesHeaderid, final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
+            final BindingResult resultBinder, final RedirectAttributes redirectAttrs,
+            @PathVariable final Long waterRatesHeaderid, final Model model) {
         if (resultBinder.hasErrors())
             return "waterRates-master";
 
         final WaterRatesHeader waterRatesHeaderTemp = waterRatesHeaderService.findBy(waterRatesHeaderid);
         WaterRatesDetails waterRatesDetailsTemp = null;
-        
-        waterRatesDetailsTemp = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(waterRatesHeaderTemp,waterRatesHeader.getWaterRatesDetails().get(0).getFromDate(), waterRatesHeader.getWaterRatesDetails().get(0).getToDate());
+
+        waterRatesDetailsTemp = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(
+                waterRatesHeaderTemp, waterRatesHeader.getWaterRatesDetails().get(0).getFromDate(),
+                waterRatesHeader.getWaterRatesDetails().get(0).getToDate());
 
         if (waterRatesDetailsTemp != null) {
             waterRatesHeaderTemp.setUsageType(waterRatesHeader.getUsageType());
@@ -179,11 +187,13 @@ public class WaterRatesMasterController {
             waterRatesHeaderTemp.setWaterSource(waterRatesHeader.getWaterSource());
             waterRatesHeaderTemp.setActive(waterRatesHeader.isActive());
             waterRatesHeader = updateWateRatesetails(waterRatesHeaderTemp, waterRatesHeader.getWaterRatesDetails());
-            
+
         } else
             waterRatesHeader = buildWaterRateDetails(waterRatesHeader, waterRatesHeader.getWaterRatesDetails());
         waterRatesHeaderService.updateWaterRatesHeader(waterRatesHeader);
-        return getWaterRatesMasterList(model);
+        redirectAttrs.addFlashAttribute("waterRatesHeader", waterRatesHeader);
+        model.addAttribute("message", "Monthly Rent for Non-Meter Master Data updated successfully.");
+        return "waterRates-master-success";
     }
 
     private WaterRatesHeader buildWaterRateDetails(final WaterRatesHeader waterRatesHeader,
@@ -191,7 +201,8 @@ public class WaterRatesMasterController {
         final Set<WaterRatesDetails> unitSet = new HashSet<WaterRatesDetails>(0);
 
         for (final WaterRatesDetails unitdetail : unitDetail)
-            if (unitdetail.getFromDate() != null &&  unitdetail.getToDate() != null && !"".equals(unitdetail.getMonthlyRate())) {
+            if (unitdetail.getFromDate() != null && unitdetail.getToDate() != null
+                    && !"".equals(unitdetail.getMonthlyRate())) {
                 unitdetail.setWaterRatesHeader(waterRatesHeader);
 
                 unitSet.add(unitdetail);
@@ -208,7 +219,8 @@ public class WaterRatesMasterController {
         final List<WaterRatesDetails> unitWaterRatesList = new ArrayList<>(0);
         for (final WaterRatesDetails waterRatesOld : waterRatesHeader.getWaterRatesDetails())
             for (final WaterRatesDetails waterRatesNew : newWaterRatesList)
-                if (waterRatesNew.getFromDate() != null && waterRatesNew.getToDate() != null && !"".equals(waterRatesNew.getMonthlyRate()) ) {
+                if (waterRatesNew.getFromDate() != null && waterRatesNew.getToDate() != null
+                        && !"".equals(waterRatesNew.getMonthlyRate())) {
                     waterRatesOld.setWaterRatesHeader(waterRatesHeader);
                     waterRatesOld.setMonthlyRate(waterRatesNew.getMonthlyRate());
                     waterRatesOld.setFromDate(waterRatesNew.getFromDate());

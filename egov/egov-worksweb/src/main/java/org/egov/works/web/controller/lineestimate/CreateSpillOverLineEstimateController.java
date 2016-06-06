@@ -262,7 +262,6 @@ public class CreateSpillOverLineEstimateController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());

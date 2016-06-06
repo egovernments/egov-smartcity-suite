@@ -77,7 +77,7 @@
 
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.propertyNo.lbl' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{propertyNo}" /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{assessmentNo}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.locality.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{boundary.name}" /></div>
 	</div>

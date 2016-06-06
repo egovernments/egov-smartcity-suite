@@ -110,11 +110,11 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("budgetHead", "");
             if (workProgressRegister.getTypeOfWork() != null)
-                jsonObject.addProperty("typeOfWork", workProgressRegister.getTypeOfWork().getCode());
+                jsonObject.addProperty("typeOfWork", workProgressRegister.getTypeOfWork().getDescription());
             else
                 jsonObject.addProperty("typeOfWork", "");
             if (workProgressRegister.getSubTypeOfWork() != null)
-                jsonObject.addProperty("subTypeOfWork", workProgressRegister.getSubTypeOfWork().getCode());
+                jsonObject.addProperty("subTypeOfWork", workProgressRegister.getSubTypeOfWork().getDescription());
             else
                 jsonObject.addProperty("subTypeOfWork", "");
             if (workProgressRegister.getAdminSanctionBy() != null)

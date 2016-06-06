@@ -46,8 +46,8 @@
 				<div class="row">
 						<div class="col-md-12">
 							<c:if test="${not empty message}">
-                    <div role="alert">${message}</div>
-                </c:if>
+                    			<div role="alert">${message}</div>
+               				 </c:if>
 							<div class="panel panel-primary" data-collapsed="0">
 								<div class="panel-heading">
 									<div class="panel-title">
@@ -70,6 +70,8 @@
 										<div class="col-md-3 col-xs-6 add-margin view-content">
 											<c:out value="${connectionCategory.name}"/>
 										</div>
+										</div>
+										<div class="row add-border">
 										 <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.status"/></div>
 											<div class="col-md-3 col-xs-6 add-margin view-content">
 												<c:choose>

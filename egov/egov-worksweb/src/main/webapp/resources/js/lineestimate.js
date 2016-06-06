@@ -42,6 +42,7 @@ $locationId = 0;
 $subTypeOfWorkId = 0;
 $subSchemeId = 0;
 $detailsRowCount = $('#detailsSize').val();
+$budgetHeadId=0;
 $(document).ready(function(){
 	
 	var lineEstimateStatus = $('#lineEstimateStatus').val();
@@ -53,11 +54,8 @@ $(document).ready(function(){
 	$locationId = $('#locationValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
-	$('#scheme').trigger('change');
-	
-	$('#typeofwork').trigger('blur');
-	$('#subTypeOfWork').trigger('blur');
-	
+	$budgetHeadId = $('#budgetHeadValue').val();
+
 	$( "input[name$='estimateAmount']" ).each(function(){
 		var value = parseFloat(roundTo($(this).val()));
 		if(value != 0)
@@ -76,10 +74,14 @@ $(document).ready(function(){
 	if (functionId != "") {
 		$('#function option').each(function() {
 			if ($(this).val() == functionId)
-				$(this).prop('selected', true);
+				$(this).attr('selected', 'selected');
 		});
 	}
 	
+	//TODO : Need to remove trigger
+	$('#typeofwork').trigger('blur');
+	$('#scheme').trigger('change');
+	$('#function').trigger('change');
 	return showSlumFieldsValue();
 });
 
@@ -602,3 +604,35 @@ function validateWorkFlowApprover(name) {
 	document.forms[0].submit;
 	return true;
 }
+
+$('#function').change(function(){
+	 if ($('#function').val() === '') {
+		   $('#budgetHead').empty();
+		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/getbudgetheadbyfunction",
+				cache: true,
+				dataType: "json",
+				data:{'functionId' : $('#function').val()}	
+			}).done(function(value) {
+				console.log(value);
+				$('#budgetHead').empty();
+				$('#budgetHead').append($("<option value=''>Select from below</option>"));
+				$.each(value, function(index, val) {
+					var selected="";
+					if($budgetHeadId)
+					{
+						if($budgetHeadId==val.id)
+						{
+							selected="selected";
+						}
+					}
+				     $('#budgetHead').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+				});
+			});
+		}
+	});
+

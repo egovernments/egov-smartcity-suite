@@ -75,22 +75,14 @@ $(document).ready(function(){
 	
  });
 
-$('#listid').click(function() {
-	window.open("/wtms/masters/propertyUsageMaster/list", "_self");
- });
-
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/propertyUsageMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/propertyUsageMaster/", "_self");
-}
 
 function edit(waterpropertyUsage)
 {
 	
-	window.open("/wtms/masters/propertyUsageMaster/"+waterpropertyUsage, "_self");
+	window.open("/wtms/masters/propertyUsageMaster/edit/"+waterpropertyUsage, "_self");
 	
 }

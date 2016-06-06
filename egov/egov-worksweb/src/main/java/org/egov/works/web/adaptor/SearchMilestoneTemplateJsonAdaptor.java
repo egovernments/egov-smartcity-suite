@@ -66,11 +66,11 @@ public class SearchMilestoneTemplateJsonAdaptor implements JsonSerializer<Milest
             else
                 jsonObject.addProperty("code", "");
             if (milestoneTemplate.getTypeOfWork() != null)
-                jsonObject.addProperty("typeOfWork", milestoneTemplate.getTypeOfWork().getCode());
+                jsonObject.addProperty("typeOfWork", milestoneTemplate.getTypeOfWork().getDescription());
             else
                 jsonObject.addProperty("typeOfWork", "");
             if (milestoneTemplate.getSubTypeOfWork() != null)
-                jsonObject.addProperty("subTypeOfWork", milestoneTemplate.getSubTypeOfWork().getCode());
+                jsonObject.addProperty("subTypeOfWork", milestoneTemplate.getSubTypeOfWork().getDescription());
             else
                 jsonObject.addProperty("subTypeOfWork", "");
 
