@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.validation.ValidationException;
+
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
@@ -82,7 +84,7 @@ public class DailyWTCollectionReportSearch {
                     logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
                 this.fromDate = ft.format(dtft.parse(fromDate));
             } catch (final ParseException e) {
-                e.printStackTrace();
+                throw new ValidationException(e.getMessage());
             }
     }
 
@@ -96,7 +98,7 @@ public class DailyWTCollectionReportSearch {
                     logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
                 this.toDate = ft.format(cal.getTime());
             } catch (final ParseException e) {
-                e.printStackTrace();
+                throw new ValidationException(e.getMessage());
             }
     }
 
