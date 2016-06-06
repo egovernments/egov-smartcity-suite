@@ -71,7 +71,6 @@ import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
-import org.egov.egf.autonumber.JVBillNumberGenerator;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -154,7 +153,7 @@ public class ContingentBillAction extends BaseBillAction {
 
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
-    
+
     @Override
     public StateAware getModel() {
         return super.getModel();
@@ -185,8 +184,7 @@ public class ContingentBillAction extends BaseBillAction {
         }
     }
 
-    public void prepareNewform()
-    {
+    public void prepareNewform() {
         billDetailslist = new ArrayList<VoucherDetails>();
         billDetailslist.add(new VoucherDetails());
         billDetailsTableFinal = null;
@@ -207,8 +205,7 @@ public class ContingentBillAction extends BaseBillAction {
         netPayList = new ArrayList<CChartOfAccounts>();
         // CChartOfAccounts coa;
         List<CChartOfAccounts> accountCodeByPurpose = new ArrayList<CChartOfAccounts>();
-        for (int i = 0; i < configValuesByModuleAndKey.size(); i++)
-        {
+        for (int i = 0; i < configValuesByModuleAndKey.size(); i++) {
             try {
                 accountCodeByPurpose = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(Integer
                         .valueOf(configValuesByModuleAndKey.get(i).getValue()));
@@ -243,8 +240,7 @@ public class ContingentBillAction extends BaseBillAction {
     @SuppressWarnings("unchecked")
     @SkipValidation
     @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-newform")
-    public String newform()
-    {
+    public String newform() {
         reset();
         commonBean.setBillDate(getDefaultDate());
         if (LOGGER.isDebugEnabled())
@@ -311,8 +307,7 @@ public class ContingentBillAction extends BaseBillAction {
         checkListsTable = null;
     }
 
-    public void prepareCreate()
-    {
+    public void prepareCreate() {
         loadSchemeSubscheme();
     }
 
@@ -326,8 +321,7 @@ public class ContingentBillAction extends BaseBillAction {
     })
     @ValidationErrorPage(value = NEW)
     @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-create")
-    public String create()
-    {
+    public String create() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info(billDetailsTableCreditFinal);
         try {
@@ -355,7 +349,7 @@ public class ContingentBillAction extends BaseBillAction {
                     throw new ValidationException(Arrays.asList(new ValidationError("bill number", "Duplicate Bill Number : "
                             + commonBean.getBillNumber())));
             populateWorkflowBean();
-            bill = egBillRegisterService.createBill(bill, workflowBean,checkListsTable);
+            bill = egBillRegisterService.createBill(bill, workflowBean, checkListsTable);
             addActionMessage(getText("cbill.transaction.succesful") + bill.getBillnumber());
             billRegisterId = bill.getId();
             if (bill.getEgBillregistermis().getBudgetaryAppnumber() != null)
@@ -401,7 +395,8 @@ public class ContingentBillAction extends BaseBillAction {
             if (bill.getCurrentState() != null) {
                 wfMatrix = this.customizedWorkFlowService.getWfMatrix(bill.getStateType(),
                         getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), bill
-                                .getCurrentState().getValue(), getPendingActions(), bill
+                                .getCurrentState().getValue(),
+                        getPendingActions(), bill
                                 .getCreatedDate());
             } else {
                 wfMatrix = this.customizedWorkFlowService.getWfMatrix(bill.getStateType(),
@@ -415,8 +410,7 @@ public class ContingentBillAction extends BaseBillAction {
 
     @SkipValidation
     @ValidationErrorPage(value = EDIT)
-    public String edit()
-    {
+    public String edit() {
         EgBillregister cbill = null;
         if (getButton().toLowerCase().contains("cancel"))
             cancelBill();
@@ -534,12 +528,10 @@ public class ContingentBillAction extends BaseBillAction {
      */
     private List<VoucherDetails> rearrangeSubledger(final List<VoucherDetails> billDetailsTableSubledger) {
         if (billDetailsTableSubledger != null)
-            if (commonBean.getSubledgerType() != null && commonBean.getSubledgerType() > 0)
-            {
+            if (commonBean.getSubledgerType() != null && commonBean.getSubledgerType() > 0) {
                 final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
                         "from Accountdetailtype where id=? order by name", commonBean.getSubledgerType());
-                for (final VoucherDetails vd : billDetailsTableSubledger)
-                {
+                for (final VoucherDetails vd : billDetailsTableSubledger) {
                     vd.setAmount(vd.getDebitAmountDetail());
                     final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(
                             "from CChartOfAccounts where glcode=?",
@@ -559,7 +551,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billRegisterId);
         for (final EgChecklists chk : checkLists)
             persistenceService.delete(chk);
-        //createCheckList(bill);
+        // createCheckList(bill);
     }
 
     private EgBillregister updateBill(EgBillregister bill) {
@@ -609,8 +601,7 @@ public class ContingentBillAction extends BaseBillAction {
         return bill;
     }
 
-    private void forwardBill(final EgBillregister cbill)
-    {
+    private void forwardBill(final EgBillregister cbill) {
         Integer userId = null;
         if (null != parameters.get(APPROVER_USER_ID) && Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]) != -1)
             userId = Integer.valueOf(parameters.get(APPROVER_USER_ID)[0]);
@@ -671,8 +662,7 @@ public class ContingentBillAction extends BaseBillAction {
         getHeadersFromBill(cbill);
         billAmount = cbill.getBillamount();
         final Set<EgBilldetails> egBilldetailes = cbill.getEgBilldetailes();
-        for (final EgBilldetails detail : egBilldetailes)
-        {
+        for (final EgBilldetails detail : egBilldetailes) {
             // getAll Credits incuding net pay
             final VoucherDetails vd = new VoucherDetails();
             final BigDecimal glcodeid = detail.getGlcodeid();
@@ -683,8 +673,7 @@ public class ContingentBillAction extends BaseBillAction {
             vd.setAccounthead(coa.getName());
             vd.setCreditAmountDetail(detail.getCreditamount() != null ? detail.getCreditamount().setScale(2,
                     BigDecimal.ROUND_HALF_EVEN) : null);
-            if (detail.getFunctionid() != null)
-            {
+            if (detail.getFunctionid() != null) {
                 final CFunction functionById = (CFunction) functionHibernateDAO.findById(detail.getFunctionid().longValue(),
                         false);
                 commonBean.setFunctionName(functionById.getName());
@@ -694,27 +683,22 @@ public class ContingentBillAction extends BaseBillAction {
                 vd.setIsSubledger(TRUE);
             else
                 vd.setIsSubledger(FALSE);
-            if (netPayList.contains(coa))
-            {
+            if (netPayList.contains(coa)) {
                 vd.setCreditAmountDetail(detail.getCreditamount() != null ? detail.getCreditamount().setScale(2,
                         BigDecimal.ROUND_HALF_EVEN) : null);
                 billDetailsTableNetFinal.add(vd);
 
-            }
-            else if (detail.getCreditamount() != null && detail.getCreditamount().compareTo(BigDecimal.ZERO)!=0)
-            {
+            } else if (detail.getCreditamount() != null && detail.getCreditamount().compareTo(BigDecimal.ZERO) != 0) {
                 vd.setCreditAmountDetail(detail.getCreditamount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 billDetailsTableCreditFinal.add(vd);
             }
 
-            if (detail.getDebitamount() != null && detail.getDebitamount().compareTo(BigDecimal.ZERO)!=0)
-            {
+            if (detail.getDebitamount() != null && detail.getDebitamount().compareTo(BigDecimal.ZERO) != 0) {
                 vd.setDebitAmountDetail(detail.getDebitamount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 billDetailsTableFinal.add(vd);
             }
             final Set<EgBillPayeedetails> egBillPaydetailes = detail.getEgBillPaydetailes();
-            for (final EgBillPayeedetails payeedetail : egBillPaydetailes)
-            {
+            for (final EgBillPayeedetails payeedetail : egBillPaydetailes) {
                 final VoucherDetails subVd = new VoucherDetails();
                 subVd.setDetailKey(payeedetail.getAccountDetailKeyId().toString());
                 subVd.setAccounthead(coa.getName());
@@ -747,7 +731,7 @@ public class ContingentBillAction extends BaseBillAction {
 
                 subVd.setDetailName(entity.getName());
                 subVd.setDetailCode(entity.getCode());
-                if (detail.getCreditamount() != null && detail.getCreditamount().compareTo(BigDecimal.ZERO)!=0)
+                if (detail.getCreditamount() != null && detail.getCreditamount().compareTo(BigDecimal.ZERO) != 0)
                     subVd.setDebitAmountDetail(payeedetail.getCreditAmount());
                 else
                     subVd.setDebitAmountDetail(payeedetail.getDebitAmount());
@@ -758,30 +742,16 @@ public class ContingentBillAction extends BaseBillAction {
         }
         if (billDetailsTableSubledger.size() == 0)
             billDetailsTableSubledger.add(new VoucherDetails());
-        if (cbill.getStatus().getDescription().equalsIgnoreCase(FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS)
-                && null != cbill.getState())
-        {
-            final BigDecimal amt = cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
-            final String amountInWords = NumberToWord.convertToWord(amt.toString());
-            sanctionedMessge = getText(
-                    "cbill.getsanctioned.message",
-                    new String[] { amountInWords, cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString(),
-                            voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition()) });
-
-        }
-        else {
-            final BigDecimal amt = cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
-            final String amountInWords = NumberToWord.convertToWord(amt.toString());
-            sanctionedMessge = getText("cbill.getsanctioned.message", new String[] { amountInWords,
-                    cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString() });
-            sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
-        }
+        final BigDecimal amt = cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
+        final String amountInWords = NumberToWord.convertToWord(amt.toString());
+        sanctionedMessge = getText("cbill.getsanctioned.message", new String[] { amountInWords,
+                cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString() });
+        sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
         // persistenceService.setType(EgChecklists.class);
         final List<EgChecklists> checkLists = persistenceService.findAllBy(
                 "from org.egov.infstr.models.EgChecklists where objectid=?",
                 billRegisterId);
-        for (final EgChecklists chk : checkLists)
-        {
+        for (final EgChecklists chk : checkLists) {
             final CheckListHelper chkHelper = new CheckListHelper();
             chkHelper.setName(chk.getAppconfigvalue().getValue());
             chkHelper.setVal(chk.getChecklistvalue());
@@ -814,22 +784,11 @@ public class ContingentBillAction extends BaseBillAction {
         if (null != cbill.getState())
             commonBean.setStateId(cbill.getState().getId());
         commonBean.setBudgetReappNo(cbill.getEgBillregistermis().getBudgetaryAppnumber());
-        if (cbill.getStatus().getDescription().equalsIgnoreCase(FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS)
-                && null != cbill.getState())
-        {
-            final String amountInWords = NumberToWord.amountInWords(cbill.getPassedamount().doubleValue());
 
-            sanctionedMessge = getText(
-                    "cbill.getsanctioned.message",
-                    new String[] { amountInWords, cbill.getPassedamount().toString(),
-                            voucherService.getEmployeeNameForPositionId(cbill.getState().getOwnerPosition()) });
-        }
-        else {
-            final String amountInWords = NumberToWord.amountInWords(cbill.getPassedamount().doubleValue());
-            sanctionedMessge = getText("cbill.getsanctioned.message", new String[] { amountInWords,
-                    cbill.getPassedamount().toString() });
-            sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
-        }
+        final String amountInWords = NumberToWord.amountInWords(cbill.getPassedamount().doubleValue());
+        sanctionedMessge = getText("cbill.getsanctioned.message", new String[] { amountInWords,
+                cbill.getPassedamount().toString() });
+        sanctionedMessge = sanctionedMessge.substring(0, sanctionedMessge.length() - 15);
     }
 
     @SkipValidation
@@ -850,8 +809,6 @@ public class ContingentBillAction extends BaseBillAction {
         prepareForViewModifyReverse();
         return REVERSE;
     }
-
-    
 
     public List<CheckListHelper> getCheckListsTable() {
         return checkListsTable;
@@ -884,8 +841,7 @@ public class ContingentBillAction extends BaseBillAction {
         // if entity count is 1 or 0 save the payto in billregistermis else dont save
         String entityKey = null;
         int entityCount = 0;
-        for (final VoucherDetails vd : billDetailsTableFinal)
-        {
+        for (final VoucherDetails vd : billDetailsTableFinal) {
             billdetails = new EgBilldetails();
             billdetails.setGlcodeid(BigDecimal.valueOf(vd.getGlcodeIdDetail()));
             if (commonBean.getFunctionId() != null)
@@ -894,12 +850,10 @@ public class ContingentBillAction extends BaseBillAction {
             debitSum = debitSum.add(vd.getDebitAmountDetail());
             billdetails.setEgBillregister(bill);
 
-            if (vd.getIsSubledger().equalsIgnoreCase(TRUE))
-            {
+            if (vd.getIsSubledger().equalsIgnoreCase(TRUE)) {
                 payeedetailsSet = new HashSet<EgBillPayeedetails>();
                 for (final VoucherDetails sub : billDetailsTableSubledger)
-                    if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode()))
-                    {
+                    if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode())) {
                         payeedetails = new EgBillPayeedetails();
                         payeedetails.setDebitAmount(sub.getDebitAmountDetail());
 
@@ -922,8 +876,7 @@ public class ContingentBillAction extends BaseBillAction {
             billdetailsSet.add(billdetails);
         }
         if (billDetailsTableCreditFinal != null)
-            for (final VoucherDetails vd : billDetailsTableCreditFinal)
-            {
+            for (final VoucherDetails vd : billDetailsTableCreditFinal) {
                 billdetails = new EgBilldetails();
                 billdetails.setGlcodeid(BigDecimal.valueOf(vd.getGlcodeIdDetail()));
                 if (commonBean.getFunctionId() != null)
@@ -931,12 +884,10 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetails.setCreditamount(vd.getCreditAmountDetail());
                 billdetails.setEgBillregister(bill);
 
-                if (vd.getIsSubledger().equalsIgnoreCase(TRUE))
-                {
+                if (vd.getIsSubledger().equalsIgnoreCase(TRUE)) {
                     payeedetailsSet = new HashSet<EgBillPayeedetails>();
                     for (final VoucherDetails sub : billDetailsTableSubledger)
-                        if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode()))
-                        {
+                        if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode())) {
                             payeedetails = new EgBillPayeedetails();
                             payeedetails.setCreditAmount(sub.getDebitAmountDetail());
                             payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
@@ -958,8 +909,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetailsSet.add(billdetails);
             }
 
-        for (final VoucherDetails vd : billDetailsTableNetFinal)
-        {
+        for (final VoucherDetails vd : billDetailsTableNetFinal) {
             billdetails = new EgBilldetails();
             final String netGlCode = vd.getGlcodeDetail();
             final String[] netGl = netGlCode.split("-");
@@ -976,12 +926,10 @@ public class ContingentBillAction extends BaseBillAction {
             bill.setBillamount(debitSum);
             bill.setPassedamount(debitSum);
             billdetails.setEgBillregister(bill);
-            if (vd.getIsSubledger().equalsIgnoreCase(TRUE))
-            {
+            if (vd.getIsSubledger().equalsIgnoreCase(TRUE)) {
                 payeedetailsSet = new HashSet<EgBillPayeedetails>();
                 for (final VoucherDetails sub : billDetailsTableSubledger)
-                    if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode()))
-                    {
+                    if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode())) {
                         payeedetails = new EgBillPayeedetails();
                         payeedetails.setCreditAmount(sub.getDebitAmountDetail());
                         payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
@@ -1010,8 +958,7 @@ public class ContingentBillAction extends BaseBillAction {
         return bill;
     }
 
-    private Set<EgBilldetails> updateBillDetails(final EgBillregister bill)
-    {
+    private Set<EgBilldetails> updateBillDetails(final EgBillregister bill) {
         EgBilldetails billdetails;
         EgBillPayeedetails payeedetails;
         Set<EgBillPayeedetails> payeedetailsSet;
@@ -1019,8 +966,7 @@ public class ContingentBillAction extends BaseBillAction {
         // if entity count is 1 or 0 save the payto in billregistermis else dont save
         String entityKey = null;
         int entityCount = 0;
-        for (final VoucherDetails vd : billDetailsTableFinal)
-        {
+        for (final VoucherDetails vd : billDetailsTableFinal) {
             billdetails = new EgBilldetails();
             billdetails.setGlcodeid(BigDecimal.valueOf(vd.getGlcodeIdDetail()));
             if (commonBean.getFunctionId() != null)
@@ -1029,15 +975,12 @@ public class ContingentBillAction extends BaseBillAction {
             debitSum = debitSum.add(vd.getDebitAmountDetail());
             billdetails.setEgBillregister(bill);
 
-            if (vd.getIsSubledger().equalsIgnoreCase(TRUE))
-            {
+            if (vd.getIsSubledger().equalsIgnoreCase(TRUE)) {
                 payeedetailsSet = new HashSet<EgBillPayeedetails>();
-                for (final VoucherDetails sub : billDetailsTableSubledger)
-                {
+                for (final VoucherDetails sub : billDetailsTableSubledger) {
                     if (sub == null)
                         continue;
-                    if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode()))
-                    {
+                    if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode())) {
                         payeedetails = new EgBillPayeedetails();
                         payeedetails.setDebitAmount(sub.getDebitAmountDetail());
 
@@ -1060,8 +1003,7 @@ public class ContingentBillAction extends BaseBillAction {
             billdetailsSet.add(billdetails);
         }
         if (billDetailsTableCreditFinal != null)
-            for (final VoucherDetails vd : billDetailsTableCreditFinal)
-            {
+            for (final VoucherDetails vd : billDetailsTableCreditFinal) {
                 billdetails = new EgBilldetails();
                 billdetails.setGlcodeid(BigDecimal.valueOf(vd.getGlcodeIdDetail()));
                 if (commonBean.getFunctionId() != null)
@@ -1069,15 +1011,12 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetails.setCreditamount(vd.getCreditAmountDetail());
                 billdetails.setEgBillregister(bill);
 
-                if (vd.getIsSubledger().equalsIgnoreCase(TRUE))
-                {
+                if (vd.getIsSubledger().equalsIgnoreCase(TRUE)) {
                     payeedetailsSet = new HashSet<EgBillPayeedetails>();
-                    for (final VoucherDetails sub : billDetailsTableSubledger)
-                    {
+                    for (final VoucherDetails sub : billDetailsTableSubledger) {
                         if (sub == null)
                             continue;
-                        if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode()))
-                        {
+                        if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode())) {
                             payeedetails = new EgBillPayeedetails();
                             payeedetails.setCreditAmount(sub.getDebitAmountDetail());
                             payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
@@ -1098,8 +1037,7 @@ public class ContingentBillAction extends BaseBillAction {
                 billdetailsSet.add(billdetails);
             }
 
-        for (final VoucherDetails vd : billDetailsTableNetFinal)
-        {
+        for (final VoucherDetails vd : billDetailsTableNetFinal) {
             billdetails = new EgBilldetails();
             final String netGlCode = vd.getGlcodeDetail();
             final String[] netGl = netGlCode.split("-");
@@ -1119,15 +1057,12 @@ public class ContingentBillAction extends BaseBillAction {
             bill.setBillamount(debitSum);
             bill.setPassedamount(debitSum);
             billdetails.setEgBillregister(bill);
-            if (vd.getIsSubledger().equalsIgnoreCase(TRUE))
-            {
+            if (vd.getIsSubledger().equalsIgnoreCase(TRUE)) {
                 payeedetailsSet = new HashSet<EgBillPayeedetails>();
-                for (final VoucherDetails sub : billDetailsTableSubledger)
-                {
+                for (final VoucherDetails sub : billDetailsTableSubledger) {
                     if (sub == null)
                         continue;
-                    if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode()))
-                    {
+                    if (vd.getGlcodeDetail().equalsIgnoreCase(sub.getSubledgerCode())) {
                         payeedetails = new EgBillPayeedetails();
                         payeedetails.setCreditAmount(sub.getDebitAmountDetail());
                         payeedetails.setAccountDetailKeyId(Integer.valueOf(sub.getDetailKey()));
@@ -1158,8 +1093,7 @@ public class ContingentBillAction extends BaseBillAction {
      * @param headerDetails
      */
     private EgBillregister setBillDetailsFromHeaderDetails(final EgBillregister bill, final EgBillregistermis mis,
-            final boolean generateBill)
-    {
+            final boolean generateBill) {
 
         mis.setEgDepartment(voucherHeader.getVouchermis().getDepartmentid());
         mis.setFund(voucherHeader.getFundId());
@@ -1181,8 +1115,7 @@ public class ContingentBillAction extends BaseBillAction {
         mis.setEgBillregister(bill);
         mis.setLastupdatedtime(new Date());
         bill.setEgBillregistermis(mis);
-        if (generateBill)
-        {
+        if (generateBill) {
             if (isBillNumberGenerationAuto())
                 commonBean.setBillNumber(getNextBillNumber(bill));
 
@@ -1204,16 +1137,15 @@ public class ContingentBillAction extends BaseBillAction {
      * @return
      */
     private String getNextBillNumber(final EgBillregister bill) {
-        
-       ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
+
+        ExpenseBillNumberGenerator b = beanResolver.getAutoNumberServiceFor(ExpenseBillNumberGenerator.class);
         final String billNumber = b.getNextNumber(bill);
 
         return billNumber;
     }
 
     @SuppressWarnings("unchecked")
-    public String getDetailTypesForCoaId(final Long id)
-    {
+    public String getDetailTypesForCoaId(final Long id) {
         final StringBuffer detailTypeIdandName1 = new StringBuffer(500);
         final List<CChartOfAccountDetail> coaDetails = persistenceService.findAllBy(
                 "from CChartOfAccountDetail where glCodeId.id=?", id);
@@ -1240,13 +1172,11 @@ public class ContingentBillAction extends BaseBillAction {
             return "";
     }
 
-    public boolean isShowPrintPreview()
-    {
+    public boolean isShowPrintPreview() {
         return showPrintPreview;
     }
 
-    public void setShowPrintPreview(final boolean showPrintPreview)
-    {
+    public void setShowPrintPreview(final boolean showPrintPreview) {
         this.showPrintPreview = showPrintPreview;
     }
 
