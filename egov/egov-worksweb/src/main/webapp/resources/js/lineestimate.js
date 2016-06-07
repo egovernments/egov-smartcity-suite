@@ -642,7 +642,7 @@ function getBudgetHeads() {
 			});
 		}
 }
-function getFunctionssByFundAndDepartment() {
+function getFunctionsByFundAndDepartment() {
 	if ($('#fund').val() === '' && $('#executingDepartments').val() === '') {
 		   $('#function').empty();
 		   $('#function').append($('<option>').text('Select from below').attr('value', ''));

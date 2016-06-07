@@ -64,7 +64,7 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required" onchange="getFunctionssByFundAndDepartment();getBudgetHeads();">
+				<form:select path="executingDepartment" data-first-option="false" id="executingDepartments" class="form-control" required="required" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -203,7 +203,7 @@
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="fund" data-first-option="false"
-					class="form-control" id="fund" required="required" onchange="getFunctionssByFundAndDepartment();getBudgetHeads();">
+					class="form-control" id="fund" required="required" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -213,7 +213,7 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.function" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="function" data-first-option="false" name="function" class="form-control" id="function" required="required" onchange="getFunctionssByFundAndDepartment();getBudgetHeads()">
+				<form:select path="function" data-first-option="false" name="function" class="form-control" id="function" required="required" onchange="getBudgetHeads();">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
