@@ -77,7 +77,6 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.web.adaptor.FunctionAdaptor;
 import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLineEstimateToCancelJSONAdaptor;
@@ -189,13 +188,6 @@ public class AjaxLineEstimateController {
         return json;
     }
 
-    public String toJSONFunction(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CFunction.class, new FunctionAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-    
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearch(final Model model,
             @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
@@ -332,12 +324,11 @@ public class AjaxLineEstimateController {
         }
     }
 
-    @RequestMapping(value = "/getfunctionsbyfundidanddepartmentid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getAllFunctionsByFundIdAndDepartmentId(final Model model,
+    @RequestMapping(value = "/getfunctionsbyfundidanddepartmentid", method = RequestMethod.GET)
+    public @ResponseBody List<CFunction> getAllFunctionsByFundIdAndDepartmentId(final Model model,
             @RequestParam("fundId") final Integer fundId, @RequestParam("departmentId") final Long departmentId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
         final List<CFunction> functions = budgetDetailsHibernateDAO.getFunctionsByFundAndDepartment(fundId, departmentId);
-        final String jsonResponse = toJSONFunction(functions);
-        return jsonResponse;
+        return functions;
     }
 }

@@ -698,25 +698,23 @@ function getFunctionsByFundAndDepartment() {
 			return;
 			} else {
 				$.ajax({
-					url: "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",     
-					type: "GET",
+					method : "GET",
+					url : "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",
 					data : {
 						fundId : $('#fund').val(),
 						departmentId : $('#executingDepartments').val()
 					},
-					dataType: "json",
-					success: function (response) {
-						$('#function').empty();
-						$('#function').append($("<option value=''>Select from below</option>"));
-						var responseObj = JSON.parse(response);
-						$.each(responseObj, function(index, value) {
-							$('#function').append($('<option>').text(responseObj[index].code+'-'+responseObj[index].name).attr('value', responseObj[index].id));
-							$('#function').val($functionId);
-						});
-					}, 
-					error: function (response) {
-						console.log("failed");
-					}
+					async : true
+				}).done(
+						function(response) {
+							$('#function').empty();
+							var output = '<option value="">Select from below</option>';
+							$.each(response, function(index, value) {
+								output += '<option value=' + value.id + '>'
+										+ value.code + ' - ' + value.name
+										+ '</option>';
+							});
+							$('#function').append(output);
 				});
 			}
 }
