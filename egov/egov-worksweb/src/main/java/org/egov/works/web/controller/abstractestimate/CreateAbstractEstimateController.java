@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
@@ -126,7 +127,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         return "newAbstractEstimate-form";
     }
 
-    private void setDropDownValues(final Model model) { 
+    private void setDropDownValues(final Model model) {
         model.addAttribute("overheads", overheadService.getOverheadsByDate(new Date()));
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
@@ -146,6 +147,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) throws IOException {
         validateMultiYearEstimates(abstractEstimate, bindErrors);
+        validateMandatory(abstractEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
             setDropDownValues(model);
             estimateService.populateDataForAbstractEstimate(abstractEstimate.getLineEstimateDetails(), model,
@@ -185,6 +187,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             index++;
         }
 
+    }
+
+    private void validateMandatory(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
+        if (StringUtils.isBlank(abstractEstimate.getDescription())) {
+            bindErrors.rejectValue("description", "error.description.required");
+        }
     }
 
 }

@@ -42,8 +42,9 @@ $subTypeOfWorkId = 0;
 $subSchemeId = 0;
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
-	
-	$('.disablefield').attr('disabled', 'disabled');
+	if($('#estimateNumber').val() != '') {
+	   $('.disablefield').attr('disabled', 'disabled');
+	}
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	var nameOfWork = $('#nameOfWork').val();
@@ -952,6 +953,8 @@ function getAbstractEstimateDate() {
 
 
 function enableFileds() {
+	var lineEstimateAmount = $('#lineEstimateAmount').val();
+	var estimateValue = $('#estimateValueTotal').html();
 
 	if($('#abstractEstimate').valid()) {
 		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;

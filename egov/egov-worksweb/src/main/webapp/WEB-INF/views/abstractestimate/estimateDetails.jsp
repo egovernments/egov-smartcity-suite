@@ -125,7 +125,7 @@
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:textarea path="description" name="description" class="form-control"  maxlength="1024" required="required"/>
-				<form:errors path="lineEstimateDetails" cssClass="add-margin error-msg" />
+				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		

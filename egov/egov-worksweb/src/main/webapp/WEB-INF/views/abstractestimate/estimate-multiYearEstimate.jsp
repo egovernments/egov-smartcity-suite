@@ -65,7 +65,9 @@
 					<th><spring:message code="lbl.year" /><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.percentage" /><span
 						class="mandatory"></span></th>
+					<c:if test="${lineEstimateDetails.estimateNumber == '' }">
 					<th><spring:message code="lbl.action" /></th>
+					</c:if>
 				</tr>
 			</thead>
 			<tbody id="multiYeaeEstimateTbl">
@@ -76,7 +78,7 @@
 							<td><span class="spansno">1</span> 
 							<form:hidden path="multiYearEstimates[0].id" name="multiYearEstimates[0].id" value="${multiYearEstimates[0].id}" class="form-control table-input hidden-input" /></td>
 							
-							<td><form:select path="multiYearEstimates[0].financialYear"	data-first-option="false" id="multiYearEstimates[0].financialYear" data-errormsg="Financial Year is mandatory!" class="form-control dropdownYear" data-idx="0" data-optional="0">
+							<td><form:select path="multiYearEstimates[0].financialYear"	data-first-option="false" id="multiYearEstimates[0].financialYear" data-errormsg="Financial Year is mandatory!" class="form-control dropdownYear disablefield" data-idx="0" data-optional="0">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -85,12 +87,14 @@
 							</td>
 							
 							<td><form:input path="multiYearEstimates[0].percentage" name="multiYearEstimates[0].percentage" value="${multiYearEstimates[0].percentage}"	data-errormsg="Percentage is mandatory!" onkeyup="validateQuantity();" data-pattern="decimalvalue" data-idx="0" data-optional="0"
-									class="form-control table-input text-right inputYearEstimatePercentage" />
+									class="form-control table-input text-right inputYearEstimatePercentage disablefield" />
 								<form:errors path="multiYearEstimates[0].percentage" cssClass="add-margin error-msg" /></td>
+							<c:if test="${lineEstimateDetails.estimateNumber == '' }">
 							<td><button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteMultiYearEstimate(this);">
 									<span class="glyphicon glyphicon-trash"></span> Delete
 								</button>
 							</td>
+							</c:if>
 						</tr>
 					</c:when>
 					<c:otherwise>
@@ -101,7 +105,7 @@
 								<c:out value="${item.index + 1}" /></span> 
 								<form:hidden path="multiYearEstimates[${item.index}].id" name="multiYearEstimates[${item.index}].id" value="${multiYearEstimates.id}" class="form-control table-input hidden-input" /></td>
 								<td>
-								<form:select path="multiYearEstimates[${item.index}].financialYear" data-first-option="false" id="multiYearEstimates[${item.index}].financialYear" data-errormsg="Financial Year is mandatory!" data-idx="0" data-optional="0" class="form-control dropdownYear">
+								<form:select path="multiYearEstimates[${item.index}].financialYear" data-first-option="false" id="multiYearEstimates[${item.index}].financialYear" data-errormsg="Financial Year is mandatory!" data-idx="0" data-optional="0" class="form-control dropdownYear disablefield">
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>
@@ -109,12 +113,14 @@
 									</form:select> <form:errors	path="multiYearEstimates[${item.index}].financialYear"	cssClass="add-margin error-msg" />
 								</td>
 							 <td>
-								<form:input	path="multiYearEstimates[${item.index}].percentage" data-errormsg="Percentage is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" onkeyup="validateQuantity();" class="form-control inputYearEstimatePercentage table-input text-right" />
+								<form:input	path="multiYearEstimates[${item.index}].percentage" data-errormsg="Percentage is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" onkeyup="validateQuantity();" class="form-control inputYearEstimatePercentage table-input text-right disablefield" />
 									<form:errors path="multiYearEstimates[${item.index}].percentage" cssClass="add-margin error-msg" />
 								</td> 
+								<c:if test="${lineEstimateDetails.estimateNumber == '' }">
 								<td>
 									<button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteMultiYearEstimate(this);">Delete</button>
 								</td>
+								</c:if>
 							</tr>
 						</c:forEach>
 					</c:otherwise>
@@ -134,15 +140,16 @@
 							code="lbl.total" /></td>
 					<td class="text-right"><span id="estimateTotal"><c:out
 								value="${total}" /></span></td>
-					<td></td>
 				</tr>
 			</tfoot>
 		</table>
+		<c:if test="${lineEstimateDetails.estimateNumber == '' }">
 		<div class="col-sm-12 text-center">
 			<button id="addRowBtn" type="button" class="btn btn-primary"
 				onclick="addMultiyearEstimate()">
 				<spring:message code="lbl.addrow" />
 			</button>
 		</div>
+		</c:if>
 	</div>
 </div>

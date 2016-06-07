@@ -40,7 +40,9 @@
 package org.egov.works.abstractestimate.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -51,7 +53,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
@@ -93,7 +95,7 @@ public class EstimateService {
     private EstimateTechnicalSanctionService estimateTechnicalSanctionService;
 
     @Autowired
-    private BoundaryService boundaryService;
+    private SecurityUtils securityUtils;
 
     @Autowired
     private OverheadService overheadService;
@@ -124,8 +126,8 @@ public class EstimateService {
     public AbstractEstimate createAbstractEstimate(final AbstractEstimate abstractEstimate, final MultipartFile[] files)
             throws IOException {
         AbstractEstimate newAbstractEstimate = null;
-        final AbstractEstimate abstractEstimateFromDB = getAbstractEstimateByEstimateNumber(abstractEstimate
-                .getEstimateNumber());
+        final AbstractEstimate abstractEstimateFromDB = getAbstractEstimateByEstimateNumber(
+                abstractEstimate.getEstimateNumber());
         if (abstractEstimateFromDB == null) {
             for (final MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates())
                 multiYearEstimate.setAbstractEstimate(abstractEstimate);
@@ -135,15 +137,16 @@ public class EstimateService {
                 obj.setAbstractEstimate(abstractEstimate);
                 obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
             }
-            for(Activity act : abstractEstimate.getActivities())
+            for (Activity act : abstractEstimate.getActivities())
                 act.setAbstractEstimate(abstractEstimate);
+            abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
             newAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
         } else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
-            abstractEstimate.setDocumentDetails(documentDetails);
+            newAbstractEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
         }
         return newAbstractEstimate;
@@ -167,22 +170,27 @@ public class EstimateService {
                 LineEstimateStatus.CREATED.toString()));
         abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getProjectCode());
         abstractEstimateFromDB.setLineEstimateDetails(newAbstractEstimate.getLineEstimateDetails());
-        
-        abstractEstimateFromDB.getActivities().clear();
-        for(Activity act : newAbstractEstimate.getActivities()) {
-            act.setAbstractEstimate(abstractEstimateFromDB);
-            abstractEstimateFromDB.addActivity(act);
+
+        for (MultiYearEstimate multiYearEstimate : abstractEstimateFromDB.getMultiYearEstimates()) {
+            multiYearEstimate.setCreatedDate(new Date());
+            multiYearEstimate.setLastModifiedDate(new Date());
+            multiYearEstimate.setCreatedBy(securityUtils.getCurrentUser());
+            multiYearEstimate.setLastModifiedBy(securityUtils.getCurrentUser());
         }
+
+        for (FinancialDetail finacilaDetail : abstractEstimateFromDB.getFinancialDetails()) {
+            finacilaDetail.setCreatedDate(new Date());
+            finacilaDetail.setLastModifiedDate(new Date());
+            finacilaDetail.setCreatedBy(securityUtils.getCurrentUser());
+            finacilaDetail.setLastModifiedBy(securityUtils.getCurrentUser());
+        }
+
         abstractEstimateFromDB.setEstimateValue(newAbstractEstimate.getEstimateValue());
         abstractEstimateFromDB.setWorkValue(newAbstractEstimate.getWorkValue());
-        
-        abstractEstimateFromDB.getOverheadValues().clear();
-        for(OverheadValue value : newAbstractEstimate.getOverheadValues()) {
-            value.setAbstractEstimate(abstractEstimateFromDB);
-            value.setOverhead(overheadService.getOverheadById(value.getOverhead().getId()));
-            abstractEstimateFromDB.addOverheadValue(value);
-        }
-        
+        abstractEstimateFromDB.setCreatedDate(new Date());
+        abstractEstimateFromDB.setLastModifiedDate(new Date());
+        abstractEstimateFromDB.setCreatedBy(securityUtils.getCurrentUser());
+        abstractEstimateFromDB.setLastModifiedBy(securityUtils.getCurrentUser());
         abstractEstimateRepository.save(abstractEstimateFromDB);
         return abstractEstimateFromDB;
     }
@@ -235,8 +243,8 @@ public class EstimateService {
     private MultiYearEstimate populateMultiYearEstimate(final AbstractEstimate abstractEstimate) {
         final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
         multiYearEstimate.setAbstractEstimate(abstractEstimate);
-        multiYearEstimate.setFinancialYear(financialYearHibernateDAO.getFinYearByDate(abstractEstimate
-                .getEstimateDate()));
+        multiYearEstimate
+                .setFinancialYear(financialYearHibernateDAO.getFinYearByDate(abstractEstimate.getEstimateDate()));
         multiYearEstimate.setPercentage(100);
         return multiYearEstimate;
     }
@@ -251,10 +259,10 @@ public class EstimateService {
             stringBuilder.append(i);
         }
         estimateTechnicalSanction.setTechnicalSanctionNumber(stringBuilder.toString());
-        estimateTechnicalSanction.setTechnicalSanctionDate(abstractEstimate.getLineEstimateDetails().getLineEstimate()
-                .getTechnicalSanctionDate());
-        estimateTechnicalSanction.setTechnicalSanctionBy(abstractEstimate.getLineEstimateDetails().getLineEstimate()
-                .getTechnicalSanctionBy());
+        estimateTechnicalSanction.setTechnicalSanctionDate(
+                abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionDate());
+        estimateTechnicalSanction.setTechnicalSanctionBy(
+                abstractEstimate.getLineEstimateDetails().getLineEstimate().getTechnicalSanctionBy());
 
         // TODO: move to cascade save with AbstractEstimate object once
         // AbstractEstimate entity converted to JPA
@@ -278,11 +286,12 @@ public class EstimateService {
 
     public Double getEstimateValueForLineEstimate(final LineEstimateDetails lineEstimateDetails) {
         Double estimateValue = 0d;
-        final String qryStr = "select totalbillpaidsofar from egw_mv_work_progress_register where ledid =:ledid ";
-        final Query query = entityManager.createNativeQuery(qryStr).setParameter("ledid", lineEstimateDetails.getId());
-        estimateValue = query.getResultList() != null && !query.getResultList().isEmpty() ? (double) query
-                .getResultList().get(0) : 0d;
-                return estimateValue;
+        final Query query = (Query) entityManager.createQuery(
+                        "select totalBillPaidSoFar from WorkProgressRegister where lineEstimateDetails.id =:ledid ")
+                .setParameter("ledid", lineEstimateDetails.getId());
+        estimateValue = (query.getResultList() != null && !query.getResultList().isEmpty())
+                ? Double.valueOf(query.getResultList().get(0).toString()) : 0d;
+        return estimateValue;
     }
 
     public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,

@@ -58,7 +58,7 @@
 							</div>
 								
 							<form:hidden path="estimateNumber" name="estimateNumber" value="${lineEstimateDetails.estimateNumber}"/>
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" /><spring:message code="lbl.lineestimateno" />.
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" />.
 							</div> 
 							<div class="col-md-2 col-xs-6 add-margin view-content">
 								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${lineEstimate.id}"/>')"><c:out value="${lineEstimate.lineEstimateNumber}"/></a>
