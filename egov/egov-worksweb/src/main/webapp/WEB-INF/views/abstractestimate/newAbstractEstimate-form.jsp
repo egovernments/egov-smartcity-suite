@@ -107,4 +107,4 @@
 </form:form>
 
 <script type="text/javascript"
-	src="<c:url value='/resources/js/abstractestimate.js?rnd=${app_release_no}'/>"></script>
+	src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>

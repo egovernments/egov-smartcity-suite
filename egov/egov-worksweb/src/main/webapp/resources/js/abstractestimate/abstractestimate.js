@@ -336,13 +336,13 @@ function recalculateOverheads(){
 	var resultLength = jQuery('#overheadTable tr').length-1;
 	var index;
 	var estimateValue = $("#estimateValue").val();
-	for (var i = 1; i <= resultLength; i++) {
+	for (var i = 0; i < resultLength; i++) {
 		index = i;
-		var percentage = document.getElementById('actionOverheadValues['
+		var percentage = document.getElementById('overheadValues['
 				+ index + '].percentage').value;
-		var amount = document.getElementById('actionOverheadValues['
+		var amount = document.getElementById('overheadValues['
 				+ index + '].amount');
-		amount.value = (estimateValue*percentage)/100;
+		amount.value = ((estimateValue*percentage)/100).toFixed(2);
 		calculateOverheadTotalAmount();
 	}
 }
@@ -398,7 +398,7 @@ function getPercentageOrLumpsumByOverhead(overhead) {
 					document.getElementById('overheadValues['+ index + '].overhead.id').value = data.overhead.id;
 					if(data.percentage>0){
 						document.getElementById('overheadValues['+ index + '].percentage').value = data.percentage;
-						document.getElementById('overheadValues['+ index + '].amount').value = (estimateValue*data.percentage)/100;
+						document.getElementById('overheadValues['+ index + '].amount').value = ((estimateValue*data.percentage)/100).toFixed(2);
 						
 					}else{
 						document.getElementById('overheadValues['+ index + '].percentage').value = "";
