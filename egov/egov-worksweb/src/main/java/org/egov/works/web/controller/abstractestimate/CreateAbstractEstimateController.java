@@ -1,6 +1,7 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,19 +18,12 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.abstractestimate.entity.Activity;
-import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
-import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.service.EstimateService;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
@@ -38,7 +32,6 @@ import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.master.service.UOMService;
-import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -192,6 +185,13 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private void validateMandatory(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
         if (StringUtils.isBlank(abstractEstimate.getDescription())) {
             bindErrors.rejectValue("description", "error.description.required");
+        }
+        LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
+        if (abstractEstimate.getEstimateValue().compareTo(lineEstimateDetails.getEstimateAmount()) == 1) {
+            BigDecimal diffValue = abstractEstimate.getEstimateValue()
+                    .subtract(lineEstimateDetails.getEstimateAmount());
+            bindErrors.reject("error.estimatevalue.greater", new String[] { diffValue.toString() },
+                    "error.estimatevalue.greater");
         }
     }
 

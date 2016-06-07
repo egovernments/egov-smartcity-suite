@@ -953,8 +953,13 @@ function getAbstractEstimateDate() {
 
 
 function enableFileds() {
-	var lineEstimateAmount = $('#lineEstimateAmount').val();
-	var estimateValue = $('#estimateValueTotal').html();
+	var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());
+	var estimateValue = parseFloat($('#estimateValueTotal').html());
+	if(estimateValue > lineEstimateAmount) {
+		var diff = estimateValue - lineEstimateAmount;
+		bootbox.alert("Abstract estimate amount is Rs."+ diff +"/- more than the administrative sanctioned amount for this estimate , please create abstract estimate with less amount");
+		return false;
+	}
 
 	if($('#abstractEstimate').valid()) {
 		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;

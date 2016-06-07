@@ -46,6 +46,13 @@
   <div class="position_alert">
 			<spring:message	code="lbl.estimate.value" /> : &#8377 <span id="estimateValueTotal"><c:out value="${abstractEstimate.estimateValue}" default="0.0"></c:out></span>
 		</div>
+		<div>
+		       <spring:hasBindErrors name="abstractEstimate">
+				    <div class="alert alert-danger col-md-10 col-md-offset-1">
+						<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+				   </div>
+	          </spring:hasBindErrors>
+		</div>
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
