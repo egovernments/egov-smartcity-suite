@@ -39,8 +39,12 @@
  */
 package org.egov.works.lineestimate.service;
 
+import java.util.List;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.repository.LineEstimateAppropriationRepository;
@@ -49,8 +53,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -65,8 +67,8 @@ public class LineEstimateAppropriationService {
     private LineEstimateAppropriationRepository lineEstimateAppropriationRepository;
 
     @Autowired
-    private BudgetAppropriationNumberGenerator budgetAppropriationNumberGenerator;
-
+    private AutonumberServiceBeanResolver beanResolver; 
+    
     @Autowired
     public LineEstimateAppropriationService(final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
@@ -109,6 +111,8 @@ public class LineEstimateAppropriationService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public String generateBudgetAppropriationNumber(final LineEstimateDetails lineEstimateDetails) {
-        return budgetAppropriationNumberGenerator.generateBudgetAppropriationNumber(lineEstimateDetails);
+        BudgetAppropriationNumberGenerator e = beanResolver.getAutoNumberServiceFor(BudgetAppropriationNumberGenerator.class);
+        final String budgetAppropriationNumber = e.getNextNumber(lineEstimateDetails);
+        return budgetAppropriationNumber;
     }
 }

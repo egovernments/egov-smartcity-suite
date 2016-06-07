@@ -177,7 +177,7 @@ public class LetterOfAcceptanceService {
         if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
         
-        createWorkOrderEstimate(workOrder);
+        //createWorkOrderEstimate(workOrder);
         
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedworkOrder,
@@ -188,17 +188,21 @@ public class LetterOfAcceptanceService {
         }
         return savedworkOrder;
     }
-
-    private void createWorkOrderEstimate(WorkOrder workOrder) {
+    
+    public WorkOrderEstimate createWorkOrderEstimate(WorkOrder workOrder) {
         final WorkOrderEstimate workOrderEstimate = new WorkOrderEstimate();
         workOrderEstimate.setWorkOrder(workOrder);
         workOrderEstimate.setEstimate(estimateService.getAbstractEstimateByEstimateNumberAndStatus(workOrder.getEstimateNumber()));
         workOrderEstimate.setEstimateWOAmount(workOrder.getWorkOrderAmount());
+        
+        //TO-DO Remove this code after converting entity to JPA
         workOrderEstimate.setCreatedBy(securityUtils.getCurrentUser());
         workOrderEstimate.setModifiedBy(securityUtils.getCurrentUser());
         workOrderEstimate.setCreatedDate(new Date());
         workOrderEstimate.setModifiedDate(new Date());
+        
         workOrder.addWorkOrderEstimate(workOrderEstimate);
+        return workOrderEstimate;
     }
 
     public WorkOrder getWorkOrderByWorkOrderNumber(final String workOrderNumber) {

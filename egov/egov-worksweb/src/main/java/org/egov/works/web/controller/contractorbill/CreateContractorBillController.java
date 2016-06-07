@@ -39,21 +39,34 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
-import org.apache.commons.lang3.StringUtils;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.StringUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.autonumber.ContractorBillNumberGenerator;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
-import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -74,18 +87,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @Controller
 @RequestMapping(value = "/contractorbill")
 public class CreateContractorBillController extends GenericWorkFlowController {
@@ -100,7 +101,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
     private ContractorBillRegisterService contractorBillRegisterService;
 
     @Autowired
-    private ContractorBillNumberGenerator contractorBillNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
     private WorksUtils worksUtils;
@@ -110,10 +111,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
+
     @Autowired
     private EstimateService estimateService;
 
@@ -132,10 +133,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         model.addAttribute("mode", "edit");
 
-        //TODO: remove this condition to check if spillover
-        if(!lineEstimateDetails.getLineEstimate().isSpillOverFlag())
+        // TODO: remove this condition to check if spillover
+        if (!lineEstimateDetails.getLineEstimate().isSpillOverFlag())
             contractorBillRegister.setBilldate(new Date());
-        
+
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
@@ -208,8 +209,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             else
                 partBillCount++;
             contractorBillRegister.setBillSequenceNumber(partBillCount);
-            contractorBillRegister.setBillnumber(
-                    contractorBillNumberGenerator.generateContractorBillNumber(contractorBillRegister));
+            ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
+            final String contractorBillNumber = c.getNextNumber(contractorBillRegister);
+            contractorBillRegister.setBillnumber(contractorBillNumber);
 
             contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
             ContractorBillRegister savedContractorBillRegister = null;
@@ -274,7 +276,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         return "contractorBill-success";
     }
 
-    private void validateInput(final ContractorBillRegister contractorBillRegister, final LineEstimateDetails lineEstimateDetails,
+    private void validateInput(final ContractorBillRegister contractorBillRegister,
+            final LineEstimateDetails lineEstimateDetails,
             final BindingResult resultBinder,
             final HttpServletRequest request) {
         final boolean validateBillInWorkflow = letterOfAcceptanceService
@@ -339,15 +342,15 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         if (StringUtils.isBlank(request.getParameter("netPayableAmount"))
                 || Double.valueOf(request.getParameter("netPayableAmount").toString()) < 0)
             resultBinder.reject("error.netpayable.amount.required", "error.netpayable.amount.required");
-        
-        //TODO: from this line code should be removed after user data entry is finished.
-        if(contractorBillRegister.getEgBillregistermis() != null
+
+        // TODO: from this line code should be removed after user data entry is finished.
+        if (contractorBillRegister.getEgBillregistermis() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate()
                         .after(contractorBillRegister.getBilldate())) {
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.partybilldate.billdate");
         }
-        
+
         if (lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {
             final Date currentDate = new Date();
             final Date currentFinYear = lineEstimateService.getCurrentFinancialYear(currentDate).getStartingDate();
@@ -423,8 +426,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             if (egBilldetails.getGlcodeid() != null)
                 contractorBillRegister
                         .addEgBilldetailes(
-                                getBillDetails(contractorBillRegister, egBilldetails, lineEstimateDetails, resultBinder,
-                                        request));
+                        getBillDetails(contractorBillRegister, egBilldetails, lineEstimateDetails, resultBinder,
+                                request));
         final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
         final String netPayableAmount = request.getParameter("netPayableAmount");
         if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAmount)) {
@@ -433,7 +436,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister
                     .addEgBilldetailes(
-                            getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails, resultBinder, request));
+                    getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails, resultBinder, request));
         }
 
         return contractorBillRegister;

@@ -64,6 +64,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
@@ -71,8 +72,8 @@ import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.autonumber.ContractorBillNumberGenerator;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
 import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
@@ -103,7 +104,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Autowired
     private PersistenceService<EgChecklists, Long> checklistService;
     @Autowired
-    private ContractorBillNumberGenerator contractorBillNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
     @Autowired
     private EgovCommon egovCommon;
     @Autowired
@@ -186,7 +187,9 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      */
     @Override
     public String generateContractorBillNumber(final ContractorBillRegister ContractorBillRegister) {
-        return contractorBillNumberGenerator.generateContractorBillNumber(ContractorBillRegister);
+        ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
+        final String contractorBillNumber = c.getNextNumber(ContractorBillRegister);
+        return contractorBillNumber;
     }
 
     /**
@@ -972,7 +975,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public List<EgBilldetails> getRetentionMoneyDeductionList(final Long billId,
             final List<StatutoryDeductionsForBill> statutoryList, final List<DeductionTypeForBill> standardDeductionList)
-                    throws NumberFormatException, ApplicationException {
+            throws NumberFormatException, ApplicationException {
         final List<BigDecimal> retentionGlcodeIdList = new ArrayList<BigDecimal>();
         getAllRetentionMoneyGlcodeList(retentionGlcodeIdList);
         return getRetentionMoneyListforglcodes(retentionGlcodeIdList, billId);
@@ -1091,7 +1094,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
             final List<StatutoryDeductionsForBill> actionStatutorydetails,
             final List<DeductionTypeForBill> standardDeductions, final List<EgBilldetails> customDeductions,
             final List<EgBilldetails> retentionMoneyDeductions, final List<AssetForBill> accountDetailsForBill)
-                    throws NumberFormatException, ApplicationException {
+            throws NumberFormatException, ApplicationException {
         actionStatutorydetails.clear();
         actionStatutorydetails.addAll(getStatutoryListForBill(id));
         standardDeductions.clear();

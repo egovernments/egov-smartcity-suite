@@ -37,11 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.contractorbill.service;
 
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
+package org.egov.works.autonumber;
 
-public interface ContractorBillNumberGenerator {
+import org.egov.commons.CFinancialYear;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.lineestimate.entity.LineEstimate;
+import org.springframework.stereotype.Service;
 
-    public String generateContractorBillNumber(final ContractorBillRegister contractorBillRegister);
+@Service
+public interface EstimateNumberGenerator {
+    public String getNextNumber(final LineEstimate lineEstimate, final CFinancialYear financialYear);
+
+    public String getEstimateNumber(final AbstractEstimate estimate, final CFinancialYear financialYear);
+
 }
