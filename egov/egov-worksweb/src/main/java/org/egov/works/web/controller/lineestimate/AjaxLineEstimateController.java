@@ -74,7 +74,10 @@ import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.service.NatureOfWorkService;
+import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.web.adaptor.FunctionAdaptor;
 import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLineEstimateToCancelJSONAdaptor;
@@ -139,12 +142,15 @@ public class AjaxLineEstimateController {
     @Autowired
     private BudgetDetailsHibernateDAO budgetDetailsHibernateDAO;
 
+    @Autowired
+    private NatureOfWorkService natureOfWorkService;
+
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
         final Scheme scheme = schemeService.findById(Integer.parseInt(schemeId), false);
         final Set<SubScheme> subSchemes = scheme.getSubSchemes();
-        final String jsonResponse = toJSON(subSchemes);
+        final String jsonResponse = toJSONSubScheme(subSchemes);
         return jsonResponse;
     }
 
@@ -176,13 +182,20 @@ public class AjaxLineEstimateController {
         return boundaries;
     }
 
-    public String toJSON(final Object object) {
+    public String toJSONSubScheme(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(SubScheme.class, new SubSchemeAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }
 
+    public String toJSONFunction(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(CFunction.class, new FunctionAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearch(final Model model,
             @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
@@ -296,13 +309,20 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/getbudgethead", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<BudgetGroup> getBudgetHeadByFunction(@RequestParam("fundId") final Integer fundId,
             @RequestParam("departmentId") final Long departmentId, @RequestParam("functionId") final Long functionId,
-            @RequestParam("natureOfWork") final String natureOfWork) {
+            @RequestParam("natureOfWorkId") final Long natureOfWorkId) {
         List<BudgetGroup> budgetGroups = new ArrayList<BudgetGroup>();
         try {
+            NatureOfWork natureOfWork = null;
+            if (natureOfWorkId != null)
+                natureOfWork = natureOfWorkService.findById(natureOfWorkId);
             String accountType = null;
-            if(natureOfWork!=null && natureOfWork.equalsIgnoreCase(WorksConstants.CAPITAL_WORKS))
+            if (natureOfWork != null
+                    && natureOfWork.getExpenditureType().getValue()
+                            .equalsIgnoreCase(WorksConstants.NATUREOFWORK_EXPENDITURETYPE_CAPITAL))
                 accountType = BudgetAccountType.CAPITAL_EXPENDITURE.toString();
-            else if(natureOfWork!=null && natureOfWork.equalsIgnoreCase(WorksConstants.NATUREOFWORKFORASSETREPAIRANDMAINTAINANCE_DEFAULTVALUE))
+            else if (natureOfWork != null
+                    && natureOfWork.getExpenditureType().getValue()
+                            .equalsIgnoreCase(WorksConstants.NATUREOFWORK_EXPENDITURETYPE_REVENUE))
                 accountType = BudgetAccountType.REVENUE_EXPENDITURE.toString();
             budgetGroups = budgetGroupDAO.getBudgetGroupsByFundFunctionDeptAndAccountType(fundId, departmentId, functionId,
                     accountType);
@@ -317,7 +337,7 @@ public class AjaxLineEstimateController {
             @RequestParam("fundId") final Integer fundId, @RequestParam("departmentId") final Long departmentId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
         final List<CFunction> functions = budgetDetailsHibernateDAO.getFunctionsByFundAndDepartment(fundId, departmentId);
-        final String jsonResponse = toJSON(functions);
+        final String jsonResponse = toJSONFunction(functions);
         return jsonResponse;
     }
 }

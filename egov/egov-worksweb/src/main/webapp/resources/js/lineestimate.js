@@ -621,7 +621,7 @@ function getBudgetHeads() {
 					'fundId' : $('#fund').val(),
 					'functionId' : $('#function').val(),
 					'departmentId' : $('#executingDepartments').val(),
-					'natureOfWork' : $('#natureOfWork').find(":selected").text()
+					'natureOfWorkId' : $('#natureOfWork').val()
 					
 					}	
 			}).done(function(value) {
