@@ -1606,13 +1606,13 @@ function checkForCurrentDate(obj)
 		   } else{
 			   document.getElementById("receipt_dateerror_area").style.display="block";
 				  document.getElementById("receipt_dateerror_area").innerHTML+=
-						'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+						'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 			  	 }
 		   </s:if>
 		   <s:else>
 		   document.getElementById("receipt_dateerror_area").style.display="block";
 			  document.getElementById("receipt_dateerror_area").innerHTML+=
-					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+					'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 		   </s:else>
 		   jQuery(obj).val('');
 		   scrolltop();

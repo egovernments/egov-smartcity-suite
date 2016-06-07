@@ -515,7 +515,7 @@ function checkForCurrentDate(obj)
 	   {
 	       dom.get("challan_dateerror_area").style.display="block";
 	       document.getElementById("challan_dateerror_area").innerHTML+=
-					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+					'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 	       return false;
 	   }
    }
