@@ -637,7 +637,7 @@ function getBudgetHeads() {
 							selected="selected";
 						}
 					}
-				     $('#budgetHead').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+				     $('#budgetHead').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
 				});
 			});
 		}
