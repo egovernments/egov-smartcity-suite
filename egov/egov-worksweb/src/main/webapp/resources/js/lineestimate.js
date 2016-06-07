@@ -607,7 +607,7 @@ function validateWorkFlowApprover(name) {
 	return true;
 }
 function getBudgetHeads() {
-	 if ($('#fund').val() === '' && $('#executingDepartments').val() === '' && $('#function').val() === '' && $('#natureOfWork').val() === '') {
+	 if ($('#fund').val() === '' || $('#executingDepartments').val() === '' || $('#function').val() === '' || $('#natureOfWork').val() === '') {
 		   $('#budgetHead').empty();
 		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
 			return;
@@ -643,7 +643,7 @@ function getBudgetHeads() {
 		}
 }
 function getFunctionsByFundAndDepartment() {
-	if ($('#fund').val() === '' && $('#executingDepartments').val() === '') {
+	if ($('#fund').val() === '' || $('#executingDepartments').val() === '') {
 		   $('#function').empty();
 		   $('#function').append($('<option>').text('Select from below').attr('value', ''));
 			return;
