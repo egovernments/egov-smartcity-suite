@@ -54,13 +54,14 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
+import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceDetails;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     private BankBranchHibernateDAO bankBranchHibernateDAO;
     @Autowired
     private BankaccountHibernateDAO bankaccountHibernateDAO;
+    private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
     /**
      * A <code>Long</code> representing the fund id. The fund id is arriving
@@ -269,7 +271,9 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/ajaxBankRemittance-bankAccountByBankBranch")
     public String bankAccountByBankBranch() {
-        bankAccountArrayList = bankaccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(branchId);
+       ServiceDetails sd=serviceDetailsService.findById(serviceId, false);
+       fundId=sd.getFund().getId();
+        bankAccountArrayList = bankaccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(branchId,fundId);
         return BANKACCOUNTLIST;
     }
 
@@ -409,5 +413,8 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     public void setBankId(final Integer bankId) {
         this.bankId = bankId;
     }
-
+    
+    public void setServiceDetailsService(PersistenceService<ServiceDetails, Long> serviceDetailsService) {
+        this.serviceDetailsService = serviceDetailsService;
+    }
 }

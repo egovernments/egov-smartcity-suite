@@ -102,7 +102,7 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
             addDropdownData(
                     "bankAccountIdList",
                     bankAccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(bankAccountServiceMap
-                            .getBankAccountId().getBankbranch().getId()));
+                            .getBankAccountId().getBankbranch().getId(),bankAccountServiceMap.getServiceDetails().getFund().getId()));
             setServiceCategory(bankAccountServiceMap.getServiceDetails().getServiceCategory().getId());
             setBankId(bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getId());
             setBranchId(bankAccountServiceMap.getBankAccountId().getBankbranch().getId());
