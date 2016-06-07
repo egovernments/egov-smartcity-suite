@@ -1,32 +1,41 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
- * government organizations.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- * Copyright (C) <2015> eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
- * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this program. If not, see
- * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
- * complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
- * material be marked in reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
- * trade names or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.wtms.utils;
 
@@ -42,6 +51,8 @@ import java.util.Locale;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -49,17 +60,19 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
@@ -69,7 +82,9 @@ import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -126,10 +141,19 @@ public class WaterTaxUtils {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-    
+
+    @Autowired
+    private WaterDemandConnectionService waterDemandConnectionService;
+
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
+
+    @Autowired
+    private ModuleService moduleService;
+
+    @Autowired
+    private InstallmentDao installmentDao;
 
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -240,11 +264,11 @@ public class WaterTaxUtils {
     }
 
     public String getMunicipalityName() {
-        return EgovThreadLocals.getMunicipalityName();
+        return ApplicationThreadLocals.getMunicipalityName();
     }
 
     public String getCityCode() {
-        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getCode();
+        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
     }
 
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
@@ -278,31 +302,28 @@ public class WaterTaxUtils {
         messagingService.sendEmail(email, emailSubject, emailBody);
     }
 
-    public Position getCityLevelCommissionerPosition(final String commissionerDesgn,String assessmentNumber) {
-        String commdesgnname = "";
+    public Position getCityLevelCommissionerPosition(final String commissionerDesgn, final String assessmentNumber) {
         final String[] degnName = commissionerDesgn.split(",");
-        if (degnName.length > 1)
-        {
-            commdesgnname = degnName[0];
+        if (degnName.length > 1) {
+        } else {
         }
-        else
-            commdesgnname = commissionerDesgn;
         final Designation desgnObj = designationService.getDesignationByName(commissionerDesgn);
         if (commissionerDesgn.equals("Commissioner")) {
             final Department deptObj = departmentService
                     .getDepartmentByName(WaterTaxConstants.ROLE_COMMISSIONERDEPARTEMNT);
-            List<Assignment> assignlist=null;
-            assignlist=	assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),new Date());
-            if(assignlist.isEmpty())
-            	 assignlist=	assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desgnObj.getId(), new Date());
-            if(assignlist.isEmpty())
-            	assignlist=assignmentService.getAllActiveAssignments(desgnObj.getId());
-           
+            List<Assignment> assignlist = null;
+            assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(),
+                    new Date(), new Date());
+            if (assignlist.isEmpty())
+                assignlist = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null,
+                        desgnObj.getId(), new Date());
+            if (assignlist.isEmpty())
+                assignlist = assignmentService.getAllActiveAssignments(desgnObj.getId());
+
             return assignlist.get(0).getPosition();
-        } else
-        {
-        	Position userPosition = getZonalLevelClerkForLoggedInUser(assessmentNumber);
-        	return userPosition;
+        } else {
+            final Position userPosition = getZonalLevelClerkForLoggedInUser(assessmentNumber);
+            return userPosition;
         }
     }
 
@@ -312,21 +333,17 @@ public class WaterTaxUtils {
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         return assignment != null ? assignment.getEmployee().getUsername() : "";
     }
-    
+
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
-        List<Assignment>asignList=null;
+        List<Assignment> asignList = null;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
-        if(assignment!=null )
-        {
-        	asignList=new ArrayList<Assignment>();
-        	asignList.add(assignment);
-        }
-        else if(assignment==null)
-        {
-        	asignList= assignmentService.getAssignmentsForPosition(approvalPosition,new Date());
-        }
+        if (assignment != null) {
+            asignList = new ArrayList<Assignment>();
+            asignList.add(assignment);
+        } else if (assignment == null)
+            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 
@@ -336,7 +353,7 @@ public class WaterTaxUtils {
 
     public Long getApproverPosition(final String designationName, final WaterConnectionDetails waterConnectionDetails) {
 
-        final List<StateHistory> stateHistoryList = waterConnectionDetails.getState().getHistory();
+        final List<StateHistory> stateHistoryList = waterConnectionDetails.getStateHistory();
         Long approverPosition = 0l;
         final String[] desgnArray = designationName.split(",");
         User currentUser = null;
@@ -378,7 +395,7 @@ public class WaterTaxUtils {
 
         } else {
             currentUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
-            if (currentUser != null &&  waterConnectionDetails.getLegacy().equals(true)) {
+            if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
                 for (final Role userrole : currentUser.getRoles())
                     if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
                         final Position positionuser = getZonalLevelClerkForLoggedInUser(waterConnectionDetails
@@ -398,7 +415,7 @@ public class WaterTaxUtils {
 
     public Position getZonalLevelClerkForLoggedInUser(final String asessmentNumber) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
-                PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ALL);
+                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         Assignment assignmentObj = null;
         /*
          * final HierarchyType hierarchy =
@@ -451,16 +468,17 @@ public class WaterTaxUtils {
         }
         return !assignment.isEmpty() ? assignment.get(0) : null;
     }
-//allowing only for CollectionOperator to collect Fees
+
+    // allowing only for CollectionOperator to collect Fees
     @ModelAttribute(value = "checkOperator")
     public Boolean checkCollectionOperatorRole() {
         Boolean isCSCOperator = false;
         // as per Adoni allowing collection for ULB Operator
-        if (EgovThreadLocals.getUserId() != null) {
-            final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User userObj = userService.getUserById(ApplicationThreadLocals.getUserId());
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
-                    if (role != null && (role.getName().contains(WaterTaxConstants.ROLE_BILLCOLLECTOR) )) {
+                    if (role != null && role.getName().contains(WaterTaxConstants.ROLE_BILLCOLLECTOR)) {
                         isCSCOperator = true;
                         break;
                     }
@@ -473,19 +491,49 @@ public class WaterTaxUtils {
                 startDate, PTMODULENAME);
     }
 
+    public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
+        final List<Installment> installments = installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
+        return installments;
+    }
+
     public Double waterConnectionDue(final long parentId) {
         BigDecimal waterTaxDueforParent = BigDecimal.ZERO;
         final List<WaterConnectionDetails> waterConnectionDetails = waterConnectionDetailsService
                 .getAllConnectionDetailsByParentConnection(parentId);
         for (final WaterConnectionDetails waterconnectiondetails : waterConnectionDetails)
-             waterTaxDueforParent = waterTaxDueforParent.add(waterConnectionDetailsService.getTotalAmount(waterconnectiondetails));
+            waterTaxDueforParent = waterTaxDueforParent.add(waterConnectionDetailsService
+                    .getTotalAmount(waterconnectiondetails));
         return waterTaxDueforParent.doubleValue();
+    }
+
+    public WaterDemandConnection getCurrentDemand(final WaterConnectionDetails waterConnectionDetails) {
+        WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
+
+        final List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
+                .findByWaterConnectionDetails(waterConnectionDetails);
+        for (final WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
+            if (waterDemandConnection.getDemand().getIsHistory().equalsIgnoreCase(WaterTaxConstants.DEMANDISHISTORY)) {
+                waterdemandConnection = waterDemandConnection;
+                break;
+            }
+
+        return waterdemandConnection;
+    }
+    public List<EgDemand> getAllDemand(final WaterConnectionDetails waterConnectionDetails) {
+        List<EgDemand> demandList=new ArrayList<EgDemand>();
+        final List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
+                .findByWaterConnectionDetails(waterConnectionDetails);
+        for (final WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
+        	demandList.add(waterDemandConnection.getDemand());
+
+        return demandList;
     }
 
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
-        if (EgovThreadLocals.getUserId() != null) {
-            final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
             if (currentUser.getRoles().isEmpty() && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
                 citizenrole = Boolean.TRUE;
             for (final Role userrole : currentUser.getRoles())
@@ -497,4 +545,14 @@ public class WaterTaxUtils {
             citizenrole = Boolean.TRUE;
         return citizenrole;
     }
+
+    public Boolean isDigitalSignatureEnabled() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDIGITALSIGNATURE);
+        if (null != appConfigValue && !appConfigValue.isEmpty())
+            return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
+        else
+            return false;
+    }
+
 }

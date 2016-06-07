@@ -75,8 +75,7 @@ public class FileUploadActionTest { /*extends AbstractPersistenceServiceTest<Rec
 		
 		
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		commonsManager = createMock(CommonsManager.class);
 		challanService=new ChallanService(){
 			public void workflowtransition(Challan challan,Position nextPosition, 

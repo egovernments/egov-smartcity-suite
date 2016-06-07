@@ -37,7 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.aadhaar.webservice.client;
+
+import org.egov.infra.aadhaar.webservice.contract.AadhaarInfo;
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -46,11 +52,6 @@ import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
-
-import org.egov.infra.aadhaar.webservice.contract.AadhaarInfo;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AadhaarInfoServiceClient {

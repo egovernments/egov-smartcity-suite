@@ -1,42 +1,43 @@
 
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-     Copyright (C) <2015>  eGovernments Foundation
- 
-     The updated version of eGov suite of products as by eGovernments Foundation 
-     is available at http://www.egovernments.org
- 
-     This program is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     any later version.
- 
-     This program is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with this program. If not, see http://www.gnu.org/licenses/ or 
-     http://www.gnu.org/licenses/gpl.html .
- 
-     In addition to the terms of the GPL license to be adhered to in using this
-     program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
 <head>
@@ -67,10 +68,26 @@ display:none;
 <script type="text/javascript">
 jQuery.noConflict();
 jQuery(document).ready(function() {
-  	 
+
      jQuery(" form ").submit(function( event ) {
     	 doLoadingMask();
     });
+     var nowTemp = new Date();
+     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+      jQuery( "#challanDate").datepicker({ 
+     	 format: 'dd/mm/yyyy',
+     	 endDate: nowTemp, 
+     	 autoclose:true,
+         onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+       }).on('changeDate', function(ev) {
+     	  var string=jQuery(this).val();
+     	  if(!(string.indexOf("_") > -1)){
+     		  isDatepickerOpened=false; 
+     	  }
+       }).data('datepicker');
      doLoadingMask();
  });
 
@@ -85,12 +102,15 @@ path="${pageContext.request.contextPath}";
 <fmt:formatDate var = "currDate" pattern="dd/MM/yyyy" value="${now}" />
 var currDate = "${currDate}";
 
-
-
 function onBodyLoad(){
+	<s:if test="%{model.id!=null}">
+		if(document.getElementById('challanDate').value!=""){
+			document.getElementById("challanDate").disabled=true;
+		}
+	</s:if>
+	
 	if(document.getElementById('challanDate').value==""){
 		document.getElementById("challanDate").value=currDate;
-		document.getElementById("challanDate").disabled=true;
 	}
 	
 	if('<s:property value="designationId"/>'!=null && '<s:property value="designationId"/>'!="")
@@ -252,19 +272,26 @@ function validate(obj){
 			valid=false;
 		 }            
 		</s:if>
-		if(!validateAccountDetail()){
+
+		if(null!= document.getElementById('approverDeptId') && document.getElementById('approverDeptId').value == "-1"){
+			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.department.errormessage" />'+ "<br>";
 			valid=false;
 		}
-		if(!validateSubLedgerDetail()){
-			valid=false;
-		}
-		if(null!= document.getElementById('designationId') && document.getElementById('designationId').value == -1){
+		
+		if(null!= document.getElementById('designationId') && document.getElementById('designationId').value == "-1"){
 			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.designation.errormessage" />'+ "<br>";
 			valid=false;
 		}
 		
-		if(null!= document.getElementById('positionUser') && document.getElementById('positionUser').value == -1){
+		if(null!= document.getElementById('positionUser') &&  document.getElementById('positionUser').value == "-1"){
 			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.position.errormessage" />'+ "<br>";
+			valid=false;
+		}
+		
+		if(!validateAccountDetail()){
+			valid=false;
+		}
+		if(!validateSubLedgerDetail()){
 			valid=false;
 		}
 		
@@ -616,8 +643,7 @@ function populatepositionuseronload()
 	     <td width="21%" class="bluebox"><s:text name="challan.date"/><span class="mandatory"/></td>
 	      		  <s:date name="challan.challanDate" var="cdFormat" format="dd/MM/yyyy"/>
 	      <td width="24%" class="bluebox">
-	      		<s:textfield id="challanDate" name="challan.challanDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-	      		<div class="highlight2" style="width:80px">DD/MM/YYYY</div>				
+	      		<s:textfield id="challanDate" name="challan.challanDate" value="%{cdFormat}" data-inputmask="'mask': 'd/m/y'"/><div>(DD/MM/YYYY)</div>
 	      </td>
 	        
    		<s:if test="%{shouldShowHeaderField('billNumber')}">
@@ -646,7 +672,7 @@ function populatepositionuseronload()
          
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategoryId" id="serviceCategoryId" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategoryId}" onChange="populateService(this);" />
-       	<egov:ajaxdropdown id="service"fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
+       	<egov:ajaxdropdown id="service" fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceId" id="serviceId" cssClass="selectwk"
 			list="dropdownData.serviceList" listKey="id" listValue="code" value="%{serviceId}" onchange="loadFinDetails(this);"/>
@@ -771,7 +797,7 @@ function populatepositionuseronload()
 		<tr>
 			<td width="4%" class="bluebox2">&nbsp;</td>
 			<td width="15%" class="bluebox2"> Approver Department <s:if test="%{model.id==null}"><span class="mandatory"/></s:if></td>
-			<td width="20%" class="bluebox2"><s:select headerKey="" headerValue="%{getText('challan.select')}" name="approverDeptId" id="approverDeptId" cssClass="selectwk" list="dropdownData.approverDepartmentList" listKey="id" listValue="name" 
+			<td width="20%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('challan.select')}" name="approverDeptId" id="approverDeptId" cssClass="selectwk" list="dropdownData.approverDepartmentList" listKey="id" listValue="name" value="%{approverDeptId}"
 onChange="onChangeDeparment(this.value)" /> 
 		<egov:ajaxdropdown id="designationIdDropdown" fields="['Text','Value']" dropdownId='designationId'
 			         url='receipts/ajaxChallanApproval-approverDesignationList.action' selectedValue="%{designationId}"/>
@@ -779,7 +805,7 @@ onChange="onChangeDeparment(this.value)" />
 
 			
 		      	<td width="15%" class="bluebox2"><s:text name="challan.approve.designation"/><s:if test="%{model.id==null}"><span class="mandatory"/></s:if></td>
-			  <td width="20%" class="bluebox2"><s:select headerKey="" headerValue="%{getText('challan.select')}" name="designationId" id="designationId" cssClass="selectwk"  list="dropdownData.designationMasterList" listKey="id" listValue="name" onChange="onChangeDesignation(this.value)"/>
+			  <td width="20%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('challan.select')}" name="designationId" id="designationId" cssClass="selectwk"  list="dropdownData.designationMasterList" listKey="id" listValue="name" value="%{designationId}" onChange="onChangeDesignation(this.value)"/>
 			  <egov:ajaxdropdown id="positionUserDropdown" fields="['Text','Value']" dropdownId='positionUser'
 			         url='receipts/ajaxChallanApproval-positionUserList.action' selectedValue="%{position.id}"/>	 
 			 </td>
@@ -787,14 +813,14 @@ onChange="onChangeDeparment(this.value)" />
 				<td width="20%" class="bluebox2">
 					<s:select headerValue="%{getText('challan.select')}"  headerKey="-1"
 	                list="dropdownData.postionUserList" listKey="position.id" id="positionUser" listValue="position.name"
-	                label="positionUser" name="positionUser" value="%{position.id}"/>
+	                label="positionUser" name="positionUser" value="%{positionUser}"/>
 				</td>
 		</tr>
 		</s:if>
 	</table>
 	</td></tr>
 	</table>
-<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/../../egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/> </div>
 <!-- </div> -->

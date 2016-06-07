@@ -1,46 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.wtms.masters.service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.repository.ConnectionCategoryRepository;
@@ -53,6 +50,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class ConnectionCategoryService {
@@ -64,12 +64,13 @@ public class ConnectionCategoryService {
         this.connectionCategoryRepository = connectionCategoryRepository;
     }
 
-    public ConnectionCategory findBy(final Long connectionCategoryId) {
+    public ConnectionCategory findOne(final Long connectionCategoryId) {
         return connectionCategoryRepository.findOne(connectionCategoryId);
     }
 
     @Transactional
     public ConnectionCategory createConnectionCategory(final ConnectionCategory connectionCategory) {
+        connectionCategory.setActive(true);
         return connectionCategoryRepository.save(connectionCategory);
     }
 
@@ -79,11 +80,15 @@ public class ConnectionCategoryService {
     }
 
     public List<ConnectionCategory> findAll() {
-        return connectionCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return connectionCategoryRepository.findAll(new Sort(Sort.Direction.DESC, "name"));
     }
 
     public ConnectionCategory findByNameIgnoreCase(final String name) {
         return connectionCategoryRepository.findByNameIgnoreCase(name);
+    }
+
+    public ConnectionCategory findByCodeIgnoreCase(final String code) {
+        return connectionCategoryRepository.findByCodeIgnoreCase(code);
     }
 
     public List<ConnectionCategory> findAllByNameLike(final String name) {
@@ -94,8 +99,8 @@ public class ConnectionCategoryService {
         return connectionCategoryRepository.findByName(name);
     }
 
-    public ConnectionCategory load(final Long id) {
-        return connectionCategoryRepository.getOne(id);
+    public ConnectionCategory findByNameAndCode(final String name, final String code) {
+        return connectionCategoryRepository.findByNameAndCode(name, code);
     }
 
     public Page<ConnectionCategory> getListOfConnectionCategory(final Integer pageNumber, final Integer pageSize) {
@@ -111,12 +116,12 @@ public class ConnectionCategoryService {
         return connectionCategoryRepository.findByActiveTrueOrderByNameAsc();
     }
 
-    public List<ConnectionCategory> getAllCategoryTypesByPropertyType(final Long propertyType,
+    public List<ConnectionCategory> getAllActiveCategoryTypesByPropertyType(final Long propertyType,
             final String connectionType) {
         if (connectionType.equals(WaterTaxConstants.ADDNLCONNECTION))
             return connectionCategoryRepository.getAllCategoryTypesByPropertyTypeNotInBPL(propertyType);
         else
-            return connectionCategoryRepository.getAllCategoryTypesByPropertyType(propertyType);
+            return connectionCategoryRepository.getAllActiveCategoryTypesByPropertyType(propertyType);
     }
 
     public List<ConnectionCategory> getConnectionCategoryListForRest() {

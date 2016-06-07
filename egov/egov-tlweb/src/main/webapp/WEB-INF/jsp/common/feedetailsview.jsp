@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <br/>
@@ -47,7 +48,7 @@
 				<img src="${pageContext.request.contextPath}/images/arrow.gif" height="20" />
 			</div>
 			<div class="headplacer">
-				<s:text name='license.title.feedetails' />
+				<s:text name='license.title.feedetail' />
 			</div>
 		</td>
 	</tr>

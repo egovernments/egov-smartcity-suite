@@ -37,7 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
@@ -88,7 +89,7 @@
                                     <div class="tab-pane fade active in" id="tradedetails">
 													
 											<div class="form-group">
-											    <label class="col-sm-3 control-label text-right"><s:text name='license.old.license.number' /><span class="mandatory"></span></label>
+											    <label class="col-sm-3 control-label text-right"><s:text name='license.oldlicensenum' /><span class="mandatory"></span></label>
 											    <div class="col-sm-3 add-margin">
 											           <s:textfield name="oldLicenseNumber"  id="oldLicenseNumber" onBlur="checkLength(this,50)"  maxlength="100" cssClass="form-control patternvalidation"  data-pattern="alphanumerichyphenbackslash" />
 											    </div>

@@ -65,11 +65,11 @@ body {
     }
     
     .spinner {
-	margin: 0px auto;
-	width: 50px;
-	height: 30px;
-	text-align: center;
-	font-size: 10px;
+		margin: 0px auto;
+		width: 50px;
+		height: 30px;
+		text-align: center;
+		font-size: 10px;
 	
 		div {
 			background-color: @whitecolor;
@@ -184,6 +184,7 @@ b, label, strong{
 
 .add-border {
     border-bottom: 1px solid #ebebeb;
+    padding:5px 0;
 }
 
 .add-padding{
@@ -192,10 +193,15 @@ b, label, strong{
 
 .add-border:last-child {
     border-bottom: none;
+    padding-bottom:0;
 }
 
 .view-content {
     font-family: semibold;
+}
+
+.img-width{
+	width:100%;
 }
 
 .font-12 {
@@ -266,6 +272,99 @@ b, label, strong{
 .page-container.horizontal-menu {
     padding-left: 0;
     padding-top: 62px;
+    
+    .search{
+    	position:fixed;
+    	top:63px;
+    	left:0;
+    	z-index:10;
+    	width:250px;
+    	background:@basecolor;
+    	
+    	#searchtree{
+    		padding:14px;
+    		width:250px;
+    		color:@whitecolor;
+    		background:@basecolor;
+    	}
+    	
+    	#searchtree::-webkit-input-placeholder
+		{
+		  color:@whitecolor;
+		}
+		
+		#searchtree:-moz-placeholder
+		{
+		  color:@whitecolor;
+		}
+		
+		#searchtree::-moz-placeholder 
+		{
+		  color:@whitecolor;
+		}
+		
+    	.searchicon{
+		    position: absolute;
+		    right: 20px;
+		    top: 18px;
+		    color:@whitecolor;
+		    cursor:pointer;
+    	}
+		
+    }
+    
+    .search_list{
+    	position:fixed;
+    	top:114px;
+    	left:0;
+    	z-index:9;
+    	background:@basecolor;
+    	width:250px;
+    	
+    	.list{
+    		position:relative;
+    		
+    		ul{
+	    		margin:0;
+	    		padding:0;
+	    		
+	    		a{
+		    		position: relative; 
+		    		color:@whitecolor;
+			        padding: 11px 16px;
+		    		display: block;
+		    		border-bottom:1px solid @separation;
+		    	}
+		    	
+		    	a:focus, a:hover, li.focus{
+		    		background:@active;
+		    	}
+		    	
+	    	}
+    	}
+    	
+    }
+    
+    .search_list::-webkit-scrollbar{
+		width:5px;
+		background-color:@active;
+	} 
+	
+	.search_list::-webkit-scrollbar-thumb{
+		background-color:@active;
+		border-radius:10px;
+	}
+	.search_list::-webkit-scrollbar-thumb:hover{
+		background-color:@active;
+	}
+	.search_list::-webkit-scrollbar-thumb:active{
+		background-color:@active;
+	} 
+	.search_list::-webkit-scrollbar-track{
+		border:1px gray solid;
+		border-radius:10px;
+		-webkit-box-shadow:0 0 6px gray inset;
+	}
 }
 
 /*Homepage header - Left and right side */
@@ -341,14 +440,8 @@ b, label, strong{
         a{
             position: relative;
             display: block;
-            padding: 0;
-            margin: 10px;
-            margin-top: 18px;
-            margin-bottom: 16px;
-            
-            i {
-                .font-size(19px);
-            }
+            padding: 8px 9px;
+            margin: 14px 15px 5px 0;
             
         }
         
@@ -439,6 +532,8 @@ b, label, strong{
         font-weight: normal;
         font-family: regular;
         .font-size(18px);
+        height: 20px;
+		overflow: hidden;
     }
     
     ul {
@@ -523,6 +618,21 @@ b, label, strong{
     overflow-x: hidden;
     width: ~"calc(100% - 250px)";
     padding-bottom: 40px;
+    
+    #inboxsearch{
+    	padding: 5px 18px 5px 10px;
+    }
+    
+    .cleartext {
+	    float: right;
+	    margin-right: 4px;
+	    margin-top: -22px;
+	    color: @basecolor;
+	    cursor:pointer;
+	    .font-size(16px);
+	    display:none;
+	}
+        
 }
 
 .table-header {
@@ -544,6 +654,10 @@ b, label, strong{
     
     a {
         padding: 5px;
+        
+        span{
+        	margin: 0 3px;
+        }
     }
 }
 
@@ -847,7 +961,7 @@ b, label, strong{
         
         .signin-title {
             .font-size(22px);
-            padding: 0 0 0 18px;
+            padding: 0 0 0 12px;
         }
         
         .feature-top {
@@ -1469,8 +1583,7 @@ b, label, strong{
         
         .yui-skin-sam .yui-dt th {
           color:@whitecolor;
-          background: @basecolor;
-          border-right: 1px solid @separation;
+          background: @active;
         }
 
         .yui-skin-sam .yui-dt td {
@@ -1525,6 +1638,14 @@ b, label, strong{
                 display: none !important;
             }
         }
+        
+        .new-page-header {
+		    font-family: semibold;
+		    .font-size(20px);
+		    color: @active;
+		    text-align: center;
+		    padding: 0 15px 15px;
+		}
         
         td.greybox input[type="text"], td.greybox select, td.bluebox input[type="text"], td.bluebox select
         {
@@ -1652,6 +1773,7 @@ b, label, strong{
     top: 10px;
     right: 30px;
     z-index: 10;
+    padding:0 5px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     cursor: pointer;
 }
@@ -1789,7 +1911,7 @@ b, label, strong{
         .remove-img {
 		    position: absolute;
 		    top: -11px;
-		    left: 3px;
+		    left: 5px;
 		    .font-size(16px);
 		    cursor: pointer;
 		}
@@ -1841,10 +1963,6 @@ b, label, strong{
         
     }
     
-    thead > tr > th:hover{
-        cursor:pointer;
-    }
-    
     tbody tr:hover
     {
         background:#f7f7f7;
@@ -1867,6 +1985,10 @@ table.dataTable{
                 left:-9990px;
                 display: block;
             }
+        }
+        
+        tr > th:hover{
+        	cursor:pointer;
         }
         
     }

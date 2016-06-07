@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.commons;
+
+import org.egov.infstr.models.BaseModel;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.infstr.models.BaseModel;
 
 public class CChartOfAccounts extends BaseModel {
 	private static final long serialVersionUID = 1L;

@@ -37,11 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pgr.web.controller.complaint;
-
-import static java.util.Arrays.asList;
-
-import java.util.List;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
@@ -52,8 +49,8 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintService;
@@ -74,6 +71,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 @Controller
 // @RequestMapping(value = "/complaint/citizen/anonymous/search")
@@ -180,7 +181,7 @@ public class ComplaintSearchController {
     @ModelAttribute("currentUlb")
     public String getCurrentUlb() {
 
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (null != cityWebsite) {
             logger.debug("logged in as " + cityWebsite.getName());
             return cityWebsite.getName();
@@ -205,6 +206,7 @@ public class ComplaintSearchController {
 
         searchResult = searchService.search(asList(Index.PGR.toString()), asList(IndexType.COMPLAINT.toString()),
                 searchRequest.searchQuery(), searchRequest.searchFilters(), Sort.NULL, Page.NULL);
+        
 
         return searchResult.getDocuments();
 

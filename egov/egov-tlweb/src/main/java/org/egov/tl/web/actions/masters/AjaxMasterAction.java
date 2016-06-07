@@ -40,7 +40,6 @@
 
 package org.egov.tl.web.actions.masters;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -53,6 +52,7 @@ import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({ @Result(name = AjaxMasterAction.UNIQUECHECK, location = "ajaxMaster-uniqueCheck.jsp") })
@@ -65,6 +65,8 @@ public class AjaxMasterAction extends BaseFormAction {
 	private String name;
 	private String errorMsg = "";
 	private String code;
+	private Long categoryid;
+	private Long uomid;
 	public static final String UNIQUECHECK = "uniqueCheck";
 	private static final String UOM_MASTER = "uomMaster";
 	private static final String CATEGORY_MASTER = "categoryMaster";
@@ -101,7 +103,7 @@ public class AjaxMasterAction extends BaseFormAction {
 			if (screenType != null && screenType.equalsIgnoreCase(UOM_MASTER)) {
 				paramType = NAME;
 				final UnitOfMeasurement unitOfMeasurement = unitOfMeasurementService.findUOMByName(name);
-				if (unitOfMeasurement != null) {
+				if (unitOfMeasurement != null && unitOfMeasurement.getId() != uomid) {
 					errorMsg = getText("uom.validate.duplicateName", new String[] { name });
 					isUnique = Boolean.FALSE;
 				} else
@@ -110,7 +112,7 @@ public class AjaxMasterAction extends BaseFormAction {
 			else if (screenType != null && screenType.equalsIgnoreCase(CATEGORY_MASTER)) {
 				paramType = NAME;
 				final LicenseCategory licenseCategory = licenseCategoryService.findCategoryByName(name);
-				if (licenseCategory != null) {
+				if (licenseCategory != null && licenseCategory.getId() != categoryid) {
 					errorMsg = getText("lc.validate.duplicateName", new String[] { name });
 					isUnique = Boolean.FALSE;
 				} else
@@ -207,5 +209,21 @@ public class AjaxMasterAction extends BaseFormAction {
 	public void setIsUnique(final Boolean isUnique) {
 		this.isUnique = isUnique;
 	}
+
+        public Long getCategoryid() {
+            return categoryid;
+        }
+    
+        public void setCategoryid(Long categoryid) {
+            this.categoryid = categoryid;
+        }
+
+        public Long getUomid() {
+            return uomid;
+        }
+
+        public void setUomid(Long uomid) {
+            this.uomid = uomid;
+        }
 
 }

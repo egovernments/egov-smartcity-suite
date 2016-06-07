@@ -1,42 +1,42 @@
-<!--
-	eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-    Copyright (C) <2015>  eGovernments Foundation
- 
-	The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
- 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
- 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
- 
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
@@ -61,7 +61,7 @@
 	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
 	type="text/javascript"></script>
 	
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 
 </head>
 
@@ -96,7 +96,7 @@
 			<div class="buttonbottom" align="center">
 				<table style="width: 100%; text-align: center;">
 					<tr>
-						<td><input  type="submit" id="Create" class="buttonsubmit" value="Create" onclick="onSubmit();"/> 
+						<td><input  type="submit" id="Create" class="buttonsubmit" value="Create" /> 
 							<input type="button" name="button2" id="button2" value="Close"	class="button" onclick="window.close();" /></td>
 					</tr>
 				</table>
@@ -122,9 +122,71 @@ jQuery(function ($) {
 		$('.datepicker').on('changeDate', function(ev){
 		    $(this).datepicker('hide');
 		});
+
+
+		$('#Create').click(function(e){
+			console.log('called :)!');
+			return validateProperty();
+		});
 		
     	
 });
+
+var isSubmit=false;
+
+function validateProperty() {
+	
+	if(isSubmit)
+	{
+		return onSubmit();
+	}
+	
+	jQuery.ajax({
+		url: "/ptis/common/ajaxCommon-checkIfPropertyExists.action",
+		type: "GET",
+		data: {
+			assessmentNo : jQuery('#upicNo').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			console.log("success"+response);
+			if(response.exists) {
+				bootbox.dialog({ 
+			          message: "Entered assessment number is not unique, Do you want system to create unique assessment number and to keep entered assessment number as Old assessment number",
+					  show: true,
+					  backdrop: true,
+					  closeButton: true,
+					  animate: true,
+					  className: "my-modal",
+					  buttons: {
+					    success: {   
+					      label: "Yes",
+					      className: "btn-primary",
+					      callback: function() {
+					    	  jQuery('#updateUpicNo').val(true);
+					    	  isSubmit=true;
+					    	  jQuery('#Create').trigger('click');
+						  }
+					    },
+					    "No": {
+					      className: "btn-default",
+					      callback: function() {
+					    	
+						  }
+					    }
+					  }
+					});
+			} else {
+				isSubmit=true;
+		    	jQuery('#Create').trigger('click');
+			}
+		}
+	});
+
+	return false;
+	
+}
 function loadOnStartUp() {
 	enableCorresAddr();
 	enableAppartnaumtLandDetails();
@@ -138,63 +200,7 @@ function loadOnStartUp() {
 	}
 	var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
-	/* document.getElementById("plotArea").style.display = ""; */
-	/* document.getElementById("ownerShipRow").style.display = "none";
-	document.getElementById("vacantAreaRow").style.display = "none"; */
-	/* document.getElementById("undivArea").style.display = "none";		
-	document.getElementById("rentBox").className="hiddentext";
-	document.getElementById("bldngCostId").className="hiddentext";
-	document.getElementById("parentIndex").className="hiddentext";
-	document.getElementById("opAlvId").className="hiddentext";
-	document.getElementById("occId").className="hiddentext";
-	document.getElementById("rentBox").readOnly=true;
-	document.getElementById("bldngCostId").readOnly=true;
-	document.getElementById("amenitiesId").disabled=true;
-	document.getElementById("opAlvId").readOnly=true;
-	document.getElementById("occId").readOnly=true;
-	document.getElementById("parentIndex").readOnly=true;
-	document.getElementById("dateOfCompletion").readOnly=true;
-	document.getElementById("dateOfCompletion").className="hiddentext";
-	document.getElementById("floorDetailsConfirm").style.display = "none";
-	document.getElementById("waterRate").style.display = "none"; */
-	
-	//enableFieldsForPropType();
-	//hideAddRmvBtnForResidFlats();
-	//enableCorresAddr();
-	//enableTaxExemptReason();
-	//enableRentBox();
-			
-	/* var complDateStr = document.getElementById("dateOfCompletion").value;
-	if(complDateStr == "" || complDateStr == "DD/MM/YYYY" || complDateStr == undefined)
-	{		
-		waterMarkInitialize('dateOfCompletion','DD/MM/YYYY');
-	}
-	var tbl = document.getElementById('floorDetails');	
-	if(tbl!=null) {
-		resetDetailsForTenantOnload();
-	} */
-	
-	//populateLocationFactors();	
-	//populateFloorConstTypeDropDowns();
-	//toggleForResNonRes();	
-	 toggleFloorDetails();
-	//toggleUnitTypeAndCategory();
-	//prepareUnitTypeCategories();
-	//prepareUsagesForUnitTypes();
-	
-	/* var intervalId = -1;
-	var propTypeMstr = document.getElementById("propTypeMaster");
-	
-	if (propTypeMstr.options[propTypeMstr.selectedIndex].text == 'Mixed') {
-		intervalId = setInterval(doOnValidationErrors, 1000);
-	} 
-	 
-	if (areUnitTypeCatsAndUsagePopulated) {
-		clearInterval(intervalId);
-	} 	
-	
-	document.getElementById("taxExemptRow").style.display = "none";		 */
-	//enableSubmitButton();  
+	toggleFloorDetails();
      var aadhartextboxes = jQuery('.txtaadhar');
      console.log(aadhartextboxes);
      aadhartextboxes.each(function() {
@@ -204,19 +210,17 @@ function loadOnStartUp() {
 	   	}
 	 });
      populateBoundaries();
+	 
 }
 
 function onSubmit() { 
-
 	jQuery('#gender, #guardianRelation').removeAttr('disabled');
-    
 	document.forms[0].action = 'createProperty-createDataEntry.action';
 	<s:if test="mode=='edit'">
 	document.forms[0].action = 'createProperty-updateDataEntry.action';
 	</s:if>
-	document.forms[0].submit;
 	
-   return true;
+   return true; 
 }
 
 </script>

@@ -1,86 +1,99 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <script>
-function showDetails(glcode){           
+	function showDetails(glcode) {
 		var deptId = "<s:property value="balanceSheet.department.id"/>";
 		var functionaryId = "<s:property value="balanceSheet.functionary.id"/>";
 		var functionName = '<s:property value="functionName"/>';
 		var functionId = "<s:property value="balanceSheet.function.id"/>";
-		var fieldId = '<s:property value="balanceSheet.field.id"/>';	   
-		var fundId='<s:property value="balanceSheet.fund.id"/>';
-        var startDate='<s:date name="%{fromDate}" format="dd/MM/yyyy"/>';
-        var endDate='<s:date name="%{toDate}" format="dd/MM/yyyy"/>';
-		
-		 var functionCode1=functionName+"~"+functionId;
+		var fieldId = '<s:property value="balanceSheet.field.id"/>';
+		var fundId = '<s:property value="balanceSheet.fund.id"/>';
+		var startDate = '<s:date name="%{fromDate}" format="dd/MM/yyyy"/>';
+		var endDate = '<s:date name="%{toDate}" format="dd/MM/yyyy"/>';
+
+		var functionCode1 = functionName + "~" + functionId;
 
 		// bootbox.alert(functionCode1);
-		if(functionId==0){
-			functionCode1="";
-			functionId="";
-			}                   
-		
-		window.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		if (functionId == 0) {
+			functionCode1 = "";
+			functionId = "";
+		}
+
+		window
+				.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='
+						+ glcode + '&fund_id=' + fundId + '&startDate='
+						+ startDate + '&endDate=' + endDate + '&departmentId='
+						+ deptId + '&functionaryId=' + functionaryId
+						+ '&functionCodeId=' + functionId + '&functionCode='
+						+ functionCode1 + '&fieldId=' + fieldId, '',
+						'resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 	}
-	
-function showPreviousYearDetails(glcode)
-{
+
+	function showPreviousYearDetails(glcode) {
 		var deptId = "<s:property value="balanceSheet.department.id"/>";
 		var functionaryId = "<s:property value="balanceSheet.functionary.id"/>";
 		var functionName = '<s:property value="functionName"/>';
 		var functionId = "<s:property value="balanceSheet.function.id"/>";
-		var fieldId = '<s:property value="balanceSheet.field.id"/>';	   
-		var fundId='<s:property value="balanceSheet.fund.id"/>';
-        var startDate='<s:date name="%{previousYearfromDate}" format="dd/MM/yyyy"/>';
-        var endDate='<s:date name="%{previousYeartoDate}" format="dd/MM/yyyy"/>';
-         var functionCode1=functionName+"~"+functionId;
- 		if(functionId==0){
-			functionCode1="";
-			functionId="";
-			}                   
-		
-		window.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		var fieldId = '<s:property value="balanceSheet.field.id"/>';
+		var fundId = '<s:property value="balanceSheet.fund.id"/>';
+		var startDate = '<s:date name="%{previousYearfromDate}" format="dd/MM/yyyy"/>';
+		var endDate = '<s:date name="%{previousYeartoDate}" format="dd/MM/yyyy"/>';
+		var functionCode1 = functionName + "~" + functionId;
+		if (functionId == 0) {
+			functionCode1 = "";
+			functionId = "";
+		}
 
-}
-	
+		window
+				.open('/EGF/Reports/GeneralLedger.jsp?fromBean=1&glCode1='
+						+ glcode + '&fund_id=' + fundId + '&startDate='
+						+ startDate + '&endDate=' + endDate + '&departmentId='
+						+ deptId + '&functionaryId=' + functionaryId
+						+ '&functionCodeId=' + functionId + '&functionCode='
+						+ functionCode1 + '&fieldId=' + fieldId, '',
+						'resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 
+	}
 </script>
 <s:if test="%{balanceSheet.size()>0}">
 	<br />
@@ -96,8 +109,9 @@ function showPreviousYearDetails(glcode)
 								<div>
 									<table width="100%" border="0" cellpadding="0" cellspacing="0">
 										<tr>
-											<th class="subheadsmallnew" colspan="16" bgcolor="#CCCCCC"><s:property
-													value="ulbName" /><br /> <strong><s:text
+											<th class="bluebgheadtd" width="100%" colspan="5"><strong
+												style="font-size: 15px;"><s:property
+														value="ulbName" /><br /> <s:text
 														name="report.balancesheet.schedule" /> <s:property
 														value="model.financialYear.finYearRange" /> <s:property
 														value="header" /></strong></th>
@@ -171,8 +185,7 @@ function showPreviousYearDetails(glcode)
 														<s:if test='%{displayBold == true}'>
 															<strong><s:if test='%{currentYearTotal != 0}'>
 																	<s:property value="currentYearTotal" />
-																</s:if>
-																<s:else>0.0</s:else></strong>
+																</s:if> <s:else>0.0</s:else></strong>
 														</s:if>
 														<s:else>
 															<s:if test='%{currentYearTotal != 0}'>
@@ -188,8 +201,7 @@ function showPreviousYearDetails(glcode)
 														<s:if test='%{displayBold == true}'>
 															<strong><s:if test='%{previousYearTotal != 0}'>
 																	<s:property value="previousYearTotal" />
-																</s:if>
-																<s:else>0.0</s:else></strong>
+																</s:if> <s:else>0.0</s:else></strong>
 														</s:if>
 														<s:else>
 															<s:if test='%{previousYearTotal != 0}'>

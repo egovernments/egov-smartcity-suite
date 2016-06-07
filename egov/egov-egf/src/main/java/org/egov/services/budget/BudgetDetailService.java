@@ -1,52 +1,43 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
- * government organizations.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- * Copyright (C) <2015> eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
- * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this program. If not, see
- * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
- * complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
- * material be marked in reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
- * trade names or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.services.budget;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -73,7 +64,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
@@ -99,6 +90,23 @@ import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.script.ScriptContext;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> {
     protected EisCommonService eisCommonService;
@@ -134,7 +142,6 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailService.class);
     private static final String BUDGET_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'Budget','NEW',1,current_date,current_date,1,current_date,1,1,0)";
     private static final String BUDGETDETAIL_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'BudgetDetail','NEW',1,current_date,current_date,1,current_date,1,1,0)";
-    private static final String BUDGETGROUP_INSERT = "insert into egf_budgetgroup (ID,NAME,MINCODE,MAXCODE,DESCRIPTION,UPDATEDTIMESTAMP,ACCOUNTTYPE,BUDGETINGTYPE,ISACTIVE) values (:id,:name,:mincode,:maxcode,:description,:updatedtimestamp,:accounttype,:budgetingtype,:isactive)";
 
     public BudgetDetailService(final Class<BudgetDetail> budgetDetail) {
         this.type = budgetDetail;
@@ -149,7 +156,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "budget.report.view.access").get(0);
         final ScriptContext context = ScriptService.createContext("wfItem", budget, "eisCommonServiceBean", eisCommonService,
                 "userId",
-                EgovThreadLocals.getUserId().intValue());
+                ApplicationThreadLocals.getUserId().intValue());
         final Integer result = (Integer) scriptExecutionService.executeScript(script, context);
         if (result == 1)
             return true;
@@ -406,7 +413,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     protected User getUser() {
-        return (User) ((PersistenceService) this).find(" from User where id=?", EgovThreadLocals.getUserId());
+        return (User) ((PersistenceService) this).find(" from User where id=?", ApplicationThreadLocals.getUserId());
     }
 
     public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException {
@@ -2350,7 +2357,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public PersonalInformation getEmpForCurrentUser()
     {
-        return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
+        return eisCommonService.getEmployeeByUserId(ApplicationThreadLocals.getUserId());
     }
 
     public void setBudgetDetailWorkflowService(final WorkflowService<BudgetDetail> budgetDetailWorkflowService) {
@@ -2368,7 +2375,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public boolean toBeConsolidated()
     {
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),
+        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(),
                 new Date());
         final Functionary empfunctionary = empAssignment.getFunctionary();
         final Designation designation = empAssignment.getDesignation();
@@ -2569,63 +2576,40 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             }
 
             bgroupId = Long.valueOf(sequenceNumber.toString());
-            /*
-             * if (budgetGroup == null) { budgetGroup = new BudgetGroup(); budgetGroup.setName(coa.getGlcode() + "-" +
-             * coa.getName()); budgetGroup.setDescription(coa.getName()); budgetGroup.setIsActive(true); if
-             * (coa.getType().compareTo('E') == 0) { budgetGroup.setAccountType(BudgetAccountType.REVENUE_EXPENDITURE);
-             * budgetGroup.setBudgetingType(BudgetingType.DEBIT); } else if (coa.getType().compareTo('A') == 0) {
-             * budgetGroup.setAccountType(BudgetAccountType.CAPITAL_EXPENDITURE);
-             * budgetGroup.setBudgetingType(BudgetingType.DEBIT); } else if (coa.getType().compareTo('L') == 0) {
-             * budgetGroup.setAccountType(BudgetAccountType.CAPITAL_RECEIPTS); budgetGroup.setBudgetingType(BudgetingType.CREDIT);
-             * } else if (coa.getType().compareTo('I') == 0) { budgetGroup.setAccountType(BudgetAccountType.REVENUE_RECEIPTS);
-             * budgetGroup.setBudgetingType(BudgetingType.CREDIT); } if (coa.getClassification().compareTo(1l) == 0 ||
-             * coa.getClassification().compareTo(2l) == 0 || coa.getClassification().compareTo(4l) == 0) {
-             * budgetGroup.setMinCode(coa); budgetGroup.setMaxCode(coa); } budgetGroup.setMajorCode(null);
-             * budgetGroupService.applyAuditing(budgetGroup); budgetGroup = budgetGroupService.persist(budgetGroup); if
-             * (coa.getType().compareTo('E') == 0 || coa.getType().compareTo('A') == 0) { coa.setBudgetCheckReq(true); coa =
-             * chartOfAccountsService.update(coa); } }
-             */
+
             if (budgetGroup == null) {
-                Query query = persistenceService
-                        .getSession()
-                        .createSQLQuery(BUDGETGROUP_INSERT);
-                query.setLong("id", bgroupId);
-                query.setString("name", coa.getGlcode() + "-" + coa.getName());
-                query.setString("description", coa.getName());
-                query.setBoolean("isactive", true);
-
+                budgetGroup = new BudgetGroup();
+                budgetGroup.setName(coa.getGlcode() + "-" +
+                        coa.getName());
+                budgetGroup.setDescription(coa.getName());
+                budgetGroup.setIsActive(true);
                 if (coa.getType().compareTo('E') == 0) {
-                    query.setString("accounttype", BudgetAccountType.REVENUE_EXPENDITURE.toString());
-                    query.setString("budgetingtype", BudgetingType.DEBIT.toString());
-                }
-                else if (coa.getType().compareTo('A') == 0) {
-                    query.setString("accounttype", BudgetAccountType.CAPITAL_EXPENDITURE.toString());
-                    query.setString("budgetingtype", BudgetingType.DEBIT.toString());
+                    budgetGroup.setAccountType(BudgetAccountType.REVENUE_EXPENDITURE);
+                    budgetGroup.setBudgetingType(BudgetingType.DEBIT);
+                } else if (coa.getType().compareTo('A') == 0) {
+                    budgetGroup.setAccountType(BudgetAccountType.CAPITAL_EXPENDITURE);
+                    budgetGroup.setBudgetingType(BudgetingType.DEBIT);
                 } else if (coa.getType().compareTo('L') == 0) {
-                    query.setString("accounttype", BudgetAccountType.CAPITAL_RECEIPTS.toString());
-                    query.setString("budgetingtype", BudgetingType.CREDIT.toString());
+                    budgetGroup.setAccountType(BudgetAccountType.CAPITAL_RECEIPTS);
+                    budgetGroup.setBudgetingType(BudgetingType.CREDIT);
                 } else if (coa.getType().compareTo('I') == 0) {
-                    query.setString("accounttype", BudgetAccountType.REVENUE_RECEIPTS.toString());
-                    query.setString("budgetingtype", BudgetingType.CREDIT.toString());
+                    budgetGroup.setAccountType(BudgetAccountType.REVENUE_RECEIPTS);
+                    budgetGroup.setBudgetingType(BudgetingType.CREDIT);
                 }
-
-                if (coa.getClassification().compareTo(1l) == 0 || coa.getClassification().compareTo(2l) == 0
-                        || coa.getClassification().compareTo(4l) == 0) {
-                    query.setLong("mincode", coa.getId());
-                    query.setLong("maxcode", coa.getId());
-                } else
-                {
-                    query.setLong("mincode", (Long) null);
-                    query.setLong("maxcode", (Long) null);
+                if (coa.getClassification().compareTo(1l) == 0 ||
+                        coa.getClassification().compareTo(2l) == 0 || coa.getClassification().compareTo(4l) == 0) {
+                    budgetGroup.setMinCode(coa);
+                    budgetGroup.setMaxCode(coa);
                 }
-                query.setDate("updatedtimestamp", new Date());
-                query.executeUpdate();
-                budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id = ?", bgroupId);
+                budgetGroup.setMajorCode(null);
+                budgetGroupService.applyAuditing(budgetGroup);
+                budgetGroup = budgetGroupService.persist(budgetGroup);
                 if (coa.getType().compareTo('E') == 0 || coa.getType().compareTo('A') == 0) {
                     coa.setBudgetCheckReq(true);
                     coa = chartOfAccountsService.update(coa);
                 }
             }
+
         } catch (final ValidationException e)
         {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),

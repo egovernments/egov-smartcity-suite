@@ -1,42 +1,44 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
 <html>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
@@ -44,14 +46,16 @@
 <title><s:text name="contingent.bill" /></title>
 <sx:head />
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js"></script>
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+	src="${pageContext.request.contextPath}/resources/javascript/contingentBillHelper.js?rnd=${app_release_no}"></script>
+<link rel="stylesheet"
+	href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
 	TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
 <script type="text/javascript"
-	src="/EGF/resources/javascript/tabber2.js"></script>
+	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
 
@@ -312,7 +316,7 @@ var makeVoucherDetailTableSubledger = function() {
 {key:"subledgerCode",label:'Subledger Code',  formatter:subledgerFormatter("billDetailsTableSubledger",".subledgerCode","text")},
 {key:"detailCode",label:'Entity Code', formatter:detailcodeFormatter("billDetailsTableSubledger",".detailCode","text")},
 {key:"detailName",label:'Entity Name', formatter:detailnameFormatter("billDetailsTableSubledger",".detailName","text")},
-{key:"accounthead", label:'Account Head', width:600,formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
+{key:"accounthead", label:'Account Head', width:400,formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
 {key:"amount",label:'Amount',formatter:amountFormatter("billDetailsTableSubledger",".debitAmountDetail","text")},
 {key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTableSubledger',this)")},
 {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTableSubledger',this)")}
@@ -515,32 +519,28 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 									class="mandatory1">*</span></td>
 								<s:date name='commonBean.billDate' id="commonBean.billDateId"
 									format='dd/MM/yyyy' />
-								<td class="bluebox"><s:textfield name="commonBean.billDate"
-										id="billDate"
+								<td class="bluebox"><s:textfield id="billDate"
+										name="commonBean.billDate" value="%{commonBean.billDateId}"
+										data-date-end-date="0d"
 										onkeyup="DateFormat(this,this.value,event,false,'3')"
-										value="%{commonBean.billDateId}" /> <a tabindex="-1"
-									href="javascript:show_calendar('cbill.billDate');"
-									style="text-decoration: none">&nbsp;<img
-										src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A></td>
+										placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+										data-inputmask="'mask': 'd/m/y'" /></td>
 							</tr>
 							<%@include file="contingentBill-form.jsp"%>
 						</table>
 					</div>
-				<!-- 	<div class="tabbertab" id="checkList">
+					<div class="tabbertab" id="checkList">
 						<h2>Check List</h2>
 						<div class="yui-skin-sam" align="center">
 							<div id="checkListTable"></div>
 						</div>
 
 						<script>
-			   	makeCheckListTable();
-			   	document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
-	</script>
+			   				makeCheckListTable();
+			   				document.getElementById('checkListTable').getElementsByTagName('table')[0].width="800";
+						</script>
 
-
-						
-
-					</div> -->
+					</div>
 					<s:hidden name="actionName" id="actionName" />
 					<div class="tabbertab" id="approval">
 						<h2>Approval Information</h2>
@@ -568,7 +568,7 @@ autocompleteEntitiesBy20();
 document.getElementById("budgetReappRow").style.display="none";
 document.getElementById("billDetailsTableNet[0].detailTypes").value='<s:property value="%{detailTypeIdandName}"/>';
 var net=document.getElementById('billDetailsTableNet[0].glcodeDetail');
-//bootbox.alert("hii"+net.value+"text"+net.text);                         
+//bootbox.alert("hii"+net.value+"text"+net.text);   
 net.options[0] =new Option("----Choose----","-1");
 var i=1;           
 <s:iterator value="netPayList" status="stat">
@@ -640,12 +640,11 @@ loadDropDownCodesForAccountDetailType(null);
 function onSubmit()
 {
 	if(validate()){
-			document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
-    		document.cbill.submit();
-			
-		}else{
-			return false;
-			}
+		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
+    	return true;
+	}else{
+		return false;
+	}
 }
 </script>
 </body>

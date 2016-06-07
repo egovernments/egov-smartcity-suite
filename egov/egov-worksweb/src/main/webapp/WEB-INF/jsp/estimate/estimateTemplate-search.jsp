@@ -1,43 +1,44 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+<%@ include file="/includes/taglibs.jsp" %>
 <script>
 
 function setupSubTypes(elem){
@@ -79,13 +80,11 @@ function bodyOnLoad(){
 <title><s:text name='page.title.estimate.template.search'/></title>
 <body onload="bodyOnLoad()" class="yui-skin-sam">
 
-<script src="<egov:url path='resources/js/works.js'/>"></script>
-
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
    
 <div class="new-page-header">
-	Search Estimate Template
+	<s:text name="estimate.search.estimate.template"/>
 </div>   
- 
     <s:if test="%{hasErrors()}">
         <div id="errorstyle" class="alert alert-danger" >
           <s:actionerror/>
@@ -104,18 +103,15 @@ function bodyOnLoad(){
   <s:hidden name="typeOfWork" id="typeOfWork" />
   <s:hidden name="subTypeOfWork" id="subTypeOfWork" />
   
-  <div class="alert alert-danger" id="estimateTemplate_error"	style="display: none;"></div>
-  
-  
-<div class="panel panel-primary" data-collapsed="0" style="text-align:left">
+ <div class="alert alert-danger" id="estimateTemplate_error"	style="display: none;"></div>
+ <div class="panel panel-primary" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">
 		<div class="panel-title">
 		   <s:text name='title.search.criteria' />
 		</div>
 	</div>
 	<div class="panel-body">
-	   
-	  <div class="form-group">
+	  	<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <s:text name="estimate.work.type" /><span class="mandatory"></span>
 			</label>
@@ -129,7 +125,7 @@ function bodyOnLoad(){
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
 			</div>
-		</div>
+	  	</div>
 		
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
@@ -157,10 +153,9 @@ function bodyOnLoad(){
 			    <s:text name="estimate.template.search.status" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="0"  list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
+				<s:select headerKey="0" list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
 			</div>
 		</div>
-		
 	</div>
 </div>
   
@@ -172,14 +167,12 @@ function bodyOnLoad(){
 	</div>
 </div>
 
-
 <div class="row report-section">
    <s:if test="%{searchResult.fullListSize != 0}">
 		<div class="col-md-12 table-header text-left">
-		  Search Result
+		  <s:text name="searchEst.result"/>
 		</div>
    </s:if>	
-   			
    <div class="col-md-12 report-table-container">
 	   <%@ include file='estimateTemplate-searchResults.jsp'%> 
    </div>

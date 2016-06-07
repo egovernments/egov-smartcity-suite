@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
@@ -66,7 +67,7 @@
    		 <![CDATA[ from  Paymentheader ph where ph.voucherheader.id in (:param_0)]]>
    	 </query>
    	 <query name="getGlDetailForPayableCode">
-   		 <![CDATA[ select gld.detailTypeId,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId and billmis.voucherHeader = gl.voucherHeaderId and billmis.egBillregister.id=? and gl.glcodeId in (:param_1)]]>
+   		 <![CDATA[ select gld.detailTypeId.id,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl,EgBillregistermis billmis where gl.id=gld.generalLedgerId.id and billmis.voucherHeader = gl.voucherHeaderId and billmis.egBillregister.id=? and gl.glcodeId in (:param_1)]]>
    	 </query>
    	 <query name="getAcctDetailForBill">
    		 <![CDATA[ select billpd.accountDetailTypeId, billpd.accountDetailKeyId from EgBillPayeedetails billpd where billpd.egBilldetailsId = ?]]>
@@ -78,9 +79,9 @@
    		 <![CDATA[ select billpd.accountDetailTypeId, billpd.accountDetailKeyId from EgBillPayeedetails billpd,EgBilldetails bd where bd.id = billpd.egBilldetailsId and bd.debitamount>0 and bd.egBillregister.id = ? ]]>
    	 </query>
    	 <query name="getPayeeDetailsForPayableCodeForVoucher">
-   		 <![CDATA[ select gld.detailTypeId,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId and gl.creditAmount>0 and gl.voucherHeaderId.id=? and gl.glcodeId in (:param_1)]]>
+   		 <![CDATA[ select gld.detailTypeId.id,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.creditAmount>0 and gl.voucherHeaderId.id=? and gl.glcodeId in (:param_1)]]>
    	 </query>
    	 <query name="getPayeeDetailsForDebitCodeForVoucher">
-   		 <![CDATA[ select gld.detailTypeId,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId and gl.debitAmount>0 and gl.voucherHeaderId.id=? ]]>
+   		 <![CDATA[ select gld.detailTypeId.id,gld.detailKeyId from CGeneralLedgerDetail gld,CGeneralLedger gl where gl.id=gld.generalLedgerId.id and gl.debitAmount>0 and gl.voucherHeaderId.id=? ]]>
    	 </query>
  </hibernate-mapping>

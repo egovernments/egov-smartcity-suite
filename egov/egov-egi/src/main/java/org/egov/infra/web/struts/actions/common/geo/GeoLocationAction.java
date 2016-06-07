@@ -37,32 +37,31 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.struts.actions.common.geo;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.models.GeoKmlInfo;
-import org.egov.infstr.services.GeoLocationConstants;
-import org.egov.infstr.services.GeoLocationService;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.gis.model.GeoKmlInfo;
+import org.egov.infra.gis.service.GeoLocationConstants;
+import org.egov.infra.gis.service.GeoLocationService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @ParentPackage("egov")
 public class GeoLocationAction extends BaseFormAction {

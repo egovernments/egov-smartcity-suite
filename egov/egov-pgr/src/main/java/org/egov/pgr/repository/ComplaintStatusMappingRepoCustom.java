@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.pgr.repository;
 
-import java.util.List;
-import java.util.Set;
+package org.egov.pgr.repository;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.pgr.entity.ComplaintStatus;
+
+import java.util.List;
+import java.util.Set;
 
 public interface ComplaintStatusMappingRepoCustom {
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,29 +24,50 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.model.bills;
 
-public class EgBillSubType implements java.io.Serializable {
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 
-    /**
-     *
-     */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "EG_BILL_SUBTYPE")
+@SequenceGenerator(name = EgBillSubType.SEQ_EG_BILL_SUBTYPE, sequenceName = EgBillSubType.SEQ_EG_BILL_SUBTYPE, allocationSize = 1)
+public class EgBillSubType extends AbstractPersistable<Integer> implements java.io.Serializable {
+    
     private static final long serialVersionUID = 1350774346491188471L;
+    
+    public static final String SEQ_EG_BILL_SUBTYPE = "SEQ_EG_BILL_SUBTYPE";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EG_BILL_SUBTYPE, strategy = GenerationType.SEQUENCE)
     private Integer id;
+    
+    @Length(max = 120)
     private String name;
+    
+    @Length(max = 50)
+    @Column(name="expenditure_type")
     private String expenditureType;
 
     public Integer getId() {

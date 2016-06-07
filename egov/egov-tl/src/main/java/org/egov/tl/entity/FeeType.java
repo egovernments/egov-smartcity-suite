@@ -37,7 +37,11 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.entity;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,9 +50,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
 
 @Entity
 @SequenceGenerator(name = FeeType.SEQ, sequenceName = FeeType.SEQ, allocationSize = 1)
@@ -59,11 +60,7 @@ public class FeeType extends AbstractAuditable {
 
     public static final String SEQ = "seq_egtl_mstr_fee_type";
 
-    /**
-     * 
-     * Will be RANGE, FLAT, PERCENTAGE actually but as of now code is not written and no usecases fixing to RANGE only
-     */
-    public static enum FeeProcessType {
+    public enum FeeProcessType {
         RANGE
     }
 

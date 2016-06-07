@@ -1,48 +1,51 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
 <tr>
 	<td class="bluebox" colspan="5">
 		<table width="100%" cellspacing="0" cellpadding="0" border="0">
 			<tr>
-				<th class="bluebgheadtd" width="100%" colspan="5"><STRONG><s:text
-							name="contra.fromBank.header" /></STRONG></th>
+				<th class="bluebgheadtd" width="100%" colspan="5"><strong
+					style="font-size: 15px;"><s:text
+							name="contra.fromBank.header" /></strong></th>
 			</tr>
 		</table>
 	</td>
@@ -88,8 +91,9 @@
 	<td class="bluebox" colspan="5">
 		<table width="100%" cellspacing="0" cellpadding="0" border="0">
 			<tr>
-				<th class="bluebgheadtd" width="100%" colspan="5"><STRONG><s:text
-							name="contra.toBank.header" /></STRONG></th>
+				<th class="bluebgheadtd" width="100%" colspan="5"><strong
+					style="font-size: 15px;"><s:text
+							name="contra.toBank.header" /></strong></th>
 			</tr>
 		</table>
 	</td>
@@ -105,14 +109,15 @@
 				headerKey="" headerValue="----Choose----" /></td>
 	</s:if>
 	<s:if test="%{shouldShowHeaderField('department')}">
-		<td class="greybox"><s:text name="voucher.department" /> <s:if
+		<td id="interFundRow1" style="visibility: hidden" class="greybox"><s:text
+				name="voucher.department" /> <s:if
 				test="%{isFieldMandatory('department')}">
 				<span class="bluebox"><span class="mandatory1">*</span></span>
 			</s:if></td>
-		<td class="greybox"><s:select name="contraBean.toDepartment"
-				id="contraBean.toDepartment" list="dropdownData.departmentList"
-				listKey="id" listValue="name" headerKey=""
-				headerValue="----Choose----"
+		<td id="interFundRow2" style="visibility: hidden" class="greybox"><s:select
+				name="contraBean.toDepartment" id="contraBean.toDepartment"
+				list="dropdownData.departmentList" listKey="id" listValue="name"
+				headerKey="" headerValue="----Choose----"
 				value="voucherHeader.vouchermis.departmentid.id"
 				onChange="populateApproverDept(this);" /></td>
 	</s:if>
@@ -152,7 +157,7 @@
 	<td class="greybox"></td>
 	<td class="greybox"></td>
 </tr>
-<tr id="interFundRow" style="visibility: hidden">
+<tr id="interFundRow3" style="visibility: hidden">
 	<td class="greybox"></td>
 	<td class="greybox"><s:text name="Source Inter Fund code" />
 	<td class="greybox"><span class="mandatory1">*</span> <s:select
@@ -175,7 +180,7 @@
 		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:radio name="contraBean.modeOfCollection"
 			id="modeOfCollection" list="%{modeOfCollectionMap}"
-			onclick="toggleChequeAndRefNumber(this)" /></td>
+			onclick="toggleChequeAndRefNumber(this)" checked="checked"/></td>
 	<td class="bluebox"></td>
 	<td class="bluebox"></td>
 </tr>
@@ -183,17 +188,17 @@
 <tr id="chequeGrid">
 	<td class="greybox"></td>
 	<td class="greybox"><span id="mdcNumber"><s:text
-				name="contra.chequeNumber" /></span> <span class="greybox"><span
+				name="contra.refNumber" /></span> <span class="greybox"><span
 			class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="contraBean.chequeNumber"
 			id="chequeNum" value="%{contraBean.chequeNumber}" /></td>
 	<td class="greybox"><span id="mdcDate"><s:text
-				name="contra.chequeDate" /></span></td>
-	<td class="greybox"><s:textfield name="contraBean.chequeDate"
-			id="chequeDate" onkeyup="DateFormat(this,this.value,event,false,'3')" />
-		<a href="javascript:show_calendar('cbtbform.chequeDate');"
-		style="text-decoration: none">&nbsp;<img tabIndex="-1"
-			src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+				name="contra.refDate" /></span></td>
+	<td class="greybox"><s:textfield id="chequeDate"
+			name="contraBean.chequeDate" data-date-end-date="0d"
+			onkeyup="DateFormat(this,this.value,event,false,'3')"
+			placeholder="DD/MM/YYYY" class="form-control datepicker"
+			data-inputmask="'mask': 'd/m/y'" /></td>
 
 </tr>
 

@@ -1,42 +1,44 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 
 <%@ page language="java"%>
@@ -44,7 +46,7 @@
 
 <head>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252" />
 <title>Create Voucher From Bill</title>
@@ -63,7 +65,7 @@
 			</div>
 			<div id="listid" style="display: block">
 				<br />
-				<div align="center">
+				<div align="left">
 					<font style='color: red; font-weight: bold'>
 						<p class="error-block" id="lblError"></p>
 					</font> <span class="mandatory1"> <font
@@ -90,19 +92,17 @@
 
 						<tr>
 							<td class="greybox">From Date</td>
-							<td class="greybox"><s:textfield
-									name="voucherTypeBean.voucherDateFrom" id="voucherDateFrom"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-								href="javascript:show_calendar('billVoucher.voucherDateFrom');"
-								style="text-decoration: none">&nbsp;<img tabIndex=-1
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							<td class="greybox"><s:textfield id="voucherDateFrom"
+									name="voucherTypeBean.voucherDateFrom" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 							<td class="greybox">To Date</td>
-							<td class="greybox"><s:textfield
-									name="voucherTypeBean.voucherDateTo" id="voucherDateTo"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-								href="javascript:show_calendar('billVoucher.voucherDateTo');"
-								style="text-decoration: none">&nbsp;<img tabIndex=-1
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							<td class="greybox"><s:textfield id="voucherDateTo"
+									name="voucherTypeBean.voucherDateTo" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" />
 						</tr>
 						<tr>
 							<td class="bluebox"><s:text name="bill.Number" /></td>
@@ -125,7 +125,7 @@
 						<td><s:submit value="Search" onclick="return validate()"
 								cssClass="buttonsubmit" />&nbsp;</td>
 						<td><input type="button" value="Reset" class="button"
-							onclick="return resetForm()" />&nbsp;</td>
+							onclick="return resetForm();" />&nbsp;</td>
 						<td><input type="button" value="Close"
 							onclick="javascript:window.close()" class="button" />&nbsp;</td>
 					</tr>
@@ -133,7 +133,7 @@
 			</div>
 		</div>
 		<s:if
-			test="%{preApprovedVoucherList.size!=0 || preApprovedVoucherList!=null}">
+			test="%{preApprovedVoucherList.size!=0 && preApprovedVoucherList!=null}">
 			<div id="listid" style="display: block">
 				<table width="100%" align="center" class="tablebottom">
 					<tr>
@@ -190,9 +190,6 @@ function onloadtask(){
 function validate()
 {
 	
-	var fromDate=document.getElementById('voucherDateFrom').value;
-	var toDate=document.getElementById('voucherDateTo').value;
-
 	var expType=document.getElementById('expType').value;
 	
 	
@@ -202,12 +199,6 @@ function validate()
 		return false;
 		}
 	
-	
-	 if (fromDate > toDate) {
-		bootbox.alert("Invalid Date Range! From Date cannot be after To Date!");
-		return false;
-		}  
-
 	
 	 document.billVoucher.action='${pageContext.request.contextPath}/voucher/billVoucher-lists.action';
 	 document.billVoucher.submit();
@@ -224,7 +215,7 @@ return true;
 	{
 
 		document.getElementById("expType").value=-1;
-		document.getElementById("deptLabel").value=-1;
+		document.getElementById("departmentid").value=-1;
 		document.getElementById("voucherDateFrom").value="";
 		document.getElementById("voucherDateTo").value="";
 		document.getElementById("billNumber").value="";

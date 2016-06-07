@@ -40,18 +40,18 @@
 
 package org.egov.tl.repository;
 
-import java.util.List;
-
 import org.egov.tl.entity.Validity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ValidityRepository extends JpaRepository<Validity, Long> {
 
-    List<Validity>findByNatureOfBusinessIdAndLicenseCategoryId(Long natureOfBusiness, Long licenseCategory);
-    
-    List<Validity>findByNatureOfBusinessId(Long natureOfBusiness);
-    
-    List<Validity>findByLicenseCategoryId(Long licenseCategory);
+    List<Validity> findByNatureOfBusinessIdAndLicenseCategoryId(Long natureOfBusiness, Long licenseCategory);
+
+    List<Validity> findByNatureOfBusinessId(Long natureOfBusiness);
+
+    List<Validity> findByLicenseCategoryId(Long licenseCategory);
 }

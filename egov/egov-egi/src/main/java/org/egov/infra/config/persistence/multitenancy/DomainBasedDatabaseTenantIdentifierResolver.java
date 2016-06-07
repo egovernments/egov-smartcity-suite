@@ -37,16 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.config.persistence.multitenancy;
 
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 
 public class DomainBasedDatabaseTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
 	@Override
 	public String resolveCurrentTenantIdentifier() {
-		return EgovThreadLocals.getTenantID() == null ? "ezgovDatabasePool" : EgovThreadLocals.getTenantID();
+		return ApplicationThreadLocals.getTenantID() == null ? "ezgovDatabasePool" : ApplicationThreadLocals.getTenantID();
 	}
 
 	@Override

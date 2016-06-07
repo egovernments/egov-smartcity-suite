@@ -1,70 +1,56 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.pims.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.eis.entity.EmployeeView;
-import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.Sequence;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -74,6 +60,16 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -90,24 +86,18 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	private final String EMPVIEWDEPTIDSLOGGEDINUSER="EMPVIEW-DEPTIDS-LOGGEDINUSER";
 	private static final String EMPVIEWACTIVEEMPS="EMPVIEW-ACTIVE-EMPS"; 
 	private static final String EMPVIEWEMPSLASTASSPRD="EMPVIEW-EMPS-LASTASSPRD";
-	private CommonsService commonsService;
-	private SequenceGenerator sequenceGenerator;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
 	
 	@Autowired
-	private AppConfigValueService appConfigValuesService;	
+	private AppConfigValueService appConfigValuesService;
+
+	@Autowired
+	private EgwStatusHibernateDAO egwStatusHibernateDAO;
     
 	public Session  getCurrentSession() {
 		return entityManager.unwrap(Session.class);
-	}
-	public SequenceGenerator getSequenceGenerator() {
-		return sequenceGenerator;
-	}
-
-	public void setSequenceGenerator(SequenceGenerator sequenceGenerator) {
-		this.sequenceGenerator = sequenceGenerator;
 	}
 	private ScriptService scriptService;
 
@@ -119,15 +109,6 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 		this.scriptService = scriptService;
 	}
 
-
-	
-	public CommonsService getCommonsService() {
-		return commonsService;
-	}
-
-	public void setCommonsService(CommonsService commonsService) {
-		this.commonsService = commonsService;
-	}
 
 	/**
 	 * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
@@ -234,20 +215,6 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 		return personalInfEntities;
 	}
 
-	/**
-	 * Returns the generated employee code. The employee code can be based on the employee type.
-	 * This calls the script named "pims.employeeCode.generator" to get the next code value.
-	 * @param employee
-	 * @return
-	 */
-	public String generateEmployeeCode(PersonalInformation employee) {
-		//SequenceGenerator sequenceGenerator = new SequenceGenerator(sessionFactory);
-		Object result=scriptService.executeScript("pims.employeeCode.generator", scriptService.createContext("sequenceGenerator",sequenceGenerator,"employee", employee));
-		if (result instanceof Sequence) {
-			return ((Sequence)result).getFormattedNumber();
-		}
-		return result.toString();
-	}
 
 	/**
 	 * Returns List of Employees for the given status  and
@@ -324,7 +291,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 
 	private Criteria getCriteriaForEmpSearchByStatus(Integer statusid ,Date fromDate,Date toDate)
 	{
-		EgwStatus egwStatus=commonsService.getEgwStatusById(statusid);
+		EgwStatus egwStatus=egwStatusHibernateDAO.findById(statusid,false);
 		DetachedCriteria detachCriteriaPersonalInfo=DetachedCriteria.forClass(PersonalInformation.class,"emp");
 		if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Employed"))
 		{

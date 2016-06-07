@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.search;
 
-import java.util.List;
+package org.egov.infstr.search;
 
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
+
+import java.util.List;
 
 /**
  * Represents a named query being used for search functionality

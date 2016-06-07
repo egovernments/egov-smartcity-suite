@@ -2,6 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -116,13 +117,7 @@ function checkValue(obj){
 		getControlInBranch(tbl.rows[rowobj.rowIndex],'toRange').value="";
 		return false;
 	} 
-  	var lastRow = (tbl.rows.length)-1;
-    var curRow=rowobj.rowIndex; 
-    if(curRow!=lastRow){
-		var uomFromVal1=getControlInBranch(tbl.rows[rowobj.rowIndex+1],'fromRange').value;
-		if(uomToval!=uomFromVal1)
-			getControlInBranch(tbl.rows[rowobj.rowIndex+1],'fromRange').value=uomToval; 
-    }
+	$(obj).closest('tr').next('tr').find('td:eq(0) input').val(toRange);
 }
 
 function deleteThisRow(obj){
@@ -165,16 +160,29 @@ function deleteThisRow(obj){
 function validateDetailsBeforeSubmit(){
 	var tbl=document.getElementById("result");
     var tabLength = (tbl.rows.length)-1;
-    var uomFromval,uomToval;
+    var fromRange,toRange,rate;
     for(var i=1;i<=tabLength;i++){
     	fromRange=getControlInBranch(tbl.rows[i],'fromRange').value;
     	toRange=getControlInBranch(tbl.rows[i],'toRange').value;
+    	rate=getControlInBranch(tbl.rows[i],'rate').value;
     	if(fromRange!='' && toRange!='' && (eval(fromRange)>=eval(toRange))){
     		bootbox.alert("\"To Range\" should be greater than \"From Range\" for row "+(i)+".");
     		getControlInBranch(tbl.rows[i],'toRange').value="";
     		getControlInBranch(tbl.rows[i],'toRange').focus();
     		return false;
-    	}  
+    	}
+    	if(!toRange){
+    		bootbox.alert("Please enter \"To(days)\" for row "+(i)+".");
+    		getControlInBranch(tbl.rows[i],'toRange').value="";
+    		getControlInBranch(tbl.rows[i],'toRange').focus();
+    		return false;
+    	}
+    	if(!rate){
+    		bootbox.alert("Please enter \"Penalty Rate(In Perc)\" for row "+(i)+".");
+    		getControlInBranch(tbl.rows[i],'rate').value="";
+    		getControlInBranch(tbl.rows[i],'rate').focus();
+    		return false;
+    	}
     }
     return true;
 }

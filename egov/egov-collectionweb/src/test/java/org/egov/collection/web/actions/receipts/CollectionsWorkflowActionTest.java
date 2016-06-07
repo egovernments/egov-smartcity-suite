@@ -134,7 +134,7 @@ public class CollectionsWorkflowActionTest {/* extends
 
 		eisCommonsManagerMock = EasyMock.createMock(EisCommonsManager.class);
 		auditEventService = new AuditEventService();
-		EgovThreadLocals.setUserId("1");
+		ApplicationThreadLocals.setUserId("1");
 		genericService.setType(AuditEvent.class);
 		auditEventService.setAuditEventPersistenceService(genericService);
 		collectionsUtil.setAuditEventService(auditEventService);

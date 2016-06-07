@@ -1,43 +1,59 @@
-/*#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------*/
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 $(document).ready(function(){
+	
+	$('#donationMasterTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 9,
+			"orderable": false
+		} ]
+	});
 	 $('#propertyType').change(function(){
 	  $.ajax({
 			url: "/wtms/ajax-PipeSizesByPropertyType",     
@@ -83,32 +99,88 @@ $(document).ready(function(){
 		  
 	  });
 	  
+	  $('#statusdiv').hide();
+		
+		var activeDiv = $('#reqAttr').val();
+		
+		if (activeDiv =='false')
+			{
+			$('#statusdiv').hide();
+		     $('#addnewid').hide();
+		     $('#resetid').show();
+			}
+		else
+			{
+			$('#resetid').hide();
+			$('#statusdiv').show();
+			 $('#addnewid').show();
+			}
+	  
 	  $('#buttonid').click(function() {
 		  if ($( "#donationDetailsform" ).valid())
 			  {
+			  if($('#effectiveDate').val() != '' && $('#toDate').val() != ''){
+					var start = $('#effectiveDate').val();
+					var end = $('#toDate').val();
+					var stsplit = start.split("/");
+						var ensplit = end.split("/");
+						
+						start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+						end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+						if(!validRange(start,end))
+						{
+						return false;
+						}
+				}
+			  
+			  var val = parseFloat($('#donationAmount').val());
+			  if (isNaN(val) || (val === 0)  )
+			  {
+				  bootbox.alert("Please Enter Donation amount");
+			      return false;
+			     
+			  }
 				   var minimum = getMinimumPipeSizeInInch();
 					var maximum = getMaximumPipeSizeInInch();
 					if( (minimum > 0) && (maximum  > 0) ){
 						if (minimum > maximum){
-							bootbox.alert("Minimum PipeSize  should not be greater than the maximum PipeSize");
+							bootbox.alert("Minimum PipeSize should not be greater than the maximum PipeSize");
 							return false;
-						}else{
-							 if(!validateTapExecutionDate())
-								{
-								return false;
-								
-								}
-							  else{
+						}
+						else if(minimum == maximum) {
+							bootbox.alert("Minimum PipeSize should not be same as maximum PipeSize");
+							return false;
+					    }
+						else{
 								  if($('#effectiveDate').val() !=undefined)
 							     donationheadercombination();
-							  }
-
 						}
 					}
 			  }
 		  		});
+	  
+	  $("#resetid").click(function(){
+			$("#donationDetailsform")[0].reset();
+			window.open("/wtms/masters/donationMaster/", "_self");
+			});
+
      });
 
+function validRange(start, end) {
+    var startDate = Date.parse(start);
+    var endDate = Date.parse(end);
+	
+    // Check the date range, 86400000 is the number of milliseconds in one day
+    var difference = (endDate - startDate) / (86400000 * 7);
+    if (difference < 0) {
+    	bootbox.alert("From date should not be greater than the To Date.");
+		$('#end_date').val('');
+		return false;
+		} else {
+		return true;
+	}
+    return true;
+}
 
 function getMinimumPipeSizeInInch() {
 	var minPipeSize = "";
@@ -151,6 +223,14 @@ function getMaximumPipeSizeInInch()
 	}
 function donationheadercombination()
 {
+	var activeDiv = $('#reqAttr').val();
+	if (activeDiv =='false')
+		{
+		var activeid = true;
+		}
+	else{
+		var activeid = ( $("#activeid").is(':checked') ) ? true : false;
+	    }
 	$.ajax({
         url: '/wtms/ajax-donationheadercombination',
         type: "GET",
@@ -159,14 +239,17 @@ function donationheadercombination()
         	categoryType: $('#connectionCategorie').val(),
         	usageType: $('#usageType').val(),
         	maxPipeSize :$('#pipeSize').val(),
-        	minPipeSize :$('#minpipeSize').val()
+        	minPipeSize :$('#minpipeSize').val(),
+        	fromDate : $('#effectiveDate').val(),
+        	toDate : $('#toDate').val(),
+        	activeid : activeid
         },
         dataType : 'json',
         success: function (response) {
 			console.log("success"+response);
-			if(response > 0){
-				var res = overwritedonation(response)
-				if(res==false)
+			if(response){
+				response=JSON.parse(response);
+				bootbox.alert("For the Selected Combination, record already present with the H.S.C Pipesize range : "+response.maxPipeSize+" and "+response.minPipeSize +" and date range "+response.fromDate+ "and "+response.toDate);
 				return false;
     			}
 			else{
@@ -182,48 +265,17 @@ function donationheadercombination()
 
 function overwritedonation(res)
 {
-	var r=confirm("With entered combination ,Donation amount is already Present, Do you want to overwrite it?")
-	if (r ==true){	
-		console.log('came as true');
-		document.forms[0].submit();
-	}
-	else
-	{
-		console.log('came as false');
-	    //document.forms[0].reset();
-	    return false;
-	}
+	document.forms[0].submit();
+	
 }
-	function compareDate(dt1, dt2){			
-	/*******		Return Values [0 if dt1=dt2], [1 if dt1<dt2],  [-1 if dt1>dt2]     *******/
-		var d1, m1, y1, d2, m2, y2, ret;
-		dt1 = dt1.split('/');
-		dt2 = dt2.split('/');
-		ret = (eval(dt2[2])>eval(dt1[2])) ? 1 : (eval(dt2[2])<eval(dt1[2])) ? -1 : (eval(dt2[1])>eval(dt1[1])) ? 1 : (eval(dt2[1])<eval(dt1[1])) ? -1 : (eval(dt2[0])>eval(dt1[0])) ? 1 : (eval(dt2[0])<eval(dt1[0])) ? -1 : 0 ;										
-		return ret;
-	}
-	function getTodayDate()
-	{
-	var date;
-	    var d = new Date();
-	var curr_date = d.getDate();
-	var curr_month = d.getMonth();
-		curr_month++;
-	var curr_year = d.getFullYear();
-	    date=curr_date+"/"+curr_month+"/"+curr_year;
-	    return date;
-	}
-	function validateTapExecutionDate() {
-	var formdate= $('#effectiveDate').val();
-	var todaysDate=getTodayDate();
-	if(compareDate(formdate,todaysDate) == 1  )
-	{		
-		bootbox.alert('Effective Date should not be less than todays date');
-		obj.value="";
-		return false;
-		}
-	else
-		{
-		return true;
-		}
+
+function edit(donationHeader)
+{
+	window.open("/wtms/masters/donationMaster/edit/"+donationHeader, "_self");
+	
+	
 }
+
+$('#addnewid').click(function() {
+	window.open("/wtms/masters/donationMaster/", "_self");
+});

@@ -1,42 +1,42 @@
-/*#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------*/
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 var tableContainer;
 jQuery(document).ready(function ($) {
 
@@ -88,12 +88,6 @@ jQuery(document).ready(function ($) {
 				    	addNewRowToTable(currentIndex);
 			});
 
-	
-/*	$('#unitrate').keypress(function(e) {
-		var k = e.charCode;
-		return(k == 0 || (k >= 48 && k <= 57));
-	});*/
-	
 	$('#schedleOfrateBtn').click(function() {  
 			$('#scheduleOfRateformResult').attr('method', 'post');
 	 	$('#scheduleOfRateformResult').attr('action', '/adtax/rates/create');
@@ -112,6 +106,9 @@ jQuery(document).ready(function ($) {
 		
 	var datadcbtbl = $('#search-scheduleofrate-table');
 	$('#searchScheduleOfRate').click(function(e){
+	if(!validateInput())
+		return false;
+			
 		datadcbtbl.dataTable({
 			"ajax": {url:"/adtax/rates/search-for-scheduleofrate",
 				type:"POST",
@@ -124,14 +121,24 @@ jQuery(document).ready(function ($) {
 	        	}
 			},
 			"sPaginationType": "bootstrap",
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+			"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"bDestroy": true,
 			"autoWidth": false,
+			"oTableTools" : {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons" : [ "xls", "pdf", "print" ]
+			},
 			"columns" : [
-		      { "data" : "unitFrom", "title":"Unit From"},
-			  { "data" : "unitTo", "title": "Unit To"},
-			  { "data" : "amount", "title": "Unit Of Measure"}
+			  { "data" : "financialyear", "title":"Financial Year"},
+			  { "data" : "unitfactor", "title":"Unit Rate"},
+			  { "data" : "category", "title":"Category"},
+			  { "data" : "subCategory", "title":"Sub Category"},
+			  { "data" : "unitofmeasure", "title":"Unit Of Measure"},
+			  { "data" : "classtype", "title":"Rate Class"},
+		      { "data" : "unitfrom", "title":"Unit From"},
+			  { "data" : "unitto", "title": "Unit To"},
+			  { "data" : "amount", "title": "Amount"}
 			  
 			  ]
 		});
@@ -199,4 +206,36 @@ function addNewRowToTable(currentIndex)
 				$('#advertisementRatesDetailsUnitFrom'+(currentIndex - 1)).val($('#advertisementRatesDetailsUnitTo'+(currentIndex - 2)).val());
 				
 	    	}
+}
+
+function getRow(obj) {
+	if (!obj) {
+		return null;
+	}
+	tag = obj.nodeName.toUpperCase();
+	while (tag != "BODY") {
+		if (tag == "TR") {
+			return obj;
+		}
+		obj = obj.parentNode;
+		tag = obj.nodeName.toUpperCase();
+	}
+	return null;
+}
+
+function validateInput()
+{
+	var catVal= document.getElementById("category").value;
+	var subCatVal=document.getElementById("subCategory").value;
+	var uomVal=document.getElementById("unitofmeasure").value;
+	var rateClassVal=document.getElementById("rateClass").value;
+	var financialYearVal=document.getElementById("financialyear").value;
+	
+	if(catVal=="" && subCatVal=="" && uomVal=="" && rateClassVal=="" && financialYearVal=="")
+		{
+		bootbox.alert("Please select atleast one field", function(result){
+		});
+		return false;
+		}
+	return true;
 }

@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.web.actions.search;
 
 import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
@@ -73,9 +74,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 
-/**
- * The Class TradeSearchAction.
- */
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = NEW, location = "searchTrade-new.jsp") })
@@ -126,7 +124,7 @@ public class SearchTradeAction extends BaseFormAction {
     public void search() throws IOException {
         List<SearchForm> resultList = new ArrayList<SearchForm>();
         String result = null;
-        List<TradeLicense> licenses = tradeLicenseService
+        final List<TradeLicense> licenses = tradeLicenseService
                 .searchTradeLicense(applicationNumber, licenseNumber, oldLicenseNumber, categoryId, subCategoryId,
                         tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo);
         resultList = prepareOutput(licenses);
@@ -168,17 +166,18 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setSubCategoryName(license.getTradeName().getName());
             searchFormInfo.setTradeTitle(license.getNameOfEstablishment());
             searchFormInfo.setTradeOwnerName(license.getLicensee().getApplicantName());
-            searchFormInfo.setPropertyAssessmentNo(license.getPropertyNo());
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
+            searchFormInfo.setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
             licenseActions = new ArrayList<String>();
             licenseActions.add("View Trade");
-            //FIXME EgwStatus usage should be removed from here
+            // FIXME EgwStatus usage should be removed from here
             if (license.getEgwStatus() != null) {
-                if ((roleName.contains(Constants.ROLE_BILLCOLLECTOR)) && !license.isPaid() && !license.isStateRejected()
-                         && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+                if (roleName.contains(Constants.ROLE_BILLCOLLECTOR) && !license.isPaid() && !license.isStateRejected()
+                        && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Collect Fees");
-                else if ( license.getStatus() != null
-                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE) && !(roleName.contains(Constants.ROLE_BILLCOLLECTOR)))
+                else if (license.getStatus() != null
+                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)
+                        && !roleName.contains(Constants.ROLE_BILLCOLLECTOR))
                     licenseActions.add("Print Certificate");
             } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");

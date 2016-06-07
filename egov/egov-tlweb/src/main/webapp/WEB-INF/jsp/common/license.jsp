@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <script>
@@ -115,7 +116,7 @@ function getUom(){
 </div>
 
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.remarks.lbl' /></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.remarks' /></label>
     <div class="col-sm-3 add-margin">
          <s:textarea name="remarks" id="remarks" value="%{remarks}" maxlength="250" class="form-control"/>
     </div>

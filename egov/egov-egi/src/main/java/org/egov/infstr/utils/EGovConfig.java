@@ -37,18 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.utils;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+package org.egov.infstr.utils;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * The Class EGovConfig. Used to read the values from properties file and XMl configuration files

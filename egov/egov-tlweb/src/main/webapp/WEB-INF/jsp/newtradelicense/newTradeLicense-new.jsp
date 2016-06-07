@@ -37,8 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
-<sx:head/>
 
 <html>
 	<head>
@@ -250,7 +250,6 @@
 							} else{
 								if(data.boundaryDetails!=null){
 									jQuery("#boundary").val(data.boundaryDetails.localityId);
-									jQuery("#zoneName").val(data.boundaryDetails.zoneName);
 									jQuery("#wardName").val(data.boundaryDetails.wardName);
 									jQuery('#parentBoundary').val(data.boundaryDetails.wardId);
 									jQuery("#address").val(data.propertyAddress);
@@ -275,9 +274,8 @@
                     document.getElementById("address").disabled=false;
 	            	document.getElementById("boundary").disabled=false;  
                 }
-            	document.getElementById("boundary").value='-1';
-            	document.getElementById("zoneName").value="";
-            	document.getElementById("wardName").value="";
+            	document.getElementById("boundary").value='-1'; 
+              	document.getElementById("wardName").value="";
             	document.getElementById("address").value="";
             }
 
@@ -313,8 +311,13 @@
 							<s:actionmessage theme="simple" />
 						</div>
 						</s:if>
-                 	
-                 	<s:form name="newTradeLicense" action="newTradeLicense" theme="css_xhtml"  enctype="multipart/form-data" 
+                 		<s:if test="%{getMessage() != null}">
+                 			<div class="alert alert-danger view-content" style="font-size: 18px;">
+							  <s:text name="%{getMessage()}" />
+							</div>
+                 		</s:if>
+                 		
+                 	<s:form name="newTradeLicense" action="newTradeLicense" theme="simple"  enctype="multipart/form-data" 
 					cssClass="form-horizontal form-groups-bordered" validate="true" >    
 					<s:push value="model"> 
 							<s:token/>
@@ -326,7 +329,7 @@
 							<s:hidden name="id" id="id" />
 							<s:hidden name="feeTypeId" id="feeTypeId" />
 							
-                        <div class="panel panel-primary" data-collapsed="0">
+                        <div class="panel panel-primary">
                             <div class="panel-heading">
                             <s:if test="%{mode=='edit'}">
 								<div class="panel-title" style="text-align:center">
@@ -349,19 +352,19 @@
                                 <div class="tab-content">
                                     <div class="tab-pane fade active in" id="tradedetails">
 	                                         <%@ include file='../common/licensee.jsp'%>
-	                                          <%@ include file='../common/address.jsp'%>
+	                                         <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
-												
-											<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-											<%@ include file='../common/commonWorkflowMatrix-button.jsp'%> 
-                                    </div>
+									</div>
                                     <div class="tab-pane fade" id="tradeattachments"> 
                                     	<%@include file="../common/documentUpload.jsp" %>
                                     </div>
-                            	</div>
+                                </div>
                             </div>
                         </div> 
-                        
+                        <div class="panel panel-primary" >
+                        	<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+							<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
+						</div>
                         </s:push>  
                     </s:form> 
                     </div>

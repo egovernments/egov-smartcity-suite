@@ -1,48 +1,50 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.ptis.actions.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
@@ -68,6 +70,7 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -89,18 +92,17 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -115,6 +117,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -169,6 +172,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private UserService userService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
 
     @Autowired
@@ -186,18 +190,26 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Autowired
     private NoticeService noticeService;
 
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
+
     // Model and View data
     private Long mutationId;
     private String assessmentNo;
     private String wfErrorMsg;
     private BigDecimal currentPropertyTax;
+    private BigDecimal currentPropertyTaxFirstHalf;
+    private BigDecimal currentPropertyTaxSecondHalf;
     private BigDecimal currentPropertyTaxDue;
     private BigDecimal currentWaterTaxDue;
     private BigDecimal arrearPropertyTaxDue;
     private List<DocumentType> documentTypes = new ArrayList<>();
     private BasicProperty basicproperty; // Do not change variable name, struts2
     // crazy.
-    private Integer reportId = -1;
+    private String reportId;
     private Long transfereeId;
     private double marketValue;
     private String transferReason;
@@ -221,6 +233,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Map<String, String> guardianRelationMap;
     private List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
     private String actionType;
+    private boolean digitalSignEnabled;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -247,6 +260,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 wfErrorMsg = getText("error.msg.child.underworkflow");
                 return TARGET_WORKFLOW_ERROR;
             }
+            final Map<String, BigDecimal> propertyTaxDetails = propertyService
+                    .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
+            Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
+                    new Date());
+            currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
+            currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
+            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
             currentWaterTaxDue = propertyService.getWaterTaxDues(assessmentNo);
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
                 setTaxDueErrorMsg(getText("taxdues.error.msg", new String[] { PROPERTY_TRANSFER }));
@@ -406,7 +426,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/approve")
     public String approve() {
         transitionWorkFlow(propertyMutation);
-        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation); 
+        transferOwnerService.approvePropertyTransfer(basicproperty, propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         approverName = "";
         Assignment assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
@@ -427,24 +447,21 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(
-                transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo),
-                getSession());
+        reportId = reportViewerUtil.addReportToTempCache(
+                transferOwnerService.generateAcknowledgement(basicproperty, propertyMutation, cityName, cityLogo));
         return PRINTACK;
     }
 
     @SkipValidation
     @Action(value = "/printNotice")
     public String printNotice() {
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
                 (String) request.getSession().getAttribute("citylogo"));
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        
+
         final String cityGrade = (request.getSession().getAttribute("cityGrade") != null ? request.getSession()
                 .getAttribute("cityGrade").toString() : null);
         Boolean isCorporation;
@@ -453,12 +470,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             isCorporation = true;
         } else
             isCorporation = false;
-        
+
         ReportOutput reportOutput = transferOwnerService.generateTransferNotice(basicproperty, propertyMutation,
-                cityName, cityLogo, actionType,isCorporation);
+                cityName, cityLogo, actionType, isCorporation);
         if (!WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
-            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else {
             PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
                     propertyMutation.getApplicationNo());
@@ -514,19 +530,21 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation = (PropertyMutation) persistenceService.find("From PropertyMutation where id = ? ",
                         mutationId);
                 basicproperty = propertyMutation.getBasicProperty();
-                historyMap = propertyService.populateHistory(propertyMutation.getState());
+                historyMap = propertyService.populateHistory(propertyMutation);
             }
-
             final Map<String, BigDecimal> propertyTaxDetails = propertyService
                     .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
-            currentPropertyTax = propertyTaxDetails.get(CURR_DMD_STR);
-            currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR)
-                    .subtract(propertyTaxDetails.get(CURR_COLL_STR));
-            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
+
+            Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
+                    new Date());
+            currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
+            currentPropertyTaxFirstHalf = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
+            currentPropertyTaxSecondHalf = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
             setGuardianRelationMap(GUARDIAN_RELATION);
         }
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
     }
 
     @Override
@@ -556,38 +574,40 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     if (document.isEnclosed() && document.getFiles().isEmpty())
                         addActionError(document.getType()
                                 + " document marked as enclosed, please add the relavent documents.");
-        // To set proxy list at approval stage 
-        if(propertyMutation.getState()!=null && propertyMutation.getState().getValue()!=null && 
-                propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED))
+        // To set proxy list at approval stage
+        if (propertyMutation.getState() != null && propertyMutation.getState().getValue() != null
+                && propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED))
             propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
 
         if (propertyMutation.getTransfereeInfosProxy().isEmpty())
             addActionError("Transfree info is mandatory, add atleast one transferee info.");
-        else{
+        else {
             for (final PropertyMutationTransferee propOwnerInfo : propertyMutation.getTransfereeInfosProxy()) {
                 if (StringUtils.isBlank(propOwnerInfo.getTransferee().getName()))
                     addActionError(getText("mandatory.ownerName"));
                 if (StringUtils.isBlank(propOwnerInfo.getTransferee().getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
-                if(propOwnerInfo.getTransferee().getGender()==null)
-                	addActionError(getText("mandatory.gender"));
+                if (propOwnerInfo.getTransferee().getGender() == null)
+                    addActionError(getText("mandatory.gender"));
                 if (StringUtils.isBlank(propOwnerInfo.getTransferee().getGuardianRelation()))
                     addActionError(getText("mandatory.guardianrelation"));
                 if (StringUtils.isBlank(propOwnerInfo.getTransferee().getGuardian()))
                     addActionError(getText("mandatory.guardian"));
             }
-              
-            int count=propertyMutation.getTransfereeInfosProxy().size();
-            for (int i=0;i<count;i++){
-                PropertyMutationTransferee owner = propertyMutation.getTransfereeInfosProxy().get(i);  
-                for(int j=i+1; j<=count-1; j++){
+
+            int count = propertyMutation.getTransfereeInfosProxy().size();
+            for (int i = 0; i < count; i++) {
+                PropertyMutationTransferee owner = propertyMutation.getTransfereeInfosProxy().get(i);
+                for (int j = i + 1; j <= count - 1; j++) {
                     PropertyMutationTransferee owner1 = propertyMutation.getTransfereeInfosProxy().get(j);
-                    if(owner.getTransferee().getMobileNumber().equalsIgnoreCase(owner1.getTransferee().getMobileNumber()) && 
-                            owner.getTransferee().getName().equalsIgnoreCase(owner1.getTransferee().getName())){
-                        addActionError(getText("error.transferee.duplicateMobileNo", "",owner.getTransferee().getMobileNumber().concat(",").concat(owner.getTransferee().getName())));
+                    if (owner.getTransferee().getMobileNumber()
+                            .equalsIgnoreCase(owner1.getTransferee().getMobileNumber())
+                            && owner.getTransferee().getName().equalsIgnoreCase(owner1.getTransferee().getName())) {
+                        addActionError(getText("error.transferee.duplicateMobileNo", "", owner.getTransferee()
+                                .getMobileNumber().concat(",").concat(owner.getTransferee().getName())));
                     }
                 }
-            } 
+            }
         }
 
         if (getMutationId() != null && null != propertyMutation
@@ -601,7 +621,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             else if (propertyMutation.getMarketValue().compareTo(BigDecimal.ZERO) < 1)
                 addActionError("Please enter a valid Market Value");
         }
-       
+
         if (loggedUserIsMeesevaUser || !propertyByEmployee) {
             if (null != basicproperty && null == propertyService.getUserPositionByZone(basicproperty)) {
                 addActionError(getText("notexists.position"));
@@ -807,6 +827,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         return currentPropertyTax;
     }
 
+    public BigDecimal getCurrentPropertyTaxFirstHalf() {
+        return currentPropertyTaxFirstHalf;
+    }
+
+    public BigDecimal getCurrentPropertyTaxSecondHalf() {
+        return currentPropertyTaxSecondHalf;
+    }
+
     public BigDecimal getCurrentPropertyTaxDue() {
         return currentPropertyTaxDue;
     }
@@ -852,12 +880,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         return arrearPropertyTaxDue;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     public void setTransfereeId(final Long transfereeId) {
@@ -1006,6 +1030,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setEnableApproverDetails(boolean enableApproverDetails) {
         this.enableApproverDetails = enableApproverDetails;
+    }
+
+    public boolean isDigitalSignEnabled() {
+        return digitalSignEnabled;
+    }
+
+    public void setDigitalSignEnabled(boolean digitalSignEnabled) {
+        this.digitalSignEnabled = digitalSignEnabled;
     }
 
 }

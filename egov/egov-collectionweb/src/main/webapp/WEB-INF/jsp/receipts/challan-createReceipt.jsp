@@ -1,42 +1,43 @@
 
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-     Copyright (C) <2015>  eGovernments Foundation
- 
-     The updated version of eGov suite of products as by eGovernments Foundation 
-     is available at http://www.egovernments.org
- 
-     This program is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     any later version.
- 
-     This program is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with this program. If not, see http://www.gnu.org/licenses/ or 
-     http://www.gnu.org/licenses/gpl.html .
- 
-     In addition to the terms of the GPL license to be adhered to in using this
-     program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
 <head>
@@ -50,10 +51,8 @@
 	#bankcodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
 </style>
 <script type="text/javascript">
-
 jQuery.noConflict();
 jQuery(document).ready(function() {
-  	 
      jQuery(" form ").submit(function( event ) {
     	 doLoadingMask();
     });
@@ -74,7 +73,37 @@ jQuery(document).ready(function() {
      	  }
      	  
       }).data('datepicker');
+     
+     var nowTemp = new Date();
+     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+      jQuery( "#challanDate").datepicker({ 
+     	 format: 'dd/mm/yyyy',
+     	 endDate: nowTemp, 
+     	 autoclose:true,
+         onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+       }).on('changeDate', function(ev) {
+     	  var string=jQuery(this).val();
+     	  if(!(string.indexOf("_") > -1)){
+     		  isDatepickerOpened=false; 
+     	  }
+       }).data('datepicker');
       
+      jQuery( "#receiptdate").datepicker({ 
+      	 format: 'dd/mm/yyyy',
+      	 endDate: nowTemp, 
+      	 autoclose:true,
+          onRender: function(date) {
+       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+       	  }
+        }).on('changeDate', function(ev) {
+      	  var string=jQuery(this).val();
+      	  if(!(string.indexOf("_") > -1)){
+      		  isDatepickerOpened=false; 
+      	  }
+        }).data('datepicker');
  });
 
 
@@ -481,18 +510,12 @@ function checkForCurrentDate(obj)
 	   //trim(obj,obj.value);
 	   dom.get("challan_dateerror_area").style.display="none";
 	   document.getElementById("challan_dateerror_area").innerHTML="";
-	   var currDate = "${currDate}";
 	   if(obj.value!="")
-	   if(!validateChequeDate(obj.value,currDate))
+	   if(!validateChequeDate(obj.value,document.getElementById('receiptdate').value))
 	   {
 	       dom.get("challan_dateerror_area").style.display="block";
 	       document.getElementById("challan_dateerror_area").innerHTML+=
 					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
-		   var keyCode = document.all? window.event.keyCode:event.which;
-		   if(keyCode==9) {
-	       window.scroll(0,0);
-		   }
-		   window.scroll(0,0);
 	       return false;
 	   }
    }
@@ -500,6 +523,11 @@ function checkForCurrentDate(obj)
 
 function onBodyLoad()
 {
+	<s:if test="%{model.id!=null}">
+	if(document.getElementById('challanDate').value!=""){
+		document.getElementById("challanDate").disabled=true;
+	}
+    </s:if>
 	<s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
 		loadDropDownCodesBank();
 	
@@ -754,7 +782,7 @@ var bankfuncObj;
 var bankArray;
 function loadDropDownCodesBank()
 {
-	var url = "/EGF/commons/Process.jsp?type=getAllBankName";
+	var url = "/EGF/voucher/common-ajaxGetAllBankName.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -800,7 +828,9 @@ function autocompletecodeBank(obj,myEvent)
 				oAutoComp.useShadow = true;
 				oAutoComp.maxResultsDisplayed = 15;
 				oAutoComp.useIFrame = true;
-				
+				bankfuncObj.applyLocalFilter = true;
+				bankfuncObj.queryMatchContains = true;
+				oAutoComp.minQueryLength = 0;
 			}
 		}
 		yuiflagBank[currRow] = 1;
@@ -922,6 +952,10 @@ function validate()
 			validation=false;
 		}
 	}
+	if(document.getElementById("receiptdate")!=null && document.getElementById("receiptdate").value==""){
+		document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.error.receiptdate" />' + '<br>';
+		validation=false;
+	}
     
 	if(validation==false){
 		dom.get("challan_error_area").style.display="block";
@@ -1009,12 +1043,6 @@ function validate()
 	 	<div class="highlight2"><s:text name="challan.findchallan.message" /></div>
 	</div>
 
-	<s:if test="%{model.id==null || hasErrors()}" >
-		<div class="buttonbottom" >
-			<input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
-		</div>
-	</s:if>
-
 </s:if>
 <s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
 	
@@ -1024,11 +1052,24 @@ function validate()
 		<%@ include file='challandetails.jsp'%>
 		</td>
 		</tr>
+		<div>
  		<tr>
     	<td>
     		<div class="subheadnew">
     		<span class="subheadsmallnew"><s:text name="challan.receipt.title.createReceipt"/></span>
     		</div>
+    		</td>
+    	</tr>
+    	<tr>
+    		<div class="billhead2" align="center">
+         	<td  class="bluebox"><s:text name="viewReceipt.receiptdate" /><span class="mandatory"/>
+                  <s:date name="receiptdate" var="cdFormat" format="dd/MM/yyyy"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <s:textfield id="receiptdate" name="receiptdate" value="%{cdFormat}" data-inputmask="'mask': 'd/m/y'"/></td>
+                </div>            
+            </td>
+          </tr>
+    	<tr>
+    	<td>
       		<div class="subheadsmallnew"><s:text name="challan.receipt.payment.details"/>  
       		</div>
       	</td>
@@ -1135,12 +1176,12 @@ function validate()
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/resources/erp2/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="../../egi/images/delete.png" id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="../../egi/resources/erp2/images/delete.png" id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -1185,12 +1226,12 @@ function validate()
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/images/add.png"  id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/resources/erp2/images/add.png"  id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-									<img src="../../egi/images/delete.png"  id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+									<img src="../../egi/resources/erp2/images/delete.png"  id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -1222,12 +1263,12 @@ function validate()
 			<!-- for card-->
 			</table> <!-- End of mode of payments table -->
      </td></tr>
+     </div>
 </table> <!--  main table ends -->
-
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
- <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+ <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
   	 
 <div class="buttonbottom" align="center">
       <label><input align="center" type="button"  class="buttonsubmit" id="button2" value="Pay"  onclick="return validate();"/></label>

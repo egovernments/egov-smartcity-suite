@@ -39,23 +39,27 @@
  */
 package org.egov.pgr.web.contract;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
 import org.egov.search.domain.RangeFilter;
 import org.egov.search.domain.TermsStringFilter;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class ComplaintSearchRequestTest {
 
 	private ComplaintSearchRequest request;
+	public static final String SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
 
 	@Before
 	public void before() {
@@ -84,15 +88,14 @@ public class ComplaintSearchRequestTest {
 		request.setComplaintDate("today");
 
 		Filters filters = request.searchFilters();
-		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-		Date today = new Date();
+		DateTime today = endOfGivenDate(new DateTime());
 		
 		assertThat(filters.getAndFilters().size(), is(1));
 		Filter filter = filters.getAndFilters().get(0);
 		
 		assertThat(filter.field(), is("common.createdDate"));
 		assertThat(filter, instanceOf(RangeFilter.class));
-		assertThat(((RangeFilter) filter).to(), is(ft.format(today)));
+		assertThat(((RangeFilter) filter).to(), is(today.toString(SEARCH_DATE_FORMAT)));
 	}
 
 	@Test

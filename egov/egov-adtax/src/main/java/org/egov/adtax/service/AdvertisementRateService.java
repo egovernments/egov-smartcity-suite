@@ -1,60 +1,67 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.adtax.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.commons.lang.StringUtils;
 import org.egov.adtax.entity.AdvertisementRate;
 import org.egov.adtax.entity.AdvertisementRatesDetails;
 import org.egov.adtax.entity.HoardingCategory;
 import org.egov.adtax.entity.RatesClass;
+import org.egov.adtax.entity.ScheduleOfRateSearch;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.UnitOfMeasure;
 import org.egov.adtax.repository.AdvertisementRateDetailRepository;
 import org.egov.adtax.repository.AdvertisementRateRepository;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.repository.CFinancialYearRepository;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,6 +70,13 @@ public class AdvertisementRateService {
     private final AdvertisementRateDetailRepository rateDetailRepository;
     private final CFinancialYearRepository cFinancialYearRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+    
     @Autowired
     public AdvertisementRateService(final AdvertisementRateRepository ratesRepository,
             final AdvertisementRateDetailRepository rateDetailRepository,
@@ -151,21 +165,89 @@ public class AdvertisementRateService {
     }
     
 
-    public List<AdvertisementRatesDetails> getScheduleOfRateSearchResult(final Long category, final Long subCategory,
-            final Long unitOfMeasure, final Long classtype, final Long finyear) {
-        final List<AdvertisementRatesDetails> rateDetails = rateDetailRepository
-                .findScheduleOfRateDetailsByCategorySubcategoryUomAndClassId(category, subCategory, unitOfMeasure, classtype,
-                        finyear);
-        final List<AdvertisementRatesDetails> advertisementRatesDetailsList = new ArrayList<AdvertisementRatesDetails>();
-        rateDetails.forEach(result -> {
-            final AdvertisementRatesDetails advertisementRatesDetails = new AdvertisementRatesDetails();
-            advertisementRatesDetails.setUnitFrom(result.getUnitFrom());
-            advertisementRatesDetails.setUnitTo(result.getUnitTo());
-            advertisementRatesDetails.setAmount(result.getAmount());
+   @SuppressWarnings("unchecked")
+    public List<ScheduleOfRateSearch> getScheduleOfRateSearchResult(final String category, final String subCategory,final String unitofmeasure,
+            final String classtype, final String finyear) {
+        
+        StringBuilder queryString = new StringBuilder();
+        queryString.append("Select A From AdvertisementRatesDetails A where ");
+        Boolean var = Boolean.FALSE;
+        if(!StringUtils.isEmpty(category))
+        {
+            queryString.append(" A.advertisementRate.category.id=:category ");
+            var = Boolean.TRUE;
+        }
+        
+        if(!StringUtils.isEmpty(subCategory))
+        {       if(var) {
+            queryString.append(" and " );
+        }
+            queryString.append(" A.advertisementRate.subCategory.id=:subCategory ");
+            var = Boolean.TRUE;
+        }
+        
+        if(!StringUtils.isEmpty(unitofmeasure))
+        {
+            if(var) {
+                queryString.append(" and " );
+            }
+            queryString.append(" A.advertisementRate.unitofmeasure.id=:unitofmeasure ");
+            var = Boolean.TRUE;
+        }
+        
+        if(!StringUtils.isEmpty(classtype))
+        {
+            if(var) {
+                queryString.append(" and " );
+            }
+            queryString.append(" A.advertisementRate.classtype.id=:classtype ");
+            var = Boolean.TRUE;
 
-            advertisementRatesDetailsList.add(advertisementRatesDetails);
-        });
-        return advertisementRatesDetailsList;
+        }
+        
+        if(!StringUtils.isEmpty(finyear))
+        {
+            if(var) {
+                queryString.append(" and " );
+            }
+            queryString.append(" A.advertisementRate.financialyear.id=:finyear ");
+            
+        }
+        
+        Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());        
+        if(!StringUtils.isEmpty(category)){
+              query.setParameter("category", Long.parseLong(category));
+        }
+        if(!StringUtils.isEmpty(subCategory)){
+            query.setParameter("subCategory", Long.parseLong(subCategory));
+        }
+        if(!StringUtils.isEmpty(unitofmeasure)){
+             query.setParameter("unitofmeasure", Long.parseLong(unitofmeasure));
+        }
+        if(!StringUtils.isEmpty(classtype)){
+              query.setParameter("classtype",  Long.parseLong(classtype));
+        }
+        if(!StringUtils.isEmpty(finyear)){
+              query.setParameter("finyear",  Long.parseLong(finyear));
+        }
+        List<AdvertisementRatesDetails>  rateList = query.list();
+        List<ScheduleOfRateSearch> scheduleOfRateList = new ArrayList<ScheduleOfRateSearch>();
+        rateList.forEach(result ->{
+            
+           ScheduleOfRateSearch scheduleOfRateSearch = new ScheduleOfRateSearch();
+           scheduleOfRateSearch.setCategory(result.getAdvertisementRate().getCategory().getCode());
+           scheduleOfRateSearch.setSubCategory(result.getAdvertisementRate().getSubCategory().getCode());
+           scheduleOfRateSearch.setUnitofmeasure(result.getAdvertisementRate().getUnitofmeasure().getCode());
+           scheduleOfRateSearch.setClasstype(result.getAdvertisementRate().getClasstype().getDescription());
+           scheduleOfRateSearch.setFinancialyear(result.getAdvertisementRate().getFinancialyear().getFinYearRange());
+           scheduleOfRateSearch.setUnitfrom(result.getUnitFrom());
+           scheduleOfRateSearch.setUnitto(result.getUnitTo());
+           scheduleOfRateSearch.setAmount(result.getAmount());
+           scheduleOfRateSearch.setUnitfactor(result.getAdvertisementRate().getUnitrate());
+           scheduleOfRateList.add(scheduleOfRateSearch);
+       });
+        
+        return scheduleOfRateList;
     }
 
     public List<CFinancialYear> getAllFinancialYears() {

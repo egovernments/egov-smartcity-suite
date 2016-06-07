@@ -1,55 +1,59 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 <head>
-<link href="/EGF/resources/css/budget.css" rel="stylesheet"
-	type="text/css" />
-<link href="/EGF/resources/css/commonegovnew.css" rel="stylesheet"
-	type="text/css" />
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css"
+<link href="/EGF/resources/css/budget.css?rnd=${app_release_no}"
+	rel="stylesheet" type="text/css" />
+<link href="/EGF/resources/css/commonegovnew.css?rnd=${app_release_no}"
+	rel="stylesheet" type="text/css" />
+<link rel="stylesheet"
+	href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
 	TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js"></script>
 <script type="text/javascript"
-	src="/EGF/resources/javascript/tabber2.js"></script>
+	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 </head>
 <script>
 
@@ -319,20 +323,22 @@ function checksalaryForSameMisAttribs(obj,len)
 															<tr>
 																<td class="greybox" width="30%"><s:text
 																		name="payment.billdatefrom" /></td>
-																<td class="greybox"><s:textfield name="fromDate"
-																		id="fromDate" maxlength="20" value="%{fromDate}" /><a
-																	href="javascript:show_calendar('forms[0].fromDate');"
-																	style="text-decoration: none">&nbsp;<img
-																		src="/egi/resources/erp2/images/calendaricon.gif"
-																		border="0" /></a><br />(dd/mm/yyyy)</td>
+																<td class="greybox"><s:textfield id="fromDate"
+																		name="fromDate" value="%{fromDate}"
+																		data-date-end-date="0d"
+																		onkeyup="DateFormat(this,this.value,event,false,'3')"
+																		placeholder="DD/MM/YYYY"
+																		class="form-control datepicker"
+																		data-inputmask="'mask': 'd/m/y'" /></td>
 																<td class="greybox" width="30%"><s:text
 																		name="payment.billdateto" /></td>
-																<td class="greybox"><s:textfield name="toDate"
-																		id="toDate" maxlength="20" value="%{toDate}" /><a
-																	href="javascript:show_calendar('forms[0].toDate');"
-																	style="text-decoration: none">&nbsp;<img
-																		src="/egi/resources/erp2/images/calendaricon.gif"
-																		border="0" /></a>(dd/mm/yyyy)</td>
+																<td class="greybox"><s:textfield id="toDate"
+																		name="toDate" value="%{toDate}"
+																		data-date-end-date="0d"
+																		onkeyup="DateFormat(this,this.value,event,false,'3')"
+																		placeholder="DD/MM/YYYY"
+																		class="form-control datepicker"
+																		data-inputmask="'mask': 'd/m/y'" /></td>
 															</tr>
 															<tr>
 																<td class="bluebox" width="30%"><s:text
@@ -376,7 +382,7 @@ function checksalaryForSameMisAttribs(obj,len)
 																				<th class="bluebgheadtdnew">Select<input
 																					type="checkbox" name="salSelectAll"
 																					id="salSelectAll" onclick="selectAllSalary(this)" />
-																				</checkbox></th>
+																					</checkbox></th>
 																				<jsp:include page="billdetails-header.jsp" />
 																				<s:iterator var="p" value="salaryList" status="s">
 																					<tr>
@@ -391,8 +397,7 @@ function checksalaryForSameMisAttribs(obj,len)
 																								value="#s.index+1" /></td>
 																						<td align="left" class="blueborderfortdnew"><s:hidden
 																								name="salaryList[%{#s.index}].expType"
-																								id="expType%{#s.index}" value="%{expType}" />
-																							<s:hidden
+																								id="expType%{#s.index}" value="%{expType}" /> <s:hidden
 																								name="salaryList[%{#s.index}].billNumber"
 																								id="billNumber%{#s.index}" value="%{billNumber}" />
 																							<s:property value="%{billNumber}" /></td>
@@ -404,33 +409,32 @@ function checksalaryForSameMisAttribs(obj,len)
 																						<td align="left" class="blueborderfortdnew"><s:hidden
 																								name="salaryList[%{#s.index}].billVoucherNumber"
 																								id="billVoucherNumber%{#s.index}"
-																								value="%{billVoucherNumber}" />
-																							<s:property value="%{billVoucherNumber}" /></td>
+																								value="%{billVoucherNumber}" /> <s:property
+																								value="%{billVoucherNumber}" /></td>
 																						<td style="text-align: left"
 																							class="blueborderfortdnew"><s:hidden
 																								name="salaryList[%{#s.index}].billVoucherDate"
 																								id="billVoucherDate%{#s.index}"
-																								value="%{billVoucherDate}" />
-																							<s:date name="%{billVoucherDate}"
-																								format="dd/MM/yyyy" /></td>
+																								value="%{billVoucherDate}" /> <s:date
+																								name="%{billVoucherDate}" format="dd/MM/yyyy" /></td>
 
 																						<td align="left" class="blueborderfortdnew"><s:hidden
 																								name="salaryList[%{#s.index}].payTo"
-																								id="payTo%{#s.index}" value="%{payTo}" />
-																							<s:property value="%{payTo}" /></td>
+																								id="payTo%{#s.index}" value="%{payTo}" /> <s:property
+																								value="%{payTo}" /></td>
 																						<td style="text-align: right"
 																							class="blueborderfortdnew"><s:hidden
 																								name="salaryList[%{#s.index}].netAmt"
-																								id="netAmt%{#s.index}" value="%{netAmt}" />
-																							<s:text name="payment.format.number">
+																								id="netAmt%{#s.index}" value="%{netAmt}" /> <s:text
+																								name="payment.format.number">
 																								<s:param value="%{netAmt}" />
 																							</s:text></td>
 																						<td style="text-align: right"
 																							class="blueborderfortdnew"><s:hidden
 																								name="salaryList[%{#s.index}].earlierPaymentAmt"
 																								id="earlierPaymentAmt%{#s.index}"
-																								value="%{earlierPaymentAmt}" />
-																							<s:text name="payment.format.number">
+																								value="%{earlierPaymentAmt}" /> <s:text
+																								name="payment.format.number">
 																								<s:param value="%{earlierPaymentAmt}" />
 																							</s:text></td>
 																						<td style="text-align: right"
@@ -463,8 +467,8 @@ function checksalaryForSameMisAttribs(obj,len)
 																								id="function<s:property value="#s.index"/>"><s:hidden
 																									name="salaryList[%{#s.index}].functionName"
 																									id="functionName%{#s.index}"
-																									value="%{functionName}" />
-																								<s:property value="%{functionName}" /></td>
+																									value="%{functionName}" /> <s:property
+																									value="%{functionName}" /></td>
 																						</s:if>
 																						<s:if
 																							test="%{shouldShowHeaderField('functionary')}">
@@ -472,8 +476,8 @@ function checksalaryForSameMisAttribs(obj,len)
 																								id="functionary<s:property value="#s.index"/>"><s:hidden
 																									name="salaryList[%{#s.index}].functionaryName"
 																									id="functionaryName%{#s.index}"
-																									value="%{functionaryName}" />
-																								<s:property value="%{functionaryName}" /></td>
+																									value="%{functionaryName}" /> <s:property
+																									value="%{functionaryName}" /></td>
 																						</s:if>
 																						<s:if
 																							test="%{shouldShowHeaderField('fundsource')}">
@@ -481,24 +485,24 @@ function checksalaryForSameMisAttribs(obj,len)
 																								id="fundsource<s:property value="#s.index"/>"><s:hidden
 																									name="salaryList[%{#s.index}].fundsourceName"
 																									id="fundsourceName%{#s.index}"
-																									value="%{fundsourceName}" />
-																								<s:property value="%{fundsourceName}" /></td>
+																									value="%{fundsourceName}" /> <s:property
+																									value="%{fundsourceName}" /></td>
 																						</s:if>
 																						<s:if test="%{shouldShowHeaderField('scheme')}">
 																							<td class="blueborderfortdnew"
 																								id="scheme<s:property value="#s.index"/>"><s:hidden
 																									name="salaryList[%{#s.index}].schemeName"
 																									id="schemeName%{#s.index}"
-																									value="%{schemeName}" />
-																								<s:property value="%{schemeName}" /></td>
+																									value="%{schemeName}" /> <s:property
+																									value="%{schemeName}" /></td>
 																						</s:if>
 																						<s:if test="%{shouldShowHeaderField('subscheme')}">
 																							<td class="blueborderfortdnew"
 																								id="subscheme<s:property value="#s.index"/>"><s:hidden
 																									name="salaryList[%{#s.index}].subschemeName"
 																									id="subschemeName%{#s.index}"
-																									value="%{subschemeName}" />
-																								<s:property value="%{subschemeName}" /></td>
+																									value="%{subschemeName}" /> <s:property
+																									value="%{subschemeName}" /></td>
 																						</s:if>
 																						<s:if test="%{shouldShowHeaderField('field')}">
 																							<td class="blueborderfortdnew"

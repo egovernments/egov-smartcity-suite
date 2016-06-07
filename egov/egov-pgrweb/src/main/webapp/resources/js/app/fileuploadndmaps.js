@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 $(document).ready(function(){
 	
 	var fileformats = ['jpg', 'jpeg', 'gif', 'png',  '3g2', '3gp', '3gp2', '3gpp', 'avi', 'divx', 'flv', 'mov', 'mp4', 'mpeg4', 'mpg4', 'mpeg', 'mpg', 'm4v', 'wmv' ];
@@ -208,64 +209,131 @@ $(document).ready(function(){
 		//marker=new google.maps.Marker();
 		
 		//mapprop();
-		var mapOptions = {
+		var latLng,mapOptions = {
 			zoom: 10,
+			timeout: 500, 
 			mapTypeControl: false,
 			navigationControl: false,
 		};
+		
+		var userLocationFound = function(position){
+		    latLng = {
+		        lat: position.coords.latitude,
+		        lng: position.coords.longitude
+		    };
+		    console.log("User confirmed! Location found: " + latLng.lat + ", " + latLng.lng);
+		    
+		    //Set current locaion to map
+		    var userLatLng = new google.maps.LatLng(latLng.lat, latLng.lng);
+			lat = latLng.lat;
+			lng = latLng.lng;
+			
+			getAddress(lat, lng);
+
+			map.setCenter(userLatLng);
+			
+			mapcenterchangeevent();
+			
+		}
+		
+		var userLocationNotFound = function(){
+			
+			citylat = $('#getcitylat').val();
+			citylng = $('#getcitylng').val();
+			
+		    //Assign static point to map
+			if(!citylat || !citylng){
+				citylat = 20.5937;
+				citylng = 78.9629;
+			    //console.log("Fallback set with no city setup: ", citylat+'<-->'+citylng);
+			}else{
+			    //console.log("Fallback set with city setup: ", citylat+'<-->'+citylng);
+			}
+			
+			latLng = {
+		        lat: citylat, // fallback lat 
+		        lng: citylng  // fallback lng
+		    };
+			setlatlong(citylat, citylng);
+			mapcenterchangeevent();
+			
+		}
+
 		
 		geocoder = new google.maps.Geocoder();
 		map=new google.maps.Map(document.getElementById("normal"),mapOptions);
 		
 		var GeoMarker = new GeolocationMarker(map);
 		$('<div/>').addClass('centerMarker').appendTo(map.getDiv());
-		//marker.setMap(map);
 		
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function (position) {
-				
-				/*var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				lat = position.coords.latitude;
-				lng = position.coords.longitude;
-				$.ajax({
-						type: "POST",
-						url: 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true',
-						dataType: 'json',
-						success : function(data){
-							 address = data.results[0].formatted_address;
-						}
-				});
-				
-				marker = new google.maps.Marker({
-					position: userLatLng,
-					draggable:true,
-					map: map
-				});
-				
-				map.setCenter(userLatLng);
-				
-				dragendmarker();*/
+		navigator.geolocation.getCurrentPosition(userLocationFound, userLocationNotFound, mapOptions);
 
-				var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-				lat = position.coords.latitude;
-				lng = position.coords.longitude;
-				
-				getAddress(lat, lng);
+		setTimeout(function () {
+		    if(!latLng){
+		        console.log("No confirmation from user, using fallback");
+		        userLocationNotFound();
+		    }else{
+		        console.log("Location was set");
+		    }
+		}, mapOptions.timeout + 500); // Wait extra second
+		
+		searchBar(map);  
+		
+	};
+	
+	function searchBar(map) {
+		
+		var input = /** @type {!HTMLInputElement} */(
+			      document.getElementById('pac-input'));
 
-				map.setCenter(userLatLng);
-				
-				}, function error(err) {
-				console.log('error: ' + err.message);        
-			});
-		}
+			  var autocomplete = new google.maps.places.Autocomplete(input);
+			  autocomplete.bindTo('bounds', map);
 
+			  autocomplete.addListener('place_changed', function() {
+			    var place = autocomplete.getPlace();
+			    if (!place.geometry) {
+			      window.alert("Autocomplete's returned place contains no geometry");
+			      return;
+			    }
+
+			    // If the place has a geometry, then present it on a map.
+			    if (place.geometry.viewport) {
+			      map.fitBounds(place.geometry.viewport);
+			    } else {
+			      map.setCenter(place.geometry.location);
+			      map.setZoom(17);  // Why 17? Because it looks good.
+			    }
+
+			    var address = '';
+			    if (place.address_components) {
+			      address = [
+			        (place.address_components[0] && place.address_components[0].short_name || ''),
+			        (place.address_components[1] && place.address_components[1].short_name || ''),
+			        (place.address_components[2] && place.address_components[2].short_name || '')
+			      ].join(' ');
+			    }
+
+			  });
+
+    };
+	
+	function mapcenterchangeevent(){
 		google.maps.event.addListener(map, 'center_changed', function() {
 			var location = map.getCenter();
 			//console.log(location.lat()+"<=======>"+location.lng());
 			getAddress(location.lat(), location.lng());
 		});
+	}
+
+	function setlatlong(citylat , citylng){
+		var userLatLng = new google.maps.LatLng(citylat, citylng);
+		lat = citylat;
+		lng = citylng;
 		
-	};
+		getAddress(lat, lng);
+
+		map.setCenter(userLatLng);
+	}
 	
 	function getAddress(lat, lng){
 		$.ajax({
@@ -277,50 +345,6 @@ $(document).ready(function(){
 			}
 		});	
 	}
-
-	/*function setmarkerfromimage()
-	{
-		marker.setMap(null);
-
-		marker = new google.maps.Marker({
-			position: myCenter,
-			draggable:true,
-			map: map
-		});
-		
-		mapprop();
-		
-		geocoder = new google.maps.Geocoder();
-		
-		marker.setMap(map);
-		
-		dragendmarker();
-		
-	}
-	
-	function mapprop(){
-	
-		mapProp = {
-			center:myCenter,
-			mapTypeControl: true,
-			zoom:12,
-			mapTypeId:google.maps.MapTypeId.ROADMAP
-		};
-		
-	}
-	
-	function dragendmarker(){
-		google.maps.event.addListener(marker, "dragend", function (e) {
-			geocoder.geocode({ 'latLng': marker.getPosition() }, function (results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					console.log("drag end!!!");
-					lat = marker.getPosition().lat();
-					lng = marker.getPosition().lng();
-					address = results[0].formatted_address;
-				}
-			});
-		});
-	}*/
 	
 	google.maps.event.addDomListener(window, 'load', initialize);
 	
@@ -347,7 +371,6 @@ $(document).ready(function(){
 	
 	$('.btn-save-location').click(function(){
 		var location = map.getCenter();
-		console.log(location.lat()+"<=======>"+location.lng());
 		lat = location.lat();
 		lng = location.lng();
 		$.ajax({
@@ -360,11 +383,14 @@ $(document).ready(function(){
 				 $('#latlngaddress').val(address);
 			}
 		});	
+		//console.log(lat+'<-->'+lng);
 		$('#lat').val(lat);
 		$('#lng').val(lng);
+		$('#crosshierarchyId, #locationid').val('');
 	});
 
 	$('#modal-6').on('hidden.bs.modal', function () {
+		$('#pac-input').val('');
 	    var userLatLng = new google.maps.LatLng(lat, lng);
 	    map.setCenter(userLatLng);
 	});

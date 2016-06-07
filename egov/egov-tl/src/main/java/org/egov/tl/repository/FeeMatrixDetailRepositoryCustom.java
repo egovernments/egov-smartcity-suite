@@ -37,18 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.repository;
+
+import org.egov.tl.entity.FeeMatrix;
+import org.egov.tl.entity.FeeMatrixDetail;
 
 import java.util.Date;
 import java.util.List;
 
-import org.egov.tl.entity.FeeMatrix;
-import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.License;
-
 public interface FeeMatrixDetailRepositoryCustom {
-
-    List<FeeMatrixDetail> findFeeList(License license);
 
     FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate, long financialYearId);
 

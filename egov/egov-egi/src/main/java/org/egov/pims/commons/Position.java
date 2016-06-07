@@ -37,7 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.pims.commons;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -50,11 +55,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
 
 @Entity
 @Table(name = "eg_position")
@@ -119,6 +119,19 @@ public class Position extends AbstractAuditable {
 
     public void setDeptDesig(final DeptDesig deptDesig) {
         this.deptDesig = deptDesig;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Position)) return false;
+        Position position = (Position) o;
+        return this.getName().equals(position.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * this.getName().hashCode();
     }
 
 }

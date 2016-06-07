@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,23 +24,24 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /**
  *
  */
 package org.egov.utils;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -63,16 +64,15 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.seqgen.DatabaseSequence;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.service.EisUtilService;
 import org.hibernate.Query;
-import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -84,6 +84,7 @@ import com.exilant.exility.common.TaskFailedException;
  */
 public class VoucherHelper {
     private static final Logger LOGGER = Logger.getLogger(VoucherHelper.class);
+    public static final String DEFAULT_SEQUENCE_PREFIX = "SQ_";
     @SuppressWarnings("unchecked")
     private PersistenceService persistenceService;
     private EisCommonService eisCommonService;
@@ -98,12 +99,15 @@ public class VoucherHelper {
     
     @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
-
+    
     @Autowired
     private DBSequenceGenerator dbSequenceGenerator;
 
     @Autowired
     private SequenceNumberGenerator sequenceNumberGenerator;
+
+   @Autowired
+   ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
     @SuppressWarnings("unchecked")
     public PersistenceService getPersistenceService() {
@@ -228,9 +232,9 @@ public class VoucherHelper {
      */
     public static String sequenceNameFor(final String voucherType, final String fiscalPeriodName) {
         return new StringBuilder()
-        .append(DatabaseSequence.SEQUENCE_NAME_PREFIX)
-        .append(DatabaseSequence.replaceBadChars(voucherType))
-        .append(DatabaseSequence.WORD_SEPARATOR_FOR_NAME)
+        .append(DEFAULT_SEQUENCE_PREFIX)
+        .append(voucherType)
+        .append(ApplicationSequenceNumberGenerator.WORD_SEPARATOR_FOR_NAME)
         .append(fiscalPeriodName)
         .toString();
     }
@@ -266,11 +270,7 @@ public class VoucherHelper {
         Serializable sequenceNumber;
         String sequenceName;
         sequenceName = sequenceNameFor(vouType, fc.get(0).toString());
-        try {
-            sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-        } catch (final SQLGrammarException e) {
-            sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-        }
+        sequenceNumber=   applicationSequenceNumberGenerator.getNextSequence(sequenceName);
         return sequenceNumber.toString();
 
     }
@@ -318,7 +318,7 @@ public class VoucherHelper {
                      "transNumber",
                      transNumber, "vNumGenMode", vNumGenMode, "date", voucherDate, "month", month, "commonsService",
                      financialYearDAO, "dbSequenceGenerator", dbSequenceGenerator, "sequenceNumberGenerator",
-                     sequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
+                     applicationSequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
              fVoucherNumber = (String) scriptService.executeScript(scriptName, scriptContext);
 
         } else
@@ -394,8 +394,8 @@ public class VoucherHelper {
             add(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
             add(FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS);
             add(FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE);
-            add(FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY);
-            add(FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION);
+            /*add(FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY);
+            add(FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION);*/
 
         }
     };

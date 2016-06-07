@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,29 +24,35 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.ptis.actions.view;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
@@ -54,15 +60,15 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHO
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -90,6 +96,7 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -111,6 +118,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private String applicationType;
     private String[] floorNoStr = new String[100];
     private String errorMessage;
+    private String isCitizen;
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -125,8 +133,12 @@ public class ViewPropertyAction extends BaseFormAction {
     @Autowired
     @Qualifier("transferOwnerService")
     private PropertyTransferService transferOwnerService;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private boolean isNagarPanchayat = false;
+
+    private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<String, Map<String, BigDecimal>>();
 
     @Override
     public StateAware getModel() {
@@ -175,61 +187,62 @@ public class ViewPropertyAction extends BaseFormAction {
                         .getType());
             }
             if (!property.getIsExemptedFromTax()) {
-                final Map<String, BigDecimal> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-                        propertyTaxUtil.getCurrentInstallment());
-                viewMap.put("currTax", demandCollMap.get(CURR_DMD_STR));
-                viewMap.put("currTaxDue", demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)));
-                viewMap.put("totalArrDue", demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)));
+                demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
+                        propertyTaxCommonUtils.getCurrentInstallment());
+                for (Entry<String, Map<String, BigDecimal>> entry : demandCollMap.entrySet()) {
+                    String key = entry.getKey();
+                    Map<String, BigDecimal> reasonDmd = entry.getValue();
+                    if (key.equals(CURRENTYEAR_FIRST_HALF)) {
+                        viewMap.put("firstHalf", CURRENTYEAR_FIRST_HALF);
+                        viewMap.put(
+                                "firstHalfGT",
+                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null ? reasonDmd
+                                        .get(DEMANDRSN_STR_GENERAL_TAX) : reasonDmd.get(DEMANDRSN_STR_VACANT_TAX));
+                        viewMap.put(
+                                "firstHalfEC",
+                                reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) != null ? reasonDmd
+                                        .get(DEMANDRSN_STR_EDUCATIONAL_CESS) : BigDecimal.ZERO);
+                        viewMap.put("firstHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
+                        viewMap.put(
+                                "firstHalfUAP",
+                                reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null ? reasonDmd
+                                        .get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO);
+                        viewMap.put(
+                                "firstHalfTotal",reasonDmd.get(CURR_FIRSTHALF_DMD_STR));
+                        viewMap.put(
+                                "firstHalfTaxDue",
+                                reasonDmd.get(CURR_FIRSTHALF_DMD_STR)
+                                        .subtract(reasonDmd.get(CURR_FIRSTHALF_COLL_STR)));
 
-                viewMap.put("eduCess", (demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
-                        : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
-                viewMap.put("libraryCess", (demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
-                        : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS)));
-                BigDecimal totalTax = BigDecimal.ZERO;
-                if (!property.getPropertyDetail().getPropertyTypeMaster().getCode()
-                        .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-                    viewMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-                    viewMap.put("propertyType", property.getPropertyDetail().getPropertyTypeMaster().getCode());
-                    totalTax = demandCollMap
-                            .get(DEMANDRSN_STR_GENERAL_TAX)
-                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
-                                    : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
-                                    : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                    if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
-                        viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-                        viewMap.put("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
-                    } else {
-                        viewMap.put("totalTax", totalTax);
-                    }
+                    } else if (key.equals(CURRENTYEAR_SECOND_HALF)) {
+                        viewMap.put("secondHalf", CURRENTYEAR_SECOND_HALF);
+                        viewMap.put(
+                                "secondHalfGT",
+                                reasonDmd.get(DEMANDRSN_STR_GENERAL_TAX) != null ? reasonDmd
+                                        .get(DEMANDRSN_STR_GENERAL_TAX) : reasonDmd.get(DEMANDRSN_STR_VACANT_TAX));
+                        viewMap.put(
+                                "secondHalfEC",
+                                reasonDmd.get(DEMANDRSN_STR_EDUCATIONAL_CESS) != null ? reasonDmd
+                                        .get(DEMANDRSN_STR_EDUCATIONAL_CESS) : BigDecimal.ZERO);
+                        viewMap.put("secondHalfLC", reasonDmd.get(DEMANDRSN_STR_LIBRARY_CESS));
+                        viewMap.put(
+                                "secondHalfUAP",
+                                reasonDmd.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null ? reasonDmd
+                                        .get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) : BigDecimal.ZERO);
+                        viewMap.put(
+                                "secondHalfTotal",reasonDmd.get(CURR_SECONDHALF_DMD_STR));
+                        viewMap.put(
+                                "secondHalfTaxDue",
+                                reasonDmd.get(CURR_SECONDHALF_DMD_STR)
+                                        .subtract(reasonDmd.get(CURR_SECONDHALF_COLL_STR)));
 
-                } else {
-                    viewMap.put("vacantLandTax", demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
-                    totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap
-                            .get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap
-                            .get(DEMANDRSN_STR_GENERAL_TAX))
-                            .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
-                                    : demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS))
-                            .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO
-                                    : demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS));
-                    if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
-                        viewMap.put("unauthorisedPenalty", demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
-                        viewMap.put("totalTax", totalTax.add(demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY)));
                     } else {
-                        viewMap.put("totalTax", totalTax);
+                        viewMap.put("arrears", ARREARS);
+                        viewMap.put("arrearTax", reasonDmd.get(ARR_DMD_STR));
+                        viewMap.put("totalArrDue", reasonDmd.get(ARR_DMD_STR).subtract(reasonDmd.get(ARR_COLL_STR)));
                     }
                 }
 
-            } else {
-                viewMap.put("currTax", BigDecimal.ZERO);
-                viewMap.put("currTaxDue", BigDecimal.ZERO);
-                viewMap.put("totalArrDue", BigDecimal.ZERO);
-
-                viewMap.put("eduCess", BigDecimal.ZERO);
-                viewMap.put("libraryCess", BigDecimal.ZERO);
-                viewMap.put("generalTax", BigDecimal.ZERO);
-                viewMap.put("totalTax", BigDecimal.ZERO);
-                viewMap.put("vacantLandTax", BigDecimal.ZERO);
             }
             if (ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
                 viewMap.put("ARV", ptDemand.getDmdCalculations().getAlv());
@@ -426,4 +439,29 @@ public class ViewPropertyAction extends BaseFormAction {
     public void setIsNagarPanchayat(boolean isNagarPanchayat) {
         this.isNagarPanchayat = isNagarPanchayat;
     }
+
+    public Map<String, Map<String, BigDecimal>> getDemandCollMap() {
+        return demandCollMap;
+    }
+
+    public void setDemandCollMap(Map<String, Map<String, BigDecimal>> demandCollMap) {
+        this.demandCollMap = demandCollMap;
+    }
+
+    public String getIsCitizen() {
+        return isCitizen;
+    }
+
+    public void setIsCitizen(String isCitizen) {
+        this.isCitizen = isCitizen;
+    }
+
+    public PropertyTaxCommonUtils getPropertyTaxCommonUtils() {
+        return propertyTaxCommonUtils;
+    }
+
+    public void setPropertyTaxCommonUtils(PropertyTaxCommonUtils propertyTaxCommonUtils) {
+        this.propertyTaxCommonUtils = propertyTaxCommonUtils;
+    }
+
 }

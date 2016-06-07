@@ -37,25 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.web.actions.newtradelicense;
 
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -72,15 +63,25 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.TRANSACTIONTYPE_CREATE_LICENSE;
+
 @ParentPackage("egov")
 @Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT + ".jsp"),
-        @Result(name = Constants.PFACERTIFICATE, location = "/WEB-INF/jsp/viewtradelicense/viewTradeLicense-"
-                + Constants.PFACERTIFICATE + ".jsp"),
-        @Result(name = Constants.MESSAGE, location = "newTradeLicense-" + Constants.MESSAGE + ".jsp"),
-        @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-" + Constants.BEFORE_RENEWAL + ".jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-" + Constants.ACKNOWLEDGEMENT_RENEW
-                + ".jsp") })
+        @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
+        @Result(name = Constants.MESSAGE, location = "newTradeLicense-message.jsp"),
+        @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
+        @Result(name = Constants.ACKNOWLEDGEMENT_RENEW, location = "newTradeLicense-acknowledgement_renew.jsp") })
 public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     private static final long serialVersionUID = 1L;
@@ -89,10 +90,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private List<LicenseDocumentType> documentTypes = new ArrayList<>();
     private Map<String, String> ownerShipTypeMap;
     private String mode;
+    private String message;
     private String renewAppType;
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     public NewTradeLicenseAction() {
         tradeLicense.setLicensee(new Licensee());
@@ -109,13 +113,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPage(Constants.NEW)
     @Action(value = "/newtradelicense/newTradeLicense-create")
     public String create() {
-       return super.create(tradeLicense);
+        return super.create(tradeLicense);
     }
 
     @Override
     @Action(value = "/newtradelicense/newTradeLicense-showForApproval")
     @SkipValidation
-    public String showForApproval() {
+    public String showForApproval() throws IOException {
+
         if (license().getStatus().getName().equals(Constants.LICENSE_STATUS_ACKNOWLEDGED)
                 || license().getStatus().getName().equals(Constants.LICENSE_STATUS_UNDERWORKFLOW))
             mode = VIEW;
@@ -125,8 +130,18 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             mode = "editForApproval";
         if (license().getState().getValue().contains(Constants.WF_STATE_DIGISIGN_STR)
                 || license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_APPROVED_STR)
-                ||license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+                || license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
             mode = "disableApprover";
+        if (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+            message = "Pending for Collection";
+        if (!license().getState().getOwnerPosition()
+                .equals(positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()))) {
+            ServletActionContext.getResponse().setContentType("text/html");
+            ServletActionContext.getResponse().getWriter()
+                    .write("<center style='color:red;font-weight:bolder'>Workflow item is in "
+                            + license().getCurrentState().getOwnerPosition().getName() + " inbox !</center>");
+            return null;
+        }
         return super.showForApproval();
     }
 
@@ -135,13 +150,14 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
 
-        BigDecimal  newTradeAreWt=tradeLicense.getTradeArea_weight();
+        final BigDecimal newTradeAreWt = tradeLicense.getTradeArea_weight();
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
-        if(null != license().getState() && license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)){
-        tradeLicense.setTradeArea_weight(newTradeAreWt);
-        }
+        if (null != license().getState()
+                && license().getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING))
+            tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
-                && (tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))&& tradeLicense != null
+                && tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
+                && tradeLicense != null
                 && !tradeLicense.isPaid() &&
                 !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
             prepareNewForm();
@@ -154,12 +170,20 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Override
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-beforeRenew")
-    public String beforeRenew() {
+    public String beforeRenew() throws IOException {
         prepareNewForm();
-        if(!tradeLicense.hasState() || tradeLicense.getCurrentState().getValue().equals("Closed")) {
-            currentState="";
+        if (tradeLicense.getEgwStatus() != null
+                && !tradeLicense.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE)
+                && tradeLicense.getLicenseAppType() != null
+                && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
+            ServletActionContext.getResponse().setContentType("text/html");
+            ServletActionContext.getResponse().getWriter()
+                    .write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");
+            return null;
         }
-        renewAppType=Constants.RENEWAL_LIC_APPTYPE;
+        if (!tradeLicense.hasState() || tradeLicense.getCurrentState().getValue().equals("Closed"))
+            currentState = "";
+        renewAppType = Constants.RENEWAL_LIC_APPTYPE;
         return super.beforeRenew();
     }
 
@@ -180,8 +204,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         setDocumentTypes(tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
-        tradeLicense.setHotelGradeList(tradeLicense.populateHotelGradeList());
-        tradeLicense.setHotelSubCatList(tradeLicenseService.getHotelCategoriesForTrade());
         setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);
@@ -241,12 +263,22 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void setMode(final String mode) {
         this.mode = mode;
     }
+
     @Override
     public String getAdditionalRule() {
-        if((renewAppType !=null && renewAppType.equals(Constants.RENEWAL_LIC_APPTYPE)) ||(tradeLicense !=null && tradeLicense.getLicenseAppType() !=null && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))){
-        return "RENEWALTRADE";
-        }
+        if (renewAppType != null && renewAppType.equals(Constants.RENEWAL_LIC_APPTYPE)
+                || tradeLicense != null && tradeLicense.getLicenseAppType() != null
+                        && tradeLicense.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
+            return "RENEWALTRADE";
         else
-            return "";
+            return "NEWTRADE";
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(final String message) {
+        this.message = message;
     }
 }

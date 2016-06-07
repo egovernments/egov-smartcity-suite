@@ -1,42 +1,42 @@
-/*#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------*/
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 jQuery.noConflict();
 var maskingTimeForDownloads = 30000;//30 seconds
 var displayTagExportPDF = 'd-5394226-e=5';
@@ -68,7 +68,8 @@ jQuery(document).click(function() {
 	if(this.activeElement.defaultValue){
 		var name = this.activeElement.defaultValue;
 		name = name.toUpperCase();
-		if(name.indexOf("EXCEL")!=-1 || name.indexOf("PDF")!=-1 ){
+		console.log(name);
+		if(name.indexOf("EXCEL")!=-1 || name.indexOf("PDF")!=-1 || name.indexOf("XLS")!=-1 ){
 			setTimeout(function() {
 				undoLoadingMask();
 			}, maskingTimeForDownloads)
@@ -106,4 +107,49 @@ function ajaxSubmit(formId,formUrl,event)
 		});
 	    event.preventDefault();
 
+}
+
+
+function initiateRequest() {
+	if (window.XMLHttpRequest) {
+		var req = new XMLHttpRequest();
+		if (req.overrideMimeType) {
+			req.overrideMimeType("text/html;charset=utf-8");
+		}
+		return req;
+	} else {
+		if (window.ActiveXObject) {
+			isIE = true;
+			return new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	}
+}
+
+function DateValidation(start , end){
+    if (start != "" && end != "") {
+		var stsplit = start.split("/");
+		var ensplit = end.split("/");
+		
+		start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+		end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+		
+		return ValidRange(start, end);
+	}else{
+		return true;
+	}
+}
+
+function ValidRange(start, end) {
+	var retvalue = false;
+    var startDate = Date.parse(start);
+    var endDate = Date.parse(end);
+	
+    // Check the date range, 86400000 is the number of milliseconds in one day
+    var difference = (endDate - startDate) / (86400000 * 7);
+    if (difference < 0) {
+		bootbox.alert("Start date must come before the end date.");
+		} else {
+		retvalue = true;
+	}
+    return retvalue;
 }

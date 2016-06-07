@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.works.models.tender;
 
@@ -45,7 +45,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -57,14 +56,14 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.Auditable;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.models.Money;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.Activity;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -96,17 +95,24 @@ public class WorksPackage extends StateAware implements Auditable {
     @NotEmpty(message = "wp.name.is.null")
     @Length(max = 1024, message = "workspackage.name.length")
     private String name;
+
     @Length(max = 1024, message = "workspackage.description.length")
     private String description;
+
     @NotNull(message = "wp.userDepartment.is.null")
     private Department department;
+
+    // @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.wpDate")
     @NotNull(message = "wp.wpDate.is.null")
-    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.wpDate")
+    @DateFormat(message = "invalid.fieldvalue.wpDate")
     private Date wpDate;
+
     @NotEmpty(message = "wp.wpNumber.is.null")
     private String wpNumber;
+
     private String employeeName;
     private Money workValueIncludingTaxes;
+
     private List<WorksPackageDetails> worksPackageDetails = new LinkedList<WorksPackageDetails>();
     private List<RetenderHistory> retenderHistoryDetails = new LinkedList<RetenderHistory>();
     private List<Retender> retenderDetails = new LinkedList<Retender>();
@@ -118,8 +124,8 @@ public class WorksPackage extends StateAware implements Auditable {
     private Long documentNumber;
     private EgwStatus egwStatus;
     private String wpOfflineStatus;
-    private SetStatus latestOfflineStatus;
-    private Set<SetStatus> setStatuses = Collections.EMPTY_SET;
+    private OfflineStatus latestOfflineStatus;
+    private Set<OfflineStatus> offlineStatuses = Collections.EMPTY_SET;
     private List<String> worksPackageActions = new LinkedList<String>();
     private String worksPackageStatus;
     private Date approvedDate;
@@ -240,7 +246,7 @@ public class WorksPackage extends StateAware implements Auditable {
                     if (DateUtils.compareDates(act.getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
                         preEstlineItem.setRate(act.getSORCurrentRate().getValue());
-                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate().getValue());
+                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate());
                         preEstlineItem.setActivity(act);
                         if (act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate()))
                             preEstlineItem.setMarketRate(preEstlineItem.getQuantity()
@@ -276,7 +282,7 @@ public class WorksPackage extends StateAware implements Auditable {
             estlineItem.setCode("");
             estlineItem.setSummary("");
             estlineItem.setDescription(act.getNonSor().getDescription());
-            estlineItem.setRate(act.getRate().getValue());
+            estlineItem.setRate(act.getRate());
             estlineItem.setMarketRate(act.getAmount().getValue());
         } else {
             estlineItem.setCode(act.getSchedule().getCode());
@@ -290,7 +296,7 @@ public class WorksPackage extends StateAware implements Auditable {
         }
 
         estlineItem.setActivity(act);
-        estlineItem.setAmt(act.getQuantity() * act.getRate().getValue());
+        estlineItem.setAmt(act.getQuantity() * act.getRate());
         estlineItem.setEstimateDate(act.getAbstractEstimate().getEstimateDate());
         estlineItem.setQuantity(act.getQuantity());
         estlineItem.setUom(act.getUom().getUom());
@@ -383,18 +389,18 @@ public class WorksPackage extends StateAware implements Auditable {
         return negotiationNumber;
     }
 
-    public Set<SetStatus> getSetStatuses() {
-        final Set<SetStatus> returnList = new LinkedHashSet<SetStatus>();
-        // Get only statuses which are of WorksPackage
-        if (setStatuses != null && setStatuses.size() > 0)
-            for (final SetStatus ss : setStatuses)
-                if (ss.getObjectType() != null && ss.getObjectType().equalsIgnoreCase("WorksPackage"))
-                    returnList.add(ss);
-        return returnList;
+    public Set<OfflineStatus> getOfflineStatuses() {
+        // TODO:Fixme - Commented out for time being since it is giving issue on forward for already saved object
+        /*
+         * final Set<SetStatus> returnList = new HashSet<SetStatus>(); // Get only statuses which are of WorksPackage if
+         * (setStatuses != null && setStatuses.size() > 0) for (final SetStatus ss : setStatuses) if (ss.getObjectType() != null
+         * && ss.getObjectType().equalsIgnoreCase("WorksPackage")) returnList.add(ss);
+         */
+        return offlineStatuses;
     }
 
-    public void setSetStatuses(final Set<SetStatus> setStatuses) {
-        this.setStatuses = setStatuses;
+    public void setOfflineStatuses(final Set<OfflineStatus> offlineStatuses) {
+        this.offlineStatuses = offlineStatuses;
     }
 
     public EgwStatus getEgwStatus() {
@@ -437,11 +443,11 @@ public class WorksPackage extends StateAware implements Auditable {
         this.retenderDetails = retenderDetails;
     }
 
-    public SetStatus getLatestOfflineStatus() {
+    public OfflineStatus getLatestOfflineStatus() {
         return latestOfflineStatus;
     }
 
-    public void setLatestOfflineStatus(final SetStatus latestOfflineStatus) {
+    public void setLatestOfflineStatus(final OfflineStatus latestOfflineStatus) {
         this.latestOfflineStatus = latestOfflineStatus;
     }
 

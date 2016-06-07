@@ -37,14 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.config.persistence.multitenancy;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+package org.egov.infra.config.persistence.multitenancy;
 
 import org.hibernate.engine.jdbc.connections.spi.AbstractMultiTenantConnectionProvider;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.hibernate.service.UnknownUnwrapTypeException;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 @SuppressWarnings("all")
 public class MultiTenantDatabaseConnectionProvider extends TenantDatasourceProvider implements

@@ -37,7 +37,20 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.filestore.service.impl;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,18 +61,6 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component("localDiskFileStoreService")
 public class LocalDiskFileStoreService implements FileStoreService {
@@ -87,7 +88,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
             return fileMapper;
         } catch (final IOException e) {
             throw new ApplicationRuntimeException(
-                    String.format("Error occurred while storing files at %s/%s/%s", this.fileStoreBaseDir, EgovThreadLocals.getCityCode(), moduleName), e);
+                    String.format("Error occurred while storing files at %s/%s/%s", this.fileStoreBaseDir, ApplicationThreadLocals.getCityCode(), moduleName), e);
         }
     }
 
@@ -102,7 +103,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
             return fileMapper;
         } catch (final IOException e) {
             throw new ApplicationRuntimeException(
-                    String.format("Error occurred while storing files at %s/%s/%s", this.fileStoreBaseDir, EgovThreadLocals.getCityCode(), moduleName), e);
+                    String.format("Error occurred while storing files at %s/%s/%s", this.fileStoreBaseDir, ApplicationThreadLocals.getCityCode(), moduleName), e);
         }
     }
 
@@ -122,7 +123,7 @@ public class LocalDiskFileStoreService implements FileStoreService {
         final Path fileDirPath = this.getFileDirectoryPath(moduleName);
         if (!Files.exists(fileDirPath))
             throw new ApplicationRuntimeException(String.format("File Store does not exist at Path : %s/%s/%s", this.fileStoreBaseDir,
-                    EgovThreadLocals.getCityCode(), moduleName));
+                    ApplicationThreadLocals.getCityCode(), moduleName));
         return this.getFilePath(fileDirPath, fileStoreId).toFile();
     }
 
@@ -142,16 +143,16 @@ public class LocalDiskFileStoreService implements FileStoreService {
     private Path createNewFilePath(final FileStoreMapper fileMapper, final String moduleName) throws IOException {
         final Path fileDirPath = this.getFileDirectoryPath(moduleName);
         if (!Files.exists(fileDirPath)) {
-            LOG.info("File Store Directory {}/{}/{} not found, creating one", this.fileStoreBaseDir, EgovThreadLocals.getCityCode(),
+            LOG.info("File Store Directory {}/{}/{} not found, creating one", this.fileStoreBaseDir, ApplicationThreadLocals.getCityCode(),
                     moduleName);
             Files.createDirectories(fileDirPath);
-            LOG.info("Created File Store Directory {}/{}/{}", this.fileStoreBaseDir, EgovThreadLocals.getCityCode(), moduleName);
+            LOG.info("Created File Store Directory {}/{}/{}", this.fileStoreBaseDir, ApplicationThreadLocals.getCityCode(), moduleName);
         }
         return this.getFilePath(fileDirPath, fileMapper.getFileStoreId());
     }
 
     private Path getFileDirectoryPath(final String moduleName) {
-        return Paths.get(new StringBuilder().append(this.fileStoreBaseDir).append(File.separator).append(EgovThreadLocals.getCityCode()).append(File.separator).append(moduleName).toString());
+        return Paths.get(new StringBuilder().append(this.fileStoreBaseDir).append(File.separator).append(ApplicationThreadLocals.getCityCode()).append(File.separator).append(moduleName).toString());
     }
 
     private Path getFilePath(final Path fileDirPath, final String fileStoreId) {

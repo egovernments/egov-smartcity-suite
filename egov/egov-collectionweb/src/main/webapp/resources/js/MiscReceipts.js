@@ -1,41 +1,41 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 var VOUCHERDETAILLIST='billDetailslist';
 var VOUCHERREBATEDETAILLIST='billRebateDetailslist';
@@ -233,12 +233,12 @@ function createAmountFieldFormatterRebate(prefix,suffix,onblurfunction,table){
 
 function createSLTextFieldFormatter(prefix,suffix,onblurfunction){
     return function(el, oRecord, oColumn, oData) {
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' onblur='"+onblurfunction+"'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' tabindex='-1' onblur='"+onblurfunction+"'/>";
 	}
 }
 function createSLHiddenFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1'/>";
 	}
 }
 
@@ -251,13 +251,13 @@ function createSLLongTextFieldFormatter(prefix,suffix){
 function createSLAmountFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' maxlength='13' style='text-align:right;width:90px;'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1' maxlength='13' style='text-align:right;width:90px;'/>";
 	}
 }
 function createTextFieldReadOnly(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+billDetailsTable.getRecordIndex(oRecord)+"]"+suffix+"' name='"+prefix+"["+billDetailsTable.getRecordIndex(oRecord)+"]"+suffix+"' readOnly style='width:90px;'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+billDetailsTable.getRecordIndex(oRecord)+"]"+suffix+"' name='"+prefix+"["+billDetailsTable.getRecordIndex(oRecord)+"]"+suffix+"' tabindex='-1' readOnly style='width:90px;'/>";
 	}
 }
 function createcheckbox(prefix,suffix,onclickfunction){
@@ -269,7 +269,7 @@ function createcheckbox(prefix,suffix,onclickfunction){
 
 function createSLDetailCodeTextFieldFormatter(prefix,suffix,onblurfunction){
 	 return function(el, oRecord, oColumn, oData) {
-				el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' onkeyup='autocompleteForEntity(this,event)' autocomplete='off' onblur = 'waterMarkTextOut(\""+prefix+"["+slDetailTableIndex+"]"+suffix+"\",\""+codeTextMessage+"\");"+onblurfunction+"' onfocus='onFocusDetailCode(this);waterMarkTextIn(\""+prefix+"["+slDetailTableIndex+"]"+suffix+"\",\""+codeTextMessage+"\");' />";
+				el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' onkeyup='autocompleteForEntity(this,event)' autocomplete='off' tabindex='-1' onblur = 'waterMarkTextOut(\""+prefix+"["+slDetailTableIndex+"]"+suffix+"\",\""+codeTextMessage+"\");"+onblurfunction+"' onfocus='onFocusDetailCode(this);waterMarkTextIn(\""+prefix+"["+slDetailTableIndex+"]"+suffix+"\",\""+codeTextMessage+"\");' />";
 				
 			}
 	}
@@ -281,7 +281,7 @@ var codeObj;
 var acccodeArray;
 function loadDropDownCodes()
 {
-	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/voucher/common-ajaxGetAllCoaNames.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -305,7 +305,7 @@ var rebatecodeObj;
 var rebacccodeArray;
 function loadDropDownRebateCodes()
 {
-	var	url = "/EGF/commons/Process.jsp?type=getAllCoaNames";
+	var	url = "/EGF/voucher/common-ajaxGetAllCoaNames.action";
 	var req3 = initiateRequest();
 	req3.onreadystatechange = function()
 	{
@@ -329,7 +329,7 @@ var funcObj;
 var funcArray;
 function loadDropDownCodesFunction()
 {
-	var url = "/EGF/commons/Process.jsp?type=getAllFunctionCode";
+	var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 	var req4 = initiateRequest();
 	req4.onreadystatechange = function()
 	{
@@ -611,8 +611,8 @@ function createDropdownFormatterPJV(prefix){
             selectEl.className = YAHOO.widget.DataTable.CLASS_DROPDOWN;
             selectEl.name = prefix+'['+subLedgersTable.getRecordIndex(oRecord)+'].'+oColumn.getKey();
 			selectEl.id = prefix+'['+subLedgersTable.getRecordIndex(oRecord)+'].'+oColumn.getKey();
+			selectEl.tabIndex='-1';
             selectEl = el.appendChild(selectEl);
-			
             YAHOO.util.Event.addListener(selectEl,"change",this._onDropdownChange,this);
 			
         }
@@ -659,14 +659,13 @@ function createDropdownFormatterDetailCode(prefix){
 	            selectEl.className = YAHOO.widget.DataTable.CLASS_DROPDOWN;
 	            selectEl.name = prefix+'['+slDetailTableIndex+'].'+oColumn.getKey();
 				selectEl.id = prefix+'['+slDetailTableIndex+'].'+oColumn.getKey();
+				selectEl.tabIndex='-1';
 	            selectEl = el.appendChild(selectEl);
 	            var selectedIndex = {value: slDetailTableIndex }; 
 	            YAHOO.util.Event.addListener(selectEl,"change",onDropdownDetailCodeChange,selectedIndex,this);
 				
 	        }
-
 	        selectEl = collection[0];
-
 	        if(selectEl) {
 	            selectEl.innerHTML = "";
 	            if(options) {
@@ -814,6 +813,7 @@ function createDropdownFormatterCode(prefix){
             selectEl.name = prefix+'['+slDetailTableIndex+'].'+oColumn.getKey();
 			selectEl.id = prefix+'['+slDetailTableIndex+'].'+oColumn.getKey();
 			//selectEl.onfocus=check;
+			selectEl.tabIndex='-1';
             selectEl = el.appendChild(selectEl);
 			var selectedIndex = {value: slDetailTableIndex }; 
             YAHOO.util.Event.addListener(selectEl,"change",onDropdownChange,selectedIndex,this);

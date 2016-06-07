@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,42 +24,83 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.model.instrument;
 
-import java.math.BigDecimal;
-
-import org.egov.commons.Accountdetailkey;
-import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.infstr.models.BaseModel;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "EGF_DISHONORCHEQUE_DETAIL")
+@SequenceGenerator(name = DishonorChequeDetails.SEQ_EGF_DISHONORCHEQUE_DETAIL, sequenceName = DishonorChequeDetails.SEQ_EGF_DISHONORCHEQUE_DETAIL, allocationSize = 1)
 public class DishonorChequeDetails extends BaseModel {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -6790212647262088197L;
+
+    public static final String SEQ_EGF_DISHONORCHEQUE_DETAIL = "SEQ_EGF_DISHONORCHQDET";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGF_DISHONORCHEQUE_DETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "headerid")
     private DishonorCheque header;
+
+    @ManyToOne
+    @JoinColumn(name = "glcodeid")
     private CChartOfAccounts glcodeId;
+
     private BigDecimal debitAmt;
+
+    @Column(name = "creditamt")
     private BigDecimal creditAmount;
-    private Accountdetailkey detailKey;
-    private Accountdetailtype detailType;
+
     private Integer functionId;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "details", targetEntity = DishonorChequeSubLedgerDetails.class)
+    private Set<DishonorChequeSubLedgerDetails> subLedgerDetails = new HashSet<DishonorChequeSubLedgerDetails>();
+
+    @Transient
     private CFunction function;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Integer getFunctionId() {
         return functionId;
@@ -101,22 +142,6 @@ public class DishonorChequeDetails extends BaseModel {
         this.creditAmount = creditAmount;
     }
 
-    public Accountdetailkey getDetailKey() {
-        return detailKey;
-    }
-
-    public void setDetailKey(final Accountdetailkey detailKey) {
-        this.detailKey = detailKey;
-    }
-
-    public Accountdetailtype getDetailType() {
-        return detailType;
-    }
-
-    public void setDetailType(final Accountdetailtype detailType) {
-        this.detailType = detailType;
-    }
-
     public CFunction getFunction() {
         return function;
     }
@@ -125,4 +150,28 @@ public class DishonorChequeDetails extends BaseModel {
         this.function = function;
     }
 
+    public Set<DishonorChequeSubLedgerDetails> getSubLedgerDetails() {
+        return subLedgerDetails;
+    }
+
+    public void setSubLedgerDetails(Set<DishonorChequeSubLedgerDetails> subLedgerDetails) {
+        this.subLedgerDetails = subLedgerDetails;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final DishonorChequeDetails other = (DishonorChequeDetails) obj;
+        if (debitAmt == null && creditAmount == null) {
+            if (debitAmt != null || creditAmount != null)
+                return false;
+        } else if (!(debitAmt.compareTo(other.debitAmt) == 0 && creditAmount.compareTo(other.creditAmount) == 0))
+            return false;
+        return true;
+    }
 }

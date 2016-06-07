@@ -37,13 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.utils;
-
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.StringUtils.upperCase;
-
-import java.io.Serializable;
-import java.sql.SQLException;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
@@ -53,6 +48,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.StringUtils.upperCase;
+
+/**
+ * Generic application number generator class, this implementation will return ERP wide
+ * application number, which consist of 5 digit sequence number (padded with trialing
+ * zero if sequence length is less than 5 digit) followed by current year and 2 random alphabets.
+ * Sequence number, year and alphabets are separated by hyphen.<br/>
+ * eg: 00010-2016-QX<br/>
+ * Sequence number will be reset to 1 on every year
+ */
 @Service
 public class ApplicationNumberGenerator {
     private static final String APP_NUMBER_SEQ_PREFIX = "SEQ_APPLICATION_NUMBER%s";

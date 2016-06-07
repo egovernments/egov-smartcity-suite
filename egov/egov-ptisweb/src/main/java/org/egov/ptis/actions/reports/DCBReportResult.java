@@ -1,6 +1,47 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.ptis.actions.reports;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class DCBReportResult {
 
@@ -42,6 +83,7 @@ public class DCBReportResult {
     private BigDecimal clctn_currentPSCT = BigDecimal.ZERO;
     private String houseNo;
     private String ownerName;
+    private BigInteger assessmentCount;
 
     public String getBoundaryName() {
         return boundaryName;
@@ -52,8 +94,7 @@ public class DCBReportResult {
     }
 
     public BigDecimal getDmnd_arrearPT() {
-        //return dmnd_arrearPT;
-        return dmnd_arrearPT.add(dmnd_arrearLC.add(dmnd_arrearEC).add(dmnd_arrearUPT));
+        return dmnd_arrearPT;
     }
 
     public void setDmnd_arrearPT(final BigDecimal dmnd_arrearPT) {
@@ -69,13 +110,11 @@ public class DCBReportResult {
     }
 
     public BigDecimal getDmnd_arrearTotal() {
-       // return getDmnd_arrearLC().add(getDmnd_arrearPT());
         return getDmnd_arrearPT().add(getDmnd_arrearPFT());
     }
 
     public BigDecimal getDmnd_currentPT() {
-        //return dmnd_currentPT;
-        return dmnd_currentPT.add(dmnd_currentLC.add(dmnd_currentEC).add(dmnd_currentUPT));
+        return dmnd_currentPT;
     }
 
     public void setDmnd_currentPT(final BigDecimal dmnd_currentPT) {
@@ -91,7 +130,6 @@ public class DCBReportResult {
     }
 
     public BigDecimal getDmnd_currentTotal() {
-        //return getDmnd_currentLC().add(getDmnd_currentPT());
         return getDmnd_currentPT().add(getDmnd_currentPFT());
     }
 
@@ -100,8 +138,7 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_arrearPT() {
-        //return clctn_arrearPT;
-        return clctn_arrearPT.add(clctn_arrearLC.add(clctn_arrearEC).add(clctn_arrearUPT));
+        return clctn_arrearPT;
     }
 
     public void setClctn_arrearPT(final BigDecimal clctn_arrearPT) {
@@ -117,13 +154,11 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_arrearTotal() {
-        //return getClctn_arrearLC().add(getClctn_arrearPFT().add(getClctn_arrearPT()));
         return getClctn_arrearPFT().add(getClctn_arrearPT());
     }
 
     public BigDecimal getClctn_currentPT() {
-        //return clctn_currentPT;
-        return clctn_currentPT.add(clctn_currentLC.add(clctn_currentEC).add(clctn_currentUPT));
+        return clctn_currentPT;
     }
 
     public void setClctn_currentPT(final BigDecimal clctn_currentPT) {
@@ -139,7 +174,6 @@ public class DCBReportResult {
     }
 
     public BigDecimal getClctn_currentTotal() {
-        //return getClctn_currentLC().add(getClctn_currentPFT().add(getClctn_currentPT()));
         return getClctn_currentPFT().add(getClctn_currentPT());
     }
 
@@ -383,19 +417,28 @@ public class DCBReportResult {
         this.boundaryId = boundaryId;
     }
 
-        public String getHouseNo() {
-                return houseNo; 
-        }
+    public String getHouseNo() {
+        return houseNo; 
+    }
 
-        public void setHouseNo(String houseNo) {
-                this.houseNo = houseNo;
-        }
+    public void setHouseNo(String houseNo) {
+    	this.houseNo = houseNo;
+    }
 
-        public String getOwnerName() {
-            return ownerName;
-        }
+    public String getOwnerName() {
+        return ownerName;
+    }
 
-        public void setOwnerName(String ownerName) {
-            this.ownerName = ownerName;
-        }
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+	public BigInteger getAssessmentCount() {
+		return assessmentCount;
+	}
+
+	public void setAssessmentCount(BigInteger assessmentCount) {
+		this.assessmentCount = assessmentCount;
+	}
+
 }

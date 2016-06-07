@@ -37,15 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.workflow.service;
+
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowAction;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.workflow.Action;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 
 /**
  * The Interface WorkflowService.
@@ -56,12 +57,12 @@ public interface WorkflowService<T extends StateAware> {
 	/**
 	 * Moves the stateAware from the current state to the next state. The actual logic of moving the stateAware
 	 * depends on the state of the stateAware, and the Action
-	 * @param action the action
+	 * @param workflowAction the action
 	 * @param stateAware the state aware stateAware
 	 * @param comment the comment
 	 * @return stateAware after state transition.
 	 */
-	T transition(Action action,T stateAware, String comment);
+	T transition(WorkflowAction workflowAction, T stateAware, String comment);
 	
 	/**
 	 * Moves the stateAware from the current state to the next state. The actual logic of moving the stateAware
@@ -83,7 +84,7 @@ public interface WorkflowService<T extends StateAware> {
 	 * @param stateAware the state aware
 	 * @return List of valid Actions
 	 */
-	List<Action> getValidActions(T stateAware);	
+	List<WorkflowAction> getValidActions(T stateAware);
 	
 		
 	/**

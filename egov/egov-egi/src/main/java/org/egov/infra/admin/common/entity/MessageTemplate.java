@@ -40,7 +40,8 @@
 
 package org.egov.infra.admin.common.entity;
 
-import java.util.Locale;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -49,9 +50,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
+import java.util.Locale;
 
 @Entity
 @Table(name = "eg_messagetemplate")

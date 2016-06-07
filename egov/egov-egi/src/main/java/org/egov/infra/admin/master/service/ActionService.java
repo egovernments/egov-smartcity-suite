@@ -37,9 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.admin.master.service;
 
-import java.util.List;
+package org.egov.infra.admin.master.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Action;
@@ -48,6 +47,8 @@ import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

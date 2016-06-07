@@ -1,42 +1,43 @@
-<!---------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------   -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
@@ -48,17 +49,17 @@
 					window.location = "../property/transfer/new.action?assessmentNo=" + assessmentNum;
 				} else if (selectedValue == 'ADD_OR_ALTER') {
 					window.location = "../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=" + assessmentNum;
-				} else if (selectedValue=='Bifurcation') {
+				} /* else if (selectedValue=='Bifurcation') {
 					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber="+assessmentNum;
 				} else if (selectedValue == 'RevisionPetition') {
 					window.location = "../revPetition/revPetition-newForm.action?propertyId=" + assessmentNum;
-				} else if (selectedValue == 'CollectTax') {
+				}  */else if (selectedValue == 'CollectTax') {
 					window.location = "/../ptis/search/searchProperty-searchOwnerDetails.action?assessmentNum=" + assessmentNum;
-				} else if (selectedValue == 'EDIT_DATAENTRY') {
+				} /* else if (selectedValue == 'EDIT_DATAENTRY') {
 					window.location = "../modify/modifyProperty-modifyDataEntry.action?modifyRsn=EDIT_DATA_ENTRY&indexNumber=" + assessmentNum;
-				}/*  else if (selectedValue == 'ADD_EDIT_DEMAND') {
+				} *//*  else if (selectedValue == 'ADD_EDIT_DEMAND') {
 					window.location = "../edit/editDemand-newEditForm.action?propertyId=" + assessmentNum;
-				} */ else if (selectedValue == 'VacancyRemission') {
+				} */ /* else if (selectedValue == 'VacancyRemission') {
 					window.location = "/ptis/vacancyremission/create/" + assessmentNum+",normalSearch";
 				} else if(selectedValue == 'VacancyRemissionMonthlyUpdate'){
 					window.location = "/ptis/vacancyremission/monthlyupdate/" + assessmentNum;
@@ -72,9 +73,11 @@
 					window.location = "/ptis/addarrears/form/" + assessmentNum;
 				} else if(selectedValue == 'GeneralRevisionPetition'){
 					window.location="../modify/modifyProperty-modifyForm.action?modifyRsn=GRP&indexNumber="+assessmentNum;
-				} /* else if(selectedValue == 'WriteOff'){
+				} */ /* else if(selectedValue == 'WriteOff'){
 					window.location = "/ptis/writeOff/form/" + assessmentNum;
-				} */
+				} */ /* else if(selectedValue == 'editOwner'){
+			      window.location = "/ptis/editowner/" + assessmentNum;
+			    }  */
 			}
 
 			function gotoSearchForm(){
@@ -127,12 +130,20 @@
 									title="Address"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:left" />
-								<display:column property="currDemand"
-									title="Current Tax"
+								<display:column property="currFirstHalfDemand"
+									title="Current FirstHalf Tax"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="text-align:center" />
-								<display:column property="currDemandDue"
-									title="Current Tax Due"
+								<display:column property="currFirstHalfDemandDue"
+									title="Current FirstHalf Tax Due"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="width:10%;text-align:center" />
+									<display:column property="currSecondHalfDemand"
+									title="Current SecondHalf Tax"
+									headerClass="bluebgheadtd" class="blueborderfortd"
+									style="text-align:center" />
+								<display:column property="currSecondHalfDemandDue"
+									title="Current SecondHalf Tax Due"
 									headerClass="bluebgheadtd" class="blueborderfortd"
 									style="width:10%;text-align:center" />
 								<display:column property="arrDemandDue"
@@ -145,56 +156,56 @@
 									<select id="actionValue" name="actionValue"
 										style="align: center;width:100%"
 										onchange="getPropdetails(this,'<s:property value="%{#attr.currentRowObject.assessmentNum}"/>')">
-										<s:property value="%{#attr.currentRowObject.isTaxExempte}"/>
+										<%-- <s:property value="%{#attr.currentRowObject.isTaxExempte}"/> --%>
 										<option value="">
 											----Choose----
 										</option>
 								
-										<s:if test="%{#attr.currentRowObject.isDemandActive && #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
+										<%-- <s:if test="%{#attr.currentRowObject.isDemandActive && #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 											<c:if test="${currentRowObject.isTaxExempted == true}">
 												<option value="TaxExemption">
 															<s:text name="TaxExemption"></s:text>
 												</option>
 											</c:if>
-										</s:if>
+										</s:if> --%>
 										<s:if test="%{(roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) ||
 										roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()))
 										&& #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 										<c:if test="${currentRowObject.isTaxExempted == false }">
-											<c:if test="${currentRowObject.source == 'D'}">
+											<%-- <c:if test="${currentRowObject.source == 'D'}">
 												<option value="EDIT_DATAENTRY">
 													<s:text name="editdataentry.title"></s:text>
 												</option>
 												
-												<%-- <option value="ADD_EDIT_DEMAND">
+												<option value="ADD_EDIT_DEMAND">
 													<s:text name="addeditDemand"></s:text> 
-												</option> --%>
+												</option>
 											</c:if>
 											<c:if test="${currentRowObject.source == 'M'}">
-											<%-- <option value="ADD_EDIT_DEMAND">
+											<option value="ADD_EDIT_DEMAND">
 													<s:text name="addeditDemand"></s:text> 
-												</option> --%>
-											</c:if>
+												</option>
+											</c:if> --%>
 											<s:if test="%{#attr.currentRowObject.isDemandActive}">
 												<option value="ADD_OR_ALTER">
 													<s:text name="viewprop.option.alter"></s:text>
 												</option>
-												<option value="Bifurcation">
+												<%-- <option value="Bifurcation">
 													<s:text name="Bifurcation"></s:text>
-												</option>
+												</option> --%>
 												<option value="TransferProperty">
 													<s:text name="transferProperty"></s:text>
 												</option>
-												<option value="TaxExemption">
+												<%-- <option value="TaxExemption">
 													<s:text name="TaxExemption"></s:text>
 										        </option>
 										        <option value="GeneralRevisionPetition">
 													<s:text name="GeneralRevisionPetition"></s:text>
-										        </option>
+										        </option> --%>
 										        <%-- <option value="WriteOff">
 													<s:text name="WriteOff"/>
 										        </option> --%>
-												<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">
+												<%-- <c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.enableVacancyRemission == true}">
 													<s:if test="%{(#attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND || !#attr.currentRowObject.isTaxExempted)}">
 														<option value="VacancyRemission">
 															<s:text name="vacancyRemission"></s:text>
@@ -203,22 +214,27 @@
 															<s:text name="Demolition"></s:text>
 														</option>
 													</s:if>
-												</c:if>
-												<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && isNagarPanchayat}">
+												</c:if> --%>
+												<%-- <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) && isNagarPanchayat}">
 													<c:if test="${currentRowObject.isUnderWorkflow == false && currentRowObject.source == 'M'}">
 														<option value="addArrears">
 															<s:text name="addArrears"></s:text>
 														</option>
 													</c:if>
-												</s:if>
+												</s:if> --%>
 											</s:if>
-											<s:else>
+											<%-- <s:else>
 												<option value="RevisionPetition">
 													<s:text name="revisionPetition"></s:text>
 												</option>
-											</s:else>
-											</c:if>
+											</s:else>--%>
+											</c:if> 
 										</s:if>
+										<%-- <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTAPPROVER_ROLE.toUpperCase())}">
+												<option value="editOwner">
+													<s:text name="editOwner"></s:text>
+												</option>
+										</s:if> --%>
 										<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_COLLECTION_OPERATOR.toUpperCase())}">
 											<c:if test="${currentRowObject.isTaxExempted == false }">
 												<option value="CollectTax">
@@ -227,7 +243,7 @@
 									   </c:if>
 									   
 									</s:if>
-									<s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive
+									<%-- <s:if test="%{roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@PTVERIFIER_ROLE.toUpperCase()) && #attr.currentRowObject.isDemandActive
 									&& #attr.currentRowObject.propType!=@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS}">
 										<c:if test="${currentRowObject.propType != 'VAC_LAND' && currentRowObject.isTaxExempted == false}">
 											<c:if test="${currentRowObject.enableMonthlyUpdate == true && currentRowObject.enableVRApproval == false}">
@@ -241,7 +257,7 @@
 												</option>
 											</c:if>
 										</c:if>
-									</s:if>
+									</s:if> --%>
 								</select>
 								</display:column>
 								<display:setProperty name="paging.banner.item" value="Record" />

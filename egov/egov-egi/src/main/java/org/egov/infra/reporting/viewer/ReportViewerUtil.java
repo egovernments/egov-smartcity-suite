@@ -37,24 +37,29 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.reporting.viewer;
+
+import org.egov.infra.cache.impl.ApplicationCacheManager;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.egov.infra.cache.impl.LRUCache;
-import org.egov.infra.reporting.engine.ReportConstants;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility methods related to report viewing
  */
-public final class ReportViewerUtil {
-	// Content types used for rendering files of different types
+@Service
+public class ReportViewerUtil {
 	private static final Map<FileFormat, String> contentTypes = getContentTypes();
+
+	@Autowired
+	private ApplicationCacheManager applicationCacheManager;
 
 	/**
 	 * @return Array of content types in appropriate order. This order is same as the order of file formats present in the FileFormat enumeration
@@ -70,66 +75,19 @@ public final class ReportViewerUtil {
 		return contentTypes;
 	}
 
-	/**
-	 * Private constructor to silence PMD warning of "all static methods"
-	 */
-	private ReportViewerUtil() {
-
+	public String addReportToTempCache(final ReportOutput reportOutput) {
+		String reportId = UUID.randomUUID().toString();
+		applicationCacheManager.put(reportId, reportOutput);
+		return reportId;
 	}
 
-	/**
-	 * Adds given report output to an internal session variable and returns the key. This key needs to be passed to the report viewer servlet for displaying the report in browser.
-	 * @param reportOutput The report output object to be added to session
-	 * @param session The session variables map
-	 * @return Key of the report output object in the session variables map
-	 */
-	@SuppressWarnings("unchecked")
-	public static Integer addReportToSession(final ReportOutput reportOutput, final Map<String, Object> session) {
-		Integer nextKey = 0;
+    public ReportOutput getReportOutputFormCache(String reportOutputCacheKey) {
+        return applicationCacheManager.get(reportOutputCacheKey, ReportOutput.class);
+    }
 
-		// Synchronized to ensure that multiple reports created by the user
-		// simultaneously do not overwrite each other.
-		synchronized (session) {
-			LRUCache<Integer, ReportOutput> reportOutputCache = (LRUCache<Integer, ReportOutput>) session.get(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-
-			if (reportOutputCache == null) {
-				reportOutputCache = new LRUCache<Integer, ReportOutput>(1, 10);
-				session.put(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP, reportOutputCache);
-			}
-
-			nextKey = reportOutputCache.size();
-			reportOutputCache.put(nextKey, reportOutput);
-		}
-
-		return nextKey;
-	}
-
-	/**
-	 * Adds given report output to an internal session variable and returns the key. This key needs to be passed to the report viewer servlet for displaying the report in browser.
-	 * @param reportOutput The report output object to be added to session
-	 * @param session The HTTP session object
-	 * @return Key of the report output object in the session variables map
-	 */
-	@SuppressWarnings("unchecked")
-	public static Integer addReportToSession(final ReportOutput reportOutput, final HttpSession session) {
-		Integer nextKey = 0;
-
-		// Synchronized to ensure that multiple reports created by the user
-		// simultaneously do not overwrite each other.
-		synchronized (session) {
-			LRUCache<Integer, ReportOutput> reportOutputCache = (LRUCache<Integer, ReportOutput>) session.getAttribute(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-
-			if (reportOutputCache == null) {
-				reportOutputCache = new LRUCache<Integer, ReportOutput>(1, 10);
-				session.setAttribute(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP, reportOutputCache);
-			}
-
-			nextKey = reportOutputCache.size();
-			reportOutputCache.put(nextKey, reportOutput);
-		}
-
-		return nextKey;
-	}
+    public void removeReportOutputFromCache(String reportOutputCacheKey) {
+        applicationCacheManager.remove(reportOutputCacheKey);
+    }
 
 	/**
 	 * @param fileFormat File format which content type is to be returned
@@ -143,7 +101,7 @@ public final class ReportViewerUtil {
 	 * @param fileFormat File format for which content disposition is to be returned
 	 * @return content type string for given file format. This can be set in the "Content-disposition" http header while rendering a file in browser
 	 */
-	protected static String getContentDisposition(final FileFormat fileFormat) {
+	public static String getContentDisposition(final FileFormat fileFormat) {
 		return "inline; filename=report." + fileFormat.toString();
 	}
 }

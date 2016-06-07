@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -54,7 +55,6 @@
 		<s:text name='licenseCategory.view' />
 	</s:elseif>	
 	</title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 
 	function bodyOnLoad(){
@@ -63,6 +63,9 @@
 			 document.getElementById("name").readOnly=true;
 			 jQuery("span").remove(".mandatory");
 		} 
+		if(document.getElementById("userMode").value=='edit'){
+			document.getElementById("code").readOnly=true;
+		}
 	}
 
 	function reload(){
@@ -95,12 +98,13 @@
 		var screenType="categoryMaster"; 
 		var name="";
 		var code="";
+		var categoryid= document.getElementById("licenseCategory_id").value
 		if(param=="name")
 			name=obj.value;
 		else if(param=="code")
 			code=obj.value;
 		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
-		    	{name:name,code:code,screenType:screenType},categorySuccessHandler,categoryFailureHandler);
+		    	{name:name,code:code,categoryid:categoryid,screenType:screenType},categorySuccessHandler,categoryFailureHandler);
 	}
 
 	categoryFailureHandler=function(){
@@ -160,7 +164,7 @@
 					</div>
 					<div class="panel-body custom-form">
 					
-						<s:hidden name="id" /> 
+						<s:hidden name="id" value="%{id}"/> 
 						<s:hidden name="userMode" id="userMode"/>
 					
 						<div class="form-group">

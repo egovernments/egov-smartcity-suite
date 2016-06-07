@@ -37,9 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.filter;
 
-import java.io.IOException;
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.web.utils.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -48,13 +54,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.web.utils.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.IOException;
 
 public class ApplicationTenantResolverFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
@@ -65,10 +65,10 @@ public class ApplicationTenantResolverFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final String domainURL = WebUtils.extractRequestedDomainName((HttpServletRequest) request);
-        LOG.debug("Resolved domain as  {}", EgovThreadLocals.getDomainName());
-        EgovThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainURL));
-        LOG.debug("Resolved tenant as  {}", EgovThreadLocals.getTenantID());
-        EgovThreadLocals.setDomainName(domainURL);
+        LOG.debug("Resolved domain as  {}", ApplicationThreadLocals.getDomainName());
+        ApplicationThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainURL));
+        LOG.debug("Resolved tenant as  {}", ApplicationThreadLocals.getTenantID());
+        ApplicationThreadLocals.setDomainName(domainURL);
         chain.doFilter(request, response);
     }
 

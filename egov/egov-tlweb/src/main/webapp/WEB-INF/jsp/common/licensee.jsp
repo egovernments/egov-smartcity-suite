@@ -37,7 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+
+<%@ page language="java" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 	<div class="panel-heading custom_form_panel_heading">
 	    <div class="panel-title"><s:text name='license.title.applicantdetails' /></div>
@@ -45,13 +46,13 @@
 	<div class="row" >
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
 	    <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
-	           <s:textfield name="licensee.uid" onBlur="return checkMinLength(this,12);"  onKeyPress="return numbersonly(this, event)"  maxlength="12" cssClass="form-control patternvalidation"  data-pattern="number" />
+	           <s:textfield name="licensee.uid" onBlur="return checkMinLength(this,12);"  maxlength="12" cssClass="form-control patternvalidation"  data-pattern="number" />
 	    </div>
 	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.mobileNo' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
 	    	<div class="input-group">
 			  <span class="input-group-addon" id="basic-addon1">+91</span>
-			  <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" onKeyPress="return numbersonly(this, event)" onBlur="checkMinLength(this,10)" maxlength="10" cssClass="form-control patternvalidation" data-pattern="number" />
+			  <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" onBlur="checkMinLength(this,10)" maxlength="10" cssClass="form-control patternvalidation" data-pattern="number" />
 			</div>
 	    </div>
 	    
@@ -61,7 +62,7 @@
 	    <div class="col-sm-3 add-margin">
 	       <s:textfield name="licensee.applicantName" id="applicantName" maxlength="250" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" />
 	    </div>
-	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.father/spouse' /><span class="mandatory"></span></label>
+	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.fatherorspousename' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
 	      	<s:textfield name="licensee.fatherOrSpouseName" maxlength="250" id="fatherOrSpouseName" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" />
 	    </div>

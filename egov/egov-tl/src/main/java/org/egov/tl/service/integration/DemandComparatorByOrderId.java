@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.service.integration;
 
-import java.util.Comparator;
+package org.egov.tl.service.integration;
 
 import org.egov.demand.model.EgDemandDetails;
 
-class DemandComparatorByOrderId implements Comparator<EgDemandDetails> {
+import java.util.Comparator;
+
+public class DemandComparatorByOrderId implements Comparator<EgDemandDetails> {
     @Override
     public int compare(final EgDemandDetails d1, final EgDemandDetails d2) {
         return d1.getEgDemandReason().getEgDemandReasonMaster().getOrderId().compareTo

@@ -1,10 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2015-12-06T16:54:32 -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-05-23T11:29:37 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainSpecialNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="120" bottomMargin="80" isSummaryNewPage="true" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
@@ -12,8 +51,8 @@
 		<defaultValueExpression><![CDATA["/home/manasa/CHECKOUTS/Phoenix/GitHub/eGov/egov/egov-ptis/src/main/java/reports/templates/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="cityName" class="java.lang.String"/>
-	<parameter name="userId" class="java.lang.Long"/>
 	<parameter name="isCorporation" class="java.lang.Boolean"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
 	<field name="noticeNo" class="java.lang.String"/>
 	<field name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
 	<field name="floorDetailsForNotice" class="java.util.List"/>
@@ -27,11 +66,11 @@
 				<subreportParameter name="cityName">
 					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="userId">
-					<subreportParameterExpression><![CDATA[$P{userId}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="copyType">
 					<subreportParameterExpression><![CDATA["citizen"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="userSignature">
+					<subreportParameterExpression><![CDATA[$P{userSignature}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="ownerInfo">
 					<subreportParameterExpression><![CDATA[$F{ownerInfo}]]></subreportParameterExpression>
@@ -48,14 +87,14 @@
 				<subreportParameter name="noticeNo">
 					<subreportParameterExpression><![CDATA[$F{noticeNo}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="userId">
-					<subreportParameterExpression><![CDATA[$P{userId}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="cityName">
 					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="copyType">
 					<subreportParameterExpression><![CDATA["official"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="userSignature">
+					<subreportParameterExpression><![CDATA[$P{userSignature}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="ownerInfo">
 					<subreportParameterExpression><![CDATA[$F{ownerInfo}]]></subreportParameterExpression>

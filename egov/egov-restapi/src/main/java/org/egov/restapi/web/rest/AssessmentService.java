@@ -1,41 +1,41 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.restapi.web.rest;
 
@@ -57,7 +57,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -78,7 +79,7 @@ import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
-import org.egov.restapi.model.AssessmentNoRequest;
+import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.BuildingPlanDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
@@ -122,12 +123,13 @@ public class AssessmentService {
      * @throws IOException
      */
     @RequestMapping(value = "/property/assessmentDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String getAssessmentDetails(@RequestBody String assessmentNoRequest)
+    public String getAssessmentDetails(@RequestBody String assessmentRequest)
             throws JsonGenerationException, JsonMappingException, IOException {
-        AssessmentNoRequest assessmentNoReq = (AssessmentNoRequest) getObjectFromJSONRequest(assessmentNoRequest,
-                AssessmentNoRequest.class);
+        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
         AssessmentDetails assessmentDetail = propertyExternalService
-                .loadAssessmentDetails(assessmentNoReq.getAssessmentNo(), PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+                .loadAssessmentDetails(assessmentReq.getAssessmentNo(), PropertyExternalService.FLAG_FULL_DETAILS,
+                        BasicPropertyStatus.ACTIVE);
         return getJSONResponse(assessmentDetail);
     }
 
@@ -141,14 +143,14 @@ public class AssessmentService {
      * @throws IOException
      */
     @RequestMapping(value = "/property/propertytaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String getPropertyTaxDetails(@RequestBody String assessmentNoRequest)
+    public String getPropertyTaxDetails(@RequestBody String assessmentRequest)
             throws JsonGenerationException, JsonMappingException, IOException {
 
         PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
-        AssessmentNoRequest assessmentNoReq = (AssessmentNoRequest) getObjectFromJSONRequest(assessmentNoRequest,
-                AssessmentNoRequest.class);
+        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
         try {
-            String assessmentNo = assessmentNoReq.getAssessmentNo();
+            String assessmentNo = assessmentReq.getAssessmentNo();
             if (null != assessmentNo) {
                 propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
             } else {
@@ -179,6 +181,65 @@ public class AssessmentService {
             return JsonConvertor.convert(errorList);
         }
         return JsonConvertor.convert(propertyTaxDetails);
+    }
+
+    /**
+     * This method is used get the property tax details.
+     * 
+     * @param assessmentNo - assessment no
+     * @param ownerName - Owner Name
+     * @param mobileNumber - Mobile Number
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    /**
+     */
+    @RequestMapping(value = "/property/propertytaxdetailsByOwnerDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public String getPropertyTaxDetailsByOwnerDetails(@RequestBody String assessmentRequest)
+            throws JsonGenerationException, JsonMappingException, IOException {
+
+        List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<PropertyTaxDetails>();
+        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
+        try {
+            String assessmentNo = assessmentReq.getAssessmentNo();
+            String ownerName = assessmentReq.getOwnerName();
+            String mobileNumber = assessmentReq.getMobileNumber();
+            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber)) {
+                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber);
+            } else {
+                ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
+                PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
+                propertyTaxDetails.setErrorDetails(errorDetails);
+                propertyTaxDetailsList.add(propertyTaxDetails);
+            }
+
+            for (PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
+                if (propertyTaxDetails.getOwnerDetails() == null) {
+                    propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>(0));
+                }
+                if (propertyTaxDetails.getLocalityName() == null)
+                    propertyTaxDetails.setLocalityName("");
+                if (propertyTaxDetails.getPropertyAddress() == null)
+                    propertyTaxDetails.setPropertyAddress("");
+                if (propertyTaxDetails.getTaxDetails() == null) {
+                    RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
+                    List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
+                    taxDetails.add(ar);
+                    propertyTaxDetails.setTaxDetails(taxDetails);
+                }
+            }
+        } catch (Exception e) {
+            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
+            ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            errorList.add(er);
+            return JsonConvertor.convert(errorList);
+        }
+        return JsonConvertor.convert(propertyTaxDetailsList);
     }
 
     /**
@@ -240,7 +301,7 @@ public class AssessmentService {
                 responseJson = JsonConvertor.convert(receiptDetails);
             }
         } catch (ValidationException e) {
-        	 e.printStackTrace();
+            e.printStackTrace();
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             List<ValidationError> errors = e.getErrors();
@@ -618,7 +679,7 @@ public class AssessmentService {
     @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String createProperty(@RequestBody String createPropertyDetails)
             throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-        EgovThreadLocals.setUserId(Long.valueOf("40"));
+        ApplicationThreadLocals.setUserId(Long.valueOf("40"));
         CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
                 createPropertyDetails, CreatePropertyDetails.class);
 

@@ -37,15 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.service.masters;
 
-import java.util.List;
+package org.egov.tl.service.masters;
 
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.repository.LicenseCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,20 +60,10 @@ public class LicenseCategoryService {
         return licenseCategoryRepository.save(licenseCategory);
     }
 
-    /**
-     * @Description returns category object that matches param name
-     * @param name
-     * @return
-     */
     public LicenseCategory findCategoryByName(final String name) {
         return licenseCategoryRepository.findByNameIgnoreCase(name);
     }
 
-    /**
-     * @Description returns category object that matches param code
-     * @param code
-     * @return
-     */
     public LicenseCategory findCategoryByCode(final String code) {
         return licenseCategoryRepository.findByCodeIgnoreCase(code);
     }

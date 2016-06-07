@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,27 +24,26 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package com.exilant.eGov.src.chartOfAccounts;
-
-import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.GLAccount;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.dataservice.DataExtractor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class CodeValidator {
@@ -68,12 +67,12 @@ public class CodeValidator {
         // This fix is for Phoenix Migration.
         /*
          * if(LOGGER.isInfoEnabled())
-         * LOGGER.info("CodeValidator getInstance() called for "+EgovThreadLocals.getDomainName()+"and singletonInstance == null"
+         * LOGGER.info("CodeValidator getInstance() called for "+ApplicationThreadLocals.getDomainName()+"and singletonInstance == null"
          * +singletonInstance == null); try { //if(LOGGER.isInfoEnabled())
-         * LOGGER.info("cache.get(rootNode/"+EgovThreadLocals.getDomainName
-         * ()+"/"+gLFilterCode+"::::::"+cache.get(rootNode+"/"+EgovThreadLocals.getDomainName(),gLFilterCode));
-         * if(cache.get(ROOTNODE+"/"+EgovThreadLocals.getDomainName(),GLFILTERCODE) == null) { if(LOGGER.isInfoEnabled())
-         * LOGGER.info("calling loadFilterData::for "+EgovThreadLocals.getDomainName()); loadFilterData(); } } catch (Exception e)
+         * LOGGER.info("cache.get(rootNode/"+ApplicationThreadLocals.getDomainName
+         * ()+"/"+gLFilterCode+"::::::"+cache.get(rootNode+"/"+ApplicationThreadLocals.getDomainName(),gLFilterCode));
+         * if(cache.get(ROOTNODE+"/"+ApplicationThreadLocals.getDomainName(),GLFILTERCODE) == null) { if(LOGGER.isInfoEnabled())
+         * LOGGER.info("calling loadFilterData::for "+ApplicationThreadLocals.getDomainName()); loadFilterData(); } } catch (Exception e)
          * { // TODO Auto-generated catch block if(LOGGER.isDebugEnabled()) LOGGER.debug("Exp="+e.getMessage()); throw new
          * TaskFailedException(); }
          */
@@ -90,7 +89,7 @@ public class CodeValidator {
         // Iterator it=glFilterList.keySet().iterator();
 
         /*
-         * try { hm = (HashMap)cache.get(ROOTNODE+"/"+EgovThreadLocals.getDomainName(),GLFILTERCODE); } catch (Exception e) { //
+         * try { hm = (HashMap)cache.get(ROOTNODE+"/"+ApplicationThreadLocals.getDomainName(),GLFILTERCODE); } catch (Exception e) { //
          * TODO Auto-generated catch block if(LOGGER.isDebugEnabled()) LOGGER.debug("Exp="+e.getMessage()); throw new
          * ApplicationRuntimeException(e.getMessage()); } //if(LOGGER.isInfoEnabled()) LOGGER.info("glcode:"+pGlCode);
          * //if(LOGGER.isInfoEnabled()) LOGGER.info("looked up str:"+rootNode+"/"+FilterName.get()+gLFilterCode); //

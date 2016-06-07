@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,37 +24,20 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.services.instrument;
-
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ADVICE;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ATM;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_BANK;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_BANK_TO_BANK;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CARD;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CASH;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CHEQUE;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_DD;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ECS;
-import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ONLINE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
@@ -62,10 +45,10 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ECSType;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.instrument.InstrumentAccountCodes;
@@ -80,6 +63,23 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ADVICE;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ATM;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_BANK;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_BANK_TO_BANK;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CARD;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CASH;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_CHEQUE;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_DD;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ECS;
+import static org.egov.utils.FinancialConstants.INSTRUMENT_TYPE_ONLINE;
 
 @Transactional(readOnly = true)
 public class InstrumentService {
@@ -131,7 +131,8 @@ public class InstrumentService {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
-
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     // Business methods
     /**
      * Accepts the list of instruments and save the same to instrument object The values that needs to be passed are:<br>
@@ -414,6 +415,27 @@ public class InstrumentService {
         if (instrMap.get(INSTRUMENT_NUMBER) != null)
             instrHeader.setInstrumentNumber((String) instrMap
                     .get(INSTRUMENT_NUMBER));
+        if (instrMap.get(BANK_CODE) != null) {
+            final Bank bank = getBank(instrMap.get(BANK_CODE).toString());
+            if (bank == null)
+                throw new ApplicationRuntimeException(BANK_CODE + "'"
+                        + instrMap.get(BANK_CODE).toString()
+                        + "' is not defined in the system ");
+            else
+                instrHeader.setBankId(bank);
+        } 
+
+        // applicable for payment
+        if (instrMap.get(BANKACCOUNTID) != null) {
+            final Bankaccount bankaccount = getBankaccount(instrMap.get(
+                    BANKACCOUNTID).toString());
+            if (bankaccount == null)
+                throw new ApplicationRuntimeException(BANKACCOUNTID + "'"
+                        + instrMap.get(BANKACCOUNTID).toString()
+                        + "' is not defined in the system ");
+            else
+                instrHeader.setBankAccountId(bankaccount);
+        }
     }
 
     private void validateAndAssignCheque(InstrumentHeader instrHeader,
@@ -426,8 +448,8 @@ public class InstrumentService {
         if (instrMap.get(INSTRUMENT_SERIALNO) == null)
             instrHeader.setSerialNo(null);
         else
-            instrHeader.setSerialNo(instrMap.get(INSTRUMENT_SERIALNO)
-                    .toString());
+            instrHeader.setSerialNo(financialYearDAO.findById(Long.valueOf(instrMap.get(INSTRUMENT_SERIALNO)
+                    .toString()),false));
         if (instrMap.get(INSTRUMENT_DATE) == null)
             throw new IllegalArgumentException(INSTRUMENT_DATE + IS_NULL);
         else if (new Date().compareTo((Date) instrMap.get(INSTRUMENT_DATE)) == -1)
@@ -861,8 +883,8 @@ public class InstrumentService {
     public InstrumentHeader getInstrumentHeader(final Long bankaccountId,
             final String instrumentNo, final String payTo, final String serialNo) {
         return instrumentHeaderService
-                .find(" from InstrumentHeader where bankAccountId.id=? and instrumentNumber=? and payTo=? and serialNo=? ",
-                        bankaccountId, instrumentNo, payTo, serialNo);
+                .find(" from InstrumentHeader where bankAccountId.id=? and instrumentNumber=? and payTo=? and serialNo.id=? ",
+                        bankaccountId, instrumentNo, payTo, Long.valueOf(serialNo));
     }
 
     @Transactional
@@ -888,7 +910,7 @@ public class InstrumentService {
             accountCheques = (AccountCheques) persistenceService
                     .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
                             + " ac.bankAccountId.id=? and cd.allotedTo.id=? and ? between ac.fromChequeNumber and ac.toChequeNumber and ac.serialNo=? ",
-                            bankAccountId, departmentId.longValue(), chequeNumber, serialNo);
+                            bankAccountId, departmentId.longValue(), chequeNumber, Long.valueOf(serialNo));
         else
             accountCheques = (AccountCheques) persistenceService
                     .find("select ac from AccountCheques ac, ChequeDeptMapping cd where ac.id = cd.accountCheque.id and "
@@ -907,8 +929,8 @@ public class InstrumentService {
             list = instrumentHeaderService
                     .findAllBy(
                             "from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and isPayCheque='1' and "
-                                    + "serialNo=?", chequeNumber,
-                            instrumentType.getId(), bankAccountId, serialNo);
+                                    + "serialNo.id=?", chequeNumber,
+                            instrumentType.getId(), bankAccountId, Long.valueOf(serialNo));
         else
             list = instrumentHeaderService
                     .findAllBy(
@@ -938,12 +960,12 @@ public class InstrumentService {
         final List<InstrumentHeader> list = instrumentHeaderService
                 .findAllBy(
                         "from InstrumentHeader where instrumentNumber=? and instrumentType.id=? and bankAccountId.id=? and statusId in (?) "
-                                + "and serialNo=?",
+                                + "and serialNo.id=?",
                         chequeNumber,
                         instrumentType.getId(),
                         bankAccountId,
                         getStatusId(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS),
-                        serialNo);
+                        Long.valueOf(serialNo));
         if (list != null && list.size() > 0)
             return true;
         return false;

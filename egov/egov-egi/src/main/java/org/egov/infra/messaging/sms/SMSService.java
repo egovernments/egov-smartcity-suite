@@ -37,12 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.messaging.sms;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+package org.egov.infra.messaging.sms;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -57,10 +53,15 @@ import org.egov.infra.config.properties.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-class SMSService {
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class SMSService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SMSService.class);
     private static final String SENDERID_PARAM_NAME = "sms.sender.req.param.name";
     private static final String USERNAME_PARAM_NAME = "sms.sender.username.req.param.name";

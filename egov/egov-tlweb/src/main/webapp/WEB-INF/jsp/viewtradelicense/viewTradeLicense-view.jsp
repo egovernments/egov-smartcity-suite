@@ -37,11 +37,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
 		<title><s:text name="page.title.viewtrade" /></title>
-		<sx:head />
 	</head>
 	<body>
 		<div id="content" class="printable">
@@ -58,7 +58,7 @@
 												</td>
 											</tr>
 										</table>
-										<s:form action="viewTradeLicense" theme="css_xhtml" name="viewForm">
+										<s:form action="viewTradeLicense" theme="simple" name="viewForm">
 											<s:push value="model">
 												<s:hidden name="actionName" value="create" />
 												<s:hidden id="detailChanged" name="detailChanged"></s:hidden>

@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -55,15 +56,18 @@
 		<s:text name='uommaster.view' />
 	</s:elseif>	
 	</title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 
 	function bodyOnLoad(){
+		checkOrUncheck();
 		if(document.getElementById("userMode").value=='view' || document.getElementById("userMode").value=='success'){
 			 document.getElementById("code").readOnly=true;
 			 document.getElementById("name").readOnly=true;
 			 document.getElementById("active").disabled=true;
 			 jQuery("span").remove(".mandatory");
+		}
+		if(document.getElementById("userMode").value=='edit'){
+			document.getElementById("code").readOnly=true;
 		}
 		if(document.getElementById("userMode").value=='new'){
 			 document.getElementById("active").checked=true;
@@ -109,12 +113,13 @@
 		var screenType="uomMaster";
 		var name="";
 		var code="";
+		var uomid=document.getElementById("unitOfMeasurement_id").value;
 		if(param=="name")
 			name=obj.value;
 		else if(param=="code")
 			code=obj.value;
 		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
-		    	{name:name,code:code,screenType:screenType},uomSuccessHandler,uomFailureHandler);
+		    	{name:name,code:code,screenType:screenType,uomid:uomid},uomSuccessHandler,uomFailureHandler);
 	}
 
 	uomFailureHandler=function(){
@@ -178,7 +183,7 @@
 					</div>
 					<div class="panel-body custom-form">
 					
-						<s:hidden name="id"/> 
+						<s:hidden name="id" value="%{id}"/> 
 						<s:hidden name="userMode" id="userMode"/>
 						<s:hidden name="uomActive" id="uomActive"/>
 					

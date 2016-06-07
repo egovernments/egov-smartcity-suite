@@ -1,44 +1,45 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
-<%@ include file="/includes/taglibs.jsp" %> 
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
+<%@ include file="/includes/taglibs.jsp" %>
+<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script> 
 <html>
 <title><s:text name="contractor.search.title" /></title>
 
@@ -109,10 +110,11 @@
 		</div>
 	</div>
 </div>
-			
+			<input type="hidden" value="<s:text name='contractor.select.error' />" id='selectMessage'>
+			<s:hidden name="id" id="id" />
 <div class="row">
 	<div class="col-xs-12 text-center buttonholdersearch">
-		<input type="submit" class="btn btn-primary" value="Search" id="searchButton" onClick="validate()" />&nbsp;
+		<input type="submit" class="btn btn-primary" value="Search" id="searchButton" name="button" onClick="return validate()" />&nbsp;
 		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
 	</div>
 </div>
@@ -120,7 +122,7 @@
 	<s:text id="select"	name="%{getText('column.title.select')}"></s:text>
  	<s:text	id="slNo" name="%{getText('column.title.SLNo')}"></s:text>
 	<s:text id="code" name="%{getText('contractor.code')}"></s:text>
-	<s:text id="name" name="%{getText('contractor.name')}"></s:text>
+	<s:text id="name" name="%{getText('contractot.contractorname')}"></s:text>
 	<s:text id="class" name="%{getText('contractor.grade')}"></s:text>
 	<s:text id="status"	name="%{getText('contractor.status')}" />
 		<s:if test="%{searchResult.fullListSize != 0}">
@@ -134,7 +136,7 @@
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" title="${select}" style="width:2%;" titleKey="column.title.select">
 						<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.id}'/>" onClick="setContractorId('<s:property value='%{#attr.currentRow.id}'/>');" />
-						<s:hidden name="id" id="id" />
+						
 					</display:column>
 
 					<display:column headerClass="pagetableth"  class="pagetabletd" title="${slNo}"  style="width:4%;text-align:right">
@@ -177,40 +179,10 @@
 </s:form>
 <s:if test="%{searchResult.fullListSize != 0}">
 	<div align="center">
-		<input type="submit" name="VIEW" Class="btn btn-primary" value="View" id="VIEW" onclick="return viewData();" /> 
-		<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="return modifyData();" /> 
+		<input type="submit" name="VIEW" Class="btn btn-primary" value="View" id="VIEW" onclick="return viewContractorDataOnSearch();" /> 
+		<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="return modifyContractorDataOnSearch();" /> 
 		<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
 </s:if>
-
-<script type="text/javascript">
-function viewData() {
-    if (document.getElementById('id').value == '' || document.getElementById('id').value == null) {
-        showMessage('contractorError', '<s:text name="contractor.select.error" />');
-        window.scrollTo(0, 0);
-        return false;
-    } else
-        window.location = '${pageContext.request.contextPath}/masters/contractor-edit.action?mode=view&id=' + dom.get('id').value;
-    return true;
-}
-
-function modifyData() {
-    if (document.getElementById('id').value == '' || document.getElementById('id').value == null) {
-        showMessage('contractorError', '<s:text name="contractor.select.error" />');
-        window.scrollTo(0, 0);
-        return false;
-    } else
-        window.location = '${pageContext.request.contextPath}/masters/contractor-edit.action?mode=edit&id=' + dom.get('id').value;
-    return true;
-}			
-function setContractorId(val) {
-	document.getElementById('id').value = val;
-}
-function validate(){
-	document.searchContractorForm.action='${pageContext.request.contextPath}/masters/contractor-viewResult.action'; 
-   	document.searchContractorForm.submit();
-	
-}
-</script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -39,47 +40,20 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd 
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" default-lazy-init="true">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	   default-lazy-init="true">
 		
 	<context:component-scan base-package="org.egov.infra"/>
-	<context:component-scan base-package="org.egov.lib"/>
 	<context:component-scan base-package="org.egov.infstr"/>
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	
-	<import resource="applicationContext-messages.xml"/>
-	<!-- <alias name="${filestore.servicebean.name}" alias="fileStoreService" /> -->
-	
-	<bean class="org.egov.EgovSpringContextHolder" lazy-init="false"/>
 	
 	<bean id="masterDataCache" class="org.egov.infstr.utils.EgovMasterDataCaching" lazy-init="false"/>
 	
-	<bean id="commonsDAOFactory" class="org.egov.commons.dao.CommonsDAOFactory">
-	</bean>
+	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype"/>
 
-	<bean id="commonsService" class="org.egov.commons.service.CommonsServiceImpl">
-		<constructor-arg ref="commonsDAOFactory"/>
-		<constructor-arg ref="sessionFactory"/>
-	</bean>
-
-	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-
-	<bean id="sequenceGenerator" class="org.egov.infstr.utils.SequenceGenerator" scope="prototype" autowire-candidate="true">
-		<constructor-arg index="0" ref="sessionFactory" />
-	</bean>
-	<!-- this is the new bean which all modules should eventually move to. It 
-		uses database sequences. -->
-	<bean id="sequenceNumberGenerator" class="org.egov.infstr.utils.SequenceNumberGenerator" scope="prototype" autowire-candidate="true">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
-	<!-- Bean for report service. constructor arguments: arg0 => Report Template 
+	<!-- Bean for report service. constructor arguments: arg0 => Report Template
 		Cache minimum size arg1 => Report Template Cache maximum size -->
 	<bean id="reportService" class="org.egov.infra.reporting.engine.jasper.JasperReportService" lazy-init="false">
 		<constructor-arg value="10" />
@@ -90,62 +64,31 @@
 		<property name="type" value="org.egov.infra.admin.master.entity.User"/>
 	</bean>
 
-	<bean id="installmentDao" class="org.egov.commons.dao.InstallmentHibDao" scope="prototype" />
-
-	<bean id="customizedWorkFlowService" class="org.egov.infstr.workflow.CustomizedWorkFlowService" scope="prototype">
+	<bean id="customizedWorkFlowService" class="org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="workflowService" ref="workflowService" />
-		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-	<bean id="authRuleService" parent="persistenceService" autowire-candidate="true">
-		<property name="type" value="org.egov.lib.rrbac.model.AuthorizationRule"/>
-	</bean>
-
-	<bean id="RuleInterceptorFilter" class="org.egov.lib.rrbac.filter.RuleInterceptorFilter">
-		<property name="userService" ref="userService" />
-		<property name="daoService" ref="persistenceService" />
-		<property name="authRuleService" ref="authRuleService" />
-	</bean>
 
 	<bean id="applicationCoreFilter" class="org.egov.infra.web.filter.ApplicationCoreFilter"/>
 	
 	<bean id="applicationTenantResolverFilter" class="org.egov.infra.web.filter.ApplicationTenantResolverFilter"/>
 	
-	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-	
-	
-	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO"/>
-
-	<bean id="bankBranchDao" class="org.egov.commons.dao.BankbranchDAO">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
-	<bean id="bankDao" class="org.egov.commons.dao.BankDAO">
-		<constructor-arg ref="sessionFactory" />
-	</bean>
-
-	<bean id="workFlowMatrixService" class="org.egov.infstr.workflow.WorkFlowMatrixService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.workflow.WorkFlowMatrix"/>
+	<bean id="workFlowMatrixService" class="org.egov.infra.workflow.matrix.service.WorkFlowMatrixService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infra.workflow.matrix.entity.WorkFlowMatrix"/>
 		<property name="persistenceService" ref="persistenceService" />
-		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-	<bean id="workFlowAdditionalDetailsService" class="org.egov.infstr.workflow.WorkFlowAdditionalDetailsService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.workflow.WorkFlowAdditionalRule"/>
+	<bean id="workFlowAdditionalDetailsService" class="org.egov.infra.workflow.matrix.service.WorkFlowAdditionalDetailsService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule"/>
 		<property name="persistenceService" ref="persistenceService" />
-		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype" lazy-init="true"/>
+	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype"/>
 	
 	
 	<!-- Use this only for generic hibernate query -->
-	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
+	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService"/>
 	
 	<!-- NEW WORKFLOW ADDITIONS -->
 	
@@ -158,7 +101,7 @@
 	</bean>
 	
 	<bean id="actionPersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infstr.workflow.Action" />
+		<property name="type" value="org.egov.infra.workflow.entity.WorkflowAction" />
 	</bean>
 	
 	<bean id="workflowTypePersistenceService" parent="persistenceService">
@@ -178,6 +121,6 @@
 		<property name="actionPersistenceService" ref="actionPersistenceService"/>
 	</bean>
 	
-	<bean id="entityValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"></bean>
+	<bean id="entityValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 	
 </beans>

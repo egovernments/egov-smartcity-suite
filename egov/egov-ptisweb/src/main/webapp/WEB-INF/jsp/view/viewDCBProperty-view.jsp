@@ -1,221 +1,227 @@
-<!---------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <%@ include file="/includes/taglibs.jsp"%>
 
 <html>
 
-	<head>
-		<title><s:text name="viewDCB"></s:text></title>
-		<script type="text/javascript">
-			
-			function loadOnStartup () {
-				var btnCheckbox = document.getElementById('taxEnsureCheckbox');
-				var btnPayTax = document.getElementById('PayTax');
-				var buttorOperatorPayTax = document.getElementById('operatorPayBill');
-				
-				if (btnPayTax != null) {
-					btnPayTax.disabled = (btnCheckbox.checked) ? false : true;
-				}
-				
-				if (buttorOperatorPayTax != null) {
-					buttorOperatorPayTax.disabled = (btnCheckbox.checked) ? false : true;
-				}
-			}
-			
-			function openNewWindow() {
-				window.open('../view/viewDCBProperty-showMigData.action?' + 
-							'propertyId=<s:property value="%{basicProperty.upicNo}"/>', 
-							'_blank', 'width=650, height=500, scrollbars=yes', false);
-			}
+<head>
+<title><s:text name="viewDCB"></s:text></title>
+<script type="text/javascript">
+	function loadOnStartup() {
+		var btnCheckbox = document.getElementById('taxEnsureCheckbox');
+		var btnPayTax = document.getElementById('PayTax');
+		var buttorOperatorPayTax = document.getElementById('operatorPayBill');
 
-			function openHeadwiseDCBWindow() {
-				window.open('../view/viewDCBProperty-displayHeadwiseDcb.action?' + 
-							'propertyId=<s:property value="%{basicProperty.upicNo}"/>', 
-							'_blank', 'width=650, height=500, scrollbars=yes', false);
-			}
-					
-			function switchPayTaxButton(ensureCheckbox) {
-				var buttonPayTax = document.getElementById('PayTax');
-				
-				if (buttonPayTax == null) {
-					document.getElementById('operatorPayBill').disabled = (ensureCheckbox.checked) ? false : true;
-				} else {
-					buttonPayTax.disabled = (ensureCheckbox.checked) ? false : true;	
-				}
-				
-			}
-			
-			function gotoSearchForm(){
-				document.viewform.action='${pageContext.request.contextPath}/citizen/search/search-searchForm.action';
-				document.viewform.submit(); 
-			}
-			
-		</script>
-	</head>
+		if (btnPayTax != null) {
+			btnPayTax.disabled = (btnCheckbox.checked) ? false : true;
+		}
 
-	<body onload="loadOnStartup();">
-		<div class="formmainbox">
-			<s:if test="%{hasErrors()}">
+		if (buttorOperatorPayTax != null) {
+			buttorOperatorPayTax.disabled = (btnCheckbox.checked) ? false
+					: true;
+		}
+	}
+
+	function openNewWindow() {
+		window.open('../view/viewDCBProperty-showMigData.action?'
+				+ 'propertyId=<s:property value="%{basicProperty.upicNo}"/>',
+				'_blank', 'width=650, height=500, scrollbars=yes', false);
+	}
+
+	function openHeadwiseDCBWindow() {
+		window.open('../view/viewDCBProperty-displayHeadwiseDcb.action?'
+				+ 'propertyId=<s:property value="%{basicProperty.upicNo}"/>',
+				'_blank', 'width=650, height=500, scrollbars=yes', false);
+	}
+
+	function switchPayTaxButton(ensureCheckbox) {
+		var buttonPayTax = document.getElementById('PayTax');
+
+		if (buttonPayTax == null) {
+			document.getElementById('operatorPayBill').disabled = (ensureCheckbox.checked) ? false
+					: true;
+		} else {
+			buttonPayTax.disabled = (ensureCheckbox.checked) ? false : true;
+		}
+
+	}
+
+	function gotoSearchForm() {
+		document.viewform.action = '${pageContext.request.contextPath}/citizen/search/search-searchForm.action';
+		document.viewform.submit();
+	}
+</script>
+</head>
+
+<body onload="loadOnStartup();">
+	<div class="formmainbox">
+		<s:if test="%{hasErrors()}">
 			<div class="errorstyle" id="property_error_area">
 				<div class="errortext">
 					<s:actionerror />
-					<s:fielderror/>
+					<s:fielderror />
 				</div>
 			</div>
-			</s:if>
+		</s:if>
+		<s:if test="%{basicProperty== null}">
+			<div class="headermessage" align="center">
+				Property does not exists with given Assessment Number :
+				<s:property value="%{propertyId}" />
+				, Please Enter a Valid Assessment Number.<span class="bold"></span>
+			</div>
+		</s:if>
+		<s:else>
 			<div class="headingbg">
-			<s:if test="%{isCitizen}">
-				<s:text name="taxdetailsheader" />
-			</s:if>
-		   <s:else>
-				 <s:text name="viewDCB" />
-		  </s:else>
+				<s:if test="%{isCitizen}">
+					<s:text name="taxdetailsheader" />
+				</s:if>
+				<s:else>
+					<s:text name="viewDCB" />
+				</s:else>
 			</div>
 			<s:form action="#" theme="simple">
-			<s:if test="%{viewMap.taxExempted == true}">
-            <div class="headermessage">
-	             This property tax is exempted with reason <span class="bold"><s:property default="N/A" value="%{basicProperty.property.taxExemptedReason.name}" /></span>
-            </div>
-             </s:if>
+				<s:if test="%{viewMap.taxExempted == true}">
+					<div class="headermessage">
+						This property tax is exempted with reason <span class="bold"><s:property
+								default="N/A"
+								value="%{basicProperty.property.taxExemptedReason.name}" /></span>
+					</div>
+				</s:if>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="greybox" width="5%">&nbsp;</td>
-						<td class="greybox" width="20%">
-							<s:text name="prop.Id" /> :
+						<td class="greybox" width="20%"><s:text name="prop.Id" /> :
 						</td>
-						<td class="greybox" width="20%">
-							<span class="bold"> <s:property value="%{propertyId}" />
-							</span>
-						</td>
-						<td class="greybox" width="20%">
-							<s:text name="Zone" /> :
-						</td>
-						<td class="bluebox" width="20%">
-							<span class="bold">
-								<s:property default="N/A" value="%{viewMap.propID.zone.name}" /> 
-							</span>
-						</td>
+						<td class="greybox" width="20%"><span class="bold"> <s:property
+									value="%{propertyId}" />
+						</span></td>
+						<td class="greybox" width="20%"><s:text name="Zone" /> :</td>
+						<td class="bluebox" width="20%"><span class="bold"> <s:property
+									default="N/A" value="%{viewMap.propID.zone.name}" />
+						</span></td>
 					</tr>
-			
-					<tr>
-							<td class="greybox" width="5%">&nbsp;</td>
-						<td class="greybox" width="20%">
-							<s:text name="Ward" /> :
-						</td>
-						<td class="greybox" width="20%">
-							<span class="bold">
-								<s:property default="N/A" value="%{viewMap.propID.ward.name}" /> 
-							</span>
-						</td>
-						<td class="greybox" width="5%">
-							<s:text name="Block" /> :
-						</td>
-						<td class="greybox" width="20%">
-							<span class="bold">
-								<s:property default="N/A" value="%{viewMap.propID.area.name}" /> 
-							</span>
-						</td>
-					</tr>   
-			
+
 					<tr>
 						<td class="greybox" width="5%">&nbsp;</td>
-						<td class="greybox" width="20%">
-							<s:text name="locality" /> :
-						</td>
-						<td class="greybox" width="20%">
-							<span class="bold"> <s:property value="%{viewMap.propID.locality.name}" /> </span>
-						</td>
-						<td class="greybox" width="20%">
-							<s:text name="OwnerName" /> :
-						</td>
-						<td class="greybox" width="20%">
-							<span class="bold"> <s:property value="%{viewMap.ownerName}" /> </span>
-						</td>
+						<td class="greybox" width="20%"><s:text name="Ward" /> :</td>
+						<td class="greybox" width="20%"><span class="bold"> <s:property
+									default="N/A" value="%{viewMap.propID.ward.name}" />
+						</span></td>
+						<td class="greybox" width="5%"><s:text name="Block" /> :</td>
+						<td class="greybox" width="20%"><span class="bold"> <s:property
+									default="N/A" value="%{viewMap.propID.area.name}" />
+						</span></td>
 					</tr>
-				
-					<tr>   
+
+					<tr>
 						<td class="greybox" width="5%">&nbsp;</td>
-						<td class="greybox" width="20%">
-							<s:text name="PropertyAddress" /> :
+						<td class="greybox" width="20%"><s:text name="locality" /> :
 						</td>
-						<td class="greybox" width="20%">
-							<span class="bold"> <s:property value="%{viewMap.propAddress}" />
-							</span>
-						</td>
-						<td class="greybox" width="20%">
-							<s:text name="ownership.type"></s:text> :
-						</td>
-						<td class="greybox" width="20%">
-							<span class="bold"> <s:property default="N/A" value="%{viewMap.ownershipType}" />
-							</span>
-						</td>
+						<td class="greybox" width="20%"><span class="bold"> <s:property
+									value="%{viewMap.propID.locality.name}" />
+						</span></td>
+						<td class="greybox" width="20%"><s:text name="OwnerName" />
+							:</td>
+						<td class="greybox" width="20%"><span class="bold"> <s:property
+									value="%{viewMap.ownerName}" />
+						</span></td>
+					</tr>
+
+					<tr>
+						<td class="greybox" width="5%">&nbsp;</td>
+						<td class="greybox" width="20%"><s:text
+								name="PropertyAddress" /> :</td>
+						<td class="greybox" width="20%"><span class="bold"> <s:property
+									value="%{viewMap.propAddress}" />
+						</span></td>
+						<td class="greybox" width="20%"><s:text name="ownership.type"></s:text>
+							:</td>
+						<td class="greybox" width="20%"><span class="bold"> <s:property
+									default="N/A" value="%{viewMap.ownershipType}" />
+						</span></td>
 
 					</tr>
-					
+
 					<tr>
 						<td class="greybox" width="5%">&nbsp;</td>
-						<td class="greybox">
-							<s:text name="CurrentTax" /> :
-						</td>
-						<td class="greybox" width="20%">
-							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxAmount" /></s:text>
-							</span>
-						</td>
-						<td class="greybox" width="20%">
-							<s:text name="CurrentTaxDue" /> :
-						</td>
-						<td class="greybox" width="20%">
-							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.currTaxDue" /></s:text>
-							</span>
-						</td>
+						<td class="greybox"><s:text name="CurrentTax" /> :</td>
+						<td class="greybox" width="20%"><span class="bold">Rs.
+								<s:text name="format.money">
+									<s:param value="viewMap.currFirstHalfTaxAmount" />
+								</s:text>
+						</span></td>
+						<td class="greybox" width="20%"><s:text name="CurrentTaxDue" />
+							:</td>
+						<td class="greybox" width="20%"><span class="bold">Rs.
+								<s:text name="format.money">
+									<s:param value="viewMap.currFirstHalfTaxDue" />
+								</s:text>
+						</span></td>
 					</tr>
-			
+					<tr>
+						<td class="greybox" width="5%">&nbsp;</td>
+						<td class="greybox"><s:text name="CurrentSecondHalfTax" /> :
+						</td>
+						<td class="greybox" width="20%"><span class="bold">Rs.
+								<s:text name="format.money">
+									<s:param value="viewMap.currSecondHalfTaxAmount" />
+								</s:text>
+						</span></td>
+						<td class="greybox" width="20%"><s:text
+								name="CurrentSecondHalfTaxDue" /> :</td>
+						<td class="greybox" width="20%"><span class="bold">Rs.
+								<s:text name="format.money">
+									<s:param value="viewMap.currSecondHalfTaxDue" />
+								</s:text>
+						</span></td>
+					</tr>
+
 					<tr>
 						<td class="greybox" width="10%"></td>
-						<td class="greybox">
-							<s:text name="ArrearsDue" /> :
-						</td>
-						<td class="greybox">
-							<span class="bold">Rs. <s:text name="format.money"><s:param value="viewMap.totalArrDue" /></s:text>
-							</span>
-						</td>
+						<td class="greybox"><s:text name="ArrearsDue" /> :</td>
+						<td class="greybox"><span class="bold">Rs. <s:text
+									name="format.money">
+									<s:param value="viewMap.totalArrDue" />
+								</s:text>
+						</span></td>
 					</tr>
 					<tr>
 						<td colspan="10">
@@ -223,9 +229,8 @@
 								cellspacing="0" class="tablebottom">
 
 								<tr>
-									<th class="bluebgheadtd" width="15%">
-										<s:text name="Installment" />
-									</th>
+									<th class="bluebgheadtd" width="15%"><s:text
+											name="Installment" /></th>
 									<th class="bluebgheadtd" width="20%" align="center" colspan="3">
 										<s:text name="Demand" />
 									</th>
@@ -243,21 +248,22 @@
 									</th>
 								</tr>
 								<tr>
-                                  <s:if test="%{viewMap.taxExempted == false}">
-									<td class="blueborderfortd">
-										<div align="center">											
-											<a href="javascript:openHeadwiseDCBWindow();"><s:text name="viewHeadwiseDCB"/></a>
-										</div><br/>
-										<div align="center">			
-											<s:if test="%{basicProperty.source == 'M'}">
-												<a href="" onclick="openNewWindow();">Show Receipts</a>
-											</s:if>	
-											<s:else>
+									<s:if test="%{viewMap.taxExempted == false}">
+										<td class="blueborderfortd">
+											<div align="center">
+												<a href="javascript:openHeadwiseDCBWindow();"><s:text
+														name="viewHeadwiseDCB" /></a>
+											</div> <br />
+											<div align="center">
+												<s:if test="%{basicProperty.source == 'M'}">
+													<a href="" onclick="openNewWindow();">Show Receipts</a>
+												</s:if>
+												<s:else>
 												&nbsp;
-											</s:else>										
-										</div>
-									</td>
-                                   </s:if>
+											</s:else>
+											</div>
+										</td>
+									</s:if>
 									<td class="blueborderfortd">
 										<div align="center">
 											<span class="bold"><s:text name="Tax" /> </span>
@@ -265,14 +271,12 @@
 									</td>
 									<td class="blueborderfortd">
 										<div align="center">
-											<span class="bold"><s:text name="chkBncPenalty" />
-											</span>
+											<span class="bold"><s:text name="chkBncPenalty" /> </span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="center">
-											<span class="bold"><s:text name="ltPmtPenalty" />
-											</span>
+											<span class="bold"><s:text name="ltPmtPenalty" /> </span>
 										</div>
 									</td>
 
@@ -284,14 +288,12 @@
 
 									<td class="blueborderfortd">
 										<div align="center">
-											<span class="bold"><s:text name="chkBncPenalty" />
-											</span>
+											<span class="bold"><s:text name="chkBncPenalty" /> </span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="center">
-											<span class="bold"><s:text name="ltPmtPenalty" />
-											</span>
+											<span class="bold"><s:text name="ltPmtPenalty" /> </span>
 										</div>
 									</td>
 
@@ -308,19 +310,17 @@
 									</td>
 									<td class="blueborderfortd">
 										<div align="center">
-											<span class="bold"><s:text name="chkBncPenalty" />
-											</span>
+											<span class="bold"><s:text name="chkBncPenalty" /> </span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="center">
-											<span class="bold"><s:text name="ltPmtPenalty" />
-											</span>
+											<span class="bold"><s:text name="ltPmtPenalty" /> </span>
 										</div>
 									</td>
 								</tr>
 								<s:set value="0" var="advance" />
-								<s:set value="0" var="advrebate" />	
+								<s:set value="0" var="advrebate" />
 
 								<s:iterator value="dcbReport.getRecords()" var="dcbreportmap">
 									<tr>
@@ -388,126 +388,99 @@
 										</s:iterator>
 									</tr>
 								</s:iterator>
-						<tr>
-							<td class="blueborderfortd">
-								<div align="right">
-									<b>Total:</b>
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-							 		<span class="bold">
-							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalDmdTax()" />
-									</s:text>
-                                    </span> 
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-							 		<span class="bold">
-							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalDmdPnlty()" />
-									</s:text>
-                                    </span> 
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-							 		<span class="bold">
-							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalLpayPnlty()" /> 
-									</s:text>
-                                    </span> 
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-							 		<span class="bold">
-							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalColTax()" />
-									</s:text>
-                                    </span> 
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-							 		<span class="bold">
-							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalColPnlty()" />
-									</s:text>
-                                    </span> 
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-							 		<span class="bold">
-							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalColLpayPnlty()" />
-									</s:text>
-                                    </span> 
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-								 	<span class="bold">
-							 		<s:text name="format.money">
-										<s:param value="dcbReport.getTotalRebate()" />
-									</s:text>
-                                    </span> 
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-								 	&nbsp;
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-								 	&nbsp;
-								</div>
-							</td>
-							<td class="blueborderfortd">
-								<div align="right">
-								 	&nbsp;
-								</div>
-							</td>
-						</tr>
 								<tr>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<b>Total:</b>
 										</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<span class="bold"> <s:text name="format.money">
+													<s:param value="dcbReport.getTotalDmdTax()" />
+												</s:text>
+											</span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<span class="bold"> <s:text name="format.money">
+													<s:param value="dcbReport.getTotalDmdPnlty()" />
+												</s:text>
+											</span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<span class="bold"> <s:text name="format.money">
+													<s:param value="dcbReport.getTotalLpayPnlty()" />
+												</s:text>
+											</span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<span class="bold"> <s:text name="format.money">
+													<s:param value="dcbReport.getTotalColTax()" />
+												</s:text>
+											</span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<span class="bold"> <s:text name="format.money">
+													<s:param value="dcbReport.getTotalColPnlty()" />
+												</s:text>
+											</span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
+										<div align="right">
+											<span class="bold"> <s:text name="format.money">
+													<s:param value="dcbReport.getTotalColLpayPnlty()" />
+												</s:text>
+											</span>
 										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="right">
+											<span class="bold"> <s:text name="format.money">
+													<s:param value="dcbReport.getTotalRebate()" />
+												</s:text>
+											</span>
+										</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="right">&nbsp;</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="right">&nbsp;</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="right">&nbsp;</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
+									</td>
+									<td class="blueborderfortd">
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
@@ -520,9 +493,9 @@
 											test="${FieldNames != 'Advance Collection' && FieldNames != 'Fines'}">
 											<td class="blueborderfortd">
 												<div align="right">
-													<span class="bold"> 
-														<s:text name="format.money"> 
-															<s:param value="dcbReport.getFieldBalanceTotals()[#FieldNames]" />
+													<span class="bold"> <s:text name="format.money">
+															<s:param
+																value="dcbReport.getFieldBalanceTotals()[#FieldNames]" />
 														</s:text>
 													</span>
 												</div>
@@ -531,103 +504,70 @@
 									</s:iterator>
 								</tr>
 								<c:if test="${dcbReport.getTotalAdvance()>0}">
-                               <tr>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
+									<tr>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
 
-									<td class="blueborderfortd">
-										<div align="right">
-											<b><s:text name="Advance" />:</b>
-										</div>
-									</td>
+										<td class="blueborderfortd">
+											<div align="right">
+												<b><s:text name="Advance" />:</b>
+											</div>
+										</td>
 
-									<td class="blueborderfortd">
-										<div align="right">
-											<span class="bold"> 
-												<s:text name="format.money">
-													<s:param value="dcbReport.getTotalAdvance()" />
-												</s:text>
-											</span>
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
-									</td>
-									<td class="blueborderfortd">
-										&nbsp;
-									</td>
-								</tr>
+										<td class="blueborderfortd">
+											<div align="right">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalAdvance()" />
+													</s:text>
+												</span>
+											</div>
+										</td>
+										<td class="blueborderfortd">
+											<div align="center">&nbsp;</div>
+										</td>
+										<td class="blueborderfortd">&nbsp;</td>
+									</tr>
 								</c:if>
 								<tr>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
 
 									<td class="blueborderfortd">
@@ -638,233 +578,238 @@
 
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> 
-												<s:text name="format.money">
+											<span class="bold"> <s:text name="format.money">
 													<s:param value="dcbReport.getTotalBalance()" />
 												</s:text>
 											</span>
 										</div>
 									</td>
 									<td class="blueborderfortd">
-										<div align="center">
-											&nbsp;
-										</div>
+										<div align="center">&nbsp;</div>
 									</td>
-									<td class="blueborderfortd">
-										&nbsp;
-									</td>
+									<td class="blueborderfortd">&nbsp;</td>
 								</tr>
 								<s:if
 									test="%{getActiveRcpts() != null && !getActiveRcpts().isEmpty()}">
 									<table width="100%" border="0" align="center" cellpadding="0"
-												cellspacing="0" class="tablebottom">
-									<tr>
-										<td align="center">
-											<div class="headingsmallbg">
-												<s:text name="propRcptDet" />
-											</div>
-										</td>
-									</tr>
+										cellspacing="0" class="tablebottom">
+										<tr>
+											<td align="center">
+												<div class="headingsmallbg">
+													<s:text name="propRcptDet" />
+												</div>
+											</td>
+										</tr>
 
-									<tr>
-										<td align="center">
-											<table width="100%" border="0" align="center" cellpadding="0"
-												cellspacing="0" class="tablebottom">
-		
-												<tr>
-													<th class="bluebgheadtd">
-														<s:text name="receiptNo" />
-													</th>
-													<th class="bluebgheadtd">
-														<s:text name="receiptDate" />
-													</th>
-													<th class="bluebgheadtd">
-														<s:text name="totalAmount" />
-													</th>
-												</tr>
-		
-												<s:iterator value="getActiveRcpts()" var="rcpt">
+										<tr>
+											<td align="center">
+												<table width="100%" border="0" align="center"
+													cellpadding="0" cellspacing="0" class="tablebottom">
+
 													<tr>
-														<td class="blueborderfortd">
-															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
-																	<s:property value="#rcpt.getReceiptNumber()" />
-																</a>
-															</div>
-														</td>
-														<td class="blueborderfortd">
-															<div align="center">
-																<s:date name="#rcpt.getReceiptDate()" format="dd/MM/yyyy h:mm:ss"/>
-															</div>
-														</td>
-														<td class="blueborderfortd">
-															<div align="center">
-																<s:text name="format.money">
-																    <s:param name="value" value="#rcpt.getReceiptAmt()"/>
-																</s:text>
-															</div>
-														</td>
+														<th class="bluebgheadtd"><s:text name="receiptNo" />
+														</th>
+														<th class="bluebgheadtd"><s:text name="receiptDate" />
+														</th>
+														<th class="bluebgheadtd"><s:text name="totalAmount" />
+														</th>
 													</tr>
-												</s:iterator>
-											</table>
-										</td>
-									</tr>
+
+													<s:iterator value="getActiveRcpts()" var="rcpt">
+														<tr>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<a
+																		href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT"
+																		target="_blank"> <s:property
+																			value="#rcpt.getReceiptNumber()" />
+																	</a>
+																</div>
+															</td>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<s:date name="#rcpt.getReceiptDate()"
+																		format="dd/MM/yyyy h:mm:ss" />
+																</div>
+															</td>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<s:text name="format.money">
+																		<s:param name="value" value="#rcpt.getReceiptAmt()" />
+																	</s:text>
+																</div>
+															</td>
+														</tr>
+													</s:iterator>
+												</table>
+											</td>
+										</tr>
 									</table>
 								</s:if>
 								<s:if
 									test="%{getCancelledReceipts() != null && !getCancelledReceipts().isEmpty()}">
 									<table width="100%" border="0" align="center" cellpadding="0"
-												cellspacing="0" class="tablebottom">
-									<tr>
-										<td align="center">
-											<div class="headingsmallbg">
-												<s:text name="rcptHeader" />
-											</div>
-										</td>
-									</tr>
+										cellspacing="0" class="tablebottom">
+										<tr>
+											<td align="center">
+												<div class="headingsmallbg">
+													<s:text name="rcptHeader" />
+												</div>
+											</td>
+										</tr>
 
-									<tr>
-										<td align="center">
-											<table width="100%" border="0" align="center" cellpadding="0"
-												cellspacing="0" class="tablebottom">
-		
-												<tr>
-													<th class="bluebgheadtd">
-														<s:text name="receiptNo" />
-													</th>
-													<th class="bluebgheadtd">
-														<s:text name="receiptDate" />
-													</th>
-													<th class="bluebgheadtd">
-														<s:text name="totalAmount" />
-													</th>
-												</tr>
-		
-												<s:iterator value="getCancelledReceipts()" var="rcpt">
-		
+										<tr>
+											<td align="center">
+												<table width="100%" border="0" align="center"
+													cellpadding="0" cellspacing="0" class="tablebottom">
+
 													<tr>
-														<td class="blueborderfortd">
-															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT" target="_blank" >
-																	<s:property value="#rcpt.getReceiptNumber()" />
-																</a>
-															</div>
-														</td>
-														<td class="blueborderfortd">
-															<div align="center">
-																<s:date name="#rcpt.getReceiptDate()" format="dd/MM/yyyy h:mm:ss"/>
-															</div>
-														</td>
-														<td class="blueborderfortd">
-															<div align="center">
-																<s:text name="format.money">
-																    <s:param name="value" value="#rcpt.getReceiptAmt()"/>
-																</s:text>
-															</div>
-														</td>
+														<th class="bluebgheadtd"><s:text name="receiptNo" />
+														</th>
+														<th class="bluebgheadtd"><s:text name="receiptDate" />
+														</th>
+														<th class="bluebgheadtd"><s:text name="totalAmount" />
+														</th>
 													</tr>
-												</s:iterator>
-											</table>
-										</td>
-									</tr>
+
+													<s:iterator value="getCancelledReceipts()" var="rcpt">
+
+														<tr>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<s:property value="#rcpt.getReceiptNumber()" />
+																</div>
+															</td>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<s:date name="#rcpt.getReceiptDate()"
+																		format="dd/MM/yyyy h:mm:ss" />
+																</div>
+															</td>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<s:text name="format.money">
+																		<s:param name="value" value="#rcpt.getReceiptAmt()" />
+																	</s:text>
+																</div>
+															</td>
+														</tr>
+													</s:iterator>
+												</table>
+											</td>
+										</tr>
 									</table>
 								</s:if>
-								<s:if test="%{getMutationRcpts() != null && !getMutationRcpts().isEmpty()}">
+								<s:if
+									test="%{getMutationRcpts() != null && !getMutationRcpts().isEmpty()}">
 									<table width="100%" border="0" align="center" cellpadding="0"
-												cellspacing="0" class="tablebottom">
-									<tr>
-										<td align="center">
-											<div class="headingsmallbg">
-												<s:text name="mutationFeeRcptHeader" />
-											</div>
-										</td>
-									</tr>
+										cellspacing="0" class="tablebottom">
+										<tr>
+											<td align="center">
+												<div class="headingsmallbg">
+													<s:text name="mutationFeeRcptHeader" />
+												</div>
+											</td>
+										</tr>
 
-									<tr>
-										<td align="center">
-											<table width="100%" border="0" align="center" cellpadding="0"
-												cellspacing="0" class="tablebottom">
-		
-												<tr>
-													<th class="bluebgheadtd">
-														<s:text name="receiptNo" />
-													</th>
-													<th class="bluebgheadtd">
-														<s:text name="receiptDate" />
-													</th>
-													<th class="bluebgheadtd">
-														<s:text name="totalAmount" />
-													</th>
-												</tr>
-		
-												<s:iterator value="getMutationRcpts()" var="rcpt">
-		
+										<tr>
+											<td align="center">
+												<table width="100%" border="0" align="center"
+													cellpadding="0" cellspacing="0" class="tablebottom">
+
 													<tr>
-														<td class="blueborderfortd">
-															<div align="center">
-																<a href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="#rcpt.getConsumerCode()" />&serviceCode=PTMF" target="_blank" >
-																	<s:property value="#rcpt.getReceiptNumber()" />
-																</a>
-															</div>
-														</td>
-														<td class="blueborderfortd">
-															<div align="center">
-																<s:date name="#rcpt.getReceiptDate()" format="dd/MM/yyyy h:mm:ss"/>
-															</div>
-														</td>
-														<td class="blueborderfortd">
-															<div align="center">
-																<s:text name="format.money">
-																    <s:param name="value" value="#rcpt.getReceiptAmt()"/>
-																</s:text>
-															</div>
-														</td>
+														<th class="bluebgheadtd"><s:text name="receiptNo" />
+														</th>
+														<th class="bluebgheadtd"><s:text name="receiptDate" />
+														</th>
+														<th class="bluebgheadtd"><s:text name="totalAmount" />
+														</th>
 													</tr>
-												</s:iterator>
-											</table>
-										</td>
-									</tr>
+
+													<s:iterator value="getMutationRcpts()" var="rcpt">
+
+														<tr>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<a
+																		href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="#rcpt.getConsumerCode()" />&serviceCode=PTMF"
+																		target="_blank"> <s:property
+																			value="#rcpt.getReceiptNumber()" />
+																	</a>
+																</div>
+															</td>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<s:date name="#rcpt.getReceiptDate()"
+																		format="dd/MM/yyyy h:mm:ss" />
+																</div>
+															</td>
+															<td class="blueborderfortd">
+																<div align="center">
+																	<s:text name="format.money">
+																		<s:param name="value" value="#rcpt.getReceiptAmt()" />
+																	</s:text>
+																</div>
+															</td>
+														</tr>
+													</s:iterator>
+												</table>
+											</td>
+										</tr>
 									</table>
-								</s:if>																			
-							</table>				
-							</td>
-							</tr>
+								</s:if>
 							</table>
-							<div class="buttonbottom" align="center">
-									<s:if test="%{errorMessage != null}">
-										<div align="center" style="font-size:15px; color:red">
-											<s:property value="%{errorMessage}" /><br><br>
-											<s:text name="msg.activeDemand" />
-										</div>			
-									</s:if>
-									<s:elseif test="%{viewMap.taxExempted == false && isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
-										<div align="center">
-											<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox" onclick="switchPayTaxButton(this);" required="true" />
-											<span style="font-size:15px; color:red ">										
-												<s:text name="msg.payBill.verification" /> <br><br>
-												<s:text name="msg.activeDemand"/>
-											</span>
-										</div><br>
-										<div align="center">
-											<s:if test="%{isCitizen && viewMap.taxExempted == false}">
-												<input type="button" name="PayTax" id="PayTax" value="Pay Tax" class="buttonsubmit"
-															onclick="window.location='../citizen/collection/collection-searchOwnerDetails.action?assessmentNumber=<s:property value="%{propertyId}" />';" />
-											</s:if>
-											<s:else> 
-												<input type="button" name="operatorPayBill" id="operatorPayBill" value="Pay Bill" class="buttonsubmit"
-															onclick="window.location='/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=<s:property value="%{propertyId}" />';" />
-											</s:else>
-										</div>
-									</s:elseif><br> 
-									<s:if test="%{isCitizen}">
-									<input id="SearchProperty" class="buttonsubmit" type="button" onclick="window.location='/ptis/citizen/search/search-searchForm.action';" 
-									value="Search Property" name="SearchProperty">
-									</s:if>
-									<input type="button" name="button2" id="button2" value="Close"
-										class="button" onclick="return confirmClose();" />
-							</div>
-					</s:form>
+						</td>
+					</tr>
+				</table>
+				<div class="buttonbottom" align="center">
+					<s:if test="%{errorMessage != null}">
+						<div align="center" style="font-size: 15px; color: red">
+							<s:property value="%{errorMessage}" />
+							<br> <br>
+							<s:text name="msg.activeDemand" />
+						</div>
+					</s:if>
+					<s:elseif
+						test="%{viewMap.taxExempted == false && isCitizen || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase())}">
+						<div align="center">
+							<s:checkbox name="taxEnsureCheckbox" id="taxEnsureCheckbox"
+								onclick="switchPayTaxButton(this);" required="true" />
+							<span style="font-size: 15px; color: red"> <s:text
+									name="msg.payBill.verification" /> <br> <br> <s:text
+									name="msg.activeDemand" />
+							</span>
+						</div>
+						<br>
+						<div align="center">
+							<s:if test="%{isCitizen && viewMap.taxExempted == false}">
+								<input type="button" name="PayTax" id="PayTax" value="Pay Tax"
+									class="buttonsubmit"
+									onclick="window.location='../citizen/collection/collection-searchOwnerDetails.action?assessmentNumber=<s:property value="%{propertyId}" />';" />
+							</s:if>
+							<s:else>
+								<input type="button" name="operatorPayBill" id="operatorPayBill"
+									value="Pay Bill" class="buttonsubmit"
+									onclick="window.location='/../ptis/collection/collectPropertyTax-generateBill.action?propertyId=<s:property value="%{propertyId}" />';" />
+							</s:else>
+						</div>
+					</s:elseif>
+					<br>
+
 				</div>
-	</body>
+
+			</s:form>
+		</s:else>
+		<div align="center">
+			<s:if test="%{isCitizen}">
+				<input id="SearchProperty" class="buttonsubmit" type="button"
+					onclick="window.location='/ptis/citizen/search/search-searchForm.action';"
+					value="Search Property" name="SearchProperty">
+			</s:if>
+			<input type="button" name="button2" id="button2" value="Close"
+				class="button" onclick="return confirmClose();" />
+		</div>
+	</div>
+</body>
 
 </html>

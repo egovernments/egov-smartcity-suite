@@ -37,9 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.web.actions.reports;
 
-import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -52,10 +52,10 @@ import java.util.List;
 import java.util.Map;
 
 @Results({
-        @Result(name = Constants.ZONE_WISE_REPORT, location = "tradeLicenseReports-" + Constants.ZONE_WISE_REPORT + ".jsp"),
-        @Result(name = Constants.WARD_WISE_REPORT, location = "tradeLicenseReports-" + Constants.WARD_WISE_REPORT + ".jsp"),
-        @Result(name = Constants.TRADE_WISE_REPORT, location = "tradeLicenseReports-" + Constants.TRADE_WISE_REPORT + ".jsp"),
-        @Result(name = Constants.LATE_RENEWALS_REPORT, location = "tradeLicenseReports-" + Constants.LATE_RENEWALS_REPORT + ".jsp")
+        @Result(name = Constants.ZONE_WISE_REPORT, location = "tradeLicenseReports-zoneWiseReport.jsp"),
+        @Result(name = Constants.WARD_WISE_REPORT, location = "tradeLicenseReports-wardWiseReport.jsp"),
+        @Result(name = Constants.TRADE_WISE_REPORT, location = "tradeLicenseReports-tradeWiseReport.jsp"),
+        @Result(name = Constants.LATE_RENEWALS_REPORT, location = "tradeLicenseReports-lateRenewals.jsp")
 })
 public class TradeLicenseReportsAction extends BaseFormAction {
 

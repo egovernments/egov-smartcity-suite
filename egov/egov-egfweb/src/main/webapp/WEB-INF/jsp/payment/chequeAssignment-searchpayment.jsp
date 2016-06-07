@@ -1,47 +1,50 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title>Cheque Assignment Search</title>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
@@ -51,7 +54,8 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Cheque Assignment Search" />
 		</jsp:include>
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">
@@ -61,9 +65,8 @@
 				id="paymentTable">
 				<tr>
 					<th class="bluebgheadtdnew"><s:text
-							name="chq.assignment.select" />
-						<s:checkbox id="selectall" name="selectall"
-							onclick="checkAll(this)" /></th>
+							name="chq.assignment.select" /> <s:checkbox id="selectall"
+							name="selectall" onclick="checkAll(this)" /></th>
 					<th class="bluebgheadtdnew"><s:text name="Sl No" /></th>
 
 					<s:if test="%{paymentMode=='cheque'}">
@@ -84,7 +87,8 @@
 						<th class="bluebgheadtdnew" width="10%"><s:text
 								name="chq.assignment.instrument.no" /><span class="mandatory1">*</span></th>
 						<th class="bluebgheadtdnew"><s:text
-								name="chq.assignment.instrument.date" /><span class="mandatory1">*</span><br>(dd/mm/yyyy)</th>
+								name="chq.assignment.instrument.date" /><span
+							class="mandatory1">*</span><br>(dd/mm/yyyy)</th>
 					</s:if>
 					<s:elseif
 						test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
@@ -93,7 +97,8 @@
 						<th class="bluebgheadtdnew" width="10%"><s:text
 								name="chq.assignment.instrument.no" /><span class="mandatory1">*</span></th>
 						<th class="bluebgheadtdnew"><s:text
-								name="chq.assignment.instrument.date" /><span class="mandatory1">*</span><br>(dd/mm/yyyy)</th>
+								name="chq.assignment.instrument.date" /><span
+							class="mandatory1">*</span><br>(dd/mm/yyyy)</th>
 					</s:elseif>
 				</tr>
 				<s:iterator var="p" value="chequeAssignmentList" status="s">
@@ -101,8 +106,8 @@
 						<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 								id="voucherHeaderId"
 								name="chequeAssignmentList[%{#s.index}].voucherHeaderId"
-								value="%{voucherHeaderId}" />
-							<s:checkbox name="chequeAssignmentList[%{#s.index}].isSelected"
+								value="%{voucherHeaderId}" /> <s:checkbox
+								name="chequeAssignmentList[%{#s.index}].isSelected"
 								id="isSelected%{#s.index}" onclick="update(this)" /></td>
 						<td align="left" style="text-align: center"
 							class="blueborderfortdnew" />
@@ -111,35 +116,28 @@
 						<s:if test="%{paymentMode=='cheque'}">
 							<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 									id="paidTo" name="chequeAssignmentList[%{#s.index}].paidTo"
-									value="%{paidTo}" />
-								<s:property value="%{paidTo}" /></td>
+									value="%{paidTo}" /> <s:property value="%{paidTo}" /></td>
 						</s:if>
 						<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 								id="voucherNumber"
 								name="chequeAssignmentList[%{#s.index}].voucherNumber"
-								value="%{voucherNumber}" />
-							<s:hidden id="detailtypeid"
+								value="%{voucherNumber}" /> <s:hidden id="detailtypeid"
 								name="chequeAssignmentList[%{#s.index}].detailtypeid"
-								value="%{detailtypeid}" />
-							<s:hidden id="detailkeyid"
+								value="%{detailtypeid}" /> <s:hidden id="detailkeyid"
 								name="chequeAssignmentList[%{#s.index}].detailkeyid"
-								value="%{detailkeyid}" />
-							<s:property value="%{voucherNumber}" /></td>
+								value="%{detailkeyid}" /> <s:property value="%{voucherNumber}" /></td>
 						<td style="text-align: center" class="blueborderfortdnew"><s:hidden
 								id="voucherDate"
 								name="chequeAssignmentList[%{#s.index}].voucherDate"
-								value="%{voucherDate}" />
-							<s:date name="%{voucherDate}" var="tempPaymentDate"
-								format="dd/MM/yyyy" />
-							<s:date name="%{voucherDate}" format="dd/MM/yyyy" />
-							<s:hidden
+								value="%{voucherDate}" /> <s:date name="%{voucherDate}"
+								var="tempPaymentDate" format="dd/MM/yyyy" /> <s:date
+								name="%{voucherDate}" format="dd/MM/yyyy" /> <s:hidden
 								name="chequeAssignmentList[%{#s.index}].tempPaymentDate"
 								value="%{tempPaymentDate}"></s:hidden></td>
 						<td style="text-align: right" class="blueborderfortdnew"><s:hidden
 								id="paidAmount"
 								name="chequeAssignmentList[%{#s.index}].paidAmount"
-								value="%{paidAmount}" />
-							<s:text name="format.number">
+								value="%{paidAmount}" /> <s:text name="format.number">
 								<s:param value="%{paidAmount}" />
 							</s:text></td>
 
@@ -150,19 +148,22 @@
 									list="chequeSlNoMap"
 									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
+									size="6"
+									maxLength="6"
 									id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}"
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
 									onchange="validateReassignSurrenderChequeNumber(this)"
-									size="10" /></td>
+									 /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeDate"
-									value="%{tempChequeDate}" size="10" /><a
-								href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
+									value="%{tempChequeDate}" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:if>
 						<s:elseif
 							test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
@@ -175,15 +176,17 @@
 									id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}" onchange="validateChequeNumber(this)"
-									size="10" /></td>
+									size="6" 
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+									maxLength="6"/></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeDate"
-									value="%{tempChequeDate}" size="10" /><a
-								href="javascript:show_calendar('forms[0].chequeDate<s:property value="#s.index"/>');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
+									value="%{tempChequeDate}" data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:elseif>
 					</tr>
 				</s:iterator>
@@ -198,8 +201,8 @@
 						<td class="greybox"><s:text name="chq.assignment.department" /><span
 							class="mandatory1">*</span> <s:select
 								name="vouchermis.departmentid" id="departmentid"
-								list="dropdownData.departmentList" listKey="id"
-								listValue="name" headerKey="-1" headerValue="----Choose----"
+								list="dropdownData.departmentList" listKey="id" listValue="name"
+								headerKey="-1" headerValue="----Choose----"
 								value="%{voucherHeader.vouchermis.departmentid.id}" /></td>
 
 						<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">
@@ -209,19 +212,19 @@
 									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
-								<s:textfield id="chequeNumber0" name="chequeNo"
-									value="%{chequeNo}"
-									onchange="validateReassignSurrenderChequeNumber(this)" /></td>
+								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+									size="6" value="%{chequeNo}"
+									onchange="validateReassignSurrenderChequeNumber(this)" 
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57'/></td>
 							<td class="greybox"><s:text
-									name="chq.assignment.instrument.date" /><span class="mandatory1">*</span>(dd/mm/yyyy)
-								<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy" />
-								<s:textfield id="chequeDt" name="chequeDt"
-									value="%{tempChequeDate}"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-								href="javascript:show_calendar('forms[0].chequeDt');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)
-							</td>
+									name="chq.assignment.instrument.date" /><span
+								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
+									var="tempChequeDate" format="dd/MM/yyyy" /> <s:textfield
+									id="chequeDt" name="chequeDt" value="%{tempChequeDate}"
+									data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:if>
 
 
@@ -233,18 +236,19 @@
 									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
-								<s:textfield id="chequeNumber0" name="chequeNo"
-									value="%{chequeNo}" onchange="validateChequeNumber(this)" /></td>
+								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+									size="6" value="%{chequeNo}"
+									onchange="validateChequeNumber(this)"
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
 							<td class="greybox"><s:text
-									name="chq.assignment.instrument.date" /><span class="mandatory1">*</span>(dd/mm/yyyy)
-								<s:date name="chequeDt" var="tempChequeDate" format="dd/MM/yyyy" />
-								<s:textfield id="chequeDt" name="chequeDt"
-									value="%{tempChequeDate}"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-								href="javascript:show_calendar('forms[0].chequeDt');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)
-							</td>
+									name="chq.assignment.instrument.date" /><span
+								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
+									var="tempChequeDate" format="dd/MM/yyyy" /> <s:textfield
+									id="chequeDt" name="chequeDt" value="%{tempChequeDate}"
+									data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:elseif>
 						<s:elseif
 							test="%{!isChequeNoGenerationAuto() && paymentMode=='rtgs'}">
@@ -254,14 +258,12 @@
 									name="rtgsRefNo" value="%{chequeNo}" /></td>
 							<td class="greybox"><s:text name="chq.assignment.rtgs.date" /><span
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="rtgsDate"
-									var="tempChequeDate" format="dd/MM/yyyy" />
-								<s:textfield id="chequeDt" name="rtgsDate"
-									value="%{tempChequeDate}"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-								href="javascript:show_calendar('forms[0].rtgsDate');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a><br />(dd/mm/yyyy)
-							</td>
+									var="tempChequeDate" format="dd/MM/yyyy" /> <s:textfield
+									id="chequeDt" name="rtgsDate" value="%{tempChequeDate}"
+									data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" class="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 						</s:elseif>
 
 						<s:if test="%{paymentMode=='cash'}">
@@ -366,6 +368,7 @@
 			
 			
 			function validateChequeDateForNonChequeMode(){
+				var flag = true;
 				var noOfSelectedRows=document.getElementById('selectedRows').value;
 				//bootbox.alert("sizseled"+noOfSelectedRows);
 				var chkCount=0;
@@ -374,13 +377,10 @@
 				var chequeDate=document.getElementById('chequeDt').value;
 				var chequeNo=document.getElementById('chequeNumber0').value;
 				if(chequeNo==null || chequeNo==''){
-					bootbox.alert("Please enter a valid cheque Number");
-						return false;   
+					bootbox.alert('Please enter a valid cheque Number', function() {
+						flag =  false;
+					});
 				}
-				if(isNaN( Date.parse( chequeDate))) {                
-					bootbox.alert("Please enter a valid cheque date");
-					return false;
-				 }
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
 					if(document.getElementById('isSelected'+index).checked){
@@ -388,15 +388,16 @@
 						//bootbox.alert(document.getElementById('isSelected'+index).checked);
 						if( compareDate(paymentDate,chequeDate) == -1){     
 						  //  bootbox.alert(paymentDate+"----"+chequeDate);      
-							bootbox.alert('Cheque Date cannot be less than  payment Date');
-							document.getElementById('chequeDt').value='';
-							document.getElementById('chequeDt').focus();
-							return false;
+							bootbox.alert('Cheque Date cannot be less than than payment Date', function() {
+								document.getElementById('chequeDt').value='';
+								document.getElementById('chequeDt').focus();
+								flag =  false;
+							});
 						 }
 						if(chkCount==noOfSelectedRows){ break;}
 					}
 				}
-			  return true;
+			  return flag ;
 			}
 			
 			function validateChequeDateForChequeMode(){
@@ -582,7 +583,7 @@
 				}
 			}
 		</script>
-<%-- 	<s:if test="%{isFieldMandatory('department')}">
+	<%-- 	<s:if test="%{isFieldMandatory('department')}">
 		<s:if
 			test="%{assignmentType!='SalaryPayment' && assignmentType!='RemittancePayment'}">
 			<script>

@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.services;
 
-import java.util.List;
+package org.egov.infstr.services;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+
+import java.util.List;
 
 public class Page {
 

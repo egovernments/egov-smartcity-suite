@@ -3,31 +3,6 @@
  */
 package org.egov.collection.util;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.egov.billsaccounting.services.CreateVoucher;
-import org.egov.collection.utils.FinancialsUtil;
-import org.egov.commons.CVoucherHeader;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.model.instrument.InstrumentHeader;
-import org.egov.services.contra.ContraService;
-import org.egov.services.instrument.InstrumentService;
-import org.junit.Before;
-import org.junit.Test;
-
 /**
  * JUnit tests for financials utilities
  */

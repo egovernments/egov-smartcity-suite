@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.utils;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+package org.egov.infra.web.utils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class WebUtils {
 

@@ -1,61 +1,49 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.adtax.service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -69,10 +57,22 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -95,6 +95,9 @@ public class AdvertisementDemandService {
     
     @Autowired
     AdvertisementPenaltyRatesService advertisementPenaltyRatesService;
+
+    @Autowired
+    private AdvertisementPenaltyCalculator advertisementPenaltyCalculator;
     
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -328,28 +331,23 @@ public class AdvertisementDemandService {
      * @param penaltyCalculationDate 
      * @return Penalty Amount and PendingAmount
      */
-    public Map<String, BigDecimal> checkPedingAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
+    public Map<String, BigDecimal> checkPedingAmountByDemand(AdvertisementPermitDetail advPermitDetail) {
 
         final Map<String, BigDecimal> demandFeeType = new LinkedHashMap<String, BigDecimal>();
 
         BigDecimal penaltyAmt = BigDecimal.ZERO;
         BigDecimal pendingAmount = BigDecimal.ZERO;
-        if (demand != null) {
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
-                // Mean if installment is different than current, then calculate
-                // penalty
-                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0
-                // && currentInstallment.getId() !=
-                // demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
-                ) {
-                    final BigDecimal amount = demandDtl.getAmount().subtract(demandDtl.getAmtCollected());
+        /**
+         * Assumption: We are calculating penalty for total pending amount. If penalty is part of demand, then also we are considering that amount for penalty calculation.
+         */
+        if (advPermitDetail!=null && advPermitDetail.getAdvertisement()!=null && advPermitDetail.getAdvertisement().getDemandId() != null) {
+            for (final EgDemandDetails demandDtl :  advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
 
-                    pendingAmount = pendingAmount.add(amount);
-                    // PENALTY is not the part of existing demand
-                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount, penaltyCalculationDate);
-
-                }
+                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
+                   pendingAmount = pendingAmount.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
+                 }
             }
+            penaltyAmt= advertisementPenaltyCalculator.calculatePenalty(advPermitDetail);
         }
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmt);
         demandFeeType.put(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT, pendingAmount);
@@ -367,105 +365,6 @@ public class AdvertisementDemandService {
 
     }
    
-  /**
-   * Calculate Penalty 
-   * @param penaltyAmt
-   * @param demandDtl
-   * @param amount
-   * @param penaltyCalculationDate
-   * @return
-   */
-    private BigDecimal calculatePenalty(BigDecimal penaltyAmt, final EgDemandDetails demandDtl,
-            final BigDecimal amount, Date penaltyCalculationDate) {
-        double percentage = 0;
-        int days = 0;
-
-        if (demandDtl != null && (amount).compareTo(BigDecimal.ZERO) > 0) {
-            // Eg: Next year installment
-            if (demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate().after(new Date())) {
-                days = Days.daysBetween(
-                        new DateTime(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()),
-                        new DateTime(new Date())).getDays();
-
-            } else if (demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate().before(new Date())) {
-                // Penalty calculation date or application date in current year.
-                // Decided based on penalty calculation date
-                if (penaltyCalculationDate != null
-                        && demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                                .before(penaltyCalculationDate)
-                        && demandDtl.getEgDemandReason().getEgInstallmentMaster().getToDate()
-                                .after(penaltyCalculationDate)) {
-                    days = Days.daysBetween(new DateTime(penaltyCalculationDate), new DateTime(new Date())).getDays();
-
-                } else {
-                    days = Days.daysBetween(
-                            new DateTime(demandDtl.getEgDemandReason().getEgInstallmentMaster().getFromDate()),
-                            new DateTime(new Date())).getDays();
-
-                }
-
-            }
-
-            percentage = advertisementPenaltyRatesService.findPenaltyRatesByNumberOfDays(Long.valueOf(days));
-            /*
-             * if (penaltyCalculationDate != null) noofmonths =
-             * (noOfMonths(penaltyCalculationDate, new Date())); else noofmonths
-             * =
-             * (noOfMonths(demandDtl.getEgDemandReason().getEgInstallmentMaster
-             * ().getFromDate(), new Date()));
-             */
-            if (percentage > 0) {
-                penaltyAmt = penaltyAmt.add(amount.multiply(BigDecimal.valueOf(percentage))
-                        .divide(BigDecimal.valueOf(100).setScale(0, BigDecimal.ROUND_HALF_UP))
-                        .setScale(0, BigDecimal.ROUND_HALF_UP));
-            }
-        }
-        return penaltyAmt;
-    }
-    
-    public BigDecimal calculatePenalty(final EgDemandDetails demandDtl, final BigDecimal amount, Date penaltyCalculationDate) {
-        BigDecimal penaltyAmt=BigDecimal.ZERO;
-        penaltyAmt= calculatePenalty(penaltyAmt,demandDtl,amount,penaltyCalculationDate);
-        return penaltyAmt;
-  }
-    /**
-     * 
-     * @param demand
-     * @param penaltyCalculationDate
-     * @return
-     */
-    public Map<String, BigDecimal> checkPenaltyAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
-        Map<String, BigDecimal> penaltyReasons = new HashMap<String, BigDecimal>();
-        BigDecimal penaltyAmt = BigDecimal.ZERO;
-        // final Installment currentInstallment = getCurrentInstallment();
-        if (demand != null) {
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
-                penaltyAmt = BigDecimal.ZERO;
-                // Mean if installment is different than current, then calculate
-                // penalty
-                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0
-                // && currentInstallment.getId() !=
-                // demandDtl.getEgDemandReason().getEgInstallmentMaster().getId())
-                ) {
-                    final BigDecimal amount = demandDtl.getAmount().subtract(demandDtl.getAmtCollected());
-                    penaltyAmt = calculatePenalty(penaltyAmt, demandDtl, amount, penaltyCalculationDate);
-
-                    if (penaltyReasons.get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription()) == null)
-                        penaltyReasons.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(),
-                                penaltyAmt);
-                    else
-                        penaltyReasons.put(
-                                demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(),
-                                penaltyReasons.get(
-                                        demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription()).add(
-                                        penaltyAmt));
-
-                }
-            }
-        }
-        return penaltyReasons;
-
-    }
     /**
      * 
      * @param advertisementPermitDetail
@@ -961,19 +860,19 @@ public int generateDemandForNextInstallment(final List<Advertisement> advertisem
         return demand;
     }
     
-    public Map<String, BigDecimal> checkPendingAmountByDemand(final EgDemand demand, Date penaltyCalculationDate) {
+    public Map<String, BigDecimal> checkPendingAmountByDemand(AdvertisementPermitDetail advPermitDetail) {
         final Map<String, BigDecimal> demandFeeType = new LinkedHashMap<String, BigDecimal>();
         BigDecimal totalDemand = BigDecimal.ZERO;
         BigDecimal totalCollection = BigDecimal.ZERO;
         BigDecimal totalPending = BigDecimal.ZERO;
         BigDecimal penaltyAmount = BigDecimal.ZERO;
-        if (demand != null) {
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()) {
+        if (advPermitDetail!=null && advPermitDetail.getAdvertisement()!=null && advPermitDetail.getAdvertisement().getDemandId() != null) {
+            for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
                 totalDemand = totalDemand.add(demandDtl.getAmount());
                 totalCollection = totalCollection.add(demandDtl.getAmtCollected());
                 totalPending= totalPending.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
-                penaltyAmount = calculatePenalty(penaltyAmount, demandDtl, demandDtl.getAmount().subtract(demandDtl.getAmtCollected()), penaltyCalculationDate);
-            }
+              }
+            penaltyAmount= advertisementPenaltyCalculator.calculatePenalty(advPermitDetail);
         }
         totalDemand = totalDemand.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         totalCollection = totalCollection.setScale(2, BigDecimal.ROUND_HALF_EVEN);
@@ -984,5 +883,56 @@ public int generateDemandForNextInstallment(final List<Advertisement> advertisem
         demandFeeType.put(AdvertisementTaxConstants.TOTALCOLLECTION, totalCollection);
         demandFeeType.put(AdvertisementTaxConstants.PENALTYAMOUNT, penaltyAmount);
         return demandFeeType;
+    }
+    
+    
+    public BigDecimal getPendingArrearsTax(final AdvertisementPermitDetail advertisementPermitDetail)
+    {
+        BigDecimal arrearTax=BigDecimal.ZERO;
+        if(advertisementPermitDetail.getAdvertisement()!=null && advertisementPermitDetail.getAdvertisement().getDemandId()!=null)
+        {
+            for(EgDemandDetails egDemandDetails : advertisementPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()){
+                if (AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX.equalsIgnoreCase(egDemandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+              arrearTax=arrearTax.add(egDemandDetails.getAmount().subtract(egDemandDetails.getAmtCollected()!=null?egDemandDetails.getAmtCollected():BigDecimal.ZERO));
+            }
+        }
+        return arrearTax;
+    }
+    
+    /**
+     * @description returns reasonwise demand and collected amount
+     * @param advPermitDetail
+     * @return
+     */
+    public Map<String, Map<String, BigDecimal>> getReasonWiseDemandAndCollection(AdvertisementPermitDetail advPermitDetail) {
+        final Map<String, Map<String, BigDecimal>> reasonwiseDmnd_CollDtls = new HashMap<String, Map<String, BigDecimal>>();
+        Map<String, BigDecimal> demandCollectionSum = null;
+        BigDecimal totalAmount = BigDecimal.ZERO;  // Holds sum of all demand detail reason base amount
+        BigDecimal totalAmountCollected = BigDecimal.ZERO; // Holds sum of all demand detail reason collected amount
+        if (advPermitDetail!=null && advPermitDetail.getAdvertisement()!=null && advPermitDetail.getAdvertisement().getDemandId() != null) {
+        	  for (EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
+        		  demandCollectionSum = new HashMap<String, BigDecimal>();
+        		  if(reasonwiseDmnd_CollDtls.containsKey(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())){
+        			  Map<String, BigDecimal> temp = reasonwiseDmnd_CollDtls.get(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode());
+        			  demandCollectionSum.put("demandAmount", temp.get("demandAmount").add(demandDtl.getAmount()!=null?demandDtl.getAmount():BigDecimal.ZERO));
+        			  demandCollectionSum.put("collectedAmount", temp.get("collectedAmount").add(demandDtl.getAmtCollected()!=null?demandDtl.getAmtCollected():BigDecimal.ZERO));
+        			  totalAmount=totalAmount.add(demandDtl.getAmount()!=null?demandDtl.getAmount():BigDecimal.ZERO);
+        			  totalAmountCollected=totalAmountCollected.add(demandDtl.getAmtCollected()!=null?demandDtl.getAmtCollected():BigDecimal.ZERO);
+        			  reasonwiseDmnd_CollDtls.put(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode(), demandCollectionSum);
+        		  }else{
+        			  // New Entry
+        			  demandCollectionSum.put("demandAmount", demandDtl.getAmount());
+        			  demandCollectionSum.put("collectedAmount", demandDtl.getAmtCollected());
+        			  totalAmount=totalAmount.add(demandDtl.getAmount());
+        			  totalAmountCollected=totalAmountCollected.add(demandDtl.getAmtCollected());
+        			  reasonwiseDmnd_CollDtls.put(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode(), demandCollectionSum);
+        		  }
+        	  }
+        	  demandCollectionSum = new HashMap<String, BigDecimal>();
+        	  demandCollectionSum.put("totalAmount", totalAmount);
+        	  demandCollectionSum.put("totalAmountCollected", totalAmountCollected);
+        	  reasonwiseDmnd_CollDtls.put("Total", demandCollectionSum);
+        }
+        return reasonwiseDmnd_CollDtls;
     }
   }

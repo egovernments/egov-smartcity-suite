@@ -1,31 +1,44 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.ptis.domain.service.property;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OPEN;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_END;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +56,13 @@ import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PropertyThirdPartyService {
 
@@ -122,7 +142,7 @@ public class PropertyThirdPartyService {
                     LOGGER.debug("Inside applicationType:" + applicationType + "for property" + property);
                 if (!property.getState().getHistory().isEmpty()) {
                     int size = property.getState().getHistory().size();
-                    stateHistory = property.getState().getHistory().get(size - 1);
+                    stateHistory = property.getStateHistory().get(size - 1);
                 }
                 if (property.getState().getValue().equals(WF_STATE_CLOSED)
                         && (stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
@@ -151,7 +171,7 @@ public class PropertyThirdPartyService {
                     LOGGER.debug("Inside applicationType:" + applicationType + "for property mutation" + mutation);
                 if (!mutation.getState().getHistory().isEmpty()) {
                     int size = mutation.getState().getHistory().size();
-                    stateHistory = mutation.getState().getHistory().get(size - 1);
+                    stateHistory = mutation.getStateHistory().get(size - 1);
                 }
                 if (mutation.getState().getValue().equals(WF_STATE_CLOSED)
                         && (stateHistory.getValue().equals(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()
@@ -181,7 +201,7 @@ public class PropertyThirdPartyService {
                             + vacancyRemission);
                 if (!vacancyRemission.getState().getHistory().isEmpty()) {
                     int size = vacancyRemission.getState().getHistory().size();
-                    stateHistory = vacancyRemission.getState().getHistory().get(size - 1);
+                    stateHistory = vacancyRemission.getStateHistory().get(size - 1);
                 }
                 if (vacancyRemission.getState().getValue().equals(WF_STATE_CLOSED)
                         && stateHistory.getValue().endsWith(WF_STATE_BILL_COLLECTOR_APPROVED)) {
@@ -210,7 +230,7 @@ public class PropertyThirdPartyService {
                             + revisionPetition);
                 if (!revisionPetition.getState().getHistory().isEmpty()) {
                     int size = revisionPetition.getState().getHistory().size();
-                    stateHistory = revisionPetition.getState().getHistory().get(size - 1);
+                    stateHistory = revisionPetition.getStateHistory().get(size - 1);
                 }
                 if (revisionPetition.getState().getValue().equals(WFLOW_ACTION_END)
                         && (stateHistory.getValue().endsWith(WF_STATE_DIGITALLY_SIGNED) || stateHistory.getValue()

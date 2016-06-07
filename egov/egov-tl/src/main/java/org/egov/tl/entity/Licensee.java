@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.entity;
 
 import org.egov.infra.admin.master.entity.Boundary;
@@ -45,42 +46,16 @@ import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
 public class Licensee extends BaseModel {
-    /**
-     *
-     */
     private static final long serialVersionUID = 6723590685484215531L;
     @Required(message = "licensee.name.err.required")
     @Length(min = 1, max = 256, message = "licensee.name.err.maxlength")
     private String applicantName;
-    private String nationality;
     private String fatherOrSpouseName;
-    // private String spouseName;
-    private String qualification;
-    private Integer age;
-    private String gender;
-    private String panNumber;
-    private String phoneNumber;
     private String mobilePhoneNumber;
     private String uid;
     private String emailId;
-    private Boundary boundary;
     private String address;
-
-    public Boundary getBoundary() {
-        return boundary;
-    }
-
-    public void setBoundary(final Boundary boundary) {
-        this.boundary = boundary;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(final String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+    private License license;
 
     public String getMobilePhoneNumber() {
         return mobilePhoneNumber;
@@ -106,8 +81,6 @@ public class Licensee extends BaseModel {
         this.emailId = emailId;
     }
 
-    private License license;
-
     public License getLicense() {
         return license;
     }
@@ -124,70 +97,12 @@ public class Licensee extends BaseModel {
         this.applicantName = applicantName;
     }
 
-    public String getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(final String nationality) {
-        this.nationality = nationality;
-    }
-
     public String getFatherOrSpouseName() {
         return fatherOrSpouseName;
     }
 
     public void setFatherOrSpouseName(final String fatherOrSpouseName) {
         this.fatherOrSpouseName = fatherOrSpouseName;
-    }
-
-    public String getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(final String qualification) {
-        this.qualification = qualification;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(final Integer age) {
-        this.age = age;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(final String gender) {
-        this.gender = gender;
-    }
-
-    public String getPanNumber() {
-        return panNumber;
-    }
-
-    public void setPanNumber(final String panNumber) {
-        this.panNumber = panNumber;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("Licensee={");
-        str.append("  applicantName=").append(applicantName == null ? "null" : applicantName.toString());
-        str.append("  address=").append(address == null ? "null" : address.toString());
-        str.append("  nationality=").append(nationality == null ? "null" : nationality.toString());
-        str.append("  fatherOrSpouseName=").append(fatherOrSpouseName == null ? "null" : fatherOrSpouseName.toString());
-        str.append("  qualification=").append(qualification == null ? "null" : qualification.toString());
-        str.append("  age=").append(age == null ? "null" : age.toString());
-        str.append("  gender=").append(gender == null ? "null" : gender.toString());
-        str.append("  panNumber=").append(panNumber == null ? "null" : panNumber.toString());
-        str.append("  phoneNumber=").append(phoneNumber == null ? "null" : phoneNumber.toString());
-        str.append("  boundary=").append(boundary == null ? "null" : boundary.toString());
-        str.append("}");
-        return str.toString();
     }
 
     public String getAddress() {

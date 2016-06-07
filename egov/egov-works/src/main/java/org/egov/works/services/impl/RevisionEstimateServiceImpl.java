@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.works.services.impl;
@@ -49,18 +49,17 @@ import java.util.List;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.commons.service.CommonsService;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetUsage;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.AbstractEstimateAppropriation;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.models.estimate.DepositWorksUsage;
-import org.egov.works.models.estimate.FinancialDetail;
-import org.egov.works.models.revisionEstimate.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.RevisionEstimateService;
@@ -70,7 +69,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * This class will expose all Revision Estimate related operations.
  */
-public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long>implements
+public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstractEstimate, Long> implements
         RevisionEstimateService {
 
     private AbstractEstimateService abstractEstimateService;
@@ -79,8 +78,8 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     private DepositWorksUsageService depositWorksUsageService;
     private PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService;
     private BudgetDetailsDAO budgetDetailsDAO;
-@Autowired
-private FinancialYearHibernateDAO finHibernateDao;
+    @Autowired
+    private FinancialYearHibernateDAO finHibernateDao;
     private static final String MODULE_NAME = "Works";
     private static final String KEY_NAME = "SKIP_BUDGET_CHECK";
 
@@ -91,34 +90,32 @@ private FinancialYearHibernateDAO finHibernateDao;
     @Override
     public void consumeBudget(final RevisionAbstractEstimate revisionEstimate) {
         final AbstractEstimate parentEstimate = revisionEstimate.getParent();
-        revisionEstimate.setBudgetApprNo(abstractEstimateService.getBudgetAppropriationNumber(parentEstimate));
-        boolean isBudgetConsumptionSuccessful = false;
+        final String appropriationNumber = abstractEstimateService.getBudgetAppropriationNumber(parentEstimate);
         if (isDepositWorksType(parentEstimate))
-            isBudgetConsumptionSuccessful = checkForBudgetaryAppropriationForDepositWorks(revisionEstimate);
+            checkForBudgetaryAppropriationForDepositWorks(revisionEstimate, appropriationNumber);
         else
-            isBudgetConsumptionSuccessful = consumeBudgetForNormalWorks(revisionEstimate);
-        if (!isBudgetConsumptionSuccessful)
-            revisionEstimate.setBudgetApprNo(null);
+            consumeBudgetForNormalWorks(revisionEstimate, appropriationNumber);
     }
 
     @Override
     public void releaseBudget(final RevisionAbstractEstimate revisionEstimate) {
         final AbstractEstimate parentEstimate = revisionEstimate.getParent();
-        revisionEstimate.setBudgetRejectionNo("BC/" + revisionEstimate.getBudgetApprNo());
+        final String appropriationNumber = abstractEstimateService.getLatestEstimateAppropriationNumber(revisionEstimate);
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("BC/");
+        stringBuilder.append(appropriationNumber);
+        final String budgetRejectionNumber = stringBuilder.toString();
 
         // Financial details of the parent
         final FinancialDetail financialDetail = parentEstimate.getFinancialDetails().get(0);
-        boolean isBudgetReleaseSuccessful = false;
         if (isDepositWorksType(parentEstimate))
-            isBudgetReleaseSuccessful = releaseDepositWorksAmountOnReject(revisionEstimate, financialDetail);
+            releaseDepositWorksAmountOnReject(revisionEstimate, financialDetail, budgetRejectionNumber);
         else
-            isBudgetReleaseSuccessful = releaseBudgetOnReject(revisionEstimate, financialDetail);
-        if (!isBudgetReleaseSuccessful)
-            revisionEstimate.setBudgetRejectionNo(null);
+            releaseBudgetOnReject(revisionEstimate, financialDetail, budgetRejectionNumber);
     }
 
     private boolean releaseDepositWorksAmountOnReject(final RevisionAbstractEstimate revisionEstimate,
-            final FinancialDetail financialDetail) throws ValidationException {
+            final FinancialDetail financialDetail, final String budgetRejectionNumber) throws ValidationException {
         boolean flag = false;
         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
@@ -134,7 +131,7 @@ private FinancialYearHibernateDAO finHibernateDao;
         depositWorksUsage.setTotalDepositAmount(creditBalance);
         depositWorksUsage.setConsumedAmount(BigDecimal.ZERO);
         depositWorksUsage.setReleasedAmount(new BigDecimal(releaseAmount));
-        depositWorksUsage.setAppropriationNumber(revisionEstimate.getBudgetRejectionNo());
+        depositWorksUsage.setAppropriationNumber(budgetRejectionNumber);
         depositWorksUsage.setAbstractEstimate(revisionEstimate);
         depositWorksUsage.setAppropriationDate(new Date());
         depositWorksUsage.setFinancialYear(estimateAppropriation.getDepositWorksUsage().getFinancialYear());
@@ -160,14 +157,15 @@ private FinancialYearHibernateDAO finHibernateDao;
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    private boolean consumeBudgetForNormalWorks(final RevisionAbstractEstimate revisionEstimate) {
+    private boolean consumeBudgetForNormalWorks(final RevisionAbstractEstimate revisionEstimate,
+            final String appropriationNumber) {
         boolean flag = false;
         final Long finYearId = finHibernateDao.getFinancialYearByDate(new Date()).getId();
         final List<Long> budgetHeadId = new ArrayList<Long>();
         final FinancialDetail financialDetail = revisionEstimate.getParent().getFinancialDetails().get(0);
         budgetHeadId.add(financialDetail.getBudgetGroup().getId());
         final BudgetUsage budgetUsage = budgetDetailsDAO.consumeEncumbranceBudget(
-                revisionEstimate.getBudgetApprNo() == null ? null : revisionEstimate.getBudgetApprNo(),
+                appropriationNumber == null ? null : appropriationNumber,
                 finYearId,
                 Integer.valueOf(11),
                 revisionEstimate.getEstimateNumber(),
@@ -211,8 +209,9 @@ private FinancialYearHibernateDAO finHibernateDao;
         estimateAppropriationService.persist(estimateAppropriation);
     }
 
-    private boolean checkForBudgetaryAppropriationForDepositWorks(final RevisionAbstractEstimate revisionEstimate)
-            throws ValidationException {
+    private boolean checkForBudgetaryAppropriationForDepositWorks(final RevisionAbstractEstimate revisionEstimate,
+            final String appropriationNumber)
+                    throws ValidationException {
         boolean flag = false;
         final Date appDate = new Date();
         double depApprAmnt = 0.0;
@@ -239,7 +238,7 @@ private FinancialYearHibernateDAO finHibernateDao;
             depositWorksUsage.setTotalDepositAmount(creditBalance);
             depositWorksUsage.setConsumedAmount(new BigDecimal(depApprAmnt));
             depositWorksUsage.setReleasedAmount(BigDecimal.ZERO);
-            depositWorksUsage.setAppropriationNumber(revisionEstimate.getBudgetApprNo());
+            depositWorksUsage.setAppropriationNumber(appropriationNumber);
             depositWorksUsage.setAbstractEstimate(revisionEstimate);
             depositWorksUsage.setAppropriationDate(appDate);
             depositWorksUsage.setFinancialYear(budgetApprDate_finYear);
@@ -285,7 +284,7 @@ private FinancialYearHibernateDAO finHibernateDao;
     }
 
     private boolean releaseBudgetOnReject(final RevisionAbstractEstimate revisionEstimate,
-            final FinancialDetail financialDetail) throws ValidationException {
+            final FinancialDetail financialDetail, final String budgetRejectionNumber) throws ValidationException {
         boolean flag = false;
         final AbstractEstimateAppropriation estimateAppropriation = estimateAppropriationService.findByNamedQuery(
                 "getLatestBudgetUsageForEstimate", revisionEstimate.getId());
@@ -297,7 +296,7 @@ private FinancialYearHibernateDAO finHibernateDao;
         BudgetUsage budgetUsage = null;
 
         budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
-                revisionEstimate.getBudgetRejectionNo() == null ? null : revisionEstimate.getBudgetRejectionNo(),
+                budgetRejectionNumber == null ? null : budgetRejectionNumber,
                 estimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
                 Integer.valueOf(11),
                 revisionEstimate.getEstimateNumber(),
@@ -336,7 +335,7 @@ private FinancialYearHibernateDAO finHibernateDao;
         boolean isDepositWorks = false;
         final List<String> depositTypeList = getAppConfigValuesToSkipBudget();
         for (final String type : depositTypeList)
-            if (type.equals(estimate.getType().getName()))
+            if (type.equals(estimate.getNatureOfWork().getName()))
                 isDepositWorks = true;
         return isDepositWorks;
     }
@@ -380,7 +379,6 @@ private FinancialYearHibernateDAO finHibernateDao;
     public void setDepositWorksUsageService(final DepositWorksUsageService depositWorksUsageService) {
         this.depositWorksUsageService = depositWorksUsageService;
     }
-
 
     public void setEstimateAppropriationService(
             final PersistenceService<AbstractEstimateAppropriation, Long> estimateAppropriationService) {

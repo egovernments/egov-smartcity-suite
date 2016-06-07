@@ -1,42 +1,43 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <style>
 #warning {
 	display: none;
@@ -687,7 +688,7 @@ function checkTenderDate(){
 		<s:hidden name="worksPackageId" value="%{worksPackage.id}" />
 		<td colspan="4" class="headingwk">
 			<div class="arrowiconwk">
-				<img src="/egi/resources/erp2/images/arrow.gif" />
+				<img src="/egworks/resources/erp2/images/arrow.gif" />
 			</div>
 			<div class="headplacer">
 				<s:text name="page.header.negotiation" />
@@ -768,7 +769,7 @@ function checkTenderDate(){
 	         </s:if>  
 	          <s:else>
 	          	<s:textfield name="tenderHeader.tenderDate" value="%{tenderDateFormat}" id="tenderDate" cssClass="selectboldwk" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/>
-	          	<a href="javascript:show_calendar('forms[0].tenderDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egi/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
+	          	<a href="javascript:show_calendar('forms[0].tenderDate',null,null,'DD/MM/YYYY');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"><img src="/egworks/resources/erp2/images/calendar.png" alt="Calendar" width="16" height="16" border="0" align="absmiddle" /></a>
 	          </s:else>	         
 	        </td>    
 	</tr>
@@ -838,7 +839,7 @@ function checkTenderDate(){
 				href="javascript:show_calendar('forms[0].negotiationDate',null,null,'DD/MM/YYYY');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"> <img
-					src="/egi/resources/erp2/images/calendar.png"
+					src="/egworks/resources/erp2/images/calendar.png"
 					id="wpDateImg" alt="Calendar" width="16" height="16" border="0"
 					align="absmiddle" /> </a>
 			<input type='hidden' id='hiddenNegotiationDate' name='hiddenNegotiationDate' />
@@ -857,7 +858,7 @@ function checkTenderDate(){
 			<td><input type="text" name="contractorName" id="contractorName" value='<s:property value="%{contractor.name}" />'  class="selectboldwk" /></td>
 			<td><input type="text" name="contractorCode" id="contractorCode"  disabled="true" value='<s:property value="%{contractor.code}" />' class="selectboldwk" />
 			<s:hidden id="contractor" name="contractor" value="%{contractor.id}"/></td>
-			<td><a onclick="searchContractor(this)" href="#"><IMG id="img" height=16 src="/egi/resources/erp2/images/magnifier.png" width=16 alt="Search" border="0" align="absmiddle"></a></td>
+			<td><a onclick="searchContractor(this)" href="#"><IMG id="img" height=16 src="/egworks/resources/erp2/images/magnifier.png" width=16 alt="Search" border="0" align="absmiddle"></a></td>
 			</tr>
 			</table>
        </td>

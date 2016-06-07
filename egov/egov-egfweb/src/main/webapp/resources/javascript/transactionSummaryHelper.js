@@ -1,3 +1,43 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 /**
  * 
  */
@@ -20,15 +60,15 @@ function loadDropDownCodes() {
 	}
 	var url = "";
 	if (document.getElementById("minor").value != "") {
-		var url = "/EGF/commons/Process.jsp?type=coaDetailCode?glCode="
+		var url = "/EGF/voucher/common-ajaxCoaDetailCode.action?glCode="
 				+ document.getElementById("minor").value;
 	} else if (document.getElementById("major").value != "") {
-		url = "/EGF/commons/Process.jsp?type=coaDetailCode?glCode="
+		url = "/EGF/voucher/common-ajaxCoaDetailCode.action?glCode="
 				+ document.getElementById("major").value;
 	} else if (document.getElementById("type").value == "A") {
-		url = "/EGF/commons/Process.jsp?type=getAllAssetCodes";
+		url = "/EGF/voucher/common-ajaxGetAllAssetCodes.action";
 	} else {
-		url = "/EGF/commons/Process.jsp?type=getAllLiabCodes";
+		url = "/EGF/voucher/common-ajaxGetAllLiabCodes.action";
 	}
 
 	var req2 = initiateRequest();
@@ -57,7 +97,7 @@ function loadDropDownCodes() {
 var funcObj;
 var funcArray;
 function loadDropDownCodesFunction() {
-	var url = "/EGF/commons/Process.jsp?type=getAllFunctionName";
+	var url = "/EGF/voucher/common-ajaxGetAllFunctionName.action";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function() {
 		if (req2.readyState == 4) {
@@ -225,8 +265,8 @@ function fillNeibrAfterSplitGlcode(obj) {
 			check();
 		} else if (temp != "" && (accCodeid == null || accCodeid == "")
 				&& (glcodeid == null || glcodeid == "")) {
-			bootbox
-					.alert("Invalid Account Code selected .Please select code from auto complete.");
+			/*bootbox
+					.alert("Invalid Account Code selected .Please select code from auto complete.");*/
 			obj.value = "";
 			document.getElementById('transactionSummaryList[' + $currRow
 					+ '].glcodeid.id').value = "";
@@ -590,7 +630,7 @@ function autocompleteEntities(obj) {
 	oAutoCompEntityForJV.minQueryLength = 1;
 	oAutoCompEntityForJV.prehighlightClassName = "yui-ac-prehighlight";
 	oAutoCompEntityForJV.useShadow = true;
-	//oAutoCompEntityForJV.forceSelection = true;
+	// oAutoCompEntityForJV.forceSelection = true;
 	oAutoCompEntityForJV.maxResultsDisplayed = 10;
 	oAutoCompEntityForJV.useIFrame = true;
 	oAutoCompEntityForJV.doBeforeExpandContainer = function(oTextbox,
@@ -846,8 +886,8 @@ function validateOnCreate() {
 	var flag = true;
 	var resultLength = $('#result tr').length - 2;
 	var index;
-	for (var i = 1; i <= resultLength; i++) {
-		index = i - 1;
+	for (var i = 0; i <= resultLength; i++) {
+		index = i;
 		var glcodeid = document.getElementById('transactionSummaryList['
 				+ index + '].glcodeid.id').value;
 		var glcode = document.getElementById('transactionSummaryList[' + index
@@ -865,10 +905,10 @@ function validateOnCreate() {
 		if ((glcode != '') && (glcodeid == null || glcodeid == '')) {
 			bootbox
 					.alert('Please select account code from auto complete for row '
-							+ i);
+							+ (i + 1));
 			flag = false;
 		} else if (glcode == null || glcode == '') {
-			bootbox.alert('Please select account code for row ' + i);
+			bootbox.alert('Please select account code for row ' + (i + 1));
 			flag = false;
 		} else if (subledgerlength > 1
 				&& (subledger.value == null || subledger.value == '')) {
@@ -892,64 +932,68 @@ function validateOnCreate() {
 			flag = false;
 		}
 	}
-	// Validate last row if glcode is there
-	var lastrow = resultLength;
-	var lastrowglcodeid = document.getElementById('transactionSummaryList['
-			+ lastrow + '].glcodeid.id').value;
-	var lastrowglcode = document.getElementById('transactionSummaryList['
-			+ lastrow + '].glcodeDetail').value;
-	var lastrowsubledger = document.getElementById('transactionSummaryList['
-			+ lastrow + '].accountdetailtype.id');
-	var lastrowsubledgerlength = $(lastrowsubledger).children('option').length;
-	console.log(glcode);
-	var lastrowentity = document.getElementById('transactionSummaryList['
-			+ lastrow + '].accountdetailkeyValue').value;
-	var lastrowdebit = document.getElementById('transactionSummaryList['
-			+ lastrow + '].openingdebitbalance').value;
-	var lastrowcredit = document.getElementById('transactionSummaryList['
-			+ lastrow + '].openingcreditbalance').value;
-	if (lastrowglcode != null && lastrowglcode != '') {
-		if ((lastrowglcode != '')
-				&& (lastrowglcodeid == null || lastrowglcodeid == '')) {
-			bootbox
-					.alert('Please select account code from auto complete for row '
-							+ i);
-			flag = false;
-		} else if (lastrowsubledgerlength > 1
-				&& (lastrowsubledger.value == null || lastrowsubledger.value == '')) {
-			bootbox.alert('Please select subledger type for account code  '
-					+ lastrowglcode);
-			flag = false;
-		} else if (lastrowsubledgerlength > 1
-				&& (lastrowsubledger.value != null || lastrowsubledger.value != '')
-				&& (lastrowentity == null || lastrowentity == '')) {
-			bootbox.alert('Please select entity for account code  '
-					+ lastrowglcode);
-			flag = false;
-		} else if ((lastrowdebit == '' && lastrowcredit == '')
-				|| (lastrowdebit < 0 && lastrowcredit < 0)) {
-			bootbox
-					.alert('Please select debit amount or credit amount for account code  '
-							+ lastrowglcode);
-			flag = false;
-		} else if (lastrowdebit > 0 && lastrowcredit > 0) {
-			bootbox
-					.alert("Opening debit amount and credit amount cannot be there for the account code   "
-							+ lastrowglcode);
-			flag = false;
+	if (resultLength > 0) {
+		// Validate last row if glcode is there
+		var lastrow = resultLength;
+		var lastrowglcodeid = document.getElementById('transactionSummaryList['
+				+ lastrow + '].glcodeid.id').value;
+		var lastrowglcode = document.getElementById('transactionSummaryList['
+				+ lastrow + '].glcodeDetail').value;
+		var lastrowsubledger = document
+				.getElementById('transactionSummaryList[' + lastrow
+						+ '].accountdetailtype.id');
+		var lastrowsubledgerlength = $(lastrowsubledger).children('option').length;
+		console.log(glcode);
+		var lastrowentity = document.getElementById('transactionSummaryList['
+				+ lastrow + '].accountdetailkeyValue').value;
+		var lastrowdebit = document.getElementById('transactionSummaryList['
+				+ lastrow + '].openingdebitbalance').value;
+		var lastrowcredit = document.getElementById('transactionSummaryList['
+				+ lastrow + '].openingcreditbalance').value;
+		if (lastrowglcode != null && lastrowglcode != '') {
+			if ((lastrowglcode != '')
+					&& (lastrowglcodeid == null || lastrowglcodeid == '')) {
+				bootbox
+						.alert('Please select account code from auto complete for row '
+								+ i);
+				flag = false;
+			} else if (lastrowsubledgerlength > 1
+					&& (lastrowsubledger.value == null || lastrowsubledger.value == '')) {
+				bootbox.alert('Please select subledger type for account code  '
+						+ lastrowglcode);
+				flag = false;
+			} else if (lastrowsubledgerlength > 1
+					&& (lastrowsubledger.value != null || lastrowsubledger.value != '')
+					&& (lastrowentity == null || lastrowentity == '')) {
+				bootbox.alert('Please select entity for account code  '
+						+ lastrowglcode);
+				flag = false;
+			} else if ((lastrowdebit == '' && lastrowcredit == '')
+					|| (lastrowdebit < 0 && lastrowcredit < 0)) {
+				bootbox
+						.alert('Please select debit amount or credit amount for account code  '
+								+ lastrowglcode);
+				flag = false;
+			} else if (lastrowdebit > 0 && lastrowcredit > 0) {
+				bootbox
+						.alert("Opening debit amount and credit amount cannot be there for the account code   "
+								+ lastrowglcode);
+				flag = false;
+			}
+		} else {
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].id').value = "";
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].glcodeDetail').value = "";
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].glcodeid.id').value = 0;
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].accounthead').innerHTML = "";
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].accountdetailkey').value = "";
+			document.getElementById('transactionSummaryList[' + lastrow
+					+ '].accountdetailkeyValue').value = "";
 		}
-	} else {
-		document.getElementById('transactionSummaryList[' + lastrow + '].id').value = "";
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].glcodeDetail').value = "";
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].glcodeid.id').value = 0;
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].accounthead').innerHTML = "";
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].accountdetailkey').value = "";
-		document.getElementById('transactionSummaryList[' + lastrow
-				+ '].accountdetailkeyValue').value = "";
 	}
 	return flag;
 }

@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  eGov suite of products aim to improve the internal efficiency,transparency, 
-     accountability and the service delivery of the government  organizations.
-  
-      Copyright (C) <2015>  eGovernments Foundation
-  
-      The updated version of eGov suite of products as by eGovernments Foundation 
-      is available at http://www.egovernments.org
-  
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      any later version.
-  
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-  
-      You should have received a copy of the GNU General Public License
-      along with this program. If not, see http://www.gnu.org/licenses/ or 
-      http://www.gnu.org/licenses/gpl.html .
-  
-      In addition to the terms of the GPL license to be adhered to in using this
-      program, the following additional terms are to be complied with:
-  
-  	1) All versions of this program, verbatim or modified must carry this 
-  	   Legal Notice.
-  
-  	2) Any misrepresentation of the origin of the material is prohibited. It 
-  	   is required that all modified versions of this material be marked in 
-  	   reasonable ways as different from the original version.
-  
-  	3) This license does not grant any rights to any user of the program 
-  	   with regards to rights under trademark law for use of the trade names 
-  	   or trademarks of eGovernments Foundation.
-  
-    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!DOCTYPE tiles-definitions PUBLIC
         "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
@@ -80,27 +80,22 @@
         <put-attribute name="page-title" value="title.watertaxSearch" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/search/waterTaxSearch-commonForm.jsp"/>
     </definition>
-	 
      <definition name="application-view" extends="base_layout">	 
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/application-view.jsp"/>
     </definition>
-    
 	<definition name="newconnection-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-edit.jsp"/> 
     </definition>
-    
-		<definition name="connection-closeForm" extends="base_layout">
+	<definition name="connection-closeForm" extends="base_layout">
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/connection-closeForm.jsp"/> 
     </definition>
-    
-		<definition name="reconnection-newForm" extends="base_layout">
+	<definition name="reconnection-newForm" extends="base_layout">
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/reconnection-newForm.jsp"/> 
     </definition>
-    
 	<definition name="newconnection-meterEntry" extends="base_layout">
         <put-attribute name="page-title" value="title.viewMeterapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newconnection-meterEntry.jsp"/> 
@@ -163,7 +158,7 @@
     </definition>
     
      <definition name="newconnection-dataEntryEditForm" extends="base_layout">
-        <put-attribute name="page-title" value="title.dataentry" cascade="true"/>
+        <put-attribute name="page-title" value="title.editdataentry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryEditForm.jsp"/>
     </definition>
     <definition name="chairperson-details" extends="base_layout">
@@ -178,14 +173,6 @@
         <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master.jsp"/>
     </definition>
-      <definition name="waterRates-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-success.jsp"/>
-    </definition>
-    <definition name="donation-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>
-    </definition>   
      <definition name="digitalSignature-success" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/digitalSignature-success.jsp"/>
@@ -206,41 +193,29 @@
         <put-attribute name="page-title" value="title.category.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/category-master.jsp"/>
     </definition>
-     <definition name="category-master-success" extends="base_layout">
+    <definition name="category-master-list" extends="base_layout">
         <put-attribute name="page-title" value="title.category.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-list.jsp"/>
     </definition>
     <definition name="application-process-time-master" extends="base_layout">
         <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master.jsp"/>
     </definition>
-    <definition name="application-process-time-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-success.jsp"/>
-    </definition>
      <definition name="document-name-master" extends="base_layout">
         <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master.jsp"/>
-    </definition>
-    <definition name="document-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/document-master-success.jsp"/>
     </definition>
     <definition name="usage-type-master" extends="base_layout">
         <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-master.jsp"/>
     </definition>
-     <definition name="usage-master-success" extends="base_layout">
+    <definition name="usage-type-master-list" extends="base_layout">
         <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/usage-master-success.jsp"/>
-    </definition>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-master-view.jsp"/>
+    </definition> 
     <definition name="pipesize-master" extends="base_layout">
         <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master.jsp"/>
-    </definition>
-    <definition name="pipesize-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-success.jsp"/>
     </definition>
     <definition name="defaultersWTReport-search" extends="base_layout">	 
         <put-attribute name="page-title" value="title.defaultersReport" cascade="true"/>
@@ -249,5 +224,125 @@
     <definition name="dcbview-migdata" extends="base_layout">	 
         <put-attribute name="page-title" value="title.migrateddata" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dcbViewMigratedData.jsp"/>
+    </definition>
+    <definition name="waterRates-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master-view.jsp"/>
+    </definition>
+     <definition name="property-usage-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyUsage.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-usage-master.jsp"/>
+    </definition>
+    <definition name="property-usage-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyUsage.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-usage-master-list.jsp"/>
+    </definition>
+     <definition name="property-category-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyCategory.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-category-master.jsp"/>
+    </definition>
+    <definition name="property-category-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyCategory.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-category-master-view.jsp"/>
+    </definition>
+     <definition name="property-pipesize-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyPipeSize.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-pipesize-master.jsp"/>
+    </definition>
+    <definition name="property-pipesize-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyPipeSize.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-pipesize-list.jsp"/>
+    </definition>
+    <definition name="pipesize-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-list.jsp"/>
+    </definition>
+     <definition name="generateBill-Report" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/generatebill-report.jsp"/>
+    </definition>
+    <definition name="water-source-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master.jsp"/>
+    </definition>
+    <definition name="water-source-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master-list.jsp"/>
+    </definition>
+     <definition name="donation-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-view.jsp"/>
+    </definition>
+     <definition name="document-name-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master-list.jsp"/>
+    </definition>
+     <definition name="application-process-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-master-list.jsp"/>
+    </definition>
+     <definition name="meter-cost-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.meterCost.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/meter-cost-master.jsp"/>
+    </definition>
+    <definition name="meter-cost-master-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.meterCost.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/meter-cost-master-list.jsp"/>
+    </definition>
+     <definition name="dataEntryReport-search" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.dataentry.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dataentry-report.jsp"/>
+    </definition>
+    <definition name="baseRegister-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.baseregister.report" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/reports/baseRegister-form.jsp" />
+	</definition>
+	 <definition name="usage-type-sucess" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-sucess.jsp"/>
+    </definition>
+    <definition name="category-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
+    </definition>
+    <definition name="pipesize-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-success.jsp"/>
+    </definition>
+      <definition name="donation-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>
+    </definition>
+     <definition name="property-usage-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyUsage.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-usage-master-success.jsp"/>
+    </definition>
+    <definition name="property-category-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyCategory.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-category-master-success.jsp"/>
+    </definition>
+     <definition name="water-source-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master-success.jsp"/>
+    </definition>
+    <definition name="meter-cost-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.meterCost.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/meter-cost-master-success.jsp"/>
+    </definition>
+    <definition name="application-process-time-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master-success.jsp"/>
+    </definition>
+    <definition name="waterRates-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master-success.jsp"/>
+    </definition>
+    <definition name="document-name-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master-success.jsp"/>
+    </definition>
+      <definition name="property-pipesize-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyPipeSize.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-pipesize-master-success.jsp"/>
     </definition>
 </tiles-definitions>

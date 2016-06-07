@@ -1,35 +1,45 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
- * government organizations.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- * Copyright (C) <2015> eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
- * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this program. If not, see
- * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
- * complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
- * material be marked in reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
- * trade names or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.wtms.web.controller.application;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,6 +79,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.JsonObject;
+
 @Controller
 public class AjaxConnectionController {
 
@@ -77,13 +89,10 @@ public class AjaxConnectionController {
 
     @Autowired
     private DonationHeaderService donationHeaderService;
-    
-    @Autowired
-    private DonationDetailsService donationDetailsService;
 
     @Autowired
     private UsageTypeService usageTypeService;
-    
+
     @Autowired
     private ApplicationTypeService applicationTypeService;
 
@@ -92,10 +101,10 @@ public class AjaxConnectionController {
 
     @Autowired
     private ConnectionDemandService connectionDemandService;
-    
+
     @Autowired
     private WaterRatesHeaderService waterRatesHeaderService;
-    
+
     @Autowired
     private WaterRatesDetailsService waterRatesDetailsService;
 
@@ -104,28 +113,29 @@ public class AjaxConnectionController {
 
     @Autowired
     private ConnectionCategoryService connectionCategoryService;
-    
+
+    @Autowired
+    private DonationDetailsService donationDetailsService;
+
     @Autowired
     private ApplicationProcessTimeService applicationProcessTimeService;
-    
-    
 
     @RequestMapping(value = "/ajaxconnection/check-primaryconnection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
         return newConnectionService.checkConnectionPresentForProperty(propertyID);
     }
-    
+
     @RequestMapping(value = "/ajaxconnection/assignmentByPositionId", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(@RequestParam final Long approvalPositionId, 
-    		final HttpServletResponse response) {
-        return   waterConnectionDetailsService.getApprovalPositionOnValidate(approvalPositionId);
+    public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(
+            @RequestParam final Long approvalPositionId, final HttpServletResponse response) {
+        return waterConnectionDetailsService.getApprovalPositionOnValidate(approvalPositionId);
     }
 
     @RequestMapping(value = "/ajax-CategoryTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<ConnectionCategory> getAllCategoryTypesByPropertyType(
             @RequestParam final Long propertyType, @RequestParam final String connectionType) {
         List<ConnectionCategory> categoryTypes = new ArrayList<ConnectionCategory>(0);
-        categoryTypes = connectionCategoryService.getAllCategoryTypesByPropertyType(propertyType, connectionType);
+        categoryTypes = connectionCategoryService.getAllActiveCategoryTypesByPropertyType(propertyType, connectionType);
         categoryTypes.forEach(categoryType -> categoryType.toString());
         return categoryTypes;
     }
@@ -133,7 +143,7 @@ public class AjaxConnectionController {
     @RequestMapping(value = "/ajax-UsageTypeByPropertyType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<UsageType> getAllUsageTypesByPropertyType(@RequestParam final Long propertyType) {
         List<UsageType> usageTypes = new ArrayList<UsageType>(0);
-        usageTypes = usageTypeService.getAllUsageTypesByPropertyType(propertyType);
+        usageTypes = usageTypeService.getAllActiveUsageTypesByPropertyType(propertyType);
         usageTypes.forEach(usageType -> usageType.toString());
         return usageTypes;
     }
@@ -179,53 +189,84 @@ public class AjaxConnectionController {
     }
 
     @RequestMapping(value = "/ajax-donationheadercombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
+    public @ResponseBody String getDonationAmountByAllCombinatons(@RequestParam final PropertyType propertyType,
             @RequestParam final ConnectionCategory categoryType, @RequestParam final UsageType usageType,
-            @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize) {
-        PipeSize minPipesizeObj=pipeSizeService.findBy(minPipeSize);
-        PipeSize maxPipesizeObj=pipeSizeService.findBy(maxPipeSize);
-        final  List<DonationHeader> donationHeaderTempList = donationHeaderService
+            @RequestParam final Long maxPipeSize, @RequestParam final Long minPipeSize,
+            @RequestParam final Date fromDate, @RequestParam final Date toDate, @RequestParam final Boolean activeid) {
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+        final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
+        final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
+        final List<DonationHeader> donationHeaderTempList = donationHeaderService
                 .findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(propertyType, categoryType, usageType,
-                		minPipesizeObj.getSizeInInch() , maxPipesizeObj.getSizeInInch());
-        if (donationHeaderTempList.isEmpty())
-            return 0;
-        else{
-               return 1;
+                        minPipesizeObj.getSizeInInch(), maxPipesizeObj.getSizeInInch());
+        DonationDetails donationDetails = null;
+        if (!donationHeaderTempList.isEmpty())
+            for (final DonationHeader donationHeaderTemp : donationHeaderTempList) {
+                donationDetails = donationDetailsService.findByDonationHeaderAndFromDateAndToDate(donationHeaderTemp,
+                        fromDate, toDate);
+                if (donationDetails != null)
+                    break;
             }
+        if (donationDetails == null)
+            return "";
+        else if (donationDetails != null && donationDetails.getDonationHeader().isActive() == activeid) {
+            final JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("maxPipeSize", donationDetails.getDonationHeader().getMaxPipeSize().getCode());
+            jsonObj.addProperty("minPipeSize", donationDetails.getDonationHeader().getMinPipeSize().getCode());
+            jsonObj.addProperty("fromDate", dateformat.format(donationDetails.getFromDate()).toString());
+            jsonObj.addProperty("toDate", dateformat.format(donationDetails.getToDate()).toString());
+            return jsonObj.toString();
+        } else
+            return "";
     }
-    
+
     @RequestMapping(value = "/ajax-minimumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double getMinimumPipeSizeInInch(
-            @RequestParam final Long minPipeSize) {
-          PipeSize minPipesizeObj=pipeSizeService.findBy(minPipeSize);
-          return minPipesizeObj.getSizeInInch();
+    public @ResponseBody double getMinimumPipeSizeInInch(@RequestParam final Long minPipeSize) {
+        final PipeSize minPipesizeObj = pipeSizeService.findOne(minPipeSize);
+        return minPipesizeObj.getSizeInInch();
     }
-    
+
     @RequestMapping(value = "/ajax-maximumpipesizeininch", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double getMaximumPipeSizeInInch(
-            @RequestParam final Long maxPipeSize) {
-          PipeSize maxPipesizeObj=pipeSizeService.findBy(maxPipeSize);
-          return maxPipesizeObj.getSizeInInch();
+    public @ResponseBody double getMaximumPipeSizeInInch(@RequestParam final Long maxPipeSize) {
+        final PipeSize maxPipesizeObj = pipeSizeService.findOne(maxPipeSize);
+        return maxPipesizeObj.getSizeInInch();
     }
-    
+
     @RequestMapping(value = "/ajax-WaterRatescombination", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam final ConnectionType categoryType,@RequestParam final WaterSource waterSource,
-            @RequestParam final UsageType usageType,
-            @RequestParam final PipeSize pipeSize) {
-        final WaterRatesHeader waterRatesHeader = waterRatesHeaderService.findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource, pipeSize);
-        final WaterRatesDetails waterRatesDetails = waterRatesDetailsService. findByWaterRatesHeader(waterRatesHeader);
-       
+    public @ResponseBody String geWaterRatesByAllCombinatons(
+            @ModelAttribute("waterRatesHeader") @RequestParam final ConnectionType categoryType,
+            @RequestParam final WaterSource waterSource, @RequestParam final UsageType usageType,
+            @RequestParam final PipeSize pipeSize, @RequestParam final Date fromDate, @RequestParam final Date toDate,
+            @RequestParam final Boolean activeid) {
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+        final List<WaterRatesHeader> waterRatesHeaderList = waterRatesHeaderService
+                .findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(categoryType, usageType, waterSource,
+                        pipeSize);
+        WaterRatesDetails waterRatesDetails = null;
+        if (!waterRatesHeaderList.isEmpty())
+            for (final WaterRatesHeader waterRatesHeaderTemp : waterRatesHeaderList) {
+                waterRatesDetails = waterRatesDetailsService.findByWaterRatesHeaderAndFromDateAndToDate(
+                        waterRatesHeaderTemp, fromDate, toDate);
+                if (waterRatesDetails != null)
+                    break;
+            }
         if (waterRatesDetails == null)
-            return 0;
-        else
-            return waterRatesDetails.getMonthlyRate();
+            return "";
+        else if (waterRatesDetails != null && waterRatesDetails.getWaterRatesHeader().isActive() == activeid) {
+            final JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("fromDate", dateformat.format(waterRatesDetails.getFromDate()).toString());
+            jsonObj.addProperty("toDate", dateformat.format(waterRatesDetails.getToDate()).toString());
+            return jsonObj.toString();
+        } else
+            return "";
     }
-    
+
     @RequestMapping(value = "/ajax-getapplicationprocesstime", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double getApplicationProcessTime(@RequestParam final Long applicationType ,@RequestParam final Long categoryType) {
-        
+    public @ResponseBody double getApplicationProcessTime(@RequestParam final Long applicationType,
+            @RequestParam final Long categoryType) {
         ApplicationProcessTime applicationprocessTime = new ApplicationProcessTime();
-        applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(applicationTypeService.findBy(applicationType),connectionCategoryService.findBy(categoryType));
+        applicationprocessTime = applicationProcessTimeService.findByApplicationTypeandCategory(
+                applicationTypeService.findBy(applicationType), connectionCategoryService.findOne(categoryType));
         if (applicationprocessTime == null)
             return 0;
         else

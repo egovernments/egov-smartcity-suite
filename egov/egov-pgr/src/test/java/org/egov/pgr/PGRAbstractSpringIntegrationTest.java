@@ -40,15 +40,14 @@
 package org.egov.pgr;
 
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-@TransactionConfiguration(transactionManager = "transactionManager",defaultRollback=true)
+@Rollback
 @ActiveProfiles("test")
 public abstract class PGRAbstractSpringIntegrationTest {
 }

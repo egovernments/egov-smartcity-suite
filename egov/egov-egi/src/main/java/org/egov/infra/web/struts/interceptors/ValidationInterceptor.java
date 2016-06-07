@@ -37,12 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.struts.interceptors;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-
+import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.ValidationAware;
+import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -50,9 +50,9 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageForward;
 
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ValidationAware;
-import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class ValidationInterceptor extends AbstractInterceptor {
 
@@ -86,7 +86,6 @@ public class ValidationInterceptor extends AbstractInterceptor {
 			}
 			final ValidationAware validationAwareAction = (ValidationAware) invocation.getAction();
 			if (validationAwareAction.hasErrors()) {
-				//HibernateUtil.markForRollback();
 				if (isInvokeAndForward) {
 					return (String) actionMethod.invoke(action);
 				} else {
@@ -96,7 +95,6 @@ public class ValidationInterceptor extends AbstractInterceptor {
 			}
 			return invocation.invoke();
 		} catch (final ValidationException e) {
-			//HibernateUtil.markForRollback();
 			if (BaseFormAction.class.isAssignableFrom(invocation.getAction().getClass())) {
 				this.transformValidationErrors(invocation, e);
 				if (isInvokeAndForward) {

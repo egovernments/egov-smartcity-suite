@@ -37,16 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infstr.models;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.validation.exception.ValidationError;
+import org.hibernate.search.annotations.DocumentId;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.validation.exception.ValidationError;
-import org.hibernate.search.annotations.DocumentId;
 
 public class BaseModel implements Serializable {
 

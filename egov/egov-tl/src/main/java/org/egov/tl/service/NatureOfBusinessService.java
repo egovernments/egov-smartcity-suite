@@ -37,24 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.service;
 
 
-
-
-import java.util.List;
-
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.repository.NatureOfBusinessRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service 
@@ -62,8 +56,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class NatureOfBusinessService  {
 
 	private final NatureOfBusinessRepository natureOfBusinessRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
 
 	@Autowired
 	public NatureOfBusinessService(final NatureOfBusinessRepository natureOfBusinessRepository) {
@@ -80,8 +72,5 @@ public class NatureOfBusinessService  {
 	} 
 	public List<NatureOfBusiness> findAll() {
 		return natureOfBusinessRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-	}
-	public NatureOfBusiness findByName(String name){
-		return natureOfBusinessRepository.findByName(name);
 	}
 }

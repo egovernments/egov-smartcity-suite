@@ -37,13 +37,14 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <div class="page-error-404">
 	<div class="error-text">
 		<div class="alert alert-danger" role="alert">
-			<i class="entypo-attention error-symbol"></i>
+			<i class="fa fa-exclamation-triangle error-symbol"></i>
 			<hr/>
 			<p style="color:#000;font-size:17px">You have insufficient permissions to perform this action</p>
 			<hr/>

@@ -1,54 +1,54 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <html>
 <head>
 <title><s:text name="bill.view" /></title>
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/payment.js"></script>
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js"></script>
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript">
-		var path="${pageContext.request.contextPath}";
-	</script>
+	var path = "${pageContext.request.contextPath}";
+</script>
 <style type="text/css">
 @media print {
 	input#button1 {
@@ -74,16 +74,19 @@
 	}
 }
 </style>
+
+
 </head>
 <body>
 	<s:form action="billView" theme="simple">
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 
 		<div class="formmainbox">
 			<div class="subheadnew">
 				<s:property value="expendituretype" />
-				&nbsp
+
 				<s:text name="bill.view" />
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -116,7 +119,7 @@
 			</table>
 			<br />
 			<div align="center">
-				<table border="1" width="100%" cellspacing="0">
+				<table width="100%" cellspacing="0" cellpadding="0">
 					<tr>
 						<th colspan="5"><div class="subheadsmallnew">
 								<s:text name="bill.accountdetails" />
@@ -136,16 +139,18 @@
 					</tr>
 					<s:iterator var="p" value="%{billDetailsList}" status="s">
 						<tr>
-							<td width="17%" class="bluebox"><s:property value="function" /></td>
-							<td width="17%" class="bluebox"><s:property value="glcode" /></td>
-							<td width="19%" class="bluebox"><s:property
+							<td width="17%" class="text-center bluebox setborder"><s:property
+									value="function" /></td>
+							<td width="17%" class="text-center bluebox setborder"><s:property
+									value="glcode" /></td>
+							<td width="19%" class="text-center bluebox setborder"><s:property
 									value="accountHead" /></td>
-							<td width="17%" class="bluebox" style="text-align: right"><s:text
-									name="format.number">
+							<td width="17%" class="text-center bluebox setborder"
+								style="text-align: right"><s:text name="format.number">
 									<s:param value="%{debitAmount}" />
 								</s:text></td>
-							<td width="16%" class="bluebox" style="text-align: right"><s:text
-									name="format.number">
+							<td width="16%" class="text-center bluebox setborder"
+								style="text-align: right"><s:text name="format.number">
 									<s:param value="%{creditAmount}" />
 								</s:text></td>
 							<c:set var="db" value="${db+debitAmount}" />
@@ -153,12 +158,15 @@
 						</tr>
 					</s:iterator>
 					<tr>
-						<td class="greybox" style="text-align: right" colspan="3" />Total
+						<td class="text-center bluebox setborder"
+							style="text-align: right" colspan="3" />Total
 						</td>
-						<td class="greybox" style="text-align: right"><fmt:formatNumber
-								value="${db}" pattern="#0.00" /></td>
-						<td class="greybox" style="text-align: right"><fmt:formatNumber
-								value="${cr}" pattern="#0.00" /></td>
+						<td class="text-center bluebox setborder"
+							style="text-align: right"><fmt:formatNumber value="${db}"
+								pattern="#0.00" /></td>
+						<td class="text-center bluebox setborder"
+							style="text-align: right"><fmt:formatNumber value="${cr}"
+								pattern="#0.00" /></td>
 					</tr>
 				</table>
 			</div>
@@ -186,14 +194,14 @@
 						</tr>
 						<s:iterator var="p" value="%{subledgerList}" status="s">
 							<tr>
-								<td width="17%" class="bluebox"><s:property
+								<td width="17%" class="text-center bluebox setborder"><s:property
 										value="function" /></td>
-								<td width="17%" class="bluebox"><s:property value="glcode" /></td>
-								<td width="19%" class="bluebox"><s:property
+								<td width="17%" class="text-center bluebox setborder"><s:property value="glcode" /></td>
+								<td width="19%" class="text-center bluebox setborder"><s:property
 										value="detailname" /></td>
-								<td width="19%" class="bluebox"><s:property
+								<td width="19%" class="text-center bluebox setborder"><s:property
 										value="detailkey" /></td>
-								<td width="16%" class="bluebox" style="text-align: right"><s:text
+								<td width="16%" class="text-center bluebox setborder" style="text-align: right"><s:text
 										name="format.number">
 										<s:param value="%{amount}" />
 									</s:text></td>
@@ -205,9 +213,9 @@
 		</div>
 		<div class="buttonbottom">
 			<input name="button" type="button" class="buttonsubmit" id="button1"
-				value="Print" onclick="window.print()" />&nbsp; <input type="button"
-				id="Close" value="Close" onclick="javascript:window.close()"
-				class="button" />&nbsp;
+				value="Print" onclick="window.print()" />&nbsp; <input
+				type="button" id="Close" value="Close"
+				onclick="javascript:window.close()" class="button" />&nbsp;
 		</div>
 	</s:form>
 </body>

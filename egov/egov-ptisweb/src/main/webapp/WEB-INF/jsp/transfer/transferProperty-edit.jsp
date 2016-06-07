@@ -1,52 +1,56 @@
-<!-- #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
 <title><s:text name='transferProperty' /></title>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css' context='/egi'/>">
-<link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+<link
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
-<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript">
 	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
@@ -56,7 +60,7 @@
 		try {
 			jQuery(".datepicker").datepicker({
 				format : "dd/mm/yyyy",
-				autoclose:true
+				autoclose : true
 			});
 		} catch (e) {
 			console.warn("No Date Picker " + e);
@@ -138,11 +142,20 @@
 
 					<tr>
 						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="currentpropertytax" /> :</td>
+						<td class="greybox"><s:text name="CurrentTax" /> :</td>
 						<td class="greybox"><span class="bold">Rs. <s:property
-									value="currentPropertyTax" /> /-
+									value="currentPropertyTaxFirstHalf" /> /-
 						</span></td>
 					</tr>
+
+					<tr>
+						<td class="greybox2">&nbsp;</td>
+						<td class="greybox"><s:text name="CurrentSecondHalfTax" /> :</td>
+						<td class="greybox"><span class="bold">Rs. <s:property
+									value="currentPropertyTaxSecondHalf" /> /-
+						</span></td>
+					</tr>
+
 					<tr>
 						<td>&nbsp;</td>
 					</tr>
@@ -226,7 +239,8 @@
 						<td class="greybox"><s:text name="docNum" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64" onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')"/></td>
+								maxlength="64"
+								onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
 						<td class="greybox"><s:text name="docDate" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:date name="deedDate" var="docDate"
@@ -235,7 +249,7 @@
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 					</tr>
-					<s:if 
+					<s:if
 						test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_BILL_COLLECTOR_APPROVED.equals(state.value)}">
 						<tr>
 							<td class="bluebox2">&nbsp;</td>
@@ -246,7 +260,7 @@
 							<td class="bluebox"><s:text name="payablefee" /><span
 								class="mandatory1">*</span> :</td>
 							<td class="bluebox"><s:textfield name="mutationFee"
-									id="mutationFee"/></td>
+									id="mutationFee" /></td>
 						</tr>
 					</s:if>
 				</table>
@@ -272,7 +286,6 @@
 			Mandatory Fields</div>
 	</div>
 	<script type="text/javascript">
-		
 		function enableSaleDtls(obj) {
 			var selectedValue = obj.options[obj.selectedIndex].text;
 			if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_SALES_DEED}" />') {
@@ -312,21 +325,27 @@
 				if (transfereeId && transfereeId != "") {
 					var result = confirm("Do you want to remove the tranfreree ?");
 					if (result) {
-						jQuery.ajax({
-							type : "GET",
-							url : "delete-transferee.action",
-							cache : true,
-							data : {
-								"transfereeId" : transfereeId,
-								"mutationId" : jQuery("#mutationId").val()
-							}
-						}).done(function(value) {
-							if (value == "true") {
-								deleteOwner(obj);
-							} else {
-								bootbox.alert("Could not delete this Transferee Info");
-							}
-						});
+						jQuery
+								.ajax(
+										{
+											type : "GET",
+											url : "delete-transferee.action",
+											cache : true,
+											data : {
+												"transfereeId" : transfereeId,
+												"mutationId" : jQuery(
+														"#mutationId").val()
+											}
+										})
+								.done(
+										function(value) {
+											if (value == "true") {
+												deleteOwner(obj);
+											} else {
+												bootbox
+														.alert("Could not delete this Transferee Info");
+											}
+										});
 
 					}
 				} else {

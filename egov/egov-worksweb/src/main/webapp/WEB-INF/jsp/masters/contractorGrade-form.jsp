@@ -1,49 +1,54 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
-
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+<div class="errorstyle" id="contractorgrade_error" class="alert alert-danger" style="display: none;"></div>
 <div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			<div class="panel-heading">
 				<div class="panel-title"><s:text name="contractor.grade.header" /></div>
 			</div>
-			
+			<input type="hidden" value="<s:text name='contractor.grade.maxamount.invalid' />" id='gradeError'>
+			<input type="hidden" value="<s:text name='contractorGrade.maxAmount.valid' />" id='gradeValidError'>
+			<input type="hidden" value="<s:text name='contractorGrade.grade.null' />" id='contractorGradeError'>
+			<input type="hidden" value="<s:text name='contractorGrade.description.null' />" id='contractorDescriptionError'>
+			<input type="hidden" value="<s:text name='contractorGrade.minAmount.numeric' />" id='contractorMinamtError'>
+			<input type="hidden" value="<s:text name='contractorGrade.maxAmount.numeric' />" id='contractorMaxamtError'>
 			<div class="panel-body">
 			
 				<div class="form-group">
@@ -66,16 +71,15 @@
 					   <s:text name="contractor.grade.master.minamount" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-					  <s:textfield name="minAmount" id="minAmount"  cssClass="form-control text-right" value="%{minAmount}" placeholder="0" />
+					  <s:textfield name="minAmount" id="minAmount"  cssClass="form-control text-right" value="%{minAmount}" maxlength="16" placeholder="0" />
 					</div>
 					<label class="col-sm-2 control-label text-right"> 
 						<s:text name="contractor.grade.master.maxamount" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-						<s:textfield name="maxAmount" id="maxAmount"  cssClass="form-control text-right" value="%{maxAmount}" placeholder="0" />
+						<s:textfield name="maxAmount" id="maxAmount"  cssClass="form-control text-right" value="%{maxAmount}" maxlength="16" placeholder="0" />
 					</div>
 				</div>
-				
 			</div>
 </div>
 

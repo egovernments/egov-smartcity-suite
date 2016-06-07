@@ -37,10 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.spring.handler;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+package org.egov.infra.web.spring.handler;
 
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.web.support.propertyeditor.JodaDateTimeEditor;
@@ -51,6 +49,9 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.InitBinder;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @ControllerAdvice
 public class GlobalInitBinderHandler {

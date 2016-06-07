@@ -1,4 +1,5 @@
-/*    eGov suite of products aim to improve the internal efficiency,transparency,
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -23,31 +24,20 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.domain.entity.property;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
@@ -58,6 +48,17 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.notice.PtNotice;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.WFOWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 
 public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     /**
@@ -103,6 +104,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private List<VacancyRemission> vacancyRemissions = new ArrayList<VacancyRemission>();
     private Double longitude;
     private Double latitude;
+    private boolean eligible;
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -170,8 +172,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /**
-     * Returns the default and non-history current installment Property for
-     * basicproperty.
+     * Returns the default and non-history current installment Property for basicproperty.
      *
      * @return Property
      */
@@ -269,8 +270,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /*
-     * @Override public PropertyReference getPropertyReference() { return
-     * propertyReference; }
+     * @Override public PropertyReference getPropertyReference() { return propertyReference; }
      */
 
     @Override
@@ -420,11 +420,10 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     /**
      * <p>
      * Returns a Map with two key-value pairs
-     * <li>The value of key WFSTATUS gives the work flow status for given
-     * property (TRUE - in work flow, FALSE - not in work flow).</li>
-     * <li>The value of key WFOWNER gives the owner of work flow object if
-     * property is under work flow otherwise gives blank string.</li> Note: This
-     * implementation may change from client to client
+     * <li>The value of key WFSTATUS gives the work flow status for given property (TRUE - in work flow, FALSE - not in work
+     * flow).</li>
+     * <li>The value of key WFOWNER gives the owner of work flow object if property is under work flow otherwise gives blank
+     * string.</li> Note: This implementation may change from client to client
      * </p>
      *
      * @param {@link BasicProperty} basicProperty
@@ -492,8 +491,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /**
-     * Returns the default and workflow current installment Property for
-     * basicproperty.
+     * Returns the default and workflow current installment Property for basicproperty.
      *
      * @return Property
      */
@@ -557,8 +555,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /**
-     * @param isTaxXMLMigrated
-     *            the isTaxXMLMigrated to set
+     * @param isTaxXMLMigrated the isTaxXMLMigrated to set
      */
     @Override
     public void setIsTaxXMLMigrated(final Character isTaxXMLMigrated) {
@@ -584,8 +581,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     }
 
     /**
-     * Gives the Inactive property i.e., PropertyImpl.status = 'I' Inactive
-     * property is the property whose demand is not active
+     * Gives the Inactive property i.e., PropertyImpl.status = 'I' Inactive property is the property whose demand is not active
      */
     @Override
     public PropertyImpl getInactiveProperty() {
@@ -687,7 +683,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     public String getMobileNumber() {
         return getPropertyOwnerInfo().get(0).getOwner().getMobileNumber();
     }
-    
+
     @Override
     public String getAadharNumber() {
         return getPropertyOwnerInfo().get(0).getOwner().getAadhaarNumber();
@@ -714,13 +710,13 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
             mobileNo.deleteCharAt(mobileNo.length() - 2);
         if (aadharNo.length() > 2)
             aadharNo.deleteCharAt(aadharNo.length() - 2);
-        
+
         ownerMap.put("OWNERNAME", ownerName.toString());
         ownerMap.put("MOBILENO", mobileNo.toString());
         ownerMap.put("AADHARNO", aadharNo.toString());
         return ownerMap;
     }
-    
+
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfoProxy() {
         return propertyOwnerInfoProxy;
@@ -794,24 +790,35 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         else
             return this.getActiveProperty();
     }
-    
+
     @Override
     public Double getLongitude() {
-		return longitude;
-	}
+        return longitude;
+    }
 
     @Override
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
-	}
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 
     @Override
-	public Double getLatitude() {
-		return latitude;
-	}
+    public Double getLatitude() {
+        return latitude;
+    }
 
     @Override
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    @Override
+    public boolean isEligible() {
+        return eligible;
+    }
+
+    @Override
+    public void setEligible(boolean eligible) {
+        this.eligible = eligible;
+    }
+
 }

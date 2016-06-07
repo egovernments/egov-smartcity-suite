@@ -1,3 +1,43 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 var reportdatatable;
 
 $(document)
@@ -11,7 +51,7 @@ $(document)
 							.on('click',
 									function(event) {
 								event.preventDefault();
-							
+								
 					 usagetableContainer.dataTable({
 						type : 'GET',
 						responsive : true,
@@ -24,7 +64,16 @@ $(document)
 						"sDom" : "<'row'<'col-xs-19 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-19'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 						"oTableTools" : {
 							"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-							"aButtons" : [ "print" ]
+							"aButtons" : [ 
+							                {
+									             "sExtends": "xls",
+				                                 "sTitle": "ULB Wise DCB Report",
+				                                 "mColumns": [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
+				                                	 
+								             },{
+									             "sExtends": "print",
+				                                 "sTitle": "ULB Wise DCB Report"
+								             }]
 						},
 						ajax : {
 							url : "/ptis/reports/ulbWiseDCBList?"+$("#bcDailyCollectionReportForm").serialize()
@@ -147,40 +196,22 @@ $(document)
 											$('#report-footer').show();
 										}
 										if (data.length > 0) {
-											updateTotalFooter(7, api);
-										    updateTotalFooter(8, api);
-											updateTotalFooter(9, api);
-											updateTotalFooter(10, api);
-											updateTotalFooter(11, api);
-											updateTotalFooter(12, api);
-											updateTotalFooter(13, api);
-											updateTotalFooter(14, api); 
-											updateTotalFooter(15, api);
-											updateTotalFooter(16, api);
-											updateTotalFooter(17, api);
-											updateTotalFooter(18, api);
-											updateTotalFooter(19, api);
-											updateTotalFooter(20, api);
-											updateTotalFooter(21, api);
-											updateTotalFooter(22, api);
-											updateTotalFooter(23, api);
-											updateTotalFooter(24, api);
-											updateTotalFooter(25, api);
-											updateTotalFooter(26, api);
-
+											for(var i=7;i<=26;i++)
+											{
+											  updateTotalFooter(i, api);
+											}
 										}
 									},
-								"aoColumnDefs" : [ {
-									"aTargets" : [ 2, 3, 4, 5, 6],
-									"mRender" : function(data, type, full) {
-										return data;
+									"aoColumnDefs" : [ {
+										"aTargets" : [ 2, 3, 4, 5, 6],
+										"mRender" : function(data, type, full) {
+											return data;
+										}
+									} ],
+									"fnRowCallback" : function(nRow, aData, iDisplayIndex){
+						                $("td:first", nRow).html(iDisplayIndex +1);
+						               return nRow;
 									}
-								} ],
-								"fnRowCallback" : function(nRow, aData, iDisplayIndex){
-					                $("td:first", nRow).html(iDisplayIndex +1);
-					               return nRow;
-								}
-									
 					});
 					/*$('#btnsearch')
 							.on('click',
@@ -194,6 +225,7 @@ $(document)
 					 
 					 $('#tblulbDCBcollection').show();
 					 $('#tblulbDCBcollectionheader').show();
+					 
 					 
 							});
 				
@@ -288,16 +320,8 @@ function updateTotalFooter(colidx, api) {
 		return intVal(a) + intVal(b);
 	});
 
-	// Total over this page
-	pageTotal = api.column(colidx, {
-		page : 'current'
-	}).data().reduce(function(a, b) {
-		return intVal(a) + intVal(b);
-	}, 0);
-
 	// Update footer
-	$(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal.toFixed(2)) + ' (' + formatNumberInr(total.toFixed(2)) + ')');
+	$(api.column(colidx).footer()).html(total.toFixed(2));//formatNumberInr()
 }
 function formatNumberInr(x) {
 	if (x) {

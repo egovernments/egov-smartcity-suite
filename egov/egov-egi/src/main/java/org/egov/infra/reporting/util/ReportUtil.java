@@ -37,9 +37,20 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.reporting.util;
 
-import java.io.ByteArrayInputStream;
+import org.apache.struts2.ServletActionContext;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.NumberUtil;
+import org.egov.infra.web.utils.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -48,24 +59,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.ServletActionContext;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.web.utils.WebUtils;
-import org.egov.infstr.utils.DateUtils;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.NumberUtil;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides utility methods related to reports
@@ -82,11 +76,10 @@ public final class ReportUtil {
     }
 
     /**
-     * Returns input stream for given file. First checks in the custom location
-     * (/custom/[filePath]/). If not found, tries the given location [filePath]
-     * 
-     * @param filePath
-     *            Path of file to be loaded from classpath
+     * Returns input stream for given file. First checks in the custom location (/custom/[filePath]/). If not found, tries the
+     * given location [filePath]
+     *
+     * @param filePath Path of file to be loaded from classpath
      * @return Input stream for given file
      */
     private static InputStream getFileAsStream(final String filePath) {
@@ -94,10 +87,9 @@ public final class ReportUtil {
         String errMsg = null;
         // Try custom file first
         fileInputStream = ReportUtil.class.getResourceAsStream(ReportConstants.CUSTOM_DIR_NAME + filePath);
-        if (fileInputStream == null) {
+        if (fileInputStream == null)
             // Custom file not available. Try given path
             fileInputStream = ReportUtil.class.getResourceAsStream(filePath);
-        }
         if (fileInputStream == null) {
             // Still not found. Logger error and throw exception.
             errMsg = "File [" + filePath + "] could not be loaded from CLASSPATH!";
@@ -108,91 +100,25 @@ public final class ReportUtil {
     }
 
     /**
-     * Returns User Signature InputStream
-     * 
-     * @param user id
-     *            
-     * @return user signature for the given user id
-     */
-    public static InputStream getUserSignature(final Long userId) {
-        final User user = (User) HibernateUtil.getCurrentSession().load(User.class, userId);
-        if (user != null && user.getSignature() != null) {
-            return new ByteArrayInputStream(user.getSignature());
-        } else {
-            LOGGER.warn("User Signature not found");
-            return null;
-        }
-    }
-
-    /**
-     * Returns input stream for given image file. First checks in the custom
-     * location (/custom/reports/images/). If not found, tries the product
-     * location (/reports/images/)
-     * 
-     * @param imageName
-     *            Name of image to be read
+     * Returns input stream for given image file. First checks in the custom location (/custom/reports/images/). If not found,
+     * tries the product location (/reports/images/)
+     *
+     * @param imageName Name of image to be read
      * @return Input stream for given image file
      */
     public static InputStream getImageAsStream(final String imageName) {
         return getFileAsStream(ReportConstants.IMAGES_BASE_PATH + imageName);
     }
 
-    /**
-     * This method can be used to fetch the logo image to be printed in those
-     * reports that use SQL query (JDBC) as data source.
-     * 
-     * @return The logo images for currently logged in city as an input stream
-     */
-    // These values should be passed as report parameters to the jrxml not to
-    // fetch from the database since it is already in session
-    @Deprecated
-    public static InputStream getLogoImageAsStream(final Connection connection) {
-        try {
-            return getImageAsStream((String) fetchFromDBSql(connection,
-                    "SELECT LOGO FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'"));
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Exception in getting logo image!", e);
-        }
-    }
-
-    /**
-     * This method can be used to fetch the logo image to be printed in those
-     * reports that use Java Bean array/collection as data source.
-     * 
-     * @return The logo images for currently logged in city as an input stream
-     */
-    // These values should be passed as report parameters to the jrxml not to
-    // fetch from the database since it is already in session
-    @Deprecated
-    public static InputStream getLogoImageAsStream() {
-        try {
-            return getImageAsStream(fetchLogo());
-        } catch (final HibernateException e) {
-            throw new ApplicationRuntimeException("Exception in getting logo image!", e);
-        }
-    }
-
-    // These values should be passed as report parameters to the jrxml not to
-    // fetch from the database since it is already in session
-    @Deprecated
-    public static String fetchLogo() {
-        return (String) HibernateUtil.getCurrentSession()
-                .createSQLQuery("SELECT LOGO FROM EG_CITY WHERE DOMAINURL = '" + EgovThreadLocals.getDomainName() + "'")
-                .list().get(0);
-    }
-
-    // Reading from session
     public static String getCityName() {
-        return EgovThreadLocals.getMunicipalityName();
+        return ApplicationThreadLocals.getMunicipalityName();
     }
 
     /**
-     * Returns input stream for given report template. First checks in the
-     * custom location (/custom/reports/templates/). If not found, tries the
-     * product location (/reports/templates/)
-     * 
-     * @param templateName
-     *            Report template to be read
+     * Returns input stream for given report template. First checks in the custom location (/custom/reports/templates/). If not
+     * found, tries the product location (/reports/templates/)
+     *
+     * @param templateName Report template to be read
      * @return Input stream for given report template
      */
     public static InputStream getTemplateAsStream(final String templateName) {
@@ -200,9 +126,8 @@ public final class ReportUtil {
     }
 
     /**
-     * Loads the report configuration file from classpath
-     * (/config/reports.properties)
-     * 
+     * Loads the report configuration file from classpath (/config/reports.properties)
+     *
      * @return the Properties object created from the configuration file
      */
     public static Properties loadReportConfig() {
@@ -224,38 +149,12 @@ public final class ReportUtil {
     }
 
     /**
-     * Executes given HQL query (which is expected to return a single object)
-     * and returns the output. Returns null if query doesn't fetch any data.
-     * 
-     * @param connection
-     *            Connection to be used for executing the query. Can be passed
-     *            as $P{REPORT_CONNECTION} in case of a jasper report
-     * @param query
-     *            Query to be executed to get the data
-     * @return Output of the query
-     */
-    @SuppressWarnings("unchecked")
-    public static Object fetchFromDBHql(final String hqlQuery) {
-        final Query query = HibernateUtil.getCurrentSession().createQuery(hqlQuery);
-        final List<Object> result = query.list();
-        if (result.size() == 1) {
-            return result.get(0);
-        } else {
-            final String errMsg = "Query [" + hqlQuery + "] returned multiple rows!";
-            LOGGER.error(errMsg);
-            throw new ApplicationRuntimeException(errMsg);
-        }
-    }
-
-    /**
-     * Executes given SQL query (which is expected to return a single object)
-     * and returns the output. Returns null if query doesn't fetch any data.
-     * 
-     * @param connection
-     *            Connection to be used for executing the query. Can be passed
-     *            as $P{REPORT_CONNECTION} in case of a jasper report
-     * @param sqlQuery
-     *            Query to be executed to get the data
+     * Executes given SQL query (which is expected to return a single object) and returns the output. Returns null if query
+     * doesn't fetch any data.
+     *
+     * @param connection Connection to be used for executing the query. Can be passed as $P{REPORT_CONNECTION} in case of a jasper
+     * report
+     * @param sqlQuery Query to be executed to get the data
      * @return Output of the query
      */
     public static Object fetchFromDBSql(final Connection connection, final String sqlQuery) throws SQLException {
@@ -264,22 +163,19 @@ public final class ReportUtil {
         try {
             statement = connection.prepareStatement(sqlQuery);
             resultSet = statement.executeQuery();
-            if ((resultSet != null) && resultSet.next()) {
+            if (resultSet != null && resultSet.next())
                 return resultSet.getString(1);
-            } else {
+            else
                 return null;
-            }
         } catch (final SQLException e) {
             final String errMsg = "Exception while executing query [" + sqlQuery + "]";
             LOGGER.error(errMsg, e);
             throw new ApplicationRuntimeException(errMsg, e);
         } finally {
-            if (statement != null) {
+            if (statement != null)
                 statement.close();
-            }
-            if (resultSet != null) {
+            if (resultSet != null)
                 resultSet.close();
-            }
         }
     }
 
@@ -315,18 +211,12 @@ public final class ReportUtil {
     }
 
     /**
-     * Adds given number of days/months/years to given date and returns the
-     * resulting date
-     * 
-     * @param inputDate
-     *            Input date
-     * @param addType
-     *            type to be added
-     *            (Calendar.DAY_OF_MONTH/Calendar.MONTH/Calendar.YEAR)
-     * @param addAmount
-     *            Number of days/months/years to be added to the input date
-     * @return Date after adding given number of days/months/years to the input
-     *         date
+     * Adds given number of days/months/years to given date and returns the resulting date
+     *
+     * @param inputDate Input date
+     * @param addType type to be added (Calendar.DAY_OF_MONTH/Calendar.MONTH/Calendar.YEAR)
+     * @param addAmount Number of days/months/years to be added to the input date
+     * @return Date after adding given number of days/months/years to the input date
      */
     public static Date add(final Date inputDate, final int addType, final int addAmount) {
         return DateUtils.add(inputDate, addType, addAmount);
@@ -334,9 +224,8 @@ public final class ReportUtil {
 
     /**
      * Converts given amount to words with default decimal precision of 2.
-     * 
-     * @param amount
-     *            Amount to be converted to words
+     *
+     * @param amount Amount to be converted to words
      * @return The amount in words with default decimal precision of 2.
      */
     public static String amountInWords(final BigDecimal amount) {
@@ -347,14 +236,10 @@ public final class ReportUtil {
      * Formats a given number with given number of fraction digits <br>
      * e.g. formatNumber(1000, 2, false) will return 1000.00 <br>
      * formatNumber(1000, 2, true) will return 1,000.00 <br>
-     * 
-     * @param number
-     *            The number to be formatted
-     * @param fractionDigits
-     *            Number of fraction digits to be used for formatting
-     * @param useGrouping
-     *            Flag indicating whether grouping is to be used while
-     *            formatting the number
+     *
+     * @param number The number to be formatted
+     * @param fractionDigits Number of fraction digits to be used for formatting
+     * @param useGrouping Flag indicating whether grouping is to be used while formatting the number
      * @return Formatted number with given number of fraction digits
      */
     public static String formatNumber(final BigDecimal number, final int fractionDigits, final boolean useGrouping) {
@@ -363,13 +248,13 @@ public final class ReportUtil {
 
     /**
      * Gives the absolute path of the logo image
-     * 
+     *
      * @return absolute path of the logo image
      */
     public static String logoBasePath() {
-        HttpServletRequest request = ServletActionContext.getRequest();
-        String url = WebUtils.extractRequestDomainURL(request, false);
-        String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        final String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                 .concat((String) request.getSession().getAttribute("citylogo"));
         return imagePath;
     }

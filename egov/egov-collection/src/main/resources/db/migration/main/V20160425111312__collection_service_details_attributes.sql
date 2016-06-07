@@ -1,0 +1,3 @@
+Insert into eg_appconfig (ID,KEY_NAME,DESCRIPTION,MODULE) values (nextval('seq_eg_appconfig'),'DEFAULTTXNMISATTRRIBUTESCOLLECTION','default transaction mis attributes',(select id from eg_module where name='Collection'));
+Insert into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='DEFAULTTXNMISATTRRIBUTESCOLLECTION'),to_date('28-03-10','DD-MM-RR'),'function|M');
+Insert into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='DEFAULTTXNMISATTRRIBUTESCOLLECTION'),to_date('28-03-10','DD-MM-RR'),'fund|M');

@@ -1,42 +1,44 @@
-<!--  #-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#      accountability and the service delivery of the government  organizations.
-#   
-#       Copyright (C) <2015>  eGovernments Foundation
-#   
-#       The updated version of eGov suite of products as by eGovernments Foundation 
-#       is available at http://www.egovernments.org
-#   
-#       This program is free software: you can redistribute it and/or modify
-#       it under the terms of the GNU General Public License as published by
-#       the Free Software Foundation, either version 3 of the License, or
-#       any later version.
-#   
-#       This program is distributed in the hope that it will be useful,
-#       but WITHOUT ANY WARRANTY; without even the implied warranty of
-#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#       GNU General Public License for more details.
-#   
-#       You should have received a copy of the GNU General Public License
-#       along with this program. If not, see http://www.gnu.org/licenses/ or 
-#       http://www.gnu.org/licenses/gpl.html .
-#   
-#       In addition to the terms of the GPL license to be adhered to in using this
-#       program, the following additional terms are to be complied with:
-#   
-#   	1) All versions of this program, verbatim or modified must carry this 
-#   	   Legal Notice.
-#   
-#   	2) Any misrepresentation of the origin of the material is prohibited. It 
-#   	   is required that all modified versions of this material be marked in 
-#   	   reasonable ways as different from the original version.
-#   
-#   	3) This license does not grant any rights to any user of the program 
-#   	   with regards to rights under trademark law for use of the trade names 
-#   	   or trademarks of eGovernments Foundation.
-#   
-#     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------  -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <s:if test="%{incomeExpenditureStatement.size()>0}">
 	<br />
@@ -48,12 +50,10 @@
 					<table border="0" cellspacing="0" cellpadding="0"
 						class="tablebottom" width="100%">
 						<tr>
-							<td colspan="12">
-								<div class="subheadsmallnew">
-									<strong><s:text name="report.ie.schedule.heading" /> <s:property
-											value="model.financialYear.finYearRange" /><br /> </strong>
-								</div>
-							</td>
+							<th class="bluebgheadtd" width="100%" colspan="12"><strong
+								style="font-size: 15px;"> <s:text
+										name="report.ie.schedule.heading" /> <s:property
+										value="model.financialYear.finYearRange" /></strong></th>
 						</tr>
 						<tr>
 							<td class="bluebox" colspan="4"><strong><s:text
@@ -111,7 +111,8 @@
 									status="stat">
 									<td class="blueborderfortd">
 										<div align="right">
-											<s:property	value="fundWiseAmount[name]" />&nbsp;
+											<s:property value="fundWiseAmount[name]" />
+											&nbsp;
 										</div>
 									</td>
 								</s:iterator>
@@ -120,8 +121,7 @@
 										<s:if test='%{displayBold == true}'>
 											<strong><s:if test='%{currentYearTotal != 0}'>
 													<s:property value="currentYearTotal" />
-												</s:if>
-												<s:else>0.00</s:else></strong>
+												</s:if> <s:else>0.00</s:else></strong>
 										</s:if>
 										<s:else>
 											<s:if test='%{currentYearTotal != 0}'>
@@ -137,8 +137,7 @@
 										<s:if test='%{displayBold == true}'>
 											<strong><s:if test='%{previousYearTotal != 0}'>
 													<s:property value="previousYearTotal" />
-												</s:if>
-												<s:else>0.00</s:else></strong>
+												</s:if> <s:else>0.00</s:else></strong>
 										</s:if>
 										<s:else>
 											<s:if test='%{previousYearTotal != 0}'>

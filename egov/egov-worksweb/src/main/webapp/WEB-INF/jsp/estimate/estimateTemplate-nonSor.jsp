@@ -1,42 +1,43 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <style type="text/css">
 #yui-dt0-bodytable, #yui-dt1-bodytable, #yui-dt2-bodytable {
     Width:100%;
@@ -79,14 +80,13 @@
 <script>
 
 var uomDropdownOptions=[{label:"--- Select ---", value:"0"},
-
     <s:iterator var="s" value="dropdownData.uomList" status="status">  
     {"label":"<s:property value="%{egUomcategory.category}"/> -- <s:property value="%{uom}" />" ,
     "value":"<s:property value="%{id}" />"
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
     ]
-    
+
 function calculateNonSOR(elem,recordId){
 	if(!checkUptoFourDecimalPlace(elem,dom.get('nonsor_error'),"Unit Rate"))
 	  return;
@@ -97,9 +97,8 @@ function calculateNonSOR(elem,recordId){
 		if(!validateNonSORDescription(recordId)) return;
 		if(!validateNonSorUom(recordId)) return;
 	}
-	 	
-    
 }
+
 function recalculateNonSorTotalsOnDelete(record){
 	if(dom.get("nonsorrate"+record.getId()).value !="" && dom.get("nonsorquantity"+record.getId()).value!=""){
 	  dom.get("nonSorEstTotal").innerHTML=roundTo(getNumericValueFromInnerHTML("nonSorEstTotal") -getNumber(record.getData("NonSorEstdAmt")));
@@ -140,8 +139,6 @@ var hiddenFormatter = function(el, oRecord, oColumn, oData) {
 return hiddenFormatter;
 }
 var nonSorHiddenFormatter = createNonSorHiddenFormatter(10,10);
-
-
 var nonSorDataTable;
 var makeNonSORDataTable = function() {
 	var cellEditor=new YAHOO.widget.TextboxCellEditor()
@@ -182,12 +179,7 @@ var makeNonSORDataTable = function() {
             if(!validateNonSorUom(record)) return;
         }
 	});
-	
-    
-	
-		
-
-	return {
+		return {
 	    oDS: nonSorDataSource,
 	    oDT: nonSorDataTable
 	};        
@@ -229,36 +221,33 @@ function resetNonSorTable(){
 	
 }
 
-
 </script>		
 
 <div id="nonSorHeaderTable" class="panel panel-primary" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">
 		<div class="panel-title">
-		   Non-SOR
+		   <s:text name="estimate.master.nonsor"/>
 		   <div class="pull-right">
-		   
-		      <a id="addnonSorRow" href="javascript:void(0);" class="btn btn-primary" 
-	   	       onclick="nonSorDataTable.addRow({SlNo:nonSorDataTable.getRecordSet().getLength()+1});return false;">
-	   	       <i class="fa fa-plus"></i> Add Non-SOR
-	   	    </a>
-		   
+		   <s:if test="%{mode!='view'}">
+		   <a id="addnonSorRow" href="javascript:void(0);" class="btn btn-primary" onclick="nonSorDataTable.addRow({SlNo:nonSorDataTable.getRecordSet().getLength()+1});return false;">
+	   	      <s:text name="estimate.master.addnonsor"/>
+	   	   </a>
+	   	   </s:if>
 		   </div>
 		</div>
 	</div>
 	<div class="panel-body">		
 		<div class="alert alert-danger" id="nonsor_error" style="display:none;"></div>
-		
-	    <div class="form-group">
-	      <div class="yui-skin-sam">
-                <div id="nonSorTable"></div>                    	
+		<div class="form-group">
+	    	<div class="yui-skin-sam">
+               <div id="nonSorTable"></div>                    	
                <div id="nonSorTotals"></div>  
-          </div>
+        	</div>
 	    </div>
 	</div>
 </div>
 
-	<script>
+<script>
 		makeNonSORDataTable();
 		<s:iterator id="nonsoriterator" value="NonSORActivities" status="row_status">
             nonSorDataTable.addRow({NonSorID:'<s:property value="nonSor.id"/>',
@@ -284,16 +273,11 @@ function resetNonSorTable(){
                 nonSorDataTable.getTdEl({record:record, column:column}).getElementsByTagName("select").item(0).selectedIndex = i;
             }
         }
-        
         </s:iterator>
-	</script> 
-	
- <script type="text/javascript">
-  <s:if test="%{mode=='view'}">
-	for(i=0;i<document.estimateTemplateForm.elements.length;i++){
-		document.estimateTemplateForm.elements[i].disabled=true;
-		document.estimateTemplateForm.elements[i].readonly=true;
-	} 
-  </s:if>
-</script>   
-
+        <s:if test="%{mode=='view'}">
+        for(i=0;i<document.estimateTemplateForm.elements.length;i++){
+        	document.estimateTemplateForm.elements[i].disabled=true;
+        	document.estimateTemplateForm.elements[i].readonly=true;
+        } 
+        </s:if>
+</script>

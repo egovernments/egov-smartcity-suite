@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,19 +24,19 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.services.budget;
 
 import java.math.BigDecimal;
@@ -53,15 +53,18 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
+import org.egov.egf.autonumber.BudgetReAppropriationSequenceNumberGenerator;
+import org.egov.egf.autonumber.VouchernumberGenerator;
+import org.egov.egf.model.BudgetReAppropriationView;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
-import org.egov.infstr.utils.SequenceGenerator;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetReAppropriation;
@@ -69,7 +72,6 @@ import org.egov.model.budget.BudgetReAppropriationMisc;
 import org.egov.pims.commons.Position;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
-import org.egov.web.actions.budget.BudgetReAppropriationView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +92,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
-    private SequenceGenerator sequenceGenerator;
+    private ApplicationSequenceNumberGenerator sequenceGenerator;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -104,15 +106,18 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
 
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+
     public BudgetReAppropriationService(final Class<BudgetReAppropriation> budgetReAppropriation) {
         this.type = budgetReAppropriation;
     }
 
-    public SequenceGenerator getSequenceGenerator() {
+    public ApplicationSequenceNumberGenerator getSequenceGenerator() {
         return sequenceGenerator;
     }
 
-    public void setSequenceGenerator(final SequenceGenerator sequenceGenerator) {
+    public void setSequenceGenerator(final ApplicationSequenceNumberGenerator sequenceGenerator) {
         this.sequenceGenerator = sequenceGenerator;
     }
 
@@ -364,8 +369,11 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     }
 
     protected String getSequenceNumber(final BudgetDetail detail) {
+        BudgetReAppropriationSequenceNumberGenerator b = beanResolver.getAutoNumberServiceFor(BudgetReAppropriationSequenceNumberGenerator.class);
+
+        final String sequenceNumber = b.getNextNumber(detail);
         final ScriptContext scriptContext = ScriptService.createContext("wfItem", detail, "sequenceGenerator", sequenceGenerator);
-        return (String) scriptService.executeScript("egf.budget.reappropriation.sequence.generator", scriptContext);
+        return sequenceNumber;
     }
 
     public BudgetReAppropriation findBySequenceNumberAndBudgetDetail(final String sequenceNumber, final Long budgetDetailId) {
@@ -389,6 +397,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
      * reappropriation)
      * @return
      */
+    @Transactional
     public void updatePlanningBudget(final BudgetReAppropriation reAppropriation) {
         getSession().flush();
         // BigDecimal multiplicationFactor = new
@@ -501,7 +510,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             final Position position, final CFinancialYear financialYear, final String beRe, final BudgetReAppropriationMisc misc,
             final String asOnDate) {
         final BudgetReAppropriation appropriation = new BudgetReAppropriation();
-        EgwStatus status =egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL","Approved");
+        EgwStatus status = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved");
         reAppView.getBudgetDetail().setStatus(status);
         final List<BudgetDetail> searchBy = budgetDetailService.searchByCriteriaWithTypeAndFY(financialYear.getId(), beRe,
                 reAppView.getBudgetDetail());
@@ -529,6 +538,8 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
          */
         applyAuditing(appropriation);
         persist(appropriation);
+        // Need to call on approve (After implementing workflow)
+        updatePlanningBudget(appropriation);
     }
 
     @Transactional
@@ -589,7 +600,9 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
             final BudgetReAppropriationView appropriation, final Position position, final BudgetReAppropriationMisc misc) {
         final BudgetReAppropriation reAppropriation = new BudgetReAppropriation();
         detail.setPlanningPercent(appropriation.getPlanningPercent());
-        detail.setBudgetAvailable(appropriation.getPlanningBudgetApproved());
+        detail.setBudgetAvailable(appropriation.getDeltaAmount().multiply(detail.getPlanningPercent())
+                .divide(new BigDecimal(String
+                        .valueOf(100))));
         reAppropriation.setBudgetDetail(detail);
         reAppropriation.setReAppropriationMisc(misc);
         reAppropriation.setAnticipatoryAmount(appropriation.getAnticipatoryAmount());

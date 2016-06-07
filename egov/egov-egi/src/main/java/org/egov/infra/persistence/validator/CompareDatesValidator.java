@@ -37,17 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.persistence.validator;
-
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
-import java.util.Date;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.CompareDates;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import java.beans.BeanInfo;
+import java.beans.PropertyDescriptor;
+import java.util.Date;
 
 public class CompareDatesValidator implements ConstraintValidator<CompareDates, Date> {
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,36 +24,23 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /**
  *
  */
 package org.egov.egf.commons;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -85,7 +72,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.model.instrument.InstrumentHeader;
@@ -101,6 +87,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author msahoo
@@ -473,8 +472,8 @@ public class EgovCommon {
         try {
 
             query.append("select iv.instrumentHeaderId FROM CGeneralLedgerDetail gld, CGeneralLedger gl , CVoucherHeader vh, ")
-            .append(" InstrumentVoucher iv WHERE gld.generalLedgerId=gl.id AND gl.voucherHeaderId.id=vh.id")
-            .append(" AND iv.voucherHeaderId.id=vh.id AND gld.detailTypeId =? AND gld.detailKeyId=? AND gl.creditAmount >0")
+            .append(" InstrumentVoucher iv WHERE gld.generalLedgerId.id=gl.id AND gl.voucherHeaderId.id=vh.id")
+            .append(" AND iv.voucherHeaderId.id=vh.id AND gld.detailTypeId.id =? AND gld.detailKeyId=? AND gl.creditAmount >0")
             .append(" AND vh.status=0 ")
             .append(" AND vh.voucherDate<='")
             .append(Constants.DDMMYYYYFORMAT1.format(voucherToDate))
@@ -1187,14 +1186,14 @@ public class EgovCommon {
             glCodeDbtBalQry
             .append("SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld ")
             .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? ")
+            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
             .append(fundCond)
             .append(deptCond)
             .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
             .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
                     Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <'").append(
                             Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId =").append(accountdetailType);
+                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId =").append(
@@ -1212,13 +1211,13 @@ public class EgovCommon {
             glCodeCrdBalQry
             .append("SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
             .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? ")
+            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
             .append(fundCond).append(deptCond)
             .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
             .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
                     Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <'").append(
                             Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId =").append(accountdetailType);
+                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId =").append(
@@ -1279,14 +1278,14 @@ public class EgovCommon {
             glCodeDbtBalQry
             .append("SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld ")
             .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? ")
+            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
             .append(fundCond)
             .append(deptCond)
             .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
             .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
                     Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <='").append(
                             Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId =").append(accountdetailType);
+                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId =").append(
@@ -1304,13 +1303,13 @@ public class EgovCommon {
             glCodeCrdBalQry
             .append("SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
             .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? ")
+            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
             .append(fundCond).append(deptCond)
             .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
             .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
                     Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <='").append(
                             Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId =").append(accountdetailType);
+                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId =").append(
@@ -1686,7 +1685,7 @@ public class EgovCommon {
             .append(
                     "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
-                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? and vh.fundId.code=? ")
+                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
                             .append(
                                     " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
                                     .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
@@ -1695,7 +1694,7 @@ public class EgovCommon {
                                                             "') and vh.voucherDate <='").append(
                                                                     Constants.DDMMYYYYFORMAT1.format(asondate)).append(
                                                                             "'and vh.status = 0").append(
-                                                                                    " and gld.detailTypeId =")
+                                                                                    " and gld.detailTypeId.id =")
                                                                                     .append(accountdetailType);
             if (null != accountdetailkey)
                 query.append(" and gld.detailKeyId =").append(accountdetailkey);
@@ -1736,10 +1735,10 @@ public class EgovCommon {
 
         queryString
         .append("SELECT MIN(vh.voucherDate) as vhDate from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
-        .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? and vh.fundId.code=? ")
+        .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
         .append(" and vh.voucherDate <= '").append(Constants.DDMMYYYYFORMAT1.format(asondate))
         .append("' and vh.status = 0")
-        .append(" and gld.detailTypeId =").append(accountdetailType);
+        .append(" and gld.detailTypeId.id =").append(accountdetailType);
         queryString.append(" and gld.detailKeyId =").append(accountdetailkey);
         queryString.append(" and gl.creditAmount >0");
 
@@ -1758,11 +1757,11 @@ public class EgovCommon {
         .append(
                 "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                 .append(
-                        " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=? and vh.fundId.code=? ")
+                        " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
                         .append(" and vh.voucherDate <= '").append(
                                 Constants.DDMMYYYYFORMAT1.format(asondate)).append(
                                         "' and vh.status = 0")
-                                        .append(" and gld.detailTypeId =").append(accountdetailType);
+                                        .append(" and gld.detailTypeId.id =").append(accountdetailType);
         if (null != accountdetailkey)
             query.append(" and gld.detailKeyId =").append(accountdetailkey);
         query.append(" and gl.creditAmount >0");
@@ -1863,7 +1862,7 @@ public class EgovCommon {
             .append(
                     "SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
-                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=?  ")
+                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=?  ")
                             .append(
                                     " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
                                     .append(Constants.DDMMYYYYFORMAT1.format(asondate))
@@ -1875,7 +1874,7 @@ public class EgovCommon {
                                     .append(statusExclude)
                                     .append(
                                             ")and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset') ) ")
-                                            .append(" and gld.detailTypeId =")
+                                            .append(" and gld.detailTypeId.id =")
                                             .append(accountdetailType);
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId in (").append(
@@ -1894,7 +1893,7 @@ public class EgovCommon {
             .append(
                     "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
-                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId and gl.glcodeId.glcode=?  ")
+                            " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=?  ")
                             .append(
                                     " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
                                     .append(Constants.DDMMYYYYFORMAT1.format(asondate))
@@ -1906,7 +1905,7 @@ public class EgovCommon {
                                     .append(statusExclude)
                                     .append(
                                             ")and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset' ) )")
-                                            .append(" and gld.detailTypeId =")
+                                            .append(" and gld.detailTypeId.id =")
                                             .append(accountdetailType);
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId in(").append(
@@ -2592,7 +2591,7 @@ public class EgovCommon {
             throw new ValidationException("DetailTypeId or EntityIdList not provided",
                     "DetailTypeId or EntityIdList not provided");
         final String query = "select sum(gld.amount) from CGeneralLedger gl, CGeneralLedgerDetail gld, CVoucherHeader vh "
-                + " WHERE gl.voucherHeaderId= vh and gl.id = gld.generalLedgerId and  gld.detailTypeId  in ( :detailTypeId ) and"
+                + " WHERE gl.voucherHeaderId= vh and gl.id = gld.generalLedgerId.id and  gld.detailTypeId.id  in ( :detailTypeId ) and"
                 + " gld.detailKeyId   in ( :entityIdList ) and gl.debitAmount>0 and vh.status!=4 and vh.type = 'Journal Voucher'";
 
         if (LOGGER.isDebugEnabled())
@@ -2626,7 +2625,7 @@ public class EgovCommon {
                     "DetailTypeId or EntityIdList not provided");
         BigDecimal dbpSum = BigDecimal.ZERO;
         final String query = "select sum(gld.amount) from CGeneralLedger gl, CGeneralLedgerDetail gld, CVoucherHeader vh "
-                + " WHERE gl.voucherHeaderId= vh and gl.id = gld.generalLedgerId and  gld.detailTypeId  in ( :detailTypeId ) and"
+                + " WHERE gl.voucherHeaderId= vh and gl.id = gld.generalLedgerId.id and  gld.detailTypeId.id  in ( :detailTypeId ) and"
                 + " gld.detailKeyId   in ( :entityIdList ) and gl.debitAmount>0 and vh.status!=4 and vh.name = 'Direct Bank Payment'";
 
         if (LOGGER.isDebugEnabled())

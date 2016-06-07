@@ -37,28 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.workflow.inbox;
-
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.egov.infra.workflow.inbox.InboxRenderService.INBOX_RENDER_SERVICE_SUFFIX;
-import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.workflow.Action;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -70,6 +58,20 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.infra.workflow.inbox.InboxRenderService.INBOX_RENDER_SERVICE_SUFFIX;
+import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 @Service
 @Transactional(readOnly = true)
@@ -107,7 +109,7 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     }
 
     public List<StateHistory> getWorkflowHistory(final Long stateId) {
-        return this.statePersistenceService.findById(stateId, false).getHistory();
+        return new LinkedList<>(this.statePersistenceService.findById(stateId, false).getHistory());
     }
 
     public List<T> fetchInboxItems(final String wfType, final String myLinkId) {
@@ -213,12 +215,12 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     public String getNextAction(final State state) {
         String nextAction = EMPTY;
         if (state.getNextAction() != null) {
-            final Action action = (Action) this.entityQueryService.findByNamedQuery(Action.BY_NAME_AND_TYPE,
+            final WorkflowAction workflowAction = (WorkflowAction) this.entityQueryService.findByNamedQuery(WorkflowAction.BY_NAME_AND_TYPE,
                     state.getNextAction(), state.getType());
-            if (action == null)
+            if (workflowAction == null)
                 nextAction = state.getNextAction();
             else
-                nextAction = action.getDescription() == null ? state.getNextAction() : action.getDescription();
+                nextAction = workflowAction.getDescription() == null ? state.getNextAction() : workflowAction.getDescription();
         }
         return nextAction;
     }

@@ -1,0 +1,11 @@
+DROP INDEX IF EXISTS indx_colldet_acchead;
+DROP INDEX IF EXISTS indx_collmis_deptid;
+DROP INDEX IF EXISTS indx_collhd_refchid;
+DROP INDEX IF EXISTS indx_collhd_state;
+DROP INDEX IF EXISTS indx_collhd_location;
+DROP INDEX IF EXISTS indx_online_collheader;
+DROP INDEX IF EXISTS indx_online_service;
+DROP INDEX IF EXISTS indx_online_status;
+DROP INDEX IF EXISTS indx_challan_collheader;
+DROP INDEX IF EXISTS indx_challan_state;
+DROP INDEX IF EXISTS indx_challan_status;

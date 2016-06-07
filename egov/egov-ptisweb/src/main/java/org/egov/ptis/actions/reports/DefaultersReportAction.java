@@ -1,42 +1,42 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
- * 
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
@@ -70,6 +70,7 @@ import org.egov.ptis.bean.DefaultersInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -93,6 +94,8 @@ public class DefaultersReportAction extends BaseFormAction {
     private BoundaryService boundaryService;
     @Autowired
     public PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
     private Map<String, String> ownerShipMap;
     private String ownerShipType;
 
@@ -138,8 +141,9 @@ public class DefaultersReportAction extends BaseFormAction {
     public void getDefaultersList() {
         List<DefaultersInfo> resultList = new ArrayList<DefaultersInfo>();
         String result = null;
-        final Query query = propertyTaxUtil.prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit,ownerShipType);
-        resultList = prepareOutput( (List<PropertyMaterlizeView>)query.list());
+        final Query query = propertyTaxUtil.prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit,
+                ownerShipType);
+        resultList = prepareOutput((List<PropertyMaterlizeView>) query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
         result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
@@ -173,11 +177,15 @@ public class DefaultersReportAction extends BaseFormAction {
         List<DefaultersInfo> defaultersList = new ArrayList<DefaultersInfo>();
         DefaultersInfo defaultersInfo = null;
         BigDecimal totalDue = BigDecimal.ZERO;
+        BigDecimal currPenalty = BigDecimal.ZERO;
+        BigDecimal currPenaltyColl = BigDecimal.ZERO;
         int count = 0;
-        Installment curInstallment = propertyTaxUtil.getCurrentInstallment();
+        Installment curInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         for (final PropertyMaterlizeView propView : propertyViewList) {
             defaultersInfo = new DefaultersInfo();
             totalDue = BigDecimal.ZERO;
+            currPenalty = BigDecimal.ZERO;
+            currPenaltyColl = BigDecimal.ZERO;
             count++;
             defaultersInfo.setSlNo(count);
             defaultersInfo.setAssessmentNo(propView.getPropertyId());
@@ -185,34 +193,42 @@ public class DefaultersReportAction extends BaseFormAction {
                     " & ") : propView.getOwnerName());
             defaultersInfo.setWardName(propView.getWard().getName());
             defaultersInfo.setHouseNo(propView.getHouseNo());
-            defaultersInfo.setLocality(propView.getLocality().getName());
+            defaultersInfo.setLocality((propView.getLocality()) != null ? propView.getLocality().getName()
+                    : "NA");
             defaultersInfo.setMobileNumber((StringUtils.isNotBlank(propView.getMobileNumber()) ? propView
                     .getMobileNumber() : "NA"));
             defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
-            defaultersInfo.setCurrentDue(propView.getAggrCurrDmd().subtract(propView.getAggrCurrColl()));
-            defaultersInfo
-                    .setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView.getAggrArrearPenaly() : ZERO)
-                            .subtract(propView.getAggrArrearPenalyColl() != null ? propView.getAggrArrearPenalyColl() : ZERO));
-            defaultersInfo.setAggrCurrPenalyDue((propView.getAggrCurrPenaly() != null ? propView.getAggrCurrPenaly() : ZERO)
-                    .subtract((propView.getAggrCurrPenalyColl() != null ? propView.getAggrCurrPenalyColl() : ZERO)));
+            defaultersInfo.setCurrentDue((propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd()))
+                    .subtract((propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl()))));
+            defaultersInfo.setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView
+                    .getAggrArrearPenaly() : ZERO).subtract(propView.getAggrArrearPenalyColl() != null ? propView
+                    .getAggrArrearPenalyColl() : ZERO));
+            currPenalty = (propView.getAggrCurrFirstHalfPenaly() != null ? propView.getAggrCurrFirstHalfPenaly() : ZERO)
+                    .add(propView.getAggrCurrSecondHalfPenaly() != null ? propView.getAggrCurrSecondHalfPenaly() : ZERO);
+            currPenaltyColl = (propView.getAggrCurrFirstHalfPenalyColl() != null ? propView
+                    .getAggrCurrFirstHalfPenalyColl() : ZERO)
+                    .add(propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
+                            .getAggrCurrSecondHalfPenalyColl() : ZERO);
+            defaultersInfo.setAggrCurrPenalyDue(currPenalty.subtract(currPenaltyColl));
             totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
                     .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
             defaultersInfo.setTotalDue(totalDue);
-            if(propView.getInstDmdColl().size()!=0 && !propView.getInstDmdColl().isEmpty()){
-                defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment().getDescription());
+            if (propView.getInstDmdColl().size() != 0 && !propView.getInstDmdColl().isEmpty()) {
+                defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment()
+                        .getDescription());
                 final Iterator itr = propView.getInstDmdColl().iterator();
                 InstDmdCollMaterializeView idc = new InstDmdCollMaterializeView();
-                InstDmdCollMaterializeView lastElement = new InstDmdCollMaterializeView(); 
-                while(itr.hasNext()) {
-                    idc =(InstDmdCollMaterializeView) itr.next();
-                    if(!idc.getInstallment().equals(curInstallment))
+                InstDmdCollMaterializeView lastElement = new InstDmdCollMaterializeView();
+                while (itr.hasNext()) {
+                    idc = (InstDmdCollMaterializeView) itr.next();
+                    if (!idc.getInstallment().equals(curInstallment))
                         lastElement = idc;
                 }
-                if(lastElement!=null && lastElement.getInstallment()!=null)  
+                if (lastElement != null && lastElement.getInstallment() != null)
                     defaultersInfo.setArrearsToInstallment(lastElement.getInstallment().getDescription());
             }
-           defaultersList.add(defaultersInfo);   
-        } 
+            defaultersList.add(defaultersInfo);
+        }
 
         return defaultersList;
 

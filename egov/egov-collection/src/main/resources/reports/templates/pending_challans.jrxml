@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-07-06T15:03:40 -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-05-04T11:59:01 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pending_challans" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c7e76695-81d1-48d4-8878-165d2e50e762">
 	<import value="org.egov.infra.reporting.util.ReportUtil"/>
 	<import value="org.egov.pims.utils.EisManagersUtill"/>
@@ -89,7 +128,7 @@ ORDER BY
 			</staticText>
 			<image>
 				<reportElement x="10" y="10" width="91" height="92" uuid="2cdff221-8ada-4349-baae-477d1fc7d847"/>
-				<imageExpression><![CDATA[ReportUtil.getLogoImageAsStream()]]></imageExpression>
+				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="410" y="108" width="140" height="20" uuid="212dcdeb-88cc-43ce-966b-d214e7ce198a"/>
@@ -103,7 +142,7 @@ ORDER BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBHql("SELECT dept.deptName FROM org.egov.infra.admin.master.entity.Department dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT dept.name FROM EG_DEPARTMENT dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="80" y="128" width="131" height="20" uuid="51c61127-16bc-40f1-acb8-62bbc93b2569"/>
@@ -510,7 +549,7 @@ ORDER BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBHql("SELECT dept.deptName FROM org.egov.infra.admin.master.entity.Department dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "All Departments" : (String)ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION},"SELECT dept.name FROM EG_DEPARTMENT dept WHERE dept.id = " + $P{EGOV_DEPT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="138" width="80" height="20" uuid="90f82144-9c7b-46de-bd0e-418441e1188b"/>

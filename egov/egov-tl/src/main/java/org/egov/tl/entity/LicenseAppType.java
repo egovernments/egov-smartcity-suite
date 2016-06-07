@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -44,9 +45,6 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * The Class LicenseAppType.
- */
 @Unique(fields = { "licenseApplicationType" }, id = "id", tableName = "EGTL_MSTR_APP_TYPE", columnName = { "name" }, message = "masters.licenseApplicationType.isunique")
 public class LicenseAppType extends BaseModel {
 	private static final long serialVersionUID = 1L;
@@ -54,12 +52,7 @@ public class LicenseAppType extends BaseModel {
 	
 	@Required(message = "masters.licenseApplicationType.name.null")
 	@Length(max = 256, message = "masters.licenseApplicationType.name.length")
-	//@OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "tradelicense.error.licenseapptype.text")
 	private String name;
-
-	public LicenseAppType() {
-		super();
-	}
 
 	public String getName() {
 		return name;
@@ -69,13 +62,4 @@ public class LicenseAppType extends BaseModel {
 		this.name = name;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder str = new StringBuilder();
-		str.append("LicenseAppType={");
-		str.append("serialVersionUID=").append(serialVersionUID);
-		str.append("name=").append(name == null ? "null" : name.toString());
-		str.append("}");
-		return str.toString();
-	}
 }

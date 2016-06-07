@@ -1,14 +1,50 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.egf.web.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFiscalPeriod;
+import org.egov.commons.repository.CFinancialYearRepository;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.web.adaptor.CFinancialYearJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +60,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/cfinancialyear")
@@ -38,6 +79,9 @@ public class CFinancialYearController {
 
     @Autowired
     private CFinancialYearService cFinancialYearService;
+    
+    @Autowired
+    private CFinancialYearRepository cFinancialYearRepository;
 
     @Autowired
     private MessageSource messageSource;
@@ -50,24 +94,38 @@ public class CFinancialYearController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
-        final CFinancialYear cFinancialYear = new CFinancialYear();
-        if (cFinancialYear.getcFiscalPeriod().isEmpty())
-            cFinancialYear.addCFiscalPeriod(new CFiscalPeriod());
+        final CFinancialYear financialYear = new CFinancialYear();
+        if (financialYear.getcFiscalPeriod().isEmpty())
+            financialYear.addCFiscalPeriod(new CFiscalPeriod());
         final Date nextStartingDate = cFinancialYearService.getNextFinancialYearStartingDate();
         model.addAttribute("startingDate", dtFormat.format(nextStartingDate));
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", financialYear);
         model.addAttribute("mode", "create");
         return CFINANCIALYEAR_NEW;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute CFinancialYear cFinancialYear, final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
+    public String create(@Valid @ModelAttribute CFinancialYear cFinancialYear, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
         final Boolean flag = false;
         final Boolean isActive = true;
         if (errors.hasErrors()) {
             prepareNewForm(model);
+            model.addAttribute("mode", "create");
             return CFINANCIALYEAR_NEW;
+        }
+        CFiscalPeriod fiscalPeriod = new CFiscalPeriod();
+        final List<CFiscalPeriod> fiscalList = cFinancialYear.getcFiscalPeriod();
+        for (final CFiscalPeriod fiscal : fiscalList) {
+            fiscalPeriod = cFinancialYearService.findByFiscalName(fiscal.getName());
+            if (fiscalPeriod != null) {
+                prepareNewForm(model);
+                redirectAttrs.addFlashAttribute("financialYear", cFinancialYear);
+                model.addAttribute("message", "Entered Fiscal Period Name " + fiscalPeriod.getName()
+                        + " already Exists");
+                model.addAttribute("mode", "create");
+                return CFINANCIALYEAR_NEW;
+            }
         }
         cFinancialYear.setIsActive(isActive);
         cFinancialYear.setIsClosed(flag);
@@ -83,7 +141,7 @@ public class CFinancialYearController {
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final CFinancialYear cFinancialYear = cFinancialYearService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", cFinancialYear);
         model.addAttribute("mode", "edit");
         return CFINANCIALYEAR_EDIT;
     }
@@ -105,22 +163,23 @@ public class CFinancialYearController {
     public String view(@PathVariable("id") final Long id, final Model model) {
         final CFinancialYear cFinancialYear = cFinancialYearService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", cFinancialYear);
         return CFINANCIALYEAR_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, final Model model) {
         final CFinancialYear cFinancialYear = cFinancialYearService.findOne(id);
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", cFinancialYear);
         return CFINANCIALYEAR_RESULT;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final CFinancialYear cFinancialYear = new CFinancialYear();
+        model.addAttribute("financialYears", cFinancialYearRepository.findAll());
         prepareNewForm(model);
-        model.addAttribute("cFinancialYear", cFinancialYear);
+        model.addAttribute("CFinancialYear", cFinancialYear);
         return CFINANCIALYEAR_SEARCH;
 
     }

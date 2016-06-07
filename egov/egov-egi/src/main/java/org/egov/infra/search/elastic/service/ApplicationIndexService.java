@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.search.elastic.service;
 
 import org.egov.config.search.Index;
@@ -46,7 +47,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.repository.ApplicationIndexRepository;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,7 +74,7 @@ public class ApplicationIndexService {
     @Transactional
     @Indexing(name = Index.APPLICATION, type = IndexType.APPLICATIONSEARCH)
     public ApplicationIndex createApplicationIndex(final ApplicationIndex applicationIndex) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         applicationIndex.setUlbName(cityWebsite.getName());
         applicationIndex.setDistrictName(cityWebsite.getDistrictName());
         applicationIndexRepository.save(applicationIndex);
@@ -88,7 +89,7 @@ public class ApplicationIndexService {
     }
 
     public ApplicationIndex findByApplicationNumber(final String applicationNumber) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         return applicationIndexRepository.findByApplicationNumberAndUlbName(applicationNumber, cityWebsite.getName());
     }
 

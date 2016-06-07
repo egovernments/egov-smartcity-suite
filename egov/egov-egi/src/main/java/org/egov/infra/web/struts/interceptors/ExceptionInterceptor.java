@@ -37,9 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.struts.interceptors;
 
-import org.egov.infstr.utils.HibernateUtil;
+package org.egov.infra.web.struts.interceptors;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.ExceptionHolder;
@@ -70,7 +69,6 @@ public class ExceptionInterceptor extends ExceptionMappingInterceptor {
 	
 	@Override
 	protected void publishException(ActionInvocation invocation, ExceptionHolder exceptionHolder) {
-		//HibernateUtil.markForRollback();
 		super.publishException(invocation, exceptionHolder);
 	}
 	

@@ -39,11 +39,6 @@
  */
 package org.egov.pgr.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 import org.egov.builder.entities.BoundaryBuilder;
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.eis.entity.PositionBuilder;
@@ -63,6 +58,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ComplaintRouterServiceTest {
 

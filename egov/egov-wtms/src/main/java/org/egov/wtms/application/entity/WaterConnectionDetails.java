@@ -1,76 +1,47 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.wtms.application.entity;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.entity.Source;
-import org.egov.demand.model.EgDemand;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -83,6 +54,16 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "egwtr_connectiondetails")
@@ -180,10 +161,6 @@ public class WaterConnectionDetails extends StateAware {
     @Temporal(value = TemporalType.DATE)
     private Date approvalDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "demand")
-    private EgDemand demand;
-
     @Temporal(value = TemporalType.DATE)
     private Date workOrderDate;
 
@@ -219,6 +196,10 @@ public class WaterConnectionDetails extends StateAware {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<WaterDemandConnection> waterDemandConnection = new ArrayList<WaterDemandConnection>(0);
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>(0);
 
     @OrderBy("id desc")
@@ -228,9 +209,6 @@ public class WaterConnectionDetails extends StateAware {
     @OrderBy("ID DESC")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<NonMeteredConnBillDetails> nonmeteredBillDetails = new HashSet<NonMeteredConnBillDetails>(0);
-
-    @Transient
-    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
     private String closeConnectionType;
 
@@ -254,20 +232,16 @@ public class WaterConnectionDetails extends StateAware {
     @Transient
     private String approvalComent;
 
+    @Transient
+    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(
+            0);
+
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
     }
 
     public void setMeterConnection(final List<MeterReadingConnectionDetails> meterConnection) {
         this.meterConnection = meterConnection;
-    }
-
-    public List<DemandDetail> getDemandDetailBeanList() {
-        return demandDetailBeanList;
-    }
-
-    public void setDemandDetailBeanList(final List<DemandDetail> demandDetailBeanList) {
-        this.demandDetailBeanList = demandDetailBeanList;
     }
 
     @Override
@@ -282,7 +256,7 @@ public class WaterConnectionDetails extends StateAware {
 
     @Override
     public String myLinkId() {
-        return (applicationNumber !=null? applicationNumber :connection.getConsumerCode());
+        return applicationNumber != null ? applicationNumber : connection.getConsumerCode();
 
     }
 
@@ -438,14 +412,6 @@ public class WaterConnectionDetails extends StateAware {
         this.numberOfRooms = numberOfRooms;
     }
 
-    public EgDemand getDemand() {
-        return demand;
-    }
-
-    public void setDemand(final EgDemand demand) {
-        this.demand = demand;
-    }
-
     public FieldInspectionDetails getFieldInspectionDetails() {
         return fieldInspectionDetails;
     }
@@ -456,6 +422,18 @@ public class WaterConnectionDetails extends StateAware {
 
     public List<ApplicationDocuments> getApplicationDocs() {
         return applicationDocs;
+    }
+
+    public List<WaterDemandConnection> getWaterDemandConnection() {
+        return waterDemandConnection;
+    }
+
+    public void setWaterDemandConnection(final List<WaterDemandConnection> waterDemandConnection) {
+        this.waterDemandConnection = waterDemandConnection;
+    }
+
+    public void addWaterDemandConnection(final WaterDemandConnection waterDemandConnection) {
+        getWaterDemandConnection().add(waterDemandConnection);
     }
 
     public void setApplicationDocs(final List<ApplicationDocuments> applicationDocs) {
@@ -481,8 +459,9 @@ public class WaterConnectionDetails extends StateAware {
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        return String.format("Application Number %s with application date %s.", (applicationNumber !=null?applicationNumber:connection.getConsumerCode()),
-                (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date()))));
+        return String.format("Application Number %s with application date %s.",
+                applicationNumber != null ? applicationNumber : connection.getConsumerCode(),
+                applicationDate != null ? formatter.format(applicationDate) : formatter.format(new Date()));
     }
 
     public String getBplCardHolderName() {
@@ -643,6 +622,15 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
+    }
+
+    public List<DemandDetail> getDemandDetailBeanList() {
+        return demandDetailBeanList;
+    }
+
+    public void setDemandDetailBeanList(
+            final List<DemandDetail> demandDetailBeanList) {
+        this.demandDetailBeanList = demandDetailBeanList;
     }
 
 }

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,54 +24,22 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.ptis.actions.search;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COLLECT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMAND_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -104,9 +72,24 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
+import org.python.antlr.PythonParser.return_stmt_return;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.servlet.http.HttpServletRequest;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @ParentPackage("egov")
 @Validations
@@ -131,12 +114,17 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = "meesevaerror", location = "/WEB-INF/jsp/common/meeseva-errorPage.jsp"),
         @Result(name = APPLICATION_TYPE_COLLECT_TAX, type = "redirectAction", location = "searchProperty-searchOwnerDetails", params = {
                 "namespace", "/search", "assessmentNum", "${assessmentNum}" }),
-        @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateBill", params = {
+        @Result(name = APPLICATION_TYPE_DEMAND_BILL, type = "redirectAction", location = "billGeneration-generateDemandBill", params = {
                 "namespace", "/bills", "indexNumber", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_VACANCY_REMISSION, type = "redirect", location = "../vacancyremission/create/${assessmentNum},${mode}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
         @Result(name = APPLICATION_TYPE_TAX_EXEMTION, type = "redirect", location = "..//exemption/form/${assessmentNum}", params = {
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
+        @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
+                "namespace", "/edit", "propertyId", "${assessmentNum}" }),
+                @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp") })
 public class SearchPropertyAction extends BaseFormAction {
     /**
@@ -295,7 +283,7 @@ public class SearchPropertyAction extends BaseFormAction {
         } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)
-                || APPLICATION_TYPE_GRP.equals(applicationType)) {
+                || APPLICATION_TYPE_GRP.equals(applicationType) || APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
             if (!isDemandActive) {
                 addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;
@@ -312,7 +300,19 @@ public class SearchPropertyAction extends BaseFormAction {
                 addActionError(getText("error.msg.taxExempted"));
                 return COMMON_FORM;
             }
+        if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
+            return APPLICATION_TYPE_EDIT_DEMAND;
+        }
 
+        if (basicProperty.getProperty().getIsExemptedFromTax()
+                && !(applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION))) {
+            addActionError(getText("action.error.msg.for.taxExempted"));
+            return COMMON_FORM;
+        }
+
+        if (APPLICATION_TYPE_EDIT_OWNER.equals(applicationType)) {
+            return APPLICATION_TYPE_EDIT_OWNER;
+        }
         if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
             if (!isDemandActive) {
@@ -320,6 +320,14 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             } else
                 mode = "commonSearch";
+        }
+        if (APPLICATION_TYPE_EDIT_COLLECTION.equals(applicationType)) {
+            if (!basicProperty.isEligible()) {
+                addActionError(getText("error.msg.editCollection.noteligible"));
+                return COMMON_FORM;
+            } else {
+                return APPLICATION_TYPE_EDIT_COLLECTION;
+            }
         }
         return applicationType;
 
@@ -570,7 +578,7 @@ public class SearchPropertyAction extends BaseFormAction {
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));
 
         if (StringUtils.isNotBlank(assessmentNum)) {
-            basicProperty = basicPropertyDAO.getBasicPropertyByIndexNumAndParcelID(assessmentNum, null);
+            basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
         }
     }
 
@@ -659,15 +667,24 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (!property.getIsExemptedFromTax()) {
-                    searchResultMap.put("currDemand", demandCollMap.get(CURR_DMD_STR).toString());
+                    searchResultMap.put("currFirstHalfDemand", demandCollMap.get(CURR_FIRSTHALF_DMD_STR).toString());
+                    searchResultMap.put("currSecondHalfDemand", demandCollMap.get(CURR_SECONDHALF_DMD_STR).toString());
                     searchResultMap.put("arrDemandDue",
                             demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR)).toString());
-                    searchResultMap.put("currDemandDue",
-                            demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR)).toString());
+                    searchResultMap.put(
+                            "currFirstHalfDemandDue",
+                            demandCollMap.get(CURR_FIRSTHALF_DMD_STR)
+                                    .subtract(demandCollMap.get(CURR_FIRSTHALF_COLL_STR)).toString());
+                    searchResultMap.put(
+                            "currSecondHalfDemandDue",
+                            demandCollMap.get(CURR_SECONDHALF_DMD_STR)
+                                    .subtract(demandCollMap.get(CURR_SECONDHALF_COLL_STR)).toString());
                 } else {
-                    searchResultMap.put("currDemand", "0");
+                    searchResultMap.put("currFirstHalfDemand", "0");
+                    searchResultMap.put("currFirstHalfDemandDue", "0");
+                    searchResultMap.put("currSecondHalfDemand", "0");
+                    searchResultMap.put("currSecondHalfDemandDue", "0");
                     searchResultMap.put("arrDemandDue", "0");
-                    searchResultMap.put("currDemandDue", "0");
                 }
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Assessment Number : " + searchResultMap.get("assessmentNum") + ", " + "Owner Name : "
@@ -755,13 +772,18 @@ public class SearchPropertyAction extends BaseFormAction {
                 searchResultMap.put("enableVRApproval",
                         String.valueOf(propertyTaxUtil.enableVRApproval(basicProperty.getUpicNo())));
                 if (pmv.getIsExempted()) {
-                    searchResultMap.put("currDemand", "0");
+                    searchResultMap.put("currFirstHalfDemand", "0");
+                    searchResultMap.put("currFirstHalfDemandDue", "0");
+                    searchResultMap.put("currSecondHalfDemand", "0");
+                    searchResultMap.put("currSecondHalfDemandDue", "0");
                     searchResultMap.put("arrDemandDue", "0");
-                    searchResultMap.put("currDemandDue", "0");
                 } else {
-                    searchResultMap.put("currDemand", pmv.getAggrCurrDmd().toString());
-                    searchResultMap.put("currDemandDue", pmv.getAggrCurrDmd().subtract(pmv.getAggrCurrColl())
-                            .toString());
+                    searchResultMap.put("currFirstHalfDemand", pmv.getAggrCurrFirstHalfDmd().toString());
+                    searchResultMap.put("currFirstHalfDemandDue",
+                            pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl()).toString());
+                    searchResultMap.put("currSecondHalfDemand", pmv.getAggrCurrSecondHalfDmd().toString());
+                    searchResultMap.put("currSecondHalfDemandDue",
+                            pmv.getAggrCurrSecondHalfDmd().subtract(pmv.getAggrCurrSecondHalfColl()).toString());
                     searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
                 }
                 searchList.add(searchResultMap);

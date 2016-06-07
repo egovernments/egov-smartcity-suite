@@ -1,34 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-03-24T18:13:00 -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2016-05-24T10:15:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="240"/>
+	<property name="ireport.y" value="52"/>
 	<import value="org.egov.infra.reporting.util.*"/>
-	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.infra.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/manasa/CHECKOUTS/Phoenix/GitHub/eGov/egov/egov-ptis/src/main/java/reports/templates/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="cityName" class="java.lang.String"/>
-	<parameter name="userId" class="java.lang.Long"/>
 	<parameter name="noticeNo" class="java.lang.String"/>
 	<parameter name="ownerInfo" class="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
 	<parameter name="copyType" class="java.lang.String"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
 	<field name="buildingClassification" class="java.lang.String"/>
 	<field name="natureOfUsage" class="java.lang.String"/>
 	<field name="plinthArea" class="java.math.BigDecimal"/>
 	<field name="monthlyRentalValue" class="java.math.BigDecimal"/>
 	<field name="bldngFloorNo" class="java.lang.String"/>
 	<title>
-		<band height="472" splitType="Stretch">
+		<band height="425" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="36" y="108" width="478" height="159" uuid="1208afdb-6715-475c-b36f-bd0cb45c6a77"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["To\nSri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getOwnerName().replaceAll("&","&amp;")+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getOwnerAddress()+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> in this Corporation, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present Complaint to the Commissioner or to any Officer authorized by the Commissioner within 15 days from the date of service of this notice. If no complaint against the assessment is presented within the above mentioned period of 15 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["To\nSri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getOwnerAddress()+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> in this Corporation, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present Complaint to the Commissioner or to any Officer authorized by the Commissioner within 15 days from the date of service of this notice. If no complaint against the assessment is presented within the above mentioned period of 15 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="36" y="94" width="478" height="10" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
@@ -49,7 +89,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["(Special Notice of Property Tax Assessment/ Revision)\n(Issued U/S 200(2) of Municipal Corporation Act, 1955(formally GHMC Act, 1955))"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["(Special Notice of Property Tax Assessment/ Revision)\n(Issued U/S 220(2) of Municipal Corporation Act, 1955(Formerly GHMC Act, 1955))"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="282" y="270" width="231" height="15" uuid="5538b6f9-3bc6-428d-b383-f6233a5bb0a1"/>
@@ -402,7 +442,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement x="36" y="387" width="477" height="50" uuid="72cf4591-462a-4395-b8ab-1af77038034b"/>
+				<reportElement x="36" y="387" width="477" height="33" uuid="72cf4591-462a-4395-b8ab-1af77038034b"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
@@ -413,7 +453,7 @@
 				<textElement textAlignment="Left" markup="styled">
 					<font size="8" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building.\n\n\nZone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Reasons for increase if any:	The MRV has been fixed based on I) Location, II) type of construction,III) Plinth Area,\n\t\t\tIV) Age V) Nature of usage of the Building.\n\n\n<style forecolor=\"#000000\" isBold=\"true\" size=\"9\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Details of Assessment/Revision </style>\n\n  Zone No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getZoneName()+"</style>"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -489,20 +529,6 @@
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Monthly Rental Value]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="43" y="-15" width="194" height="12" uuid="87cfde42-101b-4b49-ae36-8f4e3982e20b"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="10" isBold="true" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[Details of Assessment/Revision]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -583,9 +609,9 @@
 	<pageFooter>
 		<band height="100" splitType="Prevent">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
-			<image hAlign="Center" vAlign="Bottom" onErrorType="Blank">
+			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement x="343" y="0" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
-				<imageExpression><![CDATA[ReportUtil.getUserSignature($P{userId})]]></imageExpression>
+				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="381" y="52" width="92" height="18" uuid="ab68c177-dc21-4991-979d-16dbb97345e0"/>

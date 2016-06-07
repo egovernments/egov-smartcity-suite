@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.search.elastic.service;
 
 import org.egov.config.search.Index;
@@ -46,7 +47,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.repository.CollectionIndexRepository;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,20 +74,24 @@ public class CollectionIndexService {
             collectionIndexReceipt.setStatus(collectionIndex.getStatus());
             collectionIndexRepository.save(collectionIndexReceipt);
         } else {
-            final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-            collectionIndex.setUlbName(cityWebsite.getName());
+            final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+            collectionIndex.setCityName(cityWebsite.getName());
             if (cityWebsite.getDistrictName() != null)
                 collectionIndex.setDistrictName(cityWebsite.getDistrictName());
             if (cityWebsite.getRegionName() != null)
                 collectionIndex.setRegionName(cityWebsite.getRegionName());
+            if (cityWebsite.getGrade() != null)
+                collectionIndex.setCityGrade(cityWebsite.getGrade());
+            if (cityWebsite.getCode() != null)
+                collectionIndex.setCityCode(cityWebsite.getCode());
             collectionIndexRepository.save(collectionIndex);
         }
         return collectionIndex;
     }
 
     public CollectionIndex findByReceiptNumber(final String receiptNumber) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
-        return collectionIndexRepository.findByReceiptNumberAndUlbName(receiptNumber, cityWebsite.getName());
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+        return collectionIndexRepository.findByReceiptNumberAndCityName(receiptNumber, cityWebsite.getName());
     }
 
 }

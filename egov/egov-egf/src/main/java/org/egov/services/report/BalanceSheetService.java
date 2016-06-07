@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,24 +24,22 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.services.report;
 
 
-
-import org.egov.infstr.services.PersistenceService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,14 +55,14 @@ import java.util.Set;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.egf.model.Statement;
+import org.egov.egf.model.StatementEntry;
+import org.egov.egf.model.StatementResultObject;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.egov.web.actions.report.Statement;
-import org.egov.web.actions.report.StatementEntry;
-import org.egov.web.actions.report.StatementResultObject;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -108,7 +106,7 @@ public class BalanceSheetService extends ReportService {
         final List<Object[]> openingBalanceAmountList = query.list();
         for (final Object[] obj : openingBalanceAmountList)
             if (obj[0] != null && obj[1] != null) {
-                BigDecimal total = BigDecimal.valueOf((double) obj[0]);
+                BigDecimal total = (BigDecimal)obj[0];
                 if (L.equals(obj[3].toString()))
                     total = total.multiply(NEGATIVE);
                 for (final StatementEntry entry : balanceSheet.getEntries())
@@ -143,7 +141,7 @@ public class BalanceSheetService extends ReportService {
             final List<Object[]> openingBalanceAmountList = query.list();
             for (final Object[] obj : openingBalanceAmountList)
                 if (obj[0] != null && obj[1] != null) {
-                    BigDecimal total = BigDecimal.valueOf((double) obj[0]);
+                  BigDecimal total =(BigDecimal) obj[0];
                     if (L.equals(obj[2].toString()))
                         total = total.multiply(NEGATIVE);
                     for (final StatementEntry entry : balanceSheet.getEntries())
@@ -189,9 +187,9 @@ public class BalanceSheetService extends ReportService {
                             entry.getFundWiseAmount().put(
                                     fundNameForId,
                                     entry.getFundWiseAmount().get(fundNameForId)
-                                    .add(divideAndRound(BigDecimal.valueOf((double)obj[0]), divisor)));
+                                    .add(divideAndRound((BigDecimal)obj[0], divisor)));
                         else
-                            entry.getFundWiseAmount().put(fundNameForId, divideAndRound(BigDecimal.valueOf((double)obj[0]), divisor));
+                            entry.getFundWiseAmount().put(fundNameForId, divideAndRound((BigDecimal)obj[0], divisor));
                     }}
     }
 
@@ -226,7 +224,7 @@ public class BalanceSheetService extends ReportService {
         final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
         final List<Object[]> excessieAmountList = query.list();
         for (final Object[] obj : excessieAmountList)
-            sum = sum.add(BigDecimal.valueOf((double) obj[0]));
+            sum = sum.add((BigDecimal) obj[0]);
         for (int index = 0; index < balanceSheet.size(); index++)
             if (balanceSheet.get(index).getGlCode() != null && glCodeForExcessIE.equals(balanceSheet.get(index).getGlCode())) {
                 BigDecimal prevYrTotal = balanceSheet.get(index).getPreviousYearTotal();

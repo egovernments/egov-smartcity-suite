@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.entity;
 
-import java.util.List;
+package org.egov.tl.entity;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Designation;
+
+import java.util.List;
 
 public class WorkflowBean {
     private String actionName;
@@ -156,23 +157,6 @@ public class WorkflowBean {
         this.currentState = currentState;
     }
     
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("WorkflowBean={ ");
-        str.append("actionName=").append(actionName == null ? "null" : actionName.toString());
-        str.append("actionState=").append(actionState == null ? "null" : actionState.toString());
-        str.append("appoverUserList=").append(appoverUserList == null ? "null" : appoverUserList.toString());
-        str.append("approverUserId=").append(approverUserId == null ? "null" : approverUserId.toString());
-        str.append("comments=").append(approverComments == null ? "null" : approverComments.toString());
-        str.append("departmentId=").append(departmentId == null ? "null" : departmentId.toString());
-        str.append("departmentList=").append(departmentList == null ? "null" : departmentList.toString());
-        str.append("designationId=").append(designationId == null ? "null" : designationId.toString());
-        str.append("designationList=").append(designationList == null ? "null" : designationList.toString());
-        str.append("}");
-        return str.toString();
-    }
-
     public String getAdditionaRule() {
         return additionaRule;
     }

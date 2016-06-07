@@ -1,41 +1,41 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.ptis.domain.service.report;
 
@@ -48,7 +48,6 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +64,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
@@ -75,7 +73,9 @@ import org.egov.ptis.domain.entity.property.FloorDetailsView;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,8 +100,7 @@ public class ReportService {
     private static final String PRIVATE = "PRIVATE";
     private PersistenceService propPerServ;
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
+   
     @Autowired
     private RegionalHeirarchyService regionalHeirarchyService;
 
@@ -109,6 +108,8 @@ public class ReportService {
     private UserService userService;
 
     private @Autowired FinancialYearDAO financialYearDAO;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -177,7 +178,7 @@ public class ReportService {
         List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
                 propMatView.getInstDmdColl());
         for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
-            if (instDmdCollObj.getInstallment().equals(propertyTaxUtil.getCurrentInstallment())) {
+            if (instDmdCollObj.getInstallment().equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 if (propertyType.getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
                     baseRegisterResultObj.setPropertyTax(instDmdCollObj.getVacantLandTax());
                 } else {
@@ -293,6 +294,7 @@ public class ReportService {
         DailyCollectionReportResult result = null;
         BigDecimal arrLibCess = null;
         BigDecimal currLibCess = null;
+        BigDecimal rebateAmount = null;
 
         for (Object objects : objectList) {
             final Object[] object = (Object[]) objects;
@@ -304,7 +306,7 @@ public class ReportService {
             result.setReceiptNumber(collectionIndex.getReceiptNumber());
             result.setReceiptDate(collectionIndex.getReceiptDate());
             result.setAssessmentNumber(collectionIndex.getConsumerCode());
-            result.setOwnerName(collectionIndex.getPayeeName());
+            result.setOwnerName(collectionIndex.getConsumerName());
             result.setPaidAt(collectionIndex.getChannel());
             result.setWard(basicProperty.getPropertyID().getWard().getName());
 
@@ -323,8 +325,10 @@ public class ReportService {
             result.setCurrentLibCess(collectionIndex.getCurrentCess());
             arrLibCess = collectionIndex.getCurrentCess() != null ? collectionIndex.getCurrentCess() : BigDecimal.ZERO;
             currLibCess = collectionIndex.getArrearCess() != null ? collectionIndex.getArrearCess() : BigDecimal.ZERO;
+            rebateAmount = collectionIndex.getReductionAmount() != null ? collectionIndex.getReductionAmount() : BigDecimal.ZERO;
             result.setTotalLibCess(arrLibCess.add(currLibCess));
             result.setTotalPenalty(collectionIndex.getLatePaymentCharges());
+            result.setTotalRebate(rebateAmount);
             result.setFromInstallment(collectionIndex.getInstallmentFrom());
             result.setToInstallment(collectionIndex.getInstallmentTo());
             dailyCollectionReportList.add(result);
@@ -336,7 +340,7 @@ public class ReportService {
     public List<CurrentInstDCBReportResult> getCurrentInstallmentDCB(String ward) {
         final StringBuilder queryStr = new StringBuilder(500);
 
-        queryStr.append("select ward.name as \"wardName\", cast(count(*) as integer) as \"noOfProperties\", cast(sum(pi.aggregate_current_demand) as numeric) as \"currDemand\", cast(sum(pi.current_collection) as numeric) as \"currCollection\", cast(sum(pi.aggregate_arrear_demand) as numeric) as \"arrearDemand\",cast(sum(pi.arrearcollection) as numeric) as \"arrearCollection\" from egpt_mv_propertyinfo pi,"
+        queryStr.append("select ward.name as \"wardName\", cast(count(*) as integer) as \"noOfProperties\", cast(sum(pi.aggregate_current_firsthalf_demand+pi.aggregate_current_secondhalf_demand) as numeric) as \"currDemand\", cast(sum(pi.current_firsthalf_collection+pi.current_secondhalf_collection) as numeric) as \"currCollection\", cast(sum(pi.aggregate_arrear_demand) as numeric) as \"arrearDemand\",cast(sum(pi.arrearcollection) as numeric) as \"arrearCollection\" from egpt_mv_propertyinfo pi,"
                 + " eg_boundary ward where ward.id = pi.wardid and pi.isexempted = false and pi.isactive=true and ward.boundarytype = (select id from eg_boundary_type where name='Ward' and hierarchytype = (select id from eg_hierarchy_type where name= 'REVENUE')) ");
 
         if (StringUtils.isNotBlank(ward))
@@ -802,6 +806,87 @@ public class ReportService {
             bcResult.setCummulative_total_CollectionInterestPercentage(bcResult.getCummulative_total_CollectionInterestPercentage().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         } 
 
+    }
+    
+    /**
+     * @ Description - Returns query that retrieves zone/ward/block/propertywise
+     * Arrear, Current Demand and Collection Details 
+     * @param boundaryId, mode, courtCase, propertyTypes
+     * @return
+     */
+    public SQLQuery prepareQueryForDCBReport(final Long boundaryId, final String mode, final Boolean courtCase,
+            final List<String> propertyTypes) {
+
+        final String WARDWISE = "ward";
+        final String BLOCKWISE = "block";
+        final String PROPERTY = "property";
+
+        final StringBuffer queryStr = new StringBuffer("");
+        String commonFromQry = "", finalCommonQry = "", finalSelectQry = "", finalGrpQry = "", boundaryQry = "", whereQry = "", 
+        		propertyTypeIds = "", courtCaseTable = "", courtCaseQry = "";
+        Long param = null;
+
+        if (propertyTypes != null && !propertyTypes.isEmpty()) {
+            propertyTypeIds = propertyTypes.get(0);
+            for (int i = 1; i < propertyTypes.size(); i++) {
+                propertyTypeIds += "," + propertyTypes.get(i);
+            }
+        }
+
+        if(courtCase){
+            courtCaseTable =",egpt_courtcases cc ";
+            courtCaseQry = " and cc.assessmentno = pi.upicno";
+        } else{
+            courtCaseQry = " and not exists (select 1 from egpt_courtcases cc where pi.upicno = cc.assessmentno )";
+        }
+
+        if (boundaryId != -1 && boundaryId != null)
+            param = boundaryId;
+        
+        commonFromQry = " from egpt_mv_propertyinfo pi ";
+        if (!mode.equalsIgnoreCase(PROPERTY)) {
+        	commonFromQry = commonFromQry+", eg_boundary boundary ";
+        }
+        commonFromQry = commonFromQry+courtCaseTable+" where pi.isactive = true and pi.isexempted = false "+ courtCaseQry;
+
+        finalCommonQry = "cast(COALESCE(sum(pi.ARREAR_DEMAND),0) as numeric) as \"dmnd_arrearPT\","
+        		+ " cast(COALESCE(sum(pi.pen_aggr_arrear_demand),0) AS numeric) as \"dmnd_arrearPFT\", cast(COALESCE(sum(pi.annualdemand),0) AS numeric) as \"dmnd_currentPT\", "
+        		+ " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_demand),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"dmnd_currentPFT\","
+        		+ " cast(COALESCE(sum(pi.ARREAR_COLLECTION),0) AS numeric) as \"clctn_arrearPT\", cast(COALESCE(sum(pi.pen_aggr_arr_coll),0) AS numeric) as \"clctn_arrearPFT\","
+        		+ " cast(COALESCE(sum(pi.annualcoll),0) AS numeric) as \"clctn_currentPT\","
+        		+ " cast(COALESCE(sum(pi.pen_aggr_current_firsthalf_coll),0)+COALESCE(sum(pi.pen_aggr_current_secondhalf_coll),0) AS numeric) as \"clctn_currentPFT\"  ";
+                
+        // Conditions to Retrieve data based on selected boundary types
+        if (!mode.equalsIgnoreCase(PROPERTY)) {
+            finalSelectQry = "select count(pi.upicno) as \"assessmentCount\",cast(id as integer) as \"boundaryId\",boundary.name as \"boundaryName\", ";
+            finalGrpQry = " group by boundary.id,boundary.name order by boundary.name";
+        }
+       if (mode.equalsIgnoreCase(WARDWISE)) {
+            if (param != 0)
+              whereQry = " and pi.WARDID = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+              whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = " and pi.wardid=boundary.id ";
+        } else if (mode.equalsIgnoreCase(BLOCKWISE)) {
+            whereQry = " and pi.wardid = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = " and pi.blockid=boundary.id ";
+        } else if (mode.equalsIgnoreCase(PROPERTY)) {
+        	finalSelectQry = "select distinct pi.upicno as \"assessmentNo\", pi.houseno as \"houseNo\", pi.ownersname as \"ownerName\", ";
+        	whereQry = " and pi.blockid = " + param;
+            if(propertyTypes!=null && !propertyTypes.isEmpty())
+                whereQry = whereQry + " and pi.proptymaster in ("+propertyTypeIds+") "; 
+            boundaryQry = "";
+            finalGrpQry = " group by pi.upicno, pi.houseno, pi.ownersname order by pi.upicno ";
+        }
+
+        // Final Query : Retrieves arrear and current data for the selected boundary.
+        queryStr.append(finalSelectQry).append(finalCommonQry).append(commonFromQry).append(whereQry)
+               .append(boundaryQry).append(finalGrpQry);
+        
+        final SQLQuery query = propPerServ.getSession().createSQLQuery(queryStr.toString()); 
+        return query;
     }
 
 }

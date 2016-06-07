@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,52 +24,24 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.client.service.calculator;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_11_25;
-import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_1_10;
-import static org.egov.ptis.constants.PropertyTaxConstants.BPA_DEVIATION_TAXPERC_26_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCCUPANCY_ZONE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGE_RESIDENTIAL;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.log4j.Logger;
-import org.egov.commons.Area;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -83,24 +55,31 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.calculator.PropertyTaxCalculator;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 //TODO name class as client specific
 public class APTaxCalculator implements PropertyTaxCalculator {
     private static final Logger LOGGER = Logger.getLogger(APTaxCalculator.class);
     private static BigDecimal RESD_OWNER_DEPRECIATION = new BigDecimal(40);
     private static BigDecimal SEASHORE_RESD_OWNER_DEPRECIATION = new BigDecimal(45);
-    // private static BigDecimal BUIULDING_VALUE = new BigDecimal(0.67);
-    // private static BigDecimal SITE_VALUE = new BigDecimal(0.33);
-
     private BigDecimal BUIULDING_VALUE = new BigDecimal(2).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private BigDecimal SITE_VALUE = new BigDecimal(1).divide(new BigDecimal(3), 5, BigDecimal.ROUND_HALF_UP);
     private BigDecimal totalTaxPayable = BigDecimal.ZERO;
@@ -120,10 +99,13 @@ public class APTaxCalculator implements PropertyTaxCalculator {
     private PropertyTaxUtil propertyTaxUtil;
 
     @Autowired
-    private InstallmentDao installmentDAO;
+    private InstallmentHibDao installmentDAO;
 
     @Autowired
     private ModuleService moduleService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     /**
      * @param property
@@ -144,12 +126,12 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         taxRateProps = propertyTaxUtil.loadTaxRates();
         isCorporation = propertyTaxUtil.isCorporation();
         isSeaShoreULB = propertyTaxUtil.isSeaShoreULB();
-        currInstallment = propertyTaxUtil.getCurrentInstallment();
+        currInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         if (isCorporation)
             isPrimaryServiceChrApplicable = propertyTaxUtil.isPrimaryServiceApplicable();
 
         final List<String> applicableTaxes = prepareApplicableTaxes(property);
-        final List<Installment> taxInstallments = getInstallmentListByStartDate(occupationDate);
+        List<Installment> taxInstallments = propertyTaxUtil.getInstallmentsListByEffectiveDate(occupationDate);
         propertyZone = property.getBasicProperty().getPropertyID().getZone();
 
         for (final Installment installment : taxInstallments) {
@@ -169,8 +151,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
                 }
 
                 for (final Floor floorIF : property.getPropertyDetail().getFloorDetails()) {
-                    // TODO think about, these beans to be client
-                    // specific
+                    // TODO think about, these beans to be client specific
                     if (betweenOrBefore(floorIF.getOccupancyDate(), installment.getFromDate(), installment.getToDate())) {
                         boundaryCategory = getBoundaryCategory(propertyZone, installment, floorIF.getPropertyUsage()
                                 .getId(), occupationDate, floorIF.getStructureClassification().getId());
@@ -348,16 +329,6 @@ public class APTaxCalculator implements PropertyTaxCalculator {
         return applicableTaxes;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Installment> getInstallmentListByStartDate(final Date startDate) {
-        if (startDate.after(new Date())) {
-            return installmentDAO.getInsatllmentByModule(moduleService.getModuleByName(PTMODULENAME), startDate);
-        } else {
-            return persistenceService.findAllByNamedQuery(QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR, startDate,
-                    startDate, PTMODULENAME);
-        }
-    }
-
     private BoundaryCategory getBoundaryCategory(final Boundary zone, final Installment installment,
             final Long usageId, final Date occupancyDate, final Long classification) throws TaxCalculatorExeption {
         List<BoundaryCategory> categories = new ArrayList<BoundaryCategory>();
@@ -504,21 +475,26 @@ public class APTaxCalculator implements PropertyTaxCalculator {
             deviationPerc = new BigDecimal(100);
         } else if (plinthArea.compareTo(buildingPlanPlinthArea) == 1) {
             diffArea = plinthArea.subtract(buildingPlanPlinthArea);
-            deviationPerc = diffArea.divide(plinthArea, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
+            deviationPerc = diffArea.divide(buildingPlanPlinthArea, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100"));
         }
         return deviationPerc;
     }
 
     private BigDecimal calculateUnAuthPenalty(BigDecimal deviationPerc, BigDecimal totalPropertyTax) {
         BigDecimal unAuthPenalty = BigDecimal.ZERO;
+        /*
+         * deviationPerc between 1-10, Penalty perc = 25%, 
+         * deviationPerc > 10, Penalty perc = 50%, 
+         * no Building plan details, Penalty perc = 100%
+         */
         if (deviationPerc != null && !deviationPerc.equals("0")) {
             if (deviationPerc.compareTo(BigDecimal.ZERO) == 1 && deviationPerc.compareTo(BigDecimal.TEN) == -1) {
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_1_10);
-            } else if (deviationPerc.compareTo(new BigDecimal(11)) == 1
-                    && deviationPerc.compareTo(new BigDecimal(25)) == -1) {
-                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_11_25);
+            } else if (deviationPerc.compareTo(BigDecimal.TEN) == 1
+            		&& deviationPerc.compareTo(BIGDECIMAL_100) != 0) {
+                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_ABOVE_11);
             } else {
-                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_26_100);
+                unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_NOT_DEFINED);
             }
         }
         return unAuthPenalty;

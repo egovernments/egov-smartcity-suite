@@ -1,0 +1,188 @@
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
+
+<html>
+<%@ include file="/includes/taglibs.jsp"%>
+<%@ page language="java"%>
+
+<head>
+<script type="text/javascript" src="<c:url value='/resources/app/js/reconciliationHelper.js?rnd=${app_release_no}'/>"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+<title><s:text name="bankreconciliation" /></title>
+<script type="text/javascript">
+
+
+	function validateSubmit() {
+		if(!validate())
+			{
+				return false;
+			}
+	    callAjaxSearch();
+		//return true;
+	}
+	function populatebranch(obj) {
+		var bid = document.getElementById("bankId").value;
+		populatebranchId( {
+			bankId : bid
+		})
+	}
+
+	function populateaccount(obj) {
+		var bid = document.getElementById("branchId").value;
+		populateaccountId( {
+			branchId : bid
+		})
+	}
+</script>
+</head>
+<body>
+	<s:form action="autoReconciliation" theme="simple" name="mrform" id="mrform">
+		<jsp:include page="../budget/budgetHeader.jsp">
+			<jsp:param value="Auto Bank Reconciliation" name="heading" />
+		</jsp:include>
+		<div class="formmainbox">
+			<div class="formheading"></div>
+			<div class="subheadnew">
+				<s:text name="manualbankreconciliation" />
+			</div>
+	
+		<div align="center">
+			<font style='color: red;'>
+				<p class="error-block" id="lblError"></p>
+			</font>
+		</div>
+		<span class="mandatory1">
+			<div id="Errors">
+				<s:actionerror />
+				<s:fielderror />
+			</div> <s:actionmessage />
+		</span>
+		<center>
+			<table border="0" width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="bank" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
+						dropdownId="branchId"
+						url="/voucher/common-ajaxLoadBankBranchesByBank.action" />
+					<td class="greybox"><s:select name="reconcileBean.bankId" id="bankId"
+							list="dropdownData.bankList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Choose----"
+							onchange="populatebranch(this);" value="%{bankId}" /></td>
+					<td class="greybox"><s:text name="bankbranch" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
+						dropdownId="accountId"
+						url="/voucher/common-ajaxLoadBankAccountsByBranch.action" />
+					<td class="greybox"><s:select name="reconcileBean.branchId" id="branchId"
+							list="dropdownData.branchList" listKey="id" listValue="name"
+							headerKey="" headerValue="----Choose----"
+							onchange="populateaccount(this);" /></td>
+				</tr>
+				<tr>
+					<td class="bluebox"></td>
+					<td class="bluebox"><s:text name="bankaccount" /> <span
+						class="bluebox"><span class="mandatory1">*</span></span></td>
+					<td class="bluebox"><s:select name="reconcileBean.accountId" id="accountId"
+							list="dropdownData.accountList" listKey="id"
+							listValue="accountnumber" headerKey=""
+							headerValue="----Choose----" /></td>
+					<td class="bluebox"><s:text name="reconciliationdate" /> <span
+						class="bluebox"><span class="mandatory1">*</span></span></td>
+					<td class="bluebox"><input type="text" name="reconcileBean.reconciliationDate" class="form-control datepicker"
+							 data-inputmask="'mask': 'd/m/y'"  id="reconciliationDate"/>
+
+					</td>
+				</tr>
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="fromdate" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox"><input type="text"  name="reconcileBean.fromDate" id="fromDate" class="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" />
+
+					</td>
+					<td class="greybox"><s:text name="todate" /> <span
+						class="greybox"><span class="mandatory1">*</span></span></td>
+					<td class="greybox"><input type="text"  name="reconcileBean.toDate" id="toDate" class="form-control datepicker" 
+						data-inputmask="'mask': 'd/m/y'" />	 
+
+					</td>
+				</tr>
+        <tr>
+          <td class="greybox"></td>
+           <td class="greybox"><s:text name="instrumentNo" /> <span
+            class="greybox"></td>
+          <td class="greybox"><input type="text"  name="reconcileBean.instrumentNo" id="instrumentNo" /></td>
+
+          </td>
+          <td class="greybox"><s:text name="limit" /> <span
+            class="greybox"></td>
+          <td class="greybox"><s:textfield name="reconcileBean.limit" id="limit"  /></td>
+        </tr>
+			</table>
+
+			<div class="buttonbottom" id="buttondiv">
+				<table>
+					<tr>
+						<td><input  type="button" class="buttonsubmit"
+								value="Search" name="Search" method="search"
+								onclick="return validateSubmit();" /></td>
+                <td><input type="button" value="Show Pendings"
+                        onclick="showBalance()" class="buttonsubmit" /></td>
+						<td><input type="button" value="Close"
+							onclick="javascript:window.close()" class="buttonsubmit" /></td>
+					</tr>
+				</table>
+			</div>
+      <div class="col-md-12 form-group report-table-container" id="balanceDiv"></div>
+      <div id="resultDiv"> </div>
+      
+     
+		</center>
+      </div>
+	</s:form>
+</body>
+</html>
+

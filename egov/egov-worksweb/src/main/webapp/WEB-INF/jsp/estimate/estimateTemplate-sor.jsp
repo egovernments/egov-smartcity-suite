@@ -1,42 +1,42 @@
-<!-- -------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency,
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It
-# 	   is required that all modified versions of this material be marked in
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program
-# 	   with regards to rights under trademark law for use of the trade names
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#------------------------------------------------------------------------------- -->  
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
 <style type="text/css">
 .yui-dt-col-Code{
@@ -103,7 +103,7 @@ function recalculateTotalsOnDelete(record){
 	  dom.get("grandTotal").innerHTML=roundTo(getNumericValueFromInnerHTML("grandTotal") -getNumber(record.getData("Total")));
 	  document.getElementById("estimateValue").value=roundTo(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+eval(document.getElementById("overHeadTotalAmnt").innerHTML));
 }
-var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egi/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
+var hint='<a href="#" class="hintanchor" onMouseover="showhint(\'@fulldescription@\', this, event, \'300px\')"><img src="/egworks/resources/erp2/images/help.gif" alt="Help" width="16" height="16" border="0" align="absmiddle"/></a>'
 
 function createReadOnlyTextBoxFormatter(size,maxlength){
 var textboxFormatter = function(el, oRecord, oColumn, oData) {
@@ -205,7 +205,7 @@ var searchSelectionHandler = function(sType, arguments) {
 var month=date.getMonth()+1;
 var dd=date.getDate()+"/"+month+"/"+date.getFullYear();
 
-	        makeJSONCall(["Id","Description","Code","UOM","UnitRate","FullDescription"],'${pageContext.request.contextPath}/masters/scheduleOfRateSearch!findSORAjax.action',{sorID:oData[1]},mySuccessHandler,myFailureHandler) ;
+	        makeJSONCall(["Id","Description","Code","UOM","UnitRate","FullDescription"],'${pageContext.request.contextPath}/masters/scheduleOfRateSearch-findSORAjax.action',{sorID:oData[1]},mySuccessHandler,myFailureHandler) ;
 
 		}
 
@@ -305,54 +305,52 @@ function showProcessImage(event) {
 
 </script>
 
-<div id="baseSORTable" class="panel panel-primary" data-collapsed="0" style="text-align:left">
-				<div class="panel-heading">
-					<div class="panel-title">
-					    SOR
+<div id="baseSORTable" class="panel panel-primary" data-collapsed="0" style="text-align: left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<s:text name="page.title.estimate.SOR" />
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="estimate.scheduleCategory.name" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"> 
+				<s:text	name="estimate.addSOR" />
+			</label>
+			<div class="col-sm-8 add-margin">
+				<div id="sorSearch_autocomplete">
+					<div class="right-inner-addon">
+						<input id="search" type="text" name="item" class="form-control"	onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);">
+						<i id="loadImage" style="display: none" class="fa fa-circle-o-notch fa-spin"></i>
 					</div>
+					<span id="searchResults"></span>
+					<egov:autocomplete name="sorSearch" width="50" field="search" url="../masters/scheduleOfRateSearch-searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />
 				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-right">
-						    <s:text name="estimate.scheduleCategory.name" /><span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description"/>
-						</div>
-					</div>
-					
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-right">
-						    Add SOR
-						</label>
-						<div class="col-sm-8 add-margin">
-							<div id="sorSearch_autocomplete">
-							   <div class="right-inner-addon">
-								    <input id="search" type="text" name="item" class="form-control" onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);">
-								    <i id="loadImage" style="display:none" class="fa fa-circle-o-notch fa-spin"></i>
-				    			</div>    
-						    	<span id="searchResults"></span>
-						    	<egov:autocomplete name="sorSearch" width="50" field="search" url="../masters/scheduleOfRateSearch-searchAjax.action" results="searchResults" handler="searchSelectionHandler" paramsFunction="sorSearchParameters" afterHandler="afterSORResults" />
-						    </div> 
-						</div>
-					</div>
-					
-					<div class="form-group no-margin-bottom">
-						<div class="col-sm-offset-2 col-sm-8">
-							<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display:none;"></div>
-						</div>
-					</div>	
-					
-					<div class="form-group" id="sorHeaderTable">
-						<hr/>
-						<div class="yui-skin-sam">
-					         <div id="sorTable"></div>
-					         <div id="sorTotals"></div>                                
-					     </div>
-							
-					</div>	
-					
-				</div>
+			</div>
+		</div>
+
+		<div class="form-group no-margin-bottom">
+			<div class="col-sm-offset-2 col-sm-8">
+				<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display: none;"></div>
+			</div>
+		</div>
+
+		<div class="form-group" id="sorHeaderTable">
+			<hr />
+			<div class="yui-skin-sam">
+				<div id="sorTable"></div>
+				<div id="sorTotals"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
@@ -370,21 +368,12 @@ makeSORDataTable();
      
     var record = sorDataTable.getRecord(parseInt('<s:property value="#row_status.index"/>'));
     
-    
 </s:iterator>
+<s:if test="%{mode=='view'}">
+for(i=0;i<document.estimateTemplateForm.elements.length;i++){
+	document.estimateTemplateForm.elements[i].disabled=true;
+	document.estimateTemplateForm.elements[i].readonly=true;
+} 
+</s:if>
     
 </script>  
-
-
-             
-            </td>
-          </tr>
-            </table>
-<script type="text/javascript">
-  <s:if test="%{mode=='view'}">
-	for(i=0;i<document.estimateTemplateForm.elements.length;i++){
-		document.estimateTemplateForm.elements[i].disabled=true;
-		document.estimateTemplateForm.elements[i].readonly=true;
-	} 
-  </s:if>
-</script>

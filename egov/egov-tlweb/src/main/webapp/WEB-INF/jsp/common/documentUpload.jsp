@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <script>
@@ -47,28 +48,24 @@
 	
 	// checklist should be checked before attaching document
 	function verifyChecklist(obj){
-		var rowobj=getRow(obj);
-		var tbl = document.getElementById('docAttachmentTab');
-		var checkListval=getControlInBranch(tbl.rows[rowobj.rowIndex],'checklist').checked;
-		if(checkListval!=true){
+		if(!jQuery(obj).parent().parent().find('input[type="checkbox"]').is(":checked")){
 			bootbox.alert("Please Check the Check List before attaching.");
 			return false; 
-		} 
+		}
 	}
 	
 	// Clear attached document on unselection of checklist
 	function checkFileAttachment(obj){
-		var rowobj=getRow(obj);
-		var tbl = document.getElementById('docAttachmentTab');
-		var checkListval=getControlInBranch(tbl.rows[rowobj.rowIndex],'checklist').checked;
-		if(checkListval!=true && getControlInBranch(tbl.rows[rowobj.rowIndex],'uploadFile').value!=''){
-			var r = confirm("Unselecting Check List will clear the Document attached!");
-			if(r==true)
-				getControlInBranch(tbl.rows[rowobj.rowIndex],'uploadFile').value='';
-			else{
-				getControlInBranch(tbl.rows[rowobj.rowIndex],'checklist').checked=true;
-			}
-		} 
+		if(!jQuery(obj).is(":checked") && jQuery(obj).parent().parent().find('input[type="file"]').val()){
+			bootbox.confirm("Unselecting Check List will clear the Document attached?", function(result) {
+	            if (result) {
+	            	var fileobj = jQuery(obj).parent().parent().find('input[type="file"]');
+	            	fileobj.replaceWith(fileobj.val('').clone(true));
+	            }else{
+	            	jQuery(obj).prop('checked', true);
+	            }
+	        });
+		}
 	}  
 </script>
 <div class="panel-heading custom_form_panel_heading">

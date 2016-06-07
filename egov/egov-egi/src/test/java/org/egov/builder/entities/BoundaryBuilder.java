@@ -39,10 +39,10 @@
  */
 package org.egov.builder.entities;
 
-import java.util.Date;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+
+import java.util.Date;
 
 public class BoundaryBuilder {
 

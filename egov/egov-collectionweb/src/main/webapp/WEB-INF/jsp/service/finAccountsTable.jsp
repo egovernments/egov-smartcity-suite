@@ -1,55 +1,56 @@
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-     Copyright (C) <2015>  eGovernments Foundation
- 
-     The updated version of eGov suite of products as by eGovernments Foundation 
-     is available at http://www.egovernments.org
- 
-     This program is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     any later version.
- 
-     This program is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with this program. If not, see http://www.gnu.org/licenses/ or 
-     http://www.gnu.org/licenses/gpl.html .
- 
-     In addition to the terms of the GPL license to be adhered to in using this
-     program, the following additional terms are to be complied with:
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
---> 
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
+
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>  
 <script>
 
 		path="${pageContext.request.contextPath}";
 		
 		var makeAccountsDetailTable = function() {
 		var accountColumns = [ 
-			{key:"functionid",hidden:true, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".function.id","hidden")},
-            {key:"function",label:'Function', formatter:createTextFieldFormatterForFunction(ACCOUNTDETAILSLIST,".function.name")},
 			{key:"glcodeid",hidden:true, formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.id","hidden")},
-			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>', formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.glcode","text")},
-			{key:"accounthead", label:'Account Head <span class="mandatory1">*</span>',formatter:createLongTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.name")},				
+			{key:"accounthead", label:'Account Head <span class="mandatory1">*</span>',formatter:createLongTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.name")},
+			{key:"glcode",label:'Account Code <span class="mandatory1">*</span>', formatter:createTextFieldFormatter(ACCOUNTDETAILSLIST,".glCodeId.glcode","text")},				
 			{key:"amount",label:'Amount <span class="mandatory1">*</span>', formatter:createAmountFieldFormatter(ACCOUNTDETAILSLIST,".amount")}, 
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
@@ -80,10 +81,18 @@
 			
 			        
 		});
+
+		if(jQuery('#isviewmode'))
+		{
+			if(jQuery('#isviewmode').val()==="true")
+			{
+				accountsDetailTable.hideColumn('Add');
+				accountsDetailTable.hideColumn('Delete');
+			}
+		}
+		
 		<s:iterator value="accountDetails" status="stat">
 				accountsDetailTable.addRow({SlNo:accountsDetailTable.getRecordSet().getLength()+1,
-					"functionid":'<s:property value="function.id"/>',
-					"function":'<s:property value="function.name"/>',
 					"glcodeid":'<s:property value="glCodeId.id"/>',
 					"glcode":'<s:property value="glCodeId.glcode"/>',
 					"accounthead":'<s:property value="glCodeId.name"/>',
@@ -91,8 +100,6 @@
 					
 				});
 				var index = '<s:property value="#stat.index"/>';
-				updateGridAccounts('function.id',index,'<s:property value="function.id"/>');
-				updateGridAccounts('function.name',index,'<s:property value="function.name"/>');
 				updateGridAccounts('glCodeId.id',index,'<s:property value="glCodeId.id"/>');
 				updateGridAccounts('glCodeId.glcode',index,'<s:property value="glCodeId.glcode"/>');
 				updateGridAccounts('glCodeId.name',index,'<s:property value="glCodeId.name"/>');
@@ -143,6 +150,15 @@
 				}
 			}        
 		});
+		
+		if(jQuery('#isviewmode'))
+		{
+			if(jQuery('#isviewmode').val()==="true")
+			{
+				subLedgersTable.hideColumn('Add');
+				subLedgersTable.hideColumn('Delete');
+			}
+		}
 		<s:iterator value="subledgerDetails" status="stat">
 				subLedgersTable.addRow({SlNo:subLedgersTable.getRecordSet().getLength()+1,
 					"glcode":'<s:property value=".serviceAccountDetail.glCodeId.glcode"/>',
@@ -237,7 +253,7 @@ var loadDetailType = function(index) {
 		var subledgerid=document.getElementById('subledgerDetails['+index+'].serviceAccountDetail.glCodeId.id');
 		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
 		document.getElementById('subledgerDetails['+index+'].serviceAccountDetail.glCodeId.glcode').value =accountCode;
-		var url = path+'/receipts/ajaxReceiptCreate!getDetailTypeForService.action?accountCode='+accountCode+'&index='+index;
+		var url = path+'/receipts/ajaxReceiptCreate-getDetailTypeForService.action?accountCode='+accountCode+'&index='+index;
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
 };
 var postType = {

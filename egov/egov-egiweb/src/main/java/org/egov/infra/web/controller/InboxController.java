@@ -37,17 +37,10 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.controller;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.infstr.utils.StringUtils.escapeSpecialChars;
-
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.google.gson.GsonBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infra.workflow.entity.State;
@@ -66,7 +59,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.GsonBuilder;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
+import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
 
 @Controller
 @RequestMapping("/inbox")
@@ -133,24 +132,4 @@ public class InboxController {
 
         return "{ \"data\":" + new GsonBuilder().disableHtmlEscaping().create().toJson(inboxHistoryItems) + "}";
     }
-
-    private Comparator<? super StateAware> byCreatedDate() {
-        return (stateAware_1, stateAware_2) -> {
-            int returnVal = 1;
-            if (stateAware_1 == null)
-                returnVal = stateAware_2 == null ? 0 : -1;
-            else if (stateAware_2 == null)
-                returnVal = 1;
-            else {
-                final Date first_date = stateAware_1.getState().getCreatedDate();
-                final Date second_date = stateAware_2.getState().getCreatedDate();
-                if (first_date.after(second_date))
-                    returnVal = -1;
-                else if (first_date.equals(second_date))
-                    returnVal = 0;
-            }
-            return returnVal;
-        };
-    }
-
 }

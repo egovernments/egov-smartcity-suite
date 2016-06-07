@@ -1,51 +1,44 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.adtax.service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingAgencyWiseSearch;
@@ -61,7 +54,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.infstr.utils.StringUtils;
+import org.egov.infra.utils.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +62,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -101,6 +102,9 @@ public class AdvertisementPermitDetailService {
 
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private AdvertisementPermitDetailUpdateIndexService advertisementPermitDetailUpdateIndexService;
 
     @Transactional
     public AdvertisementPermitDetail createAdvertisementPermitDetail(final AdvertisementPermitDetail advertisementPermitDetail,
@@ -118,11 +122,13 @@ public class AdvertisementPermitDetailService {
         if (advertisementPermitDetail.getAdvertisement().getLegacy() && advertisementPermitDetail.getPermissionNumber() == null)
             advertisementPermitDetail.setPermissionNumber(adTaxNumberGenerator.generatePermitNumber());
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
-
+       
         if (approvalPosition != null && approvalPosition > 0 && additionalRule != null
                 && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+        //create or update index
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -136,12 +142,16 @@ public class AdvertisementPermitDetailService {
         roundOfAllTaxAmount(advertisementPermitDetail);
 
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
+        // update index for legacy advertisement
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
     @Transactional
     public AdvertisementPermitDetail updateAdvertisementPermitDetail(
             final AdvertisementPermitDetail advertisementPermitDetail) throws HoardingValidationError {
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
+        //update index on advertisement deactivation
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -186,6 +196,8 @@ public class AdvertisementPermitDetailService {
         if ((approvalPosition != null) && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+        //update index on permit generation
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
 
@@ -234,6 +246,7 @@ public class AdvertisementPermitDetailService {
             hoardingSearchResult.setPermitStatus(result.getStatus().getCode());
             hoardingSearchResult.setPermissionNumber(result.getPermissionNumber());
             hoardingSearchResult.setId(result.getId());
+            hoardingSearchResult.setLegacy(result.getAdvertisement().getLegacy());
             hoardingSearchResult.setCategoryName(result.getAdvertisement().getCategory().getName());
             hoardingSearchResult.setSubCategoryName(result.getAdvertisement().getSubCategory().getDescription());
             hoardingSearchResult.setOwnerDetail(result.getOwnerDetail() != null ? result.getOwnerDetail() : "");
@@ -243,9 +256,8 @@ public class AdvertisementPermitDetailService {
                 if (searchType != null && searchType.equalsIgnoreCase("agency") ) {
                    if(result.getAgency() != null){
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
-                    final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
+                final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
+                        .checkPedingAmountByDemand(result);
                     // TODO: DO CODE CHANGE
                     final HoardingSearch hoardingSearchObj = agencyWiseHoardingList.get(result.getAgency().getName());
                     if (hoardingSearchObj == null) {
@@ -253,6 +265,7 @@ public class AdvertisementPermitDetailService {
                                 .get(AdvertisementTaxConstants.PENALTYAMOUNT));
                         hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                                 .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                        hoardingSearchResult.setTotalAmount(hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount()));
                         hoardingSearchResult.setTotalHoardingInAgency(1);
                         hoardingSearchResult.setHordingIdsSearchedByAgency(result.getId().toString());
                         agencyWiseHoardingList.put(result.getAgency().getName(), hoardingSearchResult);
@@ -262,6 +275,7 @@ public class AdvertisementPermitDetailService {
                                 demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT)));
                         hoardingSearchObj.setPendingDemandAmount(hoardingSearchObj.getPendingDemandAmount().add(
                                 demandWiseFeeDetail.get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT)));
+                        hoardingSearchObj.setTotalAmount(hoardingSearchObj.getPendingDemandAmount().add(hoardingSearchObj.getPenaltyAmount()));
                         hoardingSearchObj.setTotalHoardingInAgency(hoardingSearchObj.getTotalHoardingInAgency() + 1);
 
                         hoardingIds.append(hoardingSearchObj.getHordingIdsSearchedByAgency()).append("~")
@@ -273,11 +287,11 @@ public class AdvertisementPermitDetailService {
                 } else {
 
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
+                            .checkPedingAmountByDemand(result);
                     hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                     hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
+                    hoardingSearchResult.setTotalAmount(hoardingSearchResult.getPendingDemandAmount().add(hoardingSearchResult.getPenaltyAmount()));
                     hoardingSearchResults.add(hoardingSearchResult);
                 }
             }
@@ -320,6 +334,8 @@ public class AdvertisementPermitDetailService {
         if (approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+        //update index on collection
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
     }
 
     public AdvertisementPermitDetail findByApplicationNumber(final String applicationNumber) {
@@ -351,6 +367,8 @@ public class AdvertisementPermitDetailService {
                 && StringUtils.isNotEmpty(workFlowAction))
             adtaxWorkflowCustomDefaultImpl.createCommonWorkflowTransition(advertisementPermitDetail,
                     approvalPosition, approvalComent, additionalRule, workFlowAction);
+        //update index on renewal
+        advertisementPermitDetailUpdateIndexService.updateAdvertisementPermitDetailIndexes(advertisementPermitDetail); 
         return advertisementPermitDetail;
     }
     //TODO : CODE REVIEW PENDING
@@ -415,8 +433,7 @@ public class AdvertisementPermitDetailService {
                 if (searchType != null && searchType.equalsIgnoreCase("agency") && result.getAgency() != null) {
                     // PASS DEMAND OF EACH HOARDING AND GROUP BY AGENCY WISE.
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
+                            .checkPedingAmountByDemand(result);
                     // TODO: DO CODE CHANGE
                     final HoardingSearch hoardingSearchObj = agencyWiseHoardingList.get(result.getAgency().getName());
                     if (hoardingSearchObj == null) {
@@ -443,8 +460,7 @@ public class AdvertisementPermitDetailService {
                 } else {
 
                     final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                            .checkPedingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                    .getPenaltyCalculationDate());
+                            .checkPedingAmountByDemand(result);
                     hoardingSearchResult.setPenaltyAmount(demandWiseFeeDetail.get(AdvertisementTaxConstants.PENALTYAMOUNT));
                     hoardingSearchResult.setPendingDemandAmount(demandWiseFeeDetail
                             .get(AdvertisementTaxConstants.PENDINGDEMANDAMOUNT));
@@ -483,8 +499,7 @@ public class AdvertisementPermitDetailService {
                 BigDecimal totalPending = BigDecimal.ZERO;
                 BigDecimal totalPenalty = BigDecimal.ZERO;
                 final Map<String, BigDecimal> demandWiseFeeDetail = advertisementDemandService
-                        .checkPendingAmountByDemand(result.getAdvertisement().getDemandId(), result.getAdvertisement()
-                                .getPenaltyCalculationDate());
+                        .checkPendingAmountByDemand(result);
                 totalDemandAmount = totalDemandAmount.add(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTAL_DEMAND));
                 totalCollectedAmount = totalCollectedAmount
                         .add(demandWiseFeeDetail.get(AdvertisementTaxConstants.TOTALCOLLECTION));
@@ -527,13 +542,12 @@ public class AdvertisementPermitDetailService {
 
         return agencyWiseFinalHoardingList;
     }
-    public List<AdvertisementPermitDetail> getAdvertisementPermitDetailBySearchParam(final Long id, final Long category,
+    public List<AdvertisementPermitDetail> getAdvertisementPermitDetailBySearchParam(final Long agencyId, final Long category,
             final Long subcategory, final Long zone, final Long ward) {
 
         StringBuilder queryString = new StringBuilder();
         queryString
-                .append(" Select B From Advertisement A , AdvertisementPermitDetail B where B.agency.id=:id  and B.id=A.id and B.isActive=true and A.status="
-                        + AdvertisementStatus.ACTIVE.ordinal() + "");
+                .append(" from AdvertisementPermitDetail B where B.agency.id=:agencyId  and B.isActive=true and B.advertisement.status=:advertismentStatus");
         if (category != null) {
             queryString.append(" and B.advertisement.category.id =:category");
         }
@@ -547,7 +561,9 @@ public class AdvertisementPermitDetailService {
             queryString.append("and B.advertisement.ward.id =:ward");
         }
         Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
-        query.setParameter("id", id);
+        query.setParameter("agencyId", agencyId);
+        
+        query.setParameter("advertismentStatus", AdvertisementStatus.ACTIVE);
         if (category != null) {
             query.setParameter("category", category);
         }
@@ -560,9 +576,7 @@ public class AdvertisementPermitDetailService {
         if (ward != null) {
             query.setParameter("ward", ward);
         }
-        List<AdvertisementPermitDetail> advertisements = query.list();
-        return advertisements;
+        return query.list();
     }
-   
 }
 

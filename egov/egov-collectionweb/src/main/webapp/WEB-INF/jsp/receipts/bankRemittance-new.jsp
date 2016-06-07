@@ -1,42 +1,43 @@
 
-<!-- eGov suite of products aim to improve the internal efficiency,transparency, 
-    accountability and the service delivery of the government  organizations.
- 
-     Copyright (C) <2015>  eGovernments Foundation
- 
-     The updated version of eGov suite of products as by eGovernments Foundation 
-     is available at http://www.egovernments.org
- 
-     This program is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     any later version.
- 
-     This program is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with this program. If not, see http://www.gnu.org/licenses/ or 
-     http://www.gnu.org/licenses/gpl.html .
- 
-     In addition to the terms of the GPL license to be adhered to in using this
-     program, the following additional terms are to be complied with: 
- 
- 	1) All versions of this program, verbatim or modified must carry this 
- 	   Legal Notice.
- 
- 	2) Any misrepresentation of the origin of the material is prohibited. It 
- 	   is required that all modified versions of this material be marked in 
- 	   reasonable ways as different from the original version.
- 
- 	3) This license does not grant any rights to any user of the program 
- 	   with regards to rights under trademark law for use of the trade names 
- 	   or trademarks of eGovernments Foundation.
- 
-   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
--->
+<%--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -44,11 +45,29 @@
 <title><s:text name="bankRemittance.title" /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
+	var isDatepickerOpened=false;
 	jQuery(document).ready(function() {
-
+		jQuery('#remittanceDate').val("");
+		jQuery('#finYearId').prop("disabled", true); 
 		jQuery(" form ").submit(function(event) {
 			doLoadingMask();
 		});
+		var nowTemp = new Date();
+	    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+	    
+	     jQuery( "#remittanceDate" ).datepicker({ 
+	   	 format: 'dd/mm/yyyy',
+	   	 endDate: nowTemp, 
+	   	 autoclose:true,
+	        onRender: function(date) {
+	     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+	     	  }
+		  }).on('changeDate', function(ev) {
+			  var string=jQuery(this).val();
+			  if(!(string.indexOf("_") > -1)){
+				  isDatepickerOpened=false; 
+			  }
+		  }).data('datepicker');
 		doLoadingMask();
 	});
 
@@ -58,7 +77,7 @@
 
 	var newServiceName = "###########";
 	var newFundName = "###########";
-	function handleReceiptSelectionEvent(serviceName, fundName, obj) {
+	function handleReceiptSelectionEvent(obj) {
 
 		isSelected = document.getElementsByName('receiptIds');
 		dom.get("multipleserviceselectionerror").style.display = "none";
@@ -97,36 +116,29 @@
 			}
 		}
 
-		var serviceNameArray = document.getElementsByName('serviceNameArray');
-		for (j = 0; j < serviceNameArray.length; j++) {
-			if (document.getElementsByName('serviceNameArray')[j].value != "") {
-				for (k = 0; k < isSelected.length; k++) {
-					if (isSelected[k].checked == true) {
-						if ((document.getElementsByName('serviceNameArray')[j].value == document
-								.getElementsByName('serviceNameTempArray')[k].value)
-								&& (document.getElementsByName('fundCodeArray')[j].value == document
-										.getElementsByName('fundCodeTempArray')[k].value)
-								&& (document
-										.getElementsByName('departmentCodeArray')[j].value == document
-										.getElementsByName('departmentCodeTempArray')[k].value)) {
-						} else {
-							dom.get("multipleserviceselectionerror").style.display = "block";
-							dom.get("button32").disabled = true;
-							dom.get("button32").className = "button";
+		//TODO: uncomment the validation after go live
+		/* var receiptDateArray=document.getElementsByName('receiptDateArray');
+		for(j=0; j<receiptDateArray.length; j++)
+		{
+			if(document.getElementsByName('receiptDateArray')[j].value!="")
+			{
+				for (k = 0; k < isSelected.length; k++)
+				{
+					if (isSelected[k].checked == true)
+					{
+						if((document.getElementsByName('receiptDateArray')[j].value==document.getElementsByName('receiptDateArray')[k].value)){}
+						else
+						{
+							dom.get("multipleserviceselectionerror").style.display="block";
+							dom.get("button32").disabled=true;
+							dom.get("button32").className="button";
+							window.scroll(0,0);
 							return false;
 						}
 					}
 				}
 			}
-		}
-		if (serviceName != "" && fundName != "" && obj == true) {
-			newServiceName = serviceName;
-			newFundName = fundName;
-		}
-		populatebankBranchMaster({
-			serviceName : newServiceName,
-			fundName : newFundName
-		});
+		} */
 	}
 
 	// Check if at least one receipt is selected
@@ -165,38 +177,46 @@
 		dom.get("selectremittanceerror").style.display = "none";
 		dom.get("approvalSelectionError").style.display = "none";
 
+		<s:if test="showRemittanceDate">
+		if(dom.get("remittanceDate")!=null && dom.get("remittanceDate").value=="")
+			{
+			bootbox.alert("Please Enter Date of Remittance");
+			return false;
+			}
+		</s:if>
 		if (!isChecked(document.getElementsByName('receiptIds'))) {
 			dom.get("selectremittanceerror").style.display = "block";
 			return false;
 		} else {
-			if (dom.get("bankBranchMaster").value == 0) {
-				dom.get("bankselectionerror").style.display = "block";
-				return false;
-			}
-			if (dom.get("accountNumberMaster").value == 0) {
-				dom.get("accountselectionerror").style.display = "block";
-				return false;
-			}
-			/* if (document.getElementById('positionUser') != null
-					&& document.getElementById('positionUser').value == -1) {
-				dom.get("approvalSelectionError").style.display = "block";
-				return false;
-			} */
-
 			doLoadingMask('#loadingMask');
+			jQuery('#finYearId').prop("disabled", false);
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			document.bankRemittanceForm.submit();
 		}
+		
 
 	}
 
 	function onChangeBankAccount(branchId) {
-		populateaccountNumberMaster({
+		populateaccountNumberId({
 			branchId : branchId,
-			serviceName : newServiceName,
-			fundName : newFundName
 		});
 	}
+
+	function searchDataToRemit() {
+		if (dom.get("bankBranchMaster").value!=null && dom.get("bankBranchMaster").value == -1) {
+			dom.get("bankselectionerror").style.display = "block";
+			return false;
+		}
+		if (dom.get("accountNumberId").value!=null && dom.get("accountNumberId").value == -1) {
+			dom.get("bankselectionerror").innerHTML="";
+			dom.get("accountselectionerror").style.display = "block";
+			return false;
+		}
+		jQuery('#finYearId').prop("disabled", false);
+		document.bankRemittanceForm.action = "bankRemittance-listData.action?bankAccountId="+dom.get("accountNumberId").value;
+		document.bankRemittanceForm.submit();
+		}
 
 	function onChangeDeparment(approverDeptId) {
 		var receiptheaderId = '<s:property value="model.id"/>';
@@ -218,6 +238,59 @@
 				designationId : designationId,
 				approverDeptId : approverDeptId
 			});
+		}
+	}
+
+	// Check if at least one receipt is selected
+	function isChecked(chk) {
+		if (chk.length == undefined) {
+	 		if (chk.checked == true) {
+	  			return true;
+	 		} else {
+	 	 		return false;
+	 		}	
+	 	} else {
+	 		for (i = 0; i < chk.length; i++)
+			{
+				if (chk[i].checked == true ) {
+					return true;
+				}
+			}
+			return false;
+	 	}
+	}
+
+
+	//DeSelect all receipts
+	function deSelectAll() {
+		// DeSelect all checkboxes
+		changeSelectionOfAllReceipts(false);
+
+	 	// Set all amounts to zero
+		totalAmount = 0;
+		cashAmount = 0;
+		chequeAmount = 0;
+		ddAmount = 0;
+		cardAmount = 0;
+
+		// Refresh the summary section
+		refreshSummary();
+
+		// Enable/disable buttons
+		enableButtons();
+	}
+
+	// Select all receipts
+	function selectAll() {
+		// Select all checkboxes
+		changeSelectionOfAllReceipts(true);
+	}
+
+	function setCheckboxStatuses(isSelected) {
+		if(isSelected == true) {
+			selectAll();
+		} else {
+			deSelectAll();
 		}
 	}
 </script>
@@ -245,26 +318,77 @@
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
 	<s:form theme="simple" name="bankRemittanceForm">
-		<s:token />
+	<s:push value="model">
+			<s:token />
+		<s:if test="%{hasErrors()}">
+	    <div id="actionErrorMessages" class="errorstyle">
+	      <s:actionerror/>
+	      <s:fielderror/>
+	    </div>
+		</s:if>
+		<s:if test="%{hasActionMessages()}">
+		    <div id="actionMessages" class="messagestyle">
+		    	<s:actionmessage theme="simple"/>
+		    </div>
+		</s:if>
 		<div class="formmainbox">
 			<div class="subheadnew">
 				<s:text name="bankRemittance.title" />
 			</div>
-			<logic:notEmpty name="paramList">
 					<div align="center">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="4%" class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text
+								name="bankremittance.bank" />:</td>
+						<td class="bluebox"><s:select
+								headerValue="--Select--" headerKey="-1"
+								list="dropdownData.bankBranchList" listKey="id"
+								id="bankBranchMaster" listValue="branchname"
+								label="bankBranchMaster" name="branchId"
+								value="%{branchId}"
+								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
+								id="accountNumberIdDropdown" fields="['Text','Value']"
+								dropdownId='accountNumberId'
+								url='receipts/ajaxBankRemittance-accountListOfService.action'
+								selectedValue="%{accountNumberId}" /></td>
+						<td class="bluebox"><s:text
+								name="bankremittance.accountnumber" />:</td>
+						<td class="bluebox"><s:select
+								headerValue="--Select--" headerKey="-1"
+								list="dropdownData.accountNumberList" listKey="id"
+								id="accountNumberId" listValue="accountnumber"
+								label="accountNumberMaster" name="accountNumberId"
+								value="%{accountNumberId}" /></td>
+								</tr>
+						<tr>
+						<td width="4%" class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text
+								name="bankremittance.financialyear" />:</td>
+						<td class="bluebox"><s:select
+								headerKey="-1"
+								list="dropdownData.financialYearList" listKey="id"
+								id="finYearId" listValue="finYearRange"
+								label="finYearRange" name="finYearId" 
+								value="%{finYearId}"
+								 /> 
+								</td>
+						</tr>
+					</table>
+					<div class="buttonbottom">
+							<input name="search" type="button" class="buttonsubmit"
+							id="search" value="Search" onclick="return searchDataToRemit()" />
+					</div>
+					<logic:notEmpty name="paramList">
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
-							export="false" requestURI="" excludedParams="*">
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Submit"
-								style="width:5%;text-align: center">
+							export="false" requestURI="" excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
+							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
+								style="width:5%; text-align: center">
 								<input name="receiptIds" type="checkbox" id="receiptIds"
 									value="${currentRow.id}"
-									onClick="handleReceiptSelectionEvent('${currentRow.SERVICENAME}','${currentRow.FUNDNAME}',this.checked)" />
-								<egov:ajaxdropdown id="bankBranchMasterDropdown"
-									fields="['Text','Value']" dropdownId='bankBranchMaster'
-									url='receipts/ajaxBankRemittance-bankBranchList.action'
-									selectedValue="%{bankbranch.id}" />
+									onClick="handleReceiptSelectionEvent(this.checked)" />
 								<input type="hidden" name="serviceNameTempArray"
 									id="serviceNameTempArray" value="${currentRow.SERVICENAME}" />
 								<input type="hidden" name="fundCodeTempArray"
@@ -344,19 +468,18 @@
 									&nbsp;
 								</div>
 							</display:column>
-
+							<s:if test="showCardAndOnlineColumn">
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd" title="Total Card Collection"
 								style="width:10%;text-align: center">
 								<div align="center">
 									<c:if
-										test="${not empty currentRow.SERVICETOTALCARDPAYMENTAMOUNT}">
+										test="${not empty currentRow.SERVICETOTALCARDPAYMENTAMOUNT && showCardAndOnlineColumn}">
 										<c:out value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
 									</c:if>
 									&nbsp;
 								</div>
 							</display:column>
-
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd" title="Total Online Collection"
 								style="width:10%;text-align: center">
@@ -368,91 +491,26 @@
 									&nbsp;
 								</div>
 							</display:column>
-
+							</s:if>
 						</display:table>
 					</div>
 					<br />
-
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<td width="4%" class="bluebox2">&nbsp;</td>
-						<td width="15%" class="bluebox2"><s:text
-								name="bankremittance.bank" /><span class="mandatory">*</span>:</td>
-						<td width="36%" class="bluebox2"><s:select
-								headerValue="--Select--" headerKey="0"
-								list="dropdownData.bankBranchList" listKey="id"
-								id="bankBranchMaster" listValue="branchname"
-								label="bankBranchMaster" name="bankBranchMaster"
-								value="%{bankbranch.id}"
-								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
-								id="accountNumberMasterDropdown" fields="['Text','Value']"
-								dropdownId='accountNumberMaster'
-								url='receipts/ajaxBankRemittance-accountList.action'
-								selectedValue="%{bankaccount.id}" /></td>
-						<td width="15%" class="bluebox2"><s:text
-								name="bankremittance.accountnumber" /><span class="mandatory">*</span>:</td>
-						<td width="30%" class="bluebox2"><s:select
-								headerValue="--Select--" headerKey="0"
-								list="dropdownData.accountNumberList" listKey="id"
-								id="accountNumberMaster" listValue="accountnumber"
-								label="accountNumberMaster" name="accountNumberMaster"
-								value="%{bankaccount.id}" /></td>
-					</table>
-			<%-- 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<div class="subheadnew">
-								<s:text name="approval.authority.information" />
-							</div>
-						</tr>
-						<tr>
-							<td width="4%" class="bluebox2">&nbsp;</td>
-							<td width="15%" class="bluebox2">Approver Department: <s:if
-									test="%{model.id==null}">
-									<span class="mandatory">*</span>
-								</s:if></td>
-							<td width="20%" class="bluebox2"><s:select headerKey=""
-									headerValue="%{getText('challan.select')}"
-									name="approverDeptId" id="approverDeptId" cssClass="selectwk"
-									list="dropdownData.approverDepartmentList" listKey="id"
-									listValue="name" onChange="onChangeDeparment(this.value)" /> <egov:ajaxdropdown
-									id="designationIdDropdown" fields="['Text','Value']"
-									dropdownId='designationId'
-									url='receipts/ajaxBankRemittance-approverDesignationList.action'
-									selectedValue="%{designationId}" /></td>
-
-
-							<td width="15%" class="bluebox2"><s:text
-									name="challan.approve.designation" />
-								<s:if test="%{model.id==null}">
-									<span class="mandatory">*</span>
-								</s:if></td>
-							<td width="20%" class="bluebox2"><s:select headerKey=""
-									headerValue="--Select--" name="designationId"
-									id="designationId" cssClass="selectwk"
-									list="dropdownData.designationMasterList" listKey="id"
-									listValue="name" onChange="onChangeDesignation(this.value)" />
-								<egov:ajaxdropdown id="positionUserDropdown"
-									fields="['Text','Value']" dropdownId='positionUser'
-									url='receipts/ajaxBankRemittance-positionUserList.action'
-									selectedValue="%{position.id}" /></td>
-							<td width="15%" class="bluebox2"><s:text
-									name="challan.approve.userposition" />
-								<s:if test="%{model.id==null}">
-									<span class="mandatory">*</span>
-								</s:if></td>
-							<td width="20%" class="bluebox2"><s:select
-									headerValue="--Select--" headerKey="-1"
-									list="dropdownData.postionUserList" listKey="position.id"
-									id="positionUser" listValue="position.name"
-									label="positionUser" name="positionUser" value="%{position.id}" />
-							</td>
-						</tr>
-					</table> --%>
 					<div id="loadingMask"
 						style="display: none; overflow: hidden; text-align: center">
-						<img src="/egi/resources/erp2/images/bar_loader.gif" alt=""/> <span
+						<img src="/collection/resources/images/bar_loader.gif" alt=""/> <span
 							style="color: red">Please wait....</span>
 					</div>
-
+					<s:if test="showRemittanceDate">
+					<div align="center">
+					<table>
+					<tr>
+					<td class="bluebox" colspan="7"> &nbsp;</td>
+					<td class="bluebox" ><s:text name="bankremittance.remittancetdate"/><span class="mandatory"/></td>
+					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" readonly="true" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
+					</tr>
+					</table>
+					</div>
+					</s:if>
 					<div align="left" class="mandatorycoll">
 						<s:text name="common.mandatoryfields" />
 					</div>
@@ -463,6 +521,7 @@
 							id="button" value="Close" onclick="window.close()" />
 					</div>
 					</logic:notEmpty>
+					<s:if test="%{isListData}">
 					<logic:empty name="paramList">
 						<div class="formmainbox">
 							<table width="90%" border="0" align="center" cellpadding="0"
@@ -480,9 +539,10 @@
 							<input name="buttonClose" type="button" class="button"
 								id="buttonClose" value="Close" onclick="window.close()" />
 						</div>
-
 					</logic:empty>
+					</s:if>
 		</div>
+		</s:push>
 	</s:form>
 </body>
 </html>

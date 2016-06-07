@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,26 +24,26 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.domain.entity.property;
+
+import org.egov.infra.admin.master.entity.Boundary;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Set;
-
-import org.egov.infra.admin.master.entity.Boundary;
 
 public class PropertyMaterlizeView implements Serializable {
 
@@ -66,15 +66,21 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal sitalArea;
     private BigDecimal toalBuiltUpArea;
     private Integer latestStatus;
-    private BigDecimal aggrCurrDmd;
+    private BigDecimal aggrCurrFirstHalfDmd;
+    private BigDecimal aggrCurrSecondHalfDmd;
     private BigDecimal aggrArrDmd;
-    private BigDecimal aggrCurrColl;
+    private BigDecimal aggrCurrFirstHalfColl;
+    private BigDecimal aggrCurrSecondHalfColl;
     private BigDecimal aggrArrColl;
     private BigDecimal totalDemand;
     private BigDecimal aggrArrearPenaly;
     private BigDecimal aggrArrearPenalyColl;
-    private BigDecimal aggrCurrPenaly;
-    private BigDecimal aggrCurrPenalyColl; 
+    private BigDecimal aggrCurrFirstHalfPenaly;
+    private BigDecimal aggrCurrFirstHalfPenalyColl; 
+    private BigDecimal aggrCurrSecondHalfPenaly;
+    private BigDecimal aggrCurrSecondHalfPenalyColl; 
+    private BigDecimal arrearDemand;
+    private BigDecimal arrearCollection; 
     private String gisRefNo;
     private Set<InstDmdCollMaterializeView> instDmdColl;
     private BigDecimal alv;
@@ -82,7 +88,8 @@ public class PropertyMaterlizeView implements Serializable {
     private Character source;
     private Set<FloorDetailsView> floorDetails;
     private String mobileNumber;
-    private boolean isActive;
+    private Boolean isActive;
+    private Boolean isUnderCourtCase;
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -180,14 +187,6 @@ public class PropertyMaterlizeView implements Serializable {
         this.latestStatus = latestStatus;
     }
 
-    public BigDecimal getAggrCurrDmd() {
-        return aggrCurrDmd;
-    }
-
-    public void setAggrCurrDmd(final BigDecimal aggrCurrDmd) {
-        this.aggrCurrDmd = aggrCurrDmd;
-    }
-
     public PropertyTypeMaster getPropTypeMstrID() {
         return propTypeMstrID;
     }
@@ -202,14 +201,6 @@ public class PropertyMaterlizeView implements Serializable {
 
     public void setAggrArrDmd(final BigDecimal aggrArrDmd) {
         this.aggrArrDmd = aggrArrDmd;
-    }
-
-    public BigDecimal getAggrCurrColl() {
-        return aggrCurrColl;
-    }
-
-    public void setAggrCurrColl(final BigDecimal aggrCurrColl) {
-        this.aggrCurrColl = aggrCurrColl;
     }
 
     public BigDecimal getAggrArrColl() {
@@ -257,8 +248,10 @@ public class PropertyMaterlizeView implements Serializable {
         final StringBuilder objStr = new StringBuilder();
 
         objStr.append("BasicPropertyId: " + getBasicPropertyID()).append("|PropertyId: ").append(getPropertyId())
-        .append("|SitalArea: ").append(getSitalArea()).append("|AggCurrDemand: ").append(getAggrCurrDmd())
-        .append("|AggArrDemand: ").append(getAggrArrDmd()).append("|AggCurrColl: ").append(getAggrCurrColl())
+        .append("|SitalArea: ").append(getSitalArea()).append("|AggCurr1stHalfDemand: ").append(getAggrCurrFirstHalfDmd())
+        .append("|AggCurr2ndHalfDemand: ").append(getAggrCurrSecondHalfDmd())
+        .append("|AggArrDemand: ").append(getAggrArrDmd()).append("|AggCurr1stHalfColl: ").append(getAggrCurrFirstHalfColl())
+        .append("|AggCurr2ndHalfColl: ").append(getAggrCurrSecondHalfColl())
         .append("|AggArrColl: ").append(getAggrArrColl()).append("|TotalDemand: ").append(getTotalDemand());
 
         return objStr.toString();
@@ -336,20 +329,92 @@ public class PropertyMaterlizeView implements Serializable {
         this.aggrArrearPenalyColl = aggrArrearPenalyColl;
     }
 
-    public BigDecimal getAggrCurrPenaly() {
-        return aggrCurrPenaly;
+    public BigDecimal getAggrCurrFirstHalfDmd() {
+        return aggrCurrFirstHalfDmd;
     }
 
-    public void setAggrCurrPenaly(BigDecimal aggrCurrPenaly) {
-        this.aggrCurrPenaly = aggrCurrPenaly;
+    public void setAggrCurrFirstHalfDmd(BigDecimal aggrCurrFirstHalfDmd) {
+        this.aggrCurrFirstHalfDmd = aggrCurrFirstHalfDmd;
     }
 
-    public BigDecimal getAggrCurrPenalyColl() {
-        return aggrCurrPenalyColl;
+    public BigDecimal getAggrCurrSecondHalfDmd() {
+        return aggrCurrSecondHalfDmd;
     }
 
-    public void setAggrCurrPenalyColl(BigDecimal aggrCurrPenalyColl) {
-        this.aggrCurrPenalyColl = aggrCurrPenalyColl;
+    public void setAggrCurrSecondHalfDmd(BigDecimal aggrCurrSecondHalfDmd) {
+        this.aggrCurrSecondHalfDmd = aggrCurrSecondHalfDmd;
+    }
+
+    public BigDecimal getAggrCurrFirstHalfColl() {
+        return aggrCurrFirstHalfColl;
+    }
+
+    public void setAggrCurrFirstHalfColl(BigDecimal aggrCurrFirstHalfColl) {
+        this.aggrCurrFirstHalfColl = aggrCurrFirstHalfColl;
+    }
+
+    public BigDecimal getAggrCurrSecondHalfColl() {
+        return aggrCurrSecondHalfColl;
+    }
+
+    public void setAggrCurrSecondHalfColl(BigDecimal aggrCurrSecondHalfColl) {
+        this.aggrCurrSecondHalfColl = aggrCurrSecondHalfColl;
+    }
+
+    public BigDecimal getAggrCurrFirstHalfPenaly() {
+        return aggrCurrFirstHalfPenaly;
+    }
+
+    public void setAggrCurrFirstHalfPenaly(BigDecimal aggrCurrFirstHalfPenaly) {
+        this.aggrCurrFirstHalfPenaly = aggrCurrFirstHalfPenaly;
+    }
+
+    public BigDecimal getAggrCurrFirstHalfPenalyColl() {
+        return aggrCurrFirstHalfPenalyColl;
+    }
+
+    public void setAggrCurrFirstHalfPenalyColl(BigDecimal aggrCurrFirstHalfPenalyColl) {
+        this.aggrCurrFirstHalfPenalyColl = aggrCurrFirstHalfPenalyColl;
+    }
+
+    public BigDecimal getAggrCurrSecondHalfPenaly() {
+        return aggrCurrSecondHalfPenaly;
+    }
+
+    public void setAggrCurrSecondHalfPenaly(BigDecimal aggrCurrSecondHalfPenaly) {
+        this.aggrCurrSecondHalfPenaly = aggrCurrSecondHalfPenaly;
+    }
+
+    public BigDecimal getAggrCurrSecondHalfPenalyColl() {
+        return aggrCurrSecondHalfPenalyColl;
+    }
+
+    public void setAggrCurrSecondHalfPenalyColl(BigDecimal aggrCurrSecondHalfPenalyColl) {
+        this.aggrCurrSecondHalfPenalyColl = aggrCurrSecondHalfPenalyColl;
+    }
+
+    public BigDecimal getArrearDemand() {
+        return arrearDemand;
+    }
+
+    public void setArrearDemand(BigDecimal arrearDemand) {
+        this.arrearDemand = arrearDemand;
+    }
+
+    public BigDecimal getArrearCollection() {
+        return arrearCollection;
+    }
+
+    public void setArrearCollection(BigDecimal arrearCollection) {
+        this.arrearCollection = arrearCollection;
     }
     
+    public Boolean getIsUnderCourtCase() {
+        return isUnderCourtCase;
+    }
+
+    public void setIsUnderCourtCase(Boolean isUnderCourtCase) {
+        this.isUnderCourtCase = isUnderCourtCase;
+    }
+
 }

@@ -40,8 +40,6 @@
 
 package org.egov.tl.web.controller;
 
-import javax.validation.Valid;
-
 import org.egov.tl.entity.FeeType;
 import org.egov.tl.service.FeeTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +50,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/feeType")
@@ -88,7 +88,7 @@ public class FeeTypeController {
 
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute final FeeType feeType,
-			final BindingResult errors, final Model model) {
+			final BindingResult errors) {
 		if (errors.hasErrors())
 			return FEETYPE_RESULT;
 		feeTypeService.update(feeType);

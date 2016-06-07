@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-	var tableContainer;
+
+var tableContainer;
 	
     $('#toggle-searchcomp').click(function () {
         if ($(this).html() == "More..") {
@@ -146,7 +147,7 @@
 		var currentStatus=tableContainer1.fnGetData(this,4);
 		var CurrentPosition=$('#employeeposition').val();
 		var isgorole= $('#isgorole').val();
-		if((currentStatus == 'COMPLETED' || currentStatus == 'REJECTED'|| currentStatus == 'WITHDRAWN') && CurrentPosition != "0")
+		if(((currentStatus == 'COMPLETED' && isgorole == 'false') || currentStatus == 'REJECTED'|| currentStatus == 'WITHDRAWN') && CurrentPosition != "0")
 			window.open("/pgr/complaint/view/"+crn);
 		else if (currentOwner == CurrentPosition || isgorole == 'true')
 			window.open("/pgr/complaint/update/"+crn);

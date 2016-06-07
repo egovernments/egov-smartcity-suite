@@ -37,13 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.utils;
 
-import java.util.List;
+package org.egov.infra.web.utils;
 
 import org.displaytag.pagination.PaginatedList;
 import org.displaytag.properties.SortOrderEnum;
 import org.egov.infstr.services.Page;
+
+import java.util.List;
 
 /**
  * The Class EgovPaginatedList.

@@ -1,57 +1,61 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.collection.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.OnlinePayment;
+import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
@@ -61,13 +65,14 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -81,16 +86,15 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
@@ -102,24 +106,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 public class CollectionsUtil {
-    private final Map<String, EgwStatus> statusMap = new HashMap<String, EgwStatus>(0);
+    private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
     public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
     private PersistenceService persistenceService;
     @Autowired
     private UserService userService;
-    private CommonsService commonsService;
     @Autowired
     private ModuleService moduleService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private EisCommonService eisCommonService;
-    private EISServeable eisService;
     @Autowired
     private SearchPositionService searchPositionService;
     @Autowired
     private ApplicationContext context;
-    private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
+
+    @Autowired
+    private EISServeable eisService;
+
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -129,42 +134,35 @@ public class CollectionsUtil {
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
-    private EmployeeService employeeService;
+    private InstallmentHibDao installmentHibDao;
     @Autowired
     private DesignationService designationService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     /**
      * Returns the Status object for given status code for a receipt
      *
-     * @param statusCode Status code for which status object is to be returned
+     * @param statusCode
+     *            Status code for which status object is to be returned
      * @return the Status object for given status code for a receipt
      */
     public EgwStatus getReceiptStatusForCode(final String statusCode) {
-        EgwStatus status = statusMap.get(statusCode);
-
-        synchronized (this) {
-            if (status == null) {
-                // Status not yet cached. Get it from DB and cache it
-                status = getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
-
-                if (status != null)
-                    statusMap.put(statusCode, status);
-            }
-        }
-
-        return status;
+        return getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER, statusCode);
     }
-   
 
     /**
-     * This method returns the <code>EgwStatus</code> for the given module type and status code
+     * This method returns the <code>EgwStatus</code> for the given module type
+     * and status code
      *
-     * @param moduleName Module name of the required status
-     * @param statusCode Status code of the required status
+     * @param moduleName
+     *            Module name of the required status
+     * @param statusCode
+     *            Status code of the required status
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
@@ -174,7 +172,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return user name of currently logged in user
      */
     public String getLoggedInUserName() {
@@ -184,7 +183,8 @@ public class CollectionsUtil {
     /**
      * This method returns the User instance associated with the logged in user
      *
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return the logged in user
      */
     public User getLoggedInUser() {
@@ -192,7 +192,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose department is to be returned
+     * @param user
+     *            the user whose department is to be returned
      * @return department of the given user
      */
     public Department getDepartmentOfUser(final User user) {
@@ -200,7 +201,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap map of session variables
+     * @param sessionMap
+     *            map of session variables
      * @return department of currently logged in user
      */
     public Department getDepartmentOfLoggedInUser() {
@@ -209,7 +211,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the User instance for the userName passed as parameter
+     * This method returns the User instance for the userName passed as
+     * parameter
      *
      * @param userName
      * @return User
@@ -219,7 +222,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return Location object for given user
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
@@ -258,7 +262,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @return List of all collection services (service type = B (Billing) or C (Challan)
+     * @return List of all collection services (service type = B (Billing) or C
+     *         (Challan)
      */
     public List getCollectionServiceList() {
         return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_COLLECTION_SERVICS);
@@ -295,10 +300,13 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the collection modes that are not allowed based on rules configured in the script
+     * This method returns the collection modes that are not allowed based on
+     * rules configured in the script
      *
-     * @param loggedInUser a <code>User</code> entity representing the logged in user.
-     * @return a <code>List</code> of <code>String</code> values representing the mode of payments supported.
+     * @param loggedInUser
+     *            a <code>User</code> entity representing the logged in user.
+     * @return a <code>List</code> of <code>String</code> values representing
+     *         the mode of payments supported.
      */
     public List<String> getCollectionModesNotAllowed(final User loggedInUser) {
         final List<String> collectionsModeNotAllowed = new ArrayList<String>(0);
@@ -309,27 +317,26 @@ public class CollectionsUtil {
         for (final AppConfigValues deptCode : deptCodesApp)
             deptCodes.add(deptCode.getValue());
         List<Assignment> assignList = null;
-        Boolean isDeptAllowed=false;
+        Boolean isDeptAllowed = false;
         final Boolean isEmp = isEmployee(loggedInUser);
         if (isEmp) {
-            //dept = getDepartmentOfUser(loggedInUser);
+            // dept = getDepartmentOfUser(loggedInUser);
             assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(loggedInUser.getId());
-            for(Assignment assign: assignList) {
-                if(!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
-                isDeptAllowed = true;
-            }
+            for (final Assignment assign : assignList)
+                if (!deptCodes.isEmpty() && deptCodes.contains(assign.getDepartment().getCode()))
+                    isDeptAllowed = true;
         }
-            
-        if (isEmp && !isDeptAllowed) {
-            final List<ValidationError> validationErrors = new ArrayList<ValidationError>(0);
-            validationErrors.add(new ValidationError("Department", "billreceipt.counter.deptcode.null"));
-        } else if (!isEmp || isDeptAllowed) {
+
+        if (isEmp && !isDeptAllowed)
+            throw new ValidationException(Arrays.asList(new ValidationError("Department",
+                    "billreceipt.counter.deptcode.null")));
+        else if (!isEmp || isDeptAllowed)
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
-        } else {
+        // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+        else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+            // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         }
         return collectionsModeNotAllowed;
     }
@@ -390,7 +397,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param sessionMap Map of session variables
+     * @param sessionMap
+     *            Map of session variables
      * @return Position of logged in user
      */
     public Position getPositionOfUser(final User user) {
@@ -400,7 +408,8 @@ public class CollectionsUtil {
     /**
      * Gets position by given position name
      *
-     * @param positionName Position name
+     * @param positionName
+     *            Position name
      * @return Position object for given position name
      */
     public Position getPositionByName(final String positionName) {
@@ -410,8 +419,11 @@ public class CollectionsUtil {
     /**
      * This method retrieves the <code>CFinancialYear</code> for the given date.
      *
-     * @param date an instance of <code>Date</code> for which the financial year is to be retrieved.
-     * @return an instance of <code></code> representing the financial year for the given date
+     * @param date
+     *            an instance of <code>Date</code> for which the financial year
+     *            is to be retrieved.
+     * @return an instance of <code></code> representing the financial year for
+     *         the given date
      */
     public CFinancialYear getFinancialYearforDate(final Date date) {
         return (CFinancialYear) persistenceService
@@ -425,8 +437,11 @@ public class CollectionsUtil {
     /**
      * This method checks if the given challan is valid.
      *
-     * @param challan the <code>Challan</code> instance whose validity has to be checked
-     * @return a boolean value - true indicating that the challan is valid and false indicating that teh challan is not valid
+     * @param challan
+     *            the <code>Challan</code> instance whose validity has to be
+     *            checked
+     * @return a boolean value - true indicating that the challan is valid and
+     *         false indicating that teh challan is not valid
      */
     public boolean checkChallanValidity(final Challan challan) {
         final Calendar current = Calendar.getInstance();
@@ -460,7 +475,8 @@ public class CollectionsUtil {
     /**
      * Fetches given bean from application context
      *
-     * @param beanName name of bean to be fetched
+     * @param beanName
+     *            name of bean to be fetched
      * @return given bean from application context
      */
     public Object getBean(final String beanName) {
@@ -478,11 +494,15 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the currently active config value for the given module name and key
+     * This method returns the currently active config value for the given
+     * module name and key
      *
-     * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
-     * @param defaultValue Default value to be returned in case the key is not defined
+     * @param moduleName
+     *            a <code>String<code> representing the module name
+     * @param key
+     *            a <code>String</code> representing the key
+     * @param defaultValue
+     *            Default value to be returned in case the key is not defined
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key, final String defaultValue) {
@@ -493,8 +513,10 @@ public class CollectionsUtil {
     /**
      * This method returns the config value for the given module name and key
      *
-     * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
+     * @param moduleName
+     *            a <code>String<code> representing the module name
+     * @param key
+     *            a <code>String</code> representing the key
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key) {
@@ -507,11 +529,15 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method returns the list of config values for the given module name and key
+     * This method returns the list of config values for the given module name
+     * and key
      *
-     * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
-     * @return <code>List<AppConfigValues></code> representing the list of configuration values
+     * @param moduleName
+     *            a <code>String<code> representing the module name
+     * @param key
+     *            a <code>String</code> representing the key
+     * @return <code>List<AppConfigValues></code> representing the list of
+     *         configuration values
      */
     public List<AppConfigValues> getAppConfigValues(final String moduleName, final String key) {
         return appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, key);
@@ -520,7 +546,8 @@ public class CollectionsUtil {
     /**
      * Gets position by given position id
      *
-     * @param positionId Position Id
+     * @param positionId
+     *            Position Id
      * @return Position object for given position id
      */
     public Position getPositionById(final Long positionId) {
@@ -528,10 +555,11 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method is invoked from the ReceiptHeader.workFlow script and returns the position for the employee id passed as
-     * parameter
+     * This method is invoked from the ReceiptHeader.workFlow script and returns
+     * the position for the employee id passed as parameter
      *
-     * @param employeeId PersonalInformation Id
+     * @param employeeId
+     *            PersonalInformation Id
      * @return Position object for Employee Id passed as parameter
      */
 
@@ -540,13 +568,18 @@ public class CollectionsUtil {
     }
 
     /**
-     * This method is invoked from the ReceiptHeader.workFlow script and returns Employee object for the given Department Id,
-     * Designation Id ,Boundary Id and FunctionaryId
+     * This method is invoked from the ReceiptHeader.workFlow script and returns
+     * Employee object for the given Department Id, Designation Id ,Boundary Id
+     * and FunctionaryId
      *
-     * @param deptId Department Id
-     * @param designationId Designation Id
-     * @param boundaryId Boundary Id
-     * @param functionaryId Functionary Id
+     * @param deptId
+     *            Department Id
+     * @param designationId
+     *            Designation Id
+     * @param boundaryId
+     *            Boundary Id
+     * @param functionaryId
+     *            Functionary Id
      * @return PersonalInformation
      */
 
@@ -574,7 +607,8 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose non-primary department list is to be returned
+     * @param user
+     *            the user whose non-primary department list is to be returned
      * @return list of non-primary department of the given user
      */
     public List<Department> getAllNonPrimaryAssignmentsOfUser(final User user) {
@@ -597,9 +631,10 @@ public class CollectionsUtil {
     }
 
     /**
-     * @param user the user whose non-primary department is to be returned
-     * @return non-primary department of the given user. In case user has multiple non-primary departments, the first one will be
-     * returned.
+     * @param user
+     *            the user whose non-primary department is to be returned
+     * @return non-primary department of the given user. In case user has
+     *         multiple non-primary departments, the first one will be returned.
      */
     public Department getNonPrimaryDeptOfUser(final User user) {
         final List<Department> nonPrimaryAssignments = getAllNonPrimaryAssignmentsOfUser(user);
@@ -639,62 +674,17 @@ public class CollectionsUtil {
         return departments;
     }
 
-    public List<Department> getDepartmentsAllowedForBankRemittanceApproval(final User loggedInUser) {
-        List<Department> departments;
-        Department department;
-        final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
-        if (contraJournalVoucherObj.getVoucherHeaderId() == null)
-            department = getDepartmentOfUser(loggedInUser);
-        else
-            department = contraJournalVoucherObj.getVoucherHeaderId().getVouchermis().getDepartmentid();
-        if (department.getCode().equals('R')) {
-            if (contraJournalVoucherObj.getVoucherHeaderId() == null)
-                departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", 'R');
-            else
-                departments = persistenceService.findAllBy("select dept from Department dept where dept.code=?", "CAF");
-        } else
-            departments = persistenceService.findAllBy("select dept from Department dept order by dept.name ");
-
-        return departments;
-    }
-
-    public List<Designation> getDesignationsAllowedForBankRemittanceApproval(final Long departmentId) {
-        Department department;
-        List<Designation> designations;
-        final ContraJournalVoucher contraJournalVoucherObj = new ContraJournalVoucher();
-        department = (Department) persistenceService.find("select dept from Department dept where dept.id=?",
-                departmentId);
-        if (contraJournalVoucherObj.getVoucherHeaderId() == null) {
-            if (department.getCode().equals('R'))
-                designations = persistenceService
-                .findAllBy(
-                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=? and upper(dm.name)=?",
-                        departmentId, "REVENUE INSPECTOR");
-            else
-                designations = persistenceService
-                .findAllBy(
-                        "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                        departmentId);
-        } else if (department.getCode().equals("CAF"))
-            designations = persistenceService
-            .findAllBy(
-                    "select distinct(dm) from Designation dm,Assignment a where a.designation,id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.code=? and upper(dm.name)=?",
-                    "CAF", "SENIOR GRADE CLERK");
-        else
-            designations = persistenceService
-            .findAllBy(
-                    "select distinct(dm) from Designation dm,Assignment a where a.designation.id=dm.id and (a.toDate >= current_timestamp or a.toDate is null) and a.department.id=?",
-                    departmentId);
-        return designations;
-    }
-
     /**
-     * This method checks if the given glcode belongs to an account head representing an arrear account head (for Property Tax).
-     * The glcodes for such accounts are retrieved from App Config.
+     * This method checks if the given glcode belongs to an account head
+     * representing an arrear account head (for Property Tax). The glcodes for
+     * such accounts are retrieved from App Config.
      *
-     * @param glcode The Chart of Accounts Code
-     * @param description Description of the glcode
-     * @returna a <code>Boolean</code> indicating if the glcode is arrear account head
+     * @param glcode
+     *            The Chart of Accounts Code
+     * @param description
+     *            Description of the glcode
+     * @returna a <code>Boolean</code> indicating if the glcode is arrear
+     *          account head
      */
     public boolean isPropertyTaxArrearAccountHead(final String glcode, final String description) {
         final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -705,7 +695,7 @@ public class CollectionsUtil {
         LOGGER.debug("isPropertyTaxArrearAccountHead glcode " + glcode + " description " + description);
         if (penaltyGlCode != null && penaltyGlCode.getValue().equals(glcode)) {
             final Module module = moduleService.getModuleByName(CollectionConstants.MODULE_NAME_PROPERTYTAX);
-            final String currInst = commonsService.getInsatllmentByModuleForGivenDate(module, new Date())
+            final String currInst = installmentHibDao.getInsatllmentByModuleForGivenDate(module, new Date())
                     .getDescription();
             if (currInst.equals(description.substring(16, description.length())))
                 retValue = false;
@@ -767,10 +757,6 @@ public class CollectionsUtil {
         this.userService = userService;
     }
 
-    public void setCommonsService(final CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
@@ -779,26 +765,30 @@ public class CollectionsUtil {
         ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final ServiceDetails billingService = receiptHeader.getService();
 
-        String instrumentType="";
-        if(!receiptHeader.getReceiptInstrument().isEmpty())
+        String instrumentType = "";
+        if (!receiptHeader.getReceiptInstrument().isEmpty())
             instrumentType = receiptHeader.getReceiptInstrument().iterator().next().getInstrumentType().getType();
-        final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(receiptHeader.getReceiptdate(),
-                receiptHeader.getReceiptnumber(), billingService.getName(), instrumentType , receiptHeader.getTotalAmount(),
-                receiptHeader.getSource(),
-                receiptHeader.getStatus().getDescription()
-                );
+        final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(
+                receiptHeader.getReceiptdate(), receiptHeader.getReceiptnumber(), billingService.getName(),
+                instrumentType, receiptHeader.getTotalAmount(), receiptHeader.getSource(), receiptHeader.getStatus()
+                .getDescription());
 
-        collectionIndexBuilder.consumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "");
-        collectionIndexBuilder.billNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : "");
-        collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader.getOnlinePayment()
-                .getService().getName() : "");
-        collectionIndexBuilder.payeeName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
+        collectionIndexBuilder.consumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode()
+                : "");
+        collectionIndexBuilder.billNumber(receiptHeader.getReferencenumber() != null ? receiptHeader
+                .getReferencenumber() : "");
+        collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader
+                .getOnlinePayment().getService().getName() : "");
+        collectionIndexBuilder.consumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
+        collectionIndexBuilder.receiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy()
+                .getName() : "");
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService.getCode()
-                    + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+            final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
+                    .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
-                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO));
+                receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader,
+                        chartOfAccountsHibernateDAO, persistenceService, null));
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
@@ -813,6 +803,7 @@ public class CollectionsUtil {
         collectionIndexBuilder.arrearCess(receiptAmountInfo.getArrearCess());
         collectionIndexBuilder.latePaymentChargesAmount(receiptAmountInfo.getLatePaymentCharges());
         collectionIndexBuilder.currentCess(receiptAmountInfo.getCurrentCess());
+        collectionIndexBuilder.reductionAmount(receiptAmountInfo.getReductionAmount());
         if (receiptAmountInfo.getInstallmentFrom() != null)
             collectionIndexBuilder.installmentFrom(receiptAmountInfo.getInstallmentFrom());
         if (receiptAmountInfo.getInstallmentTo() != null)
@@ -825,20 +816,67 @@ public class CollectionsUtil {
         Boolean createVoucherForBillingService = Boolean.FALSE;
         if (receiptHeader.getService().getVoucherCutOffDate() != null
                 && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
-            if (receiptHeader.getService().getVoucherCreation()!= null)
+            if (receiptHeader.getService().getVoucherCreation() != null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         } else if (receiptHeader.getService().getVoucherCutOffDate() == null)
-            if (receiptHeader.getService().getVoucherCreation()!= null)
+            if (receiptHeader.getService().getVoucherCreation() != null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         return createVoucherForBillingService;
     }
-    
-    public String getApproverName(Position position) {
+
+    public String getApproverName(final Position position) {
         String approver;
         final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(position.getId());
         approver = assignment.getEmployee().getName().concat("~").concat(assignment.getEmployee().getCode())
                 .concat("~").concat(assignment.getPosition().getName());
         return approver;
+    }
+
+    public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
+            final List<ReceiptDetail> receiptDetailList) {
+        final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
+                .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
+        return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
+                receiptHeader.getTotalAmount(), receiptDetailList);
+    }
+
+    public Date getRemittanceVoucherDate(final Date receiptDate) {
+        Boolean useReceiptDateAsContraVoucherDate = false;
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date voucherDate = null;
+        Date rcptDate = null;
+        if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA).equals(CollectionConstants.YES))
+            useReceiptDateAsContraVoucherDate = true;
+
+        try {
+            Date finDate = null;
+            if (receiptDate!=null) {
+                rcptDate = receiptDate;
+                finDate = financialYearDAO.getFinancialYearByDate(rcptDate).getStartingDate();
+            }
+            if (finDate != null && finDate.toString().equals(financialYearDAO.getCurrYearStartDate())) {
+                if (useReceiptDateAsContraVoucherDate)
+                    voucherDate = rcptDate;
+                else
+                    voucherDate = sdf.parse(sdf.format(new Date()));
+            } else
+                voucherDate = financialYearDAO.getPreviousFinancialYearByDate(new Date()).getEndingDate();
+        } catch (final ParseException e) {
+
+            LOGGER.debug("Exception in parsing date  " + rcptDate + " - " + e.getMessage());
+            throw new ApplicationRuntimeException("Exception while parsing date", e);
+        }
+        return voucherDate;
+    }
+
+    public Boolean getVoucherType() {
+        Boolean voucherTypeForChequeDDCard = false;
+        if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
+                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+            voucherTypeForChequeDDCard = true;
+        return voucherTypeForChequeDDCard;
     }
 
 }

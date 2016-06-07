@@ -1,46 +1,45 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.wtms.application.service.collection;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -53,9 +52,10 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
@@ -66,6 +66,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,12 +80,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterConnectionBillable extends AbstractBillable implements Billable {
 
-    private static final String STRING_DEPARTMENT_CODE = "REV";
-    private static final String STRING_SERVICE_CODE = "WT";
-    private static final String EST_STRING_SERVICE_CODE = "WES";
-    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
-    public static final String DEFAULT_FUND_SRC_CODE = "01";
-    public static final String DEFAULT_FUND_CODE = "01";
     private static final String DISPLAY_MESSAGE = "Water Charge Collection";
     private WaterConnectionDetails WaterConnectionDetails;
     private AssessmentDetails assessmentDetails;
@@ -97,8 +92,6 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
     @Autowired
-    private UserService userService;
-    @Autowired
     private EgBillDao egBillDAO;
     @Autowired
     private EgDemandDao egDemandDAO;
@@ -106,7 +99,13 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Autowired
     private ModuleService moduleService;
     @Autowired
-    private ConnectionDemandService connectioDemanService;
+    private ConnectionDemandService connectionDemandService;
+    
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     
     @Override
     public String getBillPayee() {
@@ -122,29 +121,20 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public EgDemand getCurrentDemand() {
-        return getWaterConnectionDetails().getDemand();
+        return waterTaxUtils.getCurrentDemand(getWaterConnectionDetails()).getDemand();
     }
 
     @Override
     public List<EgDemand> getAllDemands() {
-        List<EgDemand> demands = null;
-       final Long demandIds = getCurrentDemand().getId();
-        if (demandIds != null ) {
-            demands = new ArrayList<EgDemand>();
-            
-                demands.add(egDemandDAO.findById(Long.valueOf(demandIds.toString()), false));
-        }
+        List<EgDemand> demands = waterTaxUtils.getAllDemand(getWaterConnectionDetails());
         return demands;
     }
 
     @Override
     public EgBillType getBillType() {
         if (billType == null)
-            if (getUserId() != null && !getUserId().equals("")) {
-                final String loginUser = userService.getUserById(getUserId()).getName();
-                if (!loginUser.equals(WaterTaxConstants.CITIZENUSER))
-                    billType = egBillDAO.getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL);
-            }
+            billType = egBillDAO.getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO);
+           
         return billType;
     }
 
@@ -165,22 +155,30 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getDepartmentCode() {
-        return STRING_DEPARTMENT_CODE;
+    	 final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DEPTCODEGENBILL).get(0);
+        return (appConfigValue!=null?appConfigValue.getValue().trim():null);
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
+    	final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNCTIONARYCODEGENBILL).get(0);
+        return new BigDecimal((appConfigValue!=null?appConfigValue.getValue():"0"));
     }
 
     @Override
     public String getFundCode() {
-        return DEFAULT_FUND_CODE;
+         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNDCODEGENBILL).get(0);
+        return (appConfigValue!=null?appConfigValue.getValue():null);
     }
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUND_SRC_CODE;
+    	 final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNDSOURCEGENBILL).get(0);
+        return (appConfigValue!=null?appConfigValue.getValue():null);
     }
 
     @Override
@@ -216,15 +214,19 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public String getServiceCode() {
         if (getWaterConnectionDetails().getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
-            return EST_STRING_SERVICE_CODE;
+        	return appConfigValuesService.getConfigValuesByModuleAndKey(
+                     WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ESTSERVICECODEGENBILL).get(0).getValue();
+           
         else
-        return STRING_SERVICE_CODE;
+        return  appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SERVEICECODEGENBILL).get(0).getValue();
+       
     }
 
     @Override
     public BigDecimal getTotalAmount() {
         final EgDemand currentDemand = getCurrentDemand();
-        final List instVsAmt = connectioDemanService.getDmdCollAmtInstallmentWise(currentDemand);
+        final List instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
         BigDecimal balance = BigDecimal.ZERO;
         for (final Object object : instVsAmt) {
             final Object[] ddObject = (Object[]) object;
@@ -271,12 +273,18 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Boolean isCallbackForApportion() {
-        return isCallbackForApportion;
+        if(getWaterConnectionDetails().getConnectionStatus() !=null && getWaterConnectionDetails().getConnectionStatus().equals(ConnectionStatus.ACTIVE)) 
+        {
+          return isCallbackForApportion=Boolean.TRUE;
+        }else
+        {
+            return isCallbackForApportion=Boolean.FALSE; 
+        }
     }
 
     @Override
     public void setCallbackForApportion(final Boolean b) {
-        isCallbackForApportion = b;
+       this.isCallbackForApportion=b;
     }
 
     public WaterConnectionDetails getWaterConnectionDetails() {

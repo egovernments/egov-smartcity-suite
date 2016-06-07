@@ -40,34 +40,20 @@
 
 package org.egov.tl.repository;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.License;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.List;
+
 public class FeeMatrixDetailRepositoryImpl implements FeeMatrixDetailRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Override
-    public List<FeeMatrixDetail> findFeeList(final License license) {
-        final CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<FeeMatrixDetail> createQuery = builder.createQuery(FeeMatrixDetail.class);
-        createQuery.from(FeeMatrixDetail.class);
-
-        // TODO Auto-generated method st
-        return null;
-    }
 
     @Override
     public FeeMatrixDetail findFeeDetailList(final FeeMatrix feeMatrix, final Integer uom, final Date appdate,

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,29 +24,29 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.ptis.web.controller.transactions.editOwner;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,43 +59,58 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 @RequestMapping(value = "/editowner/{assessmentNo}")
 public class EditOwnerDetailsController {
 
     protected static final String OWNERDETAILS_FROM = "ownerdetails-form";
+    protected static final String OWNERDETAILS_SUCCESS = "ownerdetails-success";
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-    
+
     @Autowired
-    private PropertyPersistenceService basicPropertyService; 
-   
+    private PropertyPersistenceService basicPropertyService;
+
     @ModelAttribute
     public Property propertyModel(@PathVariable final String assessmentNo) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         PropertyImpl property = null;
         if (null != basicProperty) {
             property = (PropertyImpl) basicProperty.getProperty();
-            basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
         }
-        
         return property;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String newForm(final Model model, @PathVariable String assessmentNo) {
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         model.addAttribute("guardianRelationMap", PropertyTaxConstants.GUARDIAN_RELATION);
         model.addAttribute("gender", Gender.values());
+        for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
+            for (Address address : ownerInfo.getOwner().getAddress()) {
+                model.addAttribute("doorNumber", address.getHouseNoBldgApt());
+                model.addAttribute("pinCode", address.getPinCode());
+            }
+        }
         return OWNERDETAILS_FROM;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String updateOwnerDetails(@ModelAttribute final Property property, final RedirectAttributes redirectAttrs,final BindingResult errors,
-            final Model model, final HttpServletRequest request,@RequestParam String doorNumber) {
-        
-        basicPropertyService.updateOwners(property, property.getBasicProperty(), doorNumber);
-        return OWNERDETAILS_FROM;
+    public String updateOwnerDetails(@ModelAttribute final Property property, final RedirectAttributes redirectAttrs,
+            final BindingResult errors, final Model model, final HttpServletRequest request,
+            @RequestParam String doorNumber) {
+        model.addAttribute("doorNumber",doorNumber);
+        model.addAttribute("guardianRelationMap", PropertyTaxConstants.GUARDIAN_RELATION);
+       String errMsg = basicPropertyService.updateOwners(property, property.getBasicProperty(), doorNumber, errors);
+        if (!errMsg.isEmpty()) {
+            model.addAttribute("errorMsg", errMsg);
+                    
+            return OWNERDETAILS_FROM;
+        } else
+            return OWNERDETAILS_SUCCESS;
     }
 
 }

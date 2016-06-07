@@ -37,22 +37,22 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.admin.master.service;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -69,7 +69,7 @@ public class CityService {
     private HashOperations<String, String, Object> cityPrefCache;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<Object, Object> redisTemplate;
     
     @Autowired
     public CityService(final CityRepository cityRepository) {
@@ -105,7 +105,7 @@ public class CityService {
     public Map<String, Object> cityDataAsMap() {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs.isEmpty()) {
-            cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(EgovThreadLocals.getDomainName()).toMap());
+            cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(ApplicationThreadLocals.getDomainName()).toMap());
             cityPrefs =  cityPrefCache.entries(cityPrefCacheKey());
         }
         return cityPrefs;
@@ -120,7 +120,7 @@ public class CityService {
     }
 
     public String cityPrefCacheKey() {
-        return String.format(CITY_PREFS_CK, EgovThreadLocals.getDomainName());
+        return String.format(CITY_PREFS_CK, ApplicationThreadLocals.getDomainName());
     }
     
     public Object cityDataForKey(final String key) {

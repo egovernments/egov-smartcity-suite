@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.messaging.email;
 
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -46,7 +47,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-class EmailService {
+public class EmailService {
 
     @Autowired
     private JavaMailSenderImpl mailSender;

@@ -71,30 +71,39 @@ $(document).ready(function(){
 	});
 	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
 	
+	
 	$("#deactivation").click(function(e){
+		if(!validateDate()){
+			document.getElementById("deactiveDate").value="";
+			document.getElementById("deactiveDate").focus(); 
+			return false;
+		}
 		var pendingTax= $('#ptax').html();
+		var id=document.getElementById("id").value;
+
 		if($('#statusdeactivateform').valid()){
 			if(parseInt(pendingTax)>0)
 			{
 				bootbox.confirm("You Have a Pending Tax Of Rupees "+pendingTax+". Do You Want To Continue Deactivation?", function(result){
 					if(result)
 						{
-							$('#statusdeactivateform').attr('method','get');
-							$('#statusdeactivateform').attr('action','/adtax/deactivate/deactive');
+							var action = '/adtax/deactivate/deactive/' + id;
+							$('#statusdeactivateform').attr('method','post');
+							$('#statusdeactivateform').attr('action',action);
 							document.forms[0].submit();
 						}
 				});
 			}else
 				{
-					$('#statusdeactivateform').attr('method','get');
-					$('#statusdeactivateform').attr('action','/adtax/deactivate/deactive');
+					var action = '/adtax/deactivate/deactive/' + id;
+					$('#statusdeactivateform').attr('method','post');
+					$('#statusdeactivateform').attr('action',action);
 					document.forms[0].submit();
 				}
 		}else{
 			e.preventDefault();
+			
 		}
-		
-		
 	});
 	
 });	
@@ -128,7 +137,7 @@ $('#searchrecord').click(function(e){
 						  { 
 							  "data" : "id",
 							  "render" : function(data, type, row, meta) {
-									return '<button class="btn btn-primary" onclick="window.open(\'/adtax/deactivate/result/'+ data +'\', \'\', \'width=800, height=600 , scrollbars=yes\');"> Change Status </button>';
+									return '<button class="btn btn-primary" onclick="window.open(\'/adtax/deactivate/result/'+ data +'\', \'\', \'width=800, height=600 , scrollbars=yes\');"> Deactivate </button>';
 							   },
 							   "title": "Actions"
 						  }
@@ -141,11 +150,6 @@ $('#searchrecord').click(function(e){
 
 	});
 
-	$(document).on('click','.statuscheck' ,function(){
-		var applicationNumber=oTable.fnGetdata($(this).parent().parent(),1);
-		var url = '/adtax/deactivate/result/'+ applicationNumber;
-	});
-	
 	$('#zoneList').change(function(){
 		$.ajax({
 			type: "GET",
@@ -199,8 +203,16 @@ $('#searchrecord').click(function(e){
 		});
 	});
 	
-	
-	
-
-	
+	function validateDate(){
+		var application_date = document.getElementById("applicationDate").value;
+		var deactivation_date = document.getElementById("deactiveDate").value;
+		var a = compareDate(application_date, deactivation_date);
+		if(a==-1){
+			bootbox.alert(" The deactivation date should come after the application date : "+ document.getElementById("applicationDate").value);
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
 	

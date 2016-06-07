@@ -37,38 +37,24 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.config.persistence.event.integrator;
 
 import org.egov.infra.config.persistence.event.listener.HibernateEventListener;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.boot.Metadata;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.event.internal.DefaultSaveOrUpdateEventListener;
 import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.integrator.spi.Integrator;
-import org.hibernate.metamodel.source.MetadataImplementor;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 
 public class HibernateEventListenerIntegrator implements Integrator {
 
     @Override
-    public void integrate(final Configuration configuration, final SessionFactoryImplementor sessionFactory,
+    public void disintegrate(final SessionFactoryImplementor sessionFactory,
             final SessionFactoryServiceRegistry serviceRegistry) {
-        registerCustomFilters(serviceRegistry);
-
-    }
-
-    @Override
-    public void integrate(final MetadataImplementor metadata, final SessionFactoryImplementor sessionFactory,
-            final SessionFactoryServiceRegistry serviceRegistry) {
-        registerCustomFilters(serviceRegistry);
-
-    }
-
-    @Override
-    public void disintegrate(final SessionFactoryImplementor sessionFactory, final SessionFactoryServiceRegistry serviceRegistry) {
         // Disintegration code have to be added.
-
     }
 
     private void registerCustomFilters(final SessionFactoryServiceRegistry serviceRegistry) {
@@ -79,6 +65,13 @@ public class HibernateEventListenerIntegrator implements Integrator {
         eventListenerRegistry.setListeners(EventType.UPDATE, hibernateEventListener, dfltSaveorUpdateListner);
         eventListenerRegistry.setListeners(EventType.SAVE_UPDATE, hibernateEventListener, dfltSaveorUpdateListner);
         eventListenerRegistry.prependListeners(EventType.PRE_UPDATE, hibernateEventListener);
+    }
+
+    @Override
+    public void integrate(final Metadata metadata, final SessionFactoryImplementor sessionFactory,
+            final SessionFactoryServiceRegistry serviceRegistry) {
+        registerCustomFilters(serviceRegistry);
+
     }
 
 }

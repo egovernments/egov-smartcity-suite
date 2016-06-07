@@ -37,15 +37,16 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.service.masters;
 
-import java.util.List;
+package org.egov.tl.service.masters;
 
 import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.repository.UnitOfMeasurementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,27 +60,14 @@ public class UnitOfMeasurementService{
         return  unitOfMeasurementRepository.save(unitOfMeasurement);
     }
 
-    /**
-     * @Description returns unitofmeasurement object that matches param name
-     * @param name
-     * @return
-     */
     public UnitOfMeasurement findUOMByName(final String name) {
         return  unitOfMeasurementRepository.findByNameIgnoreCase(name);
     }
 
-    /**
-     * @Description returns unitofmeasurement object that matches param code
-     * @param code
-     * @return
-     */
     public UnitOfMeasurement findUOMByCode(final String code) {
         return  unitOfMeasurementRepository.findByCodeIgnoreCase(code);
     }
 
-    /**
-     * @return list of active UOM's
-     */
     public List<UnitOfMeasurement> findAllActiveUOM() {
         return unitOfMeasurementRepository.findAllByActiveTrue();
     }

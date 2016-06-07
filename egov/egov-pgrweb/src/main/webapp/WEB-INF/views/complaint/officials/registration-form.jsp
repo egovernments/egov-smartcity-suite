@@ -37,10 +37,12 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/map-autocomplete.css' context='/egi'/>">
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
@@ -161,17 +163,17 @@
 						<div class="col-sm-6 col-xs-12">
 							<div id="file1block" class="add-margin col-sm-4 col-xs-4">
 								<img id="preview1" src="#" alt="" class="display-hide "/>
-								<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="remove-img preview-cross1 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 								<div class="add-padding" id="filename1"></div>
 							</div>
 							<div id="file2block" class="add-margin display-hide col-sm-4 col-xs-4">
 								<img id="preview2" src="#" alt="" class="display-hide"/>
-								<div class="remove-img preview-cross2 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="remove-img preview-cross2 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 								<div class="add-padding" id="filename2"></div>
 							</div>
 							<div id="file3block" class="add-margin display-hide col-sm-4 col-xs-4">
 								<img id="preview3" src="#" alt="" class="display-hide"/>
-								<div class="remove-img preview-cross3 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+								<div class="remove-img preview-cross3 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 								<div class="add-padding" id="filename3"></div>
 							</div>
 						</div>
@@ -182,7 +184,7 @@
 						<div class="col-sm-6">
 							<div class="input-group">
 								<input id="location" type="text" value="${crossHierarchyLocation}" class="form-control low-width" placeholder='<spring:message code="lbl.placeholder.grievance.loc"/>' autocomplete="off" required="required"/>
-								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="entypo-globe specific"></i></span>
+								<span class="input-group-addon map-class btn-secondary" title="See on map" onclick="jQuery('#modal-6').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker specific"></i></span>
 								<form:hidden path="location" id="locationid"/>
 								<form:hidden path="crossHierarchyId" id="crosshierarchyId"/>
 				   				<form:hidden path="lat" id="lat"/>
@@ -227,9 +229,10 @@
 						
 							<!-- panel body -->
 							<div class="panel-body no-padding">
-								<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+								<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
 								<script type="text/javascript" src="<c:url value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
 								<div id="normal" class="img-prop"></div>
+								<input id="pac-input" class="controls" type="text" placeholder="Enter a location">
 							</div>
 						</div>
 					</div>

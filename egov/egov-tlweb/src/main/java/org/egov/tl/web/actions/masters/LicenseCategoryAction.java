@@ -40,10 +40,6 @@
 
 package org.egov.tl.web.actions.masters;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -58,15 +54,16 @@ import org.egov.tl.service.masters.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 @ParentPackage("egov")
 @Results({ @Result(name = LicenseCategoryAction.NEW, location = "licenseCategory-new.jsp"),
 	@Result(name = LicenseCategoryAction.SEARCH, location = "licenseCategory-search.jsp"),
 	@Result(name = LicenseCategoryAction.EDIT, location = "licenseCategory-edit.jsp") })
 public class LicenseCategoryAction extends BaseFormAction {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 6242612156153747913L;
 	private LicenseCategory licenseCategory = new LicenseCategory();
 	private Long id;
@@ -79,29 +76,21 @@ public class LicenseCategoryAction extends BaseFormAction {
 	private LicenseCategoryService licenseCategoryService;
 
 	private static final Logger LOGGER = Logger.getLogger(LicenseCategoryAction.class); 
-
-	// UI field
 	private String userMode;
 
 	@Override
 	public Object getModel() {
-		// TODO Auto-generated method stub
 		return licenseCategory;
 	}
 
 	@Override
 	public void prepare() {
-		// IN Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
 			setLicenseCategoryMap(getFormattedCategoryMap(licenseCategoryService.findAll()));
 		if (getId() != null)
 			licenseCategory = licenseCategoryService.findById(getId());
 	}
 
-	/**
-	 * @param licenseCategoryList
-	 * @return
-	 */
 	public static Map<Long, String> getFormattedCategoryMap(final List<LicenseCategory> licenseCategoryList) {
 		final Map<Long, String> categoryMap = new TreeMap<Long, String>();
 		for (final LicenseCategory licenseCategory : licenseCategoryList)
@@ -110,11 +99,6 @@ public class LicenseCategoryAction extends BaseFormAction {
 		return categoryMap;
 	}
 
-	/**
-	 * This method is invoked to create a new form.
-	 *
-	 * @return a <code>String</code> representing the value 'NEW'
-	 */
 	@Action(value = "/masters/licenseCategory-newform")
 	public String newform() {
 		if (userMode != null && !userMode.isEmpty()) {
@@ -128,11 +112,6 @@ public class LicenseCategoryAction extends BaseFormAction {
 		return NEW;
 	}
 
-	/**
-	 * This method is invoked to Edit a form.
-	 *
-	 * @return a <code>String</code> representing the value 'SEARCH'
-	 */
 	@Action(value = "/masters/licenseCategory-edit")
 	public String edit() {
 		if (userMode.equalsIgnoreCase(EDIT))
@@ -142,11 +121,6 @@ public class LicenseCategoryAction extends BaseFormAction {
 		return SEARCH;
 	}
 
-	/**
-	 * @return
-	 * @throws NumberFormatException
-	 * @throws ApplicationException
-	 */
 	@ValidationErrorPage(value = EDIT)
 	@Action(value = "/masters/licenseCategory-save")
 	public String save() throws NumberFormatException, ApplicationException {

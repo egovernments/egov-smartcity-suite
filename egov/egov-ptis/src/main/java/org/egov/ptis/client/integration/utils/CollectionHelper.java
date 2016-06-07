@@ -1,42 +1,42 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
- * 
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.ptis.client.integration.utils;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_COLLECTION_SERVICE_CODE;
@@ -69,10 +69,7 @@ import org.egov.dcb.bean.Payment;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.service.collection.PropertyTaxCollection;
-import org.hibernate.FlushMode;
 
 /**
  * Performs collections operations: (1) Fetch the details of a given receipt;
@@ -80,237 +77,241 @@ import org.hibernate.FlushMode;
  * existing payment ref no.
  */
 public class CollectionHelper {
-	private static final Logger LOG = Logger.getLogger(CollectionHelper.class);
-	private EgBill bill;
-	
-	/**
-	 * Use this constructor when you're only interested in getting the details
-	 * of a receipt.
-	 */
-	public CollectionHelper() {
-	}
+    private static final Logger LOG = Logger.getLogger(CollectionHelper.class);
+    private EgBill bill;
 
-	/**
-	 * Use this constructor when you're doing a collection.
-	 * 
-	 * @param bill
-	 */
-	public CollectionHelper(EgBill bill) {
-		this.bill = bill;
-	}
+    /**
+     * Use this constructor when you're only interested in getting the details
+     * of a receipt.
+     */
+    public CollectionHelper() {
+    }
 
-	/**
-	 * Executes a collection.
-	 * 
-	 * @param payment
-	 * @return
-	 */
-	public BillReceiptInfo executeCollection(Payment payment, String source) {
-		if (!isCollectionPermitted()) {
-			throw new ApplicationRuntimeException(
-					"Collection is not allowed - current balance is zero and advance coll exists.");
-		}
+    /**
+     * Use this constructor when you're doing a collection.
+     * 
+     * @param bill
+     */
+    public CollectionHelper(EgBill bill) {
+        this.bill = bill;
+    }
 
-		List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
+    /**
+     * Executes a collection.
+     * 
+     * @param payment
+     * @return
+     */
+    public BillReceiptInfo executeCollection(Payment payment, String source) {
+        if (!isCollectionPermitted()) {
+            throw new ApplicationRuntimeException(
+                    "Collection is not allowed - current balance is zero and advance coll exists.");
+        }
 
-		LOG.debug("CollectionHelper.executeCollection(): collection is from the field...");
-		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F, source);
+        List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
 
-		return SpringBeanUtil.getCollectionIntegrationService().createReceipt(billInfo, paymentInfoList);
-	}
+        LOG.debug("CollectionHelper.executeCollection(): collection is from the field...");
+        BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.F, source);
 
-	public BillReceiptInfo generateMiscReceipt(Payment payment) {
-		if (!isCollectionPermitted()) {
-			throw new ApplicationRuntimeException(
-					"Collection is not allowed - Fully paid or excess Paid.");
-		}
-		List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
-		BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.C, null);
-		return SpringBeanUtil.getCollectionIntegrationService().createMiscellaneousReceipt(billInfo, paymentInfoList);
-	}
-	
-	/**
-	 * Fetches the details of a given receipt number.
-	 * 
-	 * @param receiptNumber
-	 * @return
-	 */
-	public BillReceiptInfo getReceiptInfo(String receiptNumber) {
-		preventSessionSaveOrUpdate();
-		return SpringBeanUtil.getCollectionIntegrationService().getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, receiptNumber);
-	}
+        return SpringBeanUtil.getCollectionIntegrationService().createReceipt(billInfo, paymentInfoList);
+    }
 
-	private List<PaymentInfo> preparePaymentInfo(Payment payment) {
-		List<PaymentInfo> paymentInfoList = new ArrayList<PaymentInfo>();
-		PaymentInfo paymentInfo = null;
-		if (payment != null) {
+    public BillReceiptInfo generateMiscReceipt(Payment payment) {
+        if (!isCollectionPermitted()) {
+            throw new ApplicationRuntimeException("Collection is not allowed - Fully paid or excess Paid.");
+        }
+        List<PaymentInfo> paymentInfoList = preparePaymentInfo(payment);
+        BillInfoImpl billInfo = prepareBillInfo(payment.getAmount(), COLLECTIONTYPE.C, null);
+        return SpringBeanUtil.getCollectionIntegrationService().createMiscellaneousReceipt(billInfo, paymentInfoList);
+    }
 
-			if (payment instanceof ChequePayment) {
-				ChequePayment chequePayment = (ChequePayment) payment;
-				paymentInfo = new PaymentInfoChequeDD(chequePayment.getBankId(), chequePayment.getBranchName(),
-						chequePayment.getInstrumentDate(), chequePayment.getInstrumentNumber(), TYPE.cheque,
-						payment.getAmount());
+    /**
+     * Fetches the details of a given receipt number.
+     * 
+     * @param receiptNumber
+     * @return
+     */
+    public BillReceiptInfo getReceiptInfo(String receiptNumber) {
+        return SpringBeanUtil.getCollectionIntegrationService().getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE,
+                receiptNumber);
+    }
 
-			} else if (payment instanceof DDPayment) {
-				DDPayment chequePayment = (DDPayment) payment;
-				paymentInfo = new PaymentInfoChequeDD(chequePayment.getBankId(), chequePayment.getBranchName(),
-						chequePayment.getInstrumentDate(), chequePayment.getInstrumentNumber(), TYPE.dd,
-						payment.getAmount());
+    private List<PaymentInfo> preparePaymentInfo(Payment payment) {
+        List<PaymentInfo> paymentInfoList = new ArrayList<PaymentInfo>();
+        PaymentInfo paymentInfo = null;
+        if (payment != null) {
 
-			} else if (payment instanceof CreditCardPayment) {
-				paymentInfo = prepareCardPaymentInfo((CreditCardPayment) payment, new PaymentInfoCard());
+            if (payment instanceof ChequePayment) {
+                ChequePayment chequePayment = (ChequePayment) payment;
+                paymentInfo = new PaymentInfoChequeDD(chequePayment.getBankId(), chequePayment.getBranchName(),
+                        chequePayment.getInstrumentDate(), chequePayment.getInstrumentNumber(), TYPE.cheque,
+                        payment.getAmount());
 
-			} else if (payment instanceof CashPayment) {
-				paymentInfo = new PaymentInfoCash(payment.getAmount());
-			}
-		}
-		paymentInfoList.add(paymentInfo);
-		return paymentInfoList;
-	}
+            } else if (payment instanceof DDPayment) {
+                DDPayment chequePayment = (DDPayment) payment;
+                paymentInfo = new PaymentInfoChequeDD(chequePayment.getBankId(), chequePayment.getBranchName(),
+                        chequePayment.getInstrumentDate(), chequePayment.getInstrumentNumber(), TYPE.dd,
+                        payment.getAmount());
 
-	/**
-	 * Apportions the paid amount amongst the appropriate GL codes and returns
-	 * the collections object that can be sent to the collections API for
-	 * processing.
-	 * 
-	 * @param bill
-	 * @param amountPaid
-	 * @return
-	 */
-	private BillInfoImpl prepareBillInfo(BigDecimal amountPaid, COLLECTIONTYPE collType, String source) {
-		BillInfoImpl billInfoImpl = initialiseFromBill(amountPaid, collType);
+            } else if (payment instanceof CreditCardPayment) {
+                paymentInfo = prepareCardPaymentInfo((CreditCardPayment) payment, new PaymentInfoCard());
 
-		ArrayList<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>();
-		List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(bill.getEgBillDetails());
-		Collections.sort(billDetails);
+            } else if (payment instanceof CashPayment) {
+                paymentInfo = new PaymentInfoCash(payment.getAmount());
+            }
+        }
+        paymentInfoList.add(paymentInfo);
+        return paymentInfoList;
+    }
 
-		for (EgBillDetails billDet : billDetails) {
-			receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
-					billDet.getCrAmount(), billDet.getDrAmount(), billDet.getDescription()));
-		}
+    /**
+     * Apportions the paid amount amongst the appropriate GL codes and returns
+     * the collections object that can be sent to the collections API for
+     * processing.
+     * 
+     * @param bill
+     * @param amountPaid
+     * @return
+     */
+    private BillInfoImpl prepareBillInfo(BigDecimal amountPaid, COLLECTIONTYPE collType, String source) {
+        BillInfoImpl billInfoImpl = initialiseFromBill(amountPaid, collType);
 
-		new PropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid, receiptDetails);
+        ArrayList<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>();
+        List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(bill.getEgBillDetails());
+        Collections.sort(billDetails);
 
-		for (EgBillDetails billDet : bill.getEgBillDetails()) {
-			for (ReceiptDetail rd : receiptDetails) {
-				//FIX ME
-				if ((billDet.getGlcode().equals(rd.getAccounthead().getGlcode()))
-						&& (billDet.getDescription().equals(rd.getDescription()))) {
-					BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
-							billDet.getOrderNo(), rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(),
-							billDet.getDescription(),null /*billDet.getAdditionalFlag()*/);
-					billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
-					break;
-				}
-			}
-		}
-		billInfoImpl.setTransactionReferenceNumber(bill.getTransanctionReferenceNumber());
-		billInfoImpl.setSource(source != null ? source : "");
-		return billInfoImpl;
-	}
+        for (EgBillDetails billDet : billDetails) {
+            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
+                    BigDecimal.ZERO, // billDet.getCrAmount(),
+                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
+                    billDet.getDescription()));
+        }
 
-	/**
-	 * Populates a BillInfo object from the bill -- the GL codes, descripion and
-	 * dr/cr amounts.
-	 * 
-	 * @param bill
-	 * @return
-	 */
-	private BillInfoImpl initialiseFromBill(BigDecimal amountPaid, COLLECTIONTYPE collType) {
-		BillInfoImpl billInfoImpl = null;
-		BillPayeeDetails billPayeeDet = null;
-		List<BillPayeeDetails> billPayeeDetList = new ArrayList<BillPayeeDetails>();
-		List<String> collModesList = new ArrayList<String>();
-		String[] collModes = bill.getCollModesNotAllowed().split(",");
-		for (String coll : collModes) {
-			collModesList.add(coll);
-		}
-		billInfoImpl = new BillInfoImpl(bill.getServiceCode(), bill.getFundCode(), bill.getFunctionaryCode(),
-				bill.getFundSourceCode(), bill.getDepartmentCode(), "Property Tax collection", bill.getCitizenName(),
-				bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList, collType);
-		billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress());
+        SpringBeanUtil.getPropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid,
+                receiptDetails);
 
-		BillDetails billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(),
-				bill.getConsumerId(), bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(),
-				amountPaid, // the actual amount paid, which might include
-							// advances
-				bill.getMinAmtPayable());
-		billPayeeDet.addBillDetails(billDetails);
-		billPayeeDetList.add(billPayeeDet);
-		billInfoImpl.setPayees(billPayeeDetList);
-		return billInfoImpl;
-	}
-
-	private ReceiptDetail initReceiptDetail(String glCode, BigDecimal crAmount, BigDecimal crAmountToBePaid,
-			BigDecimal drAmount, String description) {
-		ReceiptDetail receiptDetail = new ReceiptDetail();
-		CChartOfAccounts accountHead = new CChartOfAccounts();
-		accountHead.setGlcode(glCode);
-		receiptDetail.setAccounthead(accountHead);
-		receiptDetail.setDescription(description);
-		receiptDetail.setCramount(crAmount);
-		receiptDetail.setCramountToBePaid(crAmountToBePaid);
-		receiptDetail.setDramount(drAmount);
-		return receiptDetail;
-	}
-
-	private PaymentInfoCard prepareCardPaymentInfo(CreditCardPayment cardPayment, PaymentInfoCard paymentInfoCard) {
-		paymentInfoCard.setInstrumentNumber(cardPayment.getCreditCardNo());
-		paymentInfoCard.setInstrumentAmount(cardPayment.getAmount());
-		paymentInfoCard.setExpMonth(cardPayment.getExpMonth());
-		paymentInfoCard.setExpYear(cardPayment.getExpYear());
-		paymentInfoCard.setCvvNumber(cardPayment.getCvv());
-		paymentInfoCard.setCardTypeValue(cardPayment.getCardType());
-		paymentInfoCard.setTransactionNumber(cardPayment.getTransactionNumber());
-		return paymentInfoCard;
-	}
-
-	private boolean isCollectionPermitted() {
-		boolean allowed = thereIsBalanceToBePaid();
-		LOG.debug("isCollectionPermitted() returned: " + allowed);
-		return allowed;
-	}
-
-        private boolean thereIsBalanceToBePaid() {
-            boolean result = false;
-            BigDecimal balance = BigDecimal.ZERO;
-            for (EgBillDetails bd : bill.getEgBillDetails()) {
-                balance = balance.add(bd.balance());
-                if(balance.compareTo(BigDecimal.ZERO)>0){
-                    result = true;
+        boolean isActualDemand = false;
+        for (EgBillDetails billDet : bill.getEgBillDetails()) {
+            for (ReceiptDetail rd : receiptDetails) {
+                // FIX ME
+                if ((billDet.getGlcode().equals(rd.getAccounthead().getGlcode()))
+                        && (billDet.getDescription().equals(rd.getDescription()))) {
+                	isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
+                    BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
+                            billDet.getOrderNo(), rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(),
+                            billDet.getDescription(), isActualDemand /*
+                                                            * billDet.
+                                                            * getAdditionalFlag
+                                                            * ()
+                                                            */);
+                    billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
                     break;
                 }
             }
-            return result;
         }
+        billInfoImpl.setTransactionReferenceNumber(bill.getTransanctionReferenceNumber());
+        billInfoImpl.setSource(source != null ? source : "");
+        return billInfoImpl;
+    }
 
-	private boolean thereIsCurrentBalanceToBePaid() {
-		boolean result = false;
-		BigDecimal currentBal = BigDecimal.ZERO;
-		for (Map.Entry<String, String> entry : PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX.entrySet()) {
-			currentBal = currentBal.add(bill.balanceForGLCode(entry.getValue()));
-		}
-		if (currentBal != null && currentBal.compareTo(BigDecimal.ZERO) > 0) {
-			result = true;
-		}
-		return result;
-	}
+    /**
+     * Populates a BillInfo object from the bill -- the GL codes, descripion and
+     * dr/cr amounts.
+     * 
+     * @param bill
+     * @return
+     */
+    private BillInfoImpl initialiseFromBill(BigDecimal amountPaid, COLLECTIONTYPE collType) {
+        BillInfoImpl billInfoImpl = null;
+        BillPayeeDetails billPayeeDet = null;
+        List<BillPayeeDetails> billPayeeDetList = new ArrayList<BillPayeeDetails>();
+        List<String> collModesList = new ArrayList<String>();
+        String[] collModes = bill.getCollModesNotAllowed().split(",");
+        for (String coll : collModes) {
+            collModesList.add(coll);
+        }
+        billInfoImpl = new BillInfoImpl(bill.getServiceCode(), bill.getFundCode(), bill.getFunctionaryCode(),
+                bill.getFundSourceCode(), bill.getDepartmentCode(), "Property Tax collection", bill.getCitizenName(),
+                bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList, collType);
+        billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress());
 
-	/**
-	 * Hibernate was firing a saveOrUpdate() for some reason, which was then
-	 * bombing because the userID was not there in EgovThreadlocals. Making the
-	 * flush mode MANUAL prevents hibernate from doing this.
-	 */
-	private void preventSessionSaveOrUpdate() {
-		HibernateUtil.getCurrentSession().setFlushMode(FlushMode.MANUAL);
-	}
+        BillDetails billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(), bill.getConsumerId(),
+                bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(), amountPaid, // the
+                                                                                                             // actual
+                                                                                                             // amount
+                                                                                                             // paid,
+                                                                                                             // which
+                                                                                                             // might
+                                                                                                             // include
+                                                                                                             // advances
+                bill.getMinAmtPayable());
+        billPayeeDet.addBillDetails(billDetails);
+        billPayeeDetList.add(billPayeeDet);
+        billInfoImpl.setPayees(billPayeeDetList);
+        return billInfoImpl;
+    }
 
-	EgBill getBill() {
-		return bill;
-	}
+    private ReceiptDetail initReceiptDetail(String glCode, BigDecimal crAmount, BigDecimal crAmountToBePaid,
+            BigDecimal drAmount, String description) {
+        ReceiptDetail receiptDetail = new ReceiptDetail();
+        CChartOfAccounts accountHead = new CChartOfAccounts();
+        accountHead.setGlcode(glCode);
+        receiptDetail.setAccounthead(accountHead);
+        receiptDetail.setDescription(description);
+        receiptDetail.setCramount(crAmount);
+        receiptDetail.setCramountToBePaid(crAmountToBePaid);
+        receiptDetail.setDramount(drAmount);
+        return receiptDetail;
+    }
 
-	void setBill(EgBill bill) {
-		this.bill = bill;
-	}
+    private PaymentInfoCard prepareCardPaymentInfo(CreditCardPayment cardPayment, PaymentInfoCard paymentInfoCard) {
+        paymentInfoCard.setInstrumentNumber(cardPayment.getCreditCardNo());
+        paymentInfoCard.setInstrumentAmount(cardPayment.getAmount());
+        paymentInfoCard.setExpMonth(cardPayment.getExpMonth());
+        paymentInfoCard.setExpYear(cardPayment.getExpYear());
+        paymentInfoCard.setCvvNumber(cardPayment.getCvv());
+        paymentInfoCard.setCardTypeValue(cardPayment.getCardType());
+        paymentInfoCard.setTransactionNumber(cardPayment.getTransactionNumber());
+        return paymentInfoCard;
+    }
+
+    private boolean isCollectionPermitted() {
+        boolean allowed = thereIsBalanceToBePaid();
+        LOG.debug("isCollectionPermitted() returned: " + allowed);
+        return allowed;
+    }
+
+    private boolean thereIsBalanceToBePaid() {
+        boolean result = false;
+        BigDecimal balance = BigDecimal.ZERO;
+        for (EgBillDetails bd : bill.getEgBillDetails()) {
+            balance = balance.add(bd.balance());
+            if (balance.compareTo(BigDecimal.ZERO) > 0) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private boolean thereIsCurrentBalanceToBePaid() {
+        boolean result = false;
+        BigDecimal currentBal = BigDecimal.ZERO;
+        for (Map.Entry<String, String> entry : PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX.entrySet()) {
+            currentBal = currentBal.add(bill.balanceForGLCode(entry.getValue()));
+        }
+        if (currentBal != null && currentBal.compareTo(BigDecimal.ZERO) > 0) {
+            result = true;
+        }
+        return result;
+    }
+
+    EgBill getBill() {
+        return bill;
+    }
+
+    void setBill(EgBill bill) {
+        this.bill = bill;
+    }
 
 }

@@ -1,64 +1,52 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation 
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-	1) All versions of this program, verbatim or modified must carry this 
-	   Legal Notice.
-
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
-	   reasonable ways as different from the original version.
-
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
-	   or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.pims.service;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.service.CommonsService;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -67,10 +55,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infra.exception.TooManyValuesException;
+import org.egov.commons.exception.NoSuchObjectException;
+import org.egov.commons.exception.TooManyValuesException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.AssignmentDAO;
@@ -87,16 +74,24 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * @author deepak TODO To change the template for this generated type comment go
- *         to Window - Preferences - Java - Code Style - Code Templates
- */
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeServiceOld {
 
@@ -109,8 +104,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     private static final Logger logger = Logger.getLogger(EmployeeServiceImpl.class);
     private EisUtilService eisService;
     private PersistenceService persistenceService;
-    private CommonsService commonsService;
-    private SessionFactory sessionFactory;
     private PersonalInformationDAO personalInformationDAO;
     private AssignmentDAO assignmentDAO;
     private AppConfigValueService appConfigValuesService;
@@ -119,7 +112,16 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     private EntityManager entityManager;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+
+    @Autowired
+    private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
+
+    @Autowired
+    private GenericMasterDAO genericMasterDAO;
     
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -139,7 +141,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public List searchEmployee(Integer departmentId, Integer designationId, String code, String name, String searchAll)
             throws Exception {
 
-        // session = HibernateUtil.getCurrentSession();
         List<EmployeeView> employeeList = null;
         try {
 
@@ -199,12 +200,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
@@ -214,7 +213,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public List searchEmployee(Integer departmentId, Integer designationId, String code, String name, Integer status)
             throws Exception {
 
-        // session = HibernateUtil.getCurrentSession();
         List<EmployeeView> employeeList = null;
         try {
 
@@ -281,12 +279,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
@@ -298,7 +294,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      */
     public List searchEmployee(Integer departmentId, Integer designationId, Integer functionaryId, String code,
             String name, Integer status) throws Exception {
-        // session = HibernateUtil.getCurrentSession();
         List<EmployeeView> employeeList = null;
         try {
 
@@ -372,12 +367,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
@@ -398,7 +391,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public List<EmployeeView> searchEmployee(Integer designationId, String code, String name, Integer status,
             Integer empType, Map<String, Integer> finParams) throws Exception {
 
-        // session = HibernateUtil.getCurrentSession();
         List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
         Integer departmentId = finParams.get("departmentId") == null ? 0 : finParams.get("departmentId");
         Integer functionaryId = finParams.get("functionaryId") == null ? 0 : finParams.get("functionaryId");
@@ -409,13 +401,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             Query qry = null;
             if (code != null && !code.equals("")) {
                 logger.info(" Search by Code " + code);
-                /*
-                 * eisService = new EisUtilService(); persistenceService = new
-                 * PersistenceService();
-                 * eisService.setPersistenceService(persistenceService);
-                 * persistenceService.setSessionFactory(new SessionFactory());
-                 * persistenceService.setType(EmployeeServiceImpl.class);
-                 */
+               
                 List<EmployeeView> list = persistenceService.findAllBy(
                         " from EmployeeView ev where upper(ev.employeeCode) like ? ", code);
                 Iterator itr = list.iterator();
@@ -429,8 +415,8 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
                     emp = getEmloyeeById(ev.getId().intValue());
                     break;
                 }
-                if (emp != null)
-                    ass = emp.getAssignment(date); // Returns current/latest
+                /*if (emp != null)
+                    ass = emp.getAssignment(date,persistenceService);*/ // Returns current/latest
                                                    // primary/temp assignment as
                                                    // on current date
                 Iterator itr1 = list.iterator();
@@ -512,12 +498,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
@@ -528,7 +512,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * public List searchEmployeeForNominees(Integer departmentId,Integer
      * designationId,Integer functionaryId,String code,String name,Integer
      * status,Integer empType)throws Exception { //session =
-     * HibernateUtil.getCurrentSession(); List<EmployeeView> employeeList =
      * null; try { String mainStr =
      * "select distinct ev from EmployeeView ev,EmployeeNomineeMaster enm where ev.id=enm.employeeId.id and "
      * ; if(code!=null&&!code.equals("")) { mainStr
@@ -565,9 +548,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * qry.setInteger("employeeStatus", status); } if(empType.intValue() != 0) {
      * qry.setInteger("employeeType",empType); } employeeList =
      * (List)qry.list(); } catch (HibernateException he) { LOGGER.error(he);
-     * //HibernateUtil.rollbackTransaction(); throw new
      * ApplicationRuntimeException("Exception:" + he.getMessage(),he); } catch
-     * (Exception he) { LOGGER.error(he); //HibernateUtil.rollbackTransaction();
      * throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
      * return employeeList; }
      */
@@ -590,7 +571,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public List searchEmployee(Integer departmentId, Integer designationId, Integer functionaryId, String code,
             String name, Integer status, Integer empType) throws Exception {
 
-        // session = HibernateUtil.getCurrentSession();
         List<EmployeeView> employeeList = null;
         try {
 
@@ -652,12 +632,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
@@ -665,7 +643,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     }
 
     public List<EmployeeView> searchEmployeeByGrouping(LinkedList<String> groupingByOrder) throws Exception {
-        // session = HibernateUtil.getCurrentSession();
         List<EmployeeView> employeeList = null;
         try {
             String mainStr = "from EmployeeView ev where ";
@@ -716,7 +693,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     }
 
     public List searchEmployee(Integer empId) throws Exception {
-        // session = HibernateUtil.getCurrentSession();
         ArrayList<SearchEmpDTO> dataElCol = new ArrayList<SearchEmpDTO>();
         List employeeList = null;
 
@@ -738,12 +714,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
 
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
@@ -794,13 +768,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
 
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
     public Assignment getAssignmentByEmpAndDate(Date date, Integer empId) {
-        // session = HibernateUtil.getCurrentSession();
         Assignment assignment = null;
         try {
 
@@ -819,11 +791,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
@@ -836,7 +806,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         try {
             String mainStr = "";
             mainStr = " select ev.assignment from EmployeeView ev where ev.assignment.isPrimary = 'Y' and ev.id = :empId and ((ev.toDate is null and ev.fromDate <= :sysDate ) OR (ev.fromDate <= :sysDate AND ev.toDate >= :sysDate))";
-            Query qry = sessionFactory.getCurrentSession().createQuery(mainStr);
+            Query qry = getCurrentSession().createQuery(mainStr);
 
             if (empId != null) {
                 qry.setInteger("empId", empId);
@@ -849,11 +819,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
@@ -863,7 +831,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * public List getListByAppNoAndMeMoNo(String applicationNumber ,String
      * chargeMemoNo,Integer empId) { List<DisciplinaryPunishment> list = new
      * ArrayList<DisciplinaryPunishment>(); //session =
-     * HibernateUtil.getCurrentSession(); try { String mainStr = ""; mainStr =
      * "select dp.disciplinaryPunishmentId  from DisciplinaryPunishment dp,PersonalInformation pi  where  dp.employeeId = pi.idPersonalInformation and dp.employeeId = :empId "
      * ; if(chargeMemoNo!=null&&!chargeMemoNo.equals("")) mainStr
      * +=" and upper(trim(dp.chargeMemoNo)) = :chargeMemoNo ";
@@ -879,9 +846,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * for(Iterator iter = qry.list().iterator();iter.hasNext();) { desigId =
      * (Integer)iter.next(); list.add(getDisciplinaryPunishmentById(desigId)); }
      * } } catch (HibernateException he) { LOGGER.error(he);
-     * //HibernateUtil.rollbackTransaction(); throw new
      * ApplicationRuntimeException("Exception:" + he.getMessage(),he); } catch
-     * (Exception he) { LOGGER.error(he); //HibernateUtil.rollbackTransaction();
      * throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
      * return list; }
      */
@@ -894,7 +859,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * SimpleDateFormat("dd-MMM-yyyy",Locale.getDefault()); String finId = null;
      * java.util.Date stFyDate=null; Date myGivenDate = givenDate; //String
      * finId = EisManagersUtill.getCommonsManager().getCurrYearFiscalId();
-     * //session = HibernateUtil.getCurrentSession(); try {
      * if(EisManagersUtill.getEmpLeaveService().isLeaveCalendarBased()) {
      * if(myGivenDate==null) { myGivenDate = new Date(); finId
      * =smt.format(myGivenDate); } else { finId =smt.format(myGivenDate); }
@@ -918,9 +882,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * [])iter.next();
      * addListEmployeeHistory(empId,objArray,list,myGivenDate,stFyDate); } } }
      * catch (HibernateException he) { LOGGER.error(he);
-     * //HibernateUtil.rollbackTransaction(); throw new
      * ApplicationRuntimeException("Exception:" + he.getMessage(),he); } catch
-     * (Exception he) { LOGGER.error(he); //HibernateUtil.rollbackTransaction();
      * throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
      * return list; }
      */
@@ -930,7 +892,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * givenDate,CFinancialYear financialYear) { List<SearchEmpDTO> list = new
      * ArrayList<SearchEmpDTO>(); //String finId =
      * EisManagersUtill.getCommonsManager().getCurrYearFiscalId(); //session =
-     * HibernateUtil.getCurrentSession(); try { // CFinancialYear financialYear
      * = EisManagersUtill.getCommonsManager().findFinancialYearById(new
      * Long(finId)); java.util.Date stFyDate = financialYear.getStartingDate();
      * String mainStr =
@@ -944,9 +905,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * [])iter.next();
      * addListEmployeeHistory(empId,objArray,list,givenDate,stFyDate); } } }
      * catch (HibernateException he) { LOGGER.error(he);
-     * //HibernateUtil.rollbackTransaction(); throw new
      * ApplicationRuntimeException("Exception:" + he.getMessage(),he); } catch
-     * (Exception he) { LOGGER.error(he); //HibernateUtil.rollbackTransaction();
      * throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
      * return list; }
      */
@@ -967,13 +926,11 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * SearchEmpDTO(desig,Integer.
      * valueOf(0),"","",Integer.valueOf(empId),fromdesDate,todesDate)); } } }
      * catch (Exception e) { // TODO Auto-generated catch block LOGGER.error(e);
-     * //HibernateUtil.rollbackTransaction(); throw new
      * ApplicationRuntimeException("Exception:" + e.getMessage(),e); } }
      */
 
     public PersonalInformation getEmployeeforPosition(Position pos) {
         User uerImpl = null;
-        // session = HibernateUtil.getCurrentSession();
         PersonalInformation personalInformation = new PersonalInformation();
         try {
 
@@ -993,11 +950,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return personalInformation;
@@ -1006,7 +961,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     public Position getPositionforEmp(Integer empId) {
         Position position = null;
-        // session = HibernateUtil.getCurrentSession();
         List list = null;
         try {
 
@@ -1038,7 +992,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     /*
      * public boolean checkSanctionNoForDisciplinary(String sanctionNo) {
-     * //session = HibernateUtil.getCurrentSession(); boolean b = false; Query
      * qry = getCurrentSession().createQuery(
      * "select dp.id from  DisciplinaryPunishmentApproval dp where upper(dp.sanctionNo) = :sanctionNo "
      * ); if(sanctionNo != null ) { qry.setString("sanctionNo", sanctionNo); }
@@ -1049,7 +1002,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     public boolean checkDuplication(String name, String className) {
 
-        // session = HibernateUtil.getCurrentSession();
         boolean b = false;
         try {
             Query qry = getCurrentSession()
@@ -1064,11 +1016,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
 
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
@@ -1090,35 +1040,28 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
     public PersonalInformation createEmloyee(PersonalInformation egpimsPersonalInformation) {
-        PersonalInformation personalInformation = null;
-        try {
+       try {
             if (egpimsPersonalInformation != null) {
-                personalInformation = (PersonalInformation) personalInformationDAO.create(egpimsPersonalInformation);
-                CommonsService cm = EisManagersUtill.getCommonsService();
-                String[] attrName = (cm.getAccountdetailtypeAttributename(null, "Employee")).split("#");
+                personalInformationDAO.create(egpimsPersonalInformation);
+                Accountdetailtype accountdetailtype = (accountdetailtypeHibernateDAO.getAccountdetailtypeByName("Employee"));
                 Accountdetailkey adk = new Accountdetailkey();
-                Query qry = getCurrentSession().createQuery(" from Accountdetailtype where id=:id ");
-                qry.setInteger("id", Integer.parseInt(attrName[0]));
-                adk.setAccountdetailtype((Accountdetailtype) qry.uniqueResult());
+                adk.setAccountdetailtype(accountdetailtype);
                 adk.setGroupid(1);
-                adk.setDetailkey(personalInformation.getIdPersonalInformation());
-                adk.setDetailname(attrName[1]);
-                // adk.setAccountdetailtype(Integer.parseInt(attrName[0]));
-                cm.createAccountdetailkey(adk);
+                adk.setDetailkey(egpimsPersonalInformation.getIdPersonalInformation());
+                adk.setDetailname(accountdetailtype.getAttributename());
+                accountdetailkeyHibernateDAO.create(adk);
             }
         } catch (Exception e) {
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
 
-        return personalInformation;
+        return egpimsPersonalInformation;
     }
 
     public void updateEmloyee(PersonalInformation egpimsPersonalInformation) {
@@ -1128,7 +1071,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
@@ -1141,7 +1083,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     public GenericMaster getGenericMaster(Integer masterId, String masterName) {
         GenericMaster genericMaster = null;
-        GenericMasterDAO genericMasterDAO = new GenericMasterDAO();
         genericMaster = (GenericMaster) genericMasterDAO.getGenericMaster(masterId.intValue(), masterName);
         return genericMaster;
     }
@@ -1159,7 +1100,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (RuntimeException e) {
             // TODO Auto-generated catch block
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
@@ -1170,7 +1110,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (RuntimeException e) {
             // TODO Auto-generated catch block
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
@@ -1192,7 +1131,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (Exception e) {
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return listOfEmpOfSameDept;
@@ -1217,7 +1155,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (Exception e) {
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return listOfEmpOfSameDesig;
@@ -1244,7 +1181,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
 
@@ -1268,10 +1204,8 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
             }
         } catch (NoSuchFieldException nfe) {
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + nfe.getMessage(), nfe);
         } catch (IllegalAccessException iac) {
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + iac.getMessage(), iac);
         }
         return retMap;
@@ -1301,15 +1235,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
         } catch (IllegalAccessException iac) {
 
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + iac.getMessage(), iac);
         } catch (InvocationTargetException e) {
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         } catch (NoSuchMethodException e) {
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return retMap;
@@ -1322,14 +1253,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             LOGGER.error(e);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
     }
 
     public Integer getNextVal() {
 
-        // session = HibernateUtil.getCurrentSession();
         Integer id = Integer.valueOf(0);
         try {
             Query qry = getCurrentSession().createSQLQuery("SELECT SEQ_DIS_APP.nextval as id from dual").addScalar(
@@ -1346,11 +1275,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
 
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
@@ -1360,7 +1287,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     private String getNextValForCode() {
 
-        // session = HibernateUtil.getCurrentSession();
         Integer id = Integer.valueOf(0);
         try {
             Query qry = getCurrentSession()
@@ -1380,11 +1306,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
 
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
@@ -1400,7 +1324,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public boolean checkPos(Integer posId, Date fromDate, Date toDate, Integer empId, String isPrimary) {
 
         boolean b = false;
-        // session = HibernateUtil.getCurrentSession();
 
         try {
             Query qry = null;
@@ -1447,11 +1370,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
 
         }
@@ -1467,11 +1388,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return list;
@@ -1485,11 +1404,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return list;
@@ -1503,11 +1420,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
@@ -1568,7 +1483,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     }
 
     public Assignment getLastAssignmentByEmp(Integer empId) {
-        // session = HibernateUtil.getCurrentSession();
         Assignment assignment = null;
         try {
             String mainStr = "";
@@ -1585,18 +1499,15 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
     }
 
     public ServiceHistory getServiceId(Integer id) {
-        // session = HibernateUtil.getCurrentSession();
         Query qry = getCurrentSession().createQuery("from ServiceHistory S where S.idService =:id ");
         qry.setInteger("id", id);
         return (ServiceHistory) qry.uniqueResult();
@@ -1619,7 +1530,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     public PersonalInformation getEmpForPositionAndDate(Date dateEntered, Integer posId) throws Exception {
 
-        // session = HibernateUtil.getCurrentSession();
         PersonalInformation personalInformation = null;
         try {
             Query qry = null;
@@ -1669,7 +1579,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      */
     public List<PersonalInformation> getEmpListForPositionAndDate(Date dateEntered, Integer posId) throws Exception {
 
-        // session = HibernateUtil.getCurrentSession();
         PersonalInformation personalInformation = null;
         List<PersonalInformation> empList = null;
         try {
@@ -1726,13 +1635,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         Integer departmentId = deptId;
         List<Designation> designationMstrObj = new ArrayList<Designation>();
-        /*
-         * eisService = new EisUtilService(); persistenceService = new
-         * PersistenceService();
-         * eisService.setPersistenceService(persistenceService);
-         * persistenceService.setSessionFactory(new SessionFactory());
-         * persistenceService.setType(EmployeeServiceImpl.class);
-         */
+       
         designationMstrObj = (List<Designation>) eisService.getAllDesignationByDept(departmentId, new Date());
         return designationMstrObj;
     }
@@ -1829,7 +1732,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      */
     public List getEmpTempAssignment(String code, Date givenDate, Integer posId) {
 
-        // session = HibernateUtil.getCurrentSession();
         List assignment = null;
         try {
             String mainStr = "";
@@ -1859,11 +1761,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             assignment = qry.list();
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
@@ -1900,7 +1800,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             } else {
                 stringbuffer.append(" and  ev.from_Date <= :givenDate AND ev.to_Date >= :givenDate");
             }
-            query = sessionFactory.getCurrentSession().createSQLQuery(stringbuffer.toString())
+            query = getCurrentSession().createSQLQuery(stringbuffer.toString())
                     .addScalar("ASS_ID", IntegerType.INSTANCE);
 
             if (query.getQueryString().contains(":givenDate")) {
@@ -1932,7 +1832,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     public List<Position> getPositionsForUser(User user, Date date) throws ApplicationException {
 
-        // session = HibernateUtil.getCurrentSession();
         List<Position> positionList = new ArrayList<Position>();
         Integer pos = null;
         try {
@@ -1964,11 +1863,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return positionList;
@@ -1988,7 +1885,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      */
     public List getEmpPrimaryAssignment(String code, Date givenDate, Integer posId) {
 
-        // session = HibernateUtil.getCurrentSession();
         List assignment = null;
         try {
             String mainStr = "";
@@ -2018,11 +1914,9 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             assignment = qry.list();
         } catch (HibernateException he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         } catch (Exception he) {
             LOGGER.error(he);
-            // HibernateUtil.rollbackTransaction();
             throw new ApplicationRuntimeException("Exception:" + he.getMessage(), he);
         }
         return assignment;
@@ -2042,11 +1936,10 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * @throws Exception
      */
     public List searchEmployee(Integer status, Date fromDate, Date toDate) throws Exception {
-        // session = HibernateUtil.getCurrentSession();
         List<Assignment> employeeList = new ArrayList<Assignment>();
         String mainStr = "";
         try {
-            EgwStatus statusType = EisManagersUtill.getCommonsService().getEgwStatusById(status);
+            EgwStatus statusType = egwStatusHibernateDAO.findById(status, false);
 
             if (statusType.getModuletype().equals("Employee") && statusType.getDescription().equals("Employed")) {
 
@@ -2156,7 +2049,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * @return List of Department
      */
     public List getListOfDeptBasedOnUserDept(String userName) {
-        // session = HibernateUtil.getCurrentSession();
         List deptList = new ArrayList();
         try {
             Query qry = null;
@@ -2212,7 +2104,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      */
     public List<EmployeeView> getEmployeeInfoBasedOnDeptAndDesg(Integer deptId, Integer desgId) {
         List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EmployeeView.class)
+        Criteria criteria = getCurrentSession().createCriteria(EmployeeView.class)
                 .createAlias("deptId", "department").createAlias("desigId", "designation")
                 .add(Restrictions.eq("department.id", deptId))
                 .add(Restrictions.eq("designation.designationId", desgId))
@@ -2236,7 +2128,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         if (date == null)
             date = new Date();
         List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EmployeeView.class)
+        Criteria criteria = getCurrentSession().createCriteria(EmployeeView.class)
                 .createAlias("deptId", "department").add(Restrictions.eq("department.id", deptId))
                 .add(Restrictions.eq("isActive", 1))
                 .add(Restrictions.and(Restrictions.le("fromDate", date), Restrictions.ge("toDate", date)));
@@ -2250,8 +2142,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * @return
      */
     public List<PersonalInformation> getAllEmployees() {
-        return sessionFactory
-                .getCurrentSession()
+        return getCurrentSession()
                 .createQuery(
                         "" + "select distinct employee from EmployeeView empview "
                                 + " where (sysdate between empview.fromDate  and empview.toDate or "
@@ -2282,28 +2173,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         return assignment.getDesignation();
     }
 
-    public CommonsService getCommonsService() {
-        return commonsService;
-    }
-
-    public void setCommonsService(CommonsService commonsService) {
-        this.commonsService = commonsService;
-    }
-
     public EisUtilService getEisService() {
         return eisService;
     }
 
     public void setEisService(EisUtilService eisService) {
         this.eisService = eisService;
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
     }
 
     public PersonalInformationDAO getPersonalInformationDAO() {

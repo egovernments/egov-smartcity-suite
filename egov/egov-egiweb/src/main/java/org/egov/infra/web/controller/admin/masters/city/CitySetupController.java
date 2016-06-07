@@ -37,17 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.controller.admin.masters.city;
-
-import java.io.IOException;
-
-import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -58,6 +55,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/city/setup")
@@ -72,7 +72,7 @@ public class CitySetupController {
 
     @ModelAttribute
     public City city() {
-        final City city = cityService.getCityByCode(EgovThreadLocals.getCityCode());
+        final City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
         if (city.getPreferences() == null)
             city.setPreferences(new CityPreferences());
         return city;
@@ -90,7 +90,7 @@ public class CitySetupController {
             return "city-setup";
         if (!logo.isEmpty())
             city.getPreferences().setMunicipalityLogo(fileStoreService.store(logo.getInputStream(), logo.getOriginalFilename(),
-                    logo.getContentType(), EgovThreadLocals.getCityCode()));
+                    logo.getContentType(), ApplicationThreadLocals.getCityCode()));
         cityService.updateCity(city);
         redirectAttrs.addFlashAttribute("message", "msg.city.update.success");
         return "redirect:/city/setup/view";

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,19 +24,19 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 /*
  * Created on Oct 4, 2005
  *
@@ -46,14 +46,8 @@
 package com.exilant.eGov.src.transactions;
 
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.exilant.GLEngine.GeneralLedgerBean;
+import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CFinancialYear;
@@ -63,14 +57,18 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.HibernateUtil;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.exilant.GLEngine.GeneralLedgerBean;
-import com.exilant.exility.common.TaskFailedException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Administrator TODO To change the template for this generated type
@@ -243,7 +241,7 @@ public class RptSubLedgerSchedule {
             
             int i = 0;
             pst = persistenceService.getSession().createSQLQuery(query);
-            pst.setLong(i++, Long.parseLong(accEntityId));
+            pst.setLong(i++, Integer.valueOf(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
@@ -251,7 +249,7 @@ public class RptSubLedgerSchedule {
             if (deptId != null && !deptId.equalsIgnoreCase(""))
                 pst.setLong(i++, Long.parseLong(deptId));
   
-            pst.setLong(i++, Long.parseLong(accEntityId));
+            pst.setLong(i++, Integer.valueOf(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
@@ -259,7 +257,7 @@ public class RptSubLedgerSchedule {
             if (deptId != null && !deptId.equalsIgnoreCase(""))
                 pst.setLong(i++, Long.parseLong(deptId));
  
-            pst.setLong(i++, Long.parseLong(accEntityId));
+            pst.setLong(i++, Integer.valueOf(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
@@ -268,7 +266,7 @@ public class RptSubLedgerSchedule {
                 pst.setLong(i++, Long.parseLong(deptId));
             pst.setLong(i++, Long.parseLong(fundId));
 
-            pst.setLong(i++, Long.parseLong(accEntityId));
+            pst.setLong(i++, Integer.valueOf(accEntityId));
             pst.setString(i++, glCode);
             pst.setString(i++, startDate);
             pst.setString(i++, endDate);
@@ -278,7 +276,7 @@ public class RptSubLedgerSchedule {
             pst.setLong(i++, Long.parseLong(fundId));
 
             pst.setString(i++, glCode);
-            pst.setLong(i++, Long.parseLong(accEntityId));
+            pst.setLong(i++, Integer.valueOf(accEntityId));
             pst.setLong(i++, Long.parseLong(fundId));
             pst.setLong(i++, Long.parseLong(fyId));
             if (deptId != null && !deptId.equalsIgnoreCase(""))
@@ -293,7 +291,8 @@ public class RptSubLedgerSchedule {
             final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
                     " from Accountdetailtype where id=?", Integer.valueOf(accEntityId));
             EntityType entity = null ;
-            
+            if(resultset.size()!=0)
+            {
             for (final Object[] element : resultset) {
                 gb = new GeneralLedgerBean();
                 double openingBal = 0.0;
@@ -307,12 +306,13 @@ public class RptSubLedgerSchedule {
              
                 try {
                        entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
-                                + " where id=? ", Long.valueOf(element[0].toString()));
+                                + " where id="+element[0].toString());
                     } catch ( final Exception ee) {
                         LOGGER.error(ee.getMessage(), ee);
                         entity = (EntityType) persistenceService.find(" from " + accountdetailtype.getFullQualifiedName()
-                                + " where id=? ", Integer.valueOf(element[0].toString()));
-                    }                
+                                + " where id="+element[0].toString());
+                    }    
+          
                 if (entity != null) {
                     gb.setCode(entity.getCode());
                     gb.setName(entity.getName());
@@ -320,6 +320,7 @@ public class RptSubLedgerSchedule {
                     gb.setCode("");
                     gb.setName("");
                 }
+                
                 gb.setAccEntityKey(element[0].toString());
                 if (element[5].toString() != null)
                     creditamount = Double.parseDouble(element[5].toString());
@@ -366,9 +367,11 @@ public class RptSubLedgerSchedule {
                     totalCr = totalCr + creditamount;
                 } else
                     gb.setCreditamount("&nbsp;");
+                
                 gb.setAccEntityId(accEntityId);
                 totalClosingBal = totalOpgBal + totalCr - totalDr;
                 dataList.add(gb);
+            }
             }
         } catch (final Exception e) {
             LOGGER.error("Error in subledger schedule report....." + e.getMessage());

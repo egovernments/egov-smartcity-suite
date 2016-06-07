@@ -37,54 +37,65 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.controller.common;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.IOUtils;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Controller
 @RequestMapping("/downloadfile")
 public class FileDownloadController {
 
-    @Qualifier("localDiskFileStoreService")
-    private @Autowired FileStoreService fileStoreService;
+    public static final String LOGO_IMAGE_PATH = "/resources/global/images/";
+    public static final String CITY_LOGO_KEY = "citylogo";
+
     @Autowired
     private FileStoreUtils fileStoreUtils;
 
     @RequestMapping
-    public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName,
-            @RequestParam(defaultValue = "false") final boolean toSave,
-            final HttpServletResponse response) throws IOException {
+    public void download(@RequestParam String fileStoreId, @RequestParam String moduleName,
+                         @RequestParam(defaultValue = "false") boolean toSave,
+                         HttpServletResponse response) throws IOException {
         fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, toSave, response);
     }
 
     @RequestMapping("/logo")
-    public void download(@RequestParam final String fileStoreId, @RequestParam final String moduleName, final HttpSession session,
-            final HttpServletResponse response) throws IOException {
-        if (session.getAttribute("citylogo") != null && session.getAttribute("citylogo").toString().contains(fileStoreId))
-            fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, false, response);
+    public String download(@RequestParam String fileStoreId, @RequestParam String moduleName, HttpSession session) throws IOException, ServletException {
+        String logoPath =  LOGO_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN;
+        Path logoRealPath = Paths.get(session.getServletContext().getRealPath(LOGO_IMAGE_PATH)+ File.separator + fileStoreId + ImageUtils.JPG_EXTN);
+        if (!Files.exists(logoRealPath)) {
+            String cityLogoKey = (String)session.getAttribute(CITY_LOGO_KEY);
+            if ( cityLogoKey != null && cityLogoKey.contains(fileStoreId)) {
+                this.fileStoreUtils.copyFileToPath(logoRealPath, fileStoreId, moduleName);
+            }
+        }
 
+        return "forward:"+logoPath;
     }
 
     @RequestMapping("/gis")
-    public void download(final HttpServletResponse response) throws IOException {
+    public void download(HttpServletResponse response) throws IOException {
         try (final InputStream in = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("gis/" + EgovThreadLocals.getTenantID() + "/wards.kml");
-                final OutputStream out = response.getOutputStream();) {
+                .getResourceAsStream("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.kml");
+             final OutputStream out = response.getOutputStream()) {
             if (in != null) {
                 response.setHeader("Content-Disposition", "inline;filename=wards.kml");
                 response.setContentType("application/vnd.google-earth.kml+xml");

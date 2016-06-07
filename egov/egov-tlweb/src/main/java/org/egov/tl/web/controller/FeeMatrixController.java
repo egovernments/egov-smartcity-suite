@@ -40,16 +40,8 @@
 
 package org.egov.tl.web.controller;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -75,8 +67,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/feematrix/")
@@ -186,8 +184,7 @@ public class FeeMatrixController {
 
     @RequestMapping(value = "viewresult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String viewresult(@RequestParam(required = false) final Long category,
-            @RequestParam(required = false) final Long subCategory, @RequestParam(required = false) final Long finyear,
-            final HttpServletResponse response)
+            @RequestParam(required = false) final Long subCategory, @RequestParam(required = false) final Long finyear)
             throws IOException, ParseException {
         final List<FeeMatrixDetail> feeMatrixDetails = feeMatrixDetailService.searchFeeMatrix(category, subCategory, finyear);
         final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(feeMatrixDetails)).append("}")

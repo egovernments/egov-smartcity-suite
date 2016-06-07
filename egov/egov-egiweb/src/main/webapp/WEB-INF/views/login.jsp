@@ -38,6 +38,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
 	String ipAddress = request.getRemoteAddr();
@@ -63,17 +64,16 @@
 		<title>eGov Urban Portal Login</title>
 		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
 		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/entypo/css/entypo.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome-4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
 		
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
 	</head>
 	<body class="page-body index">
@@ -165,7 +165,7 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-user theme-color style-color"></i>
+											<i class="fa fa-user theme-color style-color"></i>
 										</div>
 										<input type="text" class="form-control style-form"
 											name="j_username" id="j_username"
@@ -176,18 +176,18 @@
 								<div class="form-group">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-key theme-color style-color"></i>
+											<i class="fa fa-key theme-color style-color"></i>
 										</div>
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
-											autocomplete="off" required="required" /> <span
+											autocomplete="new-password" required="required" /> <span
 											class="mandatory set-mandatory"></span>
 									</div>
 								</div>
 								<div class="form-group display-hide" id="counter-section">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="entypo-location theme-color style-color"></i>
+											<i class="fa fa-map-marker theme-color style-color"></i>
 										</div>
 										<select class="form-control style-form" name="locationId" id="locationId"></select>
 									</div>
@@ -195,14 +195,14 @@
 								<c:if test="${param.error}">
 								<div class="form-group">
 									<div class="text-center error-msg font-12">
-									${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}
 										<c:choose>
 										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'Maximum sessions of {0} for this principal exceeded'}">
 											<spring:message code="msg.multiple.login"/>
 										</c:when>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'User credentials have expired'}">
+										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'User account has expired'}">
 											<spring:message code="msg.cred.exprd1"/>
-											<a href="#" target="_blank" style="color: blue">
+											<a href="javascript:void(0);" data-toggle="modal"
+											   data-target="#fpassword" data-backdrop="static">
 											<spring:message code="msg.cred.exprd2"/>
 											</a> <spring:message code="msg.cred.exprd3"/>
 										</c:when>
@@ -247,7 +247,7 @@
 								<div class="form-group signin-leftpadding">
 									<button type="submit"
 										class="btn btn-custom btn-block btn-login signin-submit" id="signin-action">
-										<i class="entypo-login"></i><spring:message code="lbl.login"/>
+										<i class="fa fa-sign-in"></i> <spring:message code="lbl.login"/>
 									</button>
 								</div>
 								<div class="row">
@@ -312,7 +312,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="entypo-user style-color"></i>
+										<i class="fa fa-user style-color"></i>
 									</div>
 									<input type="text" class="form-control style-form"
 										name="identity" id="emailOrMobileNum"
@@ -340,7 +340,7 @@
 						<h4 class="modal-title">Enable Cookies</h4>
 					</div>
 					<div class="modal-body">
-						Oops! Your browser seems to have cookies disabled. Make sure cookies are enabled or try opening a new browser window.
+						Your browser seems to have cookies disabled. Make sure cookies are enabled or try opening a new browser window.
 					</div>
 				</div>
 			</div>
@@ -351,4 +351,3 @@
 		<script src="/egi/resources/js/app/login.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
 	</body>
 </html>
-<%session.invalidate();%>

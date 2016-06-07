@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
@@ -24,19 +24,19 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- * 	1) All versions of this program, verbatim or modified must carry this
- * 	   Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
  *
- * 	2) Any misrepresentation of the origin of the material is prohibited. It
- * 	   is required that all modified versions of this material be marked in
- * 	   reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- * 	3) This license does not grant any rights to any user of the program
- * 	   with regards to rights under trademark law for use of the trade names
- * 	   or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.wtms.utils;
 
 import java.io.Serializable;
@@ -44,15 +44,16 @@ import java.sql.SQLException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WaterTaxNumberGenerator {
@@ -71,6 +72,27 @@ public class WaterTaxNumberGenerator {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
+    private WaterConnectionService waterConnectionService;
+
+    @Transactional
+    public String getNextConsumerNumber() {
+        Boolean cosumerCodeExists = true;
+        String consumerCode = null;
+        while (cosumerCodeExists) {
+            consumerCode = generateConsumerNumber();
+            if (waterConnectionService.findByConsumerCode(consumerCode) != null) {
+                cosumerCodeExists = true;
+                continue;
+            } else {
+                cosumerCodeExists = false;
+                break;
+            }
+
+        }
+        return consumerCode;
+    }
 
     @Transactional
     public String generateConsumerNumber() {

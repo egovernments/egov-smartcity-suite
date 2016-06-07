@@ -37,11 +37,10 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.admin.master.entity;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Set;
+import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -55,8 +54,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.search.annotations.DocumentId;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "eg_module")

@@ -37,16 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infstr.services;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+package org.egov.infstr.services;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * For all EIS dependent Service

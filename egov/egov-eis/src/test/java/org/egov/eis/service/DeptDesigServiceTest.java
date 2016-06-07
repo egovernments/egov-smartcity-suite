@@ -39,11 +39,6 @@
  */
 package org.egov.eis.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 import org.egov.builder.entities.DepartmentBuilder;
 import org.egov.eis.entity.DeptDesigBuilder;
 import org.egov.eis.entity.DesignationBuilder;
@@ -55,6 +50,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * @author Vaibhav.K

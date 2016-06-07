@@ -40,13 +40,13 @@
 
 package org.egov.infra.validation;
 
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.regex.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.regex.Pattern;
 
 @Service("validatorUtils")
 public class ValidatorUtils {

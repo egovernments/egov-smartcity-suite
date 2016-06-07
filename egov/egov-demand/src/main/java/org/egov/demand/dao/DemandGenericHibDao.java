@@ -1,50 +1,43 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
- * 
+ *
  *     Copyright (C) <2015>  eGovernments Foundation
- * 
- *     The updated version of eGov suite of products as by eGovernments Foundation 
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
- * 
+ *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or 
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
  *     http://www.gnu.org/licenses/gpl.html .
- * 
+ *
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
- * 
- * 	1) All versions of this program, verbatim or modified must carry this 
- * 	   Legal Notice.
- * 
- * 	2) Any misrepresentation of the origin of the material is prohibited. It 
- * 	   is required that all modified versions of this material be marked in 
- * 	   reasonable ways as different from the original version.
- * 
- * 	3) This license does not grant any rights to any user of the program 
- * 	   with regards to rights under trademark law for use of the trade names 
- * 	   or trademarks of eGovernments Foundation.
- * 
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- ******************************************************************************/
+ */
 package org.egov.demand.dao;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
@@ -66,7 +59,12 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository(value = "demandGenericDAO")
 public class DemandGenericHibDao implements DemandGenericDao {
@@ -821,4 +819,43 @@ public class DemandGenericHibDao implements DemandGenericDao {
             list = qry.list();
             return list;
     }
+	
+	/**
+	 * Method called to get the balance Amount for the given Demand reason
+	 * Master Code ,Module and Installment.
+	 * 
+	 * @param demand
+	 *            - EgDemand Object.
+	 * @param dmdReasonMasterCode
+	 *            - Code of the EgDemandReasonMaster
+	 * @param module
+	 *            - EgModule object
+	 * @param installment
+	 * 			  - Installment of the demand details          
+	 * @return java.math.BigDecimal - returns the Balance(Demand - Collection)
+	 * 
+	 */
+
+	@Override
+	public BigDecimal getBalanceByDmdMasterCodeInst(EgDemand demand, String dmdReasonMasterCode,
+			Module module, Installment installment) {
+		BigDecimal balance = BigDecimal.ZERO;
+		if (demand != null && dmdReasonMasterCode != null && module != null) {
+			List<EgDemandDetails> dmdDetList = getDmdDetailList(demand,
+					installment, module,
+					getDemandReasonMasterByCode(dmdReasonMasterCode, module));
+			if (!dmdDetList.isEmpty()) {
+				for (EgDemandDetails dmdDet : dmdDetList) {
+					if (dmdDet.getAmount() != null) {
+						balance = balance.add(dmdDet.getAmount());
+					}
+					if (dmdDet.getAmtCollected() != null
+							&& dmdDet.getAmtCollected().compareTo(BigDecimal.ZERO) > 0) {
+						balance = balance.subtract(dmdDet.getAmtCollected());
+					}
+				}
+			}
+		}
+		return balance;
+	}
 }

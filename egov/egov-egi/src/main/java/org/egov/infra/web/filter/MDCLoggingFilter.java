@@ -37,9 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.infra.web.filter;
 
-import java.io.IOException;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.web.utils.WebUtils;
+import org.slf4j.MDC;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -47,10 +50,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.web.utils.WebUtils;
-import org.slf4j.MDC;
+import java.io.IOException;
 
 public class MDCLoggingFilter implements Filter {
 
@@ -62,7 +62,7 @@ public class MDCLoggingFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
         try {
-            MDC.put("ulbcode", EgovThreadLocals.getCityName());
+            MDC.put("ulbcode", ApplicationThreadLocals.getCityName());
             MDC.put("appname", WebUtils.currentContextPath(request));
             chain.doFilter(request, response);
         } finally {
