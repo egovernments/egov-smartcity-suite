@@ -55,6 +55,7 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.service.FinancialYearService;
 import org.egov.commons.service.FunctionService;
+import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -67,6 +68,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
+import org.egov.utils.BudgetAccountType;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
@@ -118,10 +120,10 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private SearchLineEstimateToCancelJSONAdaptor searchLineEstimateToCancelJSONAdaptor;
-    
+
     @Autowired
     private ResourceBundleMessageSource messageSource;
 
@@ -130,10 +132,13 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private BudgetGroupDAO budgetGroupDAO;
-    
+
     @Autowired
     private FunctionService functionService;
-    
+
+    @Autowired
+    private BudgetDetailsHibernateDAO budgetDetailsHibernateDAO;
+
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
@@ -153,6 +158,7 @@ public class AjaxLineEstimateController {
 
         return financialYear;
     }
+
     @RequestMapping(value = "/ajax-getlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
         return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
@@ -251,15 +257,15 @@ public class AjaxLineEstimateController {
 
         return users;
     }
-    
+
     @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<User> getcreateByDepartment(
             @RequestParam("department") final Long department) {
         final List<User> users = lineEstimateService.getCreatedByUsersForCancelLineEstimateByDepartment(department);
         return users;
     }
-    
-   @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+
+    @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchLineEstimatesToCancel(final Model model,
             @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest) {
         final List<LineEstimate> lineestimates = lineEstimateService
@@ -269,7 +275,7 @@ public class AjaxLineEstimateController {
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchLineEstimatesToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, searchLineEstimateToCancelJSONAdaptor)
@@ -277,25 +283,41 @@ public class AjaxLineEstimateController {
         final String json = gson.toJson(object);
         return json;
     }
-       
+
     @RequestMapping(value = "/ajax-checkifloascreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfLOAsCreated(@RequestParam final Long lineEstimateId) {
         final String estimateNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimateId);
         String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { estimateNumbers }, null);
-        if(estimateNumbers.equals(""))
+        if (estimateNumbers.equals(""))
             return "";
         return message;
     }
 
-    @RequestMapping(value = "/getbudgetheadbyfunction", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<BudgetGroup> getBudgetHeadByFunction(@RequestParam("functionId") final Long functionId) {
+    @RequestMapping(value = "/getbudgethead", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<BudgetGroup> getBudgetHeadByFunction(@RequestParam("fundId") final Integer fundId,
+            @RequestParam("departmentId") final Long departmentId, @RequestParam("functionId") final Long functionId,
+            @RequestParam("natureOfWork") final String natureOfWork) {
         List<BudgetGroup> budgetGroups = new ArrayList<BudgetGroup>();
-        final CFunction function = functionService.findOne(functionId);
         try {
-            budgetGroups = budgetGroupDAO.getBudgetHeadByFunction(function.getCode());
+            String accountType = null;
+            if(natureOfWork!=null && natureOfWork.equalsIgnoreCase(WorksConstants.CAPITAL_WORKS))
+                accountType = BudgetAccountType.CAPITAL_EXPENDITURE.toString();
+            else if(natureOfWork!=null && natureOfWork.equalsIgnoreCase(WorksConstants.NATUREOFWORKFORASSETREPAIRANDMAINTAINANCE_DEFAULTVALUE))
+                accountType = BudgetAccountType.REVENUE_EXPENDITURE.toString();
+            budgetGroups = budgetGroupDAO.getBudgetGroupsByFundFunctionDeptAndAccountType(fundId, departmentId, functionId,
+                    accountType);
             return budgetGroups;
         } catch (final ValidationException v) {
             return budgetGroups;
         }
+    }
+
+    @RequestMapping(value = "/getfunctionsbyfundidanddepartmentid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getAllFunctionsByFundIdAndDepartmentId(final Model model,
+            @RequestParam("fundId") final Integer fundId, @RequestParam("departmentId") final Long departmentId)
+            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
+        final List<CFunction> functions = budgetDetailsHibernateDAO.getFunctionsByFundAndDepartment(fundId, departmentId);
+        final String jsonResponse = toJSON(functions);
+        return jsonResponse;
     }
 }

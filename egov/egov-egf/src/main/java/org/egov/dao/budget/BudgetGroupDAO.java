@@ -45,6 +45,8 @@
  */
 package org.egov.dao.budget;
 
+import java.util.List;
+
 /**
  * @author Administrator
  *
@@ -56,9 +58,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
 
-import java.util.List;
-
-public interface BudgetGroupDAO{
+public interface BudgetGroupDAO {
     public List<BudgetGroup> getBudgetGroupList() throws ValidationException;
 
     public List<BudgetGroup> getBudgetHeadByDateAndFunction(String functionCode, java.util.Date date) throws ValidationException;
@@ -69,13 +69,17 @@ public interface BudgetGroupDAO{
 
     public List<BudgetGroup> getBudgetHeadByCOAandFunction(String functionCode, List<CChartOfAccounts> chartOfAccountsList)
             throws ValidationException;
-    BudgetGroup findById(Number  id, boolean lock);
 
-    List<  BudgetGroup  > findAll();
+    BudgetGroup findById(Number id, boolean lock);
 
+    List<BudgetGroup> findAll();
 
-    BudgetGroup   create(  BudgetGroup   entity);
-    BudgetGroup   update(  BudgetGroup   entity);
+    BudgetGroup create(BudgetGroup entity);
 
-    void delete(  BudgetGroup   entity);
+    BudgetGroup update(BudgetGroup entity);
+
+    public List<BudgetGroup> getBudgetGroupsByFundFunctionDeptAndAccountType(final Integer fund, final Long dept,
+            final Long function, final String accountType) throws ValidationException;
+
+    void delete(BudgetGroup entity);
 }

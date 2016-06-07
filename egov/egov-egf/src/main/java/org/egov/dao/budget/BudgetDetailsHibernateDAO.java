@@ -2643,6 +2643,49 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         return amount;
     }
 
+    /**
+     * Returns a list of Functions having entry in budget detail with the given fund and department .
+     * 
+     * @param fund,function,department and account type
+     * @throws ValidationException
+     */
+    @Override
+    public List<CFunction> getFunctionsByFundAndDepartment(final Integer fund, final Long department) throws ValidationException {
+
+        List<CFunction> functionsList = new ArrayList<CFunction>();
+        try {
+            final StringBuffer qryStr = new StringBuffer();
+            final StringBuffer filtersQryStr = new StringBuffer();
+            if (fund != null)
+                filtersQryStr.append(" and bd.fund.id =:fund ");
+            if (department != null)
+                filtersQryStr.append(" and bd.executingDepartment.id =:department ");
+
+            qryStr.append(" select distinct bd.function from BudgetDetail bd  where bd.id is not null  ");
+            qryStr.append(filtersQryStr);
+            session = getCurrentSession();
+            final Query qry = session.createQuery(qryStr.toString());
+            if (fund != null)
+                qry.setInteger("fund", fund);
+            if (department != null)
+                qry.setLong("department", department);
+
+            functionsList = qry.list();
+
+            if (functionsList.isEmpty() || functionsList.size() == 0)
+                throw new ValidationException(EMPTY_STRING,
+                        "No Functions mapped for the given fund and department  ");
+        } catch (final ValidationException v) {
+            LOGGER.error("Exception in getFunctionsByFundAndDepartment API()" + v.getErrors());
+            throw new ValidationException(v.getErrors());
+        } catch (final Exception e) {
+            LOGGER.error("Exception in getFunctionsByFundAndDepartment API()=======" + e.getMessage());
+            throw new ValidationException(EMPTY_STRING, e.getMessage());
+        }
+        return functionsList;
+
+    }
+    
     private boolean isNull(final Object ob) {
         if (ob == null)
             return true;

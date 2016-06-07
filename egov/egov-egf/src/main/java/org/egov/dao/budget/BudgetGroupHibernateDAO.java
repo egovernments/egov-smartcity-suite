@@ -45,6 +45,12 @@
  */
 package org.egov.dao.budget;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
@@ -58,13 +64,8 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
-
 @Transactional(readOnly = true)
-public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
+public class BudgetGroupHibernateDAO implements BudgetGroupDAO {
     @Transactional
     public BudgetGroup update(final BudgetGroup entity) {
         getCurrentSession().update(entity);
@@ -82,7 +83,6 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
         getCurrentSession().delete(entity);
     }
 
-    
     public BudgetGroup findById(Number id, boolean lock) {
         return (BudgetGroup) getCurrentSession().load(BudgetGroup.class, id);
     }
@@ -94,7 +94,6 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -107,8 +106,6 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
     private FinancialYearDAO financialYearDAO;
     @Autowired
     private FunctionDAO functionDAO;
-
-   
 
     @Transactional
     public BudgetGroup createBudgetGroup(final BudgetGroup cbg) throws ValidationException {
@@ -142,7 +139,8 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
             if (fiancialyear == null)
                 throw new ValidationException(EMPTY_STRING, "Date is not defined in the Financial year master");
 
-            qryStr.append("from BudgetGroup bg where  bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.budget.financialYear=:financialYearId   ");
+            qryStr.append(
+                    "from BudgetGroup bg where  bg in ( select bd.budgetGroup from BudgetDetail bd  where bd.budget.financialYear=:financialYearId   ");
 
             if (functionCode != null && !functionCode.equals("")) {
                 function = functionDAO.getFunctionByCode(functionCode);
@@ -200,11 +198,9 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
     }
 
     /**
-     * Returns a list of BudgetGroup having entry in budget detail with the
-     * given function code.
+     * Returns a list of BudgetGroup having entry in budget detail with the given function code.
      * 
-     * @param function
-     *            code
+     * @param function code
      * @throws ValidationException
      */
     @Override
@@ -220,7 +216,8 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
                 if (function == null || function.getId() == null)
                     throw new ValidationException(EMPTY_STRING, "Function Code is not defined in the system");
 
-                qryStr.append("from BudgetGroup bg where  bg in ( select distinct bd.budgetGroup from BudgetDetail bd  where bd.function=:functionId ) order by bg.name");
+                qryStr.append(
+                        "from BudgetGroup bg where  bg in ( select distinct bd.budgetGroup from BudgetDetail bd  where bd.function=:functionId ) order by bg.name");
             }
             session = getCurrentSession();
             final Query qry = session.createQuery(qryStr.toString());
@@ -244,11 +241,10 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
     }
 
     /**
-     * Returns a list of BudgetGroup having entry in budget detail with the
-     * given function code or given List of ChartOfAccounts or both.
+     * Returns a list of BudgetGroup having entry in budget detail with the given function code or given List of ChartOfAccounts
+     * or both.
      * 
-     * @param function
-     *            code
+     * @param function code
      * @param chartOfAccountsList
      * @throws ValidationException
      */
@@ -401,6 +397,63 @@ public class BudgetGroupHibernateDAO  implements BudgetGroupDAO {
             throw new ValidationException(v.getErrors());
         } catch (final Exception e) {
             LOGGER.error("Exception in getBudgetHeadByFunction API()=======" + e.getMessage());
+            throw new ValidationException(EMPTY_STRING, e.getMessage());
+        }
+        return budgetHeadList;
+
+    }
+
+    /**
+     * Returns a list of BudgetGroup having entry in budget detail with the given fund,function,department and account type.
+     * 
+     * @param fund,function,department and account type
+     * @throws ValidationException
+     */
+    @Override
+    public List<BudgetGroup> getBudgetGroupsByFundFunctionDeptAndAccountType(final Integer fund, final Long dept,
+            final Long function, final String accountType) throws ValidationException {
+
+        List<BudgetGroup> budgetHeadList = new ArrayList<BudgetGroup>();
+        try {
+            final StringBuffer qryStr = new StringBuffer();
+            final StringBuffer filtersQryStr = new StringBuffer();
+            final StringBuffer accountTypeQryStr = new StringBuffer();
+            if (fund != null)
+                filtersQryStr.append(" and bd.fund.id =:fund ");
+            if (dept != null)
+                filtersQryStr.append(" and bd.executingDepartment.id =:dept ");
+            if (function != null)
+                filtersQryStr.append(" and bd.function.id =:function ");
+            if (accountType != null)
+                accountTypeQryStr.append(" and bg.accountType =:accountType ");
+
+            qryStr.append(
+                    "from BudgetGroup bg where  bg in ( select distinct bd.budgetGroup from BudgetDetail bd  where bd.id is not null ");
+            qryStr.append(filtersQryStr);
+            qryStr.append(" ) ");
+            qryStr.append(accountTypeQryStr);
+            qryStr.append("order by bg.name");
+            session = getCurrentSession();
+            final Query qry = session.createQuery(qryStr.toString());
+            if (fund != null)
+                qry.setInteger("fund", fund);
+            if (dept != null)
+                qry.setLong("dept", dept);
+            if (function != null)
+                qry.setLong("function", function);
+            if (accountType != null)
+                qry.setString("accountType", accountType);
+
+            budgetHeadList = qry.list();
+
+            if (budgetHeadList.isEmpty() || budgetHeadList.size() == 0)
+                throw new ValidationException(EMPTY_STRING,
+                        "No budget heads mapped for the given fund,department,function and account type ");
+        } catch (final ValidationException v) {
+            LOGGER.error("Exception in getBudgetGroupsByFundFunctionDeptAndAccountType API()" + v.getErrors());
+            throw new ValidationException(v.getErrors());
+        } catch (final Exception e) {
+            LOGGER.error("Exception in getBudgetGroupsByFundFunctionDeptAndAccountType API()=======" + e.getMessage());
             throw new ValidationException(EMPTY_STRING, e.getMessage());
         }
         return budgetHeadList;

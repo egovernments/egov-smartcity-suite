@@ -43,13 +43,14 @@ $subTypeOfWorkId = 0;
 $subSchemeId = 0;
 $detailsRowCount = $('#detailsSize').val();
 $budgetHeadId=0;
+$functionId = 0;
 $(document).ready(function(){
 	
 	$locationId = $('#locationValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$budgetHeadId = $('#budgetHeadValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
-	
+	$functionId = $('#functionId').val();
 	if($("#isBillsCreatedInput").val() == 'true') {
 		$(".thGrossAmount").show();
 		$(".tdGrossAmount").each(
@@ -654,18 +655,24 @@ function validateWorkFlowApprover(name) {
 	return true;
 }
 
-$('#function').change(function(){
-	 if ($('#function').val() === '') {
+function getBudgetHeads() {
+	 if ($('#fund').val() === '' && $('#executingDepartments').val() === '' && $('#function').val() === '' && $('#natureOfWork').val() === '') {
 		   $('#budgetHead').empty();
 		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
 			return;
 			} else {
 			$.ajax({
 				type: "GET",
-				url: "/egworks/lineestimate/getbudgetheadbyfunction",
+				url: "/egworks/lineestimate/getbudgethead",
 				cache: true,
 				dataType: "json",
-				data:{'functionId' : $('#function').val()}	
+				data:{
+					'fundId' : $('#fund').val(),
+					'functionId' : $('#function').val(),
+					'departmentId' : $('#executingDepartments').val(),
+					'natureOfWork' : $('#natureOfWork').find(":selected").text()
+					
+					}	
 			}).done(function(value) {
 				console.log(value);
 				$('#budgetHead').empty();
@@ -683,4 +690,33 @@ $('#function').change(function(){
 				});
 			});
 		}
-	});
+}
+function getFunctionssByFundAndDepartment() {
+	if ($('#fund').val() === '' && $('#executingDepartments').val() === '') {
+		   $('#function').empty();
+		   $('#function').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				$.ajax({
+					url: "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",     
+					type: "GET",
+					data : {
+						fundId : $('#fund').val(),
+						departmentId : $('#executingDepartments').val()
+					},
+					dataType: "json",
+					success: function (response) {
+						$('#function').empty();
+						$('#function').append($("<option value=''>Select from below</option>"));
+						var responseObj = JSON.parse(response);
+						$.each(responseObj, function(index, value) {
+							$('#function').append($('<option>').text(responseObj[index].code+'-'+responseObj[index].name).attr('value', responseObj[index].id));
+							$('#function').val($functionId);
+						});
+					}, 
+					error: function (response) {
+						console.log("failed");
+					}
+				});
+			}
+}
