@@ -39,6 +39,8 @@
  */
 package org.egov.works.master.repository;
 
+import java.util.List;
+
 import org.egov.works.models.masters.ScheduleCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -46,4 +48,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ScheduleCategoryRepository extends JpaRepository<ScheduleCategory, Long> {
 
+    List<ScheduleCategory> findByDescriptionContainingIgnoreCase(final String categoryName);
+    
+    ScheduleCategory findByCodeIgnoreCase(final String code);
+    
 }

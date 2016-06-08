@@ -40,14 +40,25 @@
 
 package org.egov.works.master.service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.works.master.repository.ScheduleCategoryRepository;
 import org.egov.works.models.masters.ScheduleCategory;
+import org.egov.works.models.masters.SearchRequestScheduleCategory;
+import org.egov.works.services.WorksService;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,9 +69,15 @@ public class ScheduleCategoryService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private ScheduleCategoryRepository scheduleCategoryRepository;
+
+    @Autowired
+    private WorksService worksService;
+
+    @Autowired
+    private UserService userService;
 
     public ScheduleCategory getScheduleCategoryById(final Long scheduleCategoryId) {
         final ScheduleCategory scheduleCategory = entityManager.find(ScheduleCategory.class,
@@ -68,11 +85,11 @@ public class ScheduleCategoryService {
         return scheduleCategory;
     }
 
-//    public List<ScheduleCategory> getAllScheduleCategories() {
-//        final Query query = entityManager.createQuery("from ScheduleCategory sc");
-//        final List<ScheduleCategory> scheduleCategoryList = query.getResultList();
-//        return scheduleCategoryList;
-//    }
+    // public List<ScheduleCategory> getAllScheduleCategories() {
+    // final Query query = entityManager.createQuery("from ScheduleCategory sc");
+    // final List<ScheduleCategory> scheduleCategoryList = query.getResultList();
+    // return scheduleCategoryList;
+    // }
 
     public boolean checkForSOR(final Long id) {
         final Query query = entityManager.createQuery(" from ScheduleOfRate rate where sor_category_id  = "
@@ -94,16 +111,56 @@ public class ScheduleCategoryService {
         else
             return false;
     }
-    
+
     public List<ScheduleCategory> getAllScheduleCategories() {
         return scheduleCategoryRepository.findAll();
     }
 
-    public ScheduleCategory findById(Long id, boolean b) {
+    public ScheduleCategory findById(final Long id, final boolean b) {
         return scheduleCategoryRepository.findOne(id);
     }
 
-    public ScheduleCategory save(ScheduleCategory scheduleCategory) {
+    @Transactional
+    public ScheduleCategory save(final ScheduleCategory scheduleCategory) {
         return scheduleCategoryRepository.save(scheduleCategory);
     }
+
+    public List<String> getCategoryNames(final String categoryName) {
+        final List<ScheduleCategory> scheduleCategory = scheduleCategoryRepository
+                .findByDescriptionContainingIgnoreCase(categoryName);
+        final List<String> results = new ArrayList<String>();
+        for (final ScheduleCategory details : scheduleCategory)
+            results.add(details.getDescription());
+        return results;
+    }
+
+    public List<ScheduleCategory> searchScheduleCategory(final SearchRequestScheduleCategory searchRequestScheduleCategory) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ScheduleCategory.class);
+        if (searchRequestScheduleCategory != null) {
+            if (searchRequestScheduleCategory.getCategoryName() != null)
+                criteria.add(Restrictions.eq("description", searchRequestScheduleCategory.getCategoryName()).ignoreCase());
+            if (searchRequestScheduleCategory.getCategoryDescription() != null)
+                criteria.add(
+                        Restrictions.ilike("code", searchRequestScheduleCategory.getCategoryDescription(), MatchMode.ANYWHERE));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
+    // TODO: Need to remove this method after getting better alternate option
+    public ScheduleCategory setPrimaryDetails(final ScheduleCategory scheduleCategory) {
+        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
+        if (scheduleCategory.getId() == null) {
+            scheduleCategory.setCreatedBy(user);
+            scheduleCategory.setCreatedDate(new Date());
+        }
+        scheduleCategory.setModifiedBy(user);
+        scheduleCategory.setModifiedDate(new Date());
+        return scheduleCategory;
+    }
+
+    public ScheduleCategory findByCode(final String code) {
+        return scheduleCategoryRepository.findByCodeIgnoreCase(code);
+    }
+
 }

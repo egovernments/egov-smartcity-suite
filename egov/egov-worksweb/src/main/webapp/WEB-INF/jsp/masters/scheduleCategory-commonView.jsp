@@ -41,6 +41,11 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
+			<div class="new-page-header">
+				<s:if test="%{mode == 'view'}">
+					<s:text name="schedCategory.view" />
+				</s:if>
+			</div>
 			<div class="panel-heading"></div>
 			<div class="panel-body">
 				<div class="row add-border">

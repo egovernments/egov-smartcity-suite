@@ -39,6 +39,9 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -48,20 +51,22 @@ import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 @ParentPackage("egov")
 @Results({
         @Result(name = ScheduleCategoryAction.NEW, location = "scheduleCategory-new.jsp"),
         @Result(name = ScheduleCategoryAction.EDIT, location = "scheduleCategory-edit.jsp"),
-        @Result(name = ScheduleCategoryAction.SUCCESS, location = "scheduleCategory-success.jsp")
+        @Result(name = ScheduleCategoryAction.SUCCESS, location = "scheduleCategory-success.jsp"),
+        @Result(name = ScheduleCategoryAction.SEARCH_SCHEDULECATEGORY, location = "scheduleCategory-search.jsp")
 })
 public class ScheduleCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = 8722637434208106061L;
 
+    public static final String SEARCH_SCHEDULECATEGORY = "searchScheduleCategory";
+
     @Autowired
     private ScheduleCategoryService scheduleCategoryService;
+
     private ScheduleCategory scheduleCategory = new ScheduleCategory();
     private List<ScheduleCategory> scheduleCategoryList = null;
     private Long id;
@@ -104,9 +109,14 @@ public class ScheduleCategoryAction extends BaseFormAction {
         return EDIT;
     }
 
+    @Action(value = "/masters/scheduleCategory-view")
+    public String view() {
+        return SUCCESS;
+    }
+
     @Override
     public void prepare() {
-        scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
+        /* scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories(); */
         if (id != null)
             scheduleCategory = scheduleCategoryService.findById(id, false);
         super.prepare();
@@ -117,12 +127,19 @@ public class ScheduleCategoryAction extends BaseFormAction {
         if (mode.equals("edit") && !scheduleCategoryService.checkForSOR(id)) {
             addActionMessage(getText("scheduleCategory.modify.validate.message"));
             return EDIT;
-        } else if (mode.equals("edit") && scheduleCategoryService.checkForScheduleCategory(code)) {
-            addActionMessage(getText("scheduleCategory.code.isunique"));
-            return EDIT;
-        } else
-            scheduleCategoryService.save(scheduleCategory);
-        addActionMessage(getText("schedule.category.save.success"));
+        } else if (scheduleCategory != null) {
+            final ScheduleCategory category = scheduleCategoryService.findByCode(code);
+            if (category != null && scheduleCategory.getId() != category.getId()) {
+                addActionMessage(getText("scheduleCategory.code.isunique"));
+                return EDIT;
+            }
+        }
+        scheduleCategoryService.setPrimaryDetails(scheduleCategory);
+        scheduleCategoryService.save(scheduleCategory);
+        if (StringUtils.isBlank(mode))
+            addActionMessage(getText("schedule.category.save.success", new String[] { scheduleCategory.getCode() }));
+        else
+            addActionMessage(getText("contractor.modified.success"));
         return SUCCESS;
     }
 

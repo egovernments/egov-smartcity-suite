@@ -38,15 +38,26 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <html>
 <title><s:text name="page.title.estimate.template" /></title>
 <body>
-	<div class="new-page-header">
-		<s:text name="scheduleCategory.create.success" /> <a href="${pageContext.request.contextPath}/masters/scheduleCategory-edit.action?id=<s:property value='%{id}'/>&mode=view" > <s:property value="%{code}" /> </a> <s:text name="scheduleCategory.create.save" />
-	</div>	
-	
-	<%@ include file="scheduleCategory-commonView.jsp" %>
-	
+	<s:if test="%{hasActionMessages()}">
+		<div id="msgsDiv" class="new-page-header">
+			<s:actionmessage theme="simple" />
+		</div>
+	</s:if>
+
+	<%@ include file="scheduleCategory-commonView.jsp"%>
+	<div class="row text-center">
+		<div class="add-margin">
+		<s:if test="%{ mode!='edit' && mode != 'view'}">
+			<input type="submit" name="create" Class="btn btn-primary" value="Create new SOR category" id="CREATE" name="button" onclick="createNewScheduleCategory();" />
+		</s:if>
+			<input type="submit" name="closeButton" id="closeButton"
+				value="Close" Class="btn btn-default" onclick="window.close();" />
+		</div>
+	</div>
+	<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
 </body>
 </html>
