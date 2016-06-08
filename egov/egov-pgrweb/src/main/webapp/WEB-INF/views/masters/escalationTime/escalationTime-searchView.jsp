@@ -50,7 +50,6 @@
 	function deleteRow(obj) {
 		var tb1 = document.getElementById("escalationTable");
 		var lastRow = (tb1.rows.length) - 1;
-		alert(getRow(obj).rowIndex);
 		var curRow = getRow(obj).rowIndex;
 		if (lastRow == 1) {
 			bootbox.alert('you cannot delete this row ');
@@ -60,8 +59,20 @@
 			resetSrNo();
 			return true;
 		}
-
 	}
+	
+	function getRow(obj)    
+	{
+	 if(!obj)return null;
+	 tag = obj.nodeName.toUpperCase();
+	 while(tag != 'BODY'){
+	  if (tag == 'TR') return obj;
+	  obj=obj.parentNode ;
+	  tag = obj.nodeName.toUpperCase();
+	 }
+	 return null;
+	}
+	
 	function resetSrNo() {
 		var tb1 = document.getElementById("escalationTable");
 		var lastRow = (tb1.rows.length) - 1;

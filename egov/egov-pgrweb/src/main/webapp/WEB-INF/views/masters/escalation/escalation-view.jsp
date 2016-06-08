@@ -88,6 +88,18 @@
 			return true;
 		}
 	}
+	
+	function getRow(obj)    
+	{
+	 if(!obj)return null;
+	 tag = obj.nodeName.toUpperCase();
+	 while(tag != 'BODY'){
+	  if (tag == 'TR') return obj;
+	  obj=obj.parentNode ;
+	  tag = obj.nodeName.toUpperCase();
+	 }
+	 return null;
+	}
 </script>		
 <div class="row">
 	<div class="col-md-12">
