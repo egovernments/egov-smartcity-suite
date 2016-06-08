@@ -40,7 +40,7 @@
 package org.egov.works.autonumber.impl;
 
 import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.stereotype.Service;
 
 @Service
