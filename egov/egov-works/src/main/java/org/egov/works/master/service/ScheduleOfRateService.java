@@ -48,10 +48,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.master.repository.ScheduleOfRateRepository;
+import org.egov.works.models.masters.MarketRate;
+import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +70,12 @@ public class ScheduleOfRateService {
 
     @Autowired
     private ScheduleOfRateRepository scheduleOfRateRepository;
+    
+    @Autowired
+    private WorksService worksService;
+    
+    @Autowired
+    private UserService userService;
 
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {
         final ScheduleOfRate scheduleOfRate = entityManager.find(ScheduleOfRate.class,
@@ -134,4 +145,35 @@ public class ScheduleOfRateService {
                 scheduleOfCategoryIds, new Date());
     }
 
+    // TODO: Need to remove this method after getting better alternate option
+    public ScheduleOfRate setPrimaryDetails(final ScheduleOfRate scheduleOfRate) {
+        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
+        if(scheduleOfRate.getId() == null){
+            scheduleOfRate.setCreatedBy(user);
+            scheduleOfRate.setCreatedDate(new Date());
+        }
+        scheduleOfRate.setModifiedBy(user);
+        scheduleOfRate.setModifiedDate(new Date());
+        return scheduleOfRate;
+    }
+    
+    // TODO: Need to remove this method after getting better alternate option
+    public SORRate setPrimaryDetailsForSorRates(final SORRate sorRate) {
+        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
+            sorRate.setCreatedBy(user);
+            sorRate.setCreatedDate(new Date());
+        sorRate.setModifiedBy(user);
+        sorRate.setModifiedDate(new Date());
+        return sorRate;
+    }
+    
+    // TODO: Need to remove this method after getting better alternate option
+    public MarketRate setPrimaryDetailsForMarketRates(final MarketRate marketRate) {
+        final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
+            marketRate.setCreatedBy(user);
+            marketRate.setCreatedDate(new Date());
+        marketRate.setModifiedBy(user);
+        marketRate.setModifiedDate(new Date());
+        return marketRate;
+    }
 }

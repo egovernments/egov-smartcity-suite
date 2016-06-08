@@ -39,7 +39,6 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
-
 <style type="text/css">
 .yui-dt table{
   width:100%;
@@ -73,20 +72,21 @@ body
         	<s:actionmessage theme="simple"/>
         </div>
     </s:if>
-
+<div class="errorstyle" id="sor_error" class="alert alert-danger" style="display: none;"></div>
 <s:form action="scheduleOfRate-save" theme="simple" name="scheduleOfRate" onsubmit="return validateSORFormAndSubmit();" cssClass="form-horizontal form-groups-bordered"><s:token/> 
 <s:hidden name="mode" id="mode" />
 <s:hidden  name="model.id" id="id"/> 
+<s:hidden name="id" id="id" />
 	
 	<%@ include file='scheduleOfRate-form.jsp'%>
 	
 <p class="text-center">
 <s:if test="%{model.id!=null && mode != 'view'}">
-	<s:submit type="submit" cssClass="btn btn-primary" value="Modify" id="saveButton" name="button" method="save"  />&nbsp;
+	<s:submit type="submit" cssClass="btn btn-primary" value="Modify" id="saveButton" name="button" method="save"  onclick="return validateSORFormAndSubmit();"/>&nbsp;
 </s:if>
 <s:if test="%{model.id==null}">
-	<s:submit type="submit" cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save"  />&nbsp;
-	<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();" onclick="validateSORFormAndSubmit();"> &nbsp;
+	<s:submit type="submit" cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save"  onclick="return validateSORFormAndSubmit();" />&nbsp;
+	<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();" > &nbsp;
 </s:if>
 	<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 </p>
@@ -94,3 +94,4 @@ body
 </s:form>    
 </body>  
 </html>
+<%-- <script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script> --%>

@@ -41,6 +41,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
+		<s:hidden name="mode" id="mode" />
 			<div class="panel-heading"></div>
 			<div class="panel-body">
 				<div class="row add-border">

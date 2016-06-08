@@ -167,6 +167,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
     public String save() {
         populateRates();
         populateMarketRates();
+        scheduleOfRateService.setPrimaryDetails(scheduleOfRate);
         getPersistedRateDetails(scheduleOfRate);
         if (mode != null && mode.equals(WorksConstants.EDIT)) {
             getRateDetailsForSORId(true);
@@ -184,9 +185,13 @@ public class ScheduleOfRateAction extends SearchFormAction {
     }
 
     protected void populateRates() {
-        for (final SORRate rate : actionRates)
-            if (validRate(rate))
+        scheduleOfRate.getSorRates().clear();
+        for (final SORRate rate : actionRates){
+            if (rate != null && validRate(rate)){
                 scheduleOfRate.addSorRate(rate);
+                scheduleOfRateService.setPrimaryDetailsForSorRates(rate);                
+            }
+        }
     }
 
     protected boolean validRate(final SORRate rate) {
@@ -196,9 +201,14 @@ public class ScheduleOfRateAction extends SearchFormAction {
     }
 
     protected void populateMarketRates() {
-        for (final MarketRate marketRate : actionMarketRates)
-            if (validMarketRate(marketRate))
+        scheduleOfRate.getMarketRates().clear();
+        for (final MarketRate marketRate : actionMarketRates){
+            if (marketRate != null && validMarketRate(marketRate)){
                 scheduleOfRate.addMarketRate(marketRate);
+                scheduleOfRateService.setPrimaryDetailsForMarketRates(marketRate);
+            }
+        }
+           
     }
 
     protected boolean validMarketRate(final MarketRate marketRate) {

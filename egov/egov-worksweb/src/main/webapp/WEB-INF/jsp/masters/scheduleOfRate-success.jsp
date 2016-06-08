@@ -59,10 +59,9 @@ list-style-type: none;
 
 <div class="row text-center">
 	<div class="add-margin">
-		<s:if test="%{mode!='edit'}">
-			<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor" id="CREATE" name="button" onclick="createNew();" />
+		<s:if test="%{mode!='edit' && mode != 'view'}">
+			<input type="submit" name="create" Class="btn btn-primary" value="Create New Rate" id="CREATE" name="button" onclick="createNew();" />
 		</s:if>
-			<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyData();" />
 			<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
 	</div>
 </div>
@@ -70,9 +69,6 @@ list-style-type: none;
 <script type="text/javascript">
 function createNew() {
 	window.location = '${pageContext.request.contextPath}/masters/scheduleOfRate-newform.action';
-}
-function modifyData() {
-	window.location = '${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?mode=edit&id='+<s:property value="%{model.id}"/>;
 }
 </script>
 

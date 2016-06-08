@@ -40,6 +40,7 @@
 
 <%@ include file="/includes/taglibs.jsp" %>
 <script src="<egov:url path='/resources/js/works.js?${app_release_no}'/>"></script> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <title><s:text name="sor.list" /></title>
 <style>
@@ -107,6 +108,7 @@ body
 
 <input type="hidden" value="<s:text name='master.sor.select.error' />" id='selectMessage'>
 <s:hidden name="id" id="id" />
+<input type="hidden" id="mode" value="${mode }">
 
 <div class="row">
 	<div class="col-xs-12 text-center buttonholdersearch">
@@ -121,45 +123,60 @@ body
 		</div>
 		
 		<div class="col-md-12 report-table-container">
-			<s:text id="select"	name="%{getText('column.title.select')}"></s:text>
+			<s:if test="%{mode != 'view'}"> 
+				<s:text id="select"	name="%{getText('column.title.modify')}"></s:text>
+ 			</s:if>
 			<s:text id="slNo" name="%{getText('column.title.SLNo')}"></s:text>
 			<s:text id="sorCode" name="%{getText('master.sor.code')}"></s:text>
 			<s:text id="sorDescription" name="%{getText('master.sor.description')}"></s:text>
-			<s:text id="sorRate" name="%{getText('master.sor.rate')}"></s:text>
 			<s:text id="unitOfMeasure" name="%{getText('master.sor.uom')}"></s:text>
+			<s:text id="sorRate" name="%{getText('master.sor.rate')}"></s:text>
 			<s:text id="startDate" name="%{getText('master.sor.startDate')}"></s:text>
 			<s:text id="endDate" name="%{getText('master.sor.endDate')}"></s:text>
 		
 			<display:table name="searchResult" pagesize="30" uid="currentRow" cellpadding="0" cellspacing="0" requestURI=""	class="table table-hover">
-				<display:column headerClass="pagetableth" class="pagetabletd" title="${select}"
-				style="width:2%;" titleKey="column.title.select">
-				<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.id}'/>" onClick="setSorId('<s:property value='%{#attr.currentRow.id}'/>');" />
-				</display:column>
 				
-				<display:column headerClass="pagetableth" class="pagetabletd" title="${slNo}"style="width:4%;text-align:right" >
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${slNo}" style="width:4%;text-align:right" >
 					<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
 				</display:column>
 				
-				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorCode}" style="width:5%;text-align:left" property="code">
-				</display:column>
-				
-				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorDescription}" style="width:51%;text-align:left" property="description">
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorCode}"
+						style="width:15%;text-align:left" >
+						<s:if test="%{mode != 'view'}"> 
+							<s:property value="#attr.currentRow.code"/>
+						</s:if>
+						<s:else>
+							<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view" class="open-popup">
+								<s:property value="#attr.currentRow.code"/>
+							</a>
+						</s:else>
 				</display:column>
 				
 				<display:column headerClass="pagetableth" class="pagetabletd"  title="${unitOfMeasure}" style="width:9%;text-align:left" property="uom.uom">
 				</display:column>
+				
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorDescription}" style="width:51%;text-align:left" property="description">
+				</display:column>
 
-				<display:column headerClass="pagetableth" class="pagetabletd"  title="${sorRate}" style="width:10%;text-align:left">
-					<s:property value="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).rate" />
+				<display:column headerClass="pagetableth" class="pagetabletd"  title="Rate" style="width:10%;text-align:right" titleKey="master.sor.rate">
+					<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).rate" /></fmt:formatNumber>
 				</display:column>
 									
-				<display:column headerClass="pagetableth" class="pagetabletd" title="${startDate}" style="width:10%;text-align:left" >
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${startDate}" style="width:10%;text-align:left" titleKey="master.sor.startDate">
 					<s:date name="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).validity.startDate" format="dd/MM/yyyy"/>
 				</display:column>
 				
 				<display:column headerClass="pagetableth" class="pagetabletd" title="${endDate}" style="width:10%;text-align:left" >
 					<s:date name="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).validity.endDate" format="dd/MM/yyyy"/>
 				</display:column>
+				
+				<s:if test="%{mode != 'view'}"> 
+					<display:column headerClass="pagetableth" class="pagetabletd" title="${select}" style="width:2%;" titleKey="column.title.modify">
+						<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+							<s:text name="column.title.modify" />
+						</a>
+					</display:column>
+					</s:if>
 																	
 			</display:table>
 		</div>
@@ -179,8 +196,6 @@ body
 
 <s:if test="%{searchResult.fullListSize != 0}">
 	<div align="center">
-		<input type="submit" name="VIEW" Class="btn btn-primary" value="View" id="VIEW" onclick=" return viewScheduleData();" /> 
-		<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyScheduleData();" /> 
 		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
 </s:if>
