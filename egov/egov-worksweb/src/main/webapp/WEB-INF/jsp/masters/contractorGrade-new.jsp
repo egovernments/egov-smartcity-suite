@@ -66,12 +66,16 @@
 		<s:form action="contractorGrade-save" theme="simple" name="contractorGrade" id="contractorGrade" cssClass="form-horizontal form-groups-bordered">
 			<s:token/>
 			<s:hidden name="model.id" />
+			<s:hidden name="id" />
+			<s:hidden name="mode" />
 			<%@ include file='contractorGrade-form.jsp'%>
 				<div class="row">
 					<div class="col-xs-12 text-center buttonholdersearch">
-						<s:if test="%{mode!='view'}">
+						<s:if test="%{id == null}">
 							<s:submit value="Save" method="save" cssClass="btn btn-primary" id="saveButton" name="button" onclick="return validateContractorGradeFormAndSubmit();"/>&nbsp;
-						</s:if>
+						</s:if><s:else>
+							<s:submit value="Modify" method="save" cssClass="btn btn-primary" id="modifyButton" name="button" onclick="return validateContractorGradeFormAndSubmit();"/>&nbsp;
+						</s:else>
 						<s:if test="%{model.id==null}" >
 							<input type="button" value="Clear" class="btn btn-default" onclick="clearForm(this.form.id)"/>&nbsp;
 						</s:if>

@@ -51,6 +51,8 @@
 	</div>
 </s:if>
 
+<s:hidden name="model.id" id="id" />
+<s:hidden name="mode"/>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -67,7 +69,6 @@
 
 			</div>
 			<div class="panel-body">
-				<s:iterator value="contractorGradeList">
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<s:text name="contractor.grade.master.grade" />
@@ -101,14 +102,11 @@
 							</s:text>
 						</div>
 					</div>
-				</s:iterator>
 			</div>
 		</div>
 	</div>
 </div>
 
-	<s:hidden name="id" id="id" />
-	
 <div class="row text-center">
 	<div class="add-margin">
 		<input type="submit" name="createNewGrade" Class="btn btn-primary" value="Create new Grade" id="createNewGrade" onclick="createNewContractorGrade();" /> &nbsp;

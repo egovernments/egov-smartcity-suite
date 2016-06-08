@@ -134,7 +134,16 @@
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" 
 						title="Grade" titleKey="contractor.grade.master.grade"
-						style="width:20%;text-align:left" property="grade"/>
+						style="width:20%;text-align:left"  >
+							<s:if test="%{mode == 'view'}">
+								<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
+									<s:property value="#attr.currentRow.grade" />
+								</a>
+							</s:if>
+							<s:else>
+								<s:property value="#attr.currentRow.grade" />
+							</s:else>
+						</display:column>
 																		
 					<display:column headerClass="pagetableth" class="pagetabletd" 
 						title="Description" titleKey="contractor.grade.master.description"
@@ -153,24 +162,15 @@
 						<s:text name="contractor.format.number" >
 				   	<s:param name="rate" value='%{#attr.currentRow.maxAmount}' /></s:text>
 					</display:column>
-					<s:if test="%{mode == 'view'}">
+					<s:if test="%{mode != 'view'}">
 						<display:column headerClass="pagetableth" class="pagetabletd"
-							title="View" style="width:13%;text-align:left">
-							<a class="btn btn-default"
-								href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-								<s:text name="sor.view" />
+							title="Modify" style="width:13%;text-align:left">
+							<a 
+								href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+								<s:text name="column.title.modify" />
 							</a>
 						</display:column>
 					</s:if>
-					<s:else>
-						<display:column headerClass="pagetableth" class="pagetabletd"
-							title="Edit" style="width:13%;text-align:left">
-							<a class="btn btn-default"
-								href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-								<s:text name="sor.edit" />
-							</a>
-						</display:column>
-					</s:else>
 					</display:table>
 				</div>
 				</div>
@@ -187,5 +187,13 @@
 					</div>
 				</s:elseif>
 		</s:form>
-	</body>
+	<s:if test="%{searchResult.fullListSize != 0 }">
+	<div class="row">
+		<div class="col-sm-12 text-center buttonholdersearch">
+			<input type="button" class="btn btn-default" value="Close"
+				id="closeButton" name="button" onclick="window.close();" />
+		</div>
+	</div>
+	</s:if>
+</body>
 </html>

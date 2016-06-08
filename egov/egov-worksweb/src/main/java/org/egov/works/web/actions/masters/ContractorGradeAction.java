@@ -39,6 +39,14 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -50,14 +58,6 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 @Results({
         @Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
@@ -89,7 +89,9 @@ public class ContractorGradeAction extends SearchFormAction {
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
         contractorGrade = contractorGradeService.persist(contractorGrade);
-        addActionMessage(getText("contractor.grade.save.success"));
+        if(contractorGrade.getId() == null)
+            addActionMessage(getText("contractor.grade.save.success"));
+        addActionMessage(getText("contractor.grade.modify.success"));
         contractorGradeList = new ArrayList<ContractorGrade>();
         contractorGradeList.add(contractorGrade);
         return INDEX;
@@ -97,6 +99,7 @@ public class ContractorGradeAction extends SearchFormAction {
 
     @Action(value = "/masters/contractorGrade-newform")
     public String newform() {
+        mode="new";
         return NEW;
     }
 
@@ -140,7 +143,9 @@ public class ContractorGradeAction extends SearchFormAction {
     @Action(value = "/masters/contractorGrade-edit")
     public String edit() {
         contractorGrade = contractorGradeService.getContractorGradeById(contractorGrade.getId());
-        return EDIT;
+        if (mode.equals("edit"))
+            return EDIT;
+        return INDEX;            
     }
 
     @Override
