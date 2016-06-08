@@ -40,13 +40,24 @@
 
 package org.egov.adtax.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.adtax.autonumber.AdvertisementApplicationNumberGenerator;
+import org.egov.adtax.autonumber.AdvertisementNumberGenerator;
+import org.egov.adtax.autonumber.AdvertisementPermitNumberGenerator;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.HoardingAgencyWiseSearch;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
 import org.egov.adtax.search.contract.HoardingSearch;
-import org.egov.adtax.utils.AdTaxNumberGenerator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.workflow.AdtaxWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.services.CollectionIntegrationService;
@@ -55,6 +66,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,14 +74,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -98,7 +102,7 @@ public class AdvertisementPermitDetailService {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
-    private AdTaxNumberGenerator adTaxNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -115,12 +119,12 @@ public class AdvertisementPermitDetailService {
                     .setDemandId(advertisementDemandService.createDemand(advertisementPermitDetail));
         roundOfAllTaxAmount(advertisementPermitDetail);
         if (advertisementPermitDetail.getApplicationNumber() == null)
-            advertisementPermitDetail.setApplicationNumber(adTaxNumberGenerator.generateApplicationNumber());
+            advertisementPermitDetail.setApplicationNumber((beanResolver.getAutoNumberServiceFor(AdvertisementApplicationNumberGenerator.class)).getNextAdvertisementApplicationNumber(advertisementPermitDetail.getAdvertisement()));
         if (advertisementPermitDetail.getAdvertisement().getAdvertisementNumber() == null)
             advertisementPermitDetail.getAdvertisement()
-                    .setAdvertisementNumber(adTaxNumberGenerator.generateAdvertisementNumber());
+                    .setAdvertisementNumber((beanResolver.getAutoNumberServiceFor(AdvertisementNumberGenerator.class)).getNextAdvertisementNumber(advertisementPermitDetail.getAdvertisement()));
         if (advertisementPermitDetail.getAdvertisement().getLegacy() && advertisementPermitDetail.getPermissionNumber() == null)
-            advertisementPermitDetail.setPermissionNumber(adTaxNumberGenerator.generatePermitNumber());
+            advertisementPermitDetail.setPermissionNumber((beanResolver.getAutoNumberServiceFor(AdvertisementPermitNumberGenerator.class)).getNextAdvertisementPermitNumber(advertisementPermitDetail.getAdvertisement()));
         advertisementPermitDetailRepository.save(advertisementPermitDetail);
        
         if (approvalPosition != null && approvalPosition > 0 && additionalRule != null
