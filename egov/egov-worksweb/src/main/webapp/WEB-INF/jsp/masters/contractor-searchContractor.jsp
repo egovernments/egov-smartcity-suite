@@ -61,7 +61,7 @@
 </div>
     	
 <div id="contractorError" class="alert alert-danger" style="display: none;"></div>
-<s:form action="/masters/contractor-viewResult.action" theme="simple" name="contractor" cssClass="form-horizontal form-groups-bordered">
+<s:form action="/masters/contractor-viewResult.action" theme="simple" name="searchContractorForm" id="searchContractorForm" cssClass="form-horizontal form-groups-bordered">
 					
 <div class="panel panel-primary" data-collapsed="0"
 	style="text-align: left">
@@ -118,8 +118,10 @@
 		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
 	</div>
 </div>
-		
-	<s:text id="select"	name="%{getText('column.title.select')}"></s:text>
+		<input type="hidden" id="mode" value="${mode}" />
+	<s:if test="%{mode != 'view'}"> 
+		<s:text id="modify"	name="%{getText('column.title.modify')}"></s:text>
+ 	</s:if>
  	<s:text	id="slNo" name="%{getText('column.title.SLNo')}"></s:text>
 	<s:text id="code" name="%{getText('contractor.code')}"></s:text>
 	<s:text id="name" name="%{getText('contractot.contractorname')}"></s:text>
@@ -133,22 +135,25 @@
 				
 				<div class="col-md-12 report-table-container">
 					<display:table name="searchResult" pagesize="30" uid="currentRow" cellpadding="0" cellspacing="0" requestURI="" class="table table-hover">
-					
-					<display:column headerClass="pagetableth" class="pagetabletd" title="${select}" style="width:2%;" titleKey="column.title.select">
-						<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.id}'/>" onClick="setContractorId('<s:property value='%{#attr.currentRow.id}'/>');" />
-						
-					</display:column>
 
 					<display:column headerClass="pagetableth"  class="pagetabletd" title="${slNo}"  style="width:4%;text-align:right">
 						<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
 					</display:column>
 
 					<display:column headerClass="pagetableth" class="pagetabletd" title="${name}"
-						style="width:15%;text-align:left" property="name" >
+						style="width:15%;text-align:left" property="name">
 					</display:column>
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" title="${code}"
-						style="width:15%;text-align:left" property="code" >
+						style="width:15%;text-align:left" >
+						<s:if test="%{mode != 'view'}"> 
+							<s:property value="#attr.currentRow.contractorDetails[0].contractor.code"/>
+						</s:if>
+						<s:else>
+						<a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view" class="open-popup">
+								<s:property value="#attr.currentRow.contractorDetails[0].contractor.code"/>
+							</a>
+						</s:else>
 					</display:column>
 
 					<display:column headerClass="pagetableth" class="pagetabletd" title="${class}" style="width:15%;text-align:left">
@@ -158,7 +163,13 @@
 					<display:column headerClass="pagetableth" class="pagetabletd" title="${status}" style="width:15%;text-align:left">
 						<s:property value="#attr.currentRow.contractorDetails[0].status.description" />
 					</display:column>
-							
+					<s:if test="%{mode != 'view'}"> 
+					<display:column headerClass="pagetableth" class="pagetabletd" title="${modify}" style="width:2%;" titleKey="column.title.modify">
+						<a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit" >
+							<s:text name="schedCategory.modify" />
+						</a>
+					</display:column>
+					</s:if>
 					</display:table>
 			</div>
 		</div>
@@ -168,19 +179,14 @@
 				<div class="col-md-12 table-header text-left">
 				  <s:text name="title.search.result" />
 				</div>
-				
 				<div class="col-md-12 text-center report-table-container">
 				   <div class="alert alert-warning no-margin"><s:text name="label.no.records.found"/></div>
 				</div>
 			</div>
 		</s:elseif>
-		
-			
 </s:form>
 <s:if test="%{searchResult.fullListSize != 0}">
 	<div align="center">
-		<input type="submit" name="VIEW" Class="btn btn-primary" value="View" id="VIEW" onclick="return viewContractorDataOnSearch();" /> 
-		<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="return modifyContractorDataOnSearch();" /> 
 		<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
 </s:if>

@@ -198,6 +198,11 @@ window.document.onkeydown = function(event) {
 
     	try { jQuery(":input").inputmask(); }catch(e){}
     	
+    	jQuery("a.open-popup").click(function(e) {
+    		window.open(this.href, ''+jQuery(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
+    		return false;
+    	});
+    	
 	  </script>
 	  
 	   

@@ -61,12 +61,9 @@ ul {
 <s:hidden name="model.id" id="model"/>
 <div class="row text-center">
 	<div class="add-margin">
-	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyContractorData();" />
-	
-	<s:if test="%{mode!='edit'}">
+	<s:if test="%{ mode!='edit' && mode != 'view'}">
 		<input type="submit" name="create" Class="btn btn-primary" value="Create New Contractor" id="CREATE" name="button" onclick="createNewContractor();" />
 	</s:if>
-	
 	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
 	</div>
 </div>
