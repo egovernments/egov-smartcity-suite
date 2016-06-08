@@ -66,7 +66,17 @@
 
 <div class="row">
 	<div class="col-sm-12 text-center buttonholdersearch">
-	<s:submit cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save" onclick="return methodTest();" /> &nbsp;
+		<s:if test="%{id==null}">
+			<s:submit cssClass="btn btn-primary" value="Save" id="saveButton"
+				name="button" method="save" onclick="return methodTest();" /> &nbsp;
+		</s:if>
+		<s:elseif test="%{id!=null && mode=='edit'}">
+			<s:submit cssClass="btn btn-primary" value="Modify" id="saveButton"
+				name="button" method="save" onclick="return methodTest();" /> &nbsp;
+		</s:elseif>
+		<s:else>
+			<s:text name="scheduleCategory.view.sor" />
+		</s:else>
 		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
 	</div>
 </div>
