@@ -201,7 +201,7 @@
 								<th><spring:message code="lbl.escalationTime.button.srNo" /></th>
 								<th><spring:message code="lbl.escalationTime.designation" /></th>
 								<th><spring:message code="lbl.escalationTime.noOfHours" /></th>
-								<th>Action</th>
+								<th><spring:message code="lbl.escalation.action" /></th>
 							</tr>
 						</thead>
 						<tbody>
