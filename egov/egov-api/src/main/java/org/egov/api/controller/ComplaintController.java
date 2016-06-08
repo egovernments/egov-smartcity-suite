@@ -40,6 +40,7 @@
 
 package org.egov.api.controller;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -71,11 +72,13 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintStatusService;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.search.domain.Document;
@@ -137,6 +140,9 @@ public class ComplaintController extends ApiController {
     protected ComplaintService complaintService;
 
     @Autowired
+    protected ComplaintTypeCategoryService complaintTypeCategoryService;
+    
+    @Autowired
     protected ComplaintTypeService complaintTypeService;
 
     @Autowired
@@ -153,6 +159,55 @@ public class ComplaintController extends ApiController {
     
     @Autowired
     private SecurityUtils securityUtils;
+    
+    // --------------------------------------------------------------------------------//
+    /**
+     * This will returns all complaint types
+     *
+     * @return ComplaintType
+     */
+    @RequestMapping(value = { ApiUrl.COMPLAINT_TYPES_BY_CATEGORIES }, method = GET, produces = { MediaType.TEXT_PLAIN_VALUE })
+    public ResponseEntity<String> getAllComplaintCategories() {
+        try {
+        	
+        	final List<ComplaintTypeCategory> complaintCategories = complaintTypeCategoryService.findAll();
+        	
+        	JsonArray jAryComplaintCategories=new JsonArray();
+        	
+        	for(ComplaintTypeCategory complaintTypeCategory:complaintCategories)
+        	{
+        		
+        		JsonObject jComplaintCategory=new JsonObject();
+        		jComplaintCategory.addProperty("categoryId", complaintTypeCategory.getId());
+        		jComplaintCategory.addProperty("categoryName", complaintTypeCategory.getName());
+        		
+        		List<ComplaintType> complaintTypes = complaintTypeService.findActiveComplaintTypesByCategory(complaintTypeCategory.getId());
+        		
+        		JsonArray jAryComplaintTypes=new JsonArray();
+        		
+        		for(ComplaintType complaintType:complaintTypes)
+        		{
+        			JsonObject jComplaintType=new JsonObject();
+        			jComplaintType.addProperty("id", complaintType.getId());
+        			jComplaintType.addProperty("name", complaintType.getName());
+        			jComplaintType.addProperty("description", complaintType.getDescription());
+        			jAryComplaintTypes.add(jComplaintType);
+        		}
+        		
+        		jComplaintCategory.add("complaintTypes", jAryComplaintTypes);
+        		jAryComplaintCategories.add(jComplaintCategory);
+        	}
+        	
+        	JsonObject jresp=new JsonObject();
+        	jresp.add("complaintCategories", jAryComplaintCategories);
+        	
+            return getResponseHandler().success(jresp);
+            
+        } catch (final Exception e) {
+        	LOGGER.error("EGOV-API ERROR ",e);
+        	return getResponseHandler().error(getMessage("server.error"));
+        }
+    }
     
     // --------------------------------------------------------------------------------//
     /**
@@ -493,6 +548,7 @@ public class ComplaintController extends ApiController {
      * @param page
      * @param pageSize
      * @return Complaint
+    
      */
 
     @RequestMapping(value = {
