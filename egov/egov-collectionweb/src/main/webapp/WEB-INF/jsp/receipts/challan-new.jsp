@@ -272,19 +272,26 @@ function validate(obj){
 			valid=false;
 		 }            
 		</s:if>
-		if(!validateAccountDetail()){
+
+		if(null!= document.getElementById('approverDeptId') && document.getElementById('approverDeptId').value == "-1"){
+			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.department.errormessage" />'+ "<br>";
 			valid=false;
 		}
-		if(!validateSubLedgerDetail()){
-			valid=false;
-		}
-		if(null!= document.getElementById('designationId') && document.getElementById('designationId').value == -1){
+		
+		if(null!= document.getElementById('designationId') && document.getElementById('designationId').value == "-1"){
 			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.designation.errormessage" />'+ "<br>";
 			valid=false;
 		}
 		
-		if(null!= document.getElementById('positionUser') && document.getElementById('positionUser').value == -1){
+		if(null!= document.getElementById('positionUser') &&  document.getElementById('positionUser').value == "-1"){
 			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.position.errormessage" />'+ "<br>";
+			valid=false;
+		}
+		
+		if(!validateAccountDetail()){
+			valid=false;
+		}
+		if(!validateSubLedgerDetail()){
 			valid=false;
 		}
 		
@@ -790,7 +797,7 @@ function populatepositionuseronload()
 		<tr>
 			<td width="4%" class="bluebox2">&nbsp;</td>
 			<td width="15%" class="bluebox2"> Approver Department <s:if test="%{model.id==null}"><span class="mandatory"/></s:if></td>
-			<td width="20%" class="bluebox2"><s:select headerKey="" headerValue="%{getText('challan.select')}" name="approverDeptId" id="approverDeptId" cssClass="selectwk" list="dropdownData.approverDepartmentList" listKey="id" listValue="name" 
+			<td width="20%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('challan.select')}" name="approverDeptId" id="approverDeptId" cssClass="selectwk" list="dropdownData.approverDepartmentList" listKey="id" listValue="name" value="%{approverDeptId}"
 onChange="onChangeDeparment(this.value)" /> 
 		<egov:ajaxdropdown id="designationIdDropdown" fields="['Text','Value']" dropdownId='designationId'
 			         url='receipts/ajaxChallanApproval-approverDesignationList.action' selectedValue="%{designationId}"/>
@@ -798,7 +805,7 @@ onChange="onChangeDeparment(this.value)" />
 
 			
 		      	<td width="15%" class="bluebox2"><s:text name="challan.approve.designation"/><s:if test="%{model.id==null}"><span class="mandatory"/></s:if></td>
-			  <td width="20%" class="bluebox2"><s:select headerKey="" headerValue="%{getText('challan.select')}" name="designationId" id="designationId" cssClass="selectwk"  list="dropdownData.designationMasterList" listKey="id" listValue="name" onChange="onChangeDesignation(this.value)"/>
+			  <td width="20%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('challan.select')}" name="designationId" id="designationId" cssClass="selectwk"  list="dropdownData.designationMasterList" listKey="id" listValue="name" value="%{designationId}" onChange="onChangeDesignation(this.value)"/>
 			  <egov:ajaxdropdown id="positionUserDropdown" fields="['Text','Value']" dropdownId='positionUser'
 			         url='receipts/ajaxChallanApproval-positionUserList.action' selectedValue="%{position.id}"/>	 
 			 </td>
@@ -806,7 +813,7 @@ onChange="onChangeDeparment(this.value)" />
 				<td width="20%" class="bluebox2">
 					<s:select headerValue="%{getText('challan.select')}"  headerKey="-1"
 	                list="dropdownData.postionUserList" listKey="position.id" id="positionUser" listValue="position.name"
-	                label="positionUser" name="positionUser" value="%{position.id}"/>
+	                label="positionUser" name="positionUser" value="%{positionUser}"/>
 				</td>
 		</tr>
 		</s:if>

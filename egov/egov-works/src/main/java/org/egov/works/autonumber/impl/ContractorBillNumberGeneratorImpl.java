@@ -37,15 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.letterofacceptance.service;
+package org.egov.works.autonumber.impl;
 
+import org.egov.works.autonumber.ContractorBillNumberGenerator;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LetterOfAcceptanceNumberGenerator {
+public class ContractorBillNumberGeneratorImpl implements ContractorBillNumberGenerator {
 
-    public String generateLetterOfAcceptanceNumber(final String projectCode) {
-        return "WO/" + projectCode;
+    @Override
+    public String getNextNumber(final ContractorBillRegister contractorBillRegister) {
+        return String.format("%s%02d/%s", "BILL", contractorBillRegister.getBillSequenceNumber(),
+                contractorBillRegister.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
     }
 
 }

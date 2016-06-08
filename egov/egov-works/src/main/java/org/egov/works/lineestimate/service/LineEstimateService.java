@@ -67,6 +67,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -75,8 +76,10 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.abstractestimate.service.EstimateNumberGenerator;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
+import org.egov.works.autonumber.EstimateNumberGenerator;
+import org.egov.works.autonumber.LineEstimateNumberGenerator;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -123,16 +126,10 @@ public class LineEstimateService {
     private final LineEstimateAppropriationRepository lineEstimateAppropriationRepository;
 
     @Autowired
-    private LineEstimateNumberGenerator lineEstimateNumberGenerator;
-
-    @Autowired
-    private BudgetAppropriationNumberGenerator budgetAppropriationNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
-    @Autowired
-    private EstimateNumberGenerator estimateNumberGenerator;
 
     @Autowired
     private WorksUtils worksUtils;
@@ -199,12 +196,16 @@ public class LineEstimateService {
                 LineEstimateStatus.CREATED.toString()));
         final CFinancialYear financialYear = getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
-            final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate, financialYear);
+            EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
+            final String estimateNumber = e.getNextNumber(lineEstimate, financialYear);
             lineEstimateDetail.setEstimateNumber(estimateNumber);
             lineEstimateDetail.setLineEstimate(lineEstimate);
         }
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
-            final String lineEstimateNumber = lineEstimateNumberGenerator.generateLineEstimateNumber(lineEstimate);
+
+            LineEstimateNumberGenerator l = beanResolver.getAutoNumberServiceFor(LineEstimateNumberGenerator.class);
+
+            final String lineEstimateNumber = l.getNextNumber(lineEstimate);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
         }
 
@@ -226,7 +227,8 @@ public class LineEstimateService {
             final MultipartFile[] files, final CFinancialYear financialYear) throws IOException {
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
             if (lineEstimateDetails != null && lineEstimateDetails.getId() == null) {
-                final String estimateNumber = estimateNumberGenerator.generateEstimateNumber(lineEstimate, financialYear);
+                EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
+                final String estimateNumber = e.getNextNumber(lineEstimate, financialYear);
                 lineEstimateDetails.setEstimateNumber(estimateNumber);
                 lineEstimateDetails.setLineEstimate(lineEstimate);
             }
@@ -869,11 +871,10 @@ public class LineEstimateService {
 
             if (appropriationnumber == null)
                 appropriationnumber = lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber();
-
+            BudgetAppropriationNumberGenerator b = beanResolver.getAutoNumberServiceFor(BudgetAppropriationNumberGenerator.class);
             budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
                     lineEstimateAppropriation.getBudgetUsage() == null ? null
-                            : budgetAppropriationNumberGenerator.generateCancelledBudgetAppropriationNumber(
-                                    appropriationnumber),
+                            : b.generateCancelledBudgetAppropriationNumber(appropriationnumber),
                     lineEstimateAppropriation.getBudgetUsage().getFinancialYearId().longValue(),
                     Integer.valueOf(11),
                     lineEstimateAppropriation.getLineEstimateDetails().getEstimateNumber(),
@@ -926,7 +927,9 @@ public class LineEstimateService {
         }
 
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
-            final String lineEstimateNumber = lineEstimateNumberGenerator.generateLineEstimateNumber(lineEstimate);
+
+            LineEstimateNumberGenerator l = beanResolver.getAutoNumberServiceFor(LineEstimateNumberGenerator.class);
+            final String lineEstimateNumber = l.getNextNumber(lineEstimate);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
         }
 
@@ -1038,10 +1041,10 @@ public class LineEstimateService {
         }
         return lineEstimateRepository.save(lineEstimate);
     }
-    
+
     public LineEstimate getLineEstimateByCouncilResolutionNumber(final String councilResolutionNumber) {
         return lineEstimateRepository.findByCouncilResolutionNumberIgnoreCaseAndStatus_codeNotLike(councilResolutionNumber,
                 WorksConstants.CANCELLED_STATUS);
     }
-    
+
 }

@@ -43,13 +43,14 @@ $subTypeOfWorkId = 0;
 $subSchemeId = 0;
 $detailsRowCount = $('#detailsSize').val();
 $budgetHeadId=0;
+$functionId = 0;
 $(document).ready(function(){
 	
 	$locationId = $('#locationValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$budgetHeadId = $('#budgetHeadValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
-	
+	$functionId = $('#functionId').val();
 	if($("#isBillsCreatedInput").val() == 'true') {
 		$(".thGrossAmount").show();
 		$(".tdGrossAmount").each(
@@ -654,18 +655,24 @@ function validateWorkFlowApprover(name) {
 	return true;
 }
 
-$('#function').change(function(){
-	 if ($('#function').val() === '') {
+function getBudgetHeads() {
+	 if ($('#fund').val() === '' || $('#executingDepartments').val() === '' || $('#function').val() === '' || $('#natureOfWork').val() === '') {
 		   $('#budgetHead').empty();
 		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
 			return;
 			} else {
 			$.ajax({
 				type: "GET",
-				url: "/egworks/lineestimate/getbudgetheadbyfunction",
+				url: "/egworks/lineestimate/getbudgethead",
 				cache: true,
 				dataType: "json",
-				data:{'functionId' : $('#function').val()}	
+				data:{
+					'fundId' : $('#fund').val(),
+					'functionId' : $('#function').val(),
+					'departmentId' : $('#executingDepartments').val(),
+					'natureOfWorkId' : $('#natureOfWork').val()
+					
+					}	
 			}).done(function(value) {
 				console.log(value);
 				$('#budgetHead').empty();
@@ -679,8 +686,35 @@ $('#function').change(function(){
 							selected="selected";
 						}
 					}
-				     $('#budgetHead').append($('<option '+ selected +'>').text(val.description).attr('value', val.id));
+				     $('#budgetHead').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
 				});
 			});
 		}
-	});
+}
+function getFunctionsByFundAndDepartment() {
+	if ($('#fund').val() === '' || $('#executingDepartments').val() === '') {
+		   $('#function').empty();
+		   $('#function').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				$.ajax({
+					method : "GET",
+					url : "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",
+					data : {
+						fundId : $('#fund').val(),
+						departmentId : $('#executingDepartments').val()
+					},
+					async : true
+				}).done(
+						function(response) {
+							$('#function').empty();
+							var output = '<option value="">Select from below</option>';
+							$.each(response, function(index, value) {
+								output += '<option value=' + value.id + '>'
+										+ value.code + ' - ' + value.name
+										+ '</option>';
+							});
+							$('#function').append(output);
+				});
+			}
+}

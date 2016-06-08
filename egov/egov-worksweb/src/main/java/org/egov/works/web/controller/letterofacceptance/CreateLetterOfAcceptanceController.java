@@ -48,14 +48,16 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -81,11 +83,11 @@ public class CreateLetterOfAcceptanceController {
     private LetterOfAcceptanceService letterOfAcceptanceService;
     
     @Autowired
-    private LetterOfAcceptanceNumberGenerator letterOfAcceptanceNumberGenerator;
-    
+    private AutonumberServiceBeanResolver beanResolver;
+
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private ContractorGradeService contractorGradeService;
     
@@ -140,11 +142,15 @@ public class CreateLetterOfAcceptanceController {
             return "createLetterOfAcceptance-form";
         } else {
         	workOrder.setContractor(contractorService.findById(workOrder.getContractor().getId(), false));
+        	final WorkOrderEstimate workOrderEstimate = letterOfAcceptanceService.createWorkOrderEstimate(workOrder);
+
             if (lineEstimateDetails.getLineEstimate().isSpillOverFlag() && !lineEstimateDetails.getLineEstimate()
-                    .isWorkOrderCreated() || !lineEstimateDetails.getLineEstimate().isSpillOverFlag())
-                workOrder.setWorkOrderNumber(
-                        letterOfAcceptanceNumberGenerator
-                                .generateLetterOfAcceptanceNumber(lineEstimateDetails.getProjectCode().getCode()));
+                    .isWorkOrderCreated() || !lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {
+                LetterOfAcceptanceNumberGenerator l = beanResolver
+                        .getAutoNumberServiceFor(LetterOfAcceptanceNumberGenerator.class);
+                final String workOrderNumber = l.getNextNumber(workOrderEstimate);
+                workOrder.setWorkOrderNumber(workOrderNumber);
+            }
             final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files);
             return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber();
         }
@@ -155,7 +161,7 @@ public class CreateLetterOfAcceptanceController {
             @RequestParam(value = "isModify", required = false) final boolean isModify) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(loaNumber);
         model.addAttribute("workOrder", workOrder);
-        if(isModify)
+        if (isModify)
             model.addAttribute("mode", "modify");
         return "letterofacceptance-success";
     }
@@ -190,7 +196,7 @@ public class CreateLetterOfAcceptanceController {
         if (workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
             resultBinder.rejectValue("fileDate", "error.loa.workorderdate");
     }
-    
+
     @RequestMapping(value = "/contractorsearchform", method = RequestMethod.GET)
     public String showSearchContractorForm(
             @ModelAttribute final SearchRequestContractor searchRequestContractor,

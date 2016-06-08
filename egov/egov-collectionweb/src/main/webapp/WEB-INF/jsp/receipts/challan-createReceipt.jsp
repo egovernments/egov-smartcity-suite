@@ -510,13 +510,12 @@ function checkForCurrentDate(obj)
 	   //trim(obj,obj.value);
 	   dom.get("challan_dateerror_area").style.display="none";
 	   document.getElementById("challan_dateerror_area").innerHTML="";
-	   var currDate = "${currDate}";
 	   if(obj.value!="")
-	   if(!validateChequeDate(obj.value,currDate))
+	   if(!validateChequeDate(obj.value,document.getElementById('receiptdate').value))
 	   {
 	       dom.get("challan_dateerror_area").style.display="block";
 	       document.getElementById("challan_dateerror_area").innerHTML+=
-					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+					'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 	       return false;
 	   }
    }
@@ -1266,7 +1265,6 @@ function validate()
      </td></tr>
      </div>
 </table> <!--  main table ends -->
-<s:if test="%{!hasErrors()}" >
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
@@ -1281,12 +1279,6 @@ function validate()
       <input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
 </div>
 </s:if>
-</s:if>
-<s:if test="%{model.id==null || hasErrors()}" >
-		<div class="buttonbottom" >
-			<input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
-		</div>
-	</s:if>
 </div>
 
 

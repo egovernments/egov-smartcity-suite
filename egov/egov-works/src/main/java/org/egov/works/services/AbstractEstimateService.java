@@ -69,6 +69,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
@@ -77,7 +78,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
-import org.egov.works.abstractestimate.service.EstimateNumberGenerator;
+import org.egov.works.autonumber.EstimateNumberGenerator;
 import org.egov.works.models.estimate.BudgetFolioDetail;
 import org.egov.works.models.estimate.BudgetNumberGenerator;
 import org.egov.works.models.estimate.DepositWorksUsage;
@@ -90,7 +91,8 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     private static final Logger logger = Logger.getLogger(AbstractEstimateService.class);
 
     @Autowired
-    private EstimateNumberGenerator estimateNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
+
     private BudgetNumberGenerator budgetNumberGenerator;
     @Autowired
     private ProjectCodeGenerator projectcodeGenerator;
@@ -175,8 +177,11 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public void setEstimateNumber(final AbstractEstimate entity) {
         final CFinancialYear financialYear = getCurrentFinancialYear(entity.getEstimateDate());
         if (entity.getEstimateNumber() == null || entity.getEstimateNumber() != null
-                && estimateNumberChangeRequired(entity, financialYear))
-            entity.setEstimateNumber(estimateNumberGenerator.getEstimateNumber(entity, financialYear));
+                && estimateNumberChangeRequired(entity, financialYear)){
+            EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
+            final String estimateNumber = e.getEstimateNumber(entity, financialYear);
+            entity.setEstimateNumber(estimateNumber);
+        }
     }
 
     /**
@@ -779,7 +784,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             budgetheadid.add(financialDetail.getBudgetGroup().getId());
             return budgetDetailsDAO.getPlanningBudgetAvailable(finYearId, Integer.parseInt(estimate.getUserDepartment()
                     .getId().toString()), financialDetail.getFunction() == null ? null : financialDetail.getFunction()
-                            .getId(),
+                    .getId(),
                     null, financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
                     financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(), Integer
                             .parseInt(estimate.getWard().getId().toString()),
@@ -846,7 +851,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
     public boolean checkForBudgetaryAppropriationForDepositWorks(final FinancialDetail financialDetail,
             final String appropriationNumber)
-                    throws ValidationException {
+            throws ValidationException {
         boolean flag = false;
         final Date appDate = new Date();
         double depApprAmnt = 0.0;
@@ -858,7 +863,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                        .getAbstractEstimate().getDepositCode().getId().intValue());
+                .getAbstractEstimate().getDepositCode().getId().intValue());
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(financialDetail,
                 appDate);
         BigDecimal balance = BigDecimal.ZERO;
@@ -894,7 +899,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
                 "getLatestDepositWorksUsageForEstimate", financialDetail.getAbstractEstimate().getId());
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                        .getAbstractEstimate().getDepositCode().getId().intValue());
+                .getAbstractEstimate().getDepositCode().getId().intValue());
         // Generate Budget Rejection no here
         final String budgetRejectionNumber = "BC/" + estimateAppropriation.getDepositWorksUsage().getAppropriationNumber();
         final double releaseAmount = estimateAppropriation.getDepositWorksUsage().getConsumedAmount().doubleValue();

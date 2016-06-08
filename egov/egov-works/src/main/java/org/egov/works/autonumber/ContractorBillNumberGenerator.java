@@ -37,49 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-/*
- * Created on Jan 17, 2006
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
-package org.egov.dao.budget;
+package org.egov.works.autonumber;
 
-import java.util.List;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.springframework.stereotype.Service;
 
-/**
- * @author Administrator
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+@Service
+public interface ContractorBillNumberGenerator {
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.model.budget.BudgetGroup;
-
-public interface BudgetGroupDAO {
-    public List<BudgetGroup> getBudgetGroupList() throws ValidationException;
-
-    public List<BudgetGroup> getBudgetHeadByDateAndFunction(String functionCode, java.util.Date date) throws ValidationException;
-
-    public BudgetGroup getBudgetHeadById(Long id) throws ValidationException;
-
-    public List<BudgetGroup> getBudgetHeadByFunction(String string);
-
-    public List<BudgetGroup> getBudgetHeadByCOAandFunction(String functionCode, List<CChartOfAccounts> chartOfAccountsList)
-            throws ValidationException;
-
-    BudgetGroup findById(Number id, boolean lock);
-
-    List<BudgetGroup> findAll();
-
-    BudgetGroup create(BudgetGroup entity);
-
-    BudgetGroup update(BudgetGroup entity);
-
-    public List<BudgetGroup> getBudgetGroupsByFundFunctionDeptAndAccountType(final Integer fund, final Long dept,
-            final Long function, final String accountType) throws ValidationException;
-
-    void delete(BudgetGroup entity);
+    public String getNextNumber(final ContractorBillRegister contractorBillRegister);
 }

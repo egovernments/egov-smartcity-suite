@@ -37,26 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.contractorbill.service;
+package org.egov.works.autonumber.impl;
 
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ContractorBillNumberGeneratorImpl implements ContractorBillNumberGenerator {
+public class LetterOfAcceptanceNumberGeneratorImpl implements LetterOfAcceptanceNumberGenerator {
 
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Override
-    public String generateContractorBillNumber(final ContractorBillRegister contractorBillRegister) {
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService
-                .findByEstimateNumber(contractorBillRegister.getWorkOrder().getEstimateNumber());
-        return String.format("%s%02d/%s", "BILL", contractorBillRegister.getBillSequenceNumber(),
-                lineEstimateDetails.getProjectCode().getCode());
+    public String getNextNumber(final WorkOrderEstimate workOrderEstimate) {
+        return "WO/" + workOrderEstimate.getEstimate().getProjectCode().getCode();
     }
 
 }

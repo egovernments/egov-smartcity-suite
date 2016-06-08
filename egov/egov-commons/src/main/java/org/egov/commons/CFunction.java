@@ -39,11 +39,6 @@
  */
 package org.egov.commons;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -54,107 +49,107 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-@Entity
-@Table(name="Function")
-@SequenceGenerator(name = CFunction.SEQ, sequenceName = CFunction.SEQ, allocationSize = 1)
-@Unique(id = "id", tableName = "Function", fields = { "code","name" }, columnName = { "code","name" }, enableDfltMsg = true)
-public class CFunction extends AbstractAuditable{
-	
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ = "SEQ_FUNCTION";
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id ;
-	
-	
+@Entity
+@Table(name = "Function")
+@SequenceGenerator(name = CFunction.SEQ, sequenceName = CFunction.SEQ, allocationSize = 1)
+@Unique(id = "id", tableName = "Function", fields = { "code", "name" }, columnName = { "code", "name" }, enableDfltMsg = true)
+public class CFunction extends AbstractAuditable {
+
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ = "SEQ_FUNCTION";
+
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     @Length(max = 100, min = 2)
     @Required
-	private String name;
-	
-	@Length(max = 50, min = 2)
+    private String name;
+
+    @Length(max = 50, min = 2)
     @Required
-	private String code;
-	
-	@Length(max=50)
-	private String type;
-	
-	private int llevel;
-	
-	private Boolean isActive;
-	
-	private Boolean isNotLeaf;
-	 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "parentId")	
-	private CFunction parentId;
+    private String code;
 
-	public Long getId() {
-		return id;
-	}
+    @Length(max = 50)
+    private String type;
 
-	public String getName() {
-		return name;
-	}
+    private int llevel;
 
-	public String getCode() {
-		return code;
-	}
+    private Boolean isActive;
 
-	public String getType() {
-		return type;
-	}
+    private Boolean isNotLeaf;
 
-	public int getLlevel() {
-		return llevel;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentId")
+    private CFunction parentId;
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Boolean getIsNotLeaf() {
-		return isNotLeaf;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public CFunction getParentId() {
-		return parentId;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public int getLlevel() {
+        return llevel;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public Boolean getIsNotLeaf() {
+        return isNotLeaf;
+    }
 
-	public void setLlevel(int llevel) {
-		this.llevel = llevel;
-	}
+    public CFunction getParentId() {
+        return parentId;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setIsNotLeaf(Boolean isNotLeaf) {
-		this.isNotLeaf = isNotLeaf;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setParentId(CFunction parentId) {
-		this.parentId = parentId;
-	}
-	 
-	
-	
-	
-	
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setLlevel(int llevel) {
+        this.llevel = llevel;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public void setIsNotLeaf(Boolean isNotLeaf) {
+        this.isNotLeaf = isNotLeaf;
+    }
+
+    public void setParentId(CFunction parentId) {
+        this.parentId = parentId;
+    }
+
 }
