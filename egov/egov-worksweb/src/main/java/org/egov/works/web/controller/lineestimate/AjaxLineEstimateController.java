@@ -323,6 +323,18 @@ public class AjaxLineEstimateController {
             return budgetGroups;
         }
     }
+    
+    @RequestMapping(value = "/getbudgetheadbyfunction", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<BudgetGroup> getBudgetHeadByFunction(@RequestParam("functionId") final Long functionId) {
+        List<BudgetGroup> budgetGroups = new ArrayList<BudgetGroup>();
+        final CFunction function = functionService.findOne(functionId);
+        try {
+            budgetGroups = budgetGroupDAO.getBudgetHeadByFunction(function.getCode());
+            return budgetGroups;
+        } catch (final ValidationException v) {
+            return budgetGroups;
+        }
+    }
 
     @RequestMapping(value = "/getfunctionsbyfundidanddepartmentid", method = RequestMethod.GET)
     public @ResponseBody List<CFunction> getAllFunctionsByFundIdAndDepartmentId(final Model model,
