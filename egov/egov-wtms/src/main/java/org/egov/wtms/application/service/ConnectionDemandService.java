@@ -71,6 +71,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -83,6 +84,9 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.collection.ConnectionBillService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
+import org.egov.wtms.autonumber.BillReferenceNumberGenerator;
+import org.egov.wtms.autonumber.MeterDemandNoticeNumberGenerator;
+import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
@@ -111,6 +115,10 @@ public class ConnectionDemandService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+    
     @Autowired
     private DonationDetailsService donationDetailsService;
 
@@ -473,6 +481,8 @@ public class ConnectionDemandService {
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails;
+        BillReferenceNumberGenerator billRefeNumber = beanResolver.getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
+
         if (applicationTypeCode != null
                 && (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE) || applicationTypeCode
                         .equals(WaterTaxConstants.RECONNECTIONCONNECTION)))
@@ -498,7 +508,7 @@ public class ConnectionDemandService {
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(ApplicationThreadLocals.getUserId());
 
-        waterConnectionBillable.setReferenceNumber(waterTaxNumberGenerator.generateBillNumber(currentInstallmentYear));
+        waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
 
         final String billXml = connectionBillService.getBillXML(waterConnectionBillable);
@@ -674,10 +684,12 @@ public class ConnectionDemandService {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+        MeterDemandNoticeNumberGenerator meterDemandNotice = beanResolver.getAutoNumberServiceFor(MeterDemandNoticeNumberGenerator.class);
+
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(ApplicationThreadLocals.getUserId());
-        waterConnectionBillable.setReferenceNumber(waterTaxNumberGenerator.generateMeterDemandNoticeNumber());
+        waterConnectionBillable.setReferenceNumber(meterDemandNotice.generateMeterDemandNoticeNumber());
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL));
 
         final String billObj = connectionBillService.getBillXML(waterConnectionBillable);

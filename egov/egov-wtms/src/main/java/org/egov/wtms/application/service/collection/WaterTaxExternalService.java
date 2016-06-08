@@ -67,6 +67,7 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -80,6 +81,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.autonumber.BillReferenceNumberGenerator;
 import org.egov.wtms.masters.entity.PayWaterTaxDetails;
 import org.egov.wtms.masters.entity.WaterReceiptDetails;
 import org.egov.wtms.masters.entity.WaterTaxDetails;
@@ -125,6 +127,9 @@ public class WaterTaxExternalService {
 
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
+    
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
     private ConnectionBillService connectionBillService;
@@ -144,6 +149,7 @@ public class WaterTaxExternalService {
         ErrorDetails errorDetails = null;
         String currentInstallmentYear = null;
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
+        BillReferenceNumberGenerator billRefeNumber = beanResolver.getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
         WaterConnectionDetails waterConnectionDetails = null;
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails
@@ -171,7 +177,7 @@ public class WaterTaxExternalService {
                 && ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
             currentInstallmentYear = formatYear.format(connectionDemandService.getCurrentInstallment(
                     WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date()).getInstallmentYear());
-        waterConnectionBillable.setReferenceNumber(waterTaxNumberGenerator.generateBillNumber(currentInstallmentYear));
+        waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(BILLTYPE_MANUAL));
         waterConnectionBillable.setTransanctionReferenceNumber(payWaterTaxDetails.getTransactionId());
         final EgBill egBill = generateBill(waterConnectionBillable);

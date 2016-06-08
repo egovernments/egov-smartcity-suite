@@ -197,6 +197,7 @@ public class ConnectionBillService extends BillServiceInterface {
             if (dmdDet.getInstallmentStartDate().equals(
                     currInstallments.get(WaterTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate()))
                 currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
+        if(ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
         createAdvanceBillDetails(billDetails, currentInstDemand, orderMap, demand, billObj, advanceInstallments,
                 currInstallments.get(WaterTaxConstants.CURRENTYEAR_SECOND_HALF));
         }
