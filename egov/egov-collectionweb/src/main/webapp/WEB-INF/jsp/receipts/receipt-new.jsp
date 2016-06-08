@@ -1770,9 +1770,10 @@ function onChangeBankAccount(branchId)
 {
     var serviceName=document.getElementById("serviceName").value;
     var fundName="",fundId=-1;
-    if(document.getElementById('fundId')!=null){
+    if(document.getElementById('fundId')!=null && document.getElementById('fundId')!=null){
+    	var serviceId=document.getElementById("serviceId").value;
     	fundId=document.getElementById('fundId').value;
-    	populateaccountNumberMaster({branchId:branchId,serviceName:serviceName,fundId:fundId});
+    	populateaccountNumberMaster({branchId:branchId,serviceId:serviceId,fundId:fundId});
     }
     else if(document.getElementById("fundName")!=null){
     	fundName=document.getElementById("fundName").value;

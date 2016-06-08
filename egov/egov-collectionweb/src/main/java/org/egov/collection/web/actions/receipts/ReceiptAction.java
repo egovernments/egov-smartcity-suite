@@ -231,7 +231,7 @@ public class ReceiptAction extends BaseFormAction {
 
     private Long bankAccountId;
 
-    private Long bankBranchId;
+    private Integer bankBranchId;
 
     private String payeename = "";
 
@@ -418,7 +418,7 @@ public class ReceiptAction extends BaseFormAction {
                 && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD))
             setDdAllowed(Boolean.FALSE);
 
-        if ((receiptHeader!=null && receiptHeader.getService()==null) || modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK) || collectionModesNotAllowed != null
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK) || collectionModesNotAllowed != null
                 && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
             setBankAllowed(Boolean.FALSE);
     }
@@ -770,10 +770,6 @@ public class ReceiptAction extends BaseFormAction {
         }
 
         return returnValue;
-        // } catch (final ApplicationRuntimeException e) {
-        // return NEW;
-        // }
-
     }
 
     public void createMisc() {
@@ -1665,11 +1661,11 @@ public class ReceiptAction extends BaseFormAction {
         this.mandatoryFields = mandatoryFields;
     }
 
-    public Long getBankBranchId() {
+    public Integer getBankBranchId() {
         return bankBranchId;
     }
 
-    public void setBankBranchId(final Long bankBranchId) {
+    public void setBankBranchId(final Integer bankBranchId) {
         this.bankBranchId = bankBranchId;
     }
 
