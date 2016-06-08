@@ -51,6 +51,8 @@ $(document).ready(function(){
 	$budgetHeadId = $('#budgetHeadValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
 	$functionId = $('#functionId').val();
+	getFunctionsByFundAndDepartment();
+	getBudgetHeads();
 	if($("#isBillsCreatedInput").val() == 'true') {
 		$(".thGrossAmount").show();
 		$(".tdGrossAmount").each(
@@ -656,7 +658,7 @@ function validateWorkFlowApprover(name) {
 }
 
 function getBudgetHeads() {
-	 if ($('#fund').val() === '' || $('#executingDepartments').val() === '' || $('#function').val() === '' || $('#natureOfWork').val() === '') {
+	if ($('#fund').val() === '' || $('#executingDepartments').val() === '' || ($('#function').val() === '' && $functionId == 0) || $('#natureOfWork').val() === '') {
 		   $('#budgetHead').empty();
 		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
 			return;
@@ -711,7 +713,16 @@ function getFunctionsByFundAndDepartment() {
 							$('#function').append($("<option value=''>Select from below</option>"));
 							var output = '<option value="">Select from below</option>';
 							$.each(response, function(index, value) {
+								var selected="";
+								if($functionId)
+								{
+									if($functionId==value.id)
+									{
+										selected="selected";
+									}
+								}
 								$('#function').append($('<option '+ selected +'>').text(value.code + ' - ' + value.name).attr('value', value.id));
+							
 							});
 				});
 			}
