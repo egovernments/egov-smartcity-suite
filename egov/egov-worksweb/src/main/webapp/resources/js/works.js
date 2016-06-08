@@ -240,15 +240,6 @@ function replaceExemptionFormChar() {
     document.getElementById("exemptionForm").innerHTML = exemption;
 }
 
-function methodTest() {
- 	if(document.getElementById("code").value=="Category Code"){
-		document.getElementById("code").value="";
-	}
-	if(document.getElementById("description").value=="Category Name") {
-		document.getElementById("description").value="";		
-	}
-}
-
 function validateSubledgerCodeBeforeSubmit() {
     {
         var codeName = document.getElementById("codeName").value;
