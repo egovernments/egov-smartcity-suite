@@ -187,7 +187,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             bindErrors.rejectValue("description", "error.description.required");
         }
         LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
-        if (abstractEstimate.getEstimateValue().compareTo(lineEstimateDetails.getEstimateAmount()) == 1) {
+        if (abstractEstimate.getEstimateValue() != null && abstractEstimate.getEstimateValue().compareTo(lineEstimateDetails.getEstimateAmount()) == 1) {
             BigDecimal diffValue = abstractEstimate.getEstimateValue()
                     .subtract(lineEstimateDetails.getEstimateAmount());
             bindErrors.reject("error.estimatevalue.greater", new String[] { diffValue.toString() },
