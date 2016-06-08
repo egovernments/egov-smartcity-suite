@@ -708,13 +708,11 @@ function getFunctionsByFundAndDepartment() {
 				}).done(
 						function(response) {
 							$('#function').empty();
+							$('#function').append($("<option value=''>Select from below</option>"));
 							var output = '<option value="">Select from below</option>';
 							$.each(response, function(index, value) {
-								output += '<option value=' + value.id + '>'
-										+ value.code + ' - ' + value.name
-										+ '</option>';
+								$('#function').append($('<option '+ selected +'>').text(value.code + ' - ' + value.name).attr('value', value.id));
 							});
-							$('#function').append(output);
 				});
 			}
 }
