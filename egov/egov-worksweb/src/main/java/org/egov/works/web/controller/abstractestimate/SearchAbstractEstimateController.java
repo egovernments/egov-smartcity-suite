@@ -37,30 +37,42 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.abstractestimate.repository;
+package org.egov.works.web.controller.abstractestimate;
 
-import java.util.List;
-
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@Repository
-public interface AbstractEstimateRepository extends JpaRepository<AbstractEstimate, Long> {
+@Controller
+@RequestMapping("/abstractestimate")
+public class SearchAbstractEstimateController {
 
-    List<AbstractEstimate> findByEstimateNumberContainingIgnoreCase(final String estimateNumber);
+    @Autowired
+    private DepartmentService departmentService;
 
-    List<AbstractEstimate> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
+    @Autowired
+    private EstimateService estimateService;
 
-    AbstractEstimate findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
+    @RequestMapping(value = "/searchform", method = RequestMethod.GET)
+    public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
+            throws ApplicationException {
+        setDropDownValues(model);
+        model.addAttribute("searchAbstractEstimate", searchAbstractEstimate);
+        return "abstractestimate-search";
+    }
 
-    AbstractEstimate findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(final String estimateNumber,
-            final String statusCode);
+    private void setDropDownValues(final Model model) {
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("createdUsers", estimateService.getCreatedByForViewAbstractEstimates());
+        model.addAttribute("abstractEstimateStatus", AbstractEstimate.EstimateStatus.values());
 
-    AbstractEstimate findByLineEstimateDetails_IdAndEgwStatus_codeEquals(final Long id, final String statusCode);
-
-    @Query("select distinct(ae.createdBy) from AbstractEstimate as ae")
-    List<User> findCreatedByForViewAbstractEstimates();
+    }
 }

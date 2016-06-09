@@ -89,6 +89,12 @@ public class FunctionHibernateDAO implements FunctionDAO {
                 .createQuery("from CFunction where isactive = true and isnotleaf=false order by name").list();
 
     }
+    
+    public List getAllActiveFunctionsOrderByCode() {
+        return getCurrentSession()
+                .createQuery("from CFunction where isactive = true and isnotleaf=false order by code").list();
+
+    }
 
     @Override
     public CFunction getFunctionByCode(final String functionCode) {

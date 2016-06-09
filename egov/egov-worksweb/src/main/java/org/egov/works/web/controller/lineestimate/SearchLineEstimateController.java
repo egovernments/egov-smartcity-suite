@@ -116,12 +116,12 @@ public class SearchLineEstimateController {
         model.addAttribute("lineEstimatesForAbstractEstimate", lineEstimatesForAbstractEstimate);
         model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
         model.addAttribute("departments", departments);
-        return "searchLineEstimateForAbstractEstimate-header.jsp";
+        return "searchLineEstimateForAbstractEstimate-form";
     }
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctionsOrderByCode());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", departmentService.getAllDepartments());

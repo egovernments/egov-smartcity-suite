@@ -246,7 +246,7 @@
         <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-view.jsp"/>
     </definition>
     
-    <definition name="searchLineEstimateForAbstractEstimate-header.jsp" extends="base_layout">
+    <definition name="searchLineEstimateForAbstractEstimate-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.createae" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForAbstractEstimate-header.jsp"/>
     </definition>
@@ -279,6 +279,11 @@
    	<definition name="schedulecategory-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.searchschedulecategory" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/master/schedulecategory/scheduleCategory-search.jsp"/>
-    </definition>    
+    </definition>   
+     
+     <definition name="abstractestimate-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchae" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchAbstractEstimate-form.jsp"/>
+    </definition>
     
 </tiles-definitions>

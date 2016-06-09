@@ -47,7 +47,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.egov.asset.service.AssetService;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -72,6 +71,7 @@ import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.entity.OverheadValue;
+import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
 import org.egov.works.autonumber.TechnicalSanctionNumberGenerator;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -80,11 +80,14 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.reports.entity.WorkProgressRegister;
-import org.egov.works.reports.repository.WorkProgressRegisterRepository;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -392,12 +395,13 @@ public class EstimateService {
             model.addAttribute("isServiceVATRequired", false);
 
     }
-    
-    public void validateAssetDetails(final AbstractEstimate abstractEstimate,final BindingResult bindErrors) {
+
+    public void validateAssetDetails(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
         final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.ASSETDETAILS_REQUIRED_FOR_ESTIMATE);
         final AppConfigValues value = appConfigvalues.get(0);
-        if(value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null && abstractEstimate.getAssetValues().isEmpty()) {
+        if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null
+                && abstractEstimate.getAssetValues().isEmpty()) {
             bindErrors.reject("error.assetdetails.required", "error.assetdetails.required");
         }
     }
@@ -441,11 +445,11 @@ public class EstimateService {
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
                 && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
             saveTechnicalSanctionDetails(abstractEstimate);
-        
+
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
                 && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
             saveAdminSanctionDetails(abstractEstimate);
-        
+
         abstractEstimateStatusChange(abstractEstimate, workFlowAction, mode);
         updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
 
@@ -580,4 +584,50 @@ public class EstimateService {
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
     }
+
+    public List<AbstractEstimate> getAbstractEstimateByEstimateNumberLike(final String estimateNumber) {
+        return abstractEstimateRepository.findByEstimateNumberContainingIgnoreCase("%" + estimateNumber + "%");
+    }
+
+    public List<User> getCreatedByForViewAbstractEstimates() {
+        return abstractEstimateRepository.findCreatedByForViewAbstractEstimates();
+    }
+
+    public List<AbstractEstimate> searchAbstractEstimates(
+            final SearchAbstractEstimate searchAbstractEstimate) {
+        if (searchAbstractEstimate != null) {
+            final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class)
+                    .createAlias("lineEstimateDetails", "led")
+                    .createAlias("egwStatus", "status")
+                    .createAlias("led.projectCode", "pc");
+            if (searchAbstractEstimate.getAbstractEstimateNumber() != null)
+                criteria.add(Restrictions.eq("estimateNumber",
+                        searchAbstractEstimate.getAbstractEstimateNumber()));
+            if (searchAbstractEstimate.getDepartment() != null)
+                criteria.add(Restrictions.eq("executingDepartment.id",
+                        searchAbstractEstimate.getDepartment()));
+            if (searchAbstractEstimate.getWorkIdentificationNumber() != null)
+                criteria.add(
+                        Restrictions.ilike("pc.code", searchAbstractEstimate.getWorkIdentificationNumber(), MatchMode.ANYWHERE));
+            if (searchAbstractEstimate.getStatus() != null) {
+                criteria.add(Restrictions.eq("status.code",
+                        searchAbstractEstimate.getStatus()).ignoreCase());
+            }
+            if (searchAbstractEstimate.getCreatedBy() != null) {
+                criteria.add(Restrictions.eq("createdBy.id",
+                        searchAbstractEstimate.getCreatedBy()));
+            }
+            if (searchAbstractEstimate.getFromDate() != null)
+                criteria.add(Restrictions.ge("estimateDate",
+                        searchAbstractEstimate.getFromDate()));
+            if (searchAbstractEstimate.getToDate() != null)
+                criteria.add(Restrictions.le("estimateDate",
+                        searchAbstractEstimate.getToDate()));
+
+            criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+            return criteria.list();
+        } else
+            return new ArrayList<AbstractEstimate>();
+    }
+
 }

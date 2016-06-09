@@ -177,7 +177,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
     public void setEstimateNumber(final AbstractEstimate entity) {
         final CFinancialYear financialYear = getCurrentFinancialYear(entity.getEstimateDate());
         if (entity.getEstimateNumber() == null || entity.getEstimateNumber() != null
-                && estimateNumberChangeRequired(entity, financialYear)){
+                && estimateNumberChangeRequired(entity, financialYear)) {
             EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
             final String estimateNumber = e.getEstimateNumber(entity, financialYear);
             entity.setEstimateNumber(estimateNumber);
@@ -784,7 +784,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
             budgetheadid.add(financialDetail.getBudgetGroup().getId());
             return budgetDetailsDAO.getPlanningBudgetAvailable(finYearId, Integer.parseInt(estimate.getUserDepartment()
                     .getId().toString()), financialDetail.getFunction() == null ? null : financialDetail.getFunction()
-                    .getId(),
+                            .getId(),
                     null, financialDetail.getScheme() == null ? null : financialDetail.getScheme().getId(),
                     financialDetail.getSubScheme() == null ? null : financialDetail.getSubScheme().getId(), Integer
                             .parseInt(estimate.getWard().getId().toString()),
@@ -863,7 +863,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
 
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                .getAbstractEstimate().getDepositCode().getId().intValue());
+                        .getAbstractEstimate().getDepositCode().getId().intValue());
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(financialDetail,
                 appDate);
         BigDecimal balance = BigDecimal.ZERO;
@@ -899,7 +899,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
                 "getLatestDepositWorksUsageForEstimate", financialDetail.getAbstractEstimate().getId());
         final BigDecimal creditBalance = egovCommon.getDepositAmountForDepositCode(new Date(), financialDetail.getCoa()
                 .getGlcode(), financialDetail.getFund().getCode(), accountdetailtype.getId(), financialDetail
-                .getAbstractEstimate().getDepositCode().getId().intValue());
+                        .getAbstractEstimate().getDepositCode().getId().intValue());
         // Generate Budget Rejection no here
         final String budgetRejectionNumber = "BC/" + estimateAppropriation.getDepositWorksUsage().getAppropriationNumber();
         final double releaseAmount = estimateAppropriation.getDepositWorksUsage().getConsumedAmount().doubleValue();

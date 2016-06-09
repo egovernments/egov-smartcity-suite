@@ -2663,6 +2663,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
             qryStr.append(" select distinct bd.function from BudgetDetail bd  where bd.id is not null  ");
             qryStr.append(filtersQryStr);
+            qryStr.append("order by bd.function.code");
             session = getCurrentSession();
             final Query qry = session.createQuery(qryStr.toString());
             if (fund != null)

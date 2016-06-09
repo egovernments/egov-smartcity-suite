@@ -37,30 +37,51 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.abstractestimate.repository;
+package org.egov.works.web.controller.abstractestimate;
 
 import java.util.List;
 
-import org.egov.infra.admin.master.entity.User;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.web.adaptor.AbstractEstimateJsonAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@Repository
-public interface AbstractEstimateRepository extends JpaRepository<AbstractEstimate, Long> {
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-    List<AbstractEstimate> findByEstimateNumberContainingIgnoreCase(final String estimateNumber);
+@Controller
+@RequestMapping("/abstractestimate")
+public class AjaxSearchAbstractEstimateController {
 
-    List<AbstractEstimate> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
+    @Autowired
+    private EstimateService estimateService;
 
-    AbstractEstimate findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
+    @Autowired
+    private AbstractEstimateJsonAdaptor abstractEstimateJsonAdaptor;
 
-    AbstractEstimate findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(final String estimateNumber,
-            final String statusCode);
+    @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchAbstractEstimates(
+            @ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model) {
+        final List<AbstractEstimate> abstractEstimates = estimateService.searchAbstractEstimates(searchAbstractEstimate);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toJson(abstractEstimates))
+                .append("}").toString();
+        return result;
+    }
 
-    AbstractEstimate findByLineEstimateDetails_IdAndEgwStatus_codeEquals(final Long id, final String statusCode);
-
-    @Query("select distinct(ae.createdBy) from AbstractEstimate as ae")
-    List<User> findCreatedByForViewAbstractEstimates();
+    public Object toJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class,
+                abstractEstimateJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 }

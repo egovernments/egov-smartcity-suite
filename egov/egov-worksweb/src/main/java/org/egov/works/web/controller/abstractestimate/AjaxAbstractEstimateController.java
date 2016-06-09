@@ -41,12 +41,12 @@ package org.egov.works.web.controller.abstractestimate;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.master.service.EstimateTemplateService;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleOfRateService;
@@ -77,6 +77,9 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private EstimateTemplateService estimateTemplateService;
+
+    @Autowired
+    private EstimateService estimateService;
 
     @RequestMapping(value = "/getpercentageorlumpsumbyoverheadid", method = RequestMethod.GET)
     public @ResponseBody OverheadRate getPercentageOrLumpsumByOverhead(@RequestParam("overheadId") final Long overheadId) {
@@ -128,5 +131,14 @@ public class AjaxAbstractEstimateController {
             }
         }
         return activities;
+    }
+
+    @RequestMapping(value = "/getAbstractEstimatesByNumber", method = RequestMethod.GET)
+    public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(@RequestParam final String number) {
+        List<AbstractEstimate> abstractEstimates = estimateService.getAbstractEstimateByEstimateNumberLike(number);
+        final List<String> results = new ArrayList<String>();
+        for (final AbstractEstimate abstractEstimate : abstractEstimates)
+            results.add(abstractEstimate.getEstimateNumber());
+        return results;
     }
 }
