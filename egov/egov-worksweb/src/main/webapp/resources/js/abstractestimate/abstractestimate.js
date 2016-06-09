@@ -51,8 +51,8 @@ $(document).ready(function(){
 	$('#workName').val(nameOfWork);
 	$('#scheme').trigger('change');
 	getAbstractEstimateDate();
-	
-	
+	$('#workCategory').val($('#workCategory').val().replace(/_/g, ' '));
+	$('#beneficiary').val($('#beneficiary').val().replace(/_/g, '/'));
 	$('#sorSearch').blur(function() {
 		$('#sorSearch').val('');
 	});
@@ -213,6 +213,14 @@ $(document).ready(function(){
 	
 	typeaheadWithEventsHandling(ward_typeahead,
 	'#ward');
+	
+	var index = 0;
+	$(document).on('click', '.searchAssetbtn', function() {
+		index = $(this).attr("data-idx");
+		var status = getStatusForNatureOfWork($("#natureOfWork option:selected" ).text());
+		window.open("/egassets/assetmaster/asset-showSearchPage.action?rowId="+index+"&assetStatus="+status,"",
+			"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
+	});
 });
 
 $overheadRowCount = 0;
@@ -981,6 +989,15 @@ function enableFileds() {
 				tbl.deleteRow(1);
 			}
 		}
+		var tbl=document.getElementById('tblassetdetails');
+		var assetTableLength = jQuery('#tblassetdetails tr').length-1;
+		for (var i = 0; i < assetTableLength; i++) {
+			var assetname = document.getElementById('assetValues['+ i + '].asset.name').value;
+			var assetcode = document.getElementById('assetValues['+ i + '].asset.code').value;
+			if(assetname == "" && assetcode== ""){
+				tbl.deleteRow(i+1);
+			}
+		}
 		if(!validateOverheads())
 			return false;
 		$('.disablefield').removeAttr("disabled");
@@ -1338,4 +1355,187 @@ function validateQuantity() {
 function updateUom(obj) {
 	var rowId = $(obj).attr('id').split('_').pop();
 	$('#uomid_' + rowId).val($(obj).val());
+}
+
+$(document).on('click', '#tblassetdetails tbody tr', function() {
+	$inputHiddenAssetId = $(this).find('input[name$="asset.id"]');
+	if($inputHiddenAssetId.val())
+	{
+		assetId = $inputHiddenAssetId.val();
+		var url = "/egassets/assetmaster/asset-showform.action?id="+assetId+"&userMode=view";
+		window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes'); 
+	}
+});
+
+
+function update(data)
+{
+	var index = 0;
+	var isValid = 1;
+	jQuery("#assetDetailRow").clone().find("input:hidden").each(function() {
+		var assetId = $('input[name="assetValues['+ index +'].asset.id"]').val();
+		if(data.id == assetId) {
+			isValid = 0;
+			return false;
+		}
+		index++;
+	});
+	if(isValid == 1) {
+         $('span[id="assetname['+ data.rowidx +']"]').html(data.name);
+         $('span[id="assetcode['+ data.rowidx +']"]').html(data.code);
+         $('input[name="assetValues['+ data.rowidx +'].asset.code"]').val(data.code);
+         $('input[name="assetValues['+ data.rowidx +'].asset.name"]').val(data.name);
+         $('input[name="assetValues['+ data.rowidx +'].asset.id"]').val(data.id);
+	} else {
+		bootbox.alert("Selected Asset details already added");
+	}
+}
+
+
+function getStatusForNatureOfWork(name) {
+	if(name=='Deposit Works' || name=='Deposit Works')
+		return '';
+	else
+		return 'Created&assetStatus=CWIP&assetStatus=Capitalized&assetStatus=Revaluated';
+}
+
+function addAssetDetails() {
+	var tbl = document.getElementById('tblassetdetails');
+    var rowO = tbl.rows.length;
+    if(document.getElementById('assetDetailRow') != null)
+	{
+    		//get Next Row Index to Generate
+    		var nextIdx = tbl.rows.length-1;
+    		var sno = 1;
+    		sno = nextIdx + 1;
+    		//validate status variable for exiting function
+    		var isValid=1;//for default have success value 0  
+    		
+    		//validate existing rows in table
+    		jQuery("#assetDetailsTbl tbody tr").find("input:hidden").each(function() {
+    			if((jQuery(this).data('optional') === 0) && (jQuery(this).val()))
+    			{
+    				console.log('calling :)');
+    				jQuery(this).focus();
+    				bootbox.alert("Please enter value for the row");
+    				isValid=0;//set validation failure
+    				return false;
+    			}
+    		});
+    		
+    		if (isValid === 0) {
+				return false;
+			}
+    		
+    		jQuery("#assetDetailRow").clone().find("input:hidden, span, button").each(function() {
+			    
+    			   if($(this).attr("id"))
+			       {
+			    	   $(this).attr({
+			    		   'id': function(_, id) { 
+						    	  return id.replace(/\[.\]/g, '['+ nextIdx +']'); 
+						       }});
+			    	   $(this).html('');
+				       $(this).val('');
+			       }
+    			   
+			       if($(this).attr("name"))
+			       {
+			    	   $(this).attr({
+						      'name': function(_, name) {
+					    	  return name.replace(/\[.\]/g, '['+ nextIdx +']'); 
+					   }});
+			       }
+			       
+			       if($(this).attr("data-idx"))
+			       {
+			    	   $(this).attr({
+			    		   'data-idx' : function(_,dataIdx)
+							{
+								return nextIdx;
+							}
+			    	   });
+			    	  
+			       }
+			       
+			       if($(this)[0].hasAttribute("data-sno"))
+			       {
+			    	   $(this).text((nextIdx+1));
+			       }
+			     
+			       
+				 
+	    }).end().appendTo("#assetDetailsTbl");
+	}
+}
+
+function deleteAssetDetail(obj) {
+	rIndex = getRow(obj).rowIndex - 1;
+	var tbl=document.getElementById('assetDetailsTbl');
+	var rowo=tbl.rows.length;
+	if(rowo<=1)
+	{
+		bootbox.alert("This row cannot be deleted");
+		return false;
+	}
+	else
+	{	
+		tbl.deleteRow(rIndex);	
+		
+		//starting index for table fields
+		var idx=0;
+		
+		//regenerate index existing inputs in table row
+		$("#tblassetdetails tbody tr").each(function() {
+			
+			$spanSNo=$(this).find('span[data-sno]');
+			if($spanSNo)
+			{
+				$spanSNo.text((idx+1));
+			}
+			$(this).find("input, select, span, button").each(function() {
+				
+				       if($(this).attr("id"))
+				       {
+				    	   $(this).attr({
+							      'id': function(_, id) {  
+							    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+						   }});
+				       }
+				       
+				       if($(this).attr("name"))
+				       {
+				    	   $(this).attr({
+							      'name': function(_, name) {
+						    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+						   }});
+				       }
+				       
+				       if($(this).attr("data-idx"))
+				       {
+				    	   $(this).attr({
+				    		   'data-idx' : function(_,dataIdx)
+								{
+									return idx;
+								}
+				    	   });
+				       }
+		    });
+			idx++;
+		});
+		return true;
+	}	
+
+}
+
+function changeColor(tableRow, highLight)
+{
+	if (highLight)
+	{
+	  tableRow.style.backgroundColor = '#dcfac9';
+	}
+	else
+	{
+	  tableRow.style.backgroundColor = 'white';
+	}
 }

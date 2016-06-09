@@ -63,25 +63,26 @@
 			    <spring:message code="lbl.workcategory" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-				<input class="form-control disablefield" name="workCategory"  value="${workCategory}"/>
+				<input class="form-control disablefield" name="workCategory" id="workCategory" value="${lineEstimateDetails.lineEstimate.workCategory}"/>
 			</div>
 		</div>
-		
+		<c:if test="${lineEstimate.workCategory == 'SLUM_WORK' }">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.typeofslum" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control disablefield" name="" value="${lineEstimateDetails.lineEstimate.typeOfSlum}"/>
+			<input class="form-control disablefield" name="" id="typeOfSlum" value="${lineEstimateDetails.lineEstimate.typeOfSlum}"/>
 			</div>
 			
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.beneficiary" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control disablefield" name=""  value="${lineEstimateDetails.lineEstimate.beneficiary}"/>
+			<input class="form-control disablefield" name="" id="beneficiary" value="${lineEstimateDetails.lineEstimate.beneficiary}"/>
 			</div>
 		</div>
+		</c:if>
 		</c:if>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">

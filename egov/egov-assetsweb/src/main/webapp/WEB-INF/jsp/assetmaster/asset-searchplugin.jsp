@@ -326,17 +326,18 @@ function submitForm(){
 			function returnBackToParent(id,code,name,category) {
 				var wind;
 				var data = new Array();
-				row_id = $('rowid').value;
+				rowidx = $('#rowid').val();
 				wind=window.dialogArguments;
 				if(wind==undefined){
 					wind=window.opener;
-					data = row_id + '`~`' + id + '`~`' + code + '`~`' + name + '`~`' + category;
+					//data = row_id + '`~`' + id + '`~`' + code + '`~`' + name + '`~`' + category;
+					data={rowidx:rowidx,id:id,code:code,name:name}; 
 					window.opener.update(data);
 				}
 		
 				else{
 					wind=window.dialogArguments;
-					wind.result = row_id + '`~`' + id + '`~`' + code + '`~`' + name + '`~`' + category;
+					wind.result = rowidx + '`~`' + id + '`~`' + code + '`~`' + name + '`~`' + category;
 				}
 				window.close();
 			}

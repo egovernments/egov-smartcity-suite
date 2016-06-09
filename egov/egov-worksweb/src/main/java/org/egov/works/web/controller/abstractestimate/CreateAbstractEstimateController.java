@@ -18,7 +18,6 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
@@ -83,9 +82,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private SecurityUtils securityUtils;
 
     @Autowired
-    private BoundaryService boundaryService;
-
-    @Autowired
     private FinancialYearDAO financialYearDAO;
 
     @Autowired
@@ -102,7 +98,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
-
+    
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
         final AbstractEstimate abstractEstimate = new AbstractEstimate();

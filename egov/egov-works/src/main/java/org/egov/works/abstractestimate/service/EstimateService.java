@@ -40,7 +40,6 @@
 package org.egov.works.abstractestimate.service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +48,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.egov.asset.service.AssetService;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -56,6 +56,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
@@ -66,6 +67,7 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
+import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -109,6 +111,9 @@ public class EstimateService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
+    @Autowired
+    private AssetService assetService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -137,7 +142,11 @@ public class EstimateService {
                 obj.setAbstractEstimate(abstractEstimate);
                 obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
             }
-            for (Activity act : abstractEstimate.getActivities())
+            for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getAssetValues()) {
+                assetsForEstimate.setAbstractEstimate(abstractEstimate);
+                assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
+            }
+            for (final Activity act : abstractEstimate.getActivities())
                 act.setAbstractEstimate(abstractEstimate);
             abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
             newAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
@@ -168,23 +177,27 @@ public class EstimateService {
         abstractEstimateFromDB.setExecutingDepartment(newAbstractEstimate.getExecutingDepartment());
         abstractEstimateFromDB.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CREATED.toString()));
-        abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getProjectCode());
+        abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getLineEstimateDetails().getProjectCode());
         abstractEstimateFromDB.setLineEstimateDetails(newAbstractEstimate.getLineEstimateDetails());
 
-        for (MultiYearEstimate multiYearEstimate : abstractEstimateFromDB.getMultiYearEstimates()) {
+        for (final MultiYearEstimate multiYearEstimate : abstractEstimateFromDB.getMultiYearEstimates()) {
             multiYearEstimate.setCreatedDate(new Date());
             multiYearEstimate.setLastModifiedDate(new Date());
             multiYearEstimate.setCreatedBy(securityUtils.getCurrentUser());
             multiYearEstimate.setLastModifiedBy(securityUtils.getCurrentUser());
         }
 
-        for (FinancialDetail finacilaDetail : abstractEstimateFromDB.getFinancialDetails()) {
+        for (final FinancialDetail finacilaDetail : abstractEstimateFromDB.getFinancialDetails()) {
             finacilaDetail.setCreatedDate(new Date());
             finacilaDetail.setLastModifiedDate(new Date());
             finacilaDetail.setCreatedBy(securityUtils.getCurrentUser());
             finacilaDetail.setLastModifiedBy(securityUtils.getCurrentUser());
         }
-
+        for (final AssetsForEstimate assetsForEstimate : newAbstractEstimate.getAssetValues()) {
+            assetsForEstimate.setAbstractEstimate(abstractEstimateFromDB);
+            assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
+            abstractEstimateFromDB.addAssetValue(assetsForEstimate);
+        }
         abstractEstimateFromDB.setEstimateValue(newAbstractEstimate.getEstimateValue());
         abstractEstimateFromDB.setWorkValue(newAbstractEstimate.getWorkValue());
         abstractEstimateFromDB.setCreatedDate(new Date());
@@ -286,10 +299,11 @@ public class EstimateService {
 
     public Double getEstimateValueForLineEstimate(final LineEstimateDetails lineEstimateDetails) {
         Double estimateValue = 0d;
-        final Query query = (Query) entityManager.createQuery(
+        final Query query = entityManager
+                .createQuery(
                         "select totalBillPaidSoFar from WorkProgressRegister where lineEstimateDetails.id =:ledid ")
                 .setParameter("ledid", lineEstimateDetails.getId());
-        estimateValue = (query.getResultList() != null && !query.getResultList().isEmpty())
+        estimateValue = query.getResultList() != null && !query.getResultList().isEmpty()
                 ? Double.valueOf(query.getResultList().get(0).toString()) : 0d;
         return estimateValue;
     }
@@ -306,11 +320,6 @@ public class EstimateService {
         abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
         abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
         abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
-        if (lineEstimate.getWorkCategory().equals(WorksConstants.SLUM_WORK))
-            model.addAttribute("workCategory", "Slum Work");
-        else
-            model.addAttribute("workCategory", "Non Slum Work");
-
         final List<FinancialDetail> financialDetailList = new ArrayList<FinancialDetail>();
         final FinancialDetail financialDetails = new FinancialDetail();
         financialDetails.setFund(lineEstimate.getFund());
