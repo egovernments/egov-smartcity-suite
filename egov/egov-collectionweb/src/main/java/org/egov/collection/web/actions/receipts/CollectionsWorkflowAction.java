@@ -368,9 +368,11 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private String updateReceiptWorkflowStatus(final String wfAction, final String remarks) {
         for (final Long receiptId : receiptIds) {
             // Get the next receipt that is to be updated
-            final ReceiptHeader receiptHeader = receiptHeaderService.findById(receiptId, false);
-            receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
-            approverName = collectionsUtil.getApproverName(receiptHeader.getState().getOwnerPosition());
+            final ReceiptHeader receiptHeader = receiptHeaderService.findByNamedQuery(CollectionConstants.QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED,receiptId);
+            if(receiptHeader!=null) {
+                receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
+                approverName = collectionsUtil.getApproverName(receiptHeader.getState().getOwnerPosition());
+            }
         }
         // Add the selected receipt ids to sereceiptHeader
         // Need to find a better mechanism to achieve this.

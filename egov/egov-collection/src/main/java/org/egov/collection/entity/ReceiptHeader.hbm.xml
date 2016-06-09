@@ -254,6 +254,10 @@
 	<query name="STATUS_OF_RECEIPTS">
     <![CDATA[select distinct status from org.egov.collection.entity.ReceiptHeader rh]]>
     </query>
-
+	
+	<query name="RECEIPT_BY_ID_AND_STATUSNOTCANCELLED">
+	<![CDATA[
+	select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id = ? and rh.status.code<>'CANCELLED']]>
+	</query>
   	
 </hibernate-mapping>

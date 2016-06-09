@@ -268,7 +268,16 @@ public class ChallanAction extends BaseFormAction {
     @Action(value = "/receipts/challan-newform")
     @SkipValidation
     public String newform() {
+        setLoginDept();
         return NEW;
+    }
+
+    private void setLoginDept() {
+        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
+        setDeptId(loginUserDepartment.getId().toString());
+        setDept(loginUserDepartment);
+        addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
+                collectionsUtil.getLoggedInUser(), receiptHeader));
     }
 
     /**
@@ -385,11 +394,7 @@ public class ChallanAction extends BaseFormAction {
         else
             receiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
                     CollectionConstants.QUERY_RECEIPT_BY_CHALLANID, Long.valueOf(challanId));
-        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
-        setDeptId(loginUserDepartment.getId().toString());
-        setDept(loginUserDepartment);
-        addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
-                collectionsUtil.getLoggedInUser(), receiptHeader));
+        setLoginDept();
         loadReceiptDetails();
         return VIEW;
     }
@@ -1008,11 +1013,6 @@ public class ChallanAction extends BaseFormAction {
         addDropdownData("designationMasterList", Collections.EMPTY_LIST);
         addDropdownData("postionUserList", Collections.EMPTY_LIST);
         setCurrentFinancialYearId(collectionCommon.getFinancialYearIdByDate(new Date()));
-        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
-        setDeptId(loginUserDepartment.getId().toString());
-        setDept(loginUserDepartment);
-        addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
-                collectionsUtil.getLoggedInUser(), receiptHeader));
         /**
          * super class prepare is called at the end to ensure that the modified
          * values are available to the model. The super class prepare need not
@@ -1466,6 +1466,7 @@ public class ChallanAction extends BaseFormAction {
     @Override
     public void validate() {
         super.validate();
+        setLoginDept();
         if (receiptHeader.getReceiptdate() != null
                 && receiptHeader.getReceiptdate().before(
                         financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))
