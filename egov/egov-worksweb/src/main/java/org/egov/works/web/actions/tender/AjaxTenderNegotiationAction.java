@@ -47,7 +47,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
-import org.egov.works.models.estimate.ProjectCode;
+import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.models.tender.EstimateLineItemsForWP;

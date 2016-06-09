@@ -79,7 +79,7 @@
 	</bean>
 	
 	<bean id="projectCodeService" class="org.egov.works.services.ProjectCodeService">
-		<property name="type" value="org.egov.works.models.estimate.ProjectCode"/>
+		<property name="type" value="org.egov.works.abstractestimate.entity.ProjectCode"/>
 	</bean>
 	
 	<bean id="worksUtils" class="org.egov.works.utils.WorksUtils"/>

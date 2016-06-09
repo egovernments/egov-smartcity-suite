@@ -58,7 +58,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.works.models.estimate.ProjectCode;
+import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;

@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
+package org.egov.works.abstractestimate.entity;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -61,7 +61,6 @@ import javax.persistence.Table;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 

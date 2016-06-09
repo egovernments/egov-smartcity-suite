@@ -41,7 +41,8 @@ package org.egov.works.web.controller.reports;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.egov.works.models.estimate.BudgetFolioDetail;
+
+import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
 import org.egov.works.reports.service.EstimateAppropriationRegisterService;
 import org.egov.works.web.adaptor.EstimateAppropriationRegisterJSONAdaptor;

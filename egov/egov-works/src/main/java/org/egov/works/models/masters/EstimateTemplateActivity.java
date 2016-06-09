@@ -37,14 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
+package org.egov.works.models.masters;
 
 import org.egov.common.entity.UOM;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.abstractestimate.entity.NonSor;
-import org.egov.works.models.masters.ScheduleOfRate;
 
 import javax.validation.Valid;
 import java.util.ArrayList;

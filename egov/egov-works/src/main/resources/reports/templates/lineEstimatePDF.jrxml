@@ -70,7 +70,7 @@
 	<parameter name="totalAmountWords" class="java.lang.String"/>
 	<field name="estimateAmount" class="java.math.BigDecimal"/>
 	<field name="nameOfWork" class="java.lang.String"/>
-	<field name="projectCode" class="org.egov.works.models.estimate.ProjectCode">
+	<field name="projectCode" class="org.egov.works.abstractestimate.entity.ProjectCode">
 		<fieldDescription><![CDATA[projectCode]]></fieldDescription>
 	</field>
 	<variable name="code" class="java.lang.String">

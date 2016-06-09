@@ -44,7 +44,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.models.estimate.ProjectCode;
+import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;

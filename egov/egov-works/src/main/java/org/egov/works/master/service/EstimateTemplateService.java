@@ -45,7 +45,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.works.master.repository.EstimateTemplateRepository;
-import org.egov.works.models.estimate.EstimateTemplate;
+import org.egov.works.models.masters.EstimateTemplate;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

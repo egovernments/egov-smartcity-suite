@@ -46,7 +46,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
-import org.egov.works.models.estimate.ProjectCode;
+import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

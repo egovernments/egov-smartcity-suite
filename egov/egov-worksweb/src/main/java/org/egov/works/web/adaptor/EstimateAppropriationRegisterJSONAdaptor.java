@@ -43,7 +43,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.works.models.estimate.BudgetFolioDetail;
+
+import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;

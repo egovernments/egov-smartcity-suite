@@ -108,11 +108,11 @@
 		<property name="type" value="org.egov.infstr.models.EgChecklists" />
 	</bean>
 
-	<bean class="org.egov.works.models.estimate.BudgetNumberGenerator"
+	<bean class="org.egov.works.abstractestimate.service.BudgetNumberGenerator"
 		id="budgetNumberGenerator">
 	</bean>
 
-	<bean class="org.egov.works.models.estimate.ProjectCodeGenerator"
+	<bean class="org.egov.works.abstractestimate.service.ProjectCodeGenerator"
 		id="projectcodeGenerator">
 	</bean>
 

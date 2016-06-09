@@ -52,7 +52,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.budget.BudgetGroupService;
-import org.egov.works.models.estimate.BudgetFolioDetail;
+import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
 import org.egov.works.reports.service.EstimateAppropriationRegisterService;
 import org.egov.works.utils.WorksConstants;

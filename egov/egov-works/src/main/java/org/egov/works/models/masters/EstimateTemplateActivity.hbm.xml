@@ -42,56 +42,38 @@
 PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-<class name="org.egov.works.models.estimate.EstimateTemplate" table="EGW_ESTIMATE_TEMPLATE">
+<class name="org.egov.works.models.masters.EstimateTemplateActivity" table="EGW_EST_TEMPLATE_ACTIVITY">
 		<id
 			name="id"
 			column="ID"
 			type="long"
 			unsaved-value="null">
 			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EGW_ESTIMATE_TEMPLATE</param>
+				<param name="sequence_name">SEQ_EGW_EST_TEMPLATE_ACTIVITY</param>
 			</generator>
 		</id>
-		<property name="code" type="string">
-			<column name="CODE" length="100" not-null="true" unique="true"/> 
-		</property>
-		<property name="name" type="string">
-			<column name="NAME" length="256" not-null="true" /> 
-		</property>
-		<property name="description" type="string">
-			<column name="DESCRIPTION" length="1024" /> 
-		</property>
-		<property name="status" type="int">
-			<column name="STATUS" /> 
-		</property>
-		<many-to-one name="workType"
-			class="org.egov.commons.EgwTypeOfWork" fetch="select">
-			<column name="WORKTYPE_ID" not-null="true" />
+		
+       <many-to-one name="estimateTemplate" class="org.egov.works.models.masters.EstimateTemplate" fetch="select" insert="false" update="false">
+            <column name="ESTIMATE_TEMPLATE_ID" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="schedule" class="org.egov.works.models.masters.ScheduleOfRate" fetch="join">
+            <column name="SCHEDULEOFRATE_ID" precision="22" scale="0" />
+        </many-to-one>
+        <many-to-one name="uom" class="org.egov.common.entity.UOM" fetch="join">
+	    	<column name="UOM_ID" />
 		</many-to-one>
-        <many-to-one name="subType"
-			class="org.egov.commons.EgwTypeOfWork" fetch="select"> 
-			<column name="WORKSUBTYPE_ID" />
-		</many-to-one>
+        <many-to-one name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor" fetch="join" cascade="all">
+            <column name="NONSOR_ID" precision="22" scale="0" />
+        </many-to-one>
+        
+    	 <component name="rate">
+			<property name="value" type="double" precision="2" scale="20" not-null="true"/>
+		</component>
 		
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" fetch="select"/>
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" not-null="true" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
-		
        
-		<list name="estimateTemplateActivities" cascade="all,delete-orphan">
-			<key column="ESTIMATE_TEMPLATE_ID" not-null="true" />
-			<list-index column="template_activity_index" />
-			<one-to-many
-				class="org.egov.works.models.estimate.EstimateTemplateActivity" />
-		</list>
-       
-   
 </class>
-
-	<query name="EstimateTemplateCodeUniqueCheck">
-		<![CDATA[
-     	select et.id from EstimateTemplate et where upper(et.code)=? 
-    	]]>
-	</query>
 </hibernate-mapping>
