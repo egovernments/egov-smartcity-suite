@@ -74,6 +74,7 @@ import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
 import org.egov.works.autonumber.TechnicalSanctionNumberGenerator;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
@@ -153,6 +154,9 @@ public class EstimateService {
     @Autowired
     private WorkProgressRegisterService workProgressRegisterService;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -169,8 +173,7 @@ public class EstimateService {
     @Transactional
     public AbstractEstimate createAbstractEstimate(final AbstractEstimate abstractEstimate, final MultipartFile[] files,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction)
-            throws IOException {
+            final String workFlowAction) throws IOException {
         AbstractEstimate newAbstractEstimate = null;
         final AbstractEstimate abstractEstimateFromDB = getAbstractEstimateByEstimateNumber(
                 abstractEstimate.getEstimateNumber());
@@ -194,8 +197,8 @@ public class EstimateService {
         } else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
-        createAbstractEstimateWorkflowTransition(newAbstractEstimate,
-                approvalPosition, approvalComent, additionalRule, workFlowAction);
+        createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
+                workFlowAction);
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -397,19 +400,21 @@ public class EstimateService {
     }
 
     public void validateAssetDetails(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
-        final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.ASSETDETAILS_REQUIRED_FOR_ESTIMATE);
-        final AppConfigValues value = appConfigvalues.get(0);
-        if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null
-                && abstractEstimate.getAssetValues().isEmpty()) {
-            bindErrors.reject("error.assetdetails.required", "error.assetdetails.required");
+        if (worksApplicationProperties.assetRequired().toString().equalsIgnoreCase("Yes")) {
+            final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.WORKS_MODULE_NAME, WorksConstants.ASSETDETAILS_REQUIRED_FOR_ESTIMATE);
+            final AppConfigValues value = appConfigvalues.get(0);
+            if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null
+                    && abstractEstimate.getAssetValues().isEmpty()) {
+                bindErrors.reject("error.assetdetails.required", "error.assetdetails.required");
+            }
         }
     }
 
-    public Long getApprovalPositionByMatrixDesignation(final AbstractEstimate abstractEstimate,
-            Long approvalPosition, final String additionalRule, final String mode, final String workFlowAction) {
-        final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate
-                .getStateType(), null, null, additionalRule, abstractEstimate.getCurrentState().getValue(), null);
+    public Long getApprovalPositionByMatrixDesignation(final AbstractEstimate abstractEstimate, Long approvalPosition,
+            final String additionalRule, final String mode, final String workFlowAction) {
+        final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(),
+                null, null, additionalRule, abstractEstimate.getCurrentState().getValue(), null);
         if (abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode() != null)
             if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
                     && abstractEstimate.getState() != null)
@@ -426,8 +431,7 @@ public class EstimateService {
     }
 
     @Transactional
-    public AbstractEstimate updateAbstractEstimateDetails(
-            final AbstractEstimate abstractEstimate,
+    public AbstractEstimate updateAbstractEstimateDetails(final AbstractEstimate abstractEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction, final String mode, final ReportOutput reportOutput,
             final MultipartFile[] files) throws ValidationException, IOException {
@@ -454,8 +458,8 @@ public class EstimateService {
         updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
 
         if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
-            createAbstractEstimateWorkflowTransition(updatedAbstractEstimate,
-                    approvalPosition, approvalComent, additionalRule, workFlowAction);
+            createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
+                    additionalRule, workFlowAction);
 
         return updatedAbstractEstimate;
     }
@@ -470,7 +474,8 @@ public class EstimateService {
         estimateTechnicalSanction.setAbstractEstimate(abstractEstimate);
         estimateTechnicalSanction.setTechnicalSanctionBy(securityUtils.getCurrentUser());
         estimateTechnicalSanction.setTechnicalSanctionDate(new Date());
-        estimateTechnicalSanction.setTechnicalSanctionNumber(technicalSanctionNumberGenerator.getNextNumber(abstractEstimate));
+        estimateTechnicalSanction
+                .setTechnicalSanctionNumber(technicalSanctionNumberGenerator.getNextNumber(abstractEstimate));
 
         abstractEstimate.getEstimateTechnicalSanctions().add(estimateTechnicalSanction);
     }
@@ -480,31 +485,30 @@ public class EstimateService {
         if (null != abstractEstimate && null != abstractEstimate.getEgwStatus()
                 && null != abstractEstimate.getEgwStatus().getCode())
             if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.NEW.toString()));
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.NEW.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.CREATED.toString()));
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.CREATED.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
                     && abstractEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.TECH_SANCTIONED.toString()));
-            else if (abstractEstimate.getEgwStatus().getCode()
-                    .equals(EstimateStatus.TECH_SANCTIONED.toString())
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                        WorksConstants.ABSTRACTESTIMATE, EstimateStatus.TECH_SANCTIONED.toString()));
+            else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.ADMIN_SANCTIONED.toString()));
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                        WorksConstants.ABSTRACTESTIMATE, EstimateStatus.ADMIN_SANCTIONED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.REJECTED.toString()));
-            else if (abstractEstimate.getEgwStatus().getCode()
-                    .equals(EstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.CANCELLED.toString()));
-            else if (abstractEstimate.getEgwStatus().getCode()
-                    .equals(EstimateStatus.REJECTED.toString()) && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.CREATED.toString()));
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.REJECTED.toString()));
+            else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                        WorksConstants.ABSTRACTESTIMATE, EstimateStatus.CANCELLED.toString()));
+            else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                        .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.CREATED.toString()));
     }
 
     public void createAbstractEstimateWorkflowTransition(final AbstractEstimate abstractEstimate,
@@ -529,55 +533,44 @@ public class EstimateService {
                         .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             else
                 abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(WorksConstants.WF_STATE_REJECTED).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition())
-                        .withNextAction("")
+                        .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
                         .withNatureOfTask(natureOfwork);
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-            wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
-                    null, additionalRule, WorksConstants.NEW, null);
+            wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null, null,
+                    additionalRule, WorksConstants.NEW, null);
             if (abstractEstimate.getState() == null)
                 abstractEstimate.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(WorksConstants.NEW).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition())
-                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE)
-                        .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withStateValue(WorksConstants.NEW)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
             else
                 abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(WorksConstants.NEW).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition())
-                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE)
-                        .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withStateValue(WorksConstants.NEW)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
             if (null == abstractEstimate.getState()) {
-                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
-                        null, additionalRule, currState, null);
+                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null, null,
+                        additionalRule, currState, null);
                 abstractEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
-                        null, additionalRule, abstractEstimate.getCurrentState().getValue(), null);
+                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null, null,
+                        additionalRule, abstractEstimate.getCurrentState().getValue(), null);
                 abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction("")
-                        .withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
-                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
-                        null, additionalRule, abstractEstimate.getCurrentState().getValue(), null);
+                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null, null,
+                        additionalRule, abstractEstimate.getCurrentState().getValue(), null);
                 abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
             }
         }
@@ -593,36 +586,28 @@ public class EstimateService {
         return abstractEstimateRepository.findCreatedByForViewAbstractEstimates();
     }
 
-    public List<AbstractEstimate> searchAbstractEstimates(
-            final SearchAbstractEstimate searchAbstractEstimate) {
+    public List<AbstractEstimate> searchAbstractEstimates(final SearchAbstractEstimate searchAbstractEstimate) {
         if (searchAbstractEstimate != null) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class)
-                    .createAlias("lineEstimateDetails", "led")
-                    .createAlias("egwStatus", "status")
+                    .createAlias("lineEstimateDetails", "led").createAlias("egwStatus", "status")
                     .createAlias("led.projectCode", "pc");
             if (searchAbstractEstimate.getAbstractEstimateNumber() != null)
-                criteria.add(Restrictions.eq("estimateNumber",
-                        searchAbstractEstimate.getAbstractEstimateNumber()));
+                criteria.add(Restrictions.eq("estimateNumber", searchAbstractEstimate.getAbstractEstimateNumber()));
             if (searchAbstractEstimate.getDepartment() != null)
-                criteria.add(Restrictions.eq("executingDepartment.id",
-                        searchAbstractEstimate.getDepartment()));
+                criteria.add(Restrictions.eq("executingDepartment.id", searchAbstractEstimate.getDepartment()));
             if (searchAbstractEstimate.getWorkIdentificationNumber() != null)
-                criteria.add(
-                        Restrictions.ilike("pc.code", searchAbstractEstimate.getWorkIdentificationNumber(), MatchMode.ANYWHERE));
+                criteria.add(Restrictions.ilike("pc.code", searchAbstractEstimate.getWorkIdentificationNumber(),
+                        MatchMode.ANYWHERE));
             if (searchAbstractEstimate.getStatus() != null) {
-                criteria.add(Restrictions.eq("status.code",
-                        searchAbstractEstimate.getStatus()).ignoreCase());
+                criteria.add(Restrictions.eq("status.code", searchAbstractEstimate.getStatus()).ignoreCase());
             }
             if (searchAbstractEstimate.getCreatedBy() != null) {
-                criteria.add(Restrictions.eq("createdBy.id",
-                        searchAbstractEstimate.getCreatedBy()));
+                criteria.add(Restrictions.eq("createdBy.id", searchAbstractEstimate.getCreatedBy()));
             }
             if (searchAbstractEstimate.getFromDate() != null)
-                criteria.add(Restrictions.ge("estimateDate",
-                        searchAbstractEstimate.getFromDate()));
+                criteria.add(Restrictions.ge("estimateDate", searchAbstractEstimate.getFromDate()));
             if (searchAbstractEstimate.getToDate() != null)
-                criteria.add(Restrictions.le("estimateDate",
-                        searchAbstractEstimate.getToDate()));
+                criteria.add(Restrictions.le("estimateDate", searchAbstractEstimate.getToDate()));
 
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();

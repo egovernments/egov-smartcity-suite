@@ -1,0 +1,1 @@
+update eg_appconfig  set description = 'Whether asset details required for estimate or not' where key_name = 'ASSETDETAILS_REQUIRED';
