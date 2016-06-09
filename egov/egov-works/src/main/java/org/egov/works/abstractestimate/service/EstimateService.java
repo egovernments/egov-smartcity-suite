@@ -40,6 +40,7 @@
 package org.egov.works.abstractestimate.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,8 +68,10 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
-import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.master.service.OverheadService;
+import org.egov.works.reports.entity.WorkProgressRegister;
+import org.egov.works.reports.repository.WorkProgressRegisterRepository;
+import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.hibernate.Session;
@@ -76,6 +79,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -113,6 +117,9 @@ public class EstimateService {
 
     @Autowired
     private AssetService assetService;
+
+    @Autowired
+    private WorkProgressRegisterService workProgressRegisterService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -297,15 +304,10 @@ public class EstimateService {
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
     }
 
-    public Double getEstimateValueForLineEstimate(final LineEstimateDetails lineEstimateDetails) {
-        Double estimateValue = 0d;
-        final Query query = entityManager
-                .createQuery(
-                        "select totalBillPaidSoFar from WorkProgressRegister where lineEstimateDetails.id =:ledid ")
-                .setParameter("ledid", lineEstimateDetails.getId());
-        estimateValue = query.getResultList() != null && !query.getResultList().isEmpty()
-                ? Double.valueOf(query.getResultList().get(0).toString()) : 0d;
-        return estimateValue;
+    public BigDecimal getEstimateValueForLineEstimate(final LineEstimateDetails lineEstimateDetails) {
+        WorkProgressRegister workProgressRegister = workProgressRegisterService
+                .getWorkProgressRegisterByLineEstimateDetailsId(lineEstimateDetails);
+        return workProgressRegister != null ? workProgressRegister.getTotalBillPaidSoFar() : BigDecimal.ZERO;
     }
 
     public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,
@@ -343,6 +345,15 @@ public class EstimateService {
         else
             model.addAttribute("isServiceVATRequired", false);
 
+    }
+    
+    public void validateAssetDetails(final AbstractEstimate abstractEstimate,final BindingResult bindErrors) {
+        final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.ASSETDETAILS_REQUIRED_FOR_ESTIMATE);
+        final AppConfigValues value = appConfigvalues.get(0);
+        if(value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null && abstractEstimate.getAssetValues().isEmpty()) {
+            bindErrors.reject("error.assetdetails.required", "error.assetdetails.required");
+        }
     }
 
 }

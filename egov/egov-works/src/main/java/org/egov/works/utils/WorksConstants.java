@@ -309,4 +309,6 @@ public class WorksConstants {
 
     public static final String NATUREOFWORK_EXPENDITURETYPE_REVENUE = "REVENUE";
     
+    public static final String ASSETDETAILS_REQUIRED_FOR_ESTIMATE = "ASSETDETAILS_REQUIRED";
+    
 }

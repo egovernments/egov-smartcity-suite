@@ -137,6 +137,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request) throws IOException {
         validateMultiYearEstimates(abstractEstimate, bindErrors);
         validateMandatory(abstractEstimate, bindErrors);
+        estimateService.validateAssetDetails(abstractEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
             setDropDownValues(model);
             estimateService.populateDataForAbstractEstimate(abstractEstimate.getLineEstimateDetails(), model,

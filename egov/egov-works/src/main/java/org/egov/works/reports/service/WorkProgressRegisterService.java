@@ -47,11 +47,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
+import org.egov.works.reports.repository.WorkProgressRegisterRepository;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -72,6 +74,9 @@ public class WorkProgressRegisterService {
     @Autowired
     private LineEstimateDetailsRepository lineEstimateDetailsRepository;
 
+    @Autowired
+    private WorkProgressRegisterRepository workProgressRegisterRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -89,17 +94,17 @@ public class WorkProgressRegisterService {
         if (workProgressRegisterSearchRequest != null) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkProgressRegister.class);
             if (workProgressRegisterSearchRequest.getDepartment() != null)
-                criteria.add(Restrictions.eq("department.id",
-                        workProgressRegisterSearchRequest.getDepartment()));
+                criteria.add(Restrictions.eq("department.id", workProgressRegisterSearchRequest.getDepartment()));
             if (workProgressRegisterSearchRequest.getWorkIdentificationNumber() != null)
-                criteria.add(Restrictions.eq("winCode",
-                        workProgressRegisterSearchRequest.getWorkIdentificationNumber()).ignoreCase());
+                criteria.add(Restrictions.eq("winCode", workProgressRegisterSearchRequest.getWorkIdentificationNumber())
+                        .ignoreCase());
             if (workProgressRegisterSearchRequest.getContractor() != null) {
                 criteria.createAlias("contractor", "contractor ");
-                criteria.add(Restrictions.or(Restrictions.ilike("contractor.code",
-                        workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE),
-                        Restrictions.ilike("contractor.name",
-                                workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE)));
+                criteria.add(Restrictions.or(
+                        Restrictions.ilike("contractor.code", workProgressRegisterSearchRequest.getContractor(),
+                                MatchMode.ANYWHERE),
+                        Restrictions.ilike("contractor.name", workProgressRegisterSearchRequest.getContractor(),
+                                MatchMode.ANYWHERE)));
             }
             if (workProgressRegisterSearchRequest.getAdminSanctionFromDate() != null)
                 criteria.add(Restrictions.ge("adminSanctionDate",
@@ -119,8 +124,7 @@ public class WorkProgressRegisterService {
 
     public Date getReportSchedulerRunDate() {
         Query query = null;
-        query = entityManager.unwrap(Session.class).createQuery(
-                "from WorkProgressRegister ");
+        query = entityManager.unwrap(Session.class).createQuery("from WorkProgressRegister ");
         List<WorkProgressRegister> obj = query.setMaxResults(1).list();
         Date runDate = null;
         if (obj != null) {
@@ -134,17 +138,14 @@ public class WorkProgressRegisterService {
             final EstimateAbstractReport estimateAbstractReport) {
 
         Query query = null;
-        query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
-                .addScalar("departmentName", StringType.INSTANCE)
-                .addScalar("lineEstimates", LongType.INSTANCE)
+        query = entityManager.unwrap(Session.class)
+                .createSQLQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
+                .addScalar("departmentName", StringType.INSTANCE).addScalar("lineEstimates", LongType.INSTANCE)
                 .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
                 .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
-                .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                .addScalar("loaCreated", LongType.INSTANCE)
-                .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                .addScalar("workInProgress", LongType.INSTANCE)
-                .addScalar("workCompleted", LongType.INSTANCE)
-                .addScalar("billsCreated", LongType.INSTANCE)
+                .addScalar("technicalSanctionedEstimates", LongType.INSTANCE).addScalar("loaCreated", LongType.INSTANCE)
+                .addScalar("agreementValueInCrores", StringType.INSTANCE).addScalar("workInProgress", LongType.INSTANCE)
+                .addScalar("workCompleted", LongType.INSTANCE).addScalar("billsCreated", LongType.INSTANCE)
                 .addScalar("billValueInCrores", StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
         query = setParameterForDepartmentWiseReport(estimateAbstractReport, query);
@@ -275,37 +276,30 @@ public class WorkProgressRegisterService {
         Query query = null;
         if (estimateAbstractReport.getDepartments() != null
                 && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
-            query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
+            query = entityManager.unwrap(Session.class)
+                    .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
                     .addScalar("subTypeOfWorkName", StringType.INSTANCE)
-                    .addScalar("departmentName", StringType.INSTANCE)
-                    .addScalar("lineEstimates", LongType.INSTANCE)
+                    .addScalar("departmentName", StringType.INSTANCE).addScalar("lineEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
                     .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("loaCreated", LongType.INSTANCE)
-                    .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("workInProgress", LongType.INSTANCE)
-                    .addScalar("workCompleted", LongType.INSTANCE)
-                    .addScalar("billsCreated", LongType.INSTANCE)
-                    .addScalar("billValueInCrores", StringType.INSTANCE)
+                    .addScalar("loaCreated", LongType.INSTANCE).addScalar("agreementValueInCrores", StringType.INSTANCE)
+                    .addScalar("workInProgress", LongType.INSTANCE).addScalar("workCompleted", LongType.INSTANCE)
+                    .addScalar("billsCreated", LongType.INSTANCE).addScalar("billValueInCrores", StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
-        }
-        else {
-            query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
+        } else {
+            query = entityManager.unwrap(Session.class)
+                    .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
-                    .addScalar("subTypeOfWorkName", StringType.INSTANCE)
-                    .addScalar("lineEstimates", LongType.INSTANCE)
+                    .addScalar("subTypeOfWorkName", StringType.INSTANCE).addScalar("lineEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
                     .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("loaCreated", LongType.INSTANCE)
-                    .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("workInProgress", LongType.INSTANCE)
-                    .addScalar("workCompleted", LongType.INSTANCE)
-                    .addScalar("billsCreated", LongType.INSTANCE)
-                    .addScalar("billValueInCrores", StringType.INSTANCE)
+                    .addScalar("loaCreated", LongType.INSTANCE).addScalar("agreementValueInCrores", StringType.INSTANCE)
+                    .addScalar("workInProgress", LongType.INSTANCE).addScalar("workCompleted", LongType.INSTANCE)
+                    .addScalar("billsCreated", LongType.INSTANCE).addScalar("billValueInCrores", StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
 
@@ -321,7 +315,7 @@ public class WorkProgressRegisterService {
         if (estimateAbstractReport != null) {
             if (estimateAbstractReport.isSpillOverFlag()) {
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
-                
+
                 workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
@@ -336,12 +330,11 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" 0                             AS billValueInCrores ");
                 workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
                 workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
+                workInProgessCondition
+                        .append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(" GROUP BY details.departmentName ");
-
-                
 
             } else {
                 workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
@@ -358,7 +351,8 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" 0                             AS billValueInCrores ");
                 workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
                 workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
+                workInProgessCondition
+                        .append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(" AND details.spilloverflag  = true ");
                 workInProgessCondition.append(filterConditions.toString());
@@ -383,7 +377,6 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" AND details.spilloverflag  = false ");
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(" GROUP BY details.departmentName ");
-               
 
             }
 
@@ -576,11 +569,11 @@ public class WorkProgressRegisterService {
 
             mainGroupByQuery.append(" GROUP BY typeofworkname,subtypeofworkname ");
         }
-        
+
         if (estimateAbstractReport != null) {
             if (estimateAbstractReport.isSpillOverFlag()) {
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
-                
+
                 workInProgessCondition.append(selectQuery.toString());
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
@@ -595,12 +588,11 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" 0                             AS billValueInCrores ");
                 workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
                 workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
+                workInProgessCondition
+                        .append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(groupByQuery.toString());
-
-                
 
             } else {
                 workInProgessCondition.append(selectQuery.toString());
@@ -617,7 +609,8 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" 0                             AS billValueInCrores ");
                 workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
                 workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
+                workInProgessCondition
+                        .append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(" AND details.spilloverflag  = true ");
                 workInProgessCondition.append(filterConditions.toString());
@@ -642,7 +635,6 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" AND details.spilloverflag  = false ");
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(groupByQuery.toString());
-               
 
             }
             if (estimateAbstractReport.getTypeOfWork() != null) {
@@ -652,8 +644,6 @@ public class WorkProgressRegisterService {
             if (estimateAbstractReport.getSubTypeOfWork() != null) {
                 filterConditions.append(" AND details.subtypeofwork =:subtypeofwork ");
             }
-
-           
 
             if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
                 filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
@@ -806,6 +796,10 @@ public class WorkProgressRegisterService {
         query.append(" ) final ");
         query.append(mainGroupByQuery.toString());
         return query.toString();
+    }
+
+    public WorkProgressRegister getWorkProgressRegisterByLineEstimateDetailsId(final LineEstimateDetails led) {
+        return workProgressRegisterRepository.findByLineEstimateDetails(led);
     }
 
 }

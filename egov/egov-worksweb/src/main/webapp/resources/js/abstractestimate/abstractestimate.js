@@ -51,8 +51,14 @@ $(document).ready(function(){
 	$('#workName').val(nameOfWork);
 	$('#scheme').trigger('change');
 	getAbstractEstimateDate();
-	$('#workCategory').val($('#workCategory').val().replace(/_/g, ' '));
-	$('#beneficiary').val($('#beneficiary').val().replace(/_/g, '/'));
+	var workCategory = $('#workCategory').val();
+	if(workCategory != undefined && workCategory != '') {
+		$('#workCategory').val($('#workCategory').val().replace(/_/g, ' '));
+	}
+	var beneficiary = $('#beneficiary').val(); 
+	if(beneficiary != undefined) {
+	    $('#beneficiary').val($('#beneficiary').val().replace(/_/g, '/'));
+	}
 	$('#sorSearch').blur(function() {
 		$('#sorSearch').val('');
 	});
