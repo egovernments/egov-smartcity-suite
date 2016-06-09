@@ -249,6 +249,7 @@ public class ConnectionBillService extends BillServiceInterface {
                 // DateTime(installment.getInstallmentYear().getTime());
                 final EgDemandReason reasonmaster = connectionDemandService.getDemandReasonByCodeAndInstallment(
                         WaterTaxConstants.DEMANDRSN_CODE_ADVANCE, installment);
+                if(reasonmaster !=null){
                 final EgBillDetails billdetail = new EgBillDetails();
                 billdetail.setDrAmount(BigDecimal.ZERO);
                 billdetail.setCrAmount(currentInstallmentDemand);
@@ -265,6 +266,7 @@ public class ConnectionBillService extends BillServiceInterface {
                 billdetail.setAdditionalFlag(0);
 
                 billDetails.add(billdetail);
+                }
                 
             }
         else
