@@ -115,6 +115,11 @@ public class EstimateTemplateAction extends SearchFormAction {
     public String edit() {
         return EDIT;
     }
+    
+    @Action(value = "/estimate/estimateTemplate-view")
+    public String view() {
+        return SUCCESS;
+    }
 
     @Override
     public void prepare() {
@@ -162,6 +167,10 @@ public class EstimateTemplateAction extends SearchFormAction {
         else
             setMode("edit");
         estimateTemplateService.create(estimateTemplate);
+        if (StringUtils.isBlank(mode))
+            addActionMessage(getText("estimate.template.success.save", new String[] { estimateTemplate.getCode(), estimateTemplate.getName()}));
+        else
+            addActionMessage(getText("estimate.template.success.modify"));
         return SUCCESS;
     }
 
@@ -233,11 +242,6 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     @Action(value = "/estimate/estimateTemplate-searchDetails")
     public String searchDetails() {
-        if (estimateTemplate.getWorkType() == null || estimateTemplate.getWorkType().getId() == -1) {
-            final String messageKey = "estimate.template.search.workType.error";
-            addActionError(getText(messageKey));
-            return SEARCH;
-        }
         setPageSize(WorksConstants.PAGE_SIZE);
         super.search();
         return SEARCH;
@@ -295,9 +299,6 @@ public class EstimateTemplateAction extends SearchFormAction {
         if (StringUtils.isNotBlank(estimateTemplate.getName().trim()))
             dynQuery = dynQuery + " and UPPER(et.name) like '%" + estimateTemplate.getName().trim().toUpperCase()
                     + "%'";
-        if (StringUtils.isNotBlank(estimateTemplate.getDescription().trim()))
-            dynQuery = dynQuery + " and UPPER(et.description) like '%"
-                    + estimateTemplate.getDescription().trim().toUpperCase() + "%'";
         final String countQuery = "select distinct count(et) " + dynQuery;
         return new SearchQueryHQL(dynQuery, countQuery, paramList);
     }

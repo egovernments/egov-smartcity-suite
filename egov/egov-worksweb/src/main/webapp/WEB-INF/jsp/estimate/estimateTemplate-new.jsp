@@ -137,14 +137,11 @@ function validateEstimateTemplateFormAndSubmit() {
 	
 <div class="row">
 	<div class="col-xs-12 text-center buttonholdersearch">
-		<s:if test="%{mode!='view'}">
+		<s:if test="%{model.id== null && mode!='view'}">
 			<input type="submit" class="btn btn-primary" value="Save" id="saveButton" name="button" onclick="return validateEstimateTemplateFormAndSubmit()"/>&nbsp;
-		</s:if>
-		<egov-authz:authorize actionName="editEstimateTemplate">
-		<s:if test="%{mode=='view'}">
-			<input type="button" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="enableFieldsForModify();"/>&nbsp;
-		</s:if>
-		</egov-authz:authorize>
+		</s:if><s:else>
+		<input type="submit" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="return validateEstimateTemplateFormAndSubmit()"/>&nbsp;
+		</s:else>
 		<s:if test="%{model.id==null}" >
 			<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();">&nbsp;
 		</s:if>

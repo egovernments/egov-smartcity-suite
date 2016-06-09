@@ -53,8 +53,9 @@ loadSubType= function(req, res){
 }
 
 function submitEstimateTemplateSearchForm() {
+	var mode=document.getElementById('mode').value;
 	document.estimateTemplateSearchForm.status.disabled=false;
-    document.estimateTemplateSearchForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-searchDetails.action';
+    document.estimateTemplateSearchForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-searchDetails.action?mode='+mode;
     dom.get('estimateTemplateCode').value="";
 	dom.get('typeOfWork').value=""; 
 	dom.get('subTypeOfWork').value="";
@@ -81,7 +82,7 @@ function bodyOnLoad(){
 <body onload="bodyOnLoad()" class="yui-skin-sam">
 
 <script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
-   
+   <s:hidden name="mode" id="mode" value="%{mode}" />
 <div class="new-page-header">
 	<s:text name="estimate.search.estimate.template"/>
 </div>   
@@ -113,17 +114,17 @@ function bodyOnLoad(){
 	<div class="panel-body">
 	  	<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <s:text name="estimate.work.type" /><span class="mandatory"></span>
+			    <s:text name="estimate.work.type" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
+				<s:select headerKey="-1" headerValue="Select from below" name="workType" id="workType" cssClass="form-control" list="dropdownData.parentCategoryList" listKey="id" listValue="description" value="%{workType.id}" onChange="setupSubTypes(this);"/>
                 <egov:ajaxdropdown id="categoryDropdown" fields="['Text','Value']" dropdownId='subType' url='estimate/ajaxEstimate-subcategories.action' selectedValue="%{subType.id}" afterSuccess="loadSubType" /> 
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <s:text name="estimate.work.subtype" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="-1" headerValue="%{getText('estimate.template.search.default.select')}" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
+				<s:select headerKey="-1" headerValue="Select from below" name="subType" value="%{subType.id}" id="subType" cssClass="form-control" list="dropdownData.categoryList" listKey="id" listValue="description"/>
 			</div>
 	  	</div>
 		
@@ -135,25 +136,19 @@ function bodyOnLoad(){
 				<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" /> 
 			</div>
 			<label class="col-sm-2 control-label text-right">
-			    <s:text name="estimate.template.search.description" />
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textarea name="description" cols="35" cssClass="form-control" id="description" value="%{description}"/>
-			</div>
-		</div>
-		
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
 			    <s:text name="estimate.template.search.name" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textarea name="name" cols="35" cssClass="form-control" id="name" value="%{name}"/> 
 			</div>
+		</div>
+		
+		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <s:text name="estimate.template.search.status" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="0" list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
+				<s:select headerKey="1" list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{1}" id="status" cssClass="form-control"/>
 			</div>
 		</div>
 	</div>

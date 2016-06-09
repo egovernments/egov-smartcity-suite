@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -119,7 +119,9 @@
 											<td><s:property value="#row_status.count" /></td>
 											<td><s:property value="%{nonSor.descriptionJS}" /></td>
 											<td><s:property value="%{nonSor.uom.id}" /></td>
-											<td><s:property value="%{rate}" /></td>
+											<td>
+											<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{rate}" /></fmt:formatNumber>
+											</td>
 										</tr>
 									</s:iterator>
 								</tbody>

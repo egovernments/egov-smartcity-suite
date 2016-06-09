@@ -44,7 +44,7 @@
      <s:if test="%{searchResult.fullListSize != 0}">
      <s:hidden name="selectedCode" id="selectedCode" />
      <s:hidden name="estimateTemplateId" id="estimateTemplateId" />
-     
+     <s:hidden name="mode" />
 	     <display:table name="searchResult" pagesize="30"
 			uid="currentRow" cellpadding="0" cellspacing="0"
 			requestURI="" class="table table-hover">
@@ -65,14 +65,17 @@
 		       class="pagetabletd" title="Template Code"
 			   titleKey="mb.search.column.wono"
 			   style="width:8%;text-align:left">
-                  <egov-authz:authorize actionName="viewEstimateTemplate">
-                  <a href="${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=view&id=<s:property value='%{#attr.currentRow.id}'/>">
-				  </egov-authz:authorize>	 
-					 <s:property  value='%{#attr.currentRow.code}' />
-				  <egov-authz:authorize actionName="viewEstimateTemplate">
-				  </a>
-				  </egov-authz:authorize>
-            </display:column>
+				<egov-authz:authorize actionName="viewEstimateTemplate">
+					<s:if test="%{mode != 'view'}">
+						<s:property  value='%{#attr.currentRow.code}' />
+					</s:if>
+					<s:elseif test="%{mode == 'view'}">
+						<a href="${pageContext.request.contextPath}/estimate/estimateTemplate-view.action?mode=edit&id=<s:property value='%{#attr.currentRow.id}'/>">
+						<s:property  value='%{#attr.currentRow.code}' />
+						</a>
+					</s:elseif>
+				</egov-authz:authorize>
+			</display:column>
                    
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Template Description"
@@ -112,7 +115,19 @@
 				  <s:else>
 					  <s:property value="%{'ACTIVE'}" />
 				  </s:else>
-			</display:column>                                       
+			</display:column>          
+			
+			<s:if test="%{mode != 'view'}">
+			<display:column headerClass="pagetableth"
+		       class="pagetabletd" title="Modify"
+			   titleKey="column.title.modify"
+			   style="width:8%;text-align:left">
+                  <a href="${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=edit&id=<s:property value='%{#attr.currentRow.id}'/>">
+					 <s:text name="column.title.modify" />
+				  </a>
+            </display:column>    
+            </s:if>                         
+	          	                       
 	          	                                      
 	   </display:table> 
 	    <s:if test="%{sourcePage.equals('searchForEstimate')}">
@@ -129,5 +144,10 @@
 			</div>
 	</s:elseif>   
  </div>
+ <s:if test="%{searchResult.fullListSize != 0}">
+	<div align="center">
+		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
+	</div>
+</s:if>
 <script type="text/javascript"
 	src="<c:url value='/resources/js/searchestimatetemplate.js?rnd=${app_release_no}'/>"></script>

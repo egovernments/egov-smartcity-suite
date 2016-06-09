@@ -43,21 +43,17 @@
 <html>
 <title><s:text name="page.title.estimate.template" /></title>
 <body>
-<div class="new-page-header">
-	<s:if test="%{model.id!=null && mode!='edit'}" >
-		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.create" />
-	</s:if>
-    <s:if test="%{mode=='edit'}">   
-		<s:text name="estimate.template.success.save" /> '<s:property value="%{code}" />' <s:text name="estimate.template.success.name" />  '<s:property value="%{name}" />' <s:text name="estimate.template.success.save" />
-	</s:if>
+<s:if test="%{hasActionMessages()}">
+<div id="msgsDiv" class="new-page-header">
+	<s:actionmessage theme="simple" />
 </div>
+</s:if>
 <s:hidden name="id" id="id" />
 
 	<%@ include file="estimateTemplate-commonView.jsp" %>
 
 <div class="row text-center">
 	<div class="add-margin">
-	<input type="submit" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="modifyEstimate();" />
 	<s:if test="%{mode!='edit'}">
 		<input type="submit" name="create" Class="btn btn-primary" value="Create New Estimate" id="CREATE" name="button" onclick="createNewEsimate();" />
 	</s:if>
