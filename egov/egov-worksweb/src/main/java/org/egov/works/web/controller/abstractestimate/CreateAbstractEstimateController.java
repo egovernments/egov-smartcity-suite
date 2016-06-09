@@ -35,6 +35,7 @@ import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.master.service.UOMService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -106,6 +107,9 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     
     @Autowired
     protected CustomizedWorkFlowService customizedWorkFlowService;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
@@ -195,8 +199,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             }
             estimateService.createAbstractEstimate(abstractEstimate, files, approvalPosition,
                     approvalComment, null, workFlowAction);
-            model.addAttribute("message", "Abstract Estimate created successfully");
-            return "abstractEstimate-success";
+            
+            final String pathVars = worksUtils.getPathVars(abstractEstimate.getEgwStatus(), abstractEstimate.getState(),
+                    abstractEstimate.getId(), approvalPosition);
+            
+            return "redirect:/abstractestimate/abstractestimate-success?pathVars=" + pathVars;
         }
 
     }
@@ -282,24 +289,30 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString())
                 && !abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
-            message = "Abstract Estimate has been saved successfully";
+            message = messageSource.getMessage("msg.estimate.saved",
+                    new String[] { }, null);
         else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
                 && !abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
-            message = messageSource.getMessage("msg.lineestimate.create.success",
+            message = messageSource.getMessage("msg.estimate.created",
                     new String[] { approverName, nextDesign, abstractEstimate.getEstimateNumber() }, null);
-        else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.ADMIN_SANCTIONED.toString()))
-            message = messageSource.getMessage(
-                    "msg.lineestimate.adminsanction.success",
-                    new String[] { abstractEstimate.getEstimateNumber(), approverName, nextDesign },
-                    null);
-        else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString()))
-            message = messageSource.getMessage("msg.lineestimate.techsanction.success",
+        else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.ADMIN_SANCTIONED.toString())
+                && !abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            message = messageSource.getMessage("msg.estimate.adminsanctioned",
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
+        else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
+                && !abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED)) {
+            message = messageSource.getMessage("msg.estimate.techsanctioned",
+                    new String[] { abstractEstimate.getEstimateNumber(), approverName, nextDesign,
+                            abstractEstimate.getEstimateTechnicalSanctions()
+                                    .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1)
+                                    .getTechnicalSanctionNumber() },
+                    null);
+        }
         else if (abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
-            message = messageSource.getMessage("msg.lineestimate.reject",
+            message = messageSource.getMessage("msg.estimate.rejected",
                     new String[] { abstractEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CANCELLED.toString()))
-            message = messageSource.getMessage("msg.lineestimate.cancel",
+            message = messageSource.getMessage("msg.estimate.cancelled",
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
 
         return message;
