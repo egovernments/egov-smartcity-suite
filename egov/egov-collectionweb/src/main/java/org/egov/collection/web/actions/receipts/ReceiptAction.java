@@ -818,7 +818,7 @@ public class ReceiptAction extends BaseFormAction {
             subLedgerlist.add(new ReceiptDetailInfo());
         }
         billSource = "misc";
-        partPaymentAllowed = false;
+       receiptHeader.setPartPaymentAllowed(false);
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
         // this.paidBy = payeename;
