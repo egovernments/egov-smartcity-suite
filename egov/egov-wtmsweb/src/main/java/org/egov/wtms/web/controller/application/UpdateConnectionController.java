@@ -65,6 +65,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
@@ -74,6 +75,7 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterDemandConnectionService;
+import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.service.MeterCostService;
@@ -110,6 +112,9 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private RoadCategoryService roadCategoryService;
+    
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
     protected UsageTypeService usageTypeService;
@@ -330,6 +335,8 @@ public class UpdateConnectionController extends GenericConnectionController {
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
         request.getSession().setAttribute(WaterTaxConstants.WORKFLOW_ACTION, workFlowAction);
+        
+
         // For Submit Button
         if (waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                 && mode.equalsIgnoreCase("fieldInspection"))
@@ -423,6 +430,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 + waterConnectionDetails.getApplicationNumber();
                     else if (workFlowAction.equals(WaterTaxConstants.SIGNWORKFLOWACTION) ) { // Sign
                         WaterConnectionDetails upadtedWaterConnectionDetails = null;
+                        WorkOrderNumberGenerator workOrderGen = beanResolver.getAutoNumberServiceFor(WorkOrderNumberGenerator.class);
                         if (waterConnectionDetails.getApplicationType().getCode()
                                 .equals(WaterTaxConstants.NEWCONNECTION)
                                 || waterConnectionDetails.getApplicationType().getCode()
@@ -431,7 +439,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                                         .equals(WaterTaxConstants.CHANGEOFUSE)) {
                             waterConnectionDetails.setWorkOrderDate(new Date());
                             waterConnectionDetails
-                                    .setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
+                                    .setWorkOrderNumber(workOrderGen.generateWorkOrderNumber());
                         }
                         final String cityMunicipalityName = (String) request.getSession().getAttribute(
                                 "citymunicipalityname");

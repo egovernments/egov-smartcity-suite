@@ -156,6 +156,7 @@ body
 				</div>
 			</div>
 		<br>
+		<spring:message code="reports.note.text" />
 		<div id="dailyCollectionReport-header" class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currDate}" var="currDate"
 				pattern="dd-MM-yyyy" />

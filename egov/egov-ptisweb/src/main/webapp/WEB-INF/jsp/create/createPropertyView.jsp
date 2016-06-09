@@ -40,10 +40,10 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 
     <tr>
-		<td class="greybox">&nbsp;</td>
+		<td class="greybox" width="5%">&nbsp;</td>
 		<s:if test="%{basicProp.upicNo!=null}">
 			<td class="greybox"><s:text name="prop.Id" /> :</td>
 			<td class="greybox"><span class="bold"><s:property default="N/A" value="%{basicProp.upicNo}" /> </span></td>
@@ -244,7 +244,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div class="overflow-x-scroll">
 				<%@ include file="../common/FloorView.jsp"%>
 			</div>
 		</td>

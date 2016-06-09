@@ -102,8 +102,10 @@
 					</div>
 				</div>
 			</div>
-
+			<br />
 			<div class="row display-hide report-section">
+				<s:text name="reports.note.text" />
+				<br />
 				<div class="col-md-12 table-header text-left">DCB Drill Down Report Details</div>
 				<div class="col-md-12 form-group report-table-container">
 					<table class="table table-bordered table-hover multiheadertbl" id="tbldcbdrilldown">
