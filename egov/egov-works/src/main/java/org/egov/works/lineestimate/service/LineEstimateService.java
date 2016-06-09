@@ -370,23 +370,24 @@ public class LineEstimateService {
 
         filterConditions.append(" and lineEstimate.spillOverFlag =:spillOverFlag ");
 
-        // Getting LineEstimateDetails where LineEstimate status is ADMINISTRATIVE_SANCTIONED and AbstractEstimate,WorkOrder is
+        // Getting LineEstimateDetails where LineEstimate status is ADMINISTRATIVE_SANCTIONED or TECHNICAL_SANCTIONED and AbstractEstimate,WorkOrder is
         // not yet created .
 
         mainQuery.append("select led from LineEstimateDetails as led ");
         mainQuery
                 .append(" where not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) !=:wostatus) ");
-        mainQuery.append(" and upper(led.lineEstimate.status.code) =:lestatus ");
+        mainQuery.append(" and (upper(led.lineEstimate.status.code) =:lestatus1 or upper(led.lineEstimate.status.code) =:lestatus2 )");
         mainQuery
                 .append(" and  not exists (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.lineEstimateDetails.id = led.id and upper(ae.egwStatus.code) !=:aestatus) ");
         mainQuery.append(filterConditions.toString());
 
         query = entityManager.createQuery(mainQuery.toString());
-        query.setParameter("lestatus", LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString());
+        query.setParameter("lestatus1", LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString());
+        query.setParameter("lestatus2", LineEstimateStatus.TECHNICAL_SANCTIONED.toString());
         query = setParameterToGetLineEstimatesForAbstractEstimate(lineEstimatesForAbstractEstimate, query);
 
         lineEstimateDetailsList = query.getResultList();
-
+        
         mainQuery = new StringBuilder();
 
         // Getting LineEstimateDetails where LineEstimate status is TECHNICAL_SANCTIONED , AbstractEstimate status other then
@@ -397,7 +398,7 @@ public class LineEstimateService {
                 .append(" where not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) !=:wostatus) ");
         mainQuery.append(" and upper(led.lineEstimate.status.code) =:lestatus ");
         mainQuery
-                .append(" and exists (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.lineEstimateDetails.id = led.id and upper(ae.egwStatus.code) !=:aestatus) ");
+                .append(" and exists (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.state is null and ae.lineEstimateDetails.id = led.id and upper(ae.egwStatus.code) !=:aestatus) ");
         mainQuery.append(filterConditions.toString());
 
         query = null;
@@ -406,6 +407,9 @@ public class LineEstimateService {
         query = setParameterToGetLineEstimatesForAbstractEstimate(lineEstimatesForAbstractEstimate, query);
 
         lineEstimateDetailsList.addAll(query.getResultList());
+
+
+        mainQuery = new StringBuilder();
 
         return lineEstimateDetailsList;
     }
@@ -518,7 +522,7 @@ public class LineEstimateService {
         final List<LineEstimatesForAbstractEstimate> lineEstimatesForAbstractEstimates = new ArrayList<LineEstimatesForAbstractEstimate>();
         for (final LineEstimateDetails led : lineEstimateDetails) {
             final LineEstimatesForAbstractEstimate result = new LineEstimatesForAbstractEstimate();
-            result.setId(led.getLineEstimate().getId());
+            result.setId(led.getId());
             result.setAdminSanctionNumber(led.getLineEstimate().getAdminSanctionNumber());
             result.setCreatedBy(led.getLineEstimate().getCreatedBy().getName());
             result.setEstimateAmount(led.getEstimateAmount());
@@ -639,13 +643,6 @@ public class LineEstimateService {
                 } else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()) &&
                         !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
                     setTechnicalSanctionBy(lineEstimate);
-                    int i = 0;
-                    for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-                        // TODO:create abstract estimate on technical sanction. Need to remove once Abstract Estimate is in place.
-                        if (lineEstimate.getLineEstimateDetails().size() > 1)
-                            i++;
-                        estimateService.createAbstractEstimateOnLineEstimateTechSanction(led, i);
-                    }
                 }
                 if (lineEstimate.getStatus().getCode()
                         .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
@@ -952,13 +949,6 @@ public class LineEstimateService {
         if (!documentDetails.isEmpty()) {
             newLineEstimate.setDocumentDetails(documentDetails);
             worksUtils.persistDocuments(documentDetails);
-        }
-        int i = 0;
-        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            if (lineEstimate.getLineEstimateDetails().size() > 1)
-                i++;
-            // TODO:create abstract estimate on technical sanction. Need to remove once Abstract Estimate is in place.
-            estimateService.createAbstractEstimateOnLineEstimateTechSanction(led, i);
         }
         return newLineEstimate;
     }

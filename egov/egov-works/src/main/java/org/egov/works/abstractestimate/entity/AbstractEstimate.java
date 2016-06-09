@@ -76,6 +76,7 @@ import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Fundsource;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
@@ -104,7 +105,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private static final long serialVersionUID = 5010991868891221454L;
 
     public enum EstimateStatus {
-        CREATED, TECH_SANCTION_CHECKED, TECH_SANCTIONED, BUDGETARY_APPR_CHECKED, BUDGETARY_APPROPRIATION_DONE, ADMIN_CHECKED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED
+        NEW, CREATED, TECH_SANCTIONED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED
     }
 
     public enum Actions {
@@ -207,6 +208,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @Temporal(value = TemporalType.DATE)
     @Column(name = "approveddate")
     private Date approvedDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approvedby")
+    private User approvedBy;
 
     private boolean copiedEstimate = false;
 
@@ -380,12 +385,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
     }
 
     /**
-     * This method returns the grand total of the work value for all the
-     * activities ( both SOR and Non SOR combined)
+     * This method returns the grand total of the work value for all the activities ( both SOR and Non SOR combined)
      *
-     * @return a double value representing the rounded figure of the total of
-     *         the grand total of the work value for all the activities ( both
-     *         SOR and Non SOR combined)
+     * @return a double value representing the rounded figure of the total of the grand total of the work value for all the
+     * activities ( both SOR and Non SOR combined)
      */
     public Money getWorkValueIncludingTaxes() {
         return new Money(getWorkValue() + getTotalTax().getValue());
@@ -551,11 +554,9 @@ public class AbstractEstimate extends StateAware implements Auditable {
     }
 
     /**
-     * This method returns the least of the financial years chosen from the
-     * multi year estimates
+     * This method returns the least of the financial years chosen from the multi year estimates
      *
-     * @return an instance of <code>CFinancialYear</code> representing the least
-     *         financial year
+     * @return an instance of <code>CFinancialYear</code> representing the least financial year
      */
     public CFinancialYear getLeastFinancialYearForEstimate() {
         CFinancialYear minfinYr = null;
@@ -650,6 +651,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setApprovedDate(final Date approvedDate) {
         this.approvedDate = approvedDate;
+    }
+
+    public User getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(final User approvedBy) {
+        this.approvedBy = approvedBy;
     }
 
     public List<EstimatePhotographs> getEstimatePhotographsList() {

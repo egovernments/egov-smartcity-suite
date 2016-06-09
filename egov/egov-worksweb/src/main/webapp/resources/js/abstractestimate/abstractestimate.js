@@ -227,6 +227,15 @@ $(document).ready(function(){
 		window.open("/egassets/assetmaster/asset-showSearchPage.action?rowId="+index+"&assetStatus="+status,"",
 			"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
 	});
+
+	var currentState = $('#currentState').val();
+	if(currentState == 'Technical Sanctioned') {
+		$('#approverDetailHeading').hide();
+		
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+	}
 });
 
 $overheadRowCount = 0;
@@ -965,54 +974,6 @@ function getAbstractEstimateDate() {
 	jQuery('[name="estimateDate"]').val(dd+"/"+mm+"/"+yy);
 }
 
-
-function enableFileds() {
-	var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());
-	var estimateValue = parseFloat($('#estimateValueTotal').html());
-	if(estimateValue > lineEstimateAmount) {
-		var diff = estimateValue - lineEstimateAmount;
-		bootbox.alert("Abstract estimate amount is Rs."+ diff +"/- more than the administrative sanctioned amount for this estimate , please create abstract estimate with less amount");
-		return false;
-	}
-
-	if($('#abstractEstimate').valid()) {
-		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
-		if(hiddenRowCount == 1) {
-			var tbl=document.getElementById('tblsor');
-			tbl.deleteRow(2);
-		}
-		
-		hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
-		if(hiddenRowCount == 1) {
-			var tbl=document.getElementById('tblNonSor');
-			tbl.deleteRow(2);
-		}
-		var overheadTableLength = jQuery('#overheadTable tr').length-1;
-		if(overheadTableLength == 1){
-			var overhead = document.getElementById('overheadValues[0].overhead.id').value;
-			if(overhead==""){
-				var tbl=document.getElementById('overheadTable');
-				tbl.deleteRow(1);
-			}
-		}
-		var tbl=document.getElementById('tblassetdetails');
-		var assetTableLength = jQuery('#tblassetdetails tr').length-1;
-		for (var i = 0; i < assetTableLength; i++) {
-			var assetname = document.getElementById('assetValues['+ i + '].asset.name').value;
-			var assetcode = document.getElementById('assetValues['+ i + '].asset.code').value;
-			if(assetname == "" && assetcode== ""){
-				tbl.deleteRow(i+1);
-			}
-		}
-		if(!validateOverheads())
-			return false;
-		$('.disablefield').removeAttr("disabled");
-		return true;
-	} else
-		return false;
-
-}
-
 function validateOverheads(){
 	var resultLength = jQuery('#overheadTable tr').length-1;
 	var index;
@@ -1373,7 +1334,6 @@ $(document).on('click', '#tblassetdetails tbody tr', function() {
 	}
 });
 
-
 function update(data)
 {
 	var index = 0;
@@ -1544,4 +1504,115 @@ function changeColor(tableRow, highLight)
 	{
 	  tableRow.style.backgroundColor = 'white';
 	}
+}
+
+$('.btn-primary').click(function(){
+	var button = $(this).attr('id');
+	if(button != 'addnonSorRow')
+		return validateWorkFlowApprover(button);
+});
+
+function validateWorkFlowApprover(name) {
+	document.getElementById("workFlowAction").value = name;
+	var approverPosId = document.getElementById("approvalPosition");
+	var button = document.getElementById("workFlowAction").value;
+	
+	if (button != null && button == 'Save') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Approve') {
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Submit') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Reject') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Cancel') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+		
+		if($("form").valid())
+		{
+			bootbox.confirm($('#confirm').val(), function(result) {
+				if(!result) {
+					bootbox.hideAll();
+					return false;
+				} else {
+					validateSORDetails();
+					document.forms[0].submit();
+				}
+			});
+		}
+		return false;
+	}
+	if (button != null && button == 'Forward') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+		
+		var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());
+		var estimateValue = parseFloat($('#estimateValueTotal').html());
+		if(estimateValue > lineEstimateAmount) {
+			var diff = estimateValue - lineEstimateAmount;
+			bootbox.alert("Abstract estimate amount is Rs."+ diff +"/- more than the administrative sanctioned amount for this estimate , please create abstract estimate with less amount");
+			return false;
+		}
+	}
+	
+	validateSORDetails();
+
+	document.forms[0].submit;
+	return true;
+}
+
+function validateSORDetails() {
+	if($('#abstractEstimate').valid()) {
+		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+		if(hiddenRowCount == 1) {
+			var tbl=document.getElementById('tblsor');
+			tbl.deleteRow(2);
+		}
+		
+		hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+		if(hiddenRowCount == 1) {
+			var tbl=document.getElementById('tblNonSor');
+			tbl.deleteRow(2);
+		}
+		var overheadTableLength = jQuery('#overheadTable tr').length-1;
+		if(overheadTableLength == 1){
+			var overhead = document.getElementById('overheadValues[0].overhead.id').value;
+			if(overhead==""){
+				var tbl=document.getElementById('overheadTable');
+				tbl.deleteRow(1);
+			}
+		}
+		var tbl=document.getElementById('tblassetdetails');
+		var assetTableLength = jQuery('#tblassetdetails tr').length-1;
+		for (var i = 0; i < assetTableLength; i++) {
+			var assetname = document.getElementById('assetValues['+ i + '].asset.name').value;
+			var assetcode = document.getElementById('assetValues['+ i + '].asset.code').value;
+			if(assetname == "" && assetcode== ""){
+				tbl.deleteRow(i+1);
+			}
+		}
+		if(!validateOverheads())
+			return false;
+		$('.disablefield').removeAttr("disabled");
+		return true;
+	} else
+		return false;
 }

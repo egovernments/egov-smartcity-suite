@@ -55,8 +55,8 @@
 	<div class="new-page-header">Create Abstract Estimate</div>
 
 	<div class="main-content">
-	<input type="hidden" id="estimateValue" name="estimateValue" value="${abstractEstimate.estimateValue}"/>
-	<input type="hidden" id="workValue" name="workValue" value="${abstractEstimate.workValue}"/>
+	<input type="hidden" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
+	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -89,18 +89,9 @@
 				<%@ include file="estimate-financialdetails.jsp"%>
 				<%@ include file="estimate-asset.jsp"%>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-12 text-center">
-				<button type="submit" name="submit" id="save"
-					class="btn btn-primary" onclick="return enableFileds();"
-					value="Save">
-					<spring:message code="lbl.save" />
-				</button>
-				<button type="button" class="btn btn-default" id="button2"
-					onclick="window.close();">
-					<spring:message code="lbl.close" />
-				</button>
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</div>
 	</div>
@@ -108,3 +99,4 @@
 
 <script type="text/javascript"
 	src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
+	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

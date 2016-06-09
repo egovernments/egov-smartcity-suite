@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
   <div class="position_alert">
-			<spring:message	code="lbl.estimate.value" /> : &#8377 <span id="estimateValueTotal"><c:out value="${abstractEstimate.estimateValue}" default="0.0"></c:out></span>
+			<spring:message	code="lbl.estimate.value" /> : &#8377 <span id="estimateValueTotal"><c:out value="${estimateValue}" default="0.0"></c:out></span>
 		</div>
 		<div>
 		       <spring:hasBindErrors name="abstractEstimate">
