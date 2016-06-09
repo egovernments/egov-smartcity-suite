@@ -232,7 +232,7 @@ public class ConnectionBillService extends BillServiceInterface {
          BigDecimal partiallyCollectedAmount =BigDecimal.ZERO;
         if(currentInstallmentDemand.compareTo(BigDecimal.ZERO)>0)
         partiallyCollectedAmount = advanceCollection.remainder(currentInstallmentDemand);
-
+        if(currentInstallmentDemand.compareTo(BigDecimal.ZERO) > 0){
         final Integer noOfAdvancesPaid = advanceCollection.subtract(partiallyCollectedAmount)
                 .divide(currentInstallmentDemand).intValue();
 
@@ -267,7 +267,7 @@ public class ConnectionBillService extends BillServiceInterface {
 
                 billDetails.add(billdetail);
                 }
-                
+            }
             }
         else
             LOGGER.debug("getBillDetails - All advances are paid...");
