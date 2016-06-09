@@ -1237,6 +1237,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_EDIT_DEMAND = "Edit_demand";
     public static final String APPLICATION_TYPE_EDIT_OWNER = "Edit_owner";
     public static final String APPLICATION_TYPE_EDIT_COLLECTION = "Edit_Collection";
+    public static final String APPLICATION_TYPE_MODIFY_DATA_ENTRY = "Edit_Data_Entry";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";

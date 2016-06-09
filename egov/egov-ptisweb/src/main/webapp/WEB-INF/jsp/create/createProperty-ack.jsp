@@ -81,6 +81,10 @@
 									class="bold"><s:property value="%{propertyInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/> <span class="bold"><s:property
 									value="%{basicProperty.upicNo}" /> </span></td>
 						</s:elseif>
+						<s:elseif test="mode == 'edit' && @org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_EDIT_DATA_ENTRY.equalsIgnoreCase(modifyRsn)">
+							<td colspan="5" style="font-size: 15px;" align="center">
+							<s:property value="%{ackMessage}" /> <span class="bold"><s:property value="%{basicProperty.upicNo}" /> </span></td>
+						</s:elseif>
 						<s:else>
 							<td colspan="5" style="font-size: 15px;" align="center">
 							<s:property value="%{ackMessage}"/><span

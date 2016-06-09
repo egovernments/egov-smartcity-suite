@@ -3096,6 +3096,151 @@ public class PropertyService {
         return penalyDate.getTime();
     }
     
+    /**
+     * Updates the PropertyDetail for a Property
+     * @param property
+     * @param floorTypeId
+     * @param roofTypeId
+     * @param wallTypeId
+     * @param woodTypeId
+     * @param areaOfPlot
+     * @param propertyCategory
+     * @param nonResPlotArea
+     * @param propUsageId
+     * @param propOccId
+     * @param propTypeId
+     */
+    public void updatePropertyDetail(Property property, Long floorTypeId, Long roofTypeId, Long wallTypeId, Long woodTypeId,
+    		String areaOfPlot, String propertyCategory, String nonResPlotArea, String propUsageId, String propOccId, String propTypeId) {
+    	PropertyDetail propertyDetail = property.getPropertyDetail();
+		if (floorTypeId != null && floorTypeId != -1) {
+            final FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
+            propertyDetail.setFloorType(floorType);
+        }
+    	if (roofTypeId != null && roofTypeId != -1) {
+            final RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
+            propertyDetail.setRoofType(roofType);
+        }
+    	if (wallTypeId != null && wallTypeId != -1) {
+            final WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?", wallTypeId);
+            propertyDetail.setWallType(wallType);
+        } 
+        if (woodTypeId != null && woodTypeId != -1) {
+            final WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?", woodTypeId);
+            propertyDetail.setWoodType(woodType);
+        }
+        if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+            propertyDetail.getSitalArea().setArea(new Float(areaOfPlot));
+        }
+        propertyDetail.setCategoryType(propertyDetail.getCategoryType());
+        
+        if (propertyDetail.getApartment() != null 
+                && propertyDetail.getApartment().getId() != null) {
+            final Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?",
+                    property.getPropertyDetail().getApartment().getId());
+            propertyDetail.setApartment(apartment);
+        }
+            
+        if (nonResPlotArea != null && !nonResPlotArea.isEmpty()) {
+        	propertyDetail.getNonResPlotArea().setArea(new Float(nonResPlotArea));
+        }
+
+        propertyDetail.setFieldVerified('Y');
+        propertyDetail.setProperty(property);
+        final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
+                "from PropertyMutationMaster PM where upper(PM.code) = ?", property.getBasicProperty().getPropertyMutationMaster().getCode());
+        final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPropPerServ().find(
+                "from PropertyTypeMaster PTM where PTM.id = ?", Long.valueOf(propTypeId));
+        if (propUsageId != null) {
+            final PropertyUsage usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+                    Long.valueOf(propUsageId));
+            propertyDetail.setPropertyUsage(usage);
+        } 
+        if (propOccId != null) {
+            final PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ().find(
+                    "from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
+            propertyDetail.setPropertyOccupation(occupancy);
+        } 
+        if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+        	propertyDetail.setPropertyType(VACANT_PROPERTY);
+        else
+        	propertyDetail.setPropertyType(BUILT_UP_PROPERTY);
+
+        propertyDetail.setPropertyTypeMaster(propTypeMstr);
+        propertyDetail.setPropertyMutationMaster(propMutMstr);
+        propertyDetail.setUpdatedTime(new Date());
+        
+        if (propertyDetail.getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+        	propertyDetail.setNoofFloors(0);
+        	if(!property.getPropertyDetail().getFloorDetails().isEmpty())
+        		property.getPropertyDetail().getFloorDetails().clear();
+            property.getPropertyDetail().getTotalBuiltupArea().setArea(new Float(0));
+        }
+	}
+    
+    /**
+     * Update the Floor details for a property
+     * @param property
+     * @param savedFloorDetails
+     */
+    public void updateFloorDetails(Property property, List<Floor> savedFloorDetails){
+    	PropertyTypeMaster unitType = null;
+        PropertyUsage usage = null;
+        PropertyOccupation occupancy = null;
+        StructureClassification structureClass = null;
+        final Area totBltUpArea = new Area();
+        Float totBltUpAreaVal = new Float(0);
+    	for(Floor floorProxy : property.getPropertyDetail().getFloorDetailsProxy()){
+    		for(Floor savedFloor : savedFloorDetails){
+    			if(floorProxy != null && savedFloor != null){
+	        		if(floorProxy.getFloorUid().equals(savedFloor.getFloorUid())){
+	        			totBltUpAreaVal = totBltUpAreaVal + floorProxy.getBuiltUpArea().getArea();
+	        			//set all fields for each floor, if UID matches
+	        			if (floorProxy.getUnitType() != null)
+	                        unitType = (PropertyTypeMaster) getPropPerServ().find(
+	                                "from PropertyTypeMaster utype where utype.id = ?", floorProxy.getUnitType().getId());
+	                    if (floorProxy.getPropertyUsage() != null)
+	                        usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+	                        		floorProxy.getPropertyUsage().getId());
+	                    if (floorProxy.getPropertyOccupation() != null)
+	                        occupancy = (PropertyOccupation) getPropPerServ().find(
+	                                "from PropertyOccupation po where po.id = ?", floorProxy.getPropertyOccupation().getId());
+
+	                    if (floorProxy.getStructureClassification() != null)
+	                        structureClass = (StructureClassification) getPropPerServ().find(
+	                                "from StructureClassification sc where sc.id = ?",
+	                                floorProxy.getStructureClassification().getId());
+	                    if (floorProxy.getOccupancyDate() != null)
+	                    	savedFloor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floorProxy.getOccupancyDate()));
+	                    
+	                    if (unitType != null
+	                            && unitType.getCode().equalsIgnoreCase(PropertyTaxConstants.UNITTYPE_OPEN_PLOT))
+	                    	savedFloor.setFloorNo(OPEN_PLOT_UNIT_FLOORNUMBER);
+
+	                    savedFloor.setUnitType(unitType);
+	                    savedFloor.setPropertyUsage(usage);
+	                    savedFloor.setPropertyOccupation(occupancy);
+	                    savedFloor.setStructureClassification(structureClass);
+	                    savedFloor.setPropertyDetail(property.getPropertyDetail());
+	                    savedFloor.setModifiedDate(new Date());
+	                    final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
+	                    savedFloor.setModifiedBy(user);
+	                    savedFloor.getBuiltUpArea().setArea(floorProxy.getBuiltUpArea().getArea());
+	                    savedFloor.getBuiltUpArea().setLength(floorProxy.getBuiltUpArea().getLength());
+	                    savedFloor.getBuiltUpArea().setBreadth(floorProxy.getBuiltUpArea().getLength());
+	                    // setting total builtup area.
+	                    totBltUpArea.setArea(totBltUpAreaVal);
+	                    totBltUpArea.setLength(floorProxy.getBuiltUpArea().getLength());
+	                    totBltUpArea.setBreadth(floorProxy.getBuiltUpArea().getBreadth());
+	                    property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
+	                    
+	        		}
+    			}
+    			property.getPropertyDetail().setNoofFloors(property.getPropertyDetail().getFloorDetailsProxy().size());
+        	}
+    	}
+    }
+    
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
     }
