@@ -48,6 +48,7 @@
 	var isDatepickerOpened=false;
 	jQuery(document).ready(function() {
 		jQuery('#remittanceDate').val("");
+		jQuery('#finYearId').prop("disabled", true); 
 		jQuery(" form ").submit(function(event) {
 			doLoadingMask();
 		});
