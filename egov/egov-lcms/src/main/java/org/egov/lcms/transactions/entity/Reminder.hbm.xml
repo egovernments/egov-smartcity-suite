@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.egov.lcms.models.transactions.Reminder" table="EGLC_REMINDER">
+		<id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGLC_REMINDER</param>
+			</generator>
+		</id>
+		
+        <timestamp 
+        unsaved-value="null" 
+        name="modifiedDate" 
+        column="LASTMODIFIEDDATE" 
+        access="property" />
+        
+		<property name="createdDate" type="java.util.Date" column="CREATEDDATE"  not-null="true" />    
+         
+		
+        <property name="date" type="java.util.Date" column="REMINDERDATE" />
+         <property name="remarks" type="string" column="REMARKS" />
+        <many-to-one name="legalCaseDepartment" class="org.egov.lcms.models.transactions.LegalcaseDepartment" fetch="select" >
+            <column name="ID_LEGALCASE_DEPT" precision="22" scale="0" />
+        </many-to-one>
+		</class>
+        
+</hibernate-mapping>

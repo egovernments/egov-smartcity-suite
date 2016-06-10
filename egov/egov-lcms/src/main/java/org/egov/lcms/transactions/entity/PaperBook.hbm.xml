@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.egov.lcms.models.transactions.PaperBook" table="EGLC_PAPERBOOK">
+        <id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGLC_PAPERBOOK</param>
+			</generator>
+		</id>
+		 <property name="lastDateToDepositAmt" type="java.util.Date">
+            <column name="LASTDATE_TO_DEPOSIT_AMOUNT"/>
+        </property>
+     
+         <property name="depositedAmount" type="java.lang.Double">
+	    	<column name="DEPOSITED_AMOUNT"/>
+        </property>
+        
+        <property name="concernedOfficerName" type="java.lang.String">
+	    	<column name="CONCERNED_OFFICERNAME"/>
+        </property>
+        
+        <property name="remarks" type="java.lang.String">
+	    	<column name="REMARKS"/>
+        </property>
+        
+        <property name="createdDate" type="java.util.Date">
+    		<column name="CREATED_DATE" not-null="true" />
+    	</property>
+    	
+    	<property name="modifiedDate" type="java.util.Date">
+            <column name="MODIFIED_DATE" not-null="true" />
+        </property>
+		
+		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY"  not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+        
+        <many-to-one name="legalcase" class="org.egov.lcms.models.transactions.Legalcase" fetch="select">
+            <column name="ID_LEGALCASE" precision="22" scale="0" not-null="true" />
+        </many-to-one>
+        
+        <property name="isPaperBookRequired" >
+            <column name="IS_PAPERBOOKREQUIRED" />
+        </property>
+        
+        
+    </class>
+</hibernate-mapping>

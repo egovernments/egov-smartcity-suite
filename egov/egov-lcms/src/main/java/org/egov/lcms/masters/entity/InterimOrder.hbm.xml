@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="org.egov.lcms.models.masters.InterimOrder" table="EGLC_INTERIMTYPE_MASTER">
+		<id
+			name="id"
+			column="ID"
+			type="long"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">SEQ_EGLC_INTORDERTYPE_MASTER</param>
+			</generator>
+		</id>
+		<property name="modifiedDate" type="java.util.Date">
+            <column name="LASTMODIFIEDDATE" not-null="true" />
+        </property>
+     
+   <property
+	    name="code"
+	    column="CODE"
+	    type="string"
+    />
+    
+   
+    
+   <property
+        name="createdDate"
+        column="CREATEDDATE"
+
+    />
+   <property
+	    name="description"
+	    column="DESCRIPTION"
+	    type="string"
+    />
+   <property
+	    name="interimOrderType"
+	    column="INTERIMORDERTYPE"
+	    type="string"
+    />
+   <property
+	    name="orderNumber"
+	    column="ORDERNUMBER"
+	    type="long"
+    />
+   <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"  not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true" fetch="select"/>
+		
+    
+</class>
+</hibernate-mapping>

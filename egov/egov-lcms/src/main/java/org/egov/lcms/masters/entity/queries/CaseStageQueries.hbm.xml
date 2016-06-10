@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+ <query name="getAllCaseStages.By.Excluding.CreateStage">
+    <![CDATA[from CaseStage cs where cs.stage!=? order by cs.stage asc]]>
+ </query>
+ <query name="getAllCaseStages.By.Excluding.ParamStage">
+    <![CDATA[from CaseStage cs where cs.stage!=? and cs.stage!=? order by cs.stage asc]]>
+ </query>
+ <query name="getCaseStageById">
+    <![CDATA[from CaseStage cs where cs.id=? order by cs.stage asc]]>
+ </query>
+</hibernate-mapping>
