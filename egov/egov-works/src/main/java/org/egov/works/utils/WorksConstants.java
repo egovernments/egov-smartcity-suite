@@ -88,9 +88,7 @@ public class WorksConstants {
     public static final String NATUREOFWORKFORASSETCAPITALISATION_DEFAULTVALUE = "Capital Works - New Asset,Deposit Works - Own Asset";
     public static final String NATUREOFWORKFORASSETIMPROVMENT_DEFAULTVALUE = "Capital Works - Improvement Works";
     public static final String NATUREOFWORKFORASSETREPAIRANDMAINTAINANCE_DEFAULTVALUE = "Repairs and maintenance Works";
-    // For Deposit Work Folio
-    public static final String QUERY_GETDEPOSITWORKSUSAGELISTFORDEPOSITFOLIO = "getDepositWorksUsageListForDepositFolio";
-
+    
     // RebatePremium
     public static final String BILL = "BILL";
 

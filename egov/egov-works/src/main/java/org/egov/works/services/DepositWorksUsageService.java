@@ -43,8 +43,8 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.DepositWorksUsage;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
-import org.egov.works.models.estimate.DepositWorksUsage;
 
 import java.math.BigDecimal;
 import java.util.Date;

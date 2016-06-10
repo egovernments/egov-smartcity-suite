@@ -56,7 +56,6 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.model.budget.BudgetUsage;
-import org.egov.works.models.estimate.DepositWorksUsage;
 
 @Entity
 @Table(name = "EGW_ESTIMATE_APPROPRIATION")

@@ -331,7 +331,7 @@
 		<constructor-arg>
 			<bean parent="persistenceService">
 				<property name="type"
-					value="org.egov.works.models.estimate.DepositWorksUsage" />
+					value="org.egov.works.abstractestimate.entity.DepositWorksUsage" />
 			</bean>
 		</constructor-arg>
 		<property name="genericService" ref="persistenceService" />

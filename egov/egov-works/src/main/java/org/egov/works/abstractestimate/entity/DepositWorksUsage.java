@@ -37,29 +37,92 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.models.estimate;
-
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.infstr.models.BaseModel;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.models.masters.DepositCode;
+package org.egov.works.abstractestimate.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class DepositWorksUsage extends BaseModel {
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
-    private static final long serialVersionUID = 8244011179703999724L;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.models.masters.DepositCode;
+
+@Entity
+@Table(name = "EGW_DEPOSITWORKS_USAGE")
+@NamedQueries({
+        @NamedQuery(name = DepositWorksUsage.GET_DEPOSITWORKSUSAGE_AMOUNT, query = " select sum(dwu.consumedAmount-dwu.releasedAmount) from DepositWorksUsage dwu inner join dwu.abstractEstimate.financialDetails fd where dwu.abstractEstimate.depositCode.id=? and fd.fund.id=? and fd.coa.id=? ")
+})
+@SequenceGenerator(name = DepositWorksUsage.SEQ_EGW_DEPOSITWORKSUSAGE, sequenceName = DepositWorksUsage.SEQ_EGW_DEPOSITWORKSUSAGE, allocationSize = 1)
+public class DepositWorksUsage extends AbstractAuditable {
+
+    private static final long serialVersionUID = -1250530369473146349L;
+
+    public static final String SEQ_EGW_DEPOSITWORKSUSAGE = "SEQ_EGW_DEPOSITWORKS_USAGE";
+
+    public static final String GET_DEPOSITWORKSUSAGE_AMOUNT = "getDepositWorksUsageAmount";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_DEPOSITWORKSUSAGE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "abstractestimate", nullable = false)
     private AbstractEstimate abstractEstimate;
-    private BigDecimal totalDepositAmount;
-    private BigDecimal consumedAmount;
-    private BigDecimal releasedAmount;
-    private String appropriationNumber;
-    private Date appropriationDate;
-    private CFinancialYear financialYear;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "depositcode", nullable = false)
     private DepositCode depositCode;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coa", nullable = false)
     private CChartOfAccounts coa;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "financialyear", nullable = false)
+    private CFinancialYear financialYear;
+
+    @NotNull
+    private BigDecimal totalDepositAmount;
+
+    private BigDecimal consumedAmount;
+
+    private BigDecimal releasedAmount;
+
+    @NotNull
+    private String appropriationNumber;
+
+    @NotNull
+    @Temporal(value = TemporalType.DATE)
+    private Date appropriationDate;
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
 
     public AbstractEstimate getAbstractEstimate() {
         return abstractEstimate;
@@ -67,6 +130,30 @@ public class DepositWorksUsage extends BaseModel {
 
     public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
         this.abstractEstimate = abstractEstimate;
+    }
+
+    public DepositCode getDepositCode() {
+        return depositCode;
+    }
+
+    public void setDepositCode(final DepositCode depositCode) {
+        this.depositCode = depositCode;
+    }
+
+    public CChartOfAccounts getCoa() {
+        return coa;
+    }
+
+    public void setCoa(final CChartOfAccounts coa) {
+        this.coa = coa;
+    }
+
+    public CFinancialYear getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(final CFinancialYear financialYear) {
+        this.financialYear = financialYear;
     }
 
     public BigDecimal getTotalDepositAmount() {
@@ -107,30 +194,6 @@ public class DepositWorksUsage extends BaseModel {
 
     public void setAppropriationDate(final Date appropriationDate) {
         this.appropriationDate = appropriationDate;
-    }
-
-    public CFinancialYear getFinancialYear() {
-        return financialYear;
-    }
-
-    public void setFinancialYear(final CFinancialYear financialYear) {
-        this.financialYear = financialYear;
-    }
-
-    public DepositCode getDepositCode() {
-        return depositCode;
-    }
-
-    public void setDepositCode(final DepositCode depositCode) {
-        this.depositCode = depositCode;
-    }
-
-    public CChartOfAccounts getCoa() {
-        return coa;
-    }
-
-    public void setCoa(final CChartOfAccounts coa) {
-        this.coa = coa;
     }
 
 }

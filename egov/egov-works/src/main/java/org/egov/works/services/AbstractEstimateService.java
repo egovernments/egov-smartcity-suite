@@ -77,13 +77,13 @@ import org.egov.model.budget.BudgetUsage;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
 import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
+import org.egov.works.abstractestimate.entity.DepositWorksUsage;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.egov.works.abstractestimate.service.BudgetNumberGenerator;
 import org.egov.works.abstractestimate.service.ProjectCodeGenerator;
 import org.egov.works.autonumber.EstimateNumberGenerator;
-import org.egov.works.models.estimate.DepositWorksUsage;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 

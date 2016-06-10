@@ -48,8 +48,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
+import org.egov.works.abstractestimate.entity.DepositWorksUsage;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
-import org.egov.works.models.estimate.DepositWorksUsage;
 import org.egov.works.services.ContractorBillService;
 import org.egov.works.services.DepositWorksUsageService;
 
