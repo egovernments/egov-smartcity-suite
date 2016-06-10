@@ -71,7 +71,12 @@
 				</tr>
 			</thead>
 			<tbody id="nonSorTable">
-				<tr id="nonSorMessage">
+				<c:if test="${abstractEstimate.activities.size() == 0}">
+					<tr id="nonSorMessage">
+				</c:if>
+				<c:if test="${abstractEstimate.activities.size() != 0}">
+					<tr id="nonSorMessage" hidden="true">
+				</c:if>
 					<c:if test="${isServiceVATRequired == true }">
 						<td colspan="10"><spring:message code="msg.nonsor.table"/></td>
 					</c:if>
@@ -79,47 +84,105 @@
 						<td colspan="8"><spring:message code="msg.nonsor.table"/></td>
 					</c:if>
 				</tr>
-				<tr id="nonSorRow" class="nonSorRow" hidden="true" align="center">
-					<td>
-						<span class="spannonsorslno">1</span>
-						<form:hidden path="activities[0].nonSor.id" id="nonSorId_0" class="nonSorId"/>
-					</td>
-					<td>
-						<form:input path="activities[0].nonSor.description" id="nonSorDesc_0" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
-					</td>
-					<td>
-						<form:select path="activities[0].nonSor.uom.id" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<c:forEach items="${uoms }" var="uom">
-								<option value="${uom.id }" label="${uom.uomCategory.category } -- ${uom.uom }" />
-							</c:forEach>
-						</form:select>
-						<form:hidden path="activities[0].uom.id" id="uomid_0" class="uomhiddenid"/>
-					</td>
-					<td align="right">
-						<form:input path="activities[0].rate" id="nonSorRate_0" data-pattern="decimalvalue" class="form-control table-input text-right nonSorRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
-					</td>
-					<td>
-						<form:input path="activities[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
-					</td>
-					<td align="right">
-						<span class="nonSorAmount_0 nonsoramount"></span>
-					</td>
-					<td hidden="true" class="nonSorServiceTaxPerc">
-						<form:input path="activities[0].serviceTaxPerc" id="nonSorServiceTaxPerc_0" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right nonSorServiceTaxPerc" maxlength="64" onblur="calculateNonSorVatAmount(this);" onkeyup="validateInput(this);"/>
-					</td>
-					<td hidden="true" align="right" class="nonSorVatAmount">
-						<span class="nonSorVatAmount_0 nonSorVatAmt"></span>
-					</td>
-					<td align="right">
-						<span class="nonSorTotal_0 nonSorTotal"></span>
-					</td>
-					<td>
-						<span class="add-padding delete_0" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-					</td>
-				</tr>
+				<c:choose>
+					<c:when test="${abstractEstimate.activities.size() == 0}">
+						<tr id="nonSorRow" class="nonSorRow" hidden="true" align="center">
+							<td>
+								<span class="spannonsorslno">1</span>
+								<form:hidden path="activities[0].id" id="activityid_0" class="activityid" />
+								<form:hidden path="activities[0].nonSor.id" id="nonSorId_0" class="nonSorId"/>
+							</td>
+							<td>
+								<form:input path="activities[0].nonSor.description" id="nonSorDesc_0" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
+							</td>
+							<td>
+								<form:select path="activities[0].nonSor.uom.id" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<c:forEach items="${uoms }" var="uom">
+										<option value="${uom.id }" label="${uom.uomCategory.category } -- ${uom.uom }" />
+									</c:forEach>
+								</form:select>
+								<form:hidden path="activities[0].uom.id" id="uomid_0" class="uomhiddenid"/>
+							</td>
+							<td align="right">
+								<form:input path="activities[0].rate" id="nonSorRate_0" data-pattern="decimalvalue" class="activityRate form-control table-input text-right nonSorRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
+							</td>
+							<td>
+								<form:input path="activities[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
+							</td>
+							<td align="right">
+								<span class="nonSorAmount_0 nonsoramount"></span>
+							</td>
+							<td hidden="true" class="nonSorServiceTaxPerc">
+								<form:input path="activities[0].serviceTaxPerc" id="nonSorServiceTaxPerc_0" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right nonSorServiceTaxPerc" maxlength="64" onblur="calculateNonSorVatAmount(this);" onkeyup="validateInput(this);"/>
+							</td>
+							<td hidden="true" align="right" class="nonSorVatAmount">
+								<span class="nonSorVatAmount_0 nonSorVatAmt"></span>
+							</td>
+							<td align="right">
+								<span class="nonSorTotal_0 nonSorTotal"></span>
+							</td>
+							<td>
+								<span class="add-padding delete_0" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+							</td>
+						</tr>
+					</c:when>
+					<c:otherwise>
+						<c:forEach items="${abstractEstimate.activities}" var="activity" varStatus="item">
+							<c:if test="${activity.schedule == null }">
+								<tr id="nonSorRow" class="nonSorRow" align="center">
+									<td>
+										<span class="spannonsorslno">${item.index + 1 }</span>
+										<form:hidden path="activities[${item.index }].id" id="activityid_${item.index }" class="activityid" value="${activity.id }" />
+										<form:hidden path="activities[${item.index }].nonSor.id" id="nonSorId_${item.index }" class="nonSorId" value="${activity.nonSor.id }"/>
+									</td>
+									<td>
+										<form:input path="activities[${item.index }].nonSor.description" id="nonSorDesc_${item.index }" value="${activity.nonSor.description }" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
+									</td>
+									<td>
+										<form:select path="activities[${item.index }].nonSor.uom.id" id="nonSorUom_${item.index }" data-idx="${item.index }" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
+											<form:option value="">
+												<spring:message code="lbl.select" />
+											</form:option>
+											<c:forEach items="${uoms }" var="uom">
+												<c:if test="${uom.id == activity.uom.id }">
+													<option value="${uom.id }" label="${uom.uomCategory.category } -- ${uom.uom }" selected="selected" />
+												</c:if>
+												<c:if test="${uom.id != activity.uom.id }">
+													<option value="${uom.id }" label="${uom.uomCategory.category } -- ${uom.uom }" />
+												</c:if>
+											</c:forEach>
+										</form:select>
+										<form:hidden path="activities[${item.index }].uom.id" value="${activity.uom.id }" id="uomid_${item.index }" class="uomhiddenid"/>
+									</td>
+									<td align="right">
+										<form:input path="activities[${item.index }].rate" id="nonSorRate_${item.index }" value="${activity.rate }" data-pattern="decimalvalue" class="activityRate form-control table-input text-right nonSorRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
+									</td>
+									<td>
+										<form:input path="activities[${item.index }].quantity" id="nonSorQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
+									</td>
+									<td align="right">
+										<span class="nonSorAmount_${item.index } nonsoramount"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+									</td>
+									<td hidden="true" class="nonSorServiceTaxPerc">
+										<form:input path="activities[${item.index }].serviceTaxPerc" value="${activity.serviceTaxPerc }" id="nonSorServiceTaxPerc_${item.index }" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="1" class="form-control table-input text-right nonSorServiceTaxPerc" maxlength="64" onblur="calculateNonSorVatAmount(this);" onkeyup="validateInput(this);"/>
+									</td>
+									<td hidden="true" align="right" class="nonSorVatAmount">
+										<span class="nonSorVatAmount_${item.index } nonSorVatAmt"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100) }</fmt:formatNumber></span>
+									</td>
+									<td align="right">
+										<span class="nonSorTotal_${item.index } nonSorTotal"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) + ((activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100)) }</fmt:formatNumber></span>
+									</td>
+									<td>
+										<span class="add-padding delete_${item.index }" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+									</td>
+								</tr>
+							</c:if>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
 			</tbody>
 			<tfoot>
 				<tr>

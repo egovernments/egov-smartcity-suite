@@ -162,9 +162,10 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
 
     @RequestMapping(value = "/update/{abstractEstimateId}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
+    public String update(@ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
             final BindingResult errors, final RedirectAttributes redirectAttributes,
-            final Model model, final HttpServletRequest request, @RequestParam("file") final MultipartFile[] files)
+            final Model model, final HttpServletRequest request, @RequestParam("file") final MultipartFile[] files,
+            @RequestParam final String removedActivityIds)
             throws ApplicationException, IOException {
 
         validateMultiYearEstimates(abstractEstimate, errors);
@@ -212,8 +213,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         } else {
             if (null != workFlowAction)
                 newAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
-                        approvalComment, null, workFlowAction,
-                        mode, null, files);
+                        approvalComment, null, workFlowAction, files, removedActivityIds);
             redirectAttributes.addFlashAttribute("abstractEstimate", newAbstractEstimate);
 
             final String pathVars = worksUtils.getPathVars(newAbstractEstimate.getEgwStatus(), newAbstractEstimate.getState(),

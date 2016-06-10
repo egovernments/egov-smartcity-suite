@@ -49,7 +49,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.asset.service.AssetService;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -57,7 +56,6 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -98,6 +96,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -110,9 +109,6 @@ public class EstimateService {
     private EntityManager entityManager;
 
     private final AbstractEstimateRepository abstractEstimateRepository;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
@@ -156,7 +152,7 @@ public class EstimateService {
 
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
-
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -291,7 +287,7 @@ public class EstimateService {
         abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
         abstractEstimate.setWorkValue(lineEstimateDetails.getActualEstimateAmount().doubleValue());
         abstractEstimate.setEstimateValue(lineEstimateDetails.getActualEstimateAmount());
-        abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+        abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()));
         abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
         abstractEstimate.setApprovedDate(lineEstimateDetails.getLineEstimate().getTechnicalSanctionDate());
@@ -433,12 +429,23 @@ public class EstimateService {
     @Transactional
     public AbstractEstimate updateAbstractEstimateDetails(final AbstractEstimate abstractEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final String mode, final ReportOutput reportOutput,
-            final MultipartFile[] files) throws ValidationException, IOException {
+            final String workFlowAction, final MultipartFile[] files, @RequestParam final String removedActivityIds)
+            throws ValidationException, IOException {
         AbstractEstimate updatedAbstractEstimate = null;
 
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
+        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) || 
+                abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
+            List<Activity> activities = new ArrayList<Activity>(abstractEstimate.getActivities());
+            
+            activities = removeDeletedActivities(activities, removedActivityIds);
+            
+            abstractEstimate.setActivities(activities);
+            
+            for(final Activity activity : abstractEstimate.getActivities())
+                activity.setAbstractEstimate(abstractEstimate);
+            
             updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
+            
             final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, updatedAbstractEstimate,
                     WorksConstants.ABSTRACTESTIMATE);
             if (!documentDetails.isEmpty()) {
@@ -446,22 +453,42 @@ public class EstimateService {
                 worksUtils.persistDocuments(documentDetails);
             }
         }
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
+        
+        if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
                 && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
-            saveTechnicalSanctionDetails(abstractEstimate);
+            saveTechnicalSanctionDetails(updatedAbstractEstimate);
 
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
+        if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
                 && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
-            saveAdminSanctionDetails(abstractEstimate);
+            saveAdminSanctionDetails(updatedAbstractEstimate);
 
-        abstractEstimateStatusChange(abstractEstimate, workFlowAction, mode);
         updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
+        
+        abstractEstimateStatusChange(abstractEstimate, workFlowAction);
 
         if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
             createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
                     additionalRule, workFlowAction);
 
         return updatedAbstractEstimate;
+    }
+    
+    private List<Activity> removeDeletedActivities(List<Activity> activities, String removedActivityIds) {
+        final List<Activity> activityList = new ArrayList<Activity>();
+        if (null != removedActivityIds) {
+            final String[] ids = removedActivityIds.split(",");
+            final List<String> strList = new ArrayList<String>();
+            for (final String str : ids)
+                strList.add(str);
+            for (final Activity activity : activities)
+                if (activity.getId() != null) {
+                    if (!strList.contains(activity.getId().toString()))
+                        activityList.add(activity);
+                } else
+                    activityList.add(activity);
+        } else
+            return activities;
+        return activityList;
     }
 
     private void saveAdminSanctionDetails(AbstractEstimate abstractEstimate) {
@@ -480,34 +507,33 @@ public class EstimateService {
         abstractEstimate.getEstimateTechnicalSanctions().add(estimateTechnicalSanction);
     }
 
-    public void abstractEstimateStatusChange(final AbstractEstimate abstractEstimate, final String workFlowAction,
-            final String mode) throws ValidationException {
+    public void abstractEstimateStatusChange(final AbstractEstimate abstractEstimate, final String workFlowAction) {
         if (null != abstractEstimate && null != abstractEstimate.getEgwStatus()
                 && null != abstractEstimate.getEgwStatus().getCode())
             if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                abstractEstimate.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.NEW.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                abstractEstimate.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.CREATED.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
                     && abstractEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.ABSTRACTESTIMATE, EstimateStatus.TECH_SANCTIONED.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.ABSTRACTESTIMATE, EstimateStatus.ADMIN_SANCTIONED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                abstractEstimate.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.REJECTED.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.ABSTRACTESTIMATE, EstimateStatus.CANCELLED.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
-                abstractEstimate.setEgwStatus(egwStatusHibernateDAO
+                abstractEstimate.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.CREATED.toString()));
     }
 

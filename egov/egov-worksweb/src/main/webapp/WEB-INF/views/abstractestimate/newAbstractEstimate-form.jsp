@@ -51,6 +51,9 @@
 <form:form name="abstractEstimateForm" role="form" method="post" modelAttribute="abstractEstimate" id="abstractEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	
+	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
+	<input type="hidden" value="${abstractEstimate.activities.size() }" id="activitiesSize" />
 
 	<div class="new-page-header">Create Abstract Estimate</div>
 

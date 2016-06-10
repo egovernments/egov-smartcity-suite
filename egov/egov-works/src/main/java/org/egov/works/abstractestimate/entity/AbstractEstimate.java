@@ -244,7 +244,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @Valid
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Activity.class)
-    private List<Activity> activities = new ArrayList<Activity>(0);
+    private final List<Activity> activities = new ArrayList<Activity>(0);
 
     @Valid
     @OrderBy("id")
@@ -469,7 +469,9 @@ public class AbstractEstimate extends StateAware implements Auditable {
     }
 
     public void setActivities(final List<Activity> activities) {
-        this.activities = activities;
+        this.activities.clear();
+        if(activities != null)
+            this.activities.addAll(activities);
     }
 
     public void addActivity(final Activity activity) {
