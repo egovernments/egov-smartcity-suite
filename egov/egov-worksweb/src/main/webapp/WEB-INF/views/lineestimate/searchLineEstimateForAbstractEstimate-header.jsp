@@ -59,4 +59,4 @@
 		</form:form>  
 <jsp:include page="lineEstimateForAbstractEstimate-searchresults.jsp"/>
 
-<script src="<c:url value='/resources/js/lineestimate/searchlinestimateforabstractestimatehelper.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/lineestimate/searchlineestimateforabstractestimatehelper.js?rnd=${app_release_no}'/>"></script>

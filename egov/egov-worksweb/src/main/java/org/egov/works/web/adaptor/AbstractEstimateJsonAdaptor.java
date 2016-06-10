@@ -60,11 +60,16 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (abstractEstimate != null) {
-            if (abstractEstimate.getEstimateNumber() != null)
+            if (abstractEstimate.getId() != null)
                 jsonObject.addProperty("id", abstractEstimate.getId());
             else
                 jsonObject.addProperty("id", "");
-            
+
+            if (abstractEstimate.getLineEstimateDetails() != null)
+                jsonObject.addProperty("leId", abstractEstimate.getLineEstimateDetails().getLineEstimate().getId());
+            else
+                jsonObject.addProperty("leId", "");
+
             if (abstractEstimate.getEstimateNumber() != null)
                 jsonObject.addProperty("estimateNumber", abstractEstimate.getEstimateNumber());
             else
@@ -106,18 +111,20 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
                 jsonObject.addProperty("ward", "");
 
             if (abstractEstimate.getEgwStatus() != null) {
-                if (abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.ADMIN_SANCTIONED_STATUS)
-                        || abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS))
-                    jsonObject.addProperty("status", "NA");
-                else
-                    jsonObject.addProperty("status", abstractEstimate.getEgwStatus().getCode());
+                jsonObject.addProperty("status", abstractEstimate.getEgwStatus().getCode());
             } else
                 jsonObject.addProperty("status", "");
 
-            if (abstractEstimate.getState() != null)
-                jsonObject.addProperty("currentowner", abstractEstimate.getState().getOwnerUser().getName());
-            else
-                jsonObject.addProperty("currentowner", "");
+            if (abstractEstimate.getState() != null) {
+                if (abstractEstimate.getEgwStatus() != null
+                        && (abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.ADMIN_SANCTIONED_STATUS)
+                                || abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)))
+                    jsonObject.addProperty("currentowner", "NA");
+                else {
+                    jsonObject.addProperty("currentowner", "");
+                }
+            } else
+                jsonObject.addProperty("currentowner", "NA");
 
         }
         return jsonObject;

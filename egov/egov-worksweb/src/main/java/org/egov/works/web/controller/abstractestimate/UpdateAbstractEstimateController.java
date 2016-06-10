@@ -160,17 +160,6 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         return loadViewData(model, request, abstractEstimate);
     }
 
-    @RequestMapping(value = "/view/{abstractEstimateId}", method = RequestMethod.GET)
-    public String viewAbstractEstimate(final Model model, @PathVariable final String abstractEstimateId,
-            final HttpServletRequest request)
-            throws ApplicationException {
-        final AbstractEstimate abstractEstimate = getAbstractEstimate(abstractEstimateId);
-
-        final String responsePage = loadViewData(model, request, abstractEstimate);
-        model.addAttribute("createdbybydesignation", worksUtils.getUserDesignation(abstractEstimate.getCreatedBy()));
-        model.addAttribute("mode", "readOnly");
-        return responsePage;
-    }
 
     @RequestMapping(value = "/update/{abstractEstimateId}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,

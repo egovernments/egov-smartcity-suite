@@ -93,17 +93,39 @@ function callAjaxSearch() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : []
+					"aButtons" : [
+					    {
+					    	"sExtends": "pdf",
+					    	"sTitle": "Search Abstract Estimate",
+                            "sPdfOrientation": "landscape"
+		                },
+		                {
+				             "sExtends": "xls",
+				             "mColumns": [ 1,2,3,4,5,6,7,8],
+                             "sPdfMessage": "Search Abstract Estimate",
+                             "sTitle": "Search Abstract Estimate"
+			             },
+			             {
+				             "sExtends": "print",
+				             "mColumns": [ 1,2,3,4,5,6,7,8],
+                             "sPdfMessage": "Search Abstract Estimate",
+                             "sTitle": "Search Abstract Estimate"
+			             }],
 				},
 				"fnRowCallback" : function(row, data, index) {
 					/*$('td:eq(0)',row).html(index+1);*/
+					if(data.lineestimateNumber != null)
+						$('td:eq(0)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.leId +'\')">' + data.lineestimateNumber + '</a>');
+					if(data.estimateNumberAndDate != null)
+						$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.id +'\')">' + data.estimateNumberAndDate + '</a>');
+					
 					return row;
 				},
 				aaSorting: [],				
 				columns : [ { 
 					/*"data" : "", "sClass" : "text-center"} ,{ */
-					"data" : "lineestimateNumber", "sClass" : "text-center"} ,{
-					"data" : "estimateNumberAndDate", "sClass" : "text-center"} ,{
+					"data" : "", "sClass" : "text-center"} ,{
+					"data" : "", "sClass" : "text-center"} ,{
 					"data" : "workIdentificationNumber", "sClass" : "text-center"} ,{ 
 					"data" : "estimateAmount", "sClass" : "text-right"} ,{
 					"data" : "departmentName", "sClass" : "text-center"} ,{
@@ -111,6 +133,22 @@ function callAjaxSearch() {
 					"data" : "status", "sClass" : "text-center"} ,{
 					"data" : "currentowner", "sClass" : "text-center"}]				
 				});
+		
+		//show/hide department
+		var department = $("#department").val();
+
+		if(department!=""){
+			var oTable = $('#resultTable').DataTable();
+			oTable.column(4).visible(false);
+		}
+		
+		//show/hide department
+		var status = $("#status").val();
+
+		if(status!=""){
+			var oTable = $('#resultTable').DataTable();
+			oTable.column(6).visible(false);
+		}
 }
 
 
@@ -157,3 +195,11 @@ $(document).ready(function(){
 	
 
 });
+
+function openLineEstimate(id) {
+	window.open("/egworks/lineestimate/view/"+ id , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
+
+function openAbstractEstimate(id) {
+	window.open("/egworks/abstractestimate/view/"+ id , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}

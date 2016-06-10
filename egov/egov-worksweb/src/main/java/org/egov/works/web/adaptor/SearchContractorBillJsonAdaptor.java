@@ -77,11 +77,11 @@ public class SearchContractorBillJsonAdaptor implements JsonSerializer<Contracto
             if (contractorBillRegister.getBilltype() != null)
                 jsonObject.addProperty("billType", contractorBillRegister.getBilltype());
             else
-                jsonObject.addProperty("billType", "");
+           /*     jsonObject.addProperty("billType", "");
             if(contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate() != null)
                 jsonObject.addProperty("adminSanctionNumber", contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
             else
-                jsonObject.addProperty("adminSanctionNumber", "");
+                jsonObject.addProperty("adminSanctionNumber", "");*/
             
             if(contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getProjectCode() != null)
                 jsonObject.addProperty("workIdentificationNumber", contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getProjectCode().getCode());
@@ -114,7 +114,7 @@ public class SearchContractorBillJsonAdaptor implements JsonSerializer<Contracto
                         worksUtils.getApproverName(contractorBillRegister.getState().getOwnerPosition().getId()));
             else
                 jsonObject.addProperty("owner", "");
-            jsonObject.addProperty("lineEstimateId", contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getId());
+          //  jsonObject.addProperty("lineEstimateId", contractorBillRegister.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getId());
             jsonObject.addProperty("id", contractorBillRegister.getId());
             jsonObject.addProperty("workOrderId", contractorBillRegister.getWorkOrder().getId());
 

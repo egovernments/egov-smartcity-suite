@@ -38,32 +38,39 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-		<form:form name="lineEstimateSearchForm" role="form" action="" modelAttribute="lineEstimateForLoaSearchRequest" id="lineEstimatesearchform" class="form-horizontal form-groups-bordered">
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="searchLineEstimateForLoa-form.jsp"/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type='button' class='btn btn-primary' id="btnsearch">
-						<spring:message code='lbl.search' />
-					</button>
-				</div>
-			</div>
-		</form:form>  
-<jsp:include page="lineEstimateForLoa-searchresults.jsp"/>
-<script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
-<script src="<c:url value='/resources/js/lineestimate/searchlineestimateforloahelper.js?rnd=${app_release_no}'/>"></script>
+<div id="assetValuesTable" class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="header.assetDetails" />
+		</div>
+	</div>
+<div class="panel-body">
+
+<table class="table table-bordered" id="tblsor">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.name" /></th>
+					<th><spring:message code="lbl.code" /></th>
+				</tr>
+			</thead>
+			<tbody id="assetTable">
+				<c:choose>
+					<c:when test="${abstractEstimate.assetValues.size() != 0}">
+						<c:forEach items="${abstractEstimate.getAssetValues()}" var="assetDtls" varStatus="item">
+								<tr >
+									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+									<td><c:out value="${assetDtls.asset.name}"></c:out></td>
+								 	<td><c:out value="${assetDtls.asset.code}"></c:out></td>
+								</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+					</c:otherwise>
+				</c:choose> 
+			</tbody>
+		</table>
+		
+</div>
+
+</div>

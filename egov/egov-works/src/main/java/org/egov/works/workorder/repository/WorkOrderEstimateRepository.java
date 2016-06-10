@@ -48,5 +48,7 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
 
     WorkOrderEstimate findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(final Long workOrderId, final Long estimateId,
             final String status);
+    
+    WorkOrderEstimate findByEstimate_IdAndWorkOrder_EgwStatus_Code(final Long estimateId,final String status);
 
 }

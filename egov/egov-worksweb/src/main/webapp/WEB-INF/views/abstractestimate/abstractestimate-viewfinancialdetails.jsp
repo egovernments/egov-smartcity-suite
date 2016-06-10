@@ -38,32 +38,73 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<style type="text/css">
+.yui-dt table {
+	width: 100%;
+}
+
+.yui-dt-col-Add {
+	width: 5%;
+}
+
+.yui-dt-col-Delete {
+	width: 5%;
+}
+</style>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-		<form:form name="lineEstimateSearchForm" role="form" action="" modelAttribute="lineEstimateForLoaSearchRequest" id="lineEstimatesearchform" class="form-horizontal form-groups-bordered">
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="searchLineEstimateForLoa-form.jsp"/>
-				</div>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<div class="panel panel-primary" data-collapsed="0"
+	style="text-align: left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="lbl.financialdetails" />
+		</div>
+	</div>
+
+	<div class="panel-body ">
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.fund" />
+			</div> 
+		
+			<div class="col-xs-3 add-margin view-content">
+				<c:out value="${abstractEstimate.financialDetails[0].fund.name}"></c:out>
 			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type='button' class='btn btn-primary' id="btnsearch">
-						<spring:message code='lbl.search' />
-					</button>
-				</div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.function" />
+			</div> 
+		
+			<div class="col-xs-3 add-margin view-content">
+				<c:out value="${abstractEstimate.financialDetails[0].function.name}"></c:out>
 			</div>
-		</form:form>  
-<jsp:include page="lineEstimateForLoa-searchresults.jsp"/>
-<script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
-<script src="<c:url value='/resources/js/lineestimate/searchlineestimateforloahelper.js?rnd=${app_release_no}'/>"></script>
+		</div>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.budgethead" />
+			</div> 
+		
+			<div class="col-xs-3 add-margin view-content">
+				<c:out value="${abstractEstimate.financialDetails[0].budgetGroup.name}"></c:out>
+			</div>
+		</div>		
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.scheme" />
+			</div> 
+		
+			<div class="col-xs-3 add-margin view-content">
+				<c:out value="${abstractEstimate.financialDetails[0].scheme.name}"></c:out>
+			</div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.subscheme" />
+			</div> 
+		
+			<div class="col-xs-3 add-margin view-content">
+				<c:out value="${abstractEstimate.financialDetails[0].subScheme.name}"></c:out>
+			</div>
+		</div>
+	</div>
+</div>

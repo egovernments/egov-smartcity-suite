@@ -281,9 +281,14 @@
         <put-attribute name="body" value="/WEB-INF/views/master/schedulecategory/scheduleCategory-search.jsp"/>
     </definition>   
      
-     <definition name="abstractestimate-search" extends="base_layout">
+    <definition name="abstractestimate-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.searchae" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchAbstractEstimate-form.jsp"/>
+    </definition>
+    
+    <definition name="abstractestimate-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchae" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/abstractestimate-view.jsp"/>
     </definition>
     
 </tiles-definitions>

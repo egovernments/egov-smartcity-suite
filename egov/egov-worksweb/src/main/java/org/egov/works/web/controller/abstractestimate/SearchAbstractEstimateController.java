@@ -44,10 +44,12 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -60,6 +62,9 @@ public class SearchAbstractEstimateController {
 
     @Autowired
     private EstimateService estimateService;
+    
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
@@ -67,6 +72,17 @@ public class SearchAbstractEstimateController {
         setDropDownValues(model);
         model.addAttribute("searchAbstractEstimate", searchAbstractEstimate);
         return "abstractestimate-search";
+    }
+
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    public String viewAbstractEstimate(@PathVariable final String id,final Model model)
+            throws ApplicationException {
+        final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(Long.valueOf(id));
+
+        model.addAttribute("abstractEstimate", abstractEstimate);
+        model.addAttribute("workOrderEstimate", workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(Long.valueOf(id)));
+        
+        return "abstractestimate-view";
     }
 
     private void setDropDownValues(final Model model) {
