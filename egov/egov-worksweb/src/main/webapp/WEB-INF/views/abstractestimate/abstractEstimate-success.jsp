@@ -57,8 +57,20 @@
 	</div>					
 </div>					
 </div>
+<input type="hidden" name="estimateId" id="estimateId" value="${abstractEstimate.id}"/>
+state<c:out value="${abstractEstimate.state.value }"/>
 <div class="row text-center">
 	<div class="add-margin">
+	<c:if test="${abstractEstimate != null && abstractEstimate.state.value != 'NEW'}">
+	    <button type='submit' class='btn btn-primary' id="viewBOQ" name="viewBOQ"><spring:message code='lbl.viewBOQ' />	</button>
+	</c:if>
 		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 	</div>
 </div>
+
+<script type="text/javascript">
+$('#viewBOQ').click(function() {
+	var estimateId = $("#estimateId").val();
+	window.open("/egworks/abstractestimate/viewBillOfQuantitiesXls/"+estimateId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
+});
+</script>

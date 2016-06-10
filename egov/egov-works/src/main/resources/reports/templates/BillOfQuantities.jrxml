@@ -1,44 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" resourceBundle="org.egov.works.web.actions.package">
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-06-10T19:40:58 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4f28d66-9453-4365-9c94-520990d7d3ae">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="java.math.BigDecimal"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="deptName" class="java.lang.String"/>
@@ -49,7 +14,10 @@
 	<parameter name="NonSOR_Activities" class="java.util.List"/>
 	<parameter name="estimateNo" class="java.lang.String"/>
 	<parameter name="activitySize" class="java.lang.Integer"/>
-	<parameter name="grandTotalAmt" class="java.lang.Double"/>
+	<parameter name="grandTotalAmt" class="java.math.BigDecimal"/>
+	<parameter name="estimateDate" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{estimateDate}]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -74,11 +42,11 @@
 	<field name="SORCurrentRate" class="org.egov.infra.persistence.entity.component.Money">
 		<fieldDescription><![CDATA[SORCurrentRate]]></fieldDescription>
 	</field>
-	<variable name="description" class="java.lang.String">
-		<variableExpression><![CDATA[$F{schedule}==null?$F{nonSor}.getDescription():$F{schedule}.getDescription()]]></variableExpression>
-	</variable>
 	<variable name="amount_sum" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount}.getValue()]]></variableExpression>
+	</variable>
+	<variable name="description" class="java.lang.String">
+		<variableExpression><![CDATA[$F{schedule}==null?$F{nonSor}.getDescription():$F{schedule}.getDescription()]]></variableExpression>
 	</variable>
 	<group name="dummy detail">
 		<groupExpression><![CDATA[$V{PAGE_COUNT}]]></groupExpression>
@@ -86,7 +54,7 @@
 			<band height="63">
 				<printWhenExpression><![CDATA[$V{REPORT_COUNT}==$P{activitySize} && $P{activitySize}!=0]]></printWhenExpression>
 				<staticText>
-					<reportElement stretchType="RelativeToBandHeight" x="1" y="10" width="57" height="26" backcolor="#33FFFF"/>
+					<reportElement stretchType="RelativeToBandHeight" x="1" y="10" width="57" height="26" backcolor="#33FFFF" uuid="ef1f09e1-1801-4a8b-ac00-ca93aff35a55"/>
 					<box>
 						<pen lineWidth="0.25"/>
 						<topPen lineWidth="0.25"/>
@@ -100,7 +68,7 @@
 					<text><![CDATA[Total Rs:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="58" y="10" width="169" height="26" isPrintInFirstWholeBand="true"/>
+					<reportElement stretchType="RelativeToBandHeight" x="58" y="10" width="169" height="26" isPrintInFirstWholeBand="true" uuid="5ff17cfb-df4e-4bdb-b2dd-3879bfd1b81a"/>
 					<box>
 						<pen lineWidth="0.25"/>
 						<topPen lineWidth="0.25"/>
@@ -111,10 +79,10 @@
 					<textElement verticalAlignment="Middle" markup="none">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{amount_sum}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{amount_sum}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="58" y="36" width="742" height="26"/>
+					<reportElement stretchType="RelativeToTallestObject" x="58" y="36" width="742" height="26" uuid="f8666b75-ae09-4f66-ba5e-90ecfc7cff4b"/>
 					<box>
 						<pen lineWidth="0.25"/>
 						<topPen lineWidth="0.25"/>
@@ -125,10 +93,10 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[ReportUtil.amountInWords($V{amount_sum})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[ReportUtil.amountInWords(BigDecimal.valueOf($V{amount_sum}))]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement stretchType="RelativeToTallestObject" x="1" y="36" width="57" height="26" backcolor="#33FFFF"/>
+					<reportElement stretchType="RelativeToTallestObject" x="1" y="36" width="57" height="26" backcolor="#33FFFF" uuid="9abfdc34-a8e3-466d-9aef-0c6d9fa3f5e5"/>
 					<box>
 						<pen lineWidth="0.25"/>
 						<topPen lineWidth="0.25"/>
@@ -145,15 +113,15 @@
 			<band height="97">
 				<printWhenExpression><![CDATA[$V{REPORT_COUNT}==$P{activitySize} && $P{activitySize}!=0]]></printWhenExpression>
 				<subreport>
-					<reportElement x="0" y="5" width="780" height="39"/>
+					<reportElement x="0" y="5" width="780" height="39" uuid="bf55c998-855b-4ab5-9038-ef0fbc1d2a72"/>
 					<subreportParameter name="originalEstimateNo">
 						<subreportParameterExpression><![CDATA[$P{estimateNo}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{NonSOR_Activities}, false)]]></dataSourceExpression>
-					<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("BOQ_NonSOR.jasper")]]></subreportExpression>
+					<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("BOQ_NonSOR.jasper")]]></subreportExpression>
 				</subreport>
 				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-					<reportElement positionType="FixRelativeToBottom" x="62" y="72" width="735" height="22">
+					<reportElement positionType="FixRelativeToBottom" x="62" y="72" width="735" height="22" uuid="5e6071d8-2a1d-48ef-94c0-01c8f5664aff">
 						<printWhenExpression><![CDATA[$P{activitySize}!=0 && $P{NonSOR_Activities}!=null && $P{NonSOR_Activities}.size()!=0]]></printWhenExpression>
 					</reportElement>
 					<box>
@@ -166,10 +134,10 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[ReportUtil.amountInWords($P{grandTotalAmt})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[ReportUtil.amountInWords($P{grandTotalAmt})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-					<reportElement positionType="FixRelativeToBottom" x="118" y="50" width="189" height="22">
+					<reportElement positionType="FixRelativeToBottom" x="118" y="50" width="189" height="22" uuid="a4494204-15b9-4350-a574-f83d9aa874da">
 						<printWhenExpression><![CDATA[$P{activitySize}!=0 && $P{NonSOR_Activities}!=null && $P{NonSOR_Activities}.size()!=0]]></printWhenExpression>
 					</reportElement>
 					<box>
@@ -182,10 +150,10 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{grandTotalAmt}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{grandTotalAmt}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="1" y="50" width="117" height="22">
+					<reportElement positionType="FixRelativeToBottom" x="1" y="50" width="117" height="22" uuid="fcecb3b6-3311-448a-8927-7b35585e65b3">
 						<printWhenExpression><![CDATA[$P{activitySize}!=0 && $P{NonSOR_Activities}!=null && $P{NonSOR_Activities}.size()!=0]]></printWhenExpression>
 					</reportElement>
 					<box>
@@ -201,7 +169,7 @@
 					<text><![CDATA[Grand  Total Rs :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="FixRelativeToBottom" x="1" y="72" width="61" height="22">
+					<reportElement positionType="FixRelativeToBottom" x="1" y="72" width="61" height="22" uuid="6823919d-3a24-40c5-8659-2d4980d2a963">
 						<printWhenExpression><![CDATA[$P{activitySize}!=0 && $P{NonSOR_Activities}!=null && $P{NonSOR_Activities}.size()!=0]]></printWhenExpression>
 					</reportElement>
 					<box>
@@ -226,91 +194,105 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="129" splitType="Stretch">
+		<band height="138" splitType="Stretch">
 			<staticText>
-				<reportElement x="286" y="60" width="220" height="20"/>
+				<reportElement x="286" y="60" width="220" height="20" uuid="00524c9d-28fd-4e9c-8a2e-bf8e244c6669"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="14" isBold="true" isUnderline="true" pdfFontName="Helvetica"/>
 				</textElement>
 				<text><![CDATA[BILL OF QUANTITIES]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="119" y="0" width="563" height="29"/>
+				<reportElement x="119" y="0" width="563" height="29" uuid="660603df-e0cf-4132-a692-9ecef965677c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="16" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-                <textFieldExpression class="java.lang.String"><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="29" width="802" height="29"/>
+				<reportElement x="0" y="29" width="802" height="29" uuid="b31700bb-ec13-44cf-b0a4-4b7502a5015e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{deptName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{deptName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="84" width="118" height="20"/>
+				<reportElement x="0" y="84" width="118" height="20" uuid="8265b947-793f-44a6-a711-329d5b8ba7e5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Name Of Work :-]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="118" y="84" width="683" height="20"/>
+				<reportElement x="118" y="84" width="683" height="20" uuid="192d9827-d442-47df-891b-1aeffe4a5603"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{workName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{workName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="108" width="118" height="20"/>
+				<reportElement x="1" y="108" width="118" height="20" uuid="7714679b-8bb6-42f4-b303-1f241dbb7bca"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Estimate Number :-]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="119" y="108" width="300" height="20"/>
+				<reportElement x="119" y="108" width="300" height="20" uuid="f1de0442-8b92-4faf-965e-4d61456217c4"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{estimateNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{estimateNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="682" y="0" width="80" height="20"/>
+				<reportElement x="682" y="0" width="80" height="20" uuid="577970f8-9b3d-4ad5-9ed6-2ff2214a2e3e"/>
 				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="762" y="0" width="40" height="20"/>
+				<reportElement x="762" y="0" width="40" height="20" uuid="a55213f6-285f-42e5-8e24-1f42c1708746"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="448" y="106" width="155" height="29" uuid="403c185f-5641-48b0-aeb2-8119b98923c6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estimate Date :-]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="604" y="106" width="176" height="24" uuid="5e49931d-ec95-4d6d-b69b-19ac87e875ca"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{estimateDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="27" splitType="Stretch">
 			<textField>
-				<reportElement x="682" y="5" width="80" height="20">
+				<reportElement x="682" y="5" width="80" height="20" uuid="87395e0b-45ad-4f0b-b493-6411d5f6dfcf">
 					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}!=1]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="762" y="5" width="40" height="20">
+				<reportElement x="762" y="5" width="40" height="20" uuid="a57cd7a1-6be8-4a80-a967-960e321d8b0a">
 					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}!=1]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -318,14 +300,14 @@
 		<band height="41" splitType="Stretch">
 			<printWhenExpression><![CDATA[$V{REPORT_COUNT}!=$P{activitySize}]]></printWhenExpression>
 			<staticText>
-				<reportElement x="329" y="0" width="118" height="20"/>
+				<reportElement x="329" y="0" width="118" height="20" uuid="c733b409-ba82-4b01-a80a-b32879f9e7a8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[SOR Activities]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="46" y="21" width="325" height="20"/>
+				<reportElement x="46" y="21" width="325" height="20" uuid="7d1b4da8-8a8b-482d-8a92-572b112c26d1"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -339,7 +321,7 @@
 				<text><![CDATA[Description Item]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="371" y="21" width="94" height="20"/>
+				<reportElement x="371" y="21" width="94" height="20" uuid="4e9635da-0991-48ea-a5d1-805ab4713d0a"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -353,7 +335,7 @@
 				<text><![CDATA[SOR CODE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="465" y="21" width="73" height="20"/>
+				<reportElement x="465" y="21" width="73" height="20" uuid="8f763a43-195d-4a88-ad14-99cfa68219b7"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -367,7 +349,7 @@
 				<text><![CDATA[QUANTITY]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="538" y="21" width="73" height="20"/>
+				<reportElement x="538" y="21" width="73" height="20" uuid="5153ac6d-8219-46b2-9c9e-caf16f0ae66e"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -381,7 +363,7 @@
 				<text><![CDATA[UOM]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="611" y="21" width="78" height="20"/>
+				<reportElement x="611" y="21" width="78" height="20" uuid="b0ef6b35-5fb0-44fa-b5b8-9b8d366a7f70"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -395,7 +377,7 @@
 				<text><![CDATA[RATE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="689" y="21" width="112" height="20"/>
+				<reportElement x="689" y="21" width="112" height="20" uuid="84522c55-e174-4faf-bbd3-27018e7bcfa5"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -409,7 +391,7 @@
 				<text><![CDATA[       AMOUNT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="21" width="44" height="20"/>
+				<reportElement x="2" y="21" width="44" height="20" uuid="a2211052-4d94-4e1c-a1b5-6525ccc40371"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -427,7 +409,7 @@
 	<detail>
 		<band height="23" splitType="Prevent">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="465" y="0" width="73" height="23" backcolor="#FFFFFF"/>
+				<reportElement stretchType="RelativeToTallestObject" x="465" y="0" width="73" height="23" backcolor="#FFFFFF" uuid="3a7b4719-a6ca-43f5-8e37-58870f63c316"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -438,10 +420,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{quantity}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="371" y="0" width="94" height="23"/>
+				<reportElement stretchType="RelativeToTallestObject" x="371" y="0" width="94" height="23" uuid="e3f13313-982d-42ca-80fc-aa002317c41e"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -452,10 +434,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{schedule}.getCode()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{schedule}.getCode()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="538" y="0" width="73" height="23"/>
+				<reportElement stretchType="RelativeToTallestObject" x="538" y="0" width="73" height="23" uuid="62b240c6-2e0e-45bb-8e6e-5453e05575b3"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -466,10 +448,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{uom}.getUom()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{uom}.getUom()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="611" y="0" width="78" height="23"/>
+				<reportElement stretchType="RelativeToTallestObject" x="611" y="0" width="78" height="23" uuid="21295e0b-9854-4ddd-b864-ac4b2db8dd2c"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -480,10 +462,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{SORCurrentRate}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SORCurrentRate}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="689" y="0" width="112" height="23"/>
+				<reportElement stretchType="RelativeToTallestObject" x="689" y="0" width="112" height="23" uuid="a3f14c54-3ff5-489b-8559-ff3c17f7d1b5"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -494,10 +476,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amount}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="2" y="0" width="44" height="23"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2" y="0" width="44" height="23" uuid="60907fd4-46a7-474f-a98e-5ab32d7a7db7"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -508,10 +490,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="46" y="0" width="325" height="23"/>
+				<reportElement stretchType="RelativeToTallestObject" x="46" y="0" width="325" height="23" uuid="ac0b886c-3625-487b-a6f8-e4afbd90db96"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -522,7 +504,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Times New Roman" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{description}+"\n"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{description}+"\n"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -533,12 +515,12 @@
 		<band height="49" splitType="Prevent">
 			<printWhenExpression><![CDATA[$P{activitySize}==0]]></printWhenExpression>
 			<subreport>
-				<reportElement x="1" y="6" width="780" height="39"/>
+				<reportElement x="1" y="6" width="780" height="39" uuid="11837a5f-2688-431c-84e4-e26b3a1a1800"/>
 				<subreportParameter name="originalEstimateNo">
 					<subreportParameterExpression><![CDATA[$P{estimateNo}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{NonSOR_Activities}, false)]]></dataSourceExpression>
-				<subreportExpression class="java.io.InputStream"><![CDATA[ReportUtil.getTemplateAsStream("BOQ_NonSOR.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("BOQ_NonSOR.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</summary>

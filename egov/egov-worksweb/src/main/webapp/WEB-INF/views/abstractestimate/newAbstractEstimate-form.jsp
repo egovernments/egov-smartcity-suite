@@ -58,8 +58,8 @@
 	<div class="new-page-header">Create Abstract Estimate</div>
 
 	<div class="main-content">
-	<input type="hidden" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
-	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
+	<form:hidden path="estimateValue" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
+	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${abstractEstimate.workValue}" default="0.0" />'/>
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">

@@ -1802,3 +1802,8 @@ function validateSORDetails() {
 	} else
 		return false;
 }
+
+$('#viewBOQ').click(function() {
+	var estimateId = $("#estimateId").val();
+	window.open("/egworks/abstractestimate/viewBillOfQuantitiesXls/"+estimateId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
+});
