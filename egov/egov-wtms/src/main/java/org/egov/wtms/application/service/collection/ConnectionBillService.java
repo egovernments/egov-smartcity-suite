@@ -313,7 +313,7 @@ public class ConnectionBillService extends BillServiceInterface {
         final String query = "select inst from Installment inst where inst.module.name = '"
                 + WaterTaxConstants.PROPERTY_MODULE_NAME
                 + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
-        advanceInstallments = entityManager.unwrap(Session.class).createQuery(query)
+        advanceInstallments = getCurrentSession().createQuery(query)
                 .setParameter("startdate", startDate).setMaxResults(WaterTaxConstants.MAX_ADVANCES_ALLOWED).list();
         return advanceInstallments;
     }
