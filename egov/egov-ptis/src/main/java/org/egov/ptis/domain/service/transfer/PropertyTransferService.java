@@ -39,9 +39,32 @@ l * eGov suite of products aim to improve the internal efficiency,transparency,
  */
 package org.egov.ptis.domain.service.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.egov.demand.utils.DemandConstants;
+import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
@@ -49,6 +72,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -62,6 +86,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
@@ -85,36 +110,20 @@ import org.egov.ptis.domain.entity.property.PropertyMutationTransferee;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
+import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.NewPropertyDetails;
+import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_GENERATE_TRANSFER_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 public class PropertyTransferService {
 
@@ -518,5 +527,87 @@ public class PropertyTransferService {
         initiatePropertyTransfer(basicproperty, propertyMutation);
         return propertyMutation;
     }
+    
+    /**
+     * Used in REST API for initiating property transfer
+     * @param propertyMutation
+     * @return
+     */
+    public PropertyMutation transitionWorkFlow(final PropertyMutation propertyMutation) {
+        final DateTime currentDate = new DateTime();
+        final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
+        final String approverComments = "Property has been successfully forwarded.";
+        final Assignment assignment = propertyService.getAssignmentsForDesignation(PropertyTaxConstants.COMMISSIONER_DESGN).get(0);
+        final Position pos = assignment.getPosition();
 
+        propertyMutation.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+        	.withComments(approverComments).withStateValue(PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED)
+        	.withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING)
+        	.withNatureOfTask(NATURE_TITLE_TRANSFER);
+        
+        return propertyMutation;
+    }
+    
+    /**
+     * Creates PropertyMutation object for REST API
+     * @param assessmentNumber
+     * @param mutationReasonCode
+     * @param saleDetails
+     * @param deedNo
+     * @param deedDate
+     * @param ownerDetailsList
+     * @return
+     * @throws ParseException
+     */
+    public NewPropertyDetails createPropertyMutation(String assessmentNumber, String mutationReasonCode,
+    		String saleDetails, String deedNo, String deedDate, List<OwnerDetails> ownerDetailsList) throws ParseException{
+    	PropertyMutation propertyMutation = new PropertyMutation();
+    	NewPropertyDetails newPropertyDetails = null;
+    	BasicProperty basicProperty = getBasicPropertyByUpicNo(assessmentNumber);
+    	PropertyMutationMaster mutationMaster = getPropertyTransferReasonsByCode(mutationReasonCode);
+    	propertyMutation.setDeedNo(deedNo);
+    	propertyMutation.setDeedDate(propertyService.convertStringToDate(deedDate));
+    	propertyMutation.setSaleDetail(saleDetails);
+    	propertyMutation.setMutationReason(mutationMaster);
+    	propertyMutation.setTransfereeInfosProxy(getTransfereesInfoList(propertyMutation,ownerDetailsList));
+    	transitionWorkFlow(propertyMutation);
+    	initiatePropertyTransfer(basicProperty, propertyMutation);
+    	basicPropertyService.applyAuditing(propertyMutation.getState());
+    	if (null != basicProperty) {
+            newPropertyDetails = new NewPropertyDetails();
+            newPropertyDetails.setApplicationNo(basicProperty.getUpicNo());
+            final ErrorDetails errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            newPropertyDetails.setErrorDetails(errorDetails);
+        }
+    	return newPropertyDetails;
+    }
+    
+    /**
+     * Creates Transferee list, used in REST API
+     * @param propertyMutation
+     * @param ownerDetailsList
+     * @return
+     */
+    private List<PropertyMutationTransferee> getTransfereesInfoList(PropertyMutation propertyMutation, List<OwnerDetails> ownerDetailsList) {
+        final List<PropertyMutationTransferee> transfereeInfoList = new ArrayList<PropertyMutationTransferee>(0);
+        for (final OwnerDetails ownerDetais : ownerDetailsList) {
+            final PropertyMutationTransferee transfereeInfo = new PropertyMutationTransferee();
+            final User owner = new User();
+            owner.setAadhaarNumber(ownerDetais.getAadhaarNo());
+            owner.setSalutation(ownerDetais.getSalutationCode());
+            owner.setName(ownerDetais.getName());
+            owner.setGender(Gender.valueOf(ownerDetais.getGender()));
+            owner.setMobileNumber(ownerDetais.getMobileNumber());
+            owner.setEmailId(ownerDetais.getEmailId());
+            owner.setGuardianRelation(ownerDetais.getGuardianRelation());
+            owner.setGuardian(ownerDetais.getGuardian());
+            transfereeInfo.setTransferee(owner);
+            transfereeInfo.setPropertyMutation(propertyMutation);
+            transfereeInfoList.add(transfereeInfo);
+        }
+        return transfereeInfoList;
+    }
+    
 }

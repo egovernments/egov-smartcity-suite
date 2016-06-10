@@ -169,6 +169,13 @@ public interface PropertyTaxConstants {
     public static final String SRCH_DEFAULTER_FROM_AMOUNT = "DEFAULTER_FROM_AMOUNT";
     public static final String SRCH_DEFAULTER_TO_AMOUNT = "DEFAULTER_TO_AMOUNT";
 
+    //Mutation Reason
+    public static final String MUTATION_REASON_CODE_GIFT = "GIFTDEED";
+    public static final String MUTATION_REASON_CODE_WILL = "WILLDEED";
+    public static final String MUTATION_REASON_CODE_SALE = "SALEDEED";
+    public static final String MUTATION_REASON_CODE_RELINQUISH = "RELINQUISH";
+    public static final String MUTATION_REASON_CODE_PARTITION = "PARTITIOND";
+    
     // Property status values
     public static final Character STATUS_ISHISTORY = 'H';
     public static final Character STATUS_ISACTIVE = 'A';
@@ -1394,4 +1401,6 @@ public interface PropertyTaxConstants {
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
+ 
+    
 }

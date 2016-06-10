@@ -3241,6 +3241,29 @@ public class PropertyService {
     	}
     }
     
+    /**
+     * Convert string to date
+     * @param dateInString
+     * @return
+     * @throws ParseException
+     */
+    public Date convertStringToDate(final String dateInString) throws ParseException {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final Date stringToDate = sdf.parse(dateInString);
+        return stringToDate;
+    }
+    
+    /**
+     * Fetch the assignments for the designation
+     * @param designationName
+     * @return
+     */
+    public List<Assignment> getAssignmentsForDesignation(String designationName){
+    	List<Assignment> assignmentsList = new ArrayList<Assignment>();
+    	assignmentsList = assignmentService.findPrimaryAssignmentForDesignationName(designationName);
+    	return assignmentsList;
+    }
+    
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
     }
