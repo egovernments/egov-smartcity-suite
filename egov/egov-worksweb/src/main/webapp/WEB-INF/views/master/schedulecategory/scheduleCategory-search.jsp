@@ -97,22 +97,14 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<c:if test="${mode != 'view'}">
-						<th><spring:message code="lbl.selectonly" /></th>
-					</c:if>
 					<th><spring:message code="lbl.categorycode" /></th>
 					<th><spring:message code="lbl.categoryname" /></th>
+					<th><spring:message code="lbl.modify" /></th>
 				</tr>
 			</thead>
 		</table>
 	</div>
 	<div align="center">
-		<c:if test="${mode != 'view'}">
-			<button type='button' class='btn btn-primary'
-				id="modifyScheduleCategory">
-				<spring:message code='lbl.modify' />
-			</button>
-		</c:if>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>
 	</div>

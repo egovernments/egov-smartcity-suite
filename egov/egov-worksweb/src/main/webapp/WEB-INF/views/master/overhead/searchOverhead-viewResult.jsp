@@ -49,14 +49,12 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<c:if test="${mode != 'view'}">
-						<th><spring:message code="lbl.selectonly" /></th>
-					</c:if>
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.overheadname" /></th>
 					<th><spring:message code="lbl.overheaddescription" /></th>
 					<th><spring:message code="lbl.fromdate" /></th>
 					<th><spring:message code="lbl.todate" /></th>
+					<th><spring:message code="lbl.modify" /></th>
 				</tr>
 			</thead>
 		</table>

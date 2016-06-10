@@ -38,8 +38,6 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%-- <%@ taglib uri="/egov-authz.tld" prefix="egov-authz" %> --%>
-
 <div>
      <s:if test="%{searchResult.fullListSize != 0}">
      <s:hidden name="selectedCode" id="selectedCode" />
@@ -49,66 +47,58 @@
 			uid="currentRow" cellpadding="0" cellspacing="0"
 			requestURI="" class="table table-hover">
 	                           
-	        <s:if test="%{sourcePage.equals('searchForEstimate')}">
-	     		<display:column headerClass="pagetableth" class="pagetabletd" title="Select" style="width:2%;" titleKey="column.title.select">
-						<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.code}'/>" onClick="setTemplateCode(this);setEstimateTemplateId(<s:property  value="%{#attr.currentRow.id}" />);" />
-				</display:column>
-			</s:if>       
+	        <display:column class="hidden" style="width:2%;cursor:pointer" headerClass="hidden" title="fsd">
+						<s:property value="#attr.currentRow.id" />
+			</display:column>
+			
 			<display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Sl No"
 			   titleKey="column.title.SLNo"
-			   style="width:3%;text-align:left" >
+			   style="width:3%;cursor:pointer;text-align:left" >
 			     <s:property value="#attr.currentRow_rowNum + (page-1)*pageSize"/>
 			</display:column>
 	        
 	        <display:column headerClass="pagetableth"
 		       class="pagetabletd" title="Template Code"
 			   titleKey="mb.search.column.wono"
-			   style="width:8%;text-align:left">
+			   style="width:8%;text-align:left;cursor:pointer">
 				<egov-authz:authorize actionName="viewEstimateTemplate">
-					<s:if test="%{mode != 'view'}">
 						<s:property  value='%{#attr.currentRow.code}' />
-					</s:if>
-					<s:elseif test="%{mode == 'view'}">
-						<a href="${pageContext.request.contextPath}/estimate/estimateTemplate-view.action?mode=edit&id=<s:property value='%{#attr.currentRow.id}'/>">
-						<s:property  value='%{#attr.currentRow.code}' />
-						</a>
-					</s:elseif>
 				</egov-authz:authorize>
 			</display:column>
                    
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Template Description"
 			   titleKey="mb.search.column.contractor"
-			   style="width:15%;text-align:left" >
+			   style="width:15%;text-align:left;cursor:pointer" >
 			       <s:property  value='%{#attr.currentRow.description}' />
 		    </display:column>
                      
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Template Name"
 			   titleKey="mb.search.column.refno"
-			   style="width:8%;text-align:left" >
+			   style="width:8%;text-align:left;cursor:pointer" >
                    <s:property  value='%{#attr.currentRow.name}' />
 		    </display:column>
                  
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Work Type"
 			   titleKey="mb.search.column.pages"
-			   style="width:10%;text-align:left" >
+			   style="width:10%;text-align:left;cursor:pointer" >
 				   <s:property value="%{#attr.currentRow.workType.description}" />
 			</display:column>
                 
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Work SubType"
 			   titleKey="mb.search.column.date"
-			   style="width:10%;text-align:left" >
+			   style="width:10%;text-align:left;cursor:pointer" >
 			      <s:property value="%{#attr.currentRow.subType.description}" />
 			</display:column>
                 			  
 			<display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Status"
 			   titleKey="mb.search.column.status"
-			   style="width:6%;text-align:left" >
+			   style="width:6%;text-align:left;cursor:pointer" >
 			      <s:if test="%{#attr.currentRow.status == 0}">
 					 <s:property value="%{'INACTIVE'}" />
 				  </s:if>
@@ -121,7 +111,7 @@
 			<display:column headerClass="pagetableth"
 		       class="pagetabletd" title="Modify"
 			   titleKey="column.title.modify"
-			   style="width:8%;text-align:left">
+			   style="width:8%;text-align:left;cursor:pointer">
                   <a href="${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=edit&id=<s:property value='%{#attr.currentRow.id}'/>">
 					 <s:text name="column.title.modify" />
 				  </a>
@@ -149,5 +139,13 @@
 		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
 </s:if>
+<script type="text/javascript">
+<s:if test="%{mode == 'view'}"> 
+jQuery(document).on("click", ".report-table-container table tbody tr", function(e) {
+    window.open("${pageContext.request.contextPath}/estimate/estimateTemplate-view.action?id="+jQuery(this).find('td:eq(0)').text()+"&mode=edit",'popup', 'width=900, height=700, top=300, left=260,scrollbars=yes', '_blank');
+});
+</s:if>
+</script>
+
 <script type="text/javascript"
 	src="<c:url value='/resources/js/searchestimatetemplate.js?rnd=${app_release_no}'/>"></script>

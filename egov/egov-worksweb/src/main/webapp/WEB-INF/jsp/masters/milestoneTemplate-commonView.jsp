@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -110,7 +110,9 @@
 					<tr>
 						<td><s:property value="%{stageOrderNo}" /></td>
 						<td><s:property value="%{description}" /></td>
-						<td align="right"><s:property value="%{percentage}" /></td>
+						<td align="right">
+							<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{percentage}" /></fmt:formatNumber>
+						</td>
 					</tr>
 				</s:iterator>
 			</tbody>

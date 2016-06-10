@@ -61,8 +61,6 @@ ul {
 	<s:hidden name="mode" id="mode" />
 	<div class="row text-center">
 		<div class="add-margin">
-			<input type="submit" name="MODIFY" Class="btn btn-primary"
-				value="Modify" id="MODIFY" onclick="modifyMilestoneTemplateData();" />
 			<s:if test="%{mode != 'edit' && mode == ''}">
 				<input type="submit" name="create" Class="btn btn-primary"
 					value="Add New Milestone Template" id="CREATE" name="button"

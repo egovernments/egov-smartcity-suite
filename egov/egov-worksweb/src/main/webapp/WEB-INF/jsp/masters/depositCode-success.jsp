@@ -55,9 +55,11 @@
 			<br>
 		</h4>
 		<!-- To Show Back Button -->
-		<%@ include file='depositCode-commonView.jsp'%>
 
 	</div>
+	
+	<%@ include file='depositCode-commonView.jsp'%>
+	
 	<div class="buttonholderwk">
 		<input type="button" class="buttonfinal" value="BACK" id="button" name="button" onclick="self.close();window.open('${pageContext.request.contextPath}/masters/depositCode-newform.action?depCode=true','', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" />
 	</div>

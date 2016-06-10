@@ -41,7 +41,7 @@ jQuery('#btnsearch').click(function(e) {
 		callAjaxSearch();
 });
 $(document).ready(function(){
-    var overheadName = new Bloodhound({
+		var overheadName = new Bloodhound({
         datumTokenizer: function (datum) {
             return Bloodhound.tokenizers.whitespace(datum.value);
         },
@@ -89,11 +89,16 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
+					
 					$('td:eq(0)', row).html(index + 1);
-					$('td:eq(1)', row).html(
-							'<a href="javascript:void(0);" onclick="openViewOverhead(\''
-									+ data.id + '\')">'
-									+ data.name + '</a>');
+					$(row).on(
+							'click',
+							function() {
+								console.log(data.id);
+								window.open('/egworks/masters/overhead-view/'
+										+ data.id, '',
+										'width=800, height=600');
+							});
 					return row;
 				},
 				aaSorting : [],
@@ -150,8 +155,4 @@ function getFormData($form){
     });
 
     return indexed_array;
-}
-
-function openViewOverhead(id) {
-	window.open("/egworks/masters/overhead-view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

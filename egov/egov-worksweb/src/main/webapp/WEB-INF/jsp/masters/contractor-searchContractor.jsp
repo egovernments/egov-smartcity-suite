@@ -136,37 +136,34 @@
 				<div class="col-md-12 report-table-container">
 					<display:table name="searchResult" pagesize="30" uid="currentRow" cellpadding="0" cellspacing="0" requestURI="" class="table table-hover">
 
-					<display:column headerClass="pagetableth"  class="pagetabletd" title="${slNo}"  style="width:4%;text-align:right">
+					<display:column headerClass="pagetableth"  class="pagetabletd" title="${slNo}"  style="width:4%;text-align:right;cursor:pointer">
 						<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
+					</display:column>
+					
+					<display:column class="hidden" headerClass="hidden" title="fsd">
+						<s:property value="#attr.currentRow.id" />
 					</display:column>
 
 					<display:column headerClass="pagetableth" class="pagetabletd" title="${name}"
-						style="width:15%;text-align:left" property="name">
+						style="width:15%;text-align:left;cursor:pointer" property="name">
 					</display:column>
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" title="${code}"
-						style="width:15%;text-align:left" >
-						<s:if test="%{mode != 'view'}"> 
+						style="width:15%;text-align:left;cursor:pointer" >
 							<s:property value="#attr.currentRow.contractorDetails[0].contractor.code"/>
-						</s:if>
-						<s:else>
-						<a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view" class="open-popup">
-								<s:property value="#attr.currentRow.contractorDetails[0].contractor.code"/>
-							</a>
-						</s:else>
 					</display:column>
 
-					<display:column headerClass="pagetableth" class="pagetabletd" title="${class}" style="width:15%;text-align:left">
+					<display:column headerClass="pagetableth" class="pagetabletd" title="${class}" style="width:15%;text-align:left;cursor:pointer">
 						<s:property value="#attr.currentRow.contractorDetails[0].grade.grade" />
 					</display:column>
 
-					<display:column headerClass="pagetableth" class="pagetabletd" title="${status}" style="width:15%;text-align:left">
+					<display:column headerClass="pagetableth" class="pagetabletd" title="${status}" style="width:15%;text-align:left;cursor:pointer">
 						<s:property value="#attr.currentRow.contractorDetails[0].status.description" />
 					</display:column>
 					<s:if test="%{mode != 'view'}"> 
-					<display:column headerClass="pagetableth" class="pagetabletd" title="${modify}" style="width:2%;" titleKey="column.title.modify">
+					<display:column headerClass="pagetableth" class="pagetabletd" title="${modify}" style="width:2%;cursor:pointer" titleKey="column.title.modify">
 						<a href="${pageContext.request.contextPath}/masters/contractor-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit" >
-							<s:text name="schedCategory.modify" />
+							<s:text name="column.title.modify" />
 						</a>
 					</display:column>
 					</s:if>
@@ -190,5 +187,12 @@
 		<input type="submit" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
 </s:if>
+<script type="text/javascript">
+<s:if test="%{mode == 'view'}"> 
+jQuery(document).on("click", ".report-table-container table tbody tr", function(e) {
+    window.open("${pageContext.request.contextPath}/masters/contractor-edit.action?id="+jQuery(this).find('td:eq(1)').text()+"&mode=view",'popup', 'width=900, height=700, top=300, left=260,scrollbars=yes', '_blank');
+});
+</s:if>
+</script>
 </body>
 </html>

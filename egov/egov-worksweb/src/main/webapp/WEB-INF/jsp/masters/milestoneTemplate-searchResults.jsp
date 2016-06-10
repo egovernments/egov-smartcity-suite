@@ -70,25 +70,23 @@ window.close();
 			uid="currentRow" cellpadding="0" cellspacing="0"
 			requestURI=""
 			class="table table-hover">
-			<s:if test="%{mode == 'edit'}">
-			<display:column headerClass="pagetableth" class="pagetabletd" title="Select" style="width:2%;" titleKey="column.title.select">
-					<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.id}'/>" onClick="setTemplateCode(this);" />
-			</display:column>
-			</s:if>
+
 	        <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Sl No"
 			   titleKey="column.title.SLNo"
 			   style="width:3%;text-align:left" >
 			     <s:property value="#attr.currentRow_rowNum + (page-1)*pageSize"/>
 			</display:column>
+			
+			<display:column class="hidden" headerClass="hidden" title="fsd" style="width:13%;text-align:left;;cursor:pointer">
+				<s:property value="#attr.currentRow.id" />
+			</display:column>
 	        
 	        <display:column headerClass="pagetableth"
 		       class="pagetabletd" title="Template Code"
 			   titleKey="milestone.template.search.code"
 			   style="width:8%;text-align:left">
-                  <a href="${pageContext.request.contextPath}/masters/milestoneTemplate-view.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view&sourcepage=search">
-					 <s:property  value='%{#attr.currentRow.code}' />
-				  </a>
+				<s:property  value='%{#attr.currentRow.code}' />
             </display:column>
                    
             <display:column headerClass="pagetableth"
@@ -129,7 +127,16 @@ window.close();
 				  <s:else>
 					  <s:property value="%{'ACTIVE'}" />
 				  </s:else>
-			</display:column>                                       
+			</display:column> 
+			
+			<s:if test="%{mode != 'view'}">
+				<display:column headerClass="pagetableth" class="pagetabletd"
+					title="Modify" style="width:13%;text-align:left;;cursor:pointer">
+					<a href="${pageContext.request.contextPath}/masters/milestoneTemplate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
+						<s:text name="column.title.modify" />
+					</a>
+				</display:column>
+			</s:if>                                      
 	          	                                      
 	   </display:table>
 	   <div class="buttonholderwk">
@@ -157,10 +164,14 @@ window.close();
 	</s:elseif>   
 	<s:if test="%{searchResult.fullListSize != 0 && mode == 'edit'}"> 
 	<div align="center">
-		<input type="button" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="return modifyMilestoneTemplate();" /> 
 		<input type="button" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
 </s:if>
-	
  </div>
- 
+<script type="text/javascript">
+<s:if test="%{mode == 'view'}"> 
+jQuery(document).on("click", ".report-table-container table tbody tr", function(e) {
+    window.open("${pageContext.request.contextPath}/masters/milestoneTemplate-edit.action?id="+jQuery(this).find('td:eq(1)').text()+"&mode=view",'popup', 'width=900, height=700, top=300, left=260,scrollbars=yes', '_blank');
+});
+</s:if> 
+</script>

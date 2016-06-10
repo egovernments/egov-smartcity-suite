@@ -90,10 +90,14 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)', row).html(
-							'<a href="javascript:void(0);" onclick="viewScheduleCategory(\''
-									+ data.id + '\')">'
-									+ data.code + '</a>');
+					$(row).on(
+							'click',
+							function() {
+								console.log(data.id);
+								window.open('scheduleCategory-view.action?mode=view&id='
+										+ data.id, '',
+										'width=800, height=600');
+							});
 					return row;
 				},
 				aaSorting : [],
@@ -113,9 +117,4 @@ function getFormData($form){
     });
 
     return indexed_array;
-}
-
-function viewScheduleCategory(scheduleCategoryId) {
-	window.open("scheduleCategory-view.action?mode=view&id="+scheduleCategoryId+"&sourcepage=search",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
-
 }

@@ -89,15 +89,15 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)',row).html('<input type="radio" data="'+ data.id +'" name="selectCheckbox" value="'+ data.id +'"/>');
-					$('td:eq(1)', row).html(index + 1);
+					$('td:eq(0)', row).html(index + 1);
+					$('td:eq(5)', row).html(
+							'<a href="javascript:void(0);" onclick="openOverhead(\''
+									+ data.id + '\')">Modify</a>');
 					return row;
+					
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "",
-					"sClass" : "text-center","sWidth": "1%"
-				}, {
 					"data" : "",
 					"sClass" : "text-center","sWidth": "1%"
 				}, {
@@ -124,8 +124,12 @@ function callAjaxSearch() {
 						}
 						return "";
 			    	}
-				} ]
-			});
+				} ,{
+					"data" : "",
+					"sClass" : "text-center",
+					"sWidth" : "10%"
+				}
+			] });
 }
 
 
@@ -152,12 +156,7 @@ function getFormData($form){
     return indexed_array;
 }
 
-jQuery('#Modify').click(function(e) {
-	var overheadId = $('input[name=selectCheckbox]:checked').attr('data');
-	if(overheadId == null) {
-		var message = document.getElementById('selectOverhead').value;
-		bootbox.alert(message);
-	}else {
-			window.location = "/egworks/masters/overhead-update/"+overheadId;
-		}
-});
+
+function openOverhead(overheadId) {
+	window.location = "/egworks/masters/overhead-update/"+overheadId;
+}

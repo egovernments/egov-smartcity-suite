@@ -140,38 +140,35 @@ body
 					<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
 				</display:column>
 				
+				<display:column class="hidden" headerClass="hidden" title="fsd" style="width:2%;cursor:pointer">
+						<s:property value="#attr.currentRow.id" />
+				</display:column>
+				
 				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorCode}"
 						style="width:15%;text-align:left" >
-						<s:if test="%{mode != 'view'}"> 
-							<s:property value="#attr.currentRow.code"/>
-						</s:if>
-						<s:else>
-							<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view" class="open-popup">
-								<s:property value="#attr.currentRow.code"/>
-							</a>
-						</s:else>
+					<s:property value="#attr.currentRow.code"/>
 				</display:column>
 				
-				<display:column headerClass="pagetableth" class="pagetabletd"  title="${unitOfMeasure}" style="width:9%;text-align:left" property="uom.uom">
+				<display:column headerClass="pagetableth" class="pagetabletd"  title="${unitOfMeasure}" style="width:9%;text-align:left;cursor:pointer" property="uom.uom">
 				</display:column>
 				
-				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorDescription}" style="width:51%;text-align:left" property="description">
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${sorDescription}" style="width:51%;text-align:left;cursor:pointer" property="description">
 				</display:column>
 
-				<display:column headerClass="pagetableth" class="pagetabletd"  title="Rate" style="width:10%;text-align:right" titleKey="master.sor.rate">
+				<display:column headerClass="pagetableth" class="pagetabletd"  title="Rate" style="width:10%;text-align:right;cursor:pointer" titleKey="master.sor.rate">
 					<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).rate" /></fmt:formatNumber>
 				</display:column>
 									
-				<display:column headerClass="pagetableth" class="pagetabletd" title="${startDate}" style="width:10%;text-align:left" titleKey="master.sor.startDate">
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${startDate}" style="width:10%;text-align:left;cursor:pointer" titleKey="master.sor.startDate">
 					<s:date name="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).validity.startDate" format="dd/MM/yyyy"/>
 				</display:column>
 				
-				<display:column headerClass="pagetableth" class="pagetabletd" title="${endDate}" style="width:10%;text-align:left" >
+				<display:column headerClass="pagetableth" class="pagetabletd" title="${endDate}" style="width:10%;text-align:left;cursor:pointer" >
 					<s:date name="#attr.currentRow.sorRates.get(#attr.currentRow.sorRates.size-1).validity.endDate" format="dd/MM/yyyy"/>
 				</display:column>
 				
 				<s:if test="%{mode != 'view'}"> 
-					<display:column headerClass="pagetableth" class="pagetabletd" title="${select}" style="width:2%;" titleKey="column.title.modify">
+					<display:column headerClass="pagetableth" class="pagetabletd" title="${select}" style="width:2%;cursor:pointer" titleKey="column.title.modify">
 						<a href="${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
 							<s:text name="column.title.modify" />
 						</a>
@@ -199,5 +196,12 @@ body
 		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
 </s:if>
+<script type="text/javascript">
+<s:if test="%{mode == 'view'}"> 
+jQuery(document).on("click", ".report-table-container table tbody tr", function(e) {
+    window.open("${pageContext.request.contextPath}/masters/scheduleOfRate-edit.action?id="+jQuery(this).find('td:eq(1)').text()+"&mode=view",'popup', 'width=900, height=700, top=300, left=260,scrollbars=yes', '_blank');
+});
+</s:if>
+</script>
 </body>
 </html>

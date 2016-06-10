@@ -57,6 +57,7 @@ list-style-type: none;
 
 	<%@ include file='scheduleofrate-commonView.jsp'%>
 
+
 <div class="row text-center">
 	<div class="add-margin">
 		<s:if test="%{mode!='edit' && mode != 'view'}">

@@ -128,26 +128,23 @@
 					<input type="hidden" id="mode" name="mode">
 					<display:column headerClass="pagetableth" class="pagetabletd" 
 						title="Sl.No" titleKey="column.title.SLNo"
-						style="width:4%;text-align:right" >
+						style="width:4%;text-align:right;;cursor:pointer" >
 						<s:property value="#attr.currentRow_rowNum + (page-1)*pageSize" />
+					</display:column>
+					
+					<display:column class="hidden" headerClass="hidden" title="fsd" style="width:13%;text-align:left;;cursor:pointer">
+						<s:property value="#attr.currentRow.id" />
 					</display:column>
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" 
 						title="Grade" titleKey="contractor.grade.master.grade"
-						style="width:20%;text-align:left"  >
-							<s:if test="%{mode == 'view'}">
-								<a href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
-									<s:property value="#attr.currentRow.grade" />
-								</a>
-							</s:if>
-							<s:else>
+						style="width:20%;text-align:left;;cursor:pointer"  >
 								<s:property value="#attr.currentRow.grade" />
-							</s:else>
-						</display:column>
+					</display:column>
 																		
 					<display:column headerClass="pagetableth" class="pagetabletd" 
 						title="Description" titleKey="contractor.grade.master.description"
-						style="width:40%;text-align:left" property="description"/>
+						style="width:40%;text-align:left;;cursor:pointer" property="description"/>
 																		
 					<display:column headerClass="pagetableth" class="pagetabletd" 
 						title="Minimum Amount " titleKey="contractor.grade.master.minamount"
@@ -158,13 +155,13 @@
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" 
 						title="Maximum Amount" titleKey="contractor.grade.master.maxamount"
-						style="width:10%;text-align:right"  >
+						style="width:10%;text-align:right;;cursor:pointer"  >
 						<s:text name="contractor.format.number" >
 				   	<s:param name="rate" value='%{#attr.currentRow.maxAmount}' /></s:text>
 					</display:column>
 					<s:if test="%{mode != 'view'}">
 						<display:column headerClass="pagetableth" class="pagetabletd"
-							title="Modify" style="width:13%;text-align:left">
+							title="Modify" style="width:13%;text-align:left;;cursor:pointer">
 							<a 
 								href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
 								<s:text name="column.title.modify" />
@@ -195,5 +192,12 @@
 		</div>
 	</div>
 	</s:if>
+<script type="text/javascript">
+<s:if test="%{mode == 'view'}"> 
+jQuery(document).on("click", ".report-table-container table tbody tr", function(e) {
+    window.open("${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id="+jQuery(this).find('td:eq(1)').text()+"&mode=view",'popup', 'width=900, height=700, top=300, left=260,scrollbars=yes', '_blank');
+});
+</s:if>
+</script>
 </body>
 </html>

@@ -90,15 +90,17 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)',row).html('<input type="radio" data="'+ data.id +'" name="selectCheckbox" value="'+ data.id +'"/>');
+					$('td:eq(2)', row).html(
+							'<a href="javascript:void(0);" onclick="openScheduleCategory(\''
+									+ data.id + '\')">Modify</a>');
 					return row;
 				},
 				aaSorting : [],
 				columns : [ {
-						"data" : "",
-						"sClass" : "text-center","sWidth": "1%"	}, {
 						"data" : "code","sClass" : "text-center"},{
-						"data" : "description","sClass" : "text-center"
+						"data" : "description","sClass" : "text-center"},{
+						"data" : "",
+						"sClass" : "text-center","sWidth": "1%"	
 				} ]
 			});
 }
@@ -114,12 +116,6 @@ function getFormData($form){
     return indexed_array;
 }
 
-jQuery('#modifyScheduleCategory').click(function(e) {
-	var scheduleCategoryId = $('input[name=selectCheckbox]:checked').attr('data');
-	if(scheduleCategoryId == null) {
-		var message = document.getElementById('selectScheduleCategory').value;
-		bootbox.alert(message);
-	}else {
-		window.location = '/egworks/masters/scheduleCategory-edit.action?mode=edit&id='+scheduleCategoryId;
-		}
-});
+function openScheduleCategory(scheduleCategoryId){
+	window.location = '/egworks/masters/scheduleCategory-edit.action?mode=edit&id='+scheduleCategoryId;
+}
