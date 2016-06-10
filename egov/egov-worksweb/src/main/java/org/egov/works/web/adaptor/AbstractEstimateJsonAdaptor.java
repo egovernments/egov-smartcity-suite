@@ -45,6 +45,8 @@ import java.math.BigDecimal;
 
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -54,6 +56,9 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstimate> {
+
+    @Autowired
+    private WorksUtils worksUtils;
 
     @Override
     public JsonElement serialize(final AbstractEstimate abstractEstimate, final Type type,
@@ -121,7 +126,8 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
                                 || abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)))
                     jsonObject.addProperty("currentowner", "NA");
                 else {
-                    jsonObject.addProperty("currentowner", "");
+                    jsonObject.addProperty("currentowner",
+                            worksUtils.getApproverName(abstractEstimate.getState().getOwnerPosition().getId()));
                 }
             } else
                 jsonObject.addProperty("currentowner", "NA");

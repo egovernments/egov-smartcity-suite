@@ -61,28 +61,29 @@
 						<div class="row add-border">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" />.</div> 
 							<div class="col-md-2 col-xs-6 add-margin view-content">
-							<c:out value="${abstractEstimate.lineEstimateDetails.estimateNumber}"></c:out>
+							<c:out value="${abstractEstimate.estimateNumber}"></c:out>
 							</div>
 								
-							<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.lineEstimateDetails.estimateNumber}"/>
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" />.
-							</div> 
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"/>')"><c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
-							</div>
+							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
+								<div class="col-md-2 col-xs-6 add-margin">
+									<spring:message code="lbl.lineestimateno" />.
+								</div> 
+								<div class="col-md-2 col-xs-6 add-margin view-content">
+									<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"/>')"><c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
+								</div>
+							</c:if>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workidentificationo" />.</div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
-							<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
 						</div>
 						<div class="row add-border">
-						<c:if test="${workOrderEstimate.workOrder.id != null}">
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" />.</div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="${workOrderEstimate.workOrder.id}"/>)'><c:out value="${workOrderEstimate.workOrder.workOrderNumber}"/></a>
-							</div>
-						</c:if>
+							<c:if test="${workOrderEstimate!=null &&  workOrderEstimate.workOrder.id != null}">
+								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" />.</div>
+								<div class="col-md-2 col-xs-6 add-margin view-content">
+									<a href="javascript:void(0)" onclick='viewLOA(<c:out value="${workOrderEstimate.workOrder.id}"/>)'><c:out value="${workOrderEstimate.workOrder.workOrderNumber}"/></a>
+								</div>
+							</c:if>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.paymentreleased" />.</div> 
-							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <span>${abstractEstimate.estimateValue}</span></div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <span>${paymentreleased}</span></div>
 						</div>
 					</div>
 				</div>

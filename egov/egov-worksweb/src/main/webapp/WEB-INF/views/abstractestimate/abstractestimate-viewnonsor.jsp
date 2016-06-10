@@ -64,17 +64,15 @@
 			<tbody id="nonSorTable">
 				<c:choose>
 					<c:when test="${abstractEstimate.activities.size() != 0}">
-						<c:forEach items="${abstractEstimate.getActivities()}" var="nonSorDtls" varStatus="item">
-							<c:if test="${nonSorDtls.nonSor != null}">
+						<c:forEach items="${abstractEstimate.getNonSORActivities()}" var="nonSorDtls" varStatus="item">
 								<tr >
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 									<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.rate}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.quantity}"></c:out></td>
-								 	<td class="text-right"><c:out value="${nonSorDtls.rate * nonSorDtls.quantity}"></c:out></td>
+								 	<td class="text-right"><c:out value="${nonSorDtls.getAmount().value}"></c:out></td>
 								</tr>
-							</c:if>
 						</c:forEach>
 					</c:when>
 					<c:otherwise>
@@ -84,10 +82,8 @@
 			<tfoot>
 				<c:set var="total" value="${0}" scope="session" />
 				<c:if test="${abstractEstimate.getActivities() != null}">
-					<c:forEach items="${abstractEstimate.getActivities()}" var="nonSor">
-						<c:if test="${nonSor.nonSor != null}">
-						<c:set var="total"	value="${total + (nonSor.rate * nonSor.quantity) }" />
-						</c:if>
+					<c:forEach items="${abstractEstimate.getNonSORActivities()}" var="nonSor">
+						<c:set var="total"	value="${total + nonSor.getAmount().value }" />
 					</c:forEach>
 				</c:if>
 				<tr>

@@ -65,8 +65,7 @@
 			<tbody id="sorTable">
 				<c:choose>
 					<c:when test="${abstractEstimate.activities.size() != 0}">
-						<c:forEach items="${abstractEstimate.getActivities()}" var="sorDtls" varStatus="item">
-							<c:if test="${sorDtls.schedule != null}">
+						<c:forEach items="${abstractEstimate.getSORActivities()}" var="sorDtls" varStatus="item">
 								<tr >
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 									<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
@@ -77,9 +76,8 @@
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
 								 	<td><c:out value="${sorDtls.rate}"></c:out></td>
 								 	<td><c:out value="${sorDtls.quantity}"></c:out></td>
-								 	<td class="text-right"><c:out value="${sorDtls.rate * sorDtls.quantity}"></c:out></td>
+								 	<td class="text-right"><c:out value="${sorDtls.getAmount().value}"></c:out></td>
 								</tr>
-							</c:if>
 						</c:forEach>
 					</c:when>
 					<c:otherwise>
@@ -89,10 +87,8 @@
 			<tfoot>
 				<c:set var="total" value="${0}" scope="session" />
 				<c:if test="${abstractEstimate.getActivities() != null}">
-					<c:forEach items="${abstractEstimate.getActivities()}" var="sor">
-						<c:if test="${sor.schedule != null}">
-						<c:set var="total"	value="${total + (sor.rate * sor.quantity) }" />
-						</c:if>
+					<c:forEach items="${abstractEstimate.getSORActivities()}" var="sor">
+						<c:set var="total"	value="${total + sor.getAmount().value }" />
 					</c:forEach>
 				</c:if>
 				<tr>

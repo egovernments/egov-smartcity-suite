@@ -81,6 +81,7 @@ public class SearchAbstractEstimateController {
 
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("workOrderEstimate", workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(Long.valueOf(id)));
+        model.addAttribute("paymentreleased", estimateService.getEstimateValueForLineEstimate(abstractEstimate.getLineEstimateDetails()));
         
         return "abstractestimate-view";
     }

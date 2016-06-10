@@ -52,11 +52,9 @@
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 
-	<div class="new-page-header">Create Abstract Estimate</div>
+	<div class="new-page-header"><spring:message code="lbl.viewae" /></div>
 
 	<div class="main-content">
-	<input type="hidden" id="estimateValue" name="estimateValue" value='<c:out value="${abstractEstimate.estimateValue}" default="0.0" />'/>
-	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${abstractEstimate.estimateValue}" default="0.0" />'/>
 	<%@ include file="abstractestimate-vewheaderdetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -78,8 +76,8 @@
 				<%@ include file="abstractestimate-viewmultiyearestimate.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="workdetails">
-				<%@ include file="abstractestimate-viewsor.jsp"%>
-			  <%@ include file="abstractestimate-viewnonsor.jsp"%>
+				 <%@ include file="abstractestimate-viewsor.jsp"%> 
+			 	 <%@ include file="abstractestimate-viewnonsor.jsp"%> 
 			</div>
 			<div class="tab-pane fade" id="overheads">
 				<%@ include file="abstractestimate-viewoverheads.jsp"%>
@@ -88,15 +86,10 @@
 				<%@ include file="abstractestimate-viewfinancialdetails.jsp"%>
 				<%@ include file="abstractestimate-viewassetdetails.jsp"%>
 			</div>
-			<div class="buttonbottom" align="center">
-				<table>
-					<tr>
-						<td >
-							<input type="button" name="button2" id="button2" value="Close"
-							class="btn btn-default" onclick="window.close();" /></td>
-					</tr>
-				</table>
-			</div>
+			<div class="text-center">
+                    <button type="button" id="viewAEPdf" class="btn btn-primary"><spring:message code="lbl.viewpdf" /></button>
+                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+            </div>
 		</div>
 	</div>
 </form:form>

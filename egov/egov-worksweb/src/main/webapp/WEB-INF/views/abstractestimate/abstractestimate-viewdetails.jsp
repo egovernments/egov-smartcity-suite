@@ -31,10 +31,10 @@
 		</div> 
 	
 		<div class="col-xs-3 add-margin view-content">
-			<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.name}"></c:out>
+			<c:out value="${abstractEstimate.ward.name}"></c:out>
 		</div>
 	</div>	
-	<c:if test="${abstractEstimate.lineEstimateDetails.estimateNumber != ''}">	
+	<c:if test="${abstractEstimate.lineEstimateDetails != null}">	
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.locality" />
@@ -85,7 +85,7 @@
 				</div> 
 			
 				<div class="col-xs-3 add-margin view-content">
-					<c:out value="${abstractEstimate.lineEstimateDetails.nameOfWork}"></c:out>
+					<c:out value="${abstractEstimate.name}"></c:out>
 				</div>
 				<div class="col-xs-3 add-margin">
 					<spring:message code="lbl.workdescription" />

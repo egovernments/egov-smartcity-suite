@@ -113,20 +113,24 @@ function callAjaxSearch() {
 			             }],
 				},
 				"fnRowCallback" : function(row, data, index) {
-					/*$('td:eq(0)',row).html(index+1);*/
-					if(data.lineestimateNumber != null)
-						$('td:eq(0)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.leId +'\')">' + data.lineestimateNumber + '</a>');
-					if(data.estimateNumberAndDate != null)
-						$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.id +'\')">' + data.estimateNumberAndDate + '</a>');
-					
 					return row;
 				},
 				aaSorting: [],				
-				columns : [ { 
-					/*"data" : "", "sClass" : "text-center"} ,{ */
-					"data" : "", "sClass" : "text-center"} ,{
-					"data" : "", "sClass" : "text-center"} ,{
-					"data" : "workIdentificationNumber", "sClass" : "text-center"} ,{ 
+				columns : [ {
+					"data" : "lineestimateNumber",
+					"render" : function(data, type, row) {
+						return '<a href="javascript:void(0);" onclick="openLineEstimate('+row.leId+');" data-hiddenele="lineestimateNumber" data-eleval="'
+								+ data + '">' + data + '</a>';
+						}
+					} ,
+					{
+						"data" : "estimateNumberAndDate",
+						"render" : function(data, type, row) {
+							return '<a href="javascript:void(0);" onclick="openAbstractEstimate('+row.id+');" data-hiddenele="estimateNumberAndDate" data-eleval="'
+									+ data + '">' + data + '</a>';
+							}
+						} ,
+					{"data" : "workIdentificationNumber", "sClass" : "text-center"} ,{ 
 					"data" : "estimateAmount", "sClass" : "text-right"} ,{
 					"data" : "departmentName", "sClass" : "text-center"} ,{
 					"data" : "ward", "sClass" : "text-center"} ,{

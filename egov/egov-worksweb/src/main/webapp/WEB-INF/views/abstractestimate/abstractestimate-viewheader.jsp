@@ -58,8 +58,6 @@
 	</div>
 	<div class="panel-body ">
 	   <%@ include file="abstractestimate-viewdetails.jsp"%>   
-	   <form:hidden path="lineEstimateDetails" value="${abstractEstimate.lineEstimateDetails.id}"/>
-	   <form:hidden path="" name="lineEstimateAmount" id="lineEstimateAmount" value="${abstractEstimate.lineEstimateDetails.estimateAmount}"/>
 	   
 </div>
 </div>   
