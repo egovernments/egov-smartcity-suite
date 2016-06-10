@@ -188,6 +188,7 @@
 		<module>egov-commons</module>
 		<module>egov-eis</module>
 		<module>egov-egf</module>
+		<module>egov-lcms</module>
 		<module>egov-assets</module>
 		<module>egov-works</module>
 		<module>egov-portal</module>
@@ -201,6 +202,7 @@
 		<module>egov-eisweb</module>
 		<module>egov-egiweb</module>
 		<module>egov-egfweb</module>
+		<module>egov-lcmsweb</module>
 		<module>egov-assetsweb</module>
 		<module>egov-worksweb</module>
 		<module>egov-pgrweb</module>
