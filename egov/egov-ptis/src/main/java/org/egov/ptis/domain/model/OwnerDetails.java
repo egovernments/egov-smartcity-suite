@@ -40,30 +40,20 @@
 
 package org.egov.ptis.domain.model;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import java.io.Serializable;
 
 
 @SuppressWarnings("serial")
 public class OwnerDetails implements Serializable {
 
-	@JsonIgnore
 	private String aadhaarNo;
-	@JsonIgnore
 	private String salutationCode;
-	@JsonIgnore
 	private String name;
-	@JsonIgnore
 	private String gender;
-	@JsonIgnore
 	private String mobileNumber;
 	
-	@JsonIgnore
 	private String emailId;
-	@JsonIgnore
 	private String guardianRelation;
-	@JsonIgnore
 	private String guardian;
 
 	private String ownerName;

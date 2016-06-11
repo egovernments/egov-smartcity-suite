@@ -535,12 +535,12 @@ public class PropertyTransferService {
      */
     public PropertyMutation transitionWorkFlow(final PropertyMutation propertyMutation) {
         final DateTime currentDate = new DateTime();
-        final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         final String approverComments = "Property has been successfully forwarded.";
         final Assignment assignment = propertyService.getAssignmentsForDesignation(PropertyTaxConstants.COMMISSIONER_DESGN).get(0);
         final Position pos = assignment.getPosition();
 
-        propertyMutation.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+        //TODO - sender name to be edited in future
+        propertyMutation.transition().start().withSenderName("REST API User")
         	.withComments(approverComments).withStateValue(PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED)
         	.withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING)
         	.withNatureOfTask(NATURE_TITLE_TRANSFER);
@@ -569,10 +569,22 @@ public class PropertyTransferService {
     	propertyMutation.setDeedDate(propertyService.convertStringToDate(deedDate));
     	propertyMutation.setSaleDetail(saleDetails);
     	propertyMutation.setMutationReason(mutationMaster);
+    	propertyMutation.setBasicProperty(basicProperty);
+        propertyMutation.setProperty(basicProperty.getActiveProperty());
+        basicProperty.getPropertyMutations().add(propertyMutation);
+        basicProperty.setUnderWorkflow(true);
+        
+        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
+            propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
+        propertyMutation.setMutationDate(new Date());
+        if (propertyMutation.getApplicationNo() == null)
+            propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
+        createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
+    	propertyMutationService.persist(propertyMutation);
     	propertyMutation.setTransfereeInfosProxy(getTransfereesInfoList(propertyMutation,ownerDetailsList));
     	transitionWorkFlow(propertyMutation);
-    	initiatePropertyTransfer(basicProperty, propertyMutation);
     	basicPropertyService.applyAuditing(propertyMutation.getState());
+        basicProperty = basicPropertyService.persist(basicProperty);
     	if (null != basicProperty) {
             newPropertyDetails = new NewPropertyDetails();
             newPropertyDetails.setApplicationNo(basicProperty.getUpicNo());

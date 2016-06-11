@@ -53,6 +53,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
@@ -85,9 +86,11 @@ public class PropertyTitleTransferService {
 	 * @throws ParseException
 	 */
 	@RequestMapping(value = "/property/titletransfer", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String createProperty(@RequestBody String titleTransferDetails)
+    public String transferProperty(@RequestBody String titleTransferDetails)
             throws JsonGenerationException, JsonMappingException, IOException, ParseException {
 		String responseJson = new String();
+		ApplicationThreadLocals.setUserId(2L);
+		
 		PropertyTransferDetails propertyTransferDetails = (PropertyTransferDetails) getObjectFromJSONRequest(
 				titleTransferDetails, PropertyTransferDetails.class);
 		
@@ -128,4 +131,5 @@ public class PropertyTitleTransferService {
         mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
         return mapper.readValue(jsonString, cls);
     }
+    
 }

@@ -104,6 +104,4 @@ public class PropertyTransferDetails implements Serializable {
 	public void setUlbCode(String ulbCode) {
 		this.ulbCode = ulbCode;
 	}
-	
-	
 }
