@@ -38,45 +38,24 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>	
-
-<form:form id="createLetterOfAcceptanceForm" class="form-horizontal form-groups-bordered" modelAttribute="workOrder" role="form" action="loa-save" method="post" enctype="multipart/form-data">	
-	<div class="new-page-header"><spring:message code="title.loa.create" /></div>
-
-	<div class="main-content">
-		<div class="panel-heading">
-			<ul class="nav nav-tabs" id="settingstab">
-				<li class="active">
-					<a data-toggle="tab" href="#letterofacceptanceheader" data-tabidx=0><spring:message code="lbl.header" /></a>
-				</li>
-				<c:if test="${abstractEstimate.activities.size() != 0}">
-					<li>
-						<a data-toggle="tab" href="#billofquantities" data-tabidx=1><spring:message code="tab.header.billofquantities" /> </a>
-					</li>
-				</c:if>
-			</ul>
-		</div>
-		<div class="tab-content">
-			<div class="tab-pane fade in active" id="letterofacceptanceheader">
-				<%@ include file="letterOfAcceptance-header.jsp"%>
+		
+<div class="row">
+	<div class="col-md-12"> 
+		<div class="panel panel-primary" data-collapsed="0">
+			<div>
+				<spring:hasBindErrors name="workOrder">
+			  		<div class="alert alert-danger col-md-10 col-md-offset-1">
+			  			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+			      	</div>
+	       		</spring:hasBindErrors>
+	    	</div>
+			<div class="panel-body">
+				<jsp:include page="estimateDetails-view.jsp"/>
+				<jsp:include page="letterOfAcceptance-details.jsp"/>
 			</div>
-			<c:if test="${abstractEstimate.activities.size() != 0}">
-				<div class="tab-pane fade" id="billofquantities">
-					<%@ include file="letterOfAcceptance-billofquantities.jsp"%>
-				</div>
-			</c:if>
 		</div>
-		<div class="row">
-				<div class="col-sm-12 text-center">
-					<form:button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.save"/></form:button>
-					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
-				</div>
-		</div>
+		<jsp:include page="uploadDocuments.jsp"/>
 	</div>
-</form:form>
+</div>	
+			
 
-<script src="<c:url value='/resources/js/letterofacceptance.js?rnd=${app_release_no}'/>"></script>

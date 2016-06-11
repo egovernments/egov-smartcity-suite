@@ -68,7 +68,7 @@
 				<li><a data-toggle="tab" href="#workdetails" data-tabidx=1><spring:message
 							code="tab.header.scheduleA" /> </a></li>
 				<li><a data-toggle="tab" href="#overheads" data-tabidx=1><spring:message
-							code="tab.header.scheduleA" /> </a></li>
+							code="tab.header.scheduleB" /> </a></li>
 				<li><a data-toggle="tab" href="#assetandfinancials"
 					data-tabidx=2> <spring:message
 							code="tab.header.assetandfinancials" />

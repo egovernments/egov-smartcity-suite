@@ -146,6 +146,9 @@ public class LetterOfAcceptanceService {
     @Autowired
     private MilestoneService milestoneService;
 
+    @Autowired
+    private WorkOrderActivityService workOrderActivityService;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -177,7 +180,7 @@ public class LetterOfAcceptanceService {
         if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
         
-        //createWorkOrderEstimate(workOrder);
+        workOrderActivityService.create(workOrder);
         
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedworkOrder,

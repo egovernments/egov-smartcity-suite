@@ -49,6 +49,8 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -75,13 +77,13 @@ public class CreateLetterOfAcceptanceController {
 
     @Autowired
     private LineEstimateService lineEstimateService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
-    
+
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
 
@@ -90,10 +92,13 @@ public class CreateLetterOfAcceptanceController {
 
     @Autowired
     private ContractorGradeService contractorGradeService;
-    
+
     @Autowired
     @Qualifier("contractorService")
     private ContractorService contractorService;
+
+    @Autowired
+    private EstimateService estimateService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
@@ -103,6 +108,7 @@ public class CreateLetterOfAcceptanceController {
         setDropDownValues(model, lineEstimateDetails);
         workOrder.setWorkOrderDate(new Date());
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+        model.addAttribute("abstractEstimate", estimateService.getAbstractEstimateByEstimateNumber(estimateNumber));
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         return "createLetterOfAcceptance-form";
@@ -120,6 +126,7 @@ public class CreateLetterOfAcceptanceController {
             final Model model, final BindingResult resultBinder, final HttpServletRequest request,
             @RequestParam("file") final MultipartFile[] files) throws IOException {
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
+        final AbstractEstimate abstractEstimate  = estimateService.getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
         final WorkOrder existingWorkOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(workOrder.getEstimateNumber());
 
         if (existingWorkOrder != null)
@@ -135,14 +142,15 @@ public class CreateLetterOfAcceptanceController {
         if (resultBinder.hasErrors()) {
             setDropDownValues(model, lineEstimateDetails);
             model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+            model.addAttribute("abstractEstimate", abstractEstimate);
             model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
             model.addAttribute("contractorSearch", request.getParameter("contractorSearch"));
             model.addAttribute("contractorCode", request.getParameter("contractorCode"));
             model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
             return "createLetterOfAcceptance-form";
         } else {
-        	workOrder.setContractor(contractorService.findById(workOrder.getContractor().getId(), false));
-        	final WorkOrderEstimate workOrderEstimate = letterOfAcceptanceService.createWorkOrderEstimate(workOrder);
+            workOrder.setContractor(contractorService.findById(workOrder.getContractor().getId(), false));
+            final WorkOrderEstimate workOrderEstimate = letterOfAcceptanceService.createWorkOrderEstimate(workOrder);
 
             if (lineEstimateDetails.getLineEstimate().isSpillOverFlag() && !lineEstimateDetails.getLineEstimate()
                     .isWorkOrderCreated() || !lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {

@@ -142,10 +142,12 @@ $(document).ready(function(){
 		
 		function calculateAgreementAmount() {
 	    	var tenderFinalizedPercentage = $('#tenderFinalizedPercentage').val();
+	    	$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
 			if(tenderFinalizedPercentage != ''){
 			    	percentageVal = assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage);
 			    	var agreementAmount = eval($('#estimateAmount').val())+(eval($('#estimateAmount').val())*percentageVal)/100;
 				   $('#workOrderAmount').val(roundTo(agreementAmount));
+				   $('#agreementValue').html(roundTo(agreementAmount));
 			}
 			else 
 					$('#workOrderAmount').val('');
