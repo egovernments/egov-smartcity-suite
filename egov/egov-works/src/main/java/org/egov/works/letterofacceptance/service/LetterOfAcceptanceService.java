@@ -180,9 +180,12 @@ public class LetterOfAcceptanceService {
         if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
         
-        workOrderActivityService.create(workOrder);
+        
         
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+        
+        workOrderActivityService.create(savedworkOrder);
+        
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedworkOrder,
                 WorksConstants.WORKORDER);
         if (!documentDetails.isEmpty()) {
