@@ -55,7 +55,7 @@
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
 	<input type="hidden" value="${abstractEstimate.activities.size() }" id="activitiesSize" />
 
-	<div class="new-page-header">Create Abstract Estimate</div>
+	<div class="new-page-header"><spring:message code="lbl.createae" /></div> 
 
 	<div class="main-content">
 	<form:hidden path="estimateValue" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>

@@ -88,13 +88,15 @@
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.location" />
 			</label>
-			<div class="col-sm-3 add-margin ">
-			<form:input path="location" class="form-control" name="location" value=""/> 
-			</div>
-			<a href="javascript:openMap();" id="mapAnchor" title="Click here to add/view gis marker on map" class="btn btn-primary"><i class="fa fa-location-arrow icon-inputgroup"></i></a>
+			  <div class="col-sm-3 add-margin">
+                          <div class="input-group">
+                              <form:input path="location" type="text" id="location" class="form-control"/>
+                              <button type="button" class="input-group-addon glyphicon glyphicon-globe " onclick="openMap();"> </button>
+                          </div>
+                      </div>
 		</div> 
-		
-		<%-- <div class="form-group">
+		<form:hidden path="egwStatus.code" value="${egwStatus.code}" id="statusCode"/>
+		<div class="form-group" id="latlonDiv" style="display:none;">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.latitude" />
 			</label>
@@ -110,7 +112,7 @@
 				<form:input path="longitude" name="longitude" class="form-control" />
 				<form:errors path="longitude" cssClass="add-margin error-msg" />
 			</div>
-		</div> --%>
+		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.nameofwork" />

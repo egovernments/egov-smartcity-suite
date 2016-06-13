@@ -82,7 +82,7 @@
 							</div>
 						</c:if>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.paymentreleased" />.</div> 
-							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <span>${estimateValue}</span></div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <span>${paymentsReleasedSoFar}</span></div>
 						</div>
 					</div>
 				</div>

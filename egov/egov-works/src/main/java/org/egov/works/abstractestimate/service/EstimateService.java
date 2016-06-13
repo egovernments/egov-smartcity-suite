@@ -352,7 +352,7 @@ public class EstimateService {
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
     }
 
-    public BigDecimal getEstimateValueForLineEstimate(final LineEstimateDetails lineEstimateDetails) {
+    public BigDecimal getPaymentsReleasedForLineEstimate(final LineEstimateDetails lineEstimateDetails) {
         WorkProgressRegister workProgressRegister = workProgressRegisterService
                 .getWorkProgressRegisterByLineEstimateDetailsId(lineEstimateDetails);
         return workProgressRegister != null ? workProgressRegister.getTotalBillPaidSoFar() : BigDecimal.ZERO;
@@ -379,7 +379,7 @@ public class EstimateService {
         financialDetails.setBudgetGroup(lineEstimate.getBudgetHead());
         financialDetailList.add(financialDetails);
         abstractEstimate.setFinancialDetails(financialDetailList);
-        model.addAttribute("estimateValue", getEstimateValueForLineEstimate(lineEstimateDetails));
+        model.addAttribute("paymentsReleasedSoFar", getPaymentsReleasedForLineEstimate(lineEstimateDetails));
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("lineEstimate", lineEstimate);
