@@ -59,6 +59,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Designation;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
@@ -80,6 +81,7 @@ import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.AssetsForWorkOrder;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -179,7 +181,9 @@ public class LetterOfAcceptanceService {
         if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
 
-        workOrder = createWorkOrderActivity(workOrder);
+        workOrder = createWorkOrderActivities(workOrder);
+        
+        workOrder = createAssetsForWorkOrder(workOrder);
 
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
 
@@ -192,6 +196,22 @@ public class LetterOfAcceptanceService {
         return savedworkOrder;
     }
 
+    private WorkOrder createAssetsForWorkOrder(WorkOrder workOrder) {
+        AssetsForWorkOrder assetsForWorkOrder = null;
+        WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates() != null ? workOrder.getWorkOrderEstimates().get(0)
+                : null;
+        if (workOrderEstimate != null) {
+            for (AssetsForEstimate assetsForEstimate : workOrderEstimate.getEstimate().getAssetValues()) {
+                assetsForWorkOrder = new AssetsForWorkOrder();
+                assetsForWorkOrder.setAsset(assetsForEstimate.getAsset());
+                assetsForWorkOrder.setWorkOrderEstimate(workOrderEstimate);
+                workOrder.getWorkOrderEstimates().get(0).getAssetValues().add(assetsForWorkOrder);
+
+            }
+        }
+        return workOrder;
+    }
+
     /*
      * This method will create work order activities
      * 
@@ -199,7 +219,7 @@ public class LetterOfAcceptanceService {
      * The Item Rate tender logic will be implemented later when we take up Item Rate use case.
      * 
      */
-    private WorkOrder createWorkOrderActivity(WorkOrder workOrder) {
+    private WorkOrder createWorkOrderActivities(WorkOrder workOrder) {
         WorkOrderActivity workOrderActivity = null;
         Double tenderFinalizedPercentage = workOrder.getTenderFinalizedPercentage();
         WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates() != null ? workOrder.getWorkOrderEstimates().get(0)
