@@ -68,7 +68,7 @@ public class WorkOrderActivityService {
     }
 
     public WorkOrderActivity getWorkOrderActivityById(final Long id) {
-        return workOrderActivityRepository.findById(id);
+        return workOrderActivityRepository.findOne(id);
     }
 
     @Transactional

@@ -70,15 +70,13 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
-import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
+import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLineEstimateToCancelJSONAdaptor;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
@@ -198,16 +196,6 @@ public class AjaxLineEstimateController {
         return result;
     }
 
-    @RequestMapping(value = "/ajaxsearchlineestimatesforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxSearchLineEstimatesForLOA(final Model model,
-            @ModelAttribute final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest) {
-        final List<LineEstimateForLoaSearchResult> searchResultList = lineEstimateService
-                .searchLineEstimatesForLOA(lineEstimateForLoaSearchRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateForLOAResultJson(searchResultList))
-                .append("}").toString();
-        return result;
-    }
-
     @RequestMapping(value = "/ajaxsearchlineestimatesforabstractestimate", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchLineEstimatesForAbstractEstimate(final Model model,
             @ModelAttribute final LineEstimatesForAbstractEstimate lineEstimatesForAbstractEstimate) {
@@ -226,16 +214,10 @@ public class AjaxLineEstimateController {
         return json;
     }
 
-    public Object toSearchLineEstimateForLOAResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateForLOAJsonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
 
     public Object toSearchLineEstimateForAbstractEstimateResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new LineEstimateForLOAJsonAdaptor()).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new AbstractEstimateForLOAJsonAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -254,7 +236,7 @@ public class AjaxLineEstimateController {
     public @ResponseBody List<String> findEstimateNumbersForAbstractEstimate(@RequestParam final String name) {
         return lineEstimateService.findEstimateNumbersForAbstractEstimate(name);
     }
-    
+
     @RequestMapping(value = "/adminSanctionNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findAdminSanctionNumbers(@RequestParam final String name) {
         return lineEstimateService.findAdminSanctionNumbers(name);
@@ -264,7 +246,7 @@ public class AjaxLineEstimateController {
     public @ResponseBody List<String> findAdminSanctionNumbersForLoa(@RequestParam final String name) {
         return lineEstimateService.findAdminSanctionNumbersForLoa(name);
     }
-    
+
     @RequestMapping(value = "/adminSanctionNumbersForAbstractEstimate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findAdminSanctionNumbersForAbstractEstimate(@RequestParam final String name) {
         return lineEstimateService.findAdminSanctionNumbersForAbstractEstimate(name);
@@ -352,7 +334,7 @@ public class AjaxLineEstimateController {
             return budgetGroups;
         }
     }
-    
+
     @RequestMapping(value = "/getbudgetheadbyfunction", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<BudgetGroup> getBudgetHeadByFunction(@RequestParam("functionId") final Long functionId) {
         List<BudgetGroup> budgetGroups = new ArrayList<BudgetGroup>();

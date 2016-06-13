@@ -37,11 +37,11 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.lineestimate.entity;
+package org.egov.works.abstractestimate.entity;
 
 import java.math.BigDecimal;
 
-public class LineEstimateForLoaSearchResult {
+public class AbstractEstimateForLoaSearchResult {
     private Long id;
     private String adminSanctionNumber;
     private String estimateNumber;
@@ -53,7 +53,7 @@ public class LineEstimateForLoaSearchResult {
     private BigDecimal actualEstimateAmount;
     private String workIdentificationNumber;
 
-    public LineEstimateForLoaSearchResult() {
+    public AbstractEstimateForLoaSearchResult() {
     }
 
     public Long getId() {

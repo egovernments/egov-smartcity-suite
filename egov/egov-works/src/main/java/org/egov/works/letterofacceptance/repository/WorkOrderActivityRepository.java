@@ -46,6 +46,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WorkOrderActivityRepository extends JpaRepository<WorkOrderActivity, Long> {
 
-    WorkOrderActivity findById(final Long id);
-
 }

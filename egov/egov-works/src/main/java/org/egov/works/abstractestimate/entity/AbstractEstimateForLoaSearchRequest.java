@@ -37,21 +37,21 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.lineestimate.entity;
+package org.egov.works.abstractestimate.entity;
 
 import java.util.Date;
 
-public class LineEstimateForLoaSearchRequest {
+public class AbstractEstimateForLoaSearchRequest {
     private String adminSanctionNumber;
     private String estimateNumber;
     private Long executingDepartment;
     private Date adminSanctionFromDate;
     private Date adminSanctionToDate;
-    private Long lineEstimateCreatedBy;
+    private Long abstractEstimateCreatedBy;
     private String workIdentificationNumber;
     private boolean spillOverFlag;
 
-    public LineEstimateForLoaSearchRequest() {
+    public AbstractEstimateForLoaSearchRequest() {
     }
 
     public String getAdminSanctionNumber() {
@@ -94,12 +94,13 @@ public class LineEstimateForLoaSearchRequest {
         this.adminSanctionToDate = adminSanctionToDate;
     }
 
-    public Long getLineEstimateCreatedBy() {
-        return lineEstimateCreatedBy;
+
+    public Long getAbstractEstimateCreatedBy() {
+        return abstractEstimateCreatedBy;
     }
 
-    public void setLineEstimateCreatedBy(final Long lineEstimateCreatedBy) {
-        this.lineEstimateCreatedBy = lineEstimateCreatedBy;
+    public void setAbstractEstimateCreatedBy(Long abstractEstimateCreatedBy) {
+        this.abstractEstimateCreatedBy = abstractEstimateCreatedBy;
     }
 
     public String getWorkIdentificationNumber() {

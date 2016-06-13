@@ -39,11 +39,19 @@
  */
 package org.egov.works.web.controller.abstractestimate;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -62,7 +70,13 @@ public class SearchAbstractEstimateController {
 
     @Autowired
     private EstimateService estimateService;
-    
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
@@ -75,20 +89,39 @@ public class SearchAbstractEstimateController {
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String viewAbstractEstimate(@PathVariable final String id,final Model model)
+    public String viewAbstractEstimate(@PathVariable final String id, final Model model)
             throws ApplicationException {
         final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(Long.valueOf(id));
 
         model.addAttribute("abstractEstimate", abstractEstimate);
-        model.addAttribute("workOrderEstimate", workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(Long.valueOf(id)));
-        model.addAttribute("paymentreleased", estimateService.getPaymentsReleasedForLineEstimate(abstractEstimate.getLineEstimateDetails()));
-        
+        model.addAttribute("workOrderEstimate",
+                workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(Long.valueOf(id)));
+        model.addAttribute("paymentreleased",
+                estimateService.getPaymentsReleasedForLineEstimate(abstractEstimate.getLineEstimateDetails()));
+
         return "abstractestimate-view";
+    }
+
+    @RequestMapping(value = "/searchabstractestimateforloa-form", method = RequestMethod.GET)
+    public String searchAbstractEstimateForLOA(
+            @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
+            final Model model) {
+        setDropDownValues(model);
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        List<Long> departmentIds = new ArrayList<Long>();
+        if (departments != null)
+            for (Department department : departments)
+                departmentIds.add(department.getId());
+        final List<User> abstractEstimateCreatedByUsers = estimateService.getAbstractEstimateCreatedByUsers(departmentIds);
+        model.addAttribute("abstractEstimateForLoaSearchRequest", abstractEstimateForLoaSearchRequest);
+        model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
+        model.addAttribute("departments", departments);
+        return "searchAbstractEstimateForLoa-form";
     }
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("createdUsers", estimateService.getCreatedByForViewAbstractEstimates());
+        model.addAttribute("createdUsers", estimateService.getAbstractEstimateCreatedByUsers());
         model.addAttribute("abstractEstimateStatus", AbstractEstimate.EstimateStatus.values());
 
     }

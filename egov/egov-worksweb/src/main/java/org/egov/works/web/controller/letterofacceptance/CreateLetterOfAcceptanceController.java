@@ -57,7 +57,6 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.utils.WorksConstants;
@@ -111,7 +110,7 @@ public class CreateLetterOfAcceptanceController {
                 .getAbstractEstimateByEstimateNumberAndStatus(estimateNumber);
         setDropDownValues(model, abstractEstimate);
         workOrder.setWorkOrderDate(new Date());
-        
+
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
         final AppConfigValues value = values.get(0);

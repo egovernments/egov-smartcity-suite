@@ -45,6 +45,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -62,5 +63,9 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     AbstractEstimate findByLineEstimateDetails_IdAndEgwStatus_codeEquals(final Long id, final String statusCode);
 
     @Query("select distinct(ae.createdBy) from AbstractEstimate as ae")
-    List<User> findCreatedByForViewAbstractEstimates();
+    List<User> findAbstractEstimateCreatedByUsers();
+
+    @Query("select distinct(ae.createdBy) from AbstractEstimate as ae where ae.executingDepartment.id in (:departmentIds)")
+    List<User> findAbstractEstimateCreatedByUsers(@Param("departmentIds") final List<Long> departmentIds);
+
 }

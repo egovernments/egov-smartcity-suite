@@ -67,7 +67,7 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
             @Param("status") String status);
 
     @Query("select distinct(led.estimateNumber) from LineEstimateDetails as led where not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) != :status)")
-    List<String> findEstimateNumbersToSearchLineEstimatesForLoa(@Param("status") String status);
+    List<String> findEstimateNumbersToSearchAbstractEstimatesForLoa(@Param("status") String status);
 
     @Query("select distinct(led.lineEstimate.adminSanctionNumber) from LineEstimateDetails as led  where led.lineEstimate.adminSanctionNumber like :adminSanctionNumber and led.lineEstimate.status.code = :egwStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) != :status) and  not exists (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.lineEstimateDetails.id = led.id and upper(ae.egwStatus.code) !=:status)")
     List<String> findAdminSanctionNumbersForAbstractEstimate(@Param("adminSanctionNumber") String adminSanctionNumber,

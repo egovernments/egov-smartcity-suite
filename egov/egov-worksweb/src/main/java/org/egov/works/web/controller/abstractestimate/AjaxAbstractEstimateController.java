@@ -46,6 +46,8 @@ import java.util.List;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
+import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.master.service.EstimateTemplateService;
 import org.egov.works.master.service.OverheadService;
@@ -55,15 +57,20 @@ import org.egov.works.models.masters.EstimateTemplateActivity;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
 import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/abstractestimate")
@@ -80,6 +87,13 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private EstimateService estimateService;
+    
+    public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor()).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 
     @RequestMapping(value = "/getpercentageorlumpsumbyoverheadid", method = RequestMethod.GET)
     public @ResponseBody OverheadRate getPercentageOrLumpsumByOverhead(@RequestParam("overheadId") final Long overheadId) {
@@ -140,5 +154,15 @@ public class AjaxAbstractEstimateController {
         for (final AbstractEstimate abstractEstimate : abstractEstimates)
             results.add(abstractEstimate.getEstimateNumber());
         return results;
+    }
+    
+    @RequestMapping(value = "/ajaxsearchabstractestimatesforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchAbstractEstimatesForLOA(final Model model,
+            @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
+        final List<AbstractEstimateForLoaSearchResult> searchResultList = estimateService
+                .searchAbstractEstimatesForLOA(abstractEstimateForLoaSearchRequest);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchAbstractEstimateForLOAResultJson(searchResultList))
+                .append("}").toString();
+        return result;
     }
 }

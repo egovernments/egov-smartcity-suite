@@ -51,7 +51,6 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.SchemeService;
-import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -87,7 +86,7 @@ public class SearchLineEstimateController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
 
@@ -97,18 +96,6 @@ public class SearchLineEstimateController {
         setDropDownValues(model);
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
         return "lineestimate-search";
-    }
-
-    @RequestMapping(value = "/searchlineestimateforloa-form", method = RequestMethod.GET)
-    public String create(@ModelAttribute final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest,
-            final Model model) {
-        setDropDownValues(model);
-        final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        model.addAttribute("lineEstimateForLoaSearchRequest", lineEstimateForLoaSearchRequest);
-        model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
-        model.addAttribute("departments", departments);
-        return "searchLineEstimateForLoa-form";
     }
 
     @RequestMapping(value = "/searchlineestimateforabstractestimate-form", method = RequestMethod.GET)

@@ -192,6 +192,13 @@ public class LetterOfAcceptanceService {
         return savedworkOrder;
     }
 
+    /*
+     * This method will create work order activities
+     * 
+     * Populate work order activities for Percentage Tender. 
+     * The Item Rate tender logic will be implemented later when we take up Item Rate use case.
+     * 
+     */
     private WorkOrder createWorkOrderActivity(WorkOrder workOrder) {
         WorkOrderActivity workOrderActivity = null;
         Double tenderFinalizedPercentage = workOrder.getTenderFinalizedPercentage();

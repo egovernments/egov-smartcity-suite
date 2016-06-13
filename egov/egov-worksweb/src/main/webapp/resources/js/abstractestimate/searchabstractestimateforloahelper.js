@@ -85,7 +85,7 @@ function callAjaxSearch() {
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/egworks/lineestimate/ajaxsearchlineestimatesforloa",      
+					url : "/egworks/abstractestimate/ajaxsearchabstractestimatesforloa",      
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
@@ -102,7 +102,7 @@ function callAjaxSearch() {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.estimateNumber +'"/>');
 					$('td:eq(1)',row).html(index+1);
 					if(data.adminSanctionNumber != null)
-						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.id +'\')">' + data.adminSanctionNumber + '</a>');
+						$('td:eq(7)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.id +'\')">' + data.adminSanctionNumber + '</a>');
 					$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
 					if(data.actualEstimateAmount != null)
 						$('td:eq(9)',row).html(parseFloat(Math.round(data.actualEstimateAmount * 100) / 100).toFixed(2));
@@ -114,12 +114,12 @@ function callAjaxSearch() {
 				columns : [ { 
 					"data" : "", "sClass" : "text-center"} ,{ 
 					"data" : "", "sClass" : "text-center"} , {
-					"data" : "adminSanctionNumber", "sClass" : "text-center"} ,{ 
-					"data" : "estimateNumber", "sClass" : "text-center"} ,{ 
+					"data" : "estimateNumber", "sClass" : "text-center"} ,{
 					"data" : "nameOfWork", "sClass" : "text-center"} ,{
 					"data" : "workIdentificationNumber", "sClass" : "text-center"} ,{
 					"data" : "createdBy", "sClass" : "text-center"} ,{
 					"data" : "adminSanctionBy", "sClass" : "text-center"}, {
+					"data" : "adminSanctionNumber", "sClass" : "text-center"} ,{
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"}, {
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"
 					}]				
