@@ -24,6 +24,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.service.EstimateService;
@@ -174,6 +175,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                     abstractEstimate);
 
             model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
+            
+            splitSorAndNonSorActivities(abstractEstimate);
 
             prepareWorkflow(model, abstractEstimate, new WorkflowContainer());
 
@@ -207,6 +210,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             return "redirect:/abstractestimate/abstractestimate-success?pathVars=" + pathVars;
         }
 
+    }
+    
+    private void splitSorAndNonSorActivities(AbstractEstimate abstractEstimate) {
+        abstractEstimate.setSorActivities((List<Activity>) abstractEstimate.getSORActivities());
+        abstractEstimate.setNonSorActivities((List<Activity>) abstractEstimate.getNonSORActivities());
     }
 
     private void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {

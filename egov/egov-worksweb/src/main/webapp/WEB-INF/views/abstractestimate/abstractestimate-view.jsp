@@ -51,6 +51,7 @@
 <form:form name="abstractEstimateForm" role="form" method="post" modelAttribute="abstractEstimate" id="abstractEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
 
 	<div class="new-page-header"><spring:message code="lbl.viewae" /></div>
 
@@ -88,9 +89,19 @@
 				<%@ include file="abstractestimate-viewassetdetails.jsp"%>
 			</div>
 			<div class="text-center">
-                    <%-- <button type="button" id="viewAEPdf" class="btn btn-primary"><spring:message code="lbl.viewpdf" /></button> --%>
-                    <a href="javascript:void(0)" class="btn btn-primary" onclick="viewBOQ();"><spring:message code="lbl.viewBOQ" /></a>
-                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+				<c:choose>
+					<c:when test="${mode == 'workflowView' }">
+						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+						<div class="buttonbottom" align="center">
+							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+						</div>
+					</c:when>
+					<c:otherwise>
+						<%-- <button type="button" id="viewAEPdf" class="btn btn-primary"><spring:message code="lbl.viewpdf" /></button> --%>
+	                    <a href="javascript:void(0)" class="btn btn-primary" onclick="viewBOQ();"><spring:message code="lbl.viewBOQ" /></a>
+	                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+					</c:otherwise>
+				</c:choose>
             </div>
 		</div>
 	</div>
@@ -98,3 +109,4 @@
 
 <script type="text/javascript"
 	src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
+	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

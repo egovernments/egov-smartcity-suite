@@ -244,7 +244,11 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @Valid
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Activity.class)
-    private final List<Activity> activities = new ArrayList<Activity>(0);
+    private List<Activity> activities = new ArrayList<Activity>(0);
+    
+    private transient List<Activity> sorActivities = new ArrayList<Activity>(0);
+    
+    private transient List<Activity> nonSorActivities = new ArrayList<Activity>(0);
 
     @Valid
     @OrderBy("id")
@@ -758,4 +762,19 @@ public class AbstractEstimate extends StateAware implements Auditable {
             this.documentDetails.addAll(documentDetails);
     }
 
+    public List<Activity> getSorActivities() {
+        return sorActivities;
+    }
+
+    public void setSorActivities(List<Activity> sorActivities) {
+        this.sorActivities = sorActivities;
+    }
+
+    public List<Activity> getNonSorActivities() {
+        return nonSorActivities;
+    }
+
+    public void setNonSorActivities(List<Activity> nonSorActivities) {
+        this.nonSorActivities = nonSorActivities;
+    }
 }

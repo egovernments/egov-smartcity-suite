@@ -63,6 +63,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -152,6 +153,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             final HttpServletRequest request)
             throws ApplicationException {
         final AbstractEstimate abstractEstimate = getAbstractEstimate(abstractEstimateId);
+        splitSorAndNonSorActivities(abstractEstimate);
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
         estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
         model.addAttribute("estimateTemplateConfirmMsg",
@@ -160,6 +162,11 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         return loadViewData(model, request, abstractEstimate);
     }
 
+
+    private void splitSorAndNonSorActivities(AbstractEstimate abstractEstimate) {
+        abstractEstimate.setSorActivities((List<Activity>) abstractEstimate.getSORActivities());
+        abstractEstimate.setNonSorActivities((List<Activity>) abstractEstimate.getNonSORActivities());
+    }
 
     @RequestMapping(value = "/update/{abstractEstimateId}", method = RequestMethod.POST)
     public String update(@ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
@@ -200,13 +207,6 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()))
-            validateTechSanctionDetails(abstractEstimate, errors);
-
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
-                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
-            validateAdminSanctionDetail(abstractEstimate, errors);
-
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return loadViewData(model, request, abstractEstimate);
@@ -221,14 +221,6 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
             return "redirect:/abstractestimate/abstractestimate-success?pathVars=" + pathVars;
         }
-    }
-
-    private void validateTechSanctionDetails(final AbstractEstimate abstractEstimate, final BindingResult errors) {
-        // TODO Validate details here
-    }
-
-    private void validateAdminSanctionDetail(final AbstractEstimate abstractEstimate, final BindingResult errors) {
-        // TODO Validate details here
     }
 
     private void setDropDownValues(final Model model) {
@@ -267,11 +259,6 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
                     WorksConstants.NEW, workflowContainer.getPendingActions(), abstractEstimate.getCreatedDate());
             model.addAttribute("validActionList", validActions);
         }
-        if (abstractEstimate.getState() != null
-                && abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
-            model.addAttribute("mode", "edit");
-        else
-            model.addAttribute("mode", "view");
 
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
@@ -283,7 +270,15 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("abstractEstimate", newAbstractEstimate);
         if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
-        return "newAbstractEstimate-form";
+        
+        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
+                abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
+            return "newAbstractEstimate-form";
+        }
+        else {
+            model.addAttribute("mode", "workflowView");
+            return "abstractestimate-view";
+        }
     }
 
     private AbstractEstimate getEstimateDocuments(final AbstractEstimate abstractEstimate) {

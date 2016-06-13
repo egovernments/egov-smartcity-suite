@@ -51,6 +51,9 @@
 	<div class="form-group">
 		<input type="hidden" id="msgschedulecategory" value="<spring:message code='msg.select.scheduleofcategory' />">
 		<input type="hidden" id="erroradded" value="<spring:message code='error.sor.added' />">
+		<input type="hidden" id="errorrateszero" value="<spring:message code='error.rates.zero' />">
+		<input type="hidden" id="errorsornonsor" value="<spring:message code='error.sor.nonsor.required' />">
+		<input type="hidden" value="${abstractEstimate.sorActivities.size() }" id="sorActivitiesSize" />
 		<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.typeofwork" />
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -157,10 +160,10 @@
 				</tr>
 			</thead>
 			<tbody id="sorTable">
-				<c:if test="${abstractEstimate.activities.size() == 0}">
+				<c:if test="${abstractEstimate.sorActivities.size() == 0}">
 					<tr id="message">
 				</c:if>
-				<c:if test="${abstractEstimate.activities.size() != 0}">
+				<c:if test="${abstractEstimate.sorActivities.size() != 0}">
 					<tr id="message" hidden="true">
 				</c:if>
 					<c:if test="${isServiceVATRequired == true }">
@@ -171,37 +174,37 @@
 					</c:if>
 				</tr>
 				<c:choose>
-					<c:when test="${abstractEstimate.activities.size() == 0}">
+					<c:when test="${abstractEstimate.sorActivities.size() == 0}">
 						<tr id="sorRow" class="sorRow" hidden="true" align="center">
 							<td>
 								<span class="spansorslno">1</span>
-								<form:hidden path="activities[0].id" id="activityid_0" class="activityid" />
-								<form:hidden path="activities[0].schedule.id" id="id_0" class="sorhiddenid" />
+								<form:hidden path="sorActivities[0].id" id="activityid_0" class="activityid" />
+								<form:hidden path="sorActivities[0].schedule.id" id="id_0" class="sorhiddenid" />
 							</td>
 							<td>
 								<span class="code_0"></span>
 							</td>
-							<td>
+							<td align="left">
 								<span class="summary_0"></span>
 								<span class="hintanchor description_0"/></span>
 							</td>
 							<td>
 								<span class="uom_0"></span>
-								<form:hidden path="activities[0].uom.id" id="uomid_0" class="uomhiddenid"/>
+								<form:hidden path="sorActivities[0].uom.id" id="uomid_0" class="uomhiddenid"/>
 							</td>
 							<td align="right">
 								<span class="sorRate rate_0"></span>
-								<form:hidden path="activities[0].rate" id="rate_0" />
-								<form:hidden path="activities[0].sorRate" id="sorRate_0" />
+								<form:hidden path="sorActivities[0].rate" id="rate_0" />
+								<form:hidden path="sorActivities[0].sorRate" id="sorRate_0" />
 							</td>
 							<td>
-								<form:input path="activities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
+								<form:input path="sorActivities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
 							</td>
 							<td align="right">
 								<span class="amount_0 amount"></span>
 							</td>
 							<td hidden="true" class="serviceTaxPerc">
-								<form:input path="activities[0].serviceTaxPerc" id="vat_0" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right" maxlength="64" onblur="calculateVatAmount(this);" onkeyup="validateInput(this);"/>
+								<form:input path="sorActivities[0].serviceTaxPerc" id="vat_0" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right" maxlength="64" onblur="calculateVatAmount(this);" onkeyup="validateInput(this);"/>
 							</td>
 							<td hidden="true" align="right" class="vatAmount">
 								<span class="vatAmount_0 vatAmt"></span>
@@ -215,44 +218,44 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<c:forEach items="${abstractEstimate.activities}" var="activity" varStatus="item">
+						<c:forEach items="${abstractEstimate.sorActivities}" var="activity" varStatus="item">
 							<c:if test="${activity.schedule != null }">
 								<tr id="sorRow" class="sorRow" align="center">
 									<td>
 										<span class="spansorslno">${item.index + 1 }</span>
-										<form:hidden path="activities[${item.index }].id" id="activityid_${item.index }" class="activityid" value="${activity.id }" />
-										<form:hidden path="activities[${item.index }].schedule.id" id="id_${item.index }" class="sorhiddenid" value="${activity.schedule.id }" />
+										<form:hidden path="sorActivities[${item.index }].id" id="soractivityid_${item.index }" class="soractivityid" value="${activity.id }" />
+										<form:hidden path="sorActivities[${item.index }].schedule.id" id="id_${item.index }" class="sorhiddenid" value="${activity.schedule.id }" />
 									</td>
 									<td>
 										<span class="code_${item.index }">${activity.schedule.code }</span>
 									</td>
-									<td>
+									<td align="left">
 										<span class="summary_${item.index }">${activity.schedule.getSummary() }</span>
 										<span class="hintanchor description_${item.index }"/><a href="#" class="hintanchor" title="${activity.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>
 									</td>
 									<td>
 										<span class="uom_${item.index }">${activity.schedule.uom.uom }</span>
-										<form:hidden path="activities[${item.index }].uom.id" id="uomid_${item.index }" class="uomhiddenid" value="${activity.schedule.uom.id }"/>
+										<form:hidden path="sorActivities[${item.index }].uom.id" id="sorUomid_${item.index }" class="uomhiddenid" value="${activity.schedule.uom.id }"/>
 									</td>
 									<td align="right">
 										<span class="sorRate rate_${item.index }">${activity.rate }</span>
-										<form:hidden path="activities[${item.index }].rate" id="rate_${item.index }" value="${activity.rate }" />
-										<form:hidden path="activities[${item.index }].sorRate" id="sorRate_${item.index }" value="${activity.rate }" />
+										<form:hidden path="sorActivities[${item.index }].rate" id="rate_${item.index }" value="${activity.rate }" />
+										<form:hidden path="sorActivities[${item.index }].sorRate" id="sorRate_${item.index }" value="${activity.rate }" />
 									</td>
 									<td>
-										<form:input path="activities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
+										<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
 									</td>
 									<td align="right">
-										<span class="amount_${item.index } amount"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+										<span class="amount_${item.index } amount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 									</td>
 									<td hidden="true" class="serviceTaxPerc">
-										<form:input path="activities[${item.index }].serviceTaxPerc" value="${activity.serviceTaxPerc }" id="vat_${item.index }" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="1" class="form-control table-input text-right" maxlength="64" onblur="calculateVatAmount(this);" onkeyup="validateInput(this);"/>
+										<form:input path="sorActivities[${item.index }].serviceTaxPerc" value="${activity.serviceTaxPerc }" id="vat_${item.index }" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="1" class="form-control table-input text-right" maxlength="64" onblur="calculateVatAmount(this);" onkeyup="validateInput(this);"/>
 									</td>
 									<td hidden="true" align="right" class="vatAmount">
-										<span class="vatAmount_${item.index } vatAmt"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100) }</fmt:formatNumber></span>
+										<span class="vatAmount_${item.index } vatAmt"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100) }</fmt:formatNumber></span>
 									</td>
 									<td align="right">
-										<span class="total_${item.index } total"><fmt:formatNumber minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) + ((activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100)) }</fmt:formatNumber></span>
+										<span class="total_${item.index } total"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) + ((activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100)) }</fmt:formatNumber></span>
 									</td>
 									<td>
 										<span class="add-padding delete_${item.index }" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>

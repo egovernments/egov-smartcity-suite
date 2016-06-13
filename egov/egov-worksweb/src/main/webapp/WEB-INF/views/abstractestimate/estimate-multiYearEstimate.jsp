@@ -74,9 +74,8 @@
 				<c:choose>
 					<c:when test="${abstractEstimate.multiYearEstimates.size() == 0}">
 						<tr id="yearEstimateRow">
-							<form:hidden path="multiYearEstimates[0].id" name="multiYearEstimates[0].id" value="${multiYearEstimates[0].id}" class="form-control table-input hidden-input" />
-							<td><span class="spansno">1</span> 
-							<form:hidden path="multiYearEstimates[0].id" name="multiYearEstimates[0].id" value="${multiYearEstimates[0].id}" class="form-control table-input hidden-input" /></td>
+							<form:hidden path="multiYearEstimates[0].id" name="multiYearEstimates[0].id" value="${abstractEstimate.multiYearEstimates[0].id}" class="form-control table-input hidden-input" />
+							<td><span class="spansno">1</span></td>
 							
 							<td><form:select path="multiYearEstimates[0].financialYear"	data-first-option="false" id="multiYearEstimates[0].financialYear" data-errormsg="Financial Year is mandatory!" class="form-control dropdownYear disablefield" data-idx="0" data-optional="0">
 									<form:option value="">
@@ -86,7 +85,7 @@
 								</form:select> <form:errors path="multiYearEstimates[0].financialYear" cssClass="add-margin error-msg" />
 							</td>
 							
-							<td><form:input path="multiYearEstimates[0].percentage" name="multiYearEstimates[0].percentage" value="${multiYearEstimates[0].percentage}"	data-errormsg="Percentage is mandatory!" onkeyup="validateQuantity();" data-pattern="decimalvalue" data-idx="0" data-optional="0"
+							<td><form:input path="multiYearEstimates[0].percentage" name="multiYearEstimates[0].percentage" value="${abstractEstimate.multiYearEstimates[0].percentage}"	data-errormsg="Percentage is mandatory!" onkeyup="validateQuantity();" data-pattern="decimalvalue" data-idx="0" data-optional="0"
 									class="form-control table-input text-right inputYearEstimatePercentage disablefield" />
 								<form:errors path="multiYearEstimates[0].percentage" cssClass="add-margin error-msg" /></td>
 							<c:if test="${lineEstimateDetails.estimateNumber == '' }">
@@ -103,7 +102,6 @@
 								<form:hidden path="multiYearEstimates[${item.index}].id" name="multiYearEstimates[${item.index}].id" value="${multiYearEstimates.id}" class="form-control table-input hidden-input" />
 								<td><span class="spansno">
 								<c:out value="${item.index + 1}" /></span> 
-								<form:hidden path="multiYearEstimates[${item.index}].id" name="multiYearEstimates[${item.index}].id" value="${multiYearEstimates.id}" class="form-control table-input hidden-input" /></td>
 								<td>
 								<form:select path="multiYearEstimates[${item.index}].financialYear" data-first-option="false" id="multiYearEstimates[${item.index}].financialYear" data-errormsg="Financial Year is mandatory!" data-idx="0" data-optional="0" class="form-control dropdownYear disablefield">
 										<form:option value="">

@@ -179,6 +179,7 @@ public class EstimateService {
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) throws IOException {
         AbstractEstimate newAbstractEstimate = null;
+        mergeSorAndNonSorActivities(abstractEstimate);
         final AbstractEstimate abstractEstimateFromDB = getAbstractEstimateByEstimateNumber(
                 abstractEstimate.getEstimateNumber());
         if (abstractEstimateFromDB == null) {
@@ -211,6 +212,44 @@ public class EstimateService {
         }
         return newAbstractEstimate;
 
+    }
+
+    private void mergeSorAndNonSorActivities(AbstractEstimate abstractEstimate) {
+        for(final Activity activity : abstractEstimate.getSorActivities()) {
+            if(activity.getId() == null) {
+                activity.setAbstractEstimate(abstractEstimate);
+                abstractEstimate.addActivity(activity);
+            } else {
+                for(final Activity oldActivity : abstractEstimate.getSORActivities()) {
+                    if(oldActivity.getId().equals(activity.getId())) {
+                        updateActivity(oldActivity, activity);
+                    }
+                }
+            }
+        }
+        for(final Activity activity : abstractEstimate.getNonSorActivities()) {
+            if(activity.getId() == null) {
+                activity.setAbstractEstimate(abstractEstimate);
+                abstractEstimate.addActivity(activity);
+            } else {
+                for(final Activity oldActivity : abstractEstimate.getNonSORActivities()) {
+                    if(oldActivity.getId().equals(activity.getId())) {
+                        updateActivity(oldActivity, activity);
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateActivity(Activity oldActivity, Activity activity) {
+        oldActivity.setSchedule(activity.getSchedule());
+        oldActivity.setAmt(activity.getAmt());
+        oldActivity.setNonSor(activity.getNonSor());
+        oldActivity.setQuantity(activity.getQuantity());
+        oldActivity.setRate(activity.getRate());
+        oldActivity.setServiceTaxPerc(activity.getServiceTaxPerc());
+        oldActivity.setSorRate(activity.getSorRate());
+        oldActivity.setUom(activity.getUom());
     }
 
     @Transactional
@@ -441,17 +480,30 @@ public class EstimateService {
             throws ValidationException, IOException {
         AbstractEstimate updatedAbstractEstimate = null;
 
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
-                abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
+        if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
+                abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString()))
+                && !workFlowAction.equals(WorksConstants.CANCEL_ACTION)) {
+
+            for (final MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates())
+                multiYearEstimate.setAbstractEstimate(abstractEstimate);
+            for (final FinancialDetail financialDetail : abstractEstimate.getFinancialDetails())
+                financialDetail.setAbstractEstimate(abstractEstimate);
+            for (final OverheadValue obj : abstractEstimate.getOverheadValues()) {
+                obj.setAbstractEstimate(abstractEstimate);
+                obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
+            }
+            for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getAssetValues()) {
+                assetsForEstimate.setAbstractEstimate(abstractEstimate);
+                assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
+            }
+
             List<Activity> activities = new ArrayList<Activity>(abstractEstimate.getActivities());
-
             activities = removeDeletedActivities(activities, removedActivityIds);
-
             abstractEstimate.setActivities(activities);
-
             for (final Activity activity : abstractEstimate.getActivities())
                 activity.setAbstractEstimate(abstractEstimate);
 
+            mergeSorAndNonSorActivities(abstractEstimate);
             updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
 
             final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, updatedAbstractEstimate,
@@ -460,15 +512,17 @@ public class EstimateService {
                 updatedAbstractEstimate.setDocumentDetails(documentDetails);
                 worksUtils.persistDocuments(documentDetails);
             }
+        } else {
+            if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
+                    && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+                saveTechnicalSanctionDetails(abstractEstimate);
+
+            if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
+                    && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+                saveAdminSanctionDetails(abstractEstimate);
+
+            updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
         }
-
-        if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
-                && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
-            saveTechnicalSanctionDetails(updatedAbstractEstimate);
-
-        if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
-                && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
-            saveAdminSanctionDetails(updatedAbstractEstimate);
 
         updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
 
