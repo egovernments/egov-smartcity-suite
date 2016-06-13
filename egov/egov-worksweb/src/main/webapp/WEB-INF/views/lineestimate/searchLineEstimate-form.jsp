@@ -114,11 +114,11 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="egwStatus" data-first-option="false" id="egwStatus" class="form-control">
+				<form:select path="lineEstimateStatus" data-first-option="false" id="egwStatus" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
-					<form:options items="${egwStatus}" itemValue="code" itemLabel="code" />
+					<form:options items="${egwStatus}" itemValue="code" itemLabel="description" />
 				</form:select>
-				<form:errors path="egwStatus" cssClass="add-margin error-msg" />
+				<form:errors path="lineEstimateStatus" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 	</div>

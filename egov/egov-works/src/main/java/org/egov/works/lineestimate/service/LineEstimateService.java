@@ -290,8 +290,8 @@ public class LineEstimateService {
                 criteria.add(Restrictions.ge("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
             if (lineEstimateSearchRequest.getAdminSanctionToDate() != null)
                 criteria.add(Restrictions.le("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionToDate()));
-            if (lineEstimateSearchRequest.getEgwStatus() != null)
-                criteria.add(Restrictions.eq("les.code", lineEstimateSearchRequest.getEgwStatus()));
+            if (lineEstimateSearchRequest.getLineEstimateStatus() != null)
+                criteria.add(Restrictions.eq("les.code", lineEstimateSearchRequest.getLineEstimateStatus()));
 
             criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
 

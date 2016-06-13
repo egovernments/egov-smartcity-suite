@@ -122,12 +122,6 @@ function callAjaxSearch() {
 			}
 
 $(document).ready(function(){
-	
-	$('#egwStatus option').each(function() {
-		   var $this = $(this);
-		   $this.text($this.text().replace(/_/g, ' '));
-		});
-    
     var estimateNumber = new Bloodhound({
         datumTokenizer: function (datum) {
             return Bloodhound.tokenizers.whitespace(datum.value);
