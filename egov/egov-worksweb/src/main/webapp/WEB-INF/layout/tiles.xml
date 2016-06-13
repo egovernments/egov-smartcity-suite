@@ -290,10 +290,5 @@
         <put-attribute name="page-title" value="lbl.searchae" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/abstractestimate-view.jsp"/>
     </definition>
-    
-    <definition name="abstractestimate-maps" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.searchae" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/abstractestimate-maps.jsp"/>
-    </definition>
       
 </tiles-definitions>

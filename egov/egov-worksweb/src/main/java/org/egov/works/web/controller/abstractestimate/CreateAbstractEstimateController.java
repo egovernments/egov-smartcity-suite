@@ -317,12 +317,4 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         return message;
     }
 
-    @RequestMapping(value = "/maps", method = RequestMethod.GET)
-    public String loadMap(@ModelAttribute AbstractEstimate abstractEstimate, @RequestParam final String mapMode,
-            final Model model) {
-        model.addAttribute("abstractEstimate", abstractEstimate);
-        model.addAttribute("mapMode", mapMode);
-        return "abstractestimate-maps";
-    }
-
 }
