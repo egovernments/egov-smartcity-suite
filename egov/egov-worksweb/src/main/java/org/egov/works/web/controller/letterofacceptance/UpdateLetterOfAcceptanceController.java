@@ -52,6 +52,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -166,31 +167,25 @@ public class UpdateLetterOfAcceptanceController {
         } else {
             WorkOrder savedWorkOrder = null;
             try {
-                // TODO Read from AbstractEstimate
-                final LineEstimateDetails lineEstimateDetails = lineEstimateService
-                        .findByEstimateNumber(workOrder.getEstimateNumber());
+                final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
                 savedWorkOrder = letterOfAcceptanceService.update(workOrder, lineEstimateDetails, revisedValue,
                         revisedWorkOrderAmount);
             } catch (final ValidationException e) {
                 final List<Long> budgetheadid = new ArrayList<Long>();
                 BigDecimal budgetAvailable = null;
-                if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails() != null) {
-                    final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
-                    budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
+                if (abstractEstimate != null) {
+                    final FinancialDetail financialDetail = abstractEstimate.getFinancialDetails().get(0);
+                    budgetheadid.add(financialDetail.getBudgetGroup().getId());
 
                     budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
                             lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
-                            Integer.parseInt(
-                                    lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId().toString()),
-                            lineEstimateDetails.getLineEstimate().getFunction().getId(), null,
-                            lineEstimateDetails.getLineEstimate().getScheme() == null ? null
-                                    : Integer.parseInt(
-                                            lineEstimateDetails.getLineEstimate().getScheme().getId().toString()),
-                            lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null
-                                    : Integer.parseInt(
-                                            lineEstimateDetails.getLineEstimate().getSubScheme().getId().toString()),
-                            null, budgetheadid,
-                            Integer.parseInt(lineEstimateDetails.getLineEstimate().getFund().getId().toString()));
+                            Integer.parseInt(abstractEstimate.getExecutingDepartment().getId().toString()),
+                            financialDetail.getFunction().getId(), null,
+                            financialDetail.getScheme() == null ? null
+                                    : Integer.parseInt(financialDetail.getScheme().getId().toString()),
+                            financialDetail.getSubScheme() == null ? null
+                                    : Integer.parseInt(financialDetail.getSubScheme().getId().toString()),
+                            null, budgetheadid, Integer.parseInt(financialDetail.getFund().getId().toString()));
                 }
 
                 final String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",
