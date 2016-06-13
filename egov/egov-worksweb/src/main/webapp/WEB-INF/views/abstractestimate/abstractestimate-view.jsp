@@ -70,6 +70,7 @@
 				</a></li>
 			</ul>
 		</div>
+		<input type="hidden" name="estimateId" id="estimateId" value="${abstractEstimate.id}"/>
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="estimateheader">
 				<%@ include file="abstractestimate-viewheader.jsp"%>
@@ -87,7 +88,8 @@
 				<%@ include file="abstractestimate-viewassetdetails.jsp"%>
 			</div>
 			<div class="text-center">
-                    <button type="button" id="viewAEPdf" class="btn btn-primary"><spring:message code="lbl.viewpdf" /></button>
+                    <%-- <button type="button" id="viewAEPdf" class="btn btn-primary"><spring:message code="lbl.viewpdf" /></button> --%>
+                    <a href="javascript:void(0)" class="btn btn-primary" onclick="viewBOQ();"><spring:message code="lbl.viewBOQ" /></a>
                     <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
             </div>
 		</div>

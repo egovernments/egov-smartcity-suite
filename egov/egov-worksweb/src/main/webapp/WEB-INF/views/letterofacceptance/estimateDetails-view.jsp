@@ -48,21 +48,21 @@
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="projectCode" value="${lineEstimateDetails.projectCode.code}" disabled>
+		<input type="text" class="form-control" id="projectCode" value="${abstractEstimate.projectCode.code}" disabled>
 	</div>
 </div>
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofwork" /></label>
 	<div class="col-sm-3 add-margin">
-		<textarea class="form-control" id="nameOfWork" disabled>${lineEstimateDetails.nameOfWork}</textarea>
+		<textarea class="form-control" id="nameOfWork" disabled>${abstractEstimate.name}</textarea>
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
 	<div class="col-sm-3 add-margin">	
-		<input type="text" class="form-control" id="department" value="${lineEstimateDetails.lineEstimate.executingDepartment.name}" disabled>
+		<input type="text" class="form-control" id="department" value="${abstractEstimate.lineEstimateDetails.lineEstimate.executingDepartment.name}" disabled>
 	</div>
 </div>
-<c:if test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
+<c:if test="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">

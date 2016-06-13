@@ -1803,7 +1803,41 @@ function validateSORDetails() {
 		return false;
 }
 
-$('#viewBOQ').click(function() {
+function viewBOQ() {
 	var estimateId = $("#estimateId").val();
 	window.open("/egworks/abstractestimate/viewBillOfQuantitiesXls/"+estimateId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
-});
+}
+
+function openMap()
+{
+	var params = [
+	              'height='+screen.height,
+	              'width='+screen.width,
+	              'fullscreen=yes' 
+	          ].join(',');
+	var popup ;
+	var  lat = document.getElementById("latitude").value ;
+	var lon = document.getElementById("longitude").value ;
+	var status = $("#statusCode").val();
+	if(status==null || status=='' || status =='NEW' || status=='REJECTED')
+	{
+		if(lat!='' && lon!='')
+		{
+			popup = window.open('/egworks/abstractestimate/maps?mapMode=edit&latitude='+lat+'&longitude='+lon,'popup_window', params);
+		}
+		else
+		{
+			popup = window.open('/egworks/abstractestimate/maps?mapMode=edit','popup_window', params);	
+		}
+	}	
+	else
+	{
+		if(lat!='' && lon!='')
+		{
+			popup = window.open('/egworks/abstractestimate/maps?mapMode=view&latitude='+lat+'&longitude='+lon,'popup_window', params);
+		}
+		else
+			return;
+	}	
+	//popup.moveTo(0,0);
+}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-06-10T19:40:58 -->
+<!-- 2016-06-12T22:21:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4f28d66-9453-4365-9c94-520990d7d3ae">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -259,14 +259,14 @@
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="448" y="106" width="155" height="29" uuid="403c185f-5641-48b0-aeb2-8119b98923c6"/>
+				<reportElement x="490" y="106" width="113" height="29" uuid="403c185f-5641-48b0-aeb2-8119b98923c6"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Estimate Date :-]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="604" y="106" width="176" height="24" uuid="5e49931d-ec95-4d6d-b69b-19ac87e875ca"/>
+				<reportElement x="604" y="108" width="176" height="24" uuid="5e49931d-ec95-4d6d-b69b-19ac87e875ca"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
