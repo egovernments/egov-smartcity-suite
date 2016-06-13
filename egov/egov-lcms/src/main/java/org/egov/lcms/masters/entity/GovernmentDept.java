@@ -22,8 +22,17 @@ public class GovernmentDept extends BaseModel {
     @Length(max = 32, message = "masters.name.length")
     @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message = "masters.name.mixedChar2")
     private String name;
+    private Boolean active;
 
-    @Length(max = 128, message = "masters.description.length")
+    public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	@Length(max = 128, message = "masters.description.length")
     private String Description;
     @Max(value = 1000, message = "masters.orderNumber.length")
     private Long orderNumber;

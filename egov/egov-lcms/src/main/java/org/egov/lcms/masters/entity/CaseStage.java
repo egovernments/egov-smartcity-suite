@@ -9,6 +9,16 @@ public class CaseStage extends BaseModel {
 	private static final long serialVersionUID = 1L;
 
 	private String stage;
+    private Boolean active;
+
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
 
 	public String getStage() {
 		return stage;

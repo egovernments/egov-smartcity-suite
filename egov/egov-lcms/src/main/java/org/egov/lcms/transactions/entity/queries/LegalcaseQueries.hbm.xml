@@ -8,7 +8,7 @@
 
  <query name="getLegalCaseByLcnumber">
     <![CDATA[ from Legalcase lc where lc.lcnumber=?]]></query>
-    
+   <!--  
     <query name="getLegalCaseById">
     <![CDATA[ from Legalcase lc where lc.id=?]]></query>
 
@@ -18,6 +18,6 @@
 
 	<query name="getLegalCaseBySeniorAdvocateId">
     <![CDATA[select distinct(lc) from Legalcase lc left join lc.eglcLegalcaseAdvocates la where 
-    la.eglcSeniorAdvocateMaster.id=? and upper(lc.casenumber) like '%' || ? || '%']]></query>
+    la.eglcSeniorAdvocateMaster.id=? and upper(lc.casenumber) like '%' || ? || '%']]></query> -->
     
 </hibernate-mapping>

@@ -22,8 +22,17 @@ public class CourtMaster extends BaseModel {
      * Serial version uid
      */
     private static final long serialVersionUID = 1L;
+    private Boolean active;
 
-    @Required(message = "masters.courtMaster.courtTypeSelect")
+    public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	@Required(message = "masters.courtMaster.courtTypeSelect")
     private CourttypeMaster eglcCourttypeMaster;
 
     @Required(message = "masters.courtMaster.courtNameNull")

@@ -23,6 +23,15 @@ public class CourttypeMaster extends BaseModel {
 	 * Serial version uid
 	 */
 	private static final long serialVersionUID = 1L;
+    private Boolean active;
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
 
 	@Required(message = "masters.code.null")
 	@Length(max = 8, message = "masters.code.length")

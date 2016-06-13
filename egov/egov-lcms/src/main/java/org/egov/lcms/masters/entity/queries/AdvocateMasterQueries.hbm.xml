@@ -6,7 +6,7 @@
 -->
 <hibernate-mapping>
 
- <query name="getActiveSeniorAdvocateMaster">
+ <!-- <query name="getActiveSeniorAdvocateMaster">
     <![CDATA[ from AdvocateMaster am where am.isActive=1 and am.isSenioradvocate=?]]></query>
     
   <query name="getNotPaidAdvocateByMonthAndYear">
@@ -35,6 +35,6 @@
     
     <query name="getAllActiveAdvocateMaster">
     <![CDATA[ from AdvocateMaster am where am.isActive=1]]></query>
-    
+     -->
 
 </hibernate-mapping>

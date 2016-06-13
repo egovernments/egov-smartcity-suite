@@ -3,7 +3,7 @@
 PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-<class name="org.egov.lcms.models.masters.JudgmentType" table="EGLC_JUDGMENTTYPE_MASTER">
+<class name="org.egov.lcms.masters.entity.JudgmentType" table="EGLC_JUDGMENTTYPE_MASTER">
 		<id
 			name="id"
 			column="ID"
@@ -16,7 +16,9 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		<property name="modifiedDate" type="java.util.Date">
             <column name="LASTMODIFIEDDATE" not-null="true" />
         </property>
-     
+     	 <property name="active" type="boolean">
+            <column name="ACTIVE" precision="22" scale="0" not-null="true" />
+        </property>
    <property
 	    name="code"
 	    column="CODE"
@@ -26,7 +28,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
    <property
 	    name="createdDate"
 	    column="CREATEDDATE"
-	    type="date"
+	    type="java.util.Date"
     />
    <property
 	    name="description"
@@ -38,8 +40,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 	    column="JUDGMENTTYPE"
 	    type="string"
     />
-   <many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATEDBY"  not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="LASTMODIFIEDBY" not-null="true" fetch="select"/>
+   <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"  not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" not-null="true" fetch="select"/>
 		
   
    <property

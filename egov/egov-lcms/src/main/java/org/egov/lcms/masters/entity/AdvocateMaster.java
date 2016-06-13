@@ -51,13 +51,13 @@ public class AdvocateMaster extends BaseModel implements EntityType {
     // @Max(value=999999999999,message="advocate.fee.max")
     private Long monthlyRenumeration;
 
-    private Long isRetaineradvocate = 1L;
+    private Boolean isRetaineradvocate ;
     private String firmname;
     @Required(message = "advocate.passno.null")
     @Length(max = 10, message = "advocate.pannumber.length")
     @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "advocate.pannumber.text")
     private String pannumber;
-    private Long isActive;
+    private Boolean isActive;
     private boolean isSenioradvocate;
     private String salutation;
     private String paymentmode;
@@ -176,13 +176,7 @@ public class AdvocateMaster extends BaseModel implements EntityType {
         this.email = email;
     }
 
-    public Long getIsRetaineradvocate() {
-        return this.isRetaineradvocate;
-    }
-
-    public void setIsRetaineradvocate(Long isRetaineradvocate) {
-        this.isRetaineradvocate = isRetaineradvocate;
-    }
+   
 
     public String getFirmname() {
         return this.firmname;
@@ -200,15 +194,25 @@ public class AdvocateMaster extends BaseModel implements EntityType {
         this.pannumber = pannumber;
     }
 
-    public Long getIsActive() {
-        return this.isActive;
-    }
+    
 
-    public void setIsActive(Long isActive) {
-        this.isActive = isActive;
-    }
+    public Boolean getIsRetaineradvocate() {
+		return isRetaineradvocate;
+	}
 
-    public boolean getIsSenioradvocate() {
+	public void setIsRetaineradvocate(Boolean isRetaineradvocate) {
+		this.isRetaineradvocate = isRetaineradvocate;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public boolean getIsSenioradvocate() {
         return isSenioradvocate;
     }
 

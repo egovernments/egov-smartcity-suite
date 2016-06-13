@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="org.egov.lcms.models.transactions.ProcessRegister" table="EGLC_PROCESSREGISTER">
+    <class name="org.egov.lcms.transactions.entity.ProcessRegister" table="EGLC_PROCESSREGISTER">
         <id
 			name="id"
 			column="ID"
@@ -22,23 +22,23 @@
         </property>
         
         <property name="nextDateOfProcess" type="java.util.Date">
-	    	<column name="NEXT_DATE_OF_PROCESS"/>
+	    	<column name="NEXTDATEOFPROCESS"/>
         </property>
         
         <property name="receivedOn" type="java.util.Date">
-	    	<column name="RECEIVED_ON"/>
+	    	<column name="RECEIVEDON"/>
         </property>
         
         <property name="processHandedOverTo" type="java.lang.String">
-	    	<column name="PROCESS_HANDED_OVER_TO"/>
+	    	<column name="PROCESSHANDEDOVERTO"/>
         </property>
         
         <property name="dateOfHandingOver" type="java.util.Date">
-	    	<column name="DATE_OF_HANDING_OVER"/>
+	    	<column name="DATEOFHANDINGOVER"/>
         </property>
         
         <property name="processFilingAttorney" type="java.lang.String">
-	    	<column name="PROCESS_FILING_ATTORNEY"/>
+	    	<column name="PROCESSFILINGATTORNEY"/>
         </property>
         
         <property name="remarks" type="java.lang.String">
@@ -46,22 +46,22 @@
         </property>
         
         <property name="createdDate" type="java.util.Date">
-    		<column name="CREATED_DATE" not-null="true" />
+    		<column name="CREATEDDATE" not-null="true" />
     	</property>
     	
     	<property name="modifiedDate" type="java.util.Date">
-            <column name="MODIFIED_DATE" not-null="true" />
+            <column name="LASTMODIFIEDDATE" not-null="true" />
         </property>
 		
-		<many-to-one name="createdBy" class="org.egov.lib.rjbac.user.UserImpl" column="CREATED_BY"  not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.lib.rjbac.user.UserImpl" column="MODIFIED_BY" not-null="true" fetch="select"/>
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"  not-null="true" fetch="select" />
+		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="lastMODIFIEDBY" not-null="true" fetch="select"/>
 		
-        <many-to-one name="legalcase" class="org.egov.lcms.models.transactions.Legalcase" fetch="select">
-            <column name="ID_LEGALCASE" precision="22" scale="0" not-null="true" />
+        <many-to-one name="legalcase" class="org.egov.lcms.transactions.entity.Legalcase" fetch="select">
+            <column name="LEGALCASE" precision="22" scale="0" not-null="true" />
         </many-to-one>
         
-        <property name="isProcessRegReqd" >
-            <column name="IS_PROCESSREGREQUIRED"  precision="22" scale="0"/>
+        <property name="isProcessRegReqd"  type="boolean">
+            <column name="ISPROCESSREGREQUIRED"  precision="22" scale="0"/>
         </property>
     </class>
 </hibernate-mapping>

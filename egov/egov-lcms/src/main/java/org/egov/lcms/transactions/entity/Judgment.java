@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.egov.infra.persistence.validator.annotation.DateFormat;
@@ -61,6 +62,7 @@ public class Judgment extends BaseModel {
     private Date setasidePetitionDate;
     @Length(max = 1024, message = "setasidePetitionDetails.length")
     private String setasidePetitionDetails;
+    @Transient
     private Set<Judgmentimpl> eglcJudgmentimpls = new HashSet<Judgmentimpl>(0);
     private Set<Judgment> children = new LinkedHashSet<Judgment>(0);
     @DateFormat(message = "invalid.fieldvalue.model.sapHearingDate")

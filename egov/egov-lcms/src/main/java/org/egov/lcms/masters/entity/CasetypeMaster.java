@@ -30,7 +30,17 @@ public class CasetypeMaster extends BaseModel {
     // @OptionalPattern(regex = "^[a-z|A-Z|]+[a-z|A-Z|0-9|&/() .:,-.]*", message = "casetype.mixedChar.validation")
     private String caseType;
 
-    @Length(max = 256, message = "masters.description.length")
+    private Boolean active;
+
+    public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	@Length(max = 256, message = "masters.description.length")
     private String notes;
     @Max(value = 1000, message = "masters.orderNumber.length")
     private Long ordernumber;

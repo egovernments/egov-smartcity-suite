@@ -21,8 +21,17 @@ public class InterimOrder extends BaseModel {
     @Length(max = 32, message = "masters.interimOrderType.length")
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "masters.interimOrderType.mixedChar")
     private String interimOrderType;
+    private Boolean active;
 
-    @Required(message = "masters.code.null")
+    public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	@Required(message = "masters.code.null")
     @Length(max = 8, message = "masters.code.length")
     @OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.code.alpha2")
     private String code;

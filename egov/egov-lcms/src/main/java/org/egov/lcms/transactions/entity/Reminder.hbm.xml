@@ -3,7 +3,7 @@
 PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="org.egov.lcms.models.transactions.Reminder" table="EGLC_REMINDER">
+	<class name="org.egov.lcms.transactions.entity.Reminder" table="EGLC_REMINDER">
 		<id
 			name="id"
 			column="ID"
@@ -25,8 +25,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
 		
         <property name="date" type="java.util.Date" column="REMINDERDATE" />
          <property name="remarks" type="string" column="REMARKS" />
-        <many-to-one name="legalCaseDepartment" class="org.egov.lcms.models.transactions.LegalcaseDepartment" fetch="select" >
-            <column name="ID_LEGALCASE_DEPT" precision="22" scale="0" />
+        <many-to-one name="legalCaseDepartment" class="org.egov.lcms.transactions.entity.LegalcaseDepartment" fetch="select" >
+            <column name="LEGALCASEDEPT" precision="22" scale="0" />
         </many-to-one>
 		</class>
         

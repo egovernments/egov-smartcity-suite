@@ -25,8 +25,17 @@ public class PetitiontypeMaster extends BaseModel {
      * Serial version uid
      */
     private static final long serialVersionUID = 1L;
+    private Boolean active;
 
-    @Required(message = "petition.courttype.null")
+    public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	@Required(message = "petition.courttype.null")
     private CourttypeMaster eglcCourttypeMaster;
 
     @Required(message = "masters.petitionmaster.petitioncodereq")
