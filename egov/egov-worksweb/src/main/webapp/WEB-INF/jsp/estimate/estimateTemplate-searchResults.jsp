@@ -46,11 +46,17 @@
 	     <display:table name="searchResult" pagesize="30"
 			uid="currentRow" cellpadding="0" cellspacing="0"
 			requestURI="" class="table table-hover">
-	                           
-	        <display:column class="hidden" style="width:2%;cursor:pointer" headerClass="hidden" title="fsd">
+
+			<display:column class="hidden" style="width:2%;cursor:pointer" headerClass="hidden" title="fsd">
 						<s:property value="#attr.currentRow.id" />
 			</display:column>
 			
+			<s:if test="%{sourcePage.equals('searchForEstimate')}">
+				<display:column headerClass="pagetableth" class="pagetabletd" title="Select" style="width:2%;" titleKey="column.title.select">
+					<input name="radio" type="radio" id="radio"	value="<s:property value='%{#attr.currentRow.code}'/>" onClick="setTemplateCode(this);setEstimateTemplateId(<s:property  value="%{#attr.currentRow.id}" />);" />
+				</display:column>
+			</s:if>
+
 			<display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Sl No"
 			   titleKey="column.title.SLNo"
@@ -107,7 +113,7 @@
 				  </s:else>
 			</display:column>          
 			
-			<s:if test="%{mode != 'view'}">
+			<s:if test="%{!(sourcePage.equals('searchForEstimate') || mode == 'view') }">
 			<display:column headerClass="pagetableth"
 		       class="pagetabletd" title="Modify"
 			   titleKey="column.title.modify"
@@ -115,15 +121,16 @@
                   <a href="${pageContext.request.contextPath}/estimate/estimateTemplate-edit.action?mode=edit&id=<s:property value='%{#attr.currentRow.id}'/>">
 					 <s:text name="column.title.modify" />
 				  </a>
-            </display:column>    
+            </display:column>
             </s:if>                         
 	          	                       
 	          	                                      
 	   </display:table> 
+	   
 	    <s:if test="%{sourcePage.equals('searchForEstimate')}">
-	    	<div id="buttons" class="buttonbottom">
-		    	<input type="button" class="buttonadd" value="Add Template" id="addButton" name="selectTemplateButton" onclick="selectTemplate()" align="center" />
-				<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
+	    	<div id="buttons" align="center">
+		    	<input type="button" class="btn btn-primary" value="Add Template" id="addButton" name="selectTemplateButton" onclick="selectTemplate()" align="center" />
+				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 			</div>
 	     </s:if>
 	 </s:if> 
@@ -134,7 +141,7 @@
 			</div>
 	</s:elseif>   
  </div>
- <s:if test="%{searchResult.fullListSize != 0}">
+<s:if test="%{!sourcePage.equals('searchForEstimate') }">
 	<div align="center">
 		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>
