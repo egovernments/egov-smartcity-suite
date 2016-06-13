@@ -63,7 +63,7 @@
 							<div class="col-md-2 col-xs-6 add-margin view-content">
 							<c:out value="${lineEstimateDetails.estimateNumber}"></c:out>
 							</div>
-								
+							<input type="hidden" name="mode" value="${mode}" id="mode"/>
 							<form:hidden path="estimateNumber" name="estimateNumber" value="${lineEstimateDetails.estimateNumber}"/>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" />.
 							</div> 

@@ -58,7 +58,6 @@
 </div>					
 </div>
 <input type="hidden" name="estimateId" id="estimateId" value="${abstractEstimate.id}"/>
-state<c:out value="${abstractEstimate.state.value }"/>
 <div class="row text-center">
 	<div class="add-margin">
 	<c:if test="${abstractEstimate != null && abstractEstimate.state.value != 'NEW'}">

@@ -64,6 +64,21 @@ $(document).ready(function(){
 		$('#sorSearch').val('');
 	});
 	
+	$mode = $("#mode").val();
+	if($mode == '') {
+		$("#latlonDiv").hide(); 
+	} else if($mode == 'view' || $mode == '') {
+		    $(".input-group-addon").hide();
+		    if($("#latitude").val() != '' && $("#longitude").val() != '') {
+ 			   $("#latlonDiv").show();
+	        } else 
+	        	$("#latlonDiv").hide();
+	} else if($mode == 'edit') {
+		 if($("#latitude").val() != '' && $("#longitude").val() != '') {
+			   $("#latlonDiv").show();
+	        } else 
+	        	$("#latlonDiv").hide();
+	}
 	$isServiceVATRequired = $('#isServiceVATRequired').val();
 	
 	if($isServiceVATRequired == 'true') {
