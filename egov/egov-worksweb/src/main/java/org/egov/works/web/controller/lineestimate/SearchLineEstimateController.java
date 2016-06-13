@@ -41,6 +41,7 @@ package org.egov.works.web.controller.lineestimate;
 
 import java.util.List;
 
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
@@ -54,6 +55,7 @@ import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -85,6 +87,9 @@ public class SearchLineEstimateController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForLoa(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
@@ -125,5 +130,6 @@ public class SearchLineEstimateController {
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MODULETYPE));
     }
 }

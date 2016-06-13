@@ -54,6 +54,7 @@ public class LineEstimateSearchRequest {
     private Long createdBy;
     private String lineEstimateNumber;
     private String workIdentificationNumber;
+    private String egwStatus;
 
     public LineEstimateSearchRequest() {
     }
@@ -152,6 +153,14 @@ public class LineEstimateSearchRequest {
 
     public void setCreatedBy(final Long createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getEgwStatus() {
+        return egwStatus;
+    }
+
+    public void setEgwStatus(final String egwStatus) {
+        this.egwStatus = egwStatus;
     }
 
 }

@@ -272,7 +272,8 @@ public class LineEstimateService {
 
     public List<LineEstimate> searchLineEstimates(final LineEstimateSearchRequest lineEstimateSearchRequest) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(LineEstimate.class)
-                .createAlias("lineEstimateDetails", "lineEstimateDetail");
+                .createAlias("lineEstimateDetails", "lineEstimateDetail")
+                .createAlias("status", "les");
         if (lineEstimateSearchRequest != null) {
             if (lineEstimateSearchRequest.getAdminSanctionNumber() != null)
                 criteria.add(
@@ -291,6 +292,8 @@ public class LineEstimateService {
                 criteria.add(Restrictions.ge("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionFromDate()));
             if (lineEstimateSearchRequest.getAdminSanctionToDate() != null)
                 criteria.add(Restrictions.le("adminSanctionDate", lineEstimateSearchRequest.getAdminSanctionToDate()));
+            if (lineEstimateSearchRequest.getEgwStatus() != null)
+                criteria.add(Restrictions.eq("les.code", lineEstimateSearchRequest.getEgwStatus()));
 
             criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
 
