@@ -84,12 +84,17 @@ public class WorkOrderActivityService {
     public void create(WorkOrder workOrder) {
 
         WorkOrderActivity workOrderActivity = null;
+        Double tenderFinalizedPercentage = workOrder.getTenderFinalizedPercentage();
         WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates() != null ? workOrder.getWorkOrderEstimates().get(0)
                 : null;
         if (workOrderEstimate != null) {
             for (Activity activity : workOrderEstimate.getEstimate().getActivities()) {
                 workOrderActivity = new WorkOrderActivity();
-                workOrderActivity.setApprovedRate((activity.getRate() * workOrder.getTenderFinalizedPercentage()) / 100);
+                if (!tenderFinalizedPercentage.equals(Double.valueOf(0)))
+                    workOrderActivity.setApprovedRate(
+                            activity.getRate() + ((activity.getRate() * workOrder.getTenderFinalizedPercentage()) / 100));
+                else
+                    workOrderActivity.setApprovedRate(activity.getRate());
                 workOrderActivity.setApprovedQuantity(activity.getQuantity());
                 workOrderActivity
                         .setApprovedQuantity(workOrderActivity.getApprovedRate() * workOrderActivity.getApprovedQuantity());
