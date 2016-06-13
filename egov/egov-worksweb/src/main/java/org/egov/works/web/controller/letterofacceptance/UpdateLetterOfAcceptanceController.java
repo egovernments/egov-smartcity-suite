@@ -51,6 +51,8 @@ import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -91,6 +93,9 @@ public class UpdateLetterOfAcceptanceController {
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
 
+    @Autowired
+    private EstimateService estimateService;
+
     @ModelAttribute
     public WorkOrder getWorkOrder(@PathVariable final String id) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.parseLong(id));
@@ -98,14 +103,14 @@ public class UpdateLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/modify/{id}", method = RequestMethod.GET)
-    public String viewLOA(@PathVariable final String id, final Model model,
-            final HttpServletRequest request)
+    public String viewLOA(@PathVariable final String id, final Model model, final HttpServletRequest request)
             throws ApplicationException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.parseLong(id));
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
+        final AbstractEstimate abstractEstimate = estimateService
+                .getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
         final WorkOrder newWorkOrder = getWorkOrderDocuments(workOrder);
         model.addAttribute("workOrder", newWorkOrder);
-        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+        model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         model.addAttribute("mode", "modify");
         return "letterOfAcceptance-modify";
@@ -113,15 +118,14 @@ public class UpdateLetterOfAcceptanceController {
 
     @RequestMapping(value = "/modify/{id}", method = RequestMethod.POST)
     public String modify(@ModelAttribute("workOrder") final WorkOrder workOrder, final Model model,
-            final BindingResult resultBinder,
-            final HttpServletRequest request) throws ApplicationException {
-        final List<String> workOrderNumbers = letterOfAcceptanceService.getApprovedWorkOrdersForCreateContractorBill(workOrder.getWorkOrderNumber());
-        if(workOrderNumbers.isEmpty()) {
+            final BindingResult resultBinder, final HttpServletRequest request) throws ApplicationException {
+        final List<String> workOrderNumbers = letterOfAcceptanceService
+                .getApprovedWorkOrdersForCreateContractorBill(workOrder.getWorkOrderNumber());
+        if (workOrderNumbers.isEmpty())
             resultBinder.rejectValue("", "error.modify.loa.finalbill.exists");
-        }
-        
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
 
+        final AbstractEstimate abstractEstimate = estimateService
+                .getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
         final Double revisedWorkOrderAmount = Double.valueOf(request.getParameter("revisedWorkOrderAmount"));
         final Double revisedValue = Double.valueOf(request.getParameter("revisedValue"));
         Double balanceAmount = 0.0;
@@ -132,17 +136,20 @@ public class UpdateLetterOfAcceptanceController {
         if (grossBillAmount == null)
             grossBillAmount = 0.0;
         if (revisedWorkOrderAmount >= 0 && workOrder.getPercentageSign().equals("-")) {
-            if (lineEstimateDetails.getLineEstimate().isSpillOverFlag())
+            if (abstractEstimate != null
+                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag())
                 balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue
-                        - lineEstimateDetails.getGrossAmountBilled().doubleValue();
+                        - abstractEstimate.getLineEstimateDetails().getGrossAmountBilled().doubleValue();
             else
                 balanceAmount = workOrder.getWorkOrderAmount() - grossBillAmount - revisedValue;
             if (balanceAmount < 0) {
-                if(lineEstimateDetails.getLineEstimate().isSpillOverFlag())
-                    grossBillAmount += lineEstimateDetails.getGrossAmountBilled().doubleValue();
-                
-                resultBinder.rejectValue("", "error.modify.loa.appropriation.amount",
-                        new String[] { df.format(grossBillAmount).toString(), df.format(revisedWorkOrderAmount).toString() },
+                if (abstractEstimate != null
+                        && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag())
+                    grossBillAmount += abstractEstimate.getLineEstimateDetails().getGrossAmountBilled().doubleValue();
+
+                resultBinder.rejectValue(
+                        "", "error.modify.loa.appropriation.amount", new String[] {
+                                df.format(grossBillAmount).toString(), df.format(revisedWorkOrderAmount).toString() },
                         null);
             }
         } else if (revisedWorkOrderAmount >= 0 && workOrder.getPercentageSign().equals("+"))
@@ -152,49 +159,53 @@ public class UpdateLetterOfAcceptanceController {
             resultBinder.rejectValue("", "error.modify.loa.agreement.amount");
 
         if (resultBinder.hasErrors()) {
-            model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+            model.addAttribute("abstractEstimate", abstractEstimate);
             model.addAttribute("mode", "modify");
-            model.addAttribute("lineEstimateDetails", lineEstimateDetails);
             model.addAttribute("revisedValue", request.getParameter("revisedValue"));
             return "letterOfAcceptance-modify";
         } else {
             WorkOrder savedWorkOrder = null;
             try {
+                // TODO Read from AbstractEstimate
+                final LineEstimateDetails lineEstimateDetails = lineEstimateService
+                        .findByEstimateNumber(workOrder.getEstimateNumber());
                 savedWorkOrder = letterOfAcceptanceService.update(workOrder, lineEstimateDetails, revisedValue,
                         revisedWorkOrderAmount);
             } catch (final ValidationException e) {
                 final List<Long> budgetheadid = new ArrayList<Long>();
-                budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
+                BigDecimal budgetAvailable = null;
+                if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails() != null) {
+                    final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
+                    budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
 
-                final BigDecimal budgetAvailable = budgetDetailsDAO
-                        .getPlanningBudgetAvailable(
-                                lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
-                                Integer.parseInt(lineEstimateDetails.getLineEstimate()
-                                        .getExecutingDepartment().getId().toString()),
-                                lineEstimateDetails.getLineEstimate().getFunction().getId(),
-                                        null,
-                                        lineEstimateDetails.getLineEstimate().getScheme() == null ? null : Integer
-                                        .parseInt(lineEstimateDetails.getLineEstimate().getScheme().getId()
-                                                .toString()),
-                                lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null
-                                                        : Integer.parseInt(lineEstimateDetails.getLineEstimate().getSubScheme().getId()
-                                                                .toString()),
-                                                                null, budgetheadid, Integer.parseInt(lineEstimateDetails.getLineEstimate().getFund()
-                                                                        .getId().toString()));
+                    budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
+                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                            Integer.parseInt(
+                                    lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId().toString()),
+                            lineEstimateDetails.getLineEstimate().getFunction().getId(), null,
+                            lineEstimateDetails.getLineEstimate().getScheme() == null ? null
+                                    : Integer.parseInt(
+                                            lineEstimateDetails.getLineEstimate().getScheme().getId().toString()),
+                            lineEstimateDetails.getLineEstimate().getSubScheme() == null ? null
+                                    : Integer.parseInt(
+                                            lineEstimateDetails.getLineEstimate().getSubScheme().getId().toString()),
+                            null, budgetheadid,
+                            Integer.parseInt(lineEstimateDetails.getLineEstimate().getFund().getId().toString()));
+                }
 
                 final String errorMessage = messageSource.getMessage("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), df.format(balanceAmount).toString() }, null);
                 model.addAttribute("message", errorMessage);
                 return "lineestimate-success";
             }
-            return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber() + "&isModify=true";
+            return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber()
+                    + "&isModify=true";
         }
     }
 
     private WorkOrder getWorkOrderDocuments(final WorkOrder workOrder) {
         List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-        documentDetailsList = worksUtils.findByObjectIdAndObjectType(workOrder.getId(),
-                WorksConstants.WORKORDER);
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(workOrder.getId(), WorksConstants.WORKORDER);
         workOrder.setDocumentDetails(documentDetailsList);
         return workOrder;
     }

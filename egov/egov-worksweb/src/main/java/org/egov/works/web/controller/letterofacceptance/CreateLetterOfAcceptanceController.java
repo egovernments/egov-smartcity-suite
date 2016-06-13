@@ -101,33 +101,34 @@ public class CreateLetterOfAcceptanceController {
     private EstimateService estimateService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
-    public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder,
-            final Model model, final HttpServletRequest request) {
+    public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder, final Model model,
+            final HttpServletRequest request) {
         final String estimateNumber = request.getParameter("estimateNumber");
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
-        setDropDownValues(model, lineEstimateDetails);
+        final AbstractEstimate abstractEstimate = estimateService
+                .getAbstractEstimateByEstimateNumberAndStatus(estimateNumber);
+        setDropDownValues(model, abstractEstimate);
         workOrder.setWorkOrderDate(new Date());
-        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+        model.addAttribute("lineEstimateDetails", abstractEstimate);
         model.addAttribute("abstractEstimate", estimateService.getAbstractEstimateByEstimateNumber(estimateNumber));
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         return "createLetterOfAcceptance-form";
     }
 
-    private void setDropDownValues(final Model model, final LineEstimateDetails lineEstimateDetails) {
+    private void setDropDownValues(final Model model, final AbstractEstimate abstractEstimate) {
         model.addAttribute("engineerInchargeList",
-                letterOfAcceptanceService.getEngineerInchargeList(
-                        lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId(),
+                letterOfAcceptanceService.getEngineerInchargeList(abstractEstimate.getExecutingDepartment().getId(),
                         letterOfAcceptanceService.getEngineerInchargeDesignationId()));
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
-    public String create(@ModelAttribute("workOrder") WorkOrder workOrder,
-            final Model model, final BindingResult resultBinder, final HttpServletRequest request,
+    public String create(@ModelAttribute("workOrder") WorkOrder workOrder, final Model model,
+            final BindingResult resultBinder, final HttpServletRequest request,
             @RequestParam("file") final MultipartFile[] files) throws IOException {
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-        final AbstractEstimate abstractEstimate  = estimateService.getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
-        final WorkOrder existingWorkOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(workOrder.getEstimateNumber());
+        final AbstractEstimate abstractEstimate = estimateService
+                .getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
+        final WorkOrder existingWorkOrder = letterOfAcceptanceService
+                .getWorkOrderByEstimateNumber(workOrder.getEstimateNumber());
 
         if (existingWorkOrder != null)
             resultBinder.reject("error.loa.exists.for.estimate",
@@ -136,12 +137,12 @@ public class CreateLetterOfAcceptanceController {
 
         validateInput(workOrder, resultBinder);
 
-        if (lineEstimateDetails.getLineEstimate().isSpillOverFlag() && lineEstimateDetails.getLineEstimate().isWorkOrderCreated())
-            validateSpillOverInput(workOrder, resultBinder, lineEstimateDetails);
+        if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated())
+            validateSpillOverInput(workOrder, resultBinder, abstractEstimate);
 
         if (resultBinder.hasErrors()) {
-            setDropDownValues(model, lineEstimateDetails);
-            model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+            setDropDownValues(model, abstractEstimate);
             model.addAttribute("abstractEstimate", abstractEstimate);
             model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
             model.addAttribute("contractorSearch", request.getParameter("contractorSearch"));
@@ -152,8 +153,10 @@ public class CreateLetterOfAcceptanceController {
             workOrder.setContractor(contractorService.findById(workOrder.getContractor().getId(), false));
             final WorkOrderEstimate workOrderEstimate = letterOfAcceptanceService.createWorkOrderEstimate(workOrder);
 
-            if (lineEstimateDetails.getLineEstimate().isSpillOverFlag() && !lineEstimateDetails.getLineEstimate()
-                    .isWorkOrderCreated() || !lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {
+            if (abstractEstimate != null
+                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
+                    && !abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated()
+                    || !abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
                 LetterOfAcceptanceNumberGenerator l = beanResolver
                         .getAutoNumberServiceFor(LetterOfAcceptanceNumberGenerator.class);
                 final String workOrderNumber = l.getNextNumber(workOrderEstimate);
@@ -165,8 +168,8 @@ public class CreateLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/loa-success", method = RequestMethod.GET)
-    public String showLetterOfAcceptanceSuccessPage(@RequestParam("loaNumber") final String loaNumber, final Model model,
-            @RequestParam(value = "isModify", required = false) final boolean isModify) {
+    public String showLetterOfAcceptanceSuccessPage(@RequestParam("loaNumber") final String loaNumber,
+            final Model model, @RequestParam(value = "isModify", required = false) final boolean isModify) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(loaNumber);
         model.addAttribute("workOrder", workOrder);
         if (isModify)
@@ -193,21 +196,20 @@ public class CreateLetterOfAcceptanceController {
     }
 
     private void validateSpillOverInput(final WorkOrder workOrder, final BindingResult resultBinder,
-            final LineEstimateDetails lineEstimateDetails) {
+            final AbstractEstimate abstractEstimate) {
         if (StringUtils.isBlank(workOrder.getWorkOrderNumber()))
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.required");
         final WorkOrder wo = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(workOrder.getWorkOrderNumber());
         if (wo != null)
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.unique");
-        if (workOrder.getFileDate().before(lineEstimateDetails.getLineEstimate().getTechnicalSanctionDate()))
+        if (workOrder.getFileDate().before(abstractEstimate.getEstimateDate()))
             resultBinder.rejectValue("fileDate", "error.loa.filedate");
         if (workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
             resultBinder.rejectValue("fileDate", "error.loa.workorderdate");
     }
 
     @RequestMapping(value = "/contractorsearchform", method = RequestMethod.GET)
-    public String showSearchContractorForm(
-            @ModelAttribute final SearchRequestContractor searchRequestContractor,
+    public String showSearchContractorForm(@ModelAttribute final SearchRequestContractor searchRequestContractor,
             final Model model) throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("contractorClasses", contractorGradeService.getAllContractorGrades());

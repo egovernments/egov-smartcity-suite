@@ -39,11 +39,16 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -54,10 +59,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/letterofacceptance")
 public class ViewLetterOfAcceptanceController {
@@ -66,28 +67,27 @@ public class ViewLetterOfAcceptanceController {
     private LetterOfAcceptanceService letterOfAcceptanceService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private EstimateService estimateService;
 
     @Autowired
     private WorksUtils worksUtils;
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String viewLOA(@PathVariable final String id, final Model model,
-            final HttpServletRequest request)
-                    throws ApplicationException {
+    public String viewLOA(@PathVariable final String id, final Model model, final HttpServletRequest request)
+            throws ApplicationException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.parseLong(id));
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
+        final AbstractEstimate abstractEstimate = estimateService
+                .getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
         final WorkOrder newWorkOrder = getWorkOrderDocuments(workOrder);
         model.addAttribute("workOrder", newWorkOrder);
-        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+        model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("mode", "view");
         return "letterOfAcceptance-view";
     }
 
     private WorkOrder getWorkOrderDocuments(final WorkOrder workOrder) {
         List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-        documentDetailsList = worksUtils.findByObjectIdAndObjectType(workOrder.getId(),
-                WorksConstants.WORKORDER);
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(workOrder.getId(), WorksConstants.WORKORDER);
         workOrder.setDocumentDetails(documentDetailsList);
         return workOrder;
     }

@@ -91,14 +91,14 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${lineEstimateDetails.estimateNumber}"></c:out>
+								value="${abstractEstimate.estimateNumber}"></c:out>
 						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.workidentificationnumber" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:out default="N/A"
-								value="${lineEstimateDetails.projectCode.code}"></c:out>
+								value="${abstractEstimate.projectCode.code}"></c:out>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -106,7 +106,7 @@
 							<spring:message code="lbl.nameofwork" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<c:out default="N/A" value="${lineEstimateDetails.nameOfWork}"></c:out>
+							<c:out default="N/A" value="${abstractEstimate.name}"></c:out>
 						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.department" />
@@ -115,7 +115,7 @@
 							<form:hidden path="id" name="id" value="${id}"
 								class="form-control table-input hidden-input" />
 							<c:out default="N/A"
-								value="${lineEstimateDetails.lineEstimate.executingDepartment.name}"></c:out>
+								value="${abstractEstimate.executingDepartment.name}"></c:out>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -140,13 +140,13 @@
 						<div class="col-xs-3 add-margin view-content">
 							<c:choose>
 								<c:when
-									test="${lineEstimateDetails.actualEstimateAmount == '0.0'}">
+									test="${abstractEstimate.estimateValue == '0.0'}">
 									<c:out default="N/A" value="N/A" />
 								</c:when>
 								<c:otherwise>
 									<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
 										minFractionDigits="2"
-										value="${lineEstimateDetails.actualEstimateAmount}" />
+										value="${abstractEstimate.estimateValue}" />
 								</c:otherwise>
 							</c:choose>
 						</div>

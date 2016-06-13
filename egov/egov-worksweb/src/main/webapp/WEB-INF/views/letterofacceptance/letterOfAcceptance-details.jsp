@@ -43,11 +43,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<input type="hidden" id="technicalSanctionDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${lineEstimateDetails.lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>' />
+<input type="hidden" id="technicalSanctionDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${abstractEstimate.lineEstimateDetails.lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>' />
 <input type="hidden" id="errorFileDate" value="<spring:message code='error.loa.filedate'/>">
 <input type="hidden" id="errorWorkOrderDate" value="<spring:message code='error.loa.workorderdate'/>">
-<input type="hidden" id="spillOverFlag" value="${lineEstimateDetails.lineEstimate.spillOverFlag }">
-<input type="hidden" id="workOrderCreated" value="${lineEstimateDetails.lineEstimate.workOrderCreated }">
+<input type="hidden" id="spillOverFlag" value="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag }">
+<input type="hidden" id="workOrderCreated" value="${abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.file.no" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
@@ -64,10 +64,15 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimateamount" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control text-right" data-pattern="decimalvalue" id="estimateAmount" value="${lineEstimateDetails.actualEstimateAmount}" disabled> 
+		<input type="text" class="form-control text-right" data-pattern="decimalvalue" id="estimateAmount" value="${abstractEstimate.estimateValue}" disabled> 
 	</div>
-	
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.tender.finalized.percentage" /></label><div class="col-sm-3">
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimateworkvalue" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control text-right" data-pattern="decimalvalue" id="workValue" value="${abstractEstimate.workValue}" disabled> 
+	</div>
+</div>
+<div class="form-group">
+<label class="col-sm-3 control-label text-right"><spring:message code="lbl.tender.finalized.percentage" /></label><div class="col-sm-3">
 		<div class="input-group" style="margin-bottom: 0;">
 		    <div class="input-group-btn number-sign">
                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="sign-text">+</span> &nbsp;<span class="caret"></span></button>
@@ -81,18 +86,18 @@
 			<form:errors path="tenderFinalizedPercentage" cssClass="add-margin error-msg" />
         </div> 
 	</div>
-</div>
-
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.agreement.amount" /><span class="mandatory"></span></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.agreement.amount" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		 <form:input path="workOrderAmount" name="workOrderAmount" id="workOrderAmount"  type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" required="required"/>
 		 <form:errors path="workOrderAmount" cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.dateofagreement" /></label>
+</div>
+
+<div class="form-group">
+<label class="col-sm-3 control-label text-right"><spring:message code="lbl.dateofagreement" /></label>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
-			<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
+			<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
 				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" value="${workOrderDate}" />
 			</c:when>
 			<c:otherwise>
@@ -101,10 +106,14 @@
 		</c:choose>
 		<form:errors path="workOrderDate" cssClass="add-margin error-msg" />
 	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.preparedby" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control" id="preparedBy" value="${loggedInUser}" disabled>
+	</div>
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
+<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
 		<div class="input-group">
 			<input id="contractorSearch" name="contractorSearch" value="${contractorSearch}" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="50" required="required" type="text" placeholder="Type first 3 letters of Contractor Name/Code" > 
@@ -116,13 +125,6 @@
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.code" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="contractorCode" name="contractorCode" value="${contractorCode}" disabled>
-	</div>
-</div>
-
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.preparedby" /></label>
-	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="preparedBy" value="${loggedInUser}" disabled>
 	</div>
 </div>
 
