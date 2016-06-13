@@ -113,11 +113,12 @@ function validateEstimateTemplateFormAndSubmit() {
           <s:fielderror/>
         </div>
     </s:if>
-    <s:if test="%{hasActionMessages()}">
-        <div class="messagestyle">
-        	<s:property value="%{code}"/> &nbsp; <s:actionmessage theme="simple"/>
-        </div>
-    </s:if>
+	<s:if test="%{hasActionMessages()}">
+		<div class="alert alert-success">
+			 <a href="#" style="font-size:21px;" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<s:actionmessage theme="simple" escape="false"/>
+		</div>
+	</s:if>
 <s:form theme="simple" name="estimateTemplateForm" cssClass="form-horizontal form-groups-bordered">
 	    <s:token/>
 <s:push value="model">

@@ -54,7 +54,7 @@ public class UOMService extends PersistenceService<UOM, Long> {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public UOM getUOMById(final Long uomId) {
+    public UOM getUOMById(final Integer uomId) {
         final UOM uom = entityManager.find(UOM.class, uomId);
         return uom;
     }

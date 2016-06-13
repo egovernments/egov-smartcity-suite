@@ -49,7 +49,9 @@
     "Code":"<s:property value="%{sor.code}" />",
     "FullDescription":"<s:property value="%{sor.descriptionJS}" escape="false" />",
     "UOM":"<s:property value="%{sor.uom.uom}" />",
-    "UnitRate":"<s:property value="%{currentRate.rate.value}" />"
+    "UnitRate":"<s:property value="%{currentRate.rate.value}" />",
+    "scheduleCategory":"<s:property value="%{sor.scheduleCategory.code}" />",
+    "scheduleCategoryId":"<s:property value="%{sor.scheduleCategory.id}" />"
     }
     ]
   }

@@ -64,13 +64,26 @@
 function afterSORResults(sType,results){
     clearMessage('sor_error');
     document.getElementById("loadImage").style.display='none';
-    if(results[2].length==0) showMessage('sor_error','No SORs found')
+    var message = document.getElementById('noSORFound').value;
+    if(results[2].length==0) showMessage('sor_error',message)
 }
 
+function afterSORResultsClear(){
+    clearMessage('sor_error');
+    document.getElementById("search").value = "";
+}
 function sorSearchParameters(){
-	if(dom.get('scheduleCategory').value!=-1){
-	   	return "scheduleCategoryId="+dom.get('scheduleCategory').value;
-	}
+	if(dom.get('scheduleCategory').value != ""){
+		var str = "";
+		var select = document.getElementById("scheduleCategory");
+		for(i = 0; i < select.length; i++) {
+			if(select[i].selected)
+				str += select[i].value + ",";
+		}
+	   	return "scheduleCategoryId="+str;
+	   	}
+	var message = document.getElementById('selectScheduleCategory').value;
+	showMessage('sor_error',message)
 }
 
 function calculateSOR(elem,recordId){
@@ -117,7 +130,7 @@ var textboxFormatter = function(el, oRecord, oColumn, oData) {
 return textboxFormatter;
 }
 var readOnlyTextboxFormatter = createReadOnlyTextBoxFormatter(5,5);
-
+	
 function createTextBoxFormatter(size,maxlength){
 var textboxFormatter = function(el, oRecord, oColumn, oData) {
     var value = (YAHOO.lang.isValue(oData))?oData:"";
@@ -153,7 +166,7 @@ var hiddenFormatter = createHiddenFormatter(10,10);
 
 
 function createRateRecIdHiddenFormatter(size,maxlength){
-var textboxFormatter = function(el, oRecord, oColumn, oData) {
+	var textboxFormatter = function(el, oRecord, oColumn, oData) {
     var value = sorDataTable.getRecordSet().getLength();
     var id=oColumn.getKey()+oRecord.getId();
     var fieldName=oColumn.getKey()+oRecord.getId();
@@ -165,7 +178,7 @@ return textboxFormatter;
 var hiddenRateRecIdFormatter = createRateRecIdHiddenFormatter(5,5); 
 
 function createSorRateHiddenFormatter(size,maxlength){
-var textboxFormatter = function(el, oRecord, oColumn, oData) {
+	var textboxFormatter = function(el, oRecord, oColumn, oData) {
     var value = (YAHOO.lang.isValue(oData))?oData:"";
     var id=oColumn.getKey()+oRecord.getId();
     var fieldName=oColumn.getKey()+oRecord.getId();
@@ -177,7 +190,7 @@ return textboxFormatter;
 var sorRateHiddenFormatter = createSorRateHiddenFormatter(5,5);
 
 var searchSelectionHandler = function(sType, arguments) { 
-
+	
             dom.get("search").value='';
  	        var oData = arguments[2];
  	       var mySuccessHandler = function(req,res) {
@@ -193,7 +206,7 @@ var searchSelectionHandler = function(sType, arguments) {
                       return;
                    }
                 }
-                sorDataTable.addRow({schedule:res.results[0].Id,Code:res.results[0].Code,SlNo:sorDataTable.getRecordSet().getLength()+1,Description:res.results[0].Description,UOM:res.results[0].UOM,sorrate:res.results[0].UnitRate,rate:res.results[0].UnitRate,Delete:'X',FullDescription:res.results[0].FullDescription});
+                sorDataTable.addRow({schedule:res.results[0].Id,Code:res.results[0].Code,SlNo:sorDataTable.getRecordSet().getLength()+1,scheduleCategory:res.results[0].scheduleCategory,scheduleCategoryId:res.results[0].scheduleCategoryId,Description:res.results[0].Description,UOM:res.results[0].UOM,sorrate:res.results[0].UnitRate,rate:res.results[0].UnitRate,Delete:'X',FullDescription:res.results[0].FullDescription});
                 getFactor(res.results[0].UOM,sorDataTable.getRecord(sorDataTable.getRecordSet().getLength()-1));
             };
             
@@ -205,7 +218,7 @@ var searchSelectionHandler = function(sType, arguments) {
 var month=date.getMonth()+1;
 var dd=date.getDate()+"/"+month+"/"+date.getFullYear();
 
-	        makeJSONCall(["Id","Description","Code","UOM","UnitRate","FullDescription"],'${pageContext.request.contextPath}/masters/scheduleOfRateSearch-findSORAjax.action',{sorID:oData[1]},mySuccessHandler,myFailureHandler) ;
+	        makeJSONCall(["Id","scheduleCategory","Description","Code","UOM","UnitRate","FullDescription"],'${pageContext.request.contextPath}/masters/scheduleOfRateSearch-findSORAjax.action',{sorID:oData[1]},mySuccessHandler,myFailureHandler) ;
 
 		}
 
@@ -216,6 +229,7 @@ var makeSORDataTable = function() {
             {key:"schedule", hidden:true,formatter:hiddenFormatter,sortable:false, resizeable:false},
             {key:"rateRecId", hidden:true,formatter:hiddenRateRecIdFormatter,sortable:false, resizeable:false},
             {key:"SlNo",label:'Sl No', width:50,sortable:false, resizeable:false},
+            {key:"scheduleCategory",label:'SOR Category',width:150,sortable:false, resizeable:false},
             {key:"Code",label:'Code', width:150,sortable:false, resizeable:false},
             {key:"sorrate", label:'Rate', hidden:true, formatter:sorRateHiddenFormatter,sortable:false, resizeable:false},
             {key:"rate",label:'Unit Rate',hidden:true,  formatter:readOnlyTextboxFormatter, sortable:false, resizeable:false},
@@ -311,13 +325,15 @@ function showProcessImage(event) {
 			<s:text name="page.title.estimate.SOR" />
 		</div>
 	</div>
+	<input type="hidden" value="<s:text name='estimate.template.select.category' />" id='selectScheduleCategory'>
+	<input type="hidden" value="<s:text name='estimate.template.no.sorfound' />" id='noSORFound'>
 	<div class="panel-body">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"> <s:text
 					name="estimate.scheduleCategory.name" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select onchange="clearCategoryMessage();" headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description" />
+				<s:select onchange="clearCategoryMessage();" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code+' : '+description" multiple="true" />
 			</div>
 		</div>
 
@@ -325,10 +341,10 @@ function showProcessImage(event) {
 			<label class="col-sm-2 control-label text-right"> 
 				<s:text	name="estimate.addSOR" />
 			</label>
-			<div class="col-sm-8 add-margin">
+			<div class="col-sm-offset-2 col-sm-8 add-margin">
 				<div id="sorSearch_autocomplete">
 					<div class="right-inner-addon">
-						<input id="search" type="text" name="item" class="form-control"	onkeypress="if(event.keyCode==13) return false;return showProcessImage(event);">
+						<input id="search" type="text" name="item" class="form-control" onblur="afterSORResultsClear();"	onkeyup="if(event.keyCode==13) return false;return showProcessImage(event);">
 						<i id="loadImage" style="display: none" class="fa fa-circle-o-notch fa-spin"></i>
 					</div>
 					<span id="searchResults"></span>
@@ -336,7 +352,11 @@ function showProcessImage(event) {
 				</div>
 			</div>
 		</div>
-
+		<div class="form-group no-margin-bottom">
+			<div class="col-sm-offset-2 col-sm-8">
+			<div></div>
+			</div>
+		</div>
 		<div class="form-group no-margin-bottom">
 			<div class="col-sm-offset-2 col-sm-8">
 				<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display: none;"></div>
@@ -358,6 +378,8 @@ makeSORDataTable();
 <s:iterator id="soriterator" value="SORActivities" status="row_status">
     sorDataTable.addRow({schedule:'<s:property value="schedule.id"/>',
                         SlNo:'<s:property value="#row_status.count"/>',
+                        scheduleCategory:'<s:property value="schedule.scheduleCategory.code"/>',
+                        scheduleCategoryId:'<s:property value="schedule.scheduleCategory.id"/>',
                         Code:'<s:property value="schedule.code"/>',
                         Description:'<s:property value="schedule.summaryJS"/>',
                         UOM:'<s:property value="schedule.uom.uom"/>',

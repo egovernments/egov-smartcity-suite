@@ -79,6 +79,7 @@
 								<thead>
 									<tr>
 										<th><s:text name="column.title.SLNo" /></th>
+										<th><s:text name="scheduleCategory.sor.category" /></th>
 										<th><s:text name="estimate.template.code" /></th>
 										<th><s:text name="estimate.template.description" /></th>
 										<th><s:text name="column.title.UOM" /></th>
@@ -88,6 +89,7 @@
 									<s:iterator id="soriterator" value="SORActivities" status="row_status">
 										<tr>
 											<td><s:property value="#row_status.count" /></td>
+											<td><s:property value="%{schedule.scheduleCategory.code}" /></td>
 											<td><s:property value="%{schedule.code}" /></td>
 											<td><s:property value="%{schedule.descriptionJS}" /></td>
 											<td><s:property value="%{schedule.uom.uom}" /></td>
@@ -118,8 +120,8 @@
 										<tr>
 											<td><s:property value="#row_status.count" /></td>
 											<td><s:property value="%{nonSor.descriptionJS}" /></td>
-											<td><s:property value="%{nonSor.uom.id}" /></td>
-											<td>
+											<td><s:property value="%{uom.uom}" /></td>
+											<td align="right">
 											<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{rate}" /></fmt:formatNumber>
 											</td>
 										</tr>

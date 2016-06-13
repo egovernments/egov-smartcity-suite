@@ -124,14 +124,18 @@ for(i=0;i<document.estimateTemplateForm.elements.length;i++){
 			    <s:text name="estimate.template.code" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" maxlength="25"/>
+				<s:if test="%{id == null}">
+					<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" maxlength="25"/>
+				</s:if><s:else>
+					<s:textfield name="code" value="%{code}" id="code" cssClass="form-control" maxlength="25" readonly="true" />
+				</s:else>
 			</div>
 			<s:if test="%{model.id!=null}" >
 				<label class="col-sm-2 control-label text-right">
 				    <s:text name="estimate.template.status" />
 				</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="1"  list="#{'0':'ACTIVE', '1':'INACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
+				<s:select   list="#{'0':'INACTIVE', '1':'ACTIVE'}"  name="status"  value="%{status}" id="status" cssClass="form-control"/>
 			</div>
             </s:if>
             <s:else>

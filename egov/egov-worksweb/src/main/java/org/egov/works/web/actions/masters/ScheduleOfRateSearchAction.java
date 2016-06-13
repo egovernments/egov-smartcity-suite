@@ -39,19 +39,18 @@
  */
 package org.egov.works.web.actions.masters;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.works.master.service.ScheduleOfRateService;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ScheduleOfRateSearchAction.SEARCH_RESULTS, location = "scheduleOfRateSearch-searchResults.jsp"),
@@ -68,7 +67,7 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
     private Long sorID;
     private Date estimateDate;
     private String query;
-    private Long scheduleCategoryId;
+    private String scheduleCategoryId;
     private Long estimateId;
     private List<ScheduleOfRate> scheduleOfRateList;
 
@@ -138,7 +137,7 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
         this.estimateId = estimateId;
     }
 
-    public void setScheduleCategoryId(final Long scheduleCategoryId) {
+    public void setScheduleCategoryId(final String scheduleCategoryId) {
         this.scheduleCategoryId = scheduleCategoryId;
     }
 

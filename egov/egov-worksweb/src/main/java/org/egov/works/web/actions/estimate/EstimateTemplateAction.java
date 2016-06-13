@@ -57,8 +57,10 @@ import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.master.service.EstimateTemplateService;
+import org.egov.works.master.service.UOMService;
 import org.egov.works.models.masters.EstimateTemplate;
 import org.egov.works.models.masters.EstimateTemplateActivity;
+import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
@@ -95,7 +97,10 @@ public class EstimateTemplateAction extends SearchFormAction {
     public static final String EDIT = "edit";
     public static final String SUCCESS = "success";
     private AbstractEstimateService abstractEstimateService;
-
+    
+    @Autowired
+    private UOMService uomService;
+    
     public EstimateTemplateAction() {
         addRelatedEntity("workType", EgwTypeOfWork.class);
         addRelatedEntity("subType", EgwTypeOfWork.class);
@@ -166,6 +171,13 @@ public class EstimateTemplateAction extends SearchFormAction {
             estimateTemplate.setStatus(1);
         else
             setMode("edit");
+        if (estimateTemplate != null) {
+            final EstimateTemplate template = estimateTemplateService.getEstimateTemplateByCode(estimateTemplate.getCode());
+            if (template != null && estimateTemplate.getId() != template.getId()) {
+                addActionMessage(getText("estimateTemplate.code.isunique"));
+                return NEW;
+            }
+        }
         estimateTemplateService.create(estimateTemplate);
         if (StringUtils.isBlank(mode))
             addActionMessage(getText("estimate.template.success.save", new String[] { estimateTemplate.getCode(), estimateTemplate.getName()}));
@@ -194,13 +206,14 @@ public class EstimateTemplateAction extends SearchFormAction {
     protected void populateNonSorActivities() {
         for (final EstimateTemplateActivity activity : nonSorActivities)
             if (activity != null) {
-                activity.setUom(activity.getNonSor().getUom());
+                activity.setUom(uomService.getUOMById(activity.getNonSor().getUom().getId()));
                 activity.getNonSor().setCreatedBy(worksService.getCurrentLoggedInUser());
                 activity.getNonSor().setCreatedDate(new Date());
                 activity.getNonSor().setLastModifiedBy(worksService.getCurrentLoggedInUser());
                 activity.getNonSor().setLastModifiedDate(new Date());
                 estimateTemplate.addActivity(activity);
             }
+        
     }
 
     private void populateActivities() {
