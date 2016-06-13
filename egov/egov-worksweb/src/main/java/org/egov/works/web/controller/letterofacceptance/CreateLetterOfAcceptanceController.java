@@ -41,9 +41,12 @@ package org.egov.works.web.controller.letterofacceptance;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -54,10 +57,10 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.master.service.ContractorService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +79,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class CreateLetterOfAcceptanceController {
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -108,6 +111,11 @@ public class CreateLetterOfAcceptanceController {
                 .getAbstractEstimateByEstimateNumberAndStatus(estimateNumber);
         setDropDownValues(model, abstractEstimate);
         workOrder.setWorkOrderDate(new Date());
+        
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
+        final AppConfigValues value = values.get(0);
+        model.addAttribute("percentage_on_estimaterate_or_workvalue", value.getValue());
         model.addAttribute("lineEstimateDetails", abstractEstimate);
         model.addAttribute("abstractEstimate", estimateService.getAbstractEstimateByEstimateNumber(estimateNumber));
         model.addAttribute("workOrder", workOrder);

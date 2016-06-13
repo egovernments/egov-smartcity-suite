@@ -66,15 +66,15 @@
 								 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
 								 	</td> 
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
-								 	<td><c:out value="${sorDtls.rate}"></c:out></td>
+								 	<td><c:out value="${sorDtls.sorRate}"></c:out></td>
 								 	<td class="text-right"><c:out value="${sorDtls.getAmount().value}"></c:out></td>
 								</tr>
 						</c:forEach>
 						<c:forEach items="${abstractEstimate.getNonSORActivities()}" var="nonSorDtls" varStatus="item">
 								<tr >
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
-									<td>-</td>
-									<td>-</td>
+									<td></td>
+									<td></td>
 									<td><c:out value="${nonSorDtls.quantity}"></c:out></td>
 									<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>

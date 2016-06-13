@@ -42,11 +42,8 @@ package org.egov.works.letterofacceptance.service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.letterofacceptance.repository.WorkOrderActivityRepository;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderActivity;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,32 +75,6 @@ public class WorkOrderActivityService {
     public WorkOrderActivity create(final WorkOrderActivity workOrderActivity) {
 
         return workOrderActivityRepository.save(workOrderActivity);
-    }
-
-    @Transactional
-    public void create(WorkOrder workOrder) {
-
-        WorkOrderActivity workOrderActivity = null;
-        Double tenderFinalizedPercentage = workOrder.getTenderFinalizedPercentage();
-        WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates() != null ? workOrder.getWorkOrderEstimates().get(0)
-                : null;
-        if (workOrderEstimate != null) {
-            for (Activity activity : workOrderEstimate.getEstimate().getActivities()) {
-                workOrderActivity = new WorkOrderActivity();
-                if (!tenderFinalizedPercentage.equals(Double.valueOf(0)))
-                    workOrderActivity.setApprovedRate(
-                            activity.getRate() + ((activity.getRate() * workOrder.getTenderFinalizedPercentage()) / 100));
-                else
-                    workOrderActivity.setApprovedRate(activity.getRate());
-                workOrderActivity.setApprovedQuantity(activity.getQuantity());
-                workOrderActivity
-                        .setApprovedQuantity(workOrderActivity.getApprovedRate() * workOrderActivity.getApprovedQuantity());
-                workOrderActivity.setActivity(activity);
-                workOrderActivity.setWorkOrderEstimate(workOrderEstimate);
-                workOrderActivityRepository.save(workOrderActivity);
-            }
-        }
-
     }
 
 }

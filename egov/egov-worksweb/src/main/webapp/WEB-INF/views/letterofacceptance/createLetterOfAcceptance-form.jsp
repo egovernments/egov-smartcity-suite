@@ -79,4 +79,4 @@
 	</div>
 </form:form>
 
-<script src="<c:url value='/resources/js/letterofacceptance.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/letterofacceptance/letterofacceptance.js?rnd=${app_release_no}'/>"></script>

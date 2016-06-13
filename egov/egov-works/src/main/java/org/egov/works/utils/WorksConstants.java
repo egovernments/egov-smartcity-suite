@@ -309,4 +309,6 @@ public class WorksConstants {
 
     public static final String ESTIMATE_ONSAVE_NEXTACTION_VALUE = "Pending Submission";
     
+    public static final String APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE = "PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE";
+    
 }

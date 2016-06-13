@@ -64,204 +64,213 @@ import org.egov.works.revisionestimate.entity.enums.RevisionType;
 @Entity
 @Table(name = "EGW_WORKORDER_ACTIVITY")
 @NamedQueries({
-		@NamedQuery(name = WorkOrderActivity.GETALLWORKORDERACTIVITYWITHMB, query = " Select mbDetails.workOrderActivity.id,sum(mbDetails.quantity) from MBDetails mbDetails where mbDetails.mbHeader.workOrderEstimate.id=? and mbDetails.mbHeader.egwStatus.code = ? group by mbDetails.workOrderActivity "),
-		@NamedQuery(name = WorkOrderActivity.GETALLWORKORDERACTIVITYWITHOUTMB, query = "from WorkOrderActivity woe where woe.workOrderEstimate.id=? and woe.workOrderEstimate.workOrder.egwStatus.code!=? and woe.id not in  (Select distinct(mbDetails.workOrderActivity.id) from MBDetails mbDetails where mbDetails.mbHeader.workOrderEstimate.id=?  and mbDetails.mbHeader.egwStatus.code = ?) "),
-		@NamedQuery(name = WorkOrderActivity.GETASSIGNEDQUANTITYFORACTIVITY, query = " Select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.negotiationNumber=? AND woa.workOrderEstimate.workOrder.egwStatus.code !=? group by woa.activity having woa.activity.id = ? "),
-		@NamedQuery(name = WorkOrderActivity.GETTOTALQUANTITYFORWO, query = " Select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.negotiationNumber=? AND woa.workOrderEstimate.workOrder.egwStatus.code !=? "),
-		@NamedQuery(name = WorkOrderActivity.GETTOTALQUANTITYFORNEWWO, query = "  Select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.negotiationNumber=? AND woa.workOrderEstimate.workOrder.egwStatus.code =?  ") })
+        @NamedQuery(name = WorkOrderActivity.GETALLWORKORDERACTIVITYWITHMB, query = " Select mbDetails.workOrderActivity.id,sum(mbDetails.quantity) from MBDetails mbDetails where mbDetails.mbHeader.workOrderEstimate.id=? and mbDetails.mbHeader.egwStatus.code = ? group by mbDetails.workOrderActivity "),
+        @NamedQuery(name = WorkOrderActivity.GETALLWORKORDERACTIVITYWITHOUTMB, query = "from WorkOrderActivity woe where woe.workOrderEstimate.id=? and woe.workOrderEstimate.workOrder.egwStatus.code!=? and woe.id not in  (Select distinct(mbDetails.workOrderActivity.id) from MBDetails mbDetails where mbDetails.mbHeader.workOrderEstimate.id=?  and mbDetails.mbHeader.egwStatus.code = ?) "),
+        @NamedQuery(name = WorkOrderActivity.GETASSIGNEDQUANTITYFORACTIVITY, query = " Select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.negotiationNumber=? AND woa.workOrderEstimate.workOrder.egwStatus.code !=? group by woa.activity having woa.activity.id = ? "),
+        @NamedQuery(name = WorkOrderActivity.GETTOTALQUANTITYFORWO, query = " Select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.negotiationNumber=? AND woa.workOrderEstimate.workOrder.egwStatus.code !=? "),
+        @NamedQuery(name = WorkOrderActivity.GETTOTALQUANTITYFORNEWWO, query = "  Select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.negotiationNumber=? AND woa.workOrderEstimate.workOrder.egwStatus.code =?  ") })
 @SequenceGenerator(name = WorkOrderActivity.SEQ_EGW_WORKORDER_ACTIVITY, sequenceName = WorkOrderActivity.SEQ_EGW_WORKORDER_ACTIVITY, allocationSize = 1)
 public class WorkOrderActivity extends AbstractAuditable {
 
-	private static final long serialVersionUID = -5986495021099638251L;
+    private static final long serialVersionUID = -5986495021099638251L;
 
-	public static final String SEQ_EGW_WORKORDER_ACTIVITY = "SEQ_EGW_WORKORDER_ACTIVITY";
-	public static final String GETALLWORKORDERACTIVITYWITHMB = "getallWorkOrderActivityWithMB";
-	public static final String GETALLWORKORDERACTIVITYWITHOUTMB = "getallWorkOrderActivityWithoutMB";
-	public static final String GETASSIGNEDQUANTITYFORACTIVITY = "getAssignedQuantityForActivity";
-	public static final String GETTOTALQUANTITYFORWO = "getTotalQuantityForWO";
-	public static final String GETTOTALQUANTITYFORNEWWO = "getTotalQuantityForNewWO";
+    public static final String SEQ_EGW_WORKORDER_ACTIVITY = "SEQ_EGW_WORKORDER_ACTIVITY";
+    public static final String GETALLWORKORDERACTIVITYWITHMB = "getallWorkOrderActivityWithMB";
+    public static final String GETALLWORKORDERACTIVITYWITHOUTMB = "getallWorkOrderActivityWithoutMB";
+    public static final String GETASSIGNEDQUANTITYFORACTIVITY = "getAssignedQuantityForActivity";
+    public static final String GETTOTALQUANTITYFORWO = "getTotalQuantityForWO";
+    public static final String GETTOTALQUANTITYFORNEWWO = "getTotalQuantityForNewWO";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGW_WORKORDER_ACTIVITY, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_WORKORDER_ACTIVITY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WORKORDER_ESTIMATE_ID", nullable = false)
-	private WorkOrderEstimate workOrderEstimate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WORKORDER_ESTIMATE_ID", nullable = false)
+    private WorkOrderEstimate workOrderEstimate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ESTIMATE_ACTIVITY_ID", nullable = false)
-	private Activity activity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ESTIMATE_ACTIVITY_ID", nullable = false)
+    private Activity activity;
 
-	@Required(message = "WorkOrderActivity.approvedRate.not.null")
-	@GreaterThan(value = 0, message = "WorkOrderActivity.approvedRate.non.negative")
-	@Column(name = "APPROVED_RATE")
-	private double approvedRate;
+    @Required(message = "WorkOrderActivity.approvedRate.not.null")
+    @GreaterThan(value = 0, message = "WorkOrderActivity.approvedRate.non.negative")
+    @Column(name = "APPROVED_RATE")
+    private double approvedRate;
 
-	@Required(message = "WorkOrderActivity.approvedQuantity.not.null")
-	@GreaterThan(value = 0, message = "WorkOrderActivity.approvedQuantity.non.negative")
-	@Column(name = "APPROVED_QUANTITY")
-	private double approvedQuantity;
+    @Required(message = "WorkOrderActivity.approvedQuantity.not.null")
+    @GreaterThan(value = 0, message = "WorkOrderActivity.approvedQuantity.non.negative")
+    @Column(name = "APPROVED_QUANTITY")
+    private double approvedQuantity;
 
-	@Column(name = "APPROVED_AMOUNT")
-	private double approvedAmount;
+    @Column(name = "APPROVED_AMOUNT")
+    private double approvedAmount;
 
-	private String remarks;
+    private String remarks;
 
-	// Used in new/cancelled WO (for validating the approvedquantity)
-	@Transient
-	private double unAssignedQuantity;
+    private String sorCategory;
 
-	// in-memory variable for Change in quantity
-	@Transient
-	private WorkOrderActivity parent;
+    // Used in new/cancelled WO (for validating the approvedquantity)
+    @Transient
+    private double unAssignedQuantity;
 
-	@Transient
-	private double totalEstQuantity;
+    // in-memory variable for Change in quantity
+    @Transient
+    private WorkOrderActivity parent;
 
-	@Transient
-	private double prevCumlvQuantity;
+    @Transient
+    private double totalEstQuantity;
 
-	public Activity getActivity() {
-		return activity;
-	}
+    @Transient
+    private double prevCumlvQuantity;
 
-	public void setActivity(final Activity activity) {
-		this.activity = activity;
-	}
+    public Activity getActivity() {
+        return activity;
+    }
 
-	public double getApprovedRate() {
-		return approvedRate;
-	}
+    public void setActivity(final Activity activity) {
+        this.activity = activity;
+    }
 
-	public void setApprovedRate(final double approvedRate) {
-		this.approvedRate = approvedRate;
-	}
+    public double getApprovedRate() {
+        return approvedRate;
+    }
 
-	public double getApprovedQuantity() {
-		return approvedQuantity;
-	}
+    public void setApprovedRate(final double approvedRate) {
+        this.approvedRate = approvedRate;
+    }
 
-	public void setApprovedQuantity(final double approvedQuantity) {
-		this.approvedQuantity = approvedQuantity;
-	}
+    public double getApprovedQuantity() {
+        return approvedQuantity;
+    }
 
-	public double getApprovedAmount() {
-		return approvedAmount;
-	}
+    public void setApprovedQuantity(final double approvedQuantity) {
+        this.approvedQuantity = approvedQuantity;
+    }
 
-	public void setApprovedAmount(final double approvedAmount) {
-		this.approvedAmount = approvedAmount;
-	}
+    public double getApprovedAmount() {
+        return approvedAmount;
+    }
 
-	public WorkOrderEstimate getWorkOrderEstimate() {
-		return workOrderEstimate;
-	}
+    public void setApprovedAmount(final double approvedAmount) {
+        this.approvedAmount = approvedAmount;
+    }
 
-	public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
-		this.workOrderEstimate = workOrderEstimate;
-	}
+    public WorkOrderEstimate getWorkOrderEstimate() {
+        return workOrderEstimate;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
+        this.workOrderEstimate = workOrderEstimate;
+    }
 
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public double getUnAssignedQuantity() {
-		return unAssignedQuantity;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
-	public void setUnAssignedQuantity(final double unAssignedQuantity) {
-		this.unAssignedQuantity = unAssignedQuantity;
-	}
+    public double getUnAssignedQuantity() {
+        return unAssignedQuantity;
+    }
 
-	public double getConversionFactor() {
-		if (workOrderEstimate.getWorkOrder().getParent() != null && activity.getRevisionType() != null
-				&& (activity.getRevisionType().toString().equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString())
-						|| activity.getRevisionType().toString()
-								.equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
-			return activity.getConversionFactorForRE(workOrderEstimate.getWorkOrder().getParent().getWorkOrderDate());
-		else if (workOrderEstimate.getWorkOrder().getParent() != null
-				&& workOrderEstimate.getEstimate().getParent() != null && activity.getRevisionType() != null
-				&& (activity.getRevisionType().toString().equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
-						|| activity.getRevisionType().toString()
-								.equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
-			return activity.getConversionFactorForRE(workOrderEstimate.getEstimate().getParent().getEstimateDate());
-		else
-			return activity.getConversionFactor();
-	}
+    public void setUnAssignedQuantity(final double unAssignedQuantity) {
+        this.unAssignedQuantity = unAssignedQuantity;
+    }
 
-	/**
-	 * This method is used to return the ScheduleOfRate based on if its
-	 * AbstractEstimate(estimateDate is used) or RevisionEstimate(original
-	 * parent workorderDate is used)
-	 *
-	 * @return a double value of sorRate
-	 */
-	public double getScheduleOfRate() {
-		double sorRate = 0.0;
-		if (getActivity().getAbstractEstimate().getParent() == null)
-			// Original AbstractEstimate
-			sorRate = getActivity().getSORCurrentRate().getValue();
-		else {
-			Date workOrderDate = new Date();
-			// RevisionEstimate
-			// If parent is null or if revision type is ADDITIONAL_QUANTITY or
-			// REDUCED_QUANTITY then its original WorkOrder
-			// else if its Revision WorkOrder and revision type is
-			// NON_TENDERED_ITEM or LUMP_SUM_ITEM then, get the WorkOrderDate
-			// from parent
-			workOrderDate = getWorkOrderEstimate().getWorkOrder().getParent().getWorkOrderDate();
-			if (activity.getRevisionType() != null && (activity.getRevisionType().toString()
-					.equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString())
-					|| activity.getRevisionType().toString().equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
-				sorRate = getActivity().getSORRateForDate(workOrderDate).getValue();
-			else if (getActivity().getAbstractEstimate().getParent() != null && activity.getRevisionType() != null
-					&& (activity.getRevisionType().toString()
-							.equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
-							|| activity.getRevisionType().toString()
-									.equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
-				sorRate = getActivity().getSORRateForDate(workOrderEstimate.getEstimate().getParent().getEstimateDate())
-						.getValue();
-			else
-				sorRate = getActivity().getSORCurrentRate().getValue();
-		}
-		return sorRate;
-	}
+    public double getConversionFactor() {
+        if (workOrderEstimate.getWorkOrder().getParent() != null && activity.getRevisionType() != null
+                && (activity.getRevisionType().toString().equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString())
+                        || activity.getRevisionType().toString()
+                                .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
+            return activity.getConversionFactorForRE(workOrderEstimate.getWorkOrder().getParent().getWorkOrderDate());
+        else if (workOrderEstimate.getWorkOrder().getParent() != null
+                && workOrderEstimate.getEstimate().getParent() != null && activity.getRevisionType() != null
+                && (activity.getRevisionType().toString().equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
+                        || activity.getRevisionType().toString()
+                                .equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
+            return activity.getConversionFactorForRE(workOrderEstimate.getEstimate().getParent().getEstimateDate());
+        else
+            return activity.getConversionFactor();
+    }
 
-	public WorkOrderActivity getParent() {
-		return parent;
-	}
+    /**
+     * This method is used to return the ScheduleOfRate based on if its AbstractEstimate(estimateDate is used) or
+     * RevisionEstimate(original parent workorderDate is used)
+     *
+     * @return a double value of sorRate
+     */
+    public double getScheduleOfRate() {
+        double sorRate = 0.0;
+        if (getActivity().getAbstractEstimate().getParent() == null)
+            // Original AbstractEstimate
+            sorRate = getActivity().getSORCurrentRate().getValue();
+        else {
+            Date workOrderDate = new Date();
+            // RevisionEstimate
+            // If parent is null or if revision type is ADDITIONAL_QUANTITY or
+            // REDUCED_QUANTITY then its original WorkOrder
+            // else if its Revision WorkOrder and revision type is
+            // NON_TENDERED_ITEM or LUMP_SUM_ITEM then, get the WorkOrderDate
+            // from parent
+            workOrderDate = getWorkOrderEstimate().getWorkOrder().getParent().getWorkOrderDate();
+            if (activity.getRevisionType() != null && (activity.getRevisionType().toString()
+                    .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString())
+                    || activity.getRevisionType().toString().equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString())))
+                sorRate = getActivity().getSORRateForDate(workOrderDate).getValue();
+            else if (getActivity().getAbstractEstimate().getParent() != null && activity.getRevisionType() != null
+                    && (activity.getRevisionType().toString()
+                            .equalsIgnoreCase(RevisionType.ADDITIONAL_QUANTITY.toString())
+                            || activity.getRevisionType().toString()
+                                    .equalsIgnoreCase(RevisionType.REDUCED_QUANTITY.toString())))
+                sorRate = getActivity().getSORRateForDate(workOrderEstimate.getEstimate().getParent().getEstimateDate())
+                        .getValue();
+            else
+                sorRate = getActivity().getSORCurrentRate().getValue();
+        }
+        return sorRate;
+    }
 
-	public void setParent(final WorkOrderActivity parent) {
-		this.parent = parent;
-	}
+    public WorkOrderActivity getParent() {
+        return parent;
+    }
 
-	public double getTotalEstQuantity() {
-		return totalEstQuantity;
-	}
+    public void setParent(final WorkOrderActivity parent) {
+        this.parent = parent;
+    }
 
-	public double getPrevCumlvQuantity() {
-		return prevCumlvQuantity;
-	}
+    public double getTotalEstQuantity() {
+        return totalEstQuantity;
+    }
 
-	public void setTotalEstQuantity(final double totalEstQuantity) {
-		this.totalEstQuantity = totalEstQuantity;
-	}
+    public double getPrevCumlvQuantity() {
+        return prevCumlvQuantity;
+    }
 
-	public void setPrevCumlvQuantity(final double prevCumlvQuantity) {
-		this.prevCumlvQuantity = prevCumlvQuantity;
-	}
+    public void setTotalEstQuantity(final double totalEstQuantity) {
+        this.totalEstQuantity = totalEstQuantity;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setPrevCumlvQuantity(final double prevCumlvQuantity) {
+        this.prevCumlvQuantity = prevCumlvQuantity;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSorCategory() {
+        return sorCategory;
+    }
+
+    public void setSorCategory(String sorCategory) {
+        this.sorCategory = sorCategory;
+    }
 
 }

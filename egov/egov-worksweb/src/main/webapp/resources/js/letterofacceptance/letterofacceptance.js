@@ -73,7 +73,7 @@ $(document).ready(function(){
 		$('.number-sign li a').click(function(e){
 			
 			$('.number-sign span.sign-text').html($(this).html());
-			$('#percentageSign').val($(this).html())
+			$('#percentageSign').val($(this).html());
 			calculateAgreementAmount();
 			
 		});
@@ -140,17 +140,40 @@ $(document).ready(function(){
 			calculateAgreementAmount();		
 		});
 		
+		$('#workOrderAmount').blur(function(){
+			calculateTenderFinalizedPercentage();		
+		});
+		
 		function calculateAgreementAmount() {
-	    	var tenderFinalizedPercentage = $('#tenderFinalizedPercentage').val();
-	    	$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
-			if(tenderFinalizedPercentage != ''){
-			    	percentageVal = assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage);
-			    	var agreementAmount = eval($('#workValue').val())+(eval($('#workValue').val())*percentageVal)/100;
-				   $('#workOrderAmount').val(roundTo(agreementAmount));
-				   $('#agreementValue').html(roundTo(agreementAmount));
+			//Appconfig of percentage_on_estimaterate_or_workvalue 
+			//if the value is 'yes'
+				//then 
+					//Application has to read the estimated rate and apply the Tender finalized percentage for the total work value.
+			//else 
+				//Application has to read apply the Tender finalized percentage on each and every SOR and arrive at the Agreement value.
+			if($('#percentage_on_estimaterate_or_workvalue').val() == 'Yes'){
+		    	var tenderFinalizedPercentage = $('#tenderFinalizedPercentage').val();
+		    	$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
+				if(tenderFinalizedPercentage != ''){
+				    	percentageVal = assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage);
+				    	var agreementAmount = eval($('#workValue').val())+(eval($('#workValue').val())*percentageVal)/100;
+					   $('#workOrderAmount').val(roundTo(agreementAmount));
+					   $('#agreementValue').html(roundTo(agreementAmount));
+				}
+				else 
+						$('#workOrderAmount').val('');
 			}
-			else 
-					$('#workOrderAmount').val('');
+		}
+		
+		function calculateTenderFinalizedPercentage() {
+	    	var agreementValue =eval($('#workOrderAmount').val());
+	    	var workValue = eval($('#workValue').val());
+	    	var tenderFinalizedPercentage =roundTo((eval(agreementValue - workValue)/workValue)*100);
+	    	$('#tenderFinalizedPercentage').val(Math.abs(tenderFinalizedPercentage));
+	    	if(tenderFinalizedPercentage<0)
+	    		$('.number-sign button').html('<span class="sign-text">-</span> &nbsp;<span class="caret"></span>');
+	    	else
+	    		$('.number-sign button').html('<span class="sign-text">+</span> &nbsp;<span class="caret"></span>');
 		}
 
 		function assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage){
