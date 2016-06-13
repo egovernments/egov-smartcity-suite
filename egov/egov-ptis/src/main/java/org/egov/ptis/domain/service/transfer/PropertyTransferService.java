@@ -540,7 +540,7 @@ public class PropertyTransferService {
         final Position pos = assignment.getPosition();
 
         //TODO - sender name to be edited in future
-        propertyMutation.transition().start().withSenderName("REST API User")
+        propertyMutation.transition().start().withSenderName("anonymous user")
         	.withComments(approverComments).withStateValue(PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED)
         	.withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING)
         	.withNatureOfTask(NATURE_TITLE_TRANSFER);
@@ -571,21 +571,24 @@ public class PropertyTransferService {
     	propertyMutation.setMutationReason(mutationMaster);
     	propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
+        transitionWorkFlow(propertyMutation);
+        basicPropertyService.applyAuditing(propertyMutation);
         basicProperty.getPropertyMutations().add(propertyMutation);
+        basicPropertyService.applyAuditing(propertyMutation.getState());
         basicProperty.setUnderWorkflow(true);
+        propertyMutation.setTransfereeInfosProxy(getTransfereesInfoList(propertyMutation,ownerDetailsList));
+        createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
         propertyMutation.setMutationDate(new Date());
         if (propertyMutation.getApplicationNo() == null)
             propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
-        createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
-    	propertyMutationService.persist(propertyMutation);
-    	propertyMutation.setTransfereeInfosProxy(getTransfereesInfoList(propertyMutation,ownerDetailsList));
-    	transitionWorkFlow(propertyMutation);
-    	basicPropertyService.applyAuditing(propertyMutation.getState());
+        
+        propertyMutation = propertyMutationService.persist(propertyMutation);
+        
         basicProperty = basicPropertyService.persist(basicProperty);
-    	if (null != basicProperty) {
+    	if (null != propertyMutation) {
             newPropertyDetails = new NewPropertyDetails();
             newPropertyDetails.setApplicationNo(basicProperty.getUpicNo());
             final ErrorDetails errorDetails = new ErrorDetails();
@@ -615,6 +618,7 @@ public class PropertyTransferService {
             owner.setEmailId(ownerDetais.getEmailId());
             owner.setGuardianRelation(ownerDetais.getGuardianRelation());
             owner.setGuardian(ownerDetais.getGuardian());
+            owner.setType(UserType.CITIZEN);
             transfereeInfo.setTransferee(owner);
             transfereeInfo.setPropertyMutation(propertyMutation);
             transfereeInfoList.add(transfereeInfo);
