@@ -41,6 +41,7 @@ package org.egov.restapi.web.rest;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
@@ -58,6 +59,7 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.restapi.model.OwnerInformation;
 import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
@@ -100,11 +102,11 @@ public class PropertyTitleTransferService {
         } else {
         	String assessmentNo = propertyTransferDetails.getAssessmentNo();
         	String mutationReasonCode = propertyTransferDetails.getMutationReasonCode();
-        	String saleDetails = propertyTransferDetails.getSaleDetail();
+        	String saleDetails = propertyTransferDetails.getSaleDetails();
         	String deedNo = propertyTransferDetails.getDeedNo();
         	String deedDate = propertyTransferDetails.getDeedDate();
-        	List<OwnerDetails> ownerDetailsList = propertyTransferDetails.getOwnerDetails();
-        	
+        	List<OwnerDetails> ownerDetailsList = getOwnerDetails(propertyTransferDetails.getOwnerDetails());
+
         	NewPropertyDetails newPropertyDetails = transferOwnerService.createPropertyMutation(assessmentNo, mutationReasonCode,
         			saleDetails, deedNo, deedDate, ownerDetailsList);
         	
@@ -114,6 +116,28 @@ public class PropertyTitleTransferService {
 		return responseJson;
 	}
 	
+	/**
+	 * Prepares list of OwnerDetails from OwnerInformation
+	 * @param ownerInfoList
+	 * @return
+	 */
+	private List<OwnerDetails> getOwnerDetails(List<OwnerInformation> ownerInfoList){
+		List<OwnerDetails> ownerDetailsList = new ArrayList<OwnerDetails>();
+		OwnerDetails ownerDetails ;
+		for(OwnerInformation ownerInfo : ownerInfoList){
+			ownerDetails = new OwnerDetails();
+			ownerDetails.setAadhaarNo(ownerInfo.getAadhaarNo());
+			ownerDetails.setSalutationCode(ownerInfo.getSalutationCode());
+			ownerDetails.setName(ownerInfo.getName());
+			ownerDetails.setGender(ownerInfo.getGender());
+			ownerDetails.setMobileNumber(ownerInfo.getMobileNumber());
+			ownerDetails.setEmailId(ownerInfo.getEmailId());
+			ownerDetails.setGuardianRelation(ownerInfo.getGuardianRelation());
+			ownerDetails.setGuardian(ownerInfo.getGuardian());
+			ownerDetailsList.add(ownerDetails);
+		}
+		return ownerDetailsList;
+	}
 	/**
      * This method is used to get POJO object from JSON request.
      * 

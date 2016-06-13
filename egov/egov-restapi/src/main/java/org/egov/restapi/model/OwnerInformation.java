@@ -37,77 +37,94 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.restapi.model;
 
 import java.io.Serializable;
-import java.util.List;
 
-
-/**
- * The PropertyTransferDetails class is used to contain property transfer related details
- * 
- * @author manasa
- *
- */
 
 @SuppressWarnings("serial")
-public class PropertyTransferDetails implements Serializable {
+public class OwnerInformation implements Serializable {
 
-	private String assessmentNo;
-	private String mutationReasonCode;
-	private String saleDetails;
-	private String deedNo;
-	private String deedDate;
-	private List<OwnerInformation> ownerDetails;
-	private String ulbCode;
-	
-	
+	private String aadhaarNo;
+	private String salutationCode;
+	private String name;
+	private String gender;
+	private String mobileNumber;
+	private String emailId;
+	private String guardianRelation;
+	private String guardian;
+
+
+	public String getAadhaarNo() {  
+		return aadhaarNo;
+	}
+
+	public void setAadhaarNo(String aadhaarNo) {
+		this.aadhaarNo = aadhaarNo;
+	}
+
+	public String getSalutationCode() {
+		return salutationCode;
+	}
+
+	public void setSalutationCode(String salutationCode) {
+		this.salutationCode = salutationCode;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+
+	public String getGuardianRelation() {
+		return guardianRelation;
+	}
+
+	public void setGuardianRelation(String guardianRelation) {
+		this.guardianRelation = guardianRelation;
+	}
+
+	public String getGuardian() {
+		return guardian;
+	}
+
+	public void setGuardian(String guardian) {
+		this.guardian = guardian;
+	}
+
 	@Override
 	public String toString() {
-		return "PropertyTransferDetails [assessmentNo=" + assessmentNo + ", mutationReasonCode=" + mutationReasonCode + ", saleDetails="
-				+ saleDetails + ", deedNo=" + deedNo + ", deedDate=" + deedDate + ", ownerDetails=" + ownerDetails + "]";
+		return "OwnerDetails [aadhaarNo=" + aadhaarNo + ", salutationCode=" + salutationCode + ", name="
+				+ name + ", gender=" + gender + ", mobileNumber=" + mobileNumber + ", emailId=" + emailId
+				+ ", guardianRelation=" + guardianRelation + ", guardian=" + guardian + "]";
 	}
-	
-	public String getAssessmentNo() {
-		return assessmentNo;
-	}
-	public void setAssessmentNo(String assessmentNo) {
-		this.assessmentNo = assessmentNo;
-	}
-	public String getMutationReasonCode() {
-		return mutationReasonCode;
-	}
-	public void setMutationReasonCode(String mutationReasonCode) {
-		this.mutationReasonCode = mutationReasonCode;
-	}
-	public String getSaleDetails() {
-		return saleDetails;
-	}
-	public void setSaleDetails(String saleDetails) {
-		this.saleDetails = saleDetails;
-	}
-	public String getDeedNo() {
-		return deedNo;
-	}
-	public void setDeedNo(String deedNo) {
-		this.deedNo = deedNo;
-	}
-	public String getDeedDate() {
-		return deedDate;
-	}
-	public void setDeedDate(String deedDate) {
-		this.deedDate = deedDate;
-	}
-	public List<OwnerInformation> getOwnerDetails() {
-		return ownerDetails;
-	}
-	public void setOwnerDetails(List<OwnerInformation> ownerDetails) {
-		this.ownerDetails = ownerDetails;
-	}
-	public String getUlbCode() {
-		return ulbCode;
-	}
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
+
 }

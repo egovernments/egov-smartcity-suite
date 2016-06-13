@@ -37,77 +37,101 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.restapi.model;
+package org.egov.ptis.domain.model;
 
 import java.io.Serializable;
-import java.util.List;
-
+import java.math.BigDecimal;
+import java.util.Set;
 
 /**
- * The PropertyTransferDetails class is used to contain property transfer related details
- * 
- * @author manasa
- *
+ * The AssessmentDetails class is used to contain assessment details such as property id, owner details, total tax and plinth area details
  */
-
 @SuppressWarnings("serial")
-public class PropertyTransferDetails implements Serializable {
+public class RestAssessmentDetails implements Serializable {
 
-	private String assessmentNo;
-	private String mutationReasonCode;
-	private String saleDetails;
-	private String deedNo;
-	private String deedDate;
-	private List<OwnerInformation> ownerDetails;
-	private String ulbCode;
-	
-	
-	@Override
-	public String toString() {
-		return "PropertyTransferDetails [assessmentNo=" + assessmentNo + ", mutationReasonCode=" + mutationReasonCode + ", saleDetails="
-				+ saleDetails + ", deedNo=" + deedNo + ", deedDate=" + deedDate + ", ownerDetails=" + ownerDetails + "]";
-	}
-	
+    private static final long serialVersionUID = 355399781881256188L;
+    private String assessmentNo;
+    private String propertyAddress;
+    private String localityName = "";
+    private Set<OwnerName> ownerDetails;
+    private Float plinthArea = null;
+    private BigDecimal totalTaxDue = BigDecimal.ZERO;
+    private String isMutationFeePaid;
+
+
+    @Override
+    public String toString() {
+        return "AssessmentDetails [assessmentNo=" + assessmentNo + ", ownerDetails=" + ownerDetails
+                + ", propertyAddress=" + propertyAddress + ", localityName=" + localityName
+                + ", plinthArea=" + plinthArea + ", totalTaxDue=" + totalTaxDue + ", isMutationFeePaid=" + isMutationFeePaid;
+              
+    }
+
 	public String getAssessmentNo() {
 		return assessmentNo;
 	}
+
+
 	public void setAssessmentNo(String assessmentNo) {
 		this.assessmentNo = assessmentNo;
 	}
-	public String getMutationReasonCode() {
-		return mutationReasonCode;
-	}
-	public void setMutationReasonCode(String mutationReasonCode) {
-		this.mutationReasonCode = mutationReasonCode;
-	}
-	public String getSaleDetails() {
-		return saleDetails;
-	}
-	public void setSaleDetails(String saleDetails) {
-		this.saleDetails = saleDetails;
-	}
-	public String getDeedNo() {
-		return deedNo;
-	}
-	public void setDeedNo(String deedNo) {
-		this.deedNo = deedNo;
-	}
-	public String getDeedDate() {
-		return deedDate;
-	}
-	public void setDeedDate(String deedDate) {
-		this.deedDate = deedDate;
-	}
-	public List<OwnerInformation> getOwnerDetails() {
+
+
+	public Set<OwnerName> getOwnerDetails() {
 		return ownerDetails;
 	}
-	public void setOwnerDetails(List<OwnerInformation> ownerDetails) {
+
+
+	public void setOwnerDetails(Set<OwnerName> ownerDetails) {
 		this.ownerDetails = ownerDetails;
 	}
-	public String getUlbCode() {
-		return ulbCode;
+
+
+	public String getPropertyAddress() {
+		return propertyAddress;
 	}
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
+
+
+	public void setPropertyAddress(String propertyAddress) {
+		this.propertyAddress = propertyAddress;
 	}
+
+
+	public String getLocalityName() {
+		return localityName;
+	}
+
+
+	public void setLocalityName(String localityName) {
+		this.localityName = localityName;
+	}
+
+
+	public BigDecimal getTotalTaxDue() {
+		return totalTaxDue;
+	}
+
+
+	public void setTotalTaxDue(BigDecimal totalTaxDue) {
+		this.totalTaxDue = totalTaxDue;
+	}
+
+
+	public String getIsMutationFeePaid() {
+		return isMutationFeePaid;
+	}
+
+
+	public void setIsMutationFeePaid(String isMutationFeePaid) {
+		this.isMutationFeePaid = isMutationFeePaid;
+	}
+
+	public Float getPlinthArea() {
+		return plinthArea;
+	}
+
+	public void setPlinthArea(Float plinthArea) {
+		this.plinthArea = plinthArea;
+	}
+
 }

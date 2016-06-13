@@ -42,6 +42,7 @@ package org.egov.ptis.domain.service.property;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Area;
@@ -52,6 +53,7 @@ import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -81,6 +83,7 @@ import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.*;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -96,6 +99,7 @@ import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
+import org.egov.ptis.domain.model.RestAssessmentDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
@@ -151,6 +155,7 @@ public class PropertyExternalService {
     private BasicProperty basicProperty;
     private PropertyImpl property;
     AssessmentDetails assessmentDetail;
+    private RestAssessmentDetails assessmentDetails;
 
     @Autowired
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
@@ -1752,5 +1757,40 @@ public class PropertyExternalService {
         qry.setParameter("code", apartmentCode);
         final Apartment apartment = (Apartment) qry.getSingleResult();
         return apartment;
+    }
+    
+    /**
+     * Fetches Assessment Details - owner details, tax dues, plinth area
+     * @param assessmentNo
+     * @return
+     */
+    public RestAssessmentDetails loadAssessmentDetails(final String assessmentNo) {
+        assessmentDetails = new RestAssessmentDetails();
+        if (StringUtils.isBlank(assessmentNo))
+            throw new ApplicationRuntimeException("AssessmentNo is null or empty!");
+        assessmentDetails.setAssessmentNo(assessmentNo);
+        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetails.getAssessmentNo());
+        if (basicProperty != null) {
+            assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+            property = (PropertyImpl) basicProperty.getProperty();
+            assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
+            if (property != null) {
+            	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
+            	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
+            		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
+            	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+            	BigDecimal totalTaxDue = BigDecimal.ZERO;
+            	if(currentPtdemand != null){
+            		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
+            			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
+            				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+            			}
+            		}
+            	}
+            	assessmentDetails.setTotalTaxDue(totalTaxDue);
+            	assessmentDetails.setIsMutationFeePaid("N");
+            }
+        }
+        return assessmentDetails;
     }
 }

@@ -47,6 +47,7 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.restapi.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.constants.RestApiConstants;
@@ -104,13 +105,23 @@ public class ValidationUtil {
     	}
     	
     	if(mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)){
-    		if(StringUtils.isBlank(propertyTransferDetails.getSaleDetail())){
+    		if(StringUtils.isBlank(propertyTransferDetails.getSaleDetails())){
     			errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(RestApiConstants.SALE_DETAILS_REQ_CODE);
                 errorDetails.setErrorMessage(RestApiConstants.SALE_DETAILS_REQ_MSG);
                 return errorDetails;
     		}
     	}
+    	
+    	if(!mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)){
+    		if(StringUtils.isNotBlank(propertyTransferDetails.getSaleDetails())){
+    			errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG);
+                return errorDetails;
+    		}
+    	}
+    	
     	String deedNo = propertyTransferDetails.getDeedNo();
     	if(StringUtils.isBlank(deedNo)){
     		errorDetails = new ErrorDetails();
@@ -127,39 +138,39 @@ public class ValidationUtil {
             return errorDetails;
     	}
     	
-    	List<OwnerDetails> ownerDetailsList = propertyTransferDetails.getOwnerDetails();
+    	List<OwnerInformation> ownerDetailsList = propertyTransferDetails.getOwnerDetails();
         if (ownerDetailsList.isEmpty()) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(RestApiConstants.OWNER_DETAILS_REQ_CODE);
             errorDetails.setErrorMessage(RestApiConstants.OWNER_DETAILS_REQ_MSG);
             return errorDetails;
         } else
-            for (final OwnerDetails ownerDetails : ownerDetailsList) {
-                if (ownerDetails.getMobileNumber() == null) {
+            for (final OwnerInformation ownerInfo : ownerDetailsList) {
+                if (ownerInfo.getMobileNumber() == null) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.MOBILE_NO_REQ_CODE);
                     errorDetails.setErrorMessage(RestApiConstants.MOBILE_NO_REQ_MSG);
                     return errorDetails;
                 }
-                if (ownerDetails.getName() == null) {
+                if (ownerInfo.getName() == null) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.OWNER_NAME_REQ_CODE);
                     errorDetails.setErrorMessage(RestApiConstants.OWNER_NAME_REQ_MSG);
                     return errorDetails;
                 }
-                if (ownerDetails.getGender() == null) {
+                if (ownerInfo.getGender() == null) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.GENDER_REQ_CODE);
                     errorDetails.setErrorMessage(RestApiConstants.GENDER_REQ_MSG);
                     return errorDetails;
                 }
-                if (ownerDetails.getGuardianRelation() == null) {
+                if (ownerInfo.getGuardianRelation() == null) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.GUARDIAN_RELATION_REQ_CODE);
                     errorDetails.setErrorMessage(RestApiConstants.GUARDIAN_RELATION_REQ_MSG);
                     return errorDetails;
                 }
-                if (ownerDetails.getGuardian() == null) {
+                if (ownerInfo.getGuardian() == null) {
                     errorDetails = new ErrorDetails();
                     errorDetails.setErrorCode(RestApiConstants.GUARDIAN_REQ_CODE);
                     errorDetails.setErrorMessage(RestApiConstants.GUARDIAN_REQ_MSG);

@@ -188,6 +188,8 @@ public class RestApiConstants {
 	public static final String MUTATION_REASON_INVALID_CODE_REQ_CODE = "56";
 	public static final String MUTATION_REASON_INVALID_CODE_REQ_MSG = "Invalid Mutation Reason Code. It can be GIFTDEED/WILLDEED/SALEDEED/RELINQUISH/PARTITIOND";
 
+	public static final String OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE = "57";
+	public static final String OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG = "Sale Details are required only if reason is Sale Deed.";
 	
 	//Water TAx
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
