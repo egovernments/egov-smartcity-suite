@@ -49,23 +49,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CaseTypeMasterService {
 
-    private final CasetypeMasterRepository caseTypeRepository;
+	private final CasetypeMasterRepository caseTypeRepository;
 
-    @Autowired
-    public CaseTypeMasterService(final CasetypeMasterRepository caseTypeRepository) {
-        this.caseTypeRepository = caseTypeRepository;
+	@Autowired
+	public CaseTypeMasterService(final CasetypeMasterRepository caseTypeRepository) {
+		this.caseTypeRepository = caseTypeRepository;
 
-    }
+	}
 
-    public CasetypeMaster findBy(final Long usageTypeId) {
-        return caseTypeRepository.findOne(usageTypeId);
-    }
+	public CasetypeMaster findBy(final Long usageTypeId) {
+		return caseTypeRepository.findOne(usageTypeId);
+	}
 
-    @Transactional
-    public CasetypeMaster createUsageType(final CasetypeMaster caseType) {
-    	caseType.setActive(true);
-        return caseTypeRepository.save(caseType);
-    }
+	@Transactional
+	public CasetypeMaster createUsageType(final CasetypeMaster caseType) {
+		caseType.setActive(true);
+		return caseTypeRepository.save(caseType);
+	}
 
-    
 }

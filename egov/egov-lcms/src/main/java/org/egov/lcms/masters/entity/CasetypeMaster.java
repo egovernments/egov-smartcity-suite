@@ -58,51 +58,49 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "EGLC_CASETYPE_MASTER")
 
 @Unique(id = "id", tableName = "EGLC_CASETYPE_MASTER", columnName = { "code", "caseType" }, fields = { "code",
-        "caseType" }, enableDfltMsg = true)
+		"caseType" }, enableDfltMsg = true)
 @SequenceGenerator(name = CasetypeMaster.SEQ_CASE_TYPE, sequenceName = CasetypeMaster.SEQ_CASE_TYPE, allocationSize = 1)
 public class CasetypeMaster extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1517694643078084884L;
-    public static final String SEQ_CASE_TYPE = "SEQ_EGLC_CASETYPE_MASTER";
+	private static final long serialVersionUID = 1517694643078084884L;
+	public static final String SEQ_CASE_TYPE = "SEQ_EGLC_CASETYPE_MASTER";
 
-    @Id
-    @GeneratedValue(generator = SEQ_CASE_TYPE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_CASE_TYPE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Required(message = "masters.code.null")
-    @Length(max = 8, message = "masters.code.length")
-    @OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.code.alpha2")
-    private String code;
+	@Required(message = "masters.code.null")
+	@Length(max = 8, message = "masters.code.length")
+	@OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.code.alpha2")
+	private String code;
 
-    @Required(message = "casetype.null.validation")
-    @Length(max = 50, message = "casetype.casetype.length.validation")
-    private String caseType;
+	@Required(message = "casetype.null.validation")
+	@Length(max = 50, message = "casetype.casetype.length.validation")
+	private String caseType;
 
+	@NotNull
+	private boolean active;
 
-    @NotNull
-    private boolean active;
+	@Length(max = 256, message = "masters.description.length")
+	private String notes;
+	@Max(value = 50, message = "masters.orderNumber.length")
+	private Long ordernumber;
 
-    @Length(max = 256, message = "masters.description.length")
-    private String notes;
-    @Max(value = 50, message = "masters.orderNumber.length")
-    private Long ordernumber;
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
 	public String getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
@@ -110,7 +108,7 @@ public class CasetypeMaster extends AbstractAuditable {
 		return caseType;
 	}
 
-	public void setCaseType(String caseType) {
+	public void setCaseType(final String caseType) {
 		this.caseType = caseType;
 	}
 
@@ -118,7 +116,7 @@ public class CasetypeMaster extends AbstractAuditable {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(final boolean active) {
 		this.active = active;
 	}
 
@@ -126,7 +124,7 @@ public class CasetypeMaster extends AbstractAuditable {
 		return notes;
 	}
 
-	public void setNotes(String notes) {
+	public void setNotes(final String notes) {
 		this.notes = notes;
 	}
 
@@ -134,9 +132,8 @@ public class CasetypeMaster extends AbstractAuditable {
 		return ordernumber;
 	}
 
-	public void setOrdernumber(Long ordernumber) {
+	public void setOrdernumber(final Long ordernumber) {
 		this.ordernumber = ordernumber;
 	}
 
-    
 }

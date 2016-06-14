@@ -1,3 +1,42 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
@@ -14,94 +53,84 @@ import org.egov.lcms.utils.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
 public class VacateStay extends BaseModel {
-    /**
-     * Serial version uid
-     */
-    private static final long serialVersionUID = 1L;
+	/**
+	 * Serial version uid
+	 */
+	private static final long serialVersionUID = 1L;
 
-    private Lcinterimorder lcinterimOrder;
-    @DateFormat(message = "invalid.fieldvalue.model.vsReceivedFromStandingCounsel")
-    private Date vsReceivedFromStandingCounsel;
-    @DateFormat(message = "invalid.fieldvalue.model.vsSendToStandingCounsel")
-    private Date vsSendToStandingCounsel;
-    @Required(message = "vcpetition.exists")
-    @DateFormat(message = "invalid.fieldvalue.model.vsPetitionFiledOn")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "petitionfiledon.notAllow.futureDate")
-    private Date vsPetitionFiledOn;
-    @Length(max = 1024, message = "io.vcremarks.length")
-    private String remarks;
+	private Lcinterimorder lcinterimOrder;
+	@DateFormat(message = "invalid.fieldvalue.model.vsReceivedFromStandingCounsel")
+	private Date vsReceivedFromStandingCounsel;
+	@DateFormat(message = "invalid.fieldvalue.model.vsSendToStandingCounsel")
+	private Date vsSendToStandingCounsel;
+	@Required(message = "vcpetition.exists")
+	@DateFormat(message = "invalid.fieldvalue.model.vsPetitionFiledOn")
+	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "petitionfiledon.notAllow.futureDate")
+	private Date vsPetitionFiledOn;
+	@Length(max = 1024, message = "io.vcremarks.length")
+	private String remarks;
 
-    public Date getVsReceivedFromStandingCounsel() {
-        return vsReceivedFromStandingCounsel;
-    }
+	public Date getVsReceivedFromStandingCounsel() {
+		return vsReceivedFromStandingCounsel;
+	}
 
-    public void setVsReceivedFromStandingCounsel(
-            Date vsReceivedFromStandingCounsel) {
-        this.vsReceivedFromStandingCounsel = vsReceivedFromStandingCounsel;
-    }
+	public void setVsReceivedFromStandingCounsel(final Date vsReceivedFromStandingCounsel) {
+		this.vsReceivedFromStandingCounsel = vsReceivedFromStandingCounsel;
+	}
 
-    public Date getVsSendToStandingCounsel() {
-        return vsSendToStandingCounsel;
-    }
+	public Date getVsSendToStandingCounsel() {
+		return vsSendToStandingCounsel;
+	}
 
-    public void setVsSendToStandingCounsel(Date vsSendToStandingCounsel) {
-        this.vsSendToStandingCounsel = vsSendToStandingCounsel;
-    }
+	public void setVsSendToStandingCounsel(final Date vsSendToStandingCounsel) {
+		this.vsSendToStandingCounsel = vsSendToStandingCounsel;
+	}
 
-    public Date getVsPetitionFiledOn() {
-        return vsPetitionFiledOn;
-    }
+	public Date getVsPetitionFiledOn() {
+		return vsPetitionFiledOn;
+	}
 
-    public void setVsPetitionFiledOn(Date vsPetitionFiledOn) {
-        this.vsPetitionFiledOn = vsPetitionFiledOn;
-    }
+	public void setVsPetitionFiledOn(final Date vsPetitionFiledOn) {
+		this.vsPetitionFiledOn = vsPetitionFiledOn;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
+	public void setRemarks(final String remarks) {
+		this.remarks = remarks;
+	}
 
-    public Lcinterimorder getLcinterimOrder() {
-        return lcinterimOrder;
-    }
+	public Lcinterimorder getLcinterimOrder() {
+		return lcinterimOrder;
+	}
 
-    public void setLcinterimOrder(Lcinterimorder lcinterimOrder) {
-        this.lcinterimOrder = lcinterimOrder;
-    }
+	public void setLcinterimOrder(final Lcinterimorder lcinterimOrder) {
+		this.lcinterimOrder = lcinterimOrder;
+	}
 
-    public List<ValidationError> validate() {
-        List<ValidationError> errors = new ArrayList<ValidationError>();
+	@Override
+	public List<ValidationError> validate() {
+		final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(),
-                getLcinterimOrder().getIodate()))
-            errors.add(new ValidationError("iodate",
-                    "iodate.greaterThan.vsReceivedFromStandingCounsel"));
+		if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLcinterimOrder().getIodate()))
+			errors.add(new ValidationError("iodate", "iodate.greaterThan.vsReceivedFromStandingCounsel"));
 
-        if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcinterimOrder()
-                .getIodate()))
-            errors.add(new ValidationError("iodate",
-                    "iodate.greaterThan.petitionFiledOn"));
+		if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcinterimOrder().getIodate()))
+			errors.add(new ValidationError("iodate", "iodate.greaterThan.petitionFiledOn"));
 
-        if (!DateUtils.compareDates(getVsSendToStandingCounsel(),
-                getLcinterimOrder().getIodate()))
-            errors.add(new ValidationError("iodate",
-                    "iodate.greaterThan.vsSendToStandingCounsel"));
+		if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLcinterimOrder().getIodate()))
+			errors.add(new ValidationError("iodate", "iodate.greaterThan.vsSendToStandingCounsel"));
 
-        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(),
-                getVsSendToStandingCounsel()))
-            errors
-                    .add(new ValidationError("vsReceivedFromStandingCounsel",
-                            "vsReceivedFromStandingCounsel.greaterThan.vsSendToStandingCounsel"));
+		if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getVsSendToStandingCounsel()))
+			errors.add(new ValidationError("vsReceivedFromStandingCounsel",
+					"vsReceivedFromStandingCounsel.greaterThan.vsSendToStandingCounsel"));
 
-        if (!DateUtils.compareDates(getVsSendToStandingCounsel(),
-                getVsPetitionFiledOn()))
-            errors.add(new ValidationError("petitionFiledOn",
-                    "vsSendToStandingCounsel.greaterThan.petitionFiledOn"));
+		if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getVsPetitionFiledOn()))
+			errors.add(new ValidationError("petitionFiledOn", "vsSendToStandingCounsel.greaterThan.petitionFiledOn"));
 
-        return errors;
-    }
+		return errors;
+	}
 
 }

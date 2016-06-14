@@ -1,3 +1,42 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
@@ -18,246 +57,216 @@ import org.hibernate.validator.constraints.Length;
 
 /**
  * LegalcaseAdvocate entity.
- * 
+ *
  * @author MyEclipse Persistence Tools
  */
 
 public class LegalcaseAdvocate {
 
-    private Long id;
-    private Legalcase eglcLegalcase;
-    @Required(message = "advocate.legalcase.null")
-    private AdvocateMaster eglcAdvocateMaster;
-    @DateFormat(message = "invalid.fieldvalue.assignedOnDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
-    private Date assignedtodate;
-    @DateFormat(message = "invalid.fieldvalue.assignedOnForSeniorAdv")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodateForsenior.date")
-    private Date assignedtodateForsenior;
-    @DateFormat(message = "invalid.fieldvalue.vakalaatDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.vakalatdate.date")
-    private Date vakalatdate;
-    private Long isActive;
-    @Length(max = 32, message = "ordernumber.length")
-    @OptionalPattern(regex = LcmsConstants.orderNumberFormat, message = "orderNumber.format")
-    private String ordernumber;
-    @DateFormat(message = "invalid.fieldvalue.orderDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.orderdate.date")
-    private Date orderdate;
-    private AdvocateMaster eglcSeniorAdvocateMaster;
-    @Length(max = 32, message = "ordernumberJunior.length")
-    private String ordernumberJunior;
-    @DateFormat(message = "invalid.fieldvalue.juniororderDate")
-    private Date orderdateJunior;
-    private CaseStage juniorStage;
-    private CaseStage seniorStage;
-    @Length(max = 256, message = "reassignmentJunior.length")
-    private String reassignmentJuniorReason;
-    @Length(max = 256, message = "reassignmentSenior.length")
-    private String reassignmentSeniorReason;
-    private long changeAdvocate, changeSeniorAdvocate;
+	private Long id;
+	private Legalcase eglcLegalcase;
+	@Required(message = "advocate.legalcase.null")
+	private AdvocateMaster eglcAdvocateMaster;
+	@DateFormat(message = "invalid.fieldvalue.assignedOnDate")
+	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
+	private Date assignedtodate;
+	@DateFormat(message = "invalid.fieldvalue.assignedOnForSeniorAdv")
+	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodateForsenior.date")
+	private Date assignedtodateForsenior;
+	@DateFormat(message = "invalid.fieldvalue.vakalaatDate")
+	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.vakalatdate.date")
+	private Date vakalatdate;
+	private Long isActive;
+	@Length(max = 32, message = "ordernumber.length")
+	@OptionalPattern(regex = LcmsConstants.orderNumberFormat, message = "orderNumber.format")
+	private String ordernumber;
+	@DateFormat(message = "invalid.fieldvalue.orderDate")
+	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.orderdate.date")
+	private Date orderdate;
+	private AdvocateMaster eglcSeniorAdvocateMaster;
+	@Length(max = 32, message = "ordernumberJunior.length")
+	private String ordernumberJunior;
+	@DateFormat(message = "invalid.fieldvalue.juniororderDate")
+	private Date orderdateJunior;
+	private CaseStage juniorStage;
+	private CaseStage seniorStage;
+	@Length(max = 256, message = "reassignmentJunior.length")
+	private String reassignmentJuniorReason;
+	@Length(max = 256, message = "reassignmentSenior.length")
+	private String reassignmentSeniorReason;
+	private long changeAdvocate, changeSeniorAdvocate;
 
-    public long getChangeAdvocate() {
-        return changeAdvocate;
-    }
+	public long getChangeAdvocate() {
+		return changeAdvocate;
+	}
 
-    public void setChangeAdvocate(long changeAdvocate) {
-        this.changeAdvocate = changeAdvocate;
-    }
+	public void setChangeAdvocate(final long changeAdvocate) {
+		this.changeAdvocate = changeAdvocate;
+	}
 
-    public long getChangeSeniorAdvocate() {
-        return changeSeniorAdvocate;
-    }
+	public long getChangeSeniorAdvocate() {
+		return changeSeniorAdvocate;
+	}
 
-    public void setChangeSeniorAdvocate(long changeSeniorAdvocate) {
-        this.changeSeniorAdvocate = changeSeniorAdvocate;
-    }
+	public void setChangeSeniorAdvocate(final long changeSeniorAdvocate) {
+		this.changeSeniorAdvocate = changeSeniorAdvocate;
+	}
 
-    public Legalcase getEglcLegalcase() {
-        return this.eglcLegalcase;
-    }
+	public Legalcase getEglcLegalcase() {
+		return eglcLegalcase;
+	}
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
-    }
+	public void setEglcLegalcase(final Legalcase eglcLegalcase) {
+		this.eglcLegalcase = eglcLegalcase;
+	}
 
-    public AdvocateMaster getEglcAdvocateMaster() {
-        return this.eglcAdvocateMaster;
-    }
+	public AdvocateMaster getEglcAdvocateMaster() {
+		return eglcAdvocateMaster;
+	}
 
-    public void setEglcAdvocateMaster(AdvocateMaster eglcAdvocateMaster) {
-        this.eglcAdvocateMaster = eglcAdvocateMaster;
-    }
+	public void setEglcAdvocateMaster(final AdvocateMaster eglcAdvocateMaster) {
+		this.eglcAdvocateMaster = eglcAdvocateMaster;
+	}
 
-    public Date getAssignedtodate() {
-        return this.assignedtodate;
-    }
+	public Date getAssignedtodate() {
+		return assignedtodate;
+	}
 
-    public void setAssignedtodate(Date assignedtodate) {
-        this.assignedtodate = assignedtodate;
-    }
+	public void setAssignedtodate(final Date assignedtodate) {
+		this.assignedtodate = assignedtodate;
+	}
 
-    public Date getVakalatdate() {
-        return this.vakalatdate;
-    }
+	public Date getVakalatdate() {
+		return vakalatdate;
+	}
 
-    public void setVakalatdate(Date vakalatdate) {
-        this.vakalatdate = vakalatdate;
-    }
+	public void setVakalatdate(final Date vakalatdate) {
+		this.vakalatdate = vakalatdate;
+	}
 
-    public Long getIsActive() {
-        return this.isActive;
-    }
+	public Long getIsActive() {
+		return isActive;
+	}
 
-    public void setIsActive(Long isActive) {
-        this.isActive = isActive;
-    }
+	public void setIsActive(final Long isActive) {
+		this.isActive = isActive;
+	}
 
-    public String getOrdernumber() {
-        return this.ordernumber;
-    }
+	public String getOrdernumber() {
+		return ordernumber;
+	}
 
-    public void setOrdernumber(String ordernumber) {
-        this.ordernumber = ordernumber;
-    }
+	public void setOrdernumber(final String ordernumber) {
+		this.ordernumber = ordernumber;
+	}
 
-    public Date getOrderdate() {
-        return this.orderdate;
-    }
+	public Date getOrderdate() {
+		return orderdate;
+	}
 
-    public void setOrderdate(Date orderdate) {
-        this.orderdate = orderdate;
-    }
+	public void setOrderdate(final Date orderdate) {
+		this.orderdate = orderdate;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public List<ValidationError> validate() {
-        List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (eglcLegalcase.getIsSenioradvrequired()) {
-            if (getEglcSeniorAdvocateMaster() == null) {
-                errors.add(new ValidationError("eglcSeniorAdvocateMaster",
-                        "legalcase.eglcSeniorAdvocateMaster.null"));
-            }
-            if (StringUtils.isBlank(getOrdernumber())) {
-                errors.add(new ValidationError("ordernumber",
-                        "legalcase.ordernumber.null"));
-            }
-            if (getOrderdate() == null) {
-                errors.add(new ValidationError("orderDate",
-                        "legalcase.orderdate.null"));
-            }
-            if (!DateUtils.compareDates(getOrderdate(), eglcLegalcase
-                    .getCaseReceivingDate())) {
-                errors.add(new ValidationError("orderDate",
-                        "orderdate.less.casereceivingdate"));
-            }
-            if (!DateUtils.compareDates(getOrderdate(), eglcLegalcase
-                    .getCasedate())) {
-                errors.add(new ValidationError("orderDate",
-                        "orderdate.less.casedate"));
-            }
-            if (!DateUtils.compareDates(getAssignedtodateForsenior(),
-                    getOrderdate())) {
-                errors.add(new ValidationError("assignedtodatesenior",
-                        "assignedon.less.orderdate"));
-            }
-        }
+	public List<ValidationError> validate() {
+		final List<ValidationError> errors = new ArrayList<ValidationError>();
+		if (eglcLegalcase.getIsSenioradvrequired()) {
+			if (getEglcSeniorAdvocateMaster() == null)
+				errors.add(new ValidationError("eglcSeniorAdvocateMaster", "legalcase.eglcSeniorAdvocateMaster.null"));
+			if (StringUtils.isBlank(getOrdernumber()))
+				errors.add(new ValidationError("ordernumber", "legalcase.ordernumber.null"));
+			if (getOrderdate() == null)
+				errors.add(new ValidationError("orderDate", "legalcase.orderdate.null"));
+			if (!DateUtils.compareDates(getOrderdate(), eglcLegalcase.getCaseReceivingDate()))
+				errors.add(new ValidationError("orderDate", "orderdate.less.casereceivingdate"));
+			if (!DateUtils.compareDates(getOrderdate(), eglcLegalcase.getCasedate()))
+				errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
+			if (!DateUtils.compareDates(getAssignedtodateForsenior(), getOrderdate()))
+				errors.add(new ValidationError("assignedtodatesenior", "assignedon.less.orderdate"));
+		}
 
-        if (!DateUtils.compareDates(getAssignedtodate(), eglcLegalcase
-                .getCaseReceivingDate())) {
-            errors.add(new ValidationError("assignedon",
-                    "assignedon.less.casereceivingdate"));
-        }
-        if (!DateUtils.compareDates(getAssignedtodate(), eglcLegalcase
-                .getCasedate())) {
-            errors.add(new ValidationError("assignedon",
-                    "assignedon.less.casedate"));
-        }
-        if (!DateUtils.compareDates(getVakalatdate(), eglcLegalcase
-                .getCasedate())) {
-            errors.add(new ValidationError("vakalatdate",
-                    "vakalatdate.less.casedate"));
-        }
-        if (!DateUtils.compareDates(getVakalatdate(), eglcLegalcase
-                .getCaseReceivingDate())) {
-            errors.add(new ValidationError("vakalatdate",
-                    "vakalatdate.less.caserecdate"));
-        }
-        if (!DateUtils.compareDates(getVakalatdate(), getAssignedtodate())) {
-            errors.add(new ValidationError("vakalatdate",
-                    "vakalatdate.less.assingedon"));
-        }
-        return errors;
-    }
+		if (!DateUtils.compareDates(getAssignedtodate(), eglcLegalcase.getCaseReceivingDate()))
+			errors.add(new ValidationError("assignedon", "assignedon.less.casereceivingdate"));
+		if (!DateUtils.compareDates(getAssignedtodate(), eglcLegalcase.getCasedate()))
+			errors.add(new ValidationError("assignedon", "assignedon.less.casedate"));
+		if (!DateUtils.compareDates(getVakalatdate(), eglcLegalcase.getCasedate()))
+			errors.add(new ValidationError("vakalatdate", "vakalatdate.less.casedate"));
+		if (!DateUtils.compareDates(getVakalatdate(), eglcLegalcase.getCaseReceivingDate()))
+			errors.add(new ValidationError("vakalatdate", "vakalatdate.less.caserecdate"));
+		if (!DateUtils.compareDates(getVakalatdate(), getAssignedtodate()))
+			errors.add(new ValidationError("vakalatdate", "vakalatdate.less.assingedon"));
+		return errors;
+	}
 
-    public AdvocateMaster getEglcSeniorAdvocateMaster() {
-        return eglcSeniorAdvocateMaster;
-    }
+	public AdvocateMaster getEglcSeniorAdvocateMaster() {
+		return eglcSeniorAdvocateMaster;
+	}
 
-    public void setEglcSeniorAdvocateMaster(
-            AdvocateMaster eglcSeniorAdvocateMaster) {
-        this.eglcSeniorAdvocateMaster = eglcSeniorAdvocateMaster;
-    }
+	public void setEglcSeniorAdvocateMaster(final AdvocateMaster eglcSeniorAdvocateMaster) {
+		this.eglcSeniorAdvocateMaster = eglcSeniorAdvocateMaster;
+	}
 
-    public Date getAssignedtodateForsenior() {
-        return assignedtodateForsenior;
-    }
+	public Date getAssignedtodateForsenior() {
+		return assignedtodateForsenior;
+	}
 
-    public void setAssignedtodateForsenior(Date assignedtodateForsenior) {
-        this.assignedtodateForsenior = assignedtodateForsenior;
-    }
+	public void setAssignedtodateForsenior(final Date assignedtodateForsenior) {
+		this.assignedtodateForsenior = assignedtodateForsenior;
+	}
 
-    public String getOrdernumberJunior() {
-        return ordernumberJunior;
-    }
+	public String getOrdernumberJunior() {
+		return ordernumberJunior;
+	}
 
-    public void setOrdernumberJunior(String ordernumberJunior) {
-        this.ordernumberJunior = ordernumberJunior;
-    }
+	public void setOrdernumberJunior(final String ordernumberJunior) {
+		this.ordernumberJunior = ordernumberJunior;
+	}
 
-    public Date getOrderdateJunior() {
-        return orderdateJunior;
-    }
+	public Date getOrderdateJunior() {
+		return orderdateJunior;
+	}
 
-    public void setOrderdateJunior(Date orderdateJunior) {
-        this.orderdateJunior = orderdateJunior;
-    }
+	public void setOrderdateJunior(final Date orderdateJunior) {
+		this.orderdateJunior = orderdateJunior;
+	}
 
-    public CaseStage getJuniorStage() {
-        return juniorStage;
-    }
+	public CaseStage getJuniorStage() {
+		return juniorStage;
+	}
 
-    public void setJuniorStage(CaseStage juniorStage) {
-        this.juniorStage = juniorStage;
-    }
+	public void setJuniorStage(final CaseStage juniorStage) {
+		this.juniorStage = juniorStage;
+	}
 
-    public CaseStage getSeniorStage() {
-        return seniorStage;
-    }
+	public CaseStage getSeniorStage() {
+		return seniorStage;
+	}
 
-    public void setSeniorStage(CaseStage seniorStage) {
-        this.seniorStage = seniorStage;
-    }
+	public void setSeniorStage(final CaseStage seniorStage) {
+		this.seniorStage = seniorStage;
+	}
 
-    public String getReassignmentJuniorReason() {
-        return reassignmentJuniorReason;
-    }
+	public String getReassignmentJuniorReason() {
+		return reassignmentJuniorReason;
+	}
 
-    public void setReassignmentJuniorReason(String reassignmentJuniorReason) {
-        this.reassignmentJuniorReason = reassignmentJuniorReason;
-    }
+	public void setReassignmentJuniorReason(final String reassignmentJuniorReason) {
+		this.reassignmentJuniorReason = reassignmentJuniorReason;
+	}
 
-    public String getReassignmentSeniorReason() {
-        return reassignmentSeniorReason;
-    }
+	public String getReassignmentSeniorReason() {
+		return reassignmentSeniorReason;
+	}
 
-    public void setReassignmentSeniorReason(String reassignmentSeniorReason) {
-        this.reassignmentSeniorReason = reassignmentSeniorReason;
-    }
+	public void setReassignmentSeniorReason(final String reassignmentSeniorReason) {
+		this.reassignmentSeniorReason = reassignmentSeniorReason;
+	}
 }

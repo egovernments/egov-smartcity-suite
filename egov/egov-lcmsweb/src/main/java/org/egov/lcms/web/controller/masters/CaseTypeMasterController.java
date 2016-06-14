@@ -57,29 +57,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/masters/caseType/create/")
 public class CaseTypeMasterController {
 
-    @Autowired
-    private CaseTypeMasterService caseTypeMasterService;
+	@Autowired
+	private CaseTypeMasterService caseTypeMasterService;
 
-    @RequestMapping( method = RequestMethod.GET)
-    public String newForm(final Model model) {
-        final CasetypeMaster casetypeMaster = new CasetypeMaster();
-        model.addAttribute("casetype", casetypeMaster);
-        model.addAttribute("mode", "create");
-        return "caseType-new";
-    }
+	@RequestMapping(method = RequestMethod.GET)
+	public String newForm(final Model model) {
+		final CasetypeMaster casetypeMaster = new CasetypeMaster();
+		model.addAttribute("casetype", casetypeMaster);
+		model.addAttribute("mode", "create");
+		return "caseType-new";
+	}
 
-    @RequestMapping( method = RequestMethod.POST)
-    public String createCaseType(@Valid @ModelAttribute final CasetypeMaster caseType, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
-        if (errors.hasErrors())
-            return "case-type-master";
-        caseTypeMasterService.createUsageType(caseType);
-        redirectAttrs.addFlashAttribute("caseType", caseType);
-        model.addAttribute("message", "Case Type created successfully.");
-        model.addAttribute("mode", "create");
-        return "case-type-sucess";
-    }
-
-    
+	@RequestMapping(method = RequestMethod.POST)
+	public String createCaseType(@Valid @ModelAttribute final CasetypeMaster caseType, final BindingResult errors,
+			final RedirectAttributes redirectAttrs, final Model model) {
+		if (errors.hasErrors())
+			return "case-type-master";
+		caseTypeMasterService.createUsageType(caseType);
+		redirectAttrs.addFlashAttribute("caseType", caseType);
+		model.addAttribute("message", "Case Type created successfully.");
+		model.addAttribute("mode", "create");
+		return "case-type-sucess";
+	}
 
 }

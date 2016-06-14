@@ -1,3 +1,42 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
@@ -12,117 +51,112 @@ import org.hibernate.validator.constraints.Length;
 
 /**
  * LegalcasePetitioner entity.
- * 
+ *
  * @author MyEclipse Persistence Tools
  */
 
 public class BipartisanDetails {
 
-    private Long id;
-    private Legalcase eglcLegalcase;
-    @Length(max = 128, message = "petitionerName.length")
-    @OptionalPattern(regex = LcmsConstants.mixedCharType1, message = "petitionerName.name.mixedChar")
-    private String name;
-    @Length(max = 256, message = "address.length")
-    private String address;
-    @OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "contactNumber.numeric")
-    private Long contactNumber;
-    private boolean isrepondent;
-    private GovernmentDept governmentDept;
-    private boolean isrespondentgovernment;
-    private Long serialNumber;
+	private Long id;
+	private Legalcase eglcLegalcase;
+	@Length(max = 128, message = "petitionerName.length")
+	@OptionalPattern(regex = LcmsConstants.mixedCharType1, message = "petitionerName.name.mixedChar")
+	private String name;
+	@Length(max = 256, message = "address.length")
+	private String address;
+	@OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "contactNumber.numeric")
+	private Long contactNumber;
+	private boolean isrepondent;
+	private GovernmentDept governmentDept;
+	private boolean isrespondentgovernment;
+	private Long serialNumber;
 
-    public GovernmentDept getGovernmentDept() {
-        return this.governmentDept;
-    }
+	public GovernmentDept getGovernmentDept() {
+		return governmentDept;
+	}
 
-    public void setGovernmentDept(GovernmentDept governmentDept) {
-        this.governmentDept = governmentDept;
-    }
+	public void setGovernmentDept(final GovernmentDept governmentDept) {
+		this.governmentDept = governmentDept;
+	}
 
-    public boolean getIsrespondentgovernment() {
-        return isrespondentgovernment;
-    }
+	public boolean getIsrespondentgovernment() {
+		return isrespondentgovernment;
+	}
 
-    public void setIsrespondentgovernment(boolean isrespondentgovernment) {
-        this.isrespondentgovernment = isrespondentgovernment;
-    }
+	public void setIsrespondentgovernment(final boolean isrespondentgovernment) {
+		this.isrespondentgovernment = isrespondentgovernment;
+	}
 
-    public boolean getIsrepondent() {
-        return isrepondent;
-    }
+	public boolean getIsrepondent() {
+		return isrepondent;
+	}
 
-    public void setIsrepondent(boolean isrepondent) {
-        this.isrepondent = isrepondent;
-    }
+	public void setIsrepondent(final boolean isrepondent) {
+		this.isrepondent = isrepondent;
+	}
 
-    public Legalcase getEglcLegalcase() {
-        return this.eglcLegalcase;
-    }
+	public Legalcase getEglcLegalcase() {
+		return eglcLegalcase;
+	}
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
-    }
+	public void setEglcLegalcase(final Legalcase eglcLegalcase) {
+		this.eglcLegalcase = eglcLegalcase;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(final String name) {
+		this.name = name;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setAddress(final String address) {
+		this.address = address;
+	}
 
-    public Long getContactNumber() {
-        return this.contactNumber;
-    }
+	public Long getContactNumber() {
+		return contactNumber;
+	}
 
-    public void setContactNumber(Long contactNumber) {
-        this.contactNumber = contactNumber;
-    }
+	public void setContactNumber(final Long contactNumber) {
+		this.contactNumber = contactNumber;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public List<ValidationError> validate() {
-        List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getIsrespondentgovernment() && getGovernmentDept() == null) {
-            if (getIsrepondent())
-                errors.add(new ValidationError("govtDept",
-                        "respondent.govtDept.select"));
-            else
-                errors.add(new ValidationError("govtDept",
-                        "petitioner.govtDept.select"));
-        }
-        if (!getIsrespondentgovernment()) {
-            if (getIsrepondent() && StringUtils.isBlank(getName()))
-                errors.add(new ValidationError("respondent",
-                        "respondentName.null"));
-            if (!getIsrepondent() && StringUtils.isBlank(getName()))
-                errors.add(new ValidationError("petitioner",
-                        "petitionerName.null"));
-        }
-        return errors;
-    }
+	public List<ValidationError> validate() {
+		final List<ValidationError> errors = new ArrayList<ValidationError>();
+		if (getIsrespondentgovernment() && getGovernmentDept() == null)
+			if (getIsrepondent())
+				errors.add(new ValidationError("govtDept", "respondent.govtDept.select"));
+			else
+				errors.add(new ValidationError("govtDept", "petitioner.govtDept.select"));
+		if (!getIsrespondentgovernment()) {
+			if (getIsrepondent() && StringUtils.isBlank(getName()))
+				errors.add(new ValidationError("respondent", "respondentName.null"));
+			if (!getIsrepondent() && StringUtils.isBlank(getName()))
+				errors.add(new ValidationError("petitioner", "petitionerName.null"));
+		}
+		return errors;
+	}
 
-    public Long getSerialNumber() {
-        return serialNumber;
-    }
+	public Long getSerialNumber() {
+		return serialNumber;
+	}
 
-    public void setSerialNumber(Long serialNumber) {
-        this.serialNumber = serialNumber;
-    }
+	public void setSerialNumber(final Long serialNumber) {
+		this.serialNumber = serialNumber;
+	}
 
 }

@@ -1,9 +1,47 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,283 +61,269 @@ import org.hibernate.validator.constraints.Length;
 
 /**
  * Judgment entity.
- * 
+ *
  * @author MyEclipse Persistence Tools
  */
 
 public class Judgment extends BaseModel {
-    /**
-     * Serial version uid
-     */
-    private static final long serialVersionUID = 1L;
+	/**
+	 * Serial version uid
+	 */
+	private static final long serialVersionUID = 1L;
 
-    // Fields
-    private Legalcase eglcLegalcase;
-    @Required(message = "select.judgmentType")
-    private JudgmentType judgmentType;
-    @Required(message = "orderDate.null")
-    @DateFormat(message = "invalid.fieldvalue.model.orderDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.order.date")
-    private Date orderDate;
-    @DateFormat(message = "invalid.fieldvalue.model.sentToDeptOn")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.sentDept.date")
-    private Date sentToDeptOn;
-    @DateFormat(message = "invalid.fieldvalue.model.implementByDate")
-    private Date implementByDate;
-    private Long costAwarded;
-    private Long compensationAwarded;
-    @Required(message = "judgmentDetails.null")
-    @Length(max = 1024, message = "judgmentDetails.length")
-    private String judgmentDetails;
-    private String judgmentDocument;
-    private Double advisorFee;
-    private Double arbitratorFee;
-    @Length(max = 1024, message = "enquirydetails.length")
-    private String enquirydetails;
-    @DateFormat(message = "invalid.fieldvalue.model.enquirydate")
-    private Date enquirydate;
-    @DateFormat(message = "invalid.fieldvalue.model.setasidePetitionDate")
-    private Date setasidePetitionDate;
-    @Length(max = 1024, message = "setasidePetitionDetails.length")
-    private String setasidePetitionDetails;
-    @Transient
-    private Set<Judgmentimpl> eglcJudgmentimpls = new HashSet<Judgmentimpl>(0);
-    private Set<Judgment> children = new LinkedHashSet<Judgment>(0);
-    @DateFormat(message = "invalid.fieldvalue.model.sapHearingDate")
-    private Date sapHearingDate;
-    private boolean sapAccepted;
-    private Judgment parent;
-    private Long documentNum;
-    private boolean isMemoRequired;
-    private Date certifiedMemoFwdDate;
+	// Fields
+	private Legalcase eglcLegalcase;
+	@Required(message = "select.judgmentType")
+	private JudgmentType judgmentType;
+	@Required(message = "orderDate.null")
+	@DateFormat(message = "invalid.fieldvalue.model.orderDate")
+	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.order.date")
+	private Date orderDate;
+	@DateFormat(message = "invalid.fieldvalue.model.sentToDeptOn")
+	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.sentDept.date")
+	private Date sentToDeptOn;
+	@DateFormat(message = "invalid.fieldvalue.model.implementByDate")
+	private Date implementByDate;
+	private Long costAwarded;
+	private Long compensationAwarded;
+	@Required(message = "judgmentDetails.null")
+	@Length(max = 1024, message = "judgmentDetails.length")
+	private String judgmentDetails;
+	private String judgmentDocument;
+	private Double advisorFee;
+	private Double arbitratorFee;
+	@Length(max = 1024, message = "enquirydetails.length")
+	private String enquirydetails;
+	@DateFormat(message = "invalid.fieldvalue.model.enquirydate")
+	private Date enquirydate;
+	@DateFormat(message = "invalid.fieldvalue.model.setasidePetitionDate")
+	private Date setasidePetitionDate;
+	@Length(max = 1024, message = "setasidePetitionDetails.length")
+	private String setasidePetitionDetails;
+	@Transient
+	private Set<Judgmentimpl> eglcJudgmentimpls = new HashSet<Judgmentimpl>(0);
+	private Set<Judgment> children = new LinkedHashSet<Judgment>(0);
+	@DateFormat(message = "invalid.fieldvalue.model.sapHearingDate")
+	private Date sapHearingDate;
+	private boolean sapAccepted;
+	private Judgment parent;
+	private Long documentNum;
+	private boolean isMemoRequired;
+	private Date certifiedMemoFwdDate;
 
-    public Long getDocumentNum() {
-        return documentNum;
-    }
+	public Long getDocumentNum() {
+		return documentNum;
+	}
 
-    public void setDocumentNum(Long documentNum) {
-        this.documentNum = documentNum;
-    }
+	public void setDocumentNum(final Long documentNum) {
+		this.documentNum = documentNum;
+	}
 
-    public Legalcase getEglcLegalcase() {
-        return this.eglcLegalcase;
-    }
+	public Legalcase getEglcLegalcase() {
+		return eglcLegalcase;
+	}
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
-    }
+	public void setEglcLegalcase(final Legalcase eglcLegalcase) {
+		this.eglcLegalcase = eglcLegalcase;
+	}
 
-    public JudgmentType getJudgmentType() {
-        return this.judgmentType;
-    }
+	public JudgmentType getJudgmentType() {
+		return judgmentType;
+	}
 
-    public void setJudgmentType(JudgmentType newJudgmentType) {
-        this.judgmentType = newJudgmentType;
-    }
+	public void setJudgmentType(final JudgmentType newJudgmentType) {
+		judgmentType = newJudgmentType;
+	}
 
-    public Date getOrderDate() {
-        return this.orderDate;
-    }
+	public Date getOrderDate() {
+		return orderDate;
+	}
 
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
+	public void setOrderDate(final Date orderDate) {
+		this.orderDate = orderDate;
+	}
 
-    public Date getSentToDeptOn() {
-        return this.sentToDeptOn;
-    }
+	public Date getSentToDeptOn() {
+		return sentToDeptOn;
+	}
 
-    public void setSentToDeptOn(Date sentToDeptOn) {
-        this.sentToDeptOn = sentToDeptOn;
-    }
+	public void setSentToDeptOn(final Date sentToDeptOn) {
+		this.sentToDeptOn = sentToDeptOn;
+	}
 
-    public Date getImplementByDate() {
-        return this.implementByDate;
-    }
+	public Date getImplementByDate() {
+		return implementByDate;
+	}
 
-    public void setImplementByDate(Date implementByDate) {
-        this.implementByDate = implementByDate;
-    }
+	public void setImplementByDate(final Date implementByDate) {
+		this.implementByDate = implementByDate;
+	}
 
-    public Long getCostAwarded() {
-        return this.costAwarded;
-    }
+	public Long getCostAwarded() {
+		return costAwarded;
+	}
 
-    public void setCostAwarded(Long costAwarded) {
-        this.costAwarded = costAwarded;
-    }
+	public void setCostAwarded(final Long costAwarded) {
+		this.costAwarded = costAwarded;
+	}
 
-    public Long getCompensationAwarded() {
-        return this.compensationAwarded;
-    }
+	public Long getCompensationAwarded() {
+		return compensationAwarded;
+	}
 
-    public void setCompensationAwarded(Long compensationAwarded) {
-        this.compensationAwarded = compensationAwarded;
-    }
+	public void setCompensationAwarded(final Long compensationAwarded) {
+		this.compensationAwarded = compensationAwarded;
+	}
 
-    public String getJudgmentDetails() {
-        return this.judgmentDetails;
-    }
+	public String getJudgmentDetails() {
+		return judgmentDetails;
+	}
 
-    public void setJudgmentDetails(String judgmentDetails) {
-        this.judgmentDetails = judgmentDetails;
-    }
+	public void setJudgmentDetails(final String judgmentDetails) {
+		this.judgmentDetails = judgmentDetails;
+	}
 
-    public String getJudgmentDocument() {
-        return this.judgmentDocument;
-    }
+	public String getJudgmentDocument() {
+		return judgmentDocument;
+	}
 
-    public void setJudgmentDocument(String judgmentDocument) {
-        this.judgmentDocument = judgmentDocument;
-    }
+	public void setJudgmentDocument(final String judgmentDocument) {
+		this.judgmentDocument = judgmentDocument;
+	}
 
-    public Double getAdvisorFee() {
-        return this.advisorFee;
-    }
+	public Double getAdvisorFee() {
+		return advisorFee;
+	}
 
-    public void setAdvisorFee(Double advisorFee) {
-        this.advisorFee = advisorFee;
-    }
+	public void setAdvisorFee(final Double advisorFee) {
+		this.advisorFee = advisorFee;
+	}
 
-    public Double getArbitratorFee() {
-        return this.arbitratorFee;
-    }
+	public Double getArbitratorFee() {
+		return arbitratorFee;
+	}
 
-    public void setArbitratorFee(Double arbitratorFee) {
-        this.arbitratorFee = arbitratorFee;
-    }
+	public void setArbitratorFee(final Double arbitratorFee) {
+		this.arbitratorFee = arbitratorFee;
+	}
 
-    public String getEnquirydetails() {
-        return this.enquirydetails;
-    }
+	public String getEnquirydetails() {
+		return enquirydetails;
+	}
 
-    public void setEnquirydetails(String enquirydetails) {
-        this.enquirydetails = enquirydetails;
-    }
+	public void setEnquirydetails(final String enquirydetails) {
+		this.enquirydetails = enquirydetails;
+	}
 
-    public Date getEnquirydate() {
-        return this.enquirydate;
-    }
+	public Date getEnquirydate() {
+		return enquirydate;
+	}
 
-    public void setEnquirydate(Date enquirydate) {
-        this.enquirydate = enquirydate;
-    }
+	public void setEnquirydate(final Date enquirydate) {
+		this.enquirydate = enquirydate;
+	}
 
-    public Date getSetasidePetitionDate() {
-        return this.setasidePetitionDate;
-    }
+	public Date getSetasidePetitionDate() {
+		return setasidePetitionDate;
+	}
 
-    public void setSetasidePetitionDate(Date setasidePetitionDate) {
-        this.setasidePetitionDate = setasidePetitionDate;
-    }
+	public void setSetasidePetitionDate(final Date setasidePetitionDate) {
+		this.setasidePetitionDate = setasidePetitionDate;
+	}
 
-    public String getSetasidePetitionDetails() {
-        return setasidePetitionDetails;
-    }
+	public String getSetasidePetitionDetails() {
+		return setasidePetitionDetails;
+	}
 
-    public void setSetasidePetitionDetails(String setasidePetitionDetails) {
-        this.setasidePetitionDetails = setasidePetitionDetails;
-    }
+	public void setSetasidePetitionDetails(final String setasidePetitionDetails) {
+		this.setasidePetitionDetails = setasidePetitionDetails;
+	}
 
-    public void addJudgmentimpl(Judgmentimpl judgmentimpl) {
-        getEglcJudgmentimpls().add(judgmentimpl);
-    }
+	public void addJudgmentimpl(final Judgmentimpl judgmentimpl) {
+		getEglcJudgmentimpls().add(judgmentimpl);
+	}
 
-    @Valid
-    public Set<Judgmentimpl> getEglcJudgmentimpls() {
-        return this.eglcJudgmentimpls;
-    }
+	@Valid
+	public Set<Judgmentimpl> getEglcJudgmentimpls() {
+		return eglcJudgmentimpls;
+	}
 
-    public Date getSapHearingDate() {
-        return sapHearingDate;
-    }
+	public Date getSapHearingDate() {
+		return sapHearingDate;
+	}
 
-    public boolean getSapAccepted() {
-        return sapAccepted;
-    }
+	public boolean getSapAccepted() {
+		return sapAccepted;
+	}
 
-    public void setSapHearingDate(Date sapHearingDate) {
-        this.sapHearingDate = sapHearingDate;
-    }
+	public void setSapHearingDate(final Date sapHearingDate) {
+		this.sapHearingDate = sapHearingDate;
+	}
 
-    public void setSapAccepted(boolean sapAccepted) {
-        this.sapAccepted = sapAccepted;
-    }
+	public void setSapAccepted(final boolean sapAccepted) {
+		this.sapAccepted = sapAccepted;
+	}
 
-    public List<ValidationError> validate() {
-        List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (eglcLegalcase != null
-                && !DateUtils.compareDates(getOrderDate(), eglcLegalcase
-                        .getCasedate())) {
-            errors.add(new ValidationError("orderDate",
-                    "orderdate.less.casedate"));
-        }
-        if (!DateUtils.compareDates(getImplementByDate(), getOrderDate())) {
-            errors.add(new ValidationError("implementByDate",
-                    "implementByDate.less.orderDate"));
-        }
-        if (!DateUtils.compareDates(getSentToDeptOn(), getOrderDate())) {
-            errors.add(new ValidationError("sentToDeptOn",
-                    "sentToDeptOn.less.orderDate"));
-        }
-        if (!DateUtils.compareDates(getEnquirydate(), getOrderDate())) {
-            errors.add(new ValidationError("enquirydate",
-                    "enquirydate.less.orderDate"));
-        }
-        if (!DateUtils.compareDates(getSapHearingDate(), getOrderDate())) {
-            errors.add(new ValidationError("sapHearingDate",
-                    "sapHearingDate.less.orderDate"));
-        }
-        if (!DateUtils.compareDates(getSetasidePetitionDate(), getOrderDate())) {
-            errors.add(new ValidationError("setasidePetitionDate",
-                    "setasidePetitionDate.less.orderDate"));
-        }
-        for (Iterator<Judgmentimpl> iter = getEglcJudgmentimpls().iterator(); iter
-                .hasNext();) {
-            Judgmentimpl element = (Judgmentimpl) iter.next();
-            errors.addAll(element.validate());
-        }
-        return errors;
-    }
+	@Override
+	public List<ValidationError> validate() {
+		final List<ValidationError> errors = new ArrayList<ValidationError>();
+		if (eglcLegalcase != null && !DateUtils.compareDates(getOrderDate(), eglcLegalcase.getCasedate()))
+			errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
+		if (!DateUtils.compareDates(getImplementByDate(), getOrderDate()))
+			errors.add(new ValidationError("implementByDate", "implementByDate.less.orderDate"));
+		if (!DateUtils.compareDates(getSentToDeptOn(), getOrderDate()))
+			errors.add(new ValidationError("sentToDeptOn", "sentToDeptOn.less.orderDate"));
+		if (!DateUtils.compareDates(getEnquirydate(), getOrderDate()))
+			errors.add(new ValidationError("enquirydate", "enquirydate.less.orderDate"));
+		if (!DateUtils.compareDates(getSapHearingDate(), getOrderDate()))
+			errors.add(new ValidationError("sapHearingDate", "sapHearingDate.less.orderDate"));
+		if (!DateUtils.compareDates(getSetasidePetitionDate(), getOrderDate()))
+			errors.add(new ValidationError("setasidePetitionDate", "setasidePetitionDate.less.orderDate"));
+		for (final Judgmentimpl judgmentimpl : getEglcJudgmentimpls()) {
+			final Judgmentimpl element = judgmentimpl;
+			errors.addAll(element.validate());
+		}
+		return errors;
+	}
 
-    public void setEglcJudgmentimpls(Set<Judgmentimpl> eglcJudgmentimpls) {
-        this.eglcJudgmentimpls = eglcJudgmentimpls;
-    }
+	public void setEglcJudgmentimpls(final Set<Judgmentimpl> eglcJudgmentimpls) {
+		this.eglcJudgmentimpls = eglcJudgmentimpls;
+	}
 
-    public Set<Judgment> getChildren() {
-        return children;
-    }
+	public Set<Judgment> getChildren() {
+		return children;
+	}
 
-    public void setChildren(Set<Judgment> children) {
-        this.children = children;
-    }
+	public void setChildren(final Set<Judgment> children) {
+		this.children = children;
+	}
 
-    public Judgment getParent() {
-        return parent;
-    }
+	public Judgment getParent() {
+		return parent;
+	}
 
-    public void setParent(Judgment parent) {
-        this.parent = parent;
-    }
+	public void setParent(final Judgment parent) {
+		this.parent = parent;
+	}
 
-    public void addChild(Judgment arg1) {
-        children.add(arg1);
-    }
+	public void addChild(final Judgment arg1) {
+		children.add(arg1);
+	}
 
-    public void setIsMemoRequired(boolean isMemoRequired) {
-        this.isMemoRequired = isMemoRequired;
-    }
+	public void setIsMemoRequired(final boolean isMemoRequired) {
+		this.isMemoRequired = isMemoRequired;
+	}
 
-    public boolean getIsMemoRequired() {
-        return isMemoRequired;
-    }
+	public boolean getIsMemoRequired() {
+		return isMemoRequired;
+	}
 
-    public Date getCertifiedMemoFwdDate() {
-        return certifiedMemoFwdDate;
-    }
+	public Date getCertifiedMemoFwdDate() {
+		return certifiedMemoFwdDate;
+	}
 
-    public void setCertifiedMemoFwdDate(Date certifiedMemoFwdDate) {
-        this.certifiedMemoFwdDate = certifiedMemoFwdDate;
-    }
+	public void setCertifiedMemoFwdDate(final Date certifiedMemoFwdDate) {
+		this.certifiedMemoFwdDate = certifiedMemoFwdDate;
+	}
 
 }

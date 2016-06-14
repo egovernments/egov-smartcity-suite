@@ -48,5 +48,4 @@ public interface CasetypeMasterRepository extends JpaRepository<CasetypeMaster, 
 
 	CasetypeMaster findByCode(String code);
 
-	
 }

@@ -1,3 +1,42 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
@@ -19,162 +58,148 @@ import org.hibernate.validator.constraints.Length;
 
 /**
  * Hearings entity.
- * 
+ *
  * @author MyEclipse Persistence Tools
  */
 
 public class Hearings extends BaseModel {
-    /**
-     * Serial version uid
-     */
-    private static final long serialVersionUID = 1L;
-    // Fields
-    @DateFormat(message = "invalid.fieldvalue.model.hearingDate")
-    @Required(message = "hearing.date.null")
-    private Date hearingDate;
-    private Legalcase legalcase;
-    private boolean isStandingcounselpresent;
-    @Length(max = 128, message = "hearing.additionalLawyer.length")
-    @OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
-    private String additionalLawyers;
-    private Set<PersonalInformation> eglcEmployeehearings = new HashSet<PersonalInformation>(
-            0);
-    @Length(max = 1024, message = "hearing.outcome.length")
-    private String hearingOutcome;
-    private boolean isSeniorStandingcounselpresent;
-    @Length(max = 1024, message = "hearing.purpose.length")
-    private String purposeofHearings;
-    private EgwStatus egwStatus;
-    @Length(max = 50, message = "ti.referencenumber.length")
-    @OptionalPattern(regex = LcmsConstants.referenceNumberTIRegx, message = "ti.referencenumber.alphanumeric")
-    private String referenceNumber;
+	/**
+	 * Serial version uid
+	 */
+	private static final long serialVersionUID = 1L;
+	// Fields
+	@DateFormat(message = "invalid.fieldvalue.model.hearingDate")
+	@Required(message = "hearing.date.null")
+	private Date hearingDate;
+	private Legalcase legalcase;
+	private boolean isStandingcounselpresent;
+	@Length(max = 128, message = "hearing.additionalLawyer.length")
+	@OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
+	private String additionalLawyers;
+	private Set<PersonalInformation> eglcEmployeehearings = new HashSet<PersonalInformation>(0);
+	@Length(max = 1024, message = "hearing.outcome.length")
+	private String hearingOutcome;
+	private boolean isSeniorStandingcounselpresent;
+	@Length(max = 1024, message = "hearing.purpose.length")
+	private String purposeofHearings;
+	private EgwStatus egwStatus;
+	@Length(max = 50, message = "ti.referencenumber.length")
+	@OptionalPattern(regex = LcmsConstants.referenceNumberTIRegx, message = "ti.referencenumber.alphanumeric")
+	private String referenceNumber;
 
-    public void addEmployee(PersonalInformation empObj) {
-        this.eglcEmployeehearings.add(empObj);
-    }
+	public void addEmployee(final PersonalInformation empObj) {
+		eglcEmployeehearings.add(empObj);
+	}
 
-    public Date getHearingDate() {
-        return this.hearingDate;
-    }
+	public Date getHearingDate() {
+		return hearingDate;
+	}
 
-    public void setHearingDate(Date hearingDate) {
-        this.hearingDate = hearingDate;
-    }
+	public void setHearingDate(final Date hearingDate) {
+		this.hearingDate = hearingDate;
+	}
 
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
+	public Legalcase getLegalcase() {
+		return legalcase;
+	}
 
-    public void setLegalcase(Legalcase legalcase) {
-        this.legalcase = legalcase;
-    }
+	public void setLegalcase(final Legalcase legalcase) {
+		this.legalcase = legalcase;
+	}
 
-    public String getAdditionalLawyers() {
-        return this.additionalLawyers;
-    }
+	public String getAdditionalLawyers() {
+		return additionalLawyers;
+	}
 
-    public void setAdditionalLawyers(String additionalLawyers) {
-        this.additionalLawyers = additionalLawyers;
-    }
+	public void setAdditionalLawyers(final String additionalLawyers) {
+		this.additionalLawyers = additionalLawyers;
+	}
 
-    public boolean getIsStandingcounselpresent() {
-        return isStandingcounselpresent;
-    }
+	public boolean getIsStandingcounselpresent() {
+		return isStandingcounselpresent;
+	}
 
-    public void setIsStandingcounselpresent(boolean isStandingcounselpresent) {
-        this.isStandingcounselpresent = isStandingcounselpresent;
-    }
+	public void setIsStandingcounselpresent(final boolean isStandingcounselpresent) {
+		this.isStandingcounselpresent = isStandingcounselpresent;
+	}
 
-    public Set<PersonalInformation> getEglcEmployeehearings() {
-        return eglcEmployeehearings;
-    }
+	public Set<PersonalInformation> getEglcEmployeehearings() {
+		return eglcEmployeehearings;
+	}
 
-    public void setEglcEmployeehearings(
-            Set<PersonalInformation> eglcEmployeehearings) {
-        this.eglcEmployeehearings = eglcEmployeehearings;
-    }
+	public void setEglcEmployeehearings(final Set<PersonalInformation> eglcEmployeehearings) {
+		this.eglcEmployeehearings = eglcEmployeehearings;
+	}
 
-    public String getHearingOutcome() {
-        return hearingOutcome;
-    }
+	public String getHearingOutcome() {
+		return hearingOutcome;
+	}
 
-    public void setHearingOutcome(String hearingOutcome) {
-        this.hearingOutcome = hearingOutcome;
-    }
+	public void setHearingOutcome(final String hearingOutcome) {
+		this.hearingOutcome = hearingOutcome;
+	}
 
-    public boolean getIsSeniorStandingcounselpresent() {
-        return isSeniorStandingcounselpresent;
-    }
+	public boolean getIsSeniorStandingcounselpresent() {
+		return isSeniorStandingcounselpresent;
+	}
 
-    public void setIsSeniorStandingcounselpresent(
-            boolean isSeniorStandingcounselpresent) {
-        this.isSeniorStandingcounselpresent = isSeniorStandingcounselpresent;
-    }
+	public void setIsSeniorStandingcounselpresent(final boolean isSeniorStandingcounselpresent) {
+		this.isSeniorStandingcounselpresent = isSeniorStandingcounselpresent;
+	}
 
-    public String getPurposeofHearings() {
-        return purposeofHearings;
-    }
+	public String getPurposeofHearings() {
+		return purposeofHearings;
+	}
 
-    public void setPurposeofHearings(String purposeofHearings) {
-        this.purposeofHearings = purposeofHearings;
-    }
+	public void setPurposeofHearings(final String purposeofHearings) {
+		this.purposeofHearings = purposeofHearings;
+	}
 
-    public Date getCaDueDate() {
-        Date caDueDate = null;
-        for (Pwr pwr : getLegalcase().getEglcPwrs())
-            caDueDate = pwr.getCaDueDate();
-        return caDueDate;
-    }
+	public Date getCaDueDate() {
+		Date caDueDate = null;
+		for (final Pwr pwr : getLegalcase().getEglcPwrs())
+			caDueDate = pwr.getCaDueDate();
+		return caDueDate;
+	}
 
-    public List<ValidationError> validate() {
-        List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getHearingDate() != null) {
+	@Override
+	public List<ValidationError> validate() {
+		final List<ValidationError> errors = new ArrayList<ValidationError>();
+		if (getHearingDate() != null) {
 
-            if (getCaDueDate() != null
-                    && !DateUtils
-                            .compareDates(getHearingDate(), getCaDueDate())) {
-                errors.add(new ValidationError("hearingDate",
-                        "hearingDate.greaterThan.caDueDate"));
-            }
-            if (legalcase.getCaseReceivingDate() != null
-                    && !DateUtils.compareDates(getHearingDate(), legalcase
-                            .getCaseReceivingDate())) {
-                errors.add(new ValidationError("hearingDate",
-                        "hearingDate.greaterThan.caseReceivingDate"));
-            }
-            if (!DateUtils.compareDates(getHearingDate(), legalcase
-                    .getCasedate())) {
-                errors.add(new ValidationError("hearingDate",
-                        "hearingDate.greaterThan.caseDate"));
-            }
+			if (getCaDueDate() != null && !DateUtils.compareDates(getHearingDate(), getCaDueDate()))
+				errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caDueDate"));
+			if (legalcase.getCaseReceivingDate() != null
+					&& !DateUtils.compareDates(getHearingDate(), legalcase.getCaseReceivingDate()))
+				errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseReceivingDate"));
+			if (!DateUtils.compareDates(getHearingDate(), legalcase.getCasedate()))
+				errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseDate"));
 
-        }
-        return errors;
-    }
+		}
+		return errors;
+	}
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
-    }
+	public EgwStatus getEgwStatus() {
+		return egwStatus;
+	}
 
-    public void setEgwStatus(EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
-    }
+	public void setEgwStatus(final EgwStatus egwStatus) {
+		this.egwStatus = egwStatus;
+	}
 
-    public String getReferenceNumber() {
-        return referenceNumber;
-    }
+	public String getReferenceNumber() {
+		return referenceNumber;
+	}
 
-    public void setReferenceNumber(String referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
+	public void setReferenceNumber(final String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
 
-    public Boolean getReplytoTI() {
-        if (this.getEgwStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_HEARING_REPLYTOTI)) {
-            return Boolean.TRUE;
-        }
-        else {
-            return Boolean.FALSE;
-        }
-    }
+	public Boolean getReplytoTI() {
+		if (getEgwStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_HEARING_REPLYTOTI))
+			return Boolean.TRUE;
+		else
+			return Boolean.FALSE;
+	}
 
 }

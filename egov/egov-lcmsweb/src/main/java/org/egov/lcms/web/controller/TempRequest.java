@@ -41,16 +41,14 @@
 package org.egov.lcms.web.controller;
 
 public class TempRequest {
-    private String searchText;
+	private String searchText;
 
 	public String getSearchText() {
 		return searchText;
 	}
 
-	public void setSearchText(String searchText) {
+	public void setSearchText(final String searchText) {
 		this.searchText = searchText;
 	}
-    
-
 
 }
