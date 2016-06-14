@@ -106,6 +106,11 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	$('#resendotpbtn').click(function() {
+		$('#activation_container').hide('slow');
+		$('#otpresend_container').show('slow');
+	});
+	
 	$('#password, #username').popover({ trigger: "focus",placement: "bottom"})
 	
 });
