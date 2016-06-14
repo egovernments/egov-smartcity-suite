@@ -59,6 +59,10 @@
 				</div>
 					<input type="hidden" id="consumerCode" name="consumerCode"
 						value="${waterConnectionDetails.connection.consumerCode}" />
+						<input type="hidden" id="current2HalfInstallment" name="current2HalfInstallment"
+						value="${current2HalfInstallment}" />
+						<input type="hidden" id="current1HalfInstallment" name="current1HalfInstallment"
+						value="${current1HalfInstallment}" />
 						
 					<form:hidden path="id" />
 					<div class="panel-heading">

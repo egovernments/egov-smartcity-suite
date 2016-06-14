@@ -264,6 +264,29 @@ function validateNotFutureDate(inputDate,currDate){
 	return true;
 }
 
+
+function validatedays(chqDate,receiptDate)
+{
+	var cd = process(chqDate);
+	var rd = process(receiptDate);
+	   
+	var timeDiff = Math.abs(cd.getTime()- rd.getTime());
+	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+	if(diffDays>90)
+		{
+		return false;
+		}
+	return true;
+
+}
+
+
+function process(date){
+   var parts = date.split("/");
+   var date = new Date(parts[1] + "/" + parts[0] + "/" + parts[2]);
+   return date;
+}
+
 function validateChequeDate(chqDate,currDate){
 	var currentYear = currDate.substr(6,4);
 	var chequeYear  = chqDate.substr(6,4);

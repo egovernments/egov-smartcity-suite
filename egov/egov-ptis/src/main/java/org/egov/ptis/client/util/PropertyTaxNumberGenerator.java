@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.client.util;
 
+import java.util.Date;
+
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.CityService;
@@ -46,20 +48,18 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.ptis.autonumber.AssessmentNumberGenerator;
+import org.egov.ptis.autonumber.NoticeNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-
 @Service
 @Transactional(readOnly = true)
 public class PropertyTaxNumberGenerator {
-    private static final String SEQ_EGPT_ASSESSMENT_NUMBER = "seq_egpt_assessment_number";
-    private static final String SEQ_EGPT_NOTICE_NUMBER = "SEQ_EGPT_NOTICE_NUMBER";
     private static final String SEQ_EG_BILL = "SEQ_EG_BILL";
     @Autowired
     private SequenceNumberGenerator sequenceNumberGenerator;
@@ -71,27 +71,11 @@ public class PropertyTaxNumberGenerator {
     private CityService cityService;
 
     @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
 
     public String generateNoticeNumber(final String noticeType) {
-        final StringBuffer noticeNo = new StringBuffer();
-        try {
-            if (org.apache.commons.lang.StringUtils.isNotBlank(noticeType)) {
-                if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)) {
-                    noticeNo.append("SN").append("/");
-                } else if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE)) {
-                    noticeNo.append("MC").append("/");
-                }
-                final String cityCode = ApplicationThreadLocals.getCityCode();
-                noticeNo.append(cityCode);
-                final String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER).toString();
-                noticeNo.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
-            }
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException("Exception : " + e.getMessage(), e);
-        }
-
-        return noticeNo.toString();
+    	NoticeNumberGenerator noticeNumberGen = beanResolver.getAutoNumberServiceFor(NoticeNumberGenerator.class); 
+    	return noticeNumberGen.generateNoticeNumber(noticeType);
     }
 
     public String generateBillNumber(final String wardNo) {
@@ -135,17 +119,8 @@ public class PropertyTaxNumberGenerator {
     }
 
     public String generateAssessmentNumber() {
-
-        final StringBuffer indexNum = new StringBuffer();
-        try {
-            final String cityCode = ApplicationThreadLocals.getCityCode();
-            indexNum.append(cityCode);
-            final String index = sequenceNumberGenerator.getNextSequence(SEQ_EGPT_ASSESSMENT_NUMBER).toString();
-            indexNum.append(org.apache.commons.lang.StringUtils.leftPad(index, 6, "0"));
-        } catch (final Exception e) {
-            throw new ApplicationRuntimeException("Exception : " + e.getMessage(), e);
-        }
-        return indexNum.toString();
+        AssessmentNumberGenerator assessmentNoGen = beanResolver.getAutoNumberServiceFor(AssessmentNumberGenerator.class);
+        return assessmentNoGen.generateAssessmentNumber();
     }
 
     public String generateMemoNumber() {

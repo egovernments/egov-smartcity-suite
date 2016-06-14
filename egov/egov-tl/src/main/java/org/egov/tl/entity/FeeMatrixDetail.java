@@ -57,7 +57,7 @@ import java.util.Date;
 
 @Entity
 @Table(name="egtl_feematrix_detail")
-@SequenceGenerator(name=FeeMatrixDetail.SEQ,sequenceName=FeeMatrixDetail.SEQ)
+@SequenceGenerator(name=FeeMatrixDetail.SEQ,sequenceName=FeeMatrixDetail.SEQ, allocationSize = 1)
 public class FeeMatrixDetail extends AbstractPersistable<Long> {
 	public static final String SEQ="seq_egtl_feematrix_detail";
     private static final long serialVersionUID = 1L;

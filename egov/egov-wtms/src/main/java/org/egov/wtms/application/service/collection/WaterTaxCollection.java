@@ -82,7 +82,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
@@ -134,14 +133,12 @@ public class WaterTaxCollection extends TaxCollection {
 
     @PersistenceContext
     private EntityManager entityManager;
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
     @Autowired
     private FunctionHibernateDAO functionDAO;
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
 
     @Autowired
     private DemandGenericDao demandGenericDAO;
@@ -203,7 +200,7 @@ public class WaterTaxCollection extends TaxCollection {
         String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                    && !rcptAccInfo.getIsRevenueAccount()) {
+            && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
                 final String[] installsplit = desc[1].split("#");
@@ -237,10 +234,8 @@ public class WaterTaxCollection extends TaxCollection {
     }
 
     /**
-     * @param demand
-     *            Updates WaterConnectionDetails Object once Collection Is done.
-     *            send Record move to Commissioner and Send SMS and Email after
-     *            Collection
+     * @param demand Updates WaterConnectionDetails Object once Collection Is done. send Record move to Commissioner and Send SMS
+     * and Email after Collection
      */
     @Transactional
     public void updateWaterConnectionDetails(final EgDemand demand) {
@@ -287,8 +282,8 @@ public class WaterTaxCollection extends TaxCollection {
             final EgDemand demand, final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
         final StringBuilder query = new StringBuilder(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-                .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-                .append("WHERE dmdet.egDemand.id = :demand");
+        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+        .append("WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
 
@@ -341,7 +336,7 @@ public class WaterTaxCollection extends TaxCollection {
                                     rcptAccInfo.getCrAmount(),
                                     currInstallments.get(WaterTaxConstants.CURRENTYEAR_FIRST_HALF));
                             demand.addEgDemandDetails(demandDetail);
-                            persistenceService.getSession().flush();
+                            getCurrentSession().flush();
 
                             if (installmentWiseDemandDetailsByReason.get(currInstallments.get(
                                     WaterTaxConstants.CURRENTYEAR_FIRST_HALF).getDescription()) == null) {
@@ -459,7 +454,7 @@ public class WaterTaxCollection extends TaxCollection {
         String installment = "";
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-                    && !rcptAccInfo.getIsRevenueAccount()) {
+            && !rcptAccInfo.getIsRevenueAccount()) {
 
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
@@ -479,7 +474,7 @@ public class WaterTaxCollection extends TaxCollection {
                                             + " for demandDetail " + demandDetail);
 
                         demandDetail
-                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
                                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
                             demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));

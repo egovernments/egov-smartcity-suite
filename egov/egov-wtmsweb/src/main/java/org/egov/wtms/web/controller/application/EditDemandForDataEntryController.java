@@ -154,6 +154,8 @@ public class EditDemandForDataEntryController {
                 demandDetailBeanList.add(demandDetList);
         model.addAttribute("demandDetailBeanList", demandDetailBeanList);
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
+        model.addAttribute("current1HalfInstallment", (!demandDetailBeanList.isEmpty() ?demandDetailBeanList.get(demandDetailBeanList.size()-2).getInstallment():null));
+        model.addAttribute("current2HalfInstallment",(!demandDetailBeanList.isEmpty() ? demandDetailBeanList.get(demandDetailBeanList.size()-1).getInstallment():null));
         model.addAttribute(
                 "connectionType",
                 waterConnectionDetailsService.getConnectionTypesMap().get(

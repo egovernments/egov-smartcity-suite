@@ -1094,6 +1094,7 @@ function updatetotalAmount(){
 	}
 	document.getElementById('misctotalAmount').value=totalamount.toFixed(2);
 	document.getElementById('totalamountdisplay').value=document.getElementById('misctotalAmount').value;
+	document.getElementById('instrHeaderCash.instrumentAmount').value=totalamount.toFixed(2);
 }
 
 function validateDetailCode(obj)

@@ -62,7 +62,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "egtl_feematrix")
-@SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ)
+@SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ, allocationSize = 1)
 public class FeeMatrix extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_feematrix";
     private static final long serialVersionUID = 1L;

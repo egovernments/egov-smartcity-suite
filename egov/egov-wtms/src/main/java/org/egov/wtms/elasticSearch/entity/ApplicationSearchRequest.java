@@ -175,7 +175,7 @@ public class ApplicationSearchRequest {
 	public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
-        andFilters.add(queryStringFilter("searchable.applicationnumber", "\""+applicationNumber+"\""));
+        andFilters.add(queryStringFilter("searchable.applicationnumber",(applicationNumber!=null && !applicationNumber.trim().isEmpty()) ? "\""+applicationNumber+"\"" : applicationNumber ));
         andFilters.add(termsStringFilter("clauses.modulename", moduleName));
         andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
         andFilters.add(termsStringFilter("clauses.channel", source));

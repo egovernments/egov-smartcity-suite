@@ -111,7 +111,8 @@ function showInstrumentDetails(obj){
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="cash";
-		clearCardDetails();
+ 		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
+ 		clearCardDetails();
 		clearChequeDDDetails();
 		clearBankDetails();
 	}
@@ -1589,8 +1590,8 @@ function checkForCurrentDate(obj)
 	   var day = receiptDate.substr(0,2);
 	   var receiptDateFormat = new Date(year +'-' + month+ '-' +day);
 
-	   if(obj.value != null && obj.value != '') {
-	   if(!validateChequeDate(obj.value,receiptDate)){
+	   if(obj.value != null && obj.value != "") {
+	   if(!validatedays(obj.value,receiptDate)){
 		   <s:if test="%{!isBillSourcemisc()}">
 		   if (document.getElementById("manualReceiptDate").value != null && document.getElementById("manualReceiptDate").value != '') {
 			if(receiptDateFormat<finDate) {
@@ -1983,7 +1984,7 @@ function showHideMandataryMark(obj){
 					    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox" ><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');" onblur="checkForCurrentDate(this);"  data-inputmask="'mask': 'd/m/y'" /></td>
+						<td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate" data-date-end-date="0d"  data-inputmask="'mask': 'd/m/y'" /></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">

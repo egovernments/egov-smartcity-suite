@@ -63,6 +63,8 @@
 	</tr>
 	<s:if test="propertyDetail.floorDetailsProxy.size()==0">
 		<tr id="Floorinfo">
+			<s:hidden name="propertyDetail.floorDetailsProxy[0].floorUid" id="propertyDetail.floorDetailsProxy[0].floorUid"
+                       value="%{propertyDetail.floorDetailsProxy[0].floorUid}"></s:hidden>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey=""
@@ -219,6 +221,8 @@
 		<s:iterator value="(propertyDetail.floorDetailsProxy.size).{#this}"
 			status="floorsstatus">
 			<tr id="Floorinfo">
+				<s:hidden name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].floorUid" id="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].floorUid"
+                       value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].floorUid}"></s:hidden>
 				<td class="blueborderfortd" style="padding: 2px 2px"><s:select
 						headerKey="" headerValue="%{getText('default.select')}"
 						name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].floorNo"

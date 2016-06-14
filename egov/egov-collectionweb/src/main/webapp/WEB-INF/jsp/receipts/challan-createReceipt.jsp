@@ -511,7 +511,7 @@ function checkForCurrentDate(obj)
 	   dom.get("challan_dateerror_area").style.display="none";
 	   document.getElementById("challan_dateerror_area").innerHTML="";
 	   if(obj.value!="")
-	   if(!validateChequeDate(obj.value,document.getElementById('receiptdate').value))
+	   if(!validatedays(obj.value,document.getElementById('receiptdate').value))
 	   {
 	       dom.get("challan_dateerror_area").style.display="block";
 	       document.getElementById("challan_dateerror_area").innerHTML+=
@@ -1151,7 +1151,7 @@ function validate()
 					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox2"><input type ="text" id="instrumentDate" data-inputmask="'mask': 'd/m/y'" name="instrumentProxyList[0].instrumentDate"  onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox2"><input type ="text" id="instrumentDate" data-inputmask="'mask': 'd/m/y'" name="instrumentProxyList[0].instrumentDate"  onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);" data-date-end-date="0d"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">

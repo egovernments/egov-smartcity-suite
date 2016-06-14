@@ -658,14 +658,14 @@ function populatepositionuseronload()
 	    </tr>
 	    <tr> <td width="4%" class="bluebox2">&nbsp;</td>
 	    <td width="21%" class="bluebox2"><s:text name="challan.payeename"/><span class="mandatory"/></td>
-	    <td width="24%" class="bluebox2"><s:textfield name="payeeName" id="payeeName" value="%{payeeName}" maxlength="100"/></td>
+	    <td width="24%" class="bluebox2"><s:textfield name="payeeName" id="payeeName" value="%{payeeName}" maxlength="49"/></td>
 	     <td width="21%" class="bluebox2"><s:text name="challan.payeeAddress"/></td>
-	    <td width="24%" class="bluebox2"><s:textarea name="payeeAddress" id="payeeAddress" value="%{payeeAddress}" cols="18" rows="1" maxlength="1024" onkeyup="return ismaxlength(this)"/></td>
+	    <td width="24%" class="bluebox2"><s:textarea name="payeeAddress" id="payeeAddress" value="%{payeeAddress}" cols="18" rows="1" maxlength="255" onkeyup="return ismaxlength(this)"/></td>
 	    </tr>
 	  <tr> 
 	      	<td width="4%" class="bluebox">&nbsp;</td>
 		    <td width="21%" class="bluebox"><s:text name="challan.narration"/></td>
-		    <td width="24%" class="bluebox"><s:textarea name="referenceDesc" id="referenceDesc" value="%{referenceDesc}" cols="18" rows="1" maxlength="250" onkeyup="return ismaxlength(this)"/></td>
+		    <td width="24%" class="bluebox"><s:textarea name="referenceDesc" id="referenceDesc" value="%{referenceDesc}" cols="18" rows="1" maxlength="125" onkeyup="return ismaxlength(this)"/></td>
 	    </tr>
 	    <tr>
         <td width="4%" class="bluebox">&nbsp;</td>
