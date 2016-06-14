@@ -183,10 +183,21 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws IOException {
+        
+        Long approvalPosition = 0l;
+        String approvalComment = "";
+        if (request.getParameter("approvalComment") != null)
+            approvalComment = request.getParameter("approvalComent");
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        
         validateMultiYearEstimates(abstractEstimate, bindErrors);
         validateMandatory(abstractEstimate, bindErrors);
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
-        estimateService.validateActivities(abstractEstimate, bindErrors);
+        if(!workFlowAction.equals(WorksConstants.SAVE_ACTION))
+            estimateService.validateActivities(abstractEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
             for(final Activity activity : abstractEstimate.getSorActivities()) {
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
@@ -213,15 +224,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
             return "newAbstractEstimate-form";
         } else {
-            Long approvalPosition = 0l;
-            String approvalComment = "";
-            if (request.getParameter("approvalComment") != null)
-                approvalComment = request.getParameter("approvalComent");
-            if (request.getParameter("workFlowAction") != null)
-                workFlowAction = request.getParameter("workFlowAction");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
             if (abstractEstimate.getState() == null) {
                 if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                     abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
@@ -230,11 +232,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                     abstractEstimate.setEgwStatus(egwStatusHibernateDAO
                             .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.NEW.toString()));
             }
-            estimateService.createAbstractEstimate(abstractEstimate, files, approvalPosition, approvalComment, null,
+            final AbstractEstimate savedAbstractEstimate = estimateService.createAbstractEstimate(abstractEstimate, files, approvalPosition, approvalComment, null,
                     workFlowAction);
 
-            final String pathVars = worksUtils.getPathVars(abstractEstimate.getEgwStatus(), abstractEstimate.getState(),
-                    abstractEstimate.getId(), approvalPosition);
+            final String pathVars = worksUtils.getPathVars(savedAbstractEstimate.getEgwStatus(), savedAbstractEstimate.getState(),
+                    savedAbstractEstimate.getId(), approvalPosition);
 
             return "redirect:/abstractestimate/abstractestimate-success?pathVars=" + pathVars;
         }
@@ -290,14 +292,16 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         String currentUserDesgn = "";
         String nextDesign = "";
         if (keyNameArray.length != 0 && keyNameArray.length > 0)
-            if (keyNameArray.length == 1)
+            if (keyNameArray.length == 1 && !keyNameArray[0].equals("null"))
                 id = Long.parseLong(keyNameArray[0]);
             else if (keyNameArray.length == 3) {
-                id = Long.parseLong(keyNameArray[0]);
+                if(!keyNameArray[0].equals("null"))
+                    id = Long.parseLong(keyNameArray[0]);
                 approverName = keyNameArray[1];
                 currentUserDesgn = keyNameArray[2];
             } else {
-                id = Long.parseLong(keyNameArray[0]);
+                if(!keyNameArray[0].equals("null"))
+                    id = Long.parseLong(keyNameArray[0]);
                 approverName = keyNameArray[1];
                 currentUserDesgn = keyNameArray[2];
                 nextDesign = keyNameArray[3];
@@ -320,8 +324,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             final String nextDesign) {
         String message = "";
 
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString())
-                && !abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
             message = messageSource.getMessage("msg.estimate.saved", new String[] {}, null);
         else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
                 && !abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
@@ -339,7 +342,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                                     .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1)
                                     .getTechnicalSanctionNumber() },
                     null);
-        } else if (abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+        } else if (abstractEstimate.getState() != null && abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.estimate.rejected",
                     new String[] { abstractEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CANCELLED.toString()))

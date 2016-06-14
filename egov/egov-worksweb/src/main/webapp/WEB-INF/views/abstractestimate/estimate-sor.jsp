@@ -174,7 +174,7 @@
 				</tr>
 				<c:choose>
 					<c:when test="${abstractEstimate.sorActivities.size() == 0}">
-						<tr id="sorRow" class="sorRow" hidden="true" align="center">
+						<tr id="sorRow" class="sorRow" sorinvisible="true" hidden="true" align="center">
 							<td>
 								<span class="spansorslno">1</span>
 								<form:hidden path="sorActivities[0].id" id="activityid_0" class="activityid" />

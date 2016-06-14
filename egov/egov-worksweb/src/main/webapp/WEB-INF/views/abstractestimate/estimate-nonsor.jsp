@@ -89,7 +89,7 @@
 				</tr>
 				<c:choose>
 					<c:when test="${abstractEstimate.nonSorActivities.size() == 0 }">
-						<tr id="nonSorRow" class="nonSorRow" hidden="true" align="center">
+						<tr id="nonSorRow" class="nonSorRow" nonsorinvisible="true" hidden="true" align="center">
 							<td>
 								<span class="spannonsorslno">1</span>
 								<form:hidden path="nonSorActivities[0].id" id="activityid_0" class="activityid" />

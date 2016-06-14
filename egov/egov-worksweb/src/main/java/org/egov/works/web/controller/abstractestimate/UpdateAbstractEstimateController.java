@@ -220,7 +220,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             validateMultiYearEstimates(abstractEstimate, errors);
             validateMandatory(abstractEstimate, errors);
             estimateService.validateAssetDetails(abstractEstimate, errors);
-            estimateService.validateActivities(abstractEstimate, errors);
+            if(!workFlowAction.equals(WorksConstants.SAVE_ACTION))
+                estimateService.validateActivities(abstractEstimate, errors);
         }
 
         if (errors.hasErrors()) {

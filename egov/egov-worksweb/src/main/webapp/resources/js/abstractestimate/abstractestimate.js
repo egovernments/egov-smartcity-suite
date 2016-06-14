@@ -116,6 +116,7 @@ $(document).ready(function(){
 			$('.nonSorServiceTaxPerc').val('');
 			$('#nonSorMessage').attr('hidden', 'true');
 			$('#nonSorRow').removeAttr('hidden');
+			$('#nonSorRow').removeAttr('nonsorinvisible');
 		}
 	});
 	
@@ -187,6 +188,7 @@ $(document).ready(function(){
 				
 				$('#message').attr('hidden', 'true');;
 				$('#sorRow').removeAttr('hidden');
+				$('#sorRow').removeAttr('sorinvisible');
 			}
 
 			$.each(data, function(id, val) {
@@ -679,7 +681,8 @@ function deleteSor(obj) {
 		$('#vat_' + rowId).val('');
 		$('.vatAmount_' + rowId).html('');
 		$('.total_' + rowId).html('');
-		$('#sorRow').attr('hidden', 'true');;
+		$('#sorRow').attr('hidden', 'true');
+		$('#sorRow').attr('sorinvisible', 'true');
 		$('#message').removeAttr('hidden');
 		
 		var nextIdx = 0;
@@ -868,6 +871,7 @@ function deleteNonSor(obj) {
 		$('.nonSorVatAmount_' + rowId).html('');
 		$('.nonSorTotal_' + rowId).html('');
 		$('#nonSorRow').attr('hidden', 'true');
+		$('#nonSorRow').attr('nonsorinvisible', 'true');
 		$('#nonSorMessage').removeAttr('hidden');
 		
 		var nextIdx = 0;
@@ -1662,22 +1666,25 @@ function validateWorkFlowApprover(name) {
 	var approverPosId = document.getElementById("approvalPosition");
 	var button = document.getElementById("workFlowAction").value;
 	
+	var flag = true;
+	
 	if (button != null && button == 'Save') {
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').removeAttr('required');
 		
-		var flag = false;
+		flag = validateSORDetails();
+		
 		$('.activityRate').each(function() {
 			if (parseFloat($(this).val()) <= 0)
-				flag = true;
+				flag = false;
 		});
 		$('.sorRate').each(function() {
 			if (parseFloat($(this).val()) <= 0)
-				flag = true;
+				flag = false;
 		});
-		if (flag) {
+		if (!flag) {
 			bootbox.alert($('#errorrateszero').val());
 			return false;
 		}
@@ -1732,29 +1739,29 @@ function validateWorkFlowApprover(name) {
 			return false;
 		}
 		
-		var visibleSorCount = $("#tblsor tbody tr:visible[id='sorRow']").length;
-		var visibleNonSorCount = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
-		if (visibleSorCount == 0 && visibleNonSorCount == 0) {
+		var inVisibleSorCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+		var inVisibleNonSorCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+		if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
 			bootbox.alert($('#errorsornonsor').val());
 			return false;
 		}
-		var flag = false;
+		
+		flag = validateSORDetails();
+		
 		$('.activityRate').each(function() {
 			if (parseFloat($(this).val()) <= 0)
-				flag = true;
+				flag = false;
 		});
 		$('.sorRate').each(function() {
 			if (parseFloat($(this).val()) <= 0)
-				flag = true;
+				flag = false;
 		});
-		if (flag) {
+		if (!flag) {
 			bootbox.alert($('#errorrateszero').val());
 			return false;
 		}
 	}
 	
-	var flag = validateSORDetails();
-
 	if(flag) {
 		document.forms[0].submit;
 		return true;
@@ -1764,13 +1771,13 @@ function validateWorkFlowApprover(name) {
 
 function validateSORDetails() {
 	if($('#abstractEstimate').valid()) {
-		var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+		var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
 		if(hiddenRowCount == 1) {
 			var tbl=document.getElementById('tblsor');
 			tbl.deleteRow(2);
 		}
 		
-		hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
+		hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
 		if(hiddenRowCount == 1) {
 			var tbl=document.getElementById('tblNonSor');
 			tbl.deleteRow(2);

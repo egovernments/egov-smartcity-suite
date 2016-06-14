@@ -170,6 +170,7 @@ public class EstimateService {
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
     }
 
+    @Transactional
     public AbstractEstimate getAbstractEstimateById(final Long id) {
         return abstractEstimateRepository.findOne(id);
     }
@@ -202,8 +203,9 @@ public class EstimateService {
         } else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
-        createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
+            createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
+        
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -267,6 +269,7 @@ public class EstimateService {
         abstractEstimateFromDB.setExecutingDepartment(newAbstractEstimate.getExecutingDepartment());
         abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getLineEstimateDetails().getProjectCode());
         abstractEstimateFromDB.setLineEstimateDetails(newAbstractEstimate.getLineEstimateDetails());
+        abstractEstimateFromDB.setEgwStatus(newAbstractEstimate.getEgwStatus());
 
         for (final MultiYearEstimate multiYearEstimate : abstractEstimateFromDB.getMultiYearEstimates()) {
             multiYearEstimate.setCreatedDate(new Date());
@@ -528,7 +531,6 @@ public class EstimateService {
 
         abstractEstimateStatusChange(abstractEstimate, workFlowAction);
 
-        if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
             createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
                     additionalRule, workFlowAction);
 
@@ -629,11 +631,6 @@ public class EstimateService {
                     additionalRule, WorksConstants.NEW, null);
             if (abstractEstimate.getState() == null)
                 abstractEstimate.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withStateValue(WorksConstants.NEW)
-                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
-                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
-            else
-                abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
