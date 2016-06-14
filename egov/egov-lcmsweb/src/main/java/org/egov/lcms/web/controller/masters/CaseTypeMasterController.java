@@ -63,7 +63,7 @@ public class CaseTypeMasterController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String newForm(final Model model) {
 		final CasetypeMaster casetypeMaster = new CasetypeMaster();
-		model.addAttribute("casetype", casetypeMaster);
+		model.addAttribute("casetypeMaster", casetypeMaster);
 		model.addAttribute("mode", "create");
 		return "caseType-new";
 	}
@@ -72,9 +72,9 @@ public class CaseTypeMasterController {
 	public String createCaseType(@Valid @ModelAttribute final CasetypeMaster caseType, final BindingResult errors,
 			final RedirectAttributes redirectAttrs, final Model model) {
 		if (errors.hasErrors())
-			return "case-type-master";
+			return "caseType-new";
 		caseTypeMasterService.createUsageType(caseType);
-		redirectAttrs.addFlashAttribute("caseType", caseType);
+		redirectAttrs.addFlashAttribute("casetypeMaster", caseType);
 		model.addAttribute("message", "Case Type created successfully.");
 		model.addAttribute("mode", "create");
 		return "case-type-sucess";

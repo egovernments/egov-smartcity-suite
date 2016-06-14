@@ -262,7 +262,7 @@
 							<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-lcmsweb</artifactId>
-							<contextRoot>/wtms</contextRoot>
+							<contextRoot>/lcms</contextRoot>
 						</webModule>
 						<webModule>
 							<groupId>org.egov</groupId>

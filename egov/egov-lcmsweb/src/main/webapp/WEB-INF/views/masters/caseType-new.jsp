@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<form:form method="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="casetype" id="usageTypeMasterform"
+<form:form method="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="casetypeMaster" id="usageTypeMasterform"
 	cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading"></div>
@@ -54,47 +54,52 @@
              
 		<div class="panel-body custom-form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label text-right">Code:<span class="mandatory"></span></label>
+				<label class="col-sm-4 control-label text-right"><spring:message code="lbl.code"/>:<span class="mandatory"></span></label>
 					<div class="col-sm-4 add-margin">
-						<div class="col-sm-5 add-margin"  id="codediv">
+						<div class="col-sm-5 add-margin"  >
 							<form:input class="form-control patternvalidation"  data-pattern="alphanumericwithspecialcharacters"  maxlength="25" id="code" data-first-option="false" path="code" required="required" />
 							<form:errors path="code" cssClass="add-margin error-msg" />
 						</div> 
 					</div>
-				<label class="col-sm-2 control-label text-right">Case Type:<span class="mandatory"></span></label>
+					</div>
+					<div class="form-group">
+				<label class="col-sm-4 control-label text-right"><spring:message code="lbl.caseType"/>:<span class="mandatory"></span></label>
 					<div class="col-sm-4 add-margin">
-						<div class="col-sm-5 add-margin"  id="usagediv">
+						<div class="col-sm-5 add-margin"  >
 							<form:input class="form-control patternvalidation"  data-pattern="alphabetwithspace"  maxlength="50" id="caseType" data-first-option="false" path="caseType" required="required" />
 							<form:errors path="caseType" cssClass="add-margin error-msg" />
 						</div> 
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label text-right">Description:</label>
+					<label class="col-sm-4 control-label text-right"><spring:message code="lbl.description"/>:</label>
 					<div class="col-sm-4 add-margin">
-						<div class="col-sm-5 add-margin"  id="usagediv">
+						<div class="col-sm-5 add-margin"  >
 							<form:input class="form-control patternvalidation"  data-pattern="alphabetwithspace"  maxlength="250" id="notes" data-first-option="false" path="notes"/>
 							<form:errors path="notes" cssClass="add-margin error-msg" />
 						</div> 
 					</div>
-					<div class="form-group" id="statusdiv">
-						<label class="col-sm-2 control-label text-right">Order Number:</label>
+					</div>
+					
+					<div class="form-group" > 
+						<label class="col-sm-4 control-label text-right"><spring:message code="lbl.orderNumber"/>:</label>
+						<div class="col-sm-5 add-margin">
 							<div class="col-sm-4 add-margin" >
 								<form:input class="form-control patternvalidation"   maxlength="50" id="ordernumber" data-first-option="false" path="ordernumber"/>
 							<form:errors path="ordernumber" cssClass="add-margin error-msg" />
 							</div>
+							</div>
 						</div>	
 				</div>
 			
-			 <input type="hidden" name="caseType" value="${caseType.id}" />
+			 <input type="hidden" name="caseType" value="${casetypeMaster.id}" />
 			<input type="hidden" value="${mode}" id="mode" />
 	<div class="form-group text-center">
 				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
-				<button type="button" class="btn btn-default" value="Reset" id="resetid" ><spring:message code="lbl.reset"/></button>
-				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+				<button type="button" class="btn btn-default" value="Reset" id="resetid" ><spring:message code="lbl.reset.button"/></button>
+				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close.button"/></a>
 			</div>
 		</div>
-	</div>
 </form:form>
 <link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
                 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"

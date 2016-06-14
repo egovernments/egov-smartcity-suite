@@ -72,5 +72,8 @@
         <put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/caseType-new.jsp"/> 
     </definition>
-   
+    <definition name="case-type-sucess" extends="base_layout">
+        <put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/caseType-sucess.jsp"/> 
+    </definition>
 </tiles-definitions>

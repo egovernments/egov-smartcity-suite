@@ -45,21 +45,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_CASETYPE_MASTER")
-
-@Unique(id = "id", tableName = "EGLC_CASETYPE_MASTER", columnName = { "code", "caseType" }, fields = { "code",
-		"caseType" }, enableDfltMsg = true)
+@Unique(fields = { "code","caseType" }, id = "id", tableName = "EGLC_CASETYPE_MASTER", columnName = {"code", "caseType"  }, enableDfltMsg = true)
 @SequenceGenerator(name = CasetypeMaster.SEQ_CASE_TYPE, sequenceName = CasetypeMaster.SEQ_CASE_TYPE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class CasetypeMaster extends AbstractAuditable {
 
 	private static final long serialVersionUID = 1517694643078084884L;
@@ -72,18 +74,20 @@ public class CasetypeMaster extends AbstractAuditable {
 	@Required(message = "masters.code.null")
 	@Length(max = 8, message = "masters.code.length")
 	@OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.code.alpha2")
+	@Audited
 	private String code;
 
 	@Required(message = "casetype.null.validation")
 	@Length(max = 50, message = "casetype.casetype.length.validation")
+	@Audited
 	private String caseType;
 
 	@NotNull
+	@Audited
 	private boolean active;
 
 	@Length(max = 256, message = "masters.description.length")
 	private String notes;
-	@Max(value = 50, message = "masters.orderNumber.length")
 	private Long ordernumber;
 
 	@Override
