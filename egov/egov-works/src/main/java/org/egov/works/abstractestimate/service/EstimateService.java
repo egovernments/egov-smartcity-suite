@@ -215,25 +215,25 @@ public class EstimateService {
     }
 
     private void mergeSorAndNonSorActivities(AbstractEstimate abstractEstimate) {
-        for(final Activity activity : abstractEstimate.getSorActivities()) {
-            if(activity.getId() == null) {
+        for (final Activity activity : abstractEstimate.getSorActivities()) {
+            if (activity.getId() == null) {
                 activity.setAbstractEstimate(abstractEstimate);
                 abstractEstimate.addActivity(activity);
             } else {
-                for(final Activity oldActivity : abstractEstimate.getSORActivities()) {
-                    if(oldActivity.getId().equals(activity.getId())) {
+                for (final Activity oldActivity : abstractEstimate.getSORActivities()) {
+                    if (oldActivity.getId().equals(activity.getId())) {
                         updateActivity(oldActivity, activity);
                     }
                 }
             }
         }
-        for(final Activity activity : abstractEstimate.getNonSorActivities()) {
-            if(activity.getId() == null) {
+        for (final Activity activity : abstractEstimate.getNonSorActivities()) {
+            if (activity.getId() == null) {
                 activity.setAbstractEstimate(abstractEstimate);
                 abstractEstimate.addActivity(activity);
             } else {
-                for(final Activity oldActivity : abstractEstimate.getNonSORActivities()) {
-                    if(oldActivity.getId().equals(activity.getId())) {
+                for (final Activity oldActivity : abstractEstimate.getNonSORActivities()) {
+                    if (oldActivity.getId().equals(activity.getId())) {
                         updateActivity(oldActivity, activity);
                     }
                 }
@@ -496,14 +496,14 @@ public class EstimateService {
                 assetsForEstimate.setAbstractEstimate(abstractEstimate);
                 assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
             }
-
+            
+            mergeSorAndNonSorActivities(abstractEstimate);
             List<Activity> activities = new ArrayList<Activity>(abstractEstimate.getActivities());
             activities = removeDeletedActivities(activities, removedActivityIds);
             abstractEstimate.setActivities(activities);
             for (final Activity activity : abstractEstimate.getActivities())
                 activity.setAbstractEstimate(abstractEstimate);
 
-            mergeSorAndNonSorActivities(abstractEstimate);
             updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
 
             final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, updatedAbstractEstimate,
@@ -774,5 +774,10 @@ public class EstimateService {
             abstractEstimateForLoaSearchResults.add(result);
         }
         return abstractEstimateForLoaSearchResults;
+    }
+
+    public void validateActivities(AbstractEstimate abstractEstimate, BindingResult errors) {
+        if(abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
+            errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
     }
 }

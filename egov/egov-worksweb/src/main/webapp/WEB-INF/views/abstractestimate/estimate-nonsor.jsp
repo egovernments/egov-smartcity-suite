@@ -113,7 +113,7 @@
 								<form:input path="nonSorActivities[0].rate" id="nonSorRate_0" data-pattern="decimalvalue" class="activityRate form-control table-input text-right nonSorRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
 							</td>
 							<td>
-								<form:input path="nonSorActivities[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
+								<form:input path="nonSorActivities[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
 							</td>
 							<td align="right">
 								<span class="nonSorAmount_0 nonsoramount"></span>
@@ -164,7 +164,7 @@
 										<form:input path="nonSorActivities[${item.index }].rate" id="nonSorRate_${item.index }" value="${activity.rate }" data-pattern="decimalvalue" class="activityRate form-control table-input text-right nonSorRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
 									</td>
 									<td>
-										<form:input path="nonSorActivities[${item.index }].quantity" id="nonSorQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
+										<form:input path="nonSorActivities[${item.index }].quantity" id="nonSorQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
 									</td>
 									<td align="right">
 										<span class="nonSorAmount_${item.index } nonsoramount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>

@@ -42,7 +42,7 @@
 
 <div class="panel-body">
 
-<table class="table table-bordered" id="tblsor">
+<table class="table table-bordered" >
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slNo" /></th>
@@ -51,7 +51,7 @@
 					<th><spring:message code="lbl.amount"/></th>
 				</tr>
 			</thead>
-			<tbody id="nonSorTable">
+			<tbody>
 				<c:choose>
 					<c:when test="${abstractEstimate.overheadValues.size() != 0}">
 						<c:forEach items="${abstractEstimate.getOverheadValues()}" var="overheadDtls" varStatus="item">
@@ -83,7 +83,7 @@
 											</c:otherwise>
 										</c:choose>
 									</c:forEach>
-								 	<td class="text-right"><c:out value="${overheadDtls.amount}"></c:out></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${overheadDtls.amount}" /></fmt:formatNumber></td>
 								</tr>
 						</c:forEach>
 					</c:when>
@@ -92,17 +92,18 @@
 				</c:choose> 
 			</tbody>
 			<tfoot>
-				<c:set var="total" value="${0}" scope="session" />
+				<c:set var="overheadtotal" value="${0}" scope="session" />
 				<c:if test="${abstractEstimate.getOverheadValues() != null}">
 					<c:forEach items="${abstractEstimate.getOverheadValues()}" var="overhead">
-						<c:set var="total"	value="${total + overhead.amount }" />
+						<c:set var="overheadtotal"	value="${overheadtotal + overhead.amount }" />
 					</c:forEach>
 				</c:if>
 				<tr>
 					<td colspan="3" class="text-right"><spring:message
 							code="lbl.total" /></td>
-					<td class="text-right"><span id="overheadTotal"><c:out
-								value="${total}" /></span></td>
+					<td class="text-right">
+						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${overheadtotal}" /></fmt:formatNumber></span>
+					</td>
 				</tr>
 			</tfoot>
 		</table>

@@ -42,15 +42,15 @@
   --%>
 
 
-<div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
+<div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
 			<spring:message code="title.sor" />
 		</div>
 	</div>
-	<div class="panel-body" id="sorHeaderTable">
+	<div class="panel-body">
 		
-		<table class="table table-bordered" id="tblsor">
+		<table class="table table-bordered">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slNo" /></th>
@@ -62,7 +62,7 @@
 					<th><spring:message code="lbl.estimatedamount" /></th>
 				</tr>
 			</thead>
-			<tbody id="sorTable">
+			<tbody>
 				<c:choose>
 					<c:when test="${abstractEstimate.activities.size() != 0}">
 						<c:forEach items="${abstractEstimate.getSORActivities()}" var="sorDtls" varStatus="item">
@@ -76,7 +76,7 @@
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
 								 	<td><c:out value="${sorDtls.rate}"></c:out></td>
 								 	<td><c:out value="${sorDtls.quantity}"></c:out></td>
-								 	<td class="text-right"><c:out value="${sorDtls.getAmount().value}"></c:out></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								</tr>
 						</c:forEach>
 					</c:when>
@@ -85,17 +85,18 @@
 				</c:choose> 
 			</tbody>
 			<tfoot>
-				<c:set var="total" value="${0}" scope="session" />
+				<c:set var="sortotal" value="${0}" scope="session" />
 				<c:if test="${abstractEstimate.getActivities() != null}">
 					<c:forEach items="${abstractEstimate.getSORActivities()}" var="sor">
-						<c:set var="total"	value="${total + sor.getAmount().value }" />
+						<c:set var="sortotal"	value="${sortotal + sor.getAmount().value }" />  
 					</c:forEach>
 				</c:if>
 				<tr>
 					<td colspan="6" class="text-right"><spring:message
 							code="lbl.total" /></td>
-					<td class="text-right"><span id="sorTotal"><c:out
-								value="${total}" /></span></td>
+					<td class="text-right">
+						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sortotal}" /></fmt:formatNumber></span>
+					</td>
 				</tr>
 			</tfoot>
 		</table>

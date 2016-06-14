@@ -42,15 +42,15 @@
   --%>
 
 
-<div id="baseNonSORTable" class="panel panel-primary" data-collapsed="0">
+<div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
 			<spring:message code="title.nonsor" />
 		</div>
 	</div>
-	<div class="panel-body" id="nonSorHeaderTable">
+	<div class="panel-body">
 		
-		<table class="table table-bordered" id="tblsor">
+		<table class="table table-bordered" >
 			<thead>
 				<tr>
 				<th><spring:message code="lbl.slNo" /></th>
@@ -61,7 +61,7 @@
 					<th><spring:message code="lbl.estimatedamount" /></th>
 				</tr>
 			</thead>
-			<tbody id="nonSorTable">
+			<tbody>
 				<c:choose>
 					<c:when test="${abstractEstimate.activities.size() != 0}">
 						<c:forEach items="${abstractEstimate.getNonSORActivities()}" var="nonSorDtls" varStatus="item">
@@ -71,7 +71,7 @@
 								 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.rate}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.quantity}"></c:out></td>
-								 	<td class="text-right"><c:out value="${nonSorDtls.getAmount().value}"></c:out></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								</tr>
 						</c:forEach>
 					</c:when>
@@ -80,17 +80,18 @@
 				</c:choose> 
 			</tbody>
 			<tfoot>
-				<c:set var="total" value="${0}" scope="session" />
+				<c:set var="nonsortotal" value="${0}" scope="session" />
 				<c:if test="${abstractEstimate.getActivities() != null}">
 					<c:forEach items="${abstractEstimate.getNonSORActivities()}" var="nonSor">
-						<c:set var="total"	value="${total + nonSor.getAmount().value }" />
+						<c:set var="nonsortotal" value="${nonsortotal + nonSor.getAmount().value }" />
 					</c:forEach>
 				</c:if>
 				<tr>
 					<td colspan="5" class="text-right"><spring:message
 							code="lbl.total" /></td>
-					<td class="text-right"><span id="nonSorTotal"><c:out
-								value="${total}" /></span></td>
+					<td class="text-right">
+						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonsortotal}" /></fmt:formatNumber></span>
+					</td>
 				</tr>
 			</tfoot>
 		</table>

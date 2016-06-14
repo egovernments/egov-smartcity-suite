@@ -117,7 +117,6 @@
 						<option value="${scheduleCategory.id }" label="${scheduleCategory.code }" />
 					</c:forEach>
 				</select>
-				<form:errors path="executingDepartment" cssClass="add-margin error-msg" />
 			</div>
 			<!-- <label class="col-sm-5 control-label add-margin">
 			</label> -->
@@ -198,7 +197,7 @@
 								<form:hidden path="sorActivities[0].sorRate" id="sorRate_0" />
 							</td>
 							<td>
-								<form:input path="sorActivities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
+								<form:input path="sorActivities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
 							</td>
 							<td align="right">
 								<span class="amount_0 amount"></span>
@@ -243,7 +242,7 @@
 										<form:hidden path="sorActivities[${item.index }].sorRate" id="sorRate_${item.index }" value="${activity.rate }" />
 									</td>
 									<td>
-										<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateInput(this);"/>
+										<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
 									</td>
 									<td align="right">
 										<span class="amount_${item.index } amount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>

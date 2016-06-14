@@ -1073,6 +1073,16 @@ function validateInput(object) {
     }
 }
 
+function validateQuantityInput(object) {
+    var valid = /^[1-9](\d{0,9})(\.\d{0,4})?$/.test($(object).val()),
+        val = $(object).val();
+    
+    if(!valid){
+        console.log("Invalid input!");
+        $(object).val(val.substring(0, val.length - 1));
+    }
+}
+
 
 function getAbstractEstimateDate() {
 	var dt = new Date(); 
