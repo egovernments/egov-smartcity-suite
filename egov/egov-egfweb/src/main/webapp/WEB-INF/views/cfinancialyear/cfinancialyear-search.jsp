@@ -95,7 +95,6 @@
 					<th><spring:message code="lbl.finyearrange" /></th>
 					<th><spring:message code="lbl.startingdate" /></th>
 					<th><spring:message code="lbl.endingdate" /></th>
-					<th><spring:message code="lbl.isactive" /></th>
 					<th><spring:message code="lbl.isactiveforposting" /></th>
 					<th><spring:message code="lbl.isclosed" /></th>
 					<th><spring:message code="lbl.transferclosingbalance" /></th>
