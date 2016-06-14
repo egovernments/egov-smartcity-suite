@@ -111,7 +111,8 @@ function showInstrumentDetails(obj){
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="cash";
-		clearCardDetails();
+ 		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
+ 		clearCardDetails();
 		clearChequeDDDetails();
 		clearBankDetails();
 	}
