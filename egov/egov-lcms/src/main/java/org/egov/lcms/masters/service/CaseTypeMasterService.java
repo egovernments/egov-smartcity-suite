@@ -40,7 +40,7 @@
 package org.egov.lcms.masters.service;
 
 import org.egov.lcms.masters.entity.CasetypeMaster;
-import org.egov.lcms.repository.masters.CasetypeMasterRepository;
+import org.egov.lcms.masters.repository.CasetypeMasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

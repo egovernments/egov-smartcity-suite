@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.repository.masters;
+package org.egov.lcms.masters.repository;
 
 import org.egov.lcms.masters.entity.CasetypeMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
