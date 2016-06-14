@@ -126,7 +126,7 @@
 	
     <!-- Processes application requests -->
     <servlet>
-        <servlet-name>lemsweb</servlet-name>
+        <servlet-name>lcmsweb</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
@@ -137,7 +137,7 @@
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>lemsweb</servlet-name>
+        <servlet-name>lcmsweb</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 	

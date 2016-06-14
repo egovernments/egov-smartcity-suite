@@ -51,12 +51,8 @@
 		<constructor-arg>
 			<list>
 				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/complaint/reg-success**" filters="none" />
-				<security:filter-chain pattern="/complaint/view/**" filters="none" />
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/rest/**" filters="anonymousAuthenticationFilter"/>
-				<security:filter-chain pattern="/dashboard/**" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>
