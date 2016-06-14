@@ -1166,9 +1166,9 @@ public class PropertyExternalService {
         propertyImpl.getPropertyDetail().setApartment(apartment);
         propertyImpl.getPropertyDetail().setOccupancyCertificationNo(occupancyCertificationNo);
 
-        propertyImpl.getPropertyDetail().setStructure(isSuperStructure);
+        /*propertyImpl.getPropertyDetail().setStructure(isSuperStructure);
         if (isSuperStructure)
-            propertyImpl.getPropertyDetail().setSiteOwner(siteOwnerName);
+            propertyImpl.getPropertyDetail().setSiteOwner(siteOwnerName);*/
 
         propertyImpl.getPropertyDetail().setLift(lift);
         propertyImpl.getPropertyDetail().setToilets(toilet);

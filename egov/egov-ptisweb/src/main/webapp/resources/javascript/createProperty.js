@@ -96,7 +96,7 @@ function enableFieldsForPropType() {
 			jQuery('#areaOfPlot').val("");
 			jQuery('tr.extentSite').hide();
 			jQuery('tr.appurtenant').hide();
-			jQuery('tr.superStructureRow').hide();
+			//jQuery('tr.superStructureRow').hide();
 			jQuery('tr.bpddetailsheader').hide();
 			jQuery('tr.bpddetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
@@ -115,7 +115,7 @@ function enableFieldsForPropType() {
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
-			jQuery('tr.superStructureRow').show();
+			//jQuery('tr.superStructureRow').show();
 			jQuery('tr.bpddetailsheader').show();
 			jQuery('td.apartmentRow').show();
 			jQuery('#houseNoSpan').show();
@@ -1146,7 +1146,7 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').hide();
 			jQuery('tr.appurtenant').hide();
-			jQuery('tr.superStructureRow').hide();
+			//jQuery('tr.superStructureRow').hide();
 			//jQuery('tr.bpddetailsheader').hide();
 			//jQuery('tr.bpddetails').hide();
 			jQuery("#apartment").prop('selectedIndex', 0);
@@ -1159,7 +1159,7 @@ function enableFieldsForPropTypeView(propType,appurtenantLandChecked) {
 			jQuery('#appurtenantRow').hide();
 			jQuery('tr.extentSite').show();
 			jQuery('tr.appurtenant').show();
-			jQuery('tr.superStructureRow').show();
+			//jQuery('tr.superStructureRow').show();
 			//jQuery('tr.bpddetailsheader').show();
 			//jQuery('tr.bpddetails').show();
 			jQuery('td.apartmentRow').show();

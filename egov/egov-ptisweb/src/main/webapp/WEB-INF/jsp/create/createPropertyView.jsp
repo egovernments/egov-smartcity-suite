@@ -159,7 +159,7 @@
 		</td>
 		
 	</tr>
-	<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 	<td class="greybox" width="5%">&nbsp;</td>
 	<td class="greybox" width="20%"><s:text name="superstructure"/>:</td>
 		<td class="greybox" width="20%">
@@ -171,7 +171,7 @@
 		</td>
 	<td class="greybox siteowner"><s:text name="siteowner"/> :</td>
 		<td class="greybox siteowner"><span class="bold"><s:property default="N/A" value="%{propertyDetail.siteOwner}" /> </span></td>
-	</tr>
+	</tr> --%>
 	
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>

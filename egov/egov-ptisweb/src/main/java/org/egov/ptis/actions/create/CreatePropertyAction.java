@@ -1017,14 +1017,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 addActionError(getText("mandatory.doorNo"));
 
-        if (!property.getPropertyDetail().isStructure()) {
+        //if (!property.getPropertyDetail().isStructure()) {
             if (null == property.getBasicProperty().getRegdDocDate()) {
                 addActionError(getText("mandatory.regdocdate"));
             }
             if (StringUtils.isBlank(property.getBasicProperty().getRegdDocNo())) {
                 addActionError(getText("mandatory.regdocno"));
             }
-        }
+        //}
 
         if (electionWardId == null || electionWardId == -1) {
             addActionError(getText("mandatory.election.ward"));

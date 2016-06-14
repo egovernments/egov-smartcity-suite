@@ -128,7 +128,7 @@
 		</td>
 	</tr>
 
-		<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox">
@@ -138,7 +138,7 @@
 		<td class="bluebox siteowner">
 			<span class="bold"><s:property value="%{property.propertyDetail.siteOwner}" default="N/A"/></span>
 		</td>
-	</tr>
+	</tr> --%>
 	
 	<tr>
 		<td class="bluebox">&nbsp;</td>
