@@ -54,7 +54,9 @@
 					<th><spring:message code="lbl.overheaddescription" /></th>
 					<th><spring:message code="lbl.fromdate" /></th>
 					<th><spring:message code="lbl.todate" /></th>
+					<c:if test="${mode != 'view'}"> 
 					<th><spring:message code="lbl.modify" /></th>
+					</c:if>
 				</tr>
 			</thead>
 		</table>

@@ -254,7 +254,7 @@ var makeScheduleOfRateDataTable = function() {
 			    <s:text name="master.sor.category" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code" value="%{scheduleCategory.id}" /> 
+				<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategory" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="description" value="%{scheduleCategory.id}" /> 
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <s:text name="master.sor.code" /><span class="mandatory"></span>
