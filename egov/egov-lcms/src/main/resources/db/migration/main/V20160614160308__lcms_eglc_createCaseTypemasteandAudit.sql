@@ -5,7 +5,6 @@ CREATE TABLE EGLC_CASETYPE_MASTER_aud
  code character varying(50) NOT NULL, 
   casetype character varying(100) NOT NULL, 
   active boolean NOT NULL,
-  active boolean,
   lastmodifiedby bigint,
   lastmodifieddate timestamp without time zone,
   revtype numeric,

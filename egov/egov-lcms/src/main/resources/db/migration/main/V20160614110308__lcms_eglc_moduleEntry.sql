@@ -1,4 +1,4 @@
-NSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname, ordernumber)
+INSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname, ordernumber)
 VALUES (nextval('SEQ_EG_MODULE'), 'LCMS', true, 'lcms', null, 'Legal Case Management',(select max(ordernumber)+1 from eg_module where parentmodule is null));
 
 
