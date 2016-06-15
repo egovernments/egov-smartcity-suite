@@ -267,7 +267,7 @@ public class DashboardService {
             final Double disposalPerc = 100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
                     / (noOfCompAsOnDate + noOfCompReceivedBtw);
             if (disposalPerc.isNaN() || disposalPerc.isInfinite())
-                complaintData.put("disposalPerc", "0");
+                complaintData.put("disposalPerc", "0.00");
             else
                 complaintData.put("disposalPerc", df.format(disposalPerc));
             complaintData.put("lat", compData[6]);
