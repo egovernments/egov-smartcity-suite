@@ -40,47 +40,31 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.dao.FunctionHibernateDAO;
-import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
-import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.master.service.NatureOfWorkService;
-import org.egov.works.master.service.OverheadService;
-import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.master.service.ScheduleOfRateService;
-import org.egov.works.master.service.UOMService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -102,55 +86,22 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
     private LineEstimateService lineEstimateService;
 
     @Autowired
-    private FundHibernateDAO fundHibernateDAO;
-
-    @Autowired
-    private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
-
-    @Autowired
-    private SchemeService schemeService;
-
-    @Autowired
     private DepartmentService departmentService;
 
     @Autowired
     private WorksUtils worksUtils;
 
     @Autowired
-    private NatureOfWorkService natureOfWorkService;
-
-    @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
     protected AssignmentService assignmentService;
-
-    @Autowired
-    private ResourceBundleMessageSource messageSource;
-
-    @Autowired
-    private BoundaryService boundaryService;
-
-    @Autowired
-    private OverheadService overheadService;
-
-    @Autowired
-    private ScheduleCategoryService scheduleCategoryService;
-
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
-
-    @Autowired
-    private UOMService uomService;
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private ScheduleOfRateService scheduleOfRateService;
+    
+    @Autowired
+    private MessageSource messageSource;
 
     @ModelAttribute
     public AbstractEstimate getAbstractEstimate(@PathVariable final String abstractEstimateId) {
@@ -160,11 +111,16 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
     @RequestMapping(value = "/update/{abstractEstimateId}", method = RequestMethod.GET)
     public String updateAbstractEstimate(final Model model, @PathVariable final String abstractEstimateId,
-            final HttpServletRequest request)
+            final HttpServletRequest request, @RequestParam(value="mode", required=false) final String mode)
             throws ApplicationException {
         final AbstractEstimate abstractEstimate = getAbstractEstimate(abstractEstimateId);
         splitSorAndNonSorActivities(abstractEstimate);
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
+        
+        if(mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
+            model.addAttribute("message",
+                    messageSource.getMessage("msg.estimate.saved", new String[] { abstractEstimate.getEstimateNumber() }, null));
+
         return loadViewData(model, request, abstractEstimate, lineEstimateDetails);
     }
 
@@ -182,7 +138,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
         String mode = "";
         String workFlowAction = "";
-        AbstractEstimate newAbstractEstimate = null;
+        AbstractEstimate updatedAbstractEstimate = null;
 
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
@@ -213,8 +169,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
                 abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString()))
                 && !workFlowAction.equals(WorksConstants.CANCEL_ACTION)) {
-            validateMultiYearEstimates(abstractEstimate, errors);
-            validateMandatory(abstractEstimate, errors);
+            estimateService.validateMultiYearEstimates(abstractEstimate, errors);
+            estimateService.validateMandatory(abstractEstimate, errors);
             estimateService.validateAssetDetails(abstractEstimate, errors);
             if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 estimateService.validateActivities(abstractEstimate, errors);
@@ -223,54 +179,25 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (errors.hasErrors()) {
             for (final Activity activity : abstractEstimate.getSorActivities())
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
+
             return loadViewData(model, request, abstractEstimate, abstractEstimate.getLineEstimateDetails());
         } else {
             if (null != workFlowAction)
-                newAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
+                updatedAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
                         approvalComment, null, workFlowAction, files, removedActivityIds);
-            redirectAttributes.addFlashAttribute("abstractEstimate", newAbstractEstimate);
+            redirectAttributes.addFlashAttribute("abstractEstimate", updatedAbstractEstimate);
+            
+            if(updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
+                return "redirect:/abstractestimate/update/" + updatedAbstractEstimate.getId()+"?mode=save";
 
-            final String pathVars = worksUtils.getPathVars(newAbstractEstimate.getEgwStatus(), newAbstractEstimate.getState(),
-                    newAbstractEstimate.getId(), approvalPosition);
-
-            return "redirect:/abstractestimate/abstractestimate-success?pathVars=" + pathVars;
+            return "redirect:/abstractestimate/abstractestimate-success?estimate=" + updatedAbstractEstimate.getId() + "&approvalPosition=" + approvalPosition;
         }
-    }
-
-    private void validateMandatory(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
-        if (StringUtils.isBlank(abstractEstimate.getDescription()))
-            bindErrors.rejectValue("description", "error.description.required");
-        final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
-        if (abstractEstimate.getEstimateValue() != null
-                && abstractEstimate.getEstimateValue().compareTo(lineEstimateDetails.getEstimateAmount()) == 1) {
-            final BigDecimal diffValue = abstractEstimate.getEstimateValue()
-                    .subtract(lineEstimateDetails.getEstimateAmount());
-            bindErrors.reject("error.estimatevalue.greater", new String[] { diffValue.toString() },
-                    "error.estimatevalue.greater");
-        }
-    }
-
-    private void setDropDownValues(final Model model) {
-        model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
-        model.addAttribute("natureOfWork", natureOfWorkService.findAll());
-        model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
-        model.addAttribute("overheads", overheadService.getOverheadsByDate(new Date()));
-        model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-        model.addAttribute("finYear", financialYearDAO.findAll());
-        model.addAttribute("uoms", uomService.getAllUOMs());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final AbstractEstimate abstractEstimate, final LineEstimateDetails lineEstimateDetails) {
-
-        setDropDownValues(model);
+        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
+        estimateService.setDropDownValues(model);
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
         if (abstractEstimate.getCurrentState() != null
                 && !abstractEstimate.getCurrentState().getValue().equals(WorksConstants.NEW))
@@ -320,26 +247,5 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         documentDetailsList = worksUtils.findByObjectIdAndObjectType(abstractEstimate.getId(),
                 WorksConstants.ABSTRACTESTIMATE);
         abstractEstimate.setDocumentDetails(documentDetailsList);
-    }
-
-    private void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
-        CFinancialYear cFinancialYear = null;
-        Double totalPercentage = 0d;
-        Integer index = 0;
-        for (final MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates()) {
-            totalPercentage = totalPercentage + multiYearEstimate.getPercentage();
-
-            if (multiYearEstimate.getFinancialYear() == null)
-                bindErrors.rejectValue("multiYearEstimates[" + index + "].financialYear", "error.finyear.required");
-            if (multiYearEstimate.getPercentage() == 0)
-                bindErrors.rejectValue("multiYearEstimates[" + index + "].percentage", "error.percentage.required");
-            if (cFinancialYear != null && cFinancialYear.equals(multiYearEstimate.getFinancialYear()))
-                bindErrors.rejectValue("multiYearEstimates[" + index + "].financialYear", "error.financialYear.unique");
-            if (totalPercentage > 100)
-                bindErrors.rejectValue("multiYearEstimates[" + index + "].percentage", "error.percentage.greater");
-            cFinancialYear = multiYearEstimate.getFinancialYear();
-            index++;
-        }
-
     }
 }

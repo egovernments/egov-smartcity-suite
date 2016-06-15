@@ -57,10 +57,10 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slNo" /></th>
-					<th><spring:message code="lbl.description" /><span class="mandatory"></th>
-					<th><spring:message code="lbl.uom" /><span class="mandatory"></th>
-					<th><spring:message code="lbl.rate" /><span class="mandatory"></th>
-					<th><spring:message code="lbl.estimatedquantity" /><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.description" /><span class="mandatory" /></th>
+					<th><spring:message code="lbl.uom" /><span class="mandatory" /></th>
+					<th><spring:message code="lbl.rate" /><span class="mandatory" /></th>
+					<th><spring:message code="lbl.estimatedquantity" /><span class="mandatory" /></th>
 					<th><spring:message code="lbl.estimatedamount" /></th>
 					<th hidden="true" id="nonSorServiceVatHeader"><spring:message code="lbl.service.vat" /></th>
 					<th hidden="true" id="nonSorVatAmountHeader"><spring:message code="lbl.service.vat.amount" /></th>
@@ -148,10 +148,10 @@
 											</form:option>
 											<c:forEach items="${uoms }" var="uom">
 												<c:if test="${uom.id == activity.uom.id }">
-													<option value="${uom.id }" label="${uom.uomCategory.category } -- ${uom.uom }" selected="selected" />
+													<option value="${uom.id }" selected="selected" >${uom.uomCategory.category } -- ${uom.uom }</option>
 												</c:if>
 												<c:if test="${uom.id != activity.uom.id }">
-													<option value="${uom.id }" label="${uom.uomCategory.category } -- ${uom.uom }" />
+													<option value="${uom.id }" >${uom.uomCategory.category } -- ${uom.uom }</option>
 												</c:if>
 											</c:forEach>
 										</form:select>

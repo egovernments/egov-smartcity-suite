@@ -40,8 +40,6 @@
 
 $subTypeOfWorkId = 0;
 $subSchemeId = 0;
-$sorActivityRowCount = $('#sorActivitiesSize').val();
-$nonSorActivityRowCount = $('#nonSorActivitiesSize').val();
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
 	if($('#estimateNumber').val() != '') {
@@ -107,14 +105,26 @@ $(document).ready(function(){
 	$('#addnonSorRow').click(function() {
 		var hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
 		if(hiddenRowCount == 0) {
-			addNonSor();
+			var key = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
+			addRow('tblNonSor', 'nonSorRow');
+			resetIndexes();
+			$('#activityid_' + key).val('');
+			$('#nonSorId_' + key).val('');
+			$('#nonSorDesc_' + key).val('');
+			$('#nonSorUom_' + key).val('');
+			$('#nonSorRate_' + key).val('');
+			$('#nonSorQuantity_' + key).val('');
+			$('.nonSorAmount_' + key).html('');
+			$('#nonSorServiceTaxPerc_' + key).val('');
+			$('.nonSorVatAmt_' + key).html('');
+			$('.nonSorTotal_' + key).html('');
+			generateSlno();
 		} else {
-			var visibleSorCount = $("#tblsor tbody tr:visible[id='sorRow']").length;
-			
-			$('#nonSorDesc_' + visibleSorCount).attr('required', 'required');
-			$('#nonSorUom_' + visibleSorCount).attr('required', 'required');
-			$('#nonSorRate_' + visibleSorCount).attr('required', 'required');
-			$('#nonSorQuantity_' + visibleSorCount).attr('required', 'required');
+			var key = 0;
+			$('#nonSorDesc_' + key).attr('required', 'required');
+			$('#nonSorUom_' + key).attr('required', 'required');
+			$('#nonSorRate_' + key).attr('required', 'required');
+			$('#nonSorQuantity_' + key).attr('required', 'required');
 			$('.nonSorRate').val('');
 			$('.nonSorQuantity').val('');
 			$('.nonSorServiceTaxPerc').val('');
@@ -176,28 +186,31 @@ $(document).ready(function(){
 		}
 		else {
 			var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+			var key = $("#tblsor tbody tr:visible[id='sorRow']").length;
 			if(hiddenRowCount == 0) {
-				addSor();
-				var key = 0;
-				if($sorActivityRowCount == 0)
-					key = $("#tblsor tbody tr:visible[id='sorRow']").length - 1;
-				else
-					key = $sorActivityRowCount++ - 1;
+				addRow('tblsor', 'sorRow');
+				resetIndexes();
+				$('#soractivityid_' + key).val('');
+				$('#quantity_' + key).val('');
+				$('.amount_' + key).html('');
+				$('#vat_' + key).val('');
+				$('.vatAmount_' + key).html('');
+				$('.total_' + key).html('');
+				generateSorSno();
 			} else {
 				$('#quantity_0').val('');
 				$('#vat_0').val('');
-				var key = 0;
-				if($sorActivityRowCount > 0)
-					key = $sorActivityRowCount++ - 1;
-				
+				key = 0;
 				$('#message').attr('hidden', 'true');;
 				$('#sorRow').removeAttr('hidden');
 				$('#sorRow').removeAttr('sorinvisible');
 			}
 
 			$.each(data, function(id, val) {
-				if(id == "id" || id == "uomid")
+				if(id == "id")
 					$('#' + id + "_" + key).val(val);
+				else if(id == "uomid")
+					$('#sorUomid_' + key).val(val);
 				else if(id == 'description') {
 					$('.' + id + "_" + key).html(hint.replace(/@fulldescription@/g, val));
 				} else if(id == 'rate') {
@@ -276,6 +289,12 @@ $(document).ready(function(){
 	
 	generateSorSno();
 	generateSlno();
+	
+	$('.overheadValueName').trigger('change');
+	
+	resetAddedOverheads();
+	
+	$('#isOverheadValuesLoading').val('false');
 });
 
 $overheadRowCount = 0;
@@ -304,14 +323,14 @@ function deleteOverheadRow(obj) {
 		return false;
 	} else {
 	    //calculating Overhead TotalAmount
-	    var total = document.getElementById('overheadTotalAmount').value;
+	    var total = $("#overheadTotalAmount").html();
 	    if(total==null || total=="")
 	    	total = 0;
 	    var amount = document.getElementById('overheadValues['+ (rIndex-1) + '].amount').value;
 	    if(amount==null || amount=="")
 	    	amount = 0;
 	    total = eval(total) - eval(amount);
-	    document.getElementById('overheadTotalAmount').value = total;
+	    $("#overheadTotalAmount").html(total);
 	    
 	    deleteRow("overheadTable",obj);
 	    
@@ -335,19 +354,6 @@ function recalculateOverheads(){
 		amount.value = ((estimateValue*percentage)/100).toFixed(2);
 		calculateOverheadTotalAmount();
 	}
-}
-function calculateOverHeadTotal(elem){
-	var index=elem.id.substring(elem.id.indexOf('[')+1, elem.id.indexOf(']'));
-	var oldOverheadAmount=document.getElementById('actionOverheadValues['
-			+ index + '].amount').value;
-	var overHeadTotalAmnt = document.getElementById('overHeadTotalAmnt').value;
-	if(overHeadTotalAmnt!=0) {
-		dom.get("overHeadTotalAmnt").value=roundTo(getNumericValueFromInnerHTML("overHeadTotalAmnt") -oldOverheadAmount +getNumber(amount.value));
-	}
-	else {
-		dom.get("overHeadTotalAmnt").innerHTML=roundTo(getNumericValueFromInnerHTML("overHeadTotalAmnt") +getNumber(dom.get("amount"+record.getId()).value));
-	} 
-	 document.getElementById("estimateValue").value=roundTo(eval(document.getElementById("grandTotal").innerHTML)+eval(document.getElementById("nonSorGrandTotal").innerHTML)+eval(document.getElementById("overHeadTotalAmnt").innerHTML));
 }
 
 function resetAddedOverheads(){
@@ -373,7 +379,8 @@ function getPercentageOrLumpsumByOverhead(overhead) {
 		resetAddedOverheads();
 	}else
 	if(addedOverheads.indexOf(overhead.value) == -1) {
-		resetAddedOverheads();
+		if($('#isOverheadValuesLoading').val() == 'false')
+			resetAddedOverheads();
 		var objName = overhead.name;
 		var index =objName.substring(objName.indexOf("[")+1,objName.indexOf("]")); 
 		var estimateValue = $("#estimateValue").val();
@@ -430,7 +437,8 @@ function calculateOverheadTotalAmount(){
 		total = eval(total) + eval(amount);
 	}
 	
-	document.getElementById('overheadTotalAmount').value = total;
+	$("#overheadTotalAmount").html(parseFloat(total).toFixed(2));
+	calculateEstimateValue();
 }
 
 function addMultiyearEstimate() {
@@ -537,54 +545,6 @@ function deleteMultiYearEstimate(obj) {
 
 }
 
-function addSor() {
-	var rowcount = $("#tblsor tbody tr").length;
-	if (rowcount < 31) {
-		if (document.getElementById('sorRow') != null) {
-			var nextIdx = 0;
-			// get Next Row Index to Generate
-			if($sorActivityRowCount == 0)
-				nextIdx = $("#tblsor tbody tr:visible[id='sorRow']").length;
-			else
-				nextIdx = $sorActivityRowCount++;
-			// Generate all textboxes Id and name with new index
-			$("#sorRow").clone().find("input, span").each(
-					function() {
-						if(!$(this).is('span')) {
-							$(this).attr({
-								'name' : function(_, name) {
-									return name.replace(/\d+/,nextIdx);
-								},
-								'id' : function(_, id) {
-									return id.replace(/\d+/, nextIdx);
-								},
-								'data-idx' : function(_,dataIdx)
-								{
-									return nextIdx;
-								}
-							});
-						} else {
-							$(this).attr({
-								'class' : function(_, name) {
-									return name.replace(/\d+/, nextIdx);
-								}
-							});
-						}
-					}).end().appendTo("#tblsor tbody");
-			$('#soractivityid_' + nextIdx).val('');
-			$('#quantity_' + nextIdx).val('');
-			$('.amount_' + nextIdx).html('');
-			$('#vat_' + nextIdx).val('');
-			$('.vatAmount_' + nextIdx).html('');
-			$('.total_' + nextIdx).html('');
-			
-			generateSorSno();
-		}
-	} else {
-		  bootbox.alert('limit reached!');
-	}
-}
-
 function generateSorSno()
 {
 	var idx=1;
@@ -596,7 +556,6 @@ function generateSorSno()
 
 function deleteSor(obj) {
 	var rIndex = getRow(obj).rowIndex;
-	
 	var id = $(getRow(obj)).children('td:first').children('input:first').val();
     //To get all the deleted rows id
     var aIndex = rIndex - 1;
@@ -607,7 +566,6 @@ function deleteSor(obj) {
 	
 	var tbl=document.getElementById('tblsor');	
 	var rowcount=$("#tblsor tbody tr").length;
-
 	if(rowcount==2) {
 		var rowId = $(obj).attr('class').split('_').pop();
 		$('#soractivityid_' + rowId).val('');
@@ -620,44 +578,12 @@ function deleteSor(obj) {
 		$('#sorRow').attr('hidden', 'true');
 		$('#sorRow').attr('sorinvisible', 'true');
 		$('#message').removeAttr('hidden');
-		
-		var nextIdx = 0;
-		// get Next Row Index to Generate
-		if($sorActivityRowCount == 0)
-			nextIdx = $("#tblsor tbody tr:visible[id='sorRow']").length;
-		else
-			nextIdx = $sorActivityRowCount++;
-		
-		$("#sorRow").find("input, span").each(
-				function() {
-
-					if(!$(this).is('span')) {
-						$(this).attr({
-							'name' : function(_, name) {
-								return name.replace(/\d+/,nextIdx);
-							},
-							'id' : function(_, id) {
-								return id.replace(/\d+/, nextIdx);
-							},
-							'data-idx' : function(_,dataIdx)
-							{
-								return nextIdx;
-							}
-						});
-					} else {
-						$(this).attr({
-							'class' : function(_, name) {
-								return name.replace(/\d+/, nextIdx);
-							}
-						});
-					}
-				});
 	} else {
-		tbl.deleteRow(rIndex);
+		deleteRow('tblsor',obj);
 	}
+	resetIndexes();
 	//starting index for table fields
 	generateSorSno();
-	
 	calculateEstimateAmountTotal();
 	calculateVatAmountTotal();
 	total();
@@ -715,60 +641,6 @@ function total() {
 	calculateEstimateValue();
 }
 
-function addNonSor() {
-	var rowcount = $("#tblNonSor tbody tr").length;
-	if (rowcount < 31) {
-		if (document.getElementById('nonSorRow') != null) {
-			var nextIdx = 0;
-			var visibleSorCount = $("#tblsor tbody tr:visible[id='sorRow']").length;
-			// get Next Row Index to Generate
-			if($nonSorActivityRowCount == 0)
-				nextIdx = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length + visibleSorCount;
-			else
-				nextIdx = $nonSorActivityRowCount++;
-			// Generate all textboxes Id and name with new index
-			$("#nonSorRow").clone().find("input, span, select").each(
-					function() {
-
-						if(!$(this).is('span')) {
-							$(this).attr({
-								'name' : function(_, name) {
-									return name.replace(/\d+/,nextIdx);
-								},
-								'id' : function(_, id) {
-									return id.replace(/\d+/, nextIdx);
-								},
-								'data-idx' : function(_,dataIdx)
-								{
-									return nextIdx;
-								}
-							});
-						} else {
-							$(this).attr({
-								'class' : function(_, name) {
-									return name.replace(/\d+/, nextIdx);
-								}
-							});
-						}
-					}).end().appendTo("#tblNonSor tbody");
-			$('#activityid_' + nextIdx).val('');
-			$('#nonSorId_' + nextIdx).val('');
-			$('#nonSorDesc_' + nextIdx).val('');
-			$('#nonSorUom_' + nextIdx).val('');
-			$('#nonSorRate_' + nextIdx).val('');
-			$('#nonSorQuantity_' + nextIdx).val('');
-			$('.nonSorAmount_' + nextIdx).html('');
-			$('#nonSorServiceTaxPerc_' + nextIdx).val('');
-			$('.nonSorVatAmt_' + nextIdx).html('');
-			$('.nonSorTotal_' + nextIdx).html('');
-			
-			generateSlno();
-		}
-	} else {
-		  bootbox.alert('limit reached!');
-	}
-}
-
 function generateSlno()
 {
 	var idx=1;
@@ -790,8 +662,6 @@ function deleteNonSor(obj) {
     $("#removedActivityIds").val($("#removedActivityIds").val()+id);
     
     var rowId = $(obj).attr('class').split('_').pop();
-    
-	var tbl=document.getElementById('tblNonSor');	
 	var rowcount=$("#tblNonSor tbody tr").length;
 
 	if(rowcount==2) {
@@ -809,41 +679,10 @@ function deleteNonSor(obj) {
 		$('#nonSorRow').attr('hidden', 'true');
 		$('#nonSorRow').attr('nonsorinvisible', 'true');
 		$('#nonSorMessage').removeAttr('hidden');
-		
-		var nextIdx = 0;
-		// get Next Row Index to Generate
-		if($nonSorActivityRowCount == 0)
-			nextIdx = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
-		else
-			nextIdx = $nonSorActivityRowCount++;
-		
-		$("#nonSorRow").find("input, span, select").each(
-				function() {
-
-					if(!$(this).is('span')) {
-						$(this).attr({
-							'name' : function(_, name) {
-								return name.replace(/\d+/,nextIdx);
-							},
-							'id' : function(_, id) {
-								return id.replace(/\d+/, nextIdx);
-							},
-							'data-idx' : function(_,dataIdx)
-							{
-								return nextIdx;
-							}
-						});
-					} else {
-						$(this).attr({
-							'class' : function(_, name) {
-								return name.replace(/\d+/, nextIdx);
-							}
-						});
-					}
-				});
 	} else {
-		tbl.deleteRow(rIndex);
+		deleteRow('tblNonSor',obj);
 	}
+	resetIndexes();
 	//starting index for table fields
 	generateSlno();
 	
@@ -882,9 +721,7 @@ function resetIndexes() {
 		idx++;
 	});
 	
-	var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
-	if(hiddenRowCount == 1)
-		idx = 0;
+	idx = 0;
 	
 	$(".nonSorRow").each(function() {
 		$(this).find("input, span, select").each(function() {
@@ -991,12 +828,13 @@ function nonSorTotal() {
 function calculateEstimateValue() {
 	var sorTotal = $('#sorTotal').html();
 	var nonSorTotal = $('#nonSorTotal').html();
+	var overheadTotal = $('#overheadTotalAmount').html();
 	if(sorTotal == '')
 		sorTotal = 0.0;
 	if(nonSorTotal == '')
 		nonSorTotal = 0.0;
 	
-	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2);
+	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) + parseFloat(overheadTotal)).toFixed(2);
 	
 	$('#estimateValue').val(workValue);
 	$('#workValue').val(workValue);
@@ -1187,8 +1025,6 @@ function clearActivities(){
 		var sortbl=document.getElementById('tblsor');
 		for(rowcount=2;rowcount<=sorrowcount;rowcount++){
 			resetIndexes();
-			$sorActivityRowCount--;
-		    
 			if(rowcount==2) {
 				$('.soractivityid').val('');
 				$('.sorhiddenid').val('');
@@ -1214,8 +1050,6 @@ function clearActivities(){
 		var nonsorrowcount = jQuery("#tblNonSor tbody tr").length;
 		var nonsortbl=document.getElementById('tblNonSor');
 		for(rowcount=2;rowcount<=nonsorrowcount;rowcount++){
-			$nonSorActivityRowCount--;
-		    
 			if(rowcount==2) {
 				$('.activityid').val('');
 				$('.nonSorId').val('');
@@ -1244,6 +1078,8 @@ function getActivitiesForTemplate(id){
 		type: "GET",
 		dataType: "json",
 		success: function (estimateTemplateActivities) {
+			var sorCount = 0;
+			var nonSorCount = 0;
 			$.each(estimateTemplateActivities, function(index,estimateTemplateActivity){
 				
 				if(index==0){
@@ -1251,39 +1087,64 @@ function getActivitiesForTemplate(id){
 					$('#sorRow').removeAttr("hidden");
 				}else{
 					if(estimateTemplateActivity.schedule != null){
-						addSor();	
+						var key = $("#tblsor tbody tr:visible[id='sorRow']").length - 1;
+						addRow('tblsor', 'sorRow');
+						resetIndexes();
+						$('#soractivityid_' + key).val('');
+						$('#quantity_' + key).val('');
+						$('.amount_' + key).html('');
+						$('#vat_' + key).val('');
+						$('.vatAmount_' + key).html('');
+						$('.total_' + key).html('');
+						generateSorSno();	
 					}else{
 						if(!nonSorCheck){
 							$('#nonSorMessage').prop("hidden",true);
 							$('#nonSorRow').removeAttr("hidden");
 						}
-						if(nonSorCheck)
-							addNonSor();
+						if(nonSorCheck) {
+							var key = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
+							addRow('tblNonSor', 'nonSorRow');
+							resetIndexes();
+							$('#activityid_' + key).val('');
+							$('#nonSorId_' + key).val('');
+							$('#nonSorDesc_' + key).val('');
+							$('#nonSorUom_' + key).val('');
+							$('#nonSorRate_' + key).val('');
+							$('#nonSorQuantity_' + key).val('');
+							$('.nonSorAmount_' + key).html('');
+							$('#nonSorServiceTaxPerc_' + key).val('');
+							$('.nonSorVatAmt_' + key).html('');
+							$('.nonSorTotal_' + key).html('');
+							generateSlno();
+						}
 						nonSorCheck = true;
 					}
 				}
 				if(estimateTemplateActivity.schedule != null){
-					$('#id_'+index).val(estimateTemplateActivity.schedule.id);
-					$('.code_'+index).html(estimateTemplateActivity.schedule.code);
-					$('.summary_'+index).html(estimateTemplateActivity.schedule.summary);
-					$('.description_'+index).html(hint.replace(/@fulldescription@/g, estimateTemplateActivity.schedule.description));
-					$('.uom_'+index).html(estimateTemplateActivity.schedule.uom.uom);
-					$('#uomid_'+index).val(estimateTemplateActivity.schedule.uom.id);
+					$('#id_'+sorCount).val(estimateTemplateActivity.schedule.id);
+					$('.code_'+sorCount).html(estimateTemplateActivity.schedule.code);
+					$('.summary_'+sorCount).html(estimateTemplateActivity.schedule.summary);
+					$('.description_'+sorCount).html(hint.replace(/@fulldescription@/g, estimateTemplateActivity.schedule.description));
+					$('.uom_'+sorCount).html(estimateTemplateActivity.schedule.uom.uom);
+					$('#sorUomid_'+sorCount).val(estimateTemplateActivity.schedule.uom.id);
 					if(estimateTemplateActivity.schedule.sorRate!=null) {
-						$('.rate_'+index).html(estimateTemplateActivity.schedule.sorRate);
-						$('#rate_'+index).val(estimateTemplateActivity.schedule.sorRate);
-						$('#sorRate_'+index).val(estimateTemplateActivity.schedule.sorRate);
+						$('.rate_'+sorCount).html(estimateTemplateActivity.schedule.sorRate);
+						$('#rate_'+sorCount).val(estimateTemplateActivity.schedule.sorRate);
+						$('#sorRate_'+sorCount).val(estimateTemplateActivity.schedule.sorRate);
 					}
 					else {
-						$('.rate_'+index).html(0);
-						$('#rate_'+index).val(0);
-						$('#sorRate_'+index).val(0);
+						$('.rate_'+sorCount).html(0);
+						$('#rate_'+sorCount).val(0);
+						$('#sorRate_'+sorCount).val(0);
 					}
+					sorCount++;
 				}else{
-					$('#nonSorDesc_'+index).val(estimateTemplateActivity.nonSor.description);
-					$('#nonSorUom_'+index).val(estimateTemplateActivity.uom.id);
-					$('#nonSorUomid_'+index).val(estimateTemplateActivity.uom.id);
-					$('#nonSorRate_'+index).val(estimateTemplateActivity.rate.formattedString);
+					$('#nonSorDesc_'+nonSorCount).val(estimateTemplateActivity.nonSor.description);
+					$('#nonSorUom_'+nonSorCount).val(estimateTemplateActivity.uom.id);
+					$('#nonSorUomid_'+nonSorCount).val(estimateTemplateActivity.uom.id);
+					$('#nonSorRate_'+nonSorCount).val(estimateTemplateActivity.rate.formattedString);
+					nonSorCount++;
 				}
 				resetIndexes();
 			});
@@ -1591,12 +1452,6 @@ function changeColor(tableRow, highLight)
 	}
 }
 
-$('.btn-primary').click(function(){
-	var button = $(this).attr('id');
-	if(button != 'addnonSorRow')
-		return validateWorkFlowApprover(button);
-});
-
 function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value = name;
 	var approverPosId = document.getElementById("approvalPosition");
@@ -1612,17 +1467,19 @@ function validateWorkFlowApprover(name) {
 		
 		flag = validateSORDetails();
 		
-		$('.activityRate').each(function() {
-			if (parseFloat($(this).val()) <= 0)
-				flag = false;
-		});
-		$('.sorRate').each(function() {
-			if (parseFloat($(this).val()) <= 0)
-				flag = false;
-		});
-		if (!flag) {
-			bootbox.alert($('#errorrateszero').val());
-			return false;
+		if($('#abstractEstimate').valid()) {
+			$('.activityRate').each(function() {
+				if (parseFloat($(this).val()) <= 0)
+					flag = false;
+			});
+			$('.sorRate').each(function() {
+				if (parseFloat($(this).val()) <= 0)
+					flag = false;
+			});
+			if (!flag) {
+				bootbox.alert($('#errorrateszero').val());
+				return false;
+			}
 		}
 		
 	}
@@ -1684,17 +1541,19 @@ function validateWorkFlowApprover(name) {
 		
 		flag = validateSORDetails();
 		
-		$('.activityRate').each(function() {
-			if (parseFloat($(this).val()) <= 0)
-				flag = false;
-		});
-		$('.sorRate').each(function() {
-			if (parseFloat($(this).val()) <= 0)
-				flag = false;
-		});
-		if (!flag) {
-			bootbox.alert($('#errorrateszero').val());
-			return false;
+		if($('#abstractEstimate').valid()) {
+			$('.activityRate').each(function() {
+				if (parseFloat($(this).val()) <= 0)
+					flag = false;
+			});
+			$('.sorRate').each(function() {
+				if (parseFloat($(this).val()) <= 0)
+					flag = false;
+			});
+			if (!flag) {
+				bootbox.alert($('#errorrateszero').val());
+				return false;
+			}
 		}
 	}
 	
@@ -1825,6 +1684,10 @@ function addRow(tableName,rowName) {
 							if(!(jQuery(this).attr('id')===undefined))
 								return id.replace(/\d+/, nextIdx); 
 						},
+						'class' : function(_, name) {
+							if(!(jQuery(this).attr('class')===undefined))
+								return name.replace(/\d+/, nextIdx); 
+						},
 						'data-idx' : function(_,dataIdx)
 						{
 							return nextIdx;
@@ -1873,6 +1736,10 @@ function deleteRow(tableName,obj){
 						    	  if(!(jQuery(this).attr('id')===undefined))
 						    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
 						      },
+						      'class' : function(_, name) {
+									if(!(jQuery(this).attr('class')===undefined))
+										return name.replace(/\[.\]/g, '['+ idx +']'); 
+								},
 							  'data-idx' : function(_,dataIdx)
 							  {
 								  return idx;

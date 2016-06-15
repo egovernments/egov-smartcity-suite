@@ -47,7 +47,7 @@
 			<td id="actionButtons">
 				<c:if test="${mode != 'readOnly' }">
 					<c:forEach items="${validActionList}" var="validButtons">
-						<input type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}">
+						<input type="submit" id="${validButtons}" class="btn btn-primary" value="${validButtons}" onclick="return validateWorkFlowApprover('${validButtons}');">
 							</input>
 					</c:forEach>
 				</c:if>

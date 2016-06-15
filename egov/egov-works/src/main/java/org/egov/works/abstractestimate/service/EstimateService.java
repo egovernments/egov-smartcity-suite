@@ -48,20 +48,29 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.service.AssetService;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
@@ -82,7 +91,11 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.master.service.OverheadService;
+import org.egov.works.master.service.ScheduleCategoryService;
+import org.egov.works.master.service.UOMService;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.egov.works.utils.WorksConstants;
@@ -159,6 +172,39 @@ public class EstimateService {
 
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+    
+    @Autowired
+    private ScheduleCategoryService scheduleCategoryService;
+
+    @Autowired
+    private NatureOfWorkService natureOfWorkService;
+
+    @Autowired
+    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+
+    @Autowired
+    private FundHibernateDAO fundHibernateDAO;
+
+    @Autowired
+    private FunctionHibernateDAO functionHibernateDAO;
+
+    @Autowired
+    private BudgetGroupDAO budgetGroupDAO;
+
+    @Autowired
+    private SchemeService schemeService;
+
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
+
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private UOMService uomService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -171,7 +217,6 @@ public class EstimateService {
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
     }
 
-    @Transactional
     public AbstractEstimate getAbstractEstimateById(final Long id) {
         return abstractEstimateRepository.findOne(id);
     }
@@ -479,12 +524,10 @@ public class EstimateService {
             for (final Activity activity : abstractEstimate.getActivities())
                 activity.setAbstractEstimate(abstractEstimate);
 
-            updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
-
-            final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, updatedAbstractEstimate,
+            final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, abstractEstimate,
                     WorksConstants.ABSTRACTESTIMATE);
             if (!documentDetails.isEmpty()) {
-                updatedAbstractEstimate.setDocumentDetails(documentDetails);
+                abstractEstimate.setDocumentDetails(documentDetails);
                 worksUtils.persistDocuments(documentDetails);
             }
         } else {
@@ -495,8 +538,6 @@ public class EstimateService {
             if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
                     && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
                 saveAdminSanctionDetails(abstractEstimate);
-
-            updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
         }
 
         updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
@@ -749,5 +790,84 @@ public class EstimateService {
         if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
             errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
     }
+
+    public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,
+            final AbstractEstimate abstractEstimate) {
+        final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
+        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
+        abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
+        abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
+        if (lineEstimate.getLocation() != null)
+            abstractEstimate.setLocation(lineEstimate.getLocation().getName());
+        abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
+        abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
+        abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
+        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
+        abstractEstimate.addMultiYearEstimate(populateMultiYearEstimate(abstractEstimate));
+        abstractEstimate.addFinancialDetails(populateEstimateFinancialDetails(abstractEstimate));
+        loadModelValues(lineEstimateDetails, model, abstractEstimate);
+    }
     
+    public void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
+        CFinancialYear cFinancialYear = null;
+        Double totalPercentage = 0d;
+        Integer index = 0;
+        for (final MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates()) {
+            totalPercentage = totalPercentage + multiYearEstimate.getPercentage();
+
+            if (multiYearEstimate.getFinancialYear() == null) {
+                bindErrors.rejectValue("multiYearEstimates[" + index + "].financialYear", "error.finyear.required");
+            }
+            if (multiYearEstimate.getPercentage() == 0) {
+                bindErrors.rejectValue("multiYearEstimates[" + index + "].percentage", "error.percentage.required");
+            }
+            if (cFinancialYear != null && cFinancialYear.equals(multiYearEstimate.getFinancialYear())) {
+                bindErrors.rejectValue("multiYearEstimates[" + index + "].financialYear", "error.financialYear.unique");
+            }
+            if (totalPercentage > 100) {
+                bindErrors.rejectValue("multiYearEstimates[" + index + "].percentage", "error.percentage.greater");
+            }
+            cFinancialYear = multiYearEstimate.getFinancialYear();
+            index++;
+        }
+
+    }
+
+    public void validateMandatory(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
+        if (StringUtils.isBlank(abstractEstimate.getDescription())) {
+            bindErrors.rejectValue("description", "error.description.required");
+        }
+        LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
+        if (abstractEstimate.getEstimateValue() != null
+                && abstractEstimate.getEstimateValue().compareTo(lineEstimateDetails.getEstimateAmount()) == 1) {
+            BigDecimal diffValue = abstractEstimate.getEstimateValue()
+                    .subtract(lineEstimateDetails.getEstimateAmount());
+            bindErrors.reject("error.estimatevalue.greater", new String[] { diffValue.toString() },
+                    "error.estimatevalue.greater");
+        }
+    }
+    
+    public void setDropDownValues(final Model model) {
+        model.addAttribute("overheads", overheadService.getOverheadsByDate(new Date()));
+        model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
+        model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
+        model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
+        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        model.addAttribute("schemes", schemeService.findAll());
+        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
+        model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("natureOfWork", natureOfWorkService.findAll());
+        model.addAttribute("finYear", financialYearDAO.findAll());
+        model.addAttribute("uoms", uomService.getAllUOMs());
+        
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isServiceVATRequired", true);
+        else
+            model.addAttribute("isServiceVATRequired", false);
+    }
 }

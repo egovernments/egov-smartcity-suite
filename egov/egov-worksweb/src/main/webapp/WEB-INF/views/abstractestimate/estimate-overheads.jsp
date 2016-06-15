@@ -39,6 +39,7 @@
   --%>
 
 <div id="overheadsHeaderTable" class="panel panel-primary" data-collapsed="0">
+<input type="hidden" value="true" id="isOverheadValuesLoading" />
 
 <div class="panel-heading custom_form_panel_heading" >
 	<div class="panel-title">
@@ -62,9 +63,11 @@
 				</tr>
 			</thead>
 			<tbody>
-					<tr id="overheadRow">
+				<c:choose>
+					<c:when test="${abstractEstimate.overheadValues.size() == 0}">
+						<tr id="overheadRow">
 							<td>
-								<form:select path="" data-first-option="false" name="overheadValues[0].name" id="overheadValues[0].name" class="form-control" onchange="getPercentageOrLumpsumByOverhead(this);">
+								<form:select path="" data-first-option="false" name="overheadValues[0].name" id="overheadValues[0].name" class="form-control overheadValueName" onchange="getPercentageOrLumpsumByOverhead(this);">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -120,15 +123,105 @@
 								<button type="button" onclick="deleteOverheadRow(this);" class="btn btn-xs btn-secondary delete-row"><span class="glyphicon glyphicon-trash"></span> Delete</button>
 							 </td>
 						</tr>
+					</c:when>
+					<c:otherwise>
+						<c:forEach items="${abstractEstimate.overheadValues}" var="overheadValue" varStatus="item">
+							<tr id="overheadRow">
+								<td>
+									<form:select path="" data-first-option="false" name="overheadValues[${item.index }].name" id="overheadValues[${item.index }].name" class="form-control overheadValueName" onchange="getPercentageOrLumpsumByOverhead(this);">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<c:forEach var="overhead" items="${overheads}">
+											<c:forEach var="overheadrate" items="${overhead.overheadRates}">
+											<c:set var="estDate" value="<%=new java.util.Date()%>" scope="session"/>
+											<c:set var="fromDate" value="${overheadrate.validity.startDate}" scope="session"/>
+											<c:set var="toDate" value="${overheadrate.validity.endDate}" scope="session"/>
+											<c:choose>
+												<c:when  test="${overheadrate.validity != null}">
+													<c:choose>
+														<c:when  test="${fromDate <= estDate && (estDate <= toDate || toDate == null || toDate == '')}">
+															<c:choose>
+																<c:when test="${overheadrate.percentage > 0}">
+																	<c:if test="${overhead.id == overheadValue.overhead.id }">
+																		<form:option value="${overhead.id}" selected="selected">
+																			<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
+																		</form:option>
+																	</c:if>
+																	<c:if test="${overhead.id != overheadValue.overhead.id }">
+																		<form:option value="${overhead.id}">
+																			<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
+																		</form:option>
+																	</c:if>
+																</c:when>
+																<c:otherwise>
+																	<c:if test="${overhead.id == overheadValue.overhead.id }">
+																		<form:option value="${overhead.id}" selected="selected">
+																			<c:out value="${overhead.name}" />
+																		</form:option>
+																	</c:if>
+																	<c:if test="${overhead.id != overheadValue.overhead.id }">
+																		<form:option value="${overhead.id}">
+																			<c:out value="${overhead.name}" />
+																		</form:option>
+																	</c:if>
+																</c:otherwise>
+															</c:choose>
+														</c:when>
+														<c:otherwise>
+															<c:if test="${overhead.id == overheadValue.overhead.id }">
+																<form:option value="${overhead.id}" selected="selected">
+																	<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
+																</form:option>
+															</c:if>
+															<c:if test="${overhead.id != overheadValue.overhead.id }">
+																<form:option value="${overhead.id}">
+																	<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
+																</form:option>
+															</c:if>
+														</c:otherwise>
+													</c:choose>
+												</c:when>
+												<c:otherwise>
+													<c:if test="${overhead.id == overheadValue.overhead.id }">
+														<form:option value="${overhead.id}" selected="selected">
+															<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
+														</form:option>
+													</c:if>
+													<c:if test="${overhead.id != overheadValue.overhead.id }">
+														<form:option value="${overhead.id}">
+															<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
+														</form:option>
+													</c:if>
+												</c:otherwise>
+											</c:choose>
+											</c:forEach>
+										</c:forEach>
+									</form:select> 
+									<form:hidden path="overheadValues[${item.index }].overhead.id"  name="overheadValues[${item.index }].overhead.id" id="overheadValues[${item.index }].overhead.id"  class="form-control table-input hidden-input"/> 
+									<form:errors path="overheadValues[${item.index }].overhead.id" cssClass="add-margin error-msg" /> 
+								</td>
+								<td>
+									<input type="text" id="overheadValues[${item.index }].percentage" name="overheadValues[${item.index }].percentage"  class="form-control" disabled>  
+								</td>
+								<td>
+									<form:input path="overheadValues[${item.index }].amount" id="overheadValues[${item.index }].amount" name="overheadValues[${item.index }].amount"  data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right" onblur="calculateOverheadTotalAmount();"  maxlength="12" />
+									<form:errors path="overheadValues[${item.index }].amount" cssClass="add-margin error-msg" /> 
+								</td> 
+								<td class="text-center">
+									<button type="button" onclick="deleteOverheadRow(this);" class="btn btn-xs btn-secondary delete-row"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+								 </td>
+							</tr>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
 			</tbody>
 		</table>
 		<table class="table table-bordered" >
 			<tr>
 				<td width="64.5%" style="text-align:right"><spring:message code="lbl.total" /></td>
-				<td>
-					<input type="text" id="overheadTotalAmount" name="overheadTotalAmount"  class="form-control" disabled>
-				</td>
-				<td width="7.5%"></td>
+				<td class="text-right"> <span id="overheadTotalAmount">0.00</span> </td>
+				<td width="10%"></td>
 			</tr>
 		</table>
 		<div class="panel-title">
