@@ -58,6 +58,11 @@ public class DashboardHomeController {
     public String home() {
         return "home";
     }
+    @RequestMapping("/erpReports")
+    public String erpReports() {
+        return "erpReports";
+    }
+
 
     @RequestMapping("/{moduleName}")
     public String kebanaDashboard(@PathVariable final String moduleName, final Model model) {

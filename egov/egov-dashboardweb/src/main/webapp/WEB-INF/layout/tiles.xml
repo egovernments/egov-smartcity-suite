@@ -71,5 +71,6 @@
     </definition>
     
     <definition name="kibana-dashboard" template="/WEB-INF/views/dashboard/kibana-dashboard.jsp"/>
+     <definition name="erpReports" template="/WEB-INF/views/dashboard/report.jsp"/> 
     
 </tiles-definitions>
