@@ -343,7 +343,7 @@ public class EstimateService {
         return abstractEstimate;
     }
 
-    private FinancialDetail populateEstimateFinancialDetails(final AbstractEstimate abstractEstimate) {
+    public FinancialDetail populateEstimateFinancialDetails(final AbstractEstimate abstractEstimate) {
         final FinancialDetail financialDetail = new FinancialDetail();
         financialDetail.setAbstractEstimate(abstractEstimate);
         financialDetail.setFund(abstractEstimate.getLineEstimateDetails().getLineEstimate().getFund());
@@ -354,7 +354,7 @@ public class EstimateService {
         return financialDetail;
     }
 
-    private MultiYearEstimate populateMultiYearEstimate(final AbstractEstimate abstractEstimate) {
+    public MultiYearEstimate populateMultiYearEstimate(final AbstractEstimate abstractEstimate) {
         final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
         multiYearEstimate.setAbstractEstimate(abstractEstimate);
         multiYearEstimate.setFinancialYear(financialYearHibernateDAO
@@ -407,9 +407,6 @@ public class EstimateService {
     public void loadModelValues(final LineEstimateDetails lineEstimateDetails, final Model model,
             final AbstractEstimate abstractEstimate) {
         model.addAttribute("paymentsReleasedSoFar", getPaymentsReleasedForLineEstimate(lineEstimateDetails));
-        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
-        model.addAttribute("abstractEstimate", abstractEstimate);
-        model.addAttribute("lineEstimate", lineEstimateDetails.getLineEstimate());
         model.addAttribute("workOrder",
                 letterOfAcceptanceService.getWorkOrderByEstimateNumber(lineEstimateDetails.getEstimateNumber()));
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -752,19 +749,5 @@ public class EstimateService {
         if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
             errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
     }
-
-    public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,
-            final AbstractEstimate abstractEstimate) {
-        final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
-        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
-        abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
-        abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
-        abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
-        abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
-        abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
-        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
-        //abstractEstimate.addMultiYearEstimate(populateMultiYearEstimate(abstractEstimate));
-        abstractEstimate.addFinancialDetails(populateEstimateFinancialDetails(abstractEstimate));
-        loadModelValues(lineEstimateDetails, model, abstractEstimate);
-    }
+    
 }

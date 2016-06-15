@@ -53,8 +53,8 @@
 	</div>
 	<div class="panel-body custom-form">
 	   <%@ include file="estimateDetails.jsp"%>   
-	   <form:hidden path="lineEstimateDetails" value="${lineEstimateDetails.id}"/>
-	   <form:hidden path="" name="lineEstimateAmount" id="lineEstimateAmount" value="${lineEstimateDetails.estimateAmount}"/>
+	   <form:hidden path="lineEstimateDetails" value="${abstractEstimate.lineEstimateDetails.id}"/>
+	   <form:hidden path="" name="lineEstimateAmount" id="lineEstimateAmount" value="${abstractEstimate.lineEstimateDetails.estimateAmount}"/>
 	   
 	   <div class="form-group">
 			<%-- <label class="col-sm-2 control-label text-right">

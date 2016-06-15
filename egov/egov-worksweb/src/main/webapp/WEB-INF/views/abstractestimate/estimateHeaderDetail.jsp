@@ -55,16 +55,20 @@
 					<div class="panel-body">
 						<div class="row add-border">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" />.</div> 
+							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
 							<div class="col-md-2 col-xs-6 add-margin view-content">
-							<c:out value="${lineEstimateDetails.estimateNumber}"></c:out>
-							</div>
+							<c:out value="${abstractEstimate.lineEstimateDetails.estimateNumber}"></c:out>
+							</div></c:if>
 							<input type="hidden" name="mode" value="${mode}" id="mode"/>
-							<form:hidden path="estimateNumber" name="estimateNumber" value="${lineEstimateDetails.estimateNumber}"/>
+							<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.lineEstimateDetails.estimateNumber}"/>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" />.
 							</div> 
+							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
 							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${lineEstimate.id}"/>')"><c:out value="${lineEstimate.lineEstimateNumber}"/></a>
+								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"/>')">
+								<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
 							</div>
+							</c:if>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workidentificationo" />.</div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
 							<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>

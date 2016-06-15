@@ -61,7 +61,7 @@
 					<th><spring:message code="lbl.year" /><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.percentage" /><span
 						class="mandatory"></span></th>
-					<c:if test="${lineEstimateDetails.estimateNumber == '' }">
+					<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.estimateNumber == '' }">
 					<th><spring:message code="lbl.action" /></th>
 					</c:if>
 				</tr>
@@ -84,7 +84,7 @@
 							<td><form:input path="multiYearEstimates[0].percentage" name="multiYearEstimates[0].percentage" value="${abstractEstimate.multiYearEstimates[0].percentage}"	data-errormsg="Percentage is mandatory!" onkeyup="validateQuantity();" data-pattern="decimalvalue" data-idx="0" data-optional="0"
 									class="form-control table-input text-right inputYearEstimatePercentage disablefield" />
 								<form:errors path="multiYearEstimates[0].percentage" cssClass="add-margin error-msg" /></td>
-							<c:if test="${lineEstimateDetails.estimateNumber == '' }">
+							<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.estimateNumber == '' }">
 							<td><button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteMultiYearEstimate(this);">
 									<span class="glyphicon glyphicon-trash"></span> Delete
 								</button>
@@ -110,7 +110,7 @@
 								<form:input	path="multiYearEstimates[${item.index}].percentage" data-errormsg="Percentage is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" onkeyup="validateQuantity();" class="form-control inputYearEstimatePercentage table-input text-right disablefield" />
 									<form:errors path="multiYearEstimates[${item.index}].percentage" cssClass="add-margin error-msg" />
 								</td> 
-								<c:if test="${lineEstimateDetails.estimateNumber == '' }">
+								<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.estimateNumber == '' }">
 								<td>
 									<button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteRow('tblyearestimate',this);"><span class="glyphicon glyphicon-trash"></span>Delete</button>
 								</td>
@@ -137,7 +137,7 @@
 				</tr>
 			</tfoot>
 		</table>
-		<c:if test="${lineEstimateDetails.estimateNumber == '' }">
+		<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.estimateNumber == '' }">
 		<div class="col-sm-12 text-center">
 			<button id="addRowBtn" type="button" class="btn btn-primary"
 				onclick="addRow('tblyearestimate','yearEstimateRow')">

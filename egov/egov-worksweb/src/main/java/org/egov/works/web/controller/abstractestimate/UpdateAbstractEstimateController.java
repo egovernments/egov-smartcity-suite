@@ -165,7 +165,6 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         final AbstractEstimate abstractEstimate = getAbstractEstimate(abstractEstimateId);
         splitSorAndNonSorActivities(abstractEstimate);
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
-
         return loadViewData(model, request, abstractEstimate, lineEstimateDetails);
     }
 
@@ -271,12 +270,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final AbstractEstimate abstractEstimate, final LineEstimateDetails lineEstimateDetails) {
 
-        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
-
         setDropDownValues(model);
-        
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
-
         if (abstractEstimate.getCurrentState() != null
                 && !abstractEstimate.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", abstractEstimate.getCurrentState().getValue());

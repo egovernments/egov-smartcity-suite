@@ -41,42 +41,42 @@
 			    <spring:message code="lbl.estimate.ward" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:hidden path="ward" class="form-control" name="ward" value="${lineEstimateDetails.lineEstimate.ward.id}"/>
+			<form:hidden path="ward" class="form-control" name="ward" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.id}"/>
 			<form:input id="wardInput" path="ward.name" class="form-control disablefield" type="text" required="required"/>
 			</div>
 			
 		</div>
 		
-		<c:if test="${lineEstimateDetails.estimateNumber != ''}">
+		<c:if test="${abstractEstimate.lineEstimateDetails != null && lineEstimateDetails.estimateNumber != ''}">
 		<div class="form-group">
 			
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.locality" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control disablefield" name="locality"  id="" value="${lineEstimateDetails.lineEstimate.location.name}"/>
+			<input class="form-control disablefield" name="locality"  id="" value="${abstractEstimate.lineEstimateDetails.lineEstimate.location.name}"/>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.workcategory" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-				<input class="form-control disablefield" name="workCategory" id="workCategory" value="${lineEstimateDetails.lineEstimate.workCategory}"/>
+				<input class="form-control disablefield" name="workCategory" id="workCategory" value="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory}"/>
 			</div>
 		</div>
-		<c:if test="${lineEstimate.workCategory == 'SLUM_WORK' }">
+		<c:if test="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory == 'SLUM_WORK' }">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.typeofslum" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control disablefield" name="" id="typeOfSlum" value="${lineEstimateDetails.lineEstimate.typeOfSlum}"/>
+			<input class="form-control disablefield" name="" id="typeOfSlum" value="${abstractEstimate.lineEstimateDetails.lineEstimate.typeOfSlum}"/>
 			</div>
 			
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.beneficiary" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<input class="form-control disablefield" name="" id="beneficiary" value="${lineEstimateDetails.lineEstimate.beneficiary}"/>
+			<input class="form-control disablefield" name="" id="beneficiary" value="${abstractEstimate.lineEstimateDetails.lineEstimate.beneficiary}"/>
 			</div>
 		</div>
 		</c:if>
@@ -114,7 +114,7 @@
 			</label>
 			<div class="col-sm-3 add-margin ">
 			<form:textarea path="name" name="name" id="workName" class="form-control disablefield" />
-			<input type="hidden" id="nameOfWork" name="nameOfWork" value="${lineEstimateDetails.nameOfWork}"/>
+			<input type="hidden" id="nameOfWork" name="nameOfWork" value="${abstractEstimate.lineEstimateDetails.nameOfWork}"/>
 			<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
 			
@@ -144,7 +144,7 @@
 								<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
 								<script type="text/javascript" src="<c:url value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
 								<div id="normal" class="img-prop"></div>
-								<input id="pac-input" class="btn" type="text" placeholder="Enter a location">
+								<input id="pac-input" class="controls " type="text" placeholder="Enter a location">
 							</div>
 						</div>
 					</div>

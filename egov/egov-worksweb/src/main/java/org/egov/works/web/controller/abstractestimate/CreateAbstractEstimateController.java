@@ -30,6 +30,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -122,10 +123,10 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private ScheduleOfRateService scheduleOfRateService;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
-        final AbstractEstimate abstractEstimate = new AbstractEstimate();
+    public String showAbstractEstimateForm(@ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
+            @RequestParam final Long lineEstimateDetailId, final Model model) {
         LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
-        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
+        populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
         loadViewData(model, abstractEstimate, lineEstimateDetails);
         return "newAbstractEstimate-form";
     }
@@ -326,6 +327,21 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
 
         return message;
+    }
+
+    public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,
+            final AbstractEstimate abstractEstimate) {
+        final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
+        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
+        abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
+        abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
+        abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
+        abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
+        abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
+        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
+        abstractEstimate.addMultiYearEstimate(estimateService.populateMultiYearEstimate(abstractEstimate));
+        abstractEstimate.addFinancialDetails(estimateService.populateEstimateFinancialDetails(abstractEstimate));
+        estimateService.loadModelValues(lineEstimateDetails, model, abstractEstimate);
     }
 
 }
