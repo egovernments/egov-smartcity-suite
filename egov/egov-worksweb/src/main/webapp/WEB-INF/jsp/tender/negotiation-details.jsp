@@ -686,12 +686,12 @@ makeItemRateDataTable();
                         description:'<s:property value="schedule.summaryJS"/>',
                         estimatedQuantity:'<s:property value="quantity"/>',
                          estimatedQty:'<s:property value="quantity"/>',
-                        estimatedRate:roundTo('<s:property value="sORCurrentRate"/>'),
+                        estimatedRate:roundTo('<s:property value="sorRate"/>'),
                         uomFactor:'<s:property value="conversionFactor"/>',                           
                         uom:'<s:property value="schedule.uom.uom"/>',
                         estimatedAmount:roundTo('<s:property value="amount.value"/>'),
-                        contractordetails:'|<s:property value="sORCurrentRate"/>|<s:property value="amount.value"/>',
-                        negotiatedRate:roundTo('<s:property value="sORCurrentRate"/>'),
+                        contractordetails:'|<s:property value="sorRate"/>|<s:property value="amount.value"/>',
+                        negotiatedRate:roundTo('<s:property value="sorRate"/>'),
                         negotiatedAmount:roundTo('<s:property value="amount.value"/>'),
                         marketRate:'',
                         marketRateAmount:'',                       
@@ -837,7 +837,7 @@ makeItemRateDataTable();
     
     var column = itemRateDataTable.getColumn('schId');  
     if(dom.get(column.getKey()+record.getId()).value!=''){
-    	populateSorPerDiff('<s:property value="negotiatedRate"/>','<s:property value="activity.sORCurrentRate"/>');
+    	populateSorPerDiff('<s:property value="negotiatedRate"/>','<s:property value="activity.sorRate"/>');
     }
     else
     {
@@ -860,7 +860,7 @@ makeItemRateDataTable();
                         
                         estimatedQuantity:'<s:property value="estimatedQty"/>',
                         estimatedQty:'<s:property value="estimatedQty"/>',
-                        estimatedRate:roundTo('<s:property value="activity.sORCurrentRate"/>'),
+                        estimatedRate:roundTo('<s:property value="activity.sorRate"/>'),
                         uomFactor:'<s:property value="activity.conversionFactor"/>',                        
                         uom:'<s:property value="activity.schedule.uom.uom"/>',
                         estimatedAmount:roundTo('<s:property value="activity.rate"/>' * '<s:property value="estimatedQty"/>'),
@@ -902,7 +902,7 @@ makeItemRateDataTable();
     var record = itemRateDataTable.getRecord(parseInt('<s:property value="#row_status.index"/>')); 
     var column = itemRateDataTable.getColumn('schId');  
     if(dom.get(column.getKey()+record.getId()).value!=''){
-    	populateSorPerDiff('<s:property value="negotiatedRate"/>','<s:property value="activity.sORCurrentRate"/>');
+    	populateSorPerDiff('<s:property value="negotiatedRate"/>','<s:property value="activity.sorRate"/>');
     }
     else
     {

@@ -710,8 +710,8 @@ public class TenderNegotiationAction extends SearchFormAction {
                         if (tenderResponseContractors != null) {
                             final TenderResponseQuotes tenderResponseQuotes = new TenderResponseQuotes();
                             if (activity.getNonSor() == null) {
-                                tenderResponseQuotes.setQuotedRate(activity.getSORCurrentRate().getValue());
-                                tenderResponseActivity.setNegotiatedRate(activity.getSORCurrentRate().getValue());
+                                tenderResponseQuotes.setQuotedRate(activity.getSorRate());
+                                tenderResponseActivity.setNegotiatedRate(activity.getSorRate());
                             } else if (activity.getSchedule() == null) {
                                 tenderResponseQuotes.setQuotedRate(activity.getRate());
                                 tenderResponseActivity.setNegotiatedRate(activity.getRate());
@@ -728,11 +728,11 @@ public class TenderNegotiationAction extends SearchFormAction {
                             final TenderResponseQuotes tenderResponseQuotes = new TenderResponseQuotes();
 
                             if (activity.getNonSor() == null) {
-                                tenderResponseQuotes.setQuotedRate(activity.getSORCurrentRate().getValue()
-                                        + activity.getSORCurrentRate().getValue() * tenderResponse.getPercQuotedRate()
+                                tenderResponseQuotes.setQuotedRate(activity.getSorRate()
+                                        + activity.getSorRate() * tenderResponse.getPercQuotedRate()
                                                 / 100);
-                                tenderResponseActivity.setNegotiatedRate(activity.getSORCurrentRate().getValue()
-                                        + activity.getSORCurrentRate().getValue()
+                                tenderResponseActivity.setNegotiatedRate(activity.getSorRate()
+                                        + activity.getSorRate()
                                                 * tenderResponse.getPercNegotiatedAmountRate() / 100);
                             } else if (activity.getSchedule() == null) {
                                 tenderResponseQuotes.setQuotedRate(activity.getRate()

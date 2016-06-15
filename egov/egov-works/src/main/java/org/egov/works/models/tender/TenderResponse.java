@@ -325,7 +325,7 @@ public class TenderResponse extends WorkFlow {
                     preEstlineItem.setQuantity(tra.getActivity().getQuantity() + preEstlineItem.getQuantity());
                     if (DateUtils.compareDates(tra.getActivity().getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
-                        preEstlineItem.setRate(tra.getActivity().getSORCurrentRate().getValue());
+                        preEstlineItem.setRate(tra.getActivity().getSorRate());
                         preEstlineItem.setAmt(preEstlineItem.getQuantity() * tra.getActivity().getRate());
                         preEstlineItem.setActivity(tra.getActivity());
                         if (tra.getActivity().getSchedule()
@@ -372,7 +372,7 @@ public class TenderResponse extends WorkFlow {
         } else {
             estlineItem.setCode(act.getSchedule().getCode());
             estlineItem.setDescription(act.getSchedule().getDescription());
-            estlineItem.setRate(act.getSORCurrentRate().getValue());
+            estlineItem.setRate(act.getSorRate());
             if (act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate()))
                 estlineItem.setMarketRate(act.getQuantity() * act.getSORCurrentMarketRate().getValue());
             else

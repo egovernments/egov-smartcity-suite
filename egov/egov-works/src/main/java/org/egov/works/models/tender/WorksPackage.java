@@ -245,7 +245,7 @@ public class WorksPackage extends StateAware implements Auditable {
                     preEstlineItem.setQuantity(act.getQuantity() + preEstlineItem.getQuantity());
                     if (DateUtils.compareDates(act.getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
-                        preEstlineItem.setRate(act.getSORCurrentRate().getValue());
+                        preEstlineItem.setRate(act.getSorRate());
                         preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate());
                         preEstlineItem.setActivity(act);
                         if (act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate()))
@@ -287,7 +287,7 @@ public class WorksPackage extends StateAware implements Auditable {
         } else {
             estlineItem.setCode(act.getSchedule().getCode());
             estlineItem.setDescription(act.getSchedule().getDescription());
-            estlineItem.setRate(act.getSORCurrentRate().getValue());
+            estlineItem.setRate(act.getSorRate());
             if (act.getSchedule().hasValidMarketRateFor(act.getAbstractEstimate().getEstimateDate()))
                 estlineItem.setMarketRate(act.getQuantity() * act.getSORCurrentMarketRate().getValue());
             else

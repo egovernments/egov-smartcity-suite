@@ -454,7 +454,7 @@ makeSORDataTable();
                         Code:'<s:property value="schedule.code"/>',
                         Description:'<s:property value="schedule.summaryJS"/>',
                         UOM:'<s:property value="schedule.uom.uom"/>',
-                        sorrate:roundTo('<s:property value="sORCurrentRate"/>'),
+                        sorrate:roundTo('<s:property value="sorRate"/>'),
                         rate:'<s:property value="rate"/>',
                         quantity:roundTo('<s:property value="quantity"/>'),
                         EstdAmt:roundTo('<s:property value="amount.value"/>'),

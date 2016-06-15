@@ -123,9 +123,6 @@ public class Activity extends AbstractAuditable {
     private Activity parent;
 
     @Transient
-    private Money sORCurrentRate = new Money(0.0);
-
-    @Transient
     private double amt;
 
     @Transient
@@ -208,20 +205,6 @@ public class Activity extends AbstractAuditable {
         return new Money(getAmount().getValue() + getTaxAmount().getValue());
     }
 
-    public Money getSORCurrentRate() {
-        Money sorCurrentRate = schedule.getRateOn(abstractEstimate.getEstimateDate()).getRate();
-        if (sorCurrentRate != null) {
-            BigDecimal currentRate = BigDecimal.valueOf(sorCurrentRate.getValue());
-            currentRate = currentRate.setScale(2, BigDecimal.ROUND_UP);
-            sorCurrentRate = new Money(currentRate.doubleValue());
-        }
-        return sorCurrentRate;
-    }
-
-    public void setSORCurrentRate(final Money sORCurrentRate) {
-        this.sORCurrentRate = sORCurrentRate;
-    }
-
     public Money getSORCurrentMarketRate() {
         Money sorCurrentMarketRate = schedule.getMarketRateOn(abstractEstimate.getEstimateDate()).getMarketRate();
         if (sorCurrentMarketRate != null) {
@@ -254,20 +237,20 @@ public class Activity extends AbstractAuditable {
     }
 
     public Money getSORRateForDate(final Date asOnDate) {
-        Money sorCurrentRate = schedule.getRateOn(asOnDate).getRate();
-        if (sorCurrentRate != null) {
-            BigDecimal currentRate = BigDecimal.valueOf(sorCurrentRate.getValue());
+        Money sorRateAsOnDate = schedule.getRateOn(asOnDate).getRate();
+        if (sorRateAsOnDate != null) {
+            BigDecimal currentRate = BigDecimal.valueOf(sorRateAsOnDate.getValue());
             currentRate = currentRate.setScale(2, BigDecimal.ROUND_UP);
-            sorCurrentRate = new Money(currentRate.doubleValue());
+            sorRateAsOnDate = new Money(currentRate.doubleValue());
         }
-        return sorCurrentRate;
+        return sorRateAsOnDate;
     }
 
     public double getConversionFactor() {
         if (schedule == null)
             return Double.valueOf(1);
         else {
-            final double masterRate = getSORCurrentRate() == null ? Double.valueOf(0) : getSORCurrentRate().getValue();
+            final double masterRate = sorRate;
             final double unitRate = rate;
             if (unitRate > 0 && masterRate > 0)
                 return unitRate / masterRate;

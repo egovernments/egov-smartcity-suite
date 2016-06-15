@@ -206,7 +206,7 @@ public class WorkOrderActivity extends AbstractAuditable {
         double sorRate = 0.0;
         if (getActivity().getAbstractEstimate().getParent() == null)
             // Original AbstractEstimate
-            sorRate = getActivity().getSORCurrentRate().getValue();
+            sorRate = getActivity().getSorRate();
         else {
             Date workOrderDate = new Date();
             // RevisionEstimate
@@ -228,7 +228,7 @@ public class WorkOrderActivity extends AbstractAuditable {
                 sorRate = getActivity().getSORRateForDate(workOrderEstimate.getEstimate().getParent().getEstimateDate())
                         .getValue();
             else
-                sorRate = getActivity().getSORCurrentRate().getValue();
+                sorRate = getActivity().getSorRate();
         }
         return sorRate;
     }

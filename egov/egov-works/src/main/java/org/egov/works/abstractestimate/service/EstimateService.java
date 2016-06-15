@@ -767,7 +767,7 @@ public class EstimateService {
         abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
         abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
         abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
-        abstractEstimate.addMultiYearEstimate(populateMultiYearEstimate(abstractEstimate));
+        //abstractEstimate.addMultiYearEstimate(populateMultiYearEstimate(abstractEstimate));
         abstractEstimate.addFinancialDetails(populateEstimateFinancialDetails(abstractEstimate));
         loadModelValues(lineEstimateDetails, model, abstractEstimate);
     }

@@ -518,8 +518,8 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                 if (tenderResponseActivity.getActivity() != null
                         && tenderResponseActivity.getActivity().getSchedule() != null
                         && tenderResponseActivity.getActivity().getRate() != 0
-                        && tenderResponseActivity.getActivity().getSORCurrentRate() != null)
-                    rate = tenderResponseActivity.getActivity().getSORCurrentRate().getValue();
+                        && tenderResponseActivity.getActivity().getSorRate() != 0)
+                    rate = tenderResponseActivity.getActivity().getSorRate();
                 if (tenderResponseActivity.getActivity() != null
                         && tenderResponseActivity.getActivity().getNonSor() != null
                         && tenderResponseActivity.getActivity().getRate() != 0)
@@ -566,7 +566,7 @@ public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
                     marketRateAmount = quantity * marketRate / uomFactor;
                 } else if (tenderResponseActivity.getActivity() != null
                         && tenderResponseActivity.getActivity().getSchedule() != null) {
-                    marketRate = tenderResponseActivity.getActivity().getSORCurrentRate().getValue();
+                    marketRate = tenderResponseActivity.getActivity().getSorRate();
                     final double marketQty = tenderResponseActivity.getActivity().getQuantity();
                     marketRateAmount = marketQty * marketRate / uomFactor;
                 } else if (tenderResponseActivity.getActivity() != null

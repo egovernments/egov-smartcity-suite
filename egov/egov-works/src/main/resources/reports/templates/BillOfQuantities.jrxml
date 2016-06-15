@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-06-13T17:23:05 -->
+<!-- 2016-06-15T16:33:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4f28d66-9453-4365-9c94-520990d7d3ae">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -66,9 +66,6 @@
 	<field name="uom" class="org.egov.common.entity.UOM">
 		<fieldDescription><![CDATA[uom]]></fieldDescription>
 	</field>
-	<field name="rate" class="org.egov.infra.persistence.entity.component.Money">
-		<fieldDescription><![CDATA[rate]]></fieldDescription>
-	</field>
 	<field name="schedule" class="org.egov.works.models.masters.ScheduleOfRate">
 		<fieldDescription><![CDATA[schedule]]></fieldDescription>
 	</field>
@@ -78,8 +75,8 @@
 	<field name="amount" class="org.egov.infra.persistence.entity.component.Money">
 		<fieldDescription><![CDATA[amount]]></fieldDescription>
 	</field>
-	<field name="SORCurrentRate" class="org.egov.infra.persistence.entity.component.Money">
-		<fieldDescription><![CDATA[SORCurrentRate]]></fieldDescription>
+	<field name="sorRate" class="java.lang.Double">
+		<fieldDescription><![CDATA[sorRate]]></fieldDescription>
 	</field>
 	<variable name="amount_sum" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount}.getValue()]]></variableExpression>
@@ -501,7 +498,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{SORCurrentRate}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sorRate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="689" y="0" width="112" height="23" uuid="a3f14c54-3ff5-489b-8559-ff3c17f7d1b5"/>

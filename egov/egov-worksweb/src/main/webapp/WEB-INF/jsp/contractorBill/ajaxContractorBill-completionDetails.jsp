@@ -129,10 +129,10 @@
         </p></td>
         <td width="45" style="WORD-BREAK:BREAK-ALL"><p align="right">
 	<s:if test="%{workOrderActivity.activity.schedule!=null}">
-        	<s:property value="%{workOrderActivity.activity.SORCurrentRate.value}"/>
+        	<s:property value="%{workOrderActivity.activity.sorRate}"/>
         </s:if>
         <s:else>
-        	<s:property value="%{workOrderActivity.activity.rate.value}"/>
+        	<s:property value="%{workOrderActivity.activity.rate}"/>
         </s:else></p></td>
         <td width="43" style="WORD-BREAK:BREAK-ALL"><p align="right">
          <s:text name="contractor.format.number" >
