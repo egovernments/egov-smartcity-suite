@@ -37,33 +37,10 @@
 # 
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<meta name="description" content="Neon Admin Panel" />
-		<meta name="author" content="" />
-		
-		<title>eGov Urban Portal</title>
-		
-		<link rel="stylesheet" href="../../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="../../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="../../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
-		<link rel="stylesheet" href="../../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/treed.css">
-		
-		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
-		
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
-		
-		
-	</head>
-	<body class="page-body">
+		<body class="page-body">
 		<div class="page-container" id="page-container">
 			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
@@ -74,7 +51,7 @@
 								<!-- <img src="egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60"> -->
 								<div>
 									
-									<span class="title2">Grievance Type Wise Report</span>
+									<span class="title2">ERP Reports</span>
 								</div>
 							</a>
 						</div>
@@ -83,7 +60,8 @@
 							<ul class="hr-menu text-right">
 								<li class="ico-menu">
 									<a href="javascript:void(0);">
-										<img src="../../../../../../../egov-egiweb/src/main/webapp/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
+						<img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+				
 									</a>
 								</li>
 								
@@ -246,16 +224,16 @@
 				</div>
 
 			</div>
-			<footer class="main">
-					
-					Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
-					
-			</footer> 
 		</div>
-		<script src="../../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
-		<script src="../../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
-		<script src="../../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/treed.js"></script>
-	</body>
+	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/treed.css' context='/egi'/>">
+		
+		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+		<script src="<c:url value='/resources/global/js/bootstrap/treed.js' context='/egi'/>"></script>
+		</body>
 </html>
 
 
