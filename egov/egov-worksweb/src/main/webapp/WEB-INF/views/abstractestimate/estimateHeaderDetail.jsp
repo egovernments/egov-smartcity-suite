@@ -37,12 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
-  <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
   <div class="position_alert">
 			<spring:message	code="lbl.estimate.value" /> : &#8377 <span id="estimateValueTotal"><c:out value="${estimateValue}" default="0.0"></c:out></span>
 		</div>
@@ -81,8 +76,10 @@
 								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="%{workOrder.id"/>)'><c:out value="%{workOrder.workOrderNumber}"/></a>
 							</div>
 						</c:if>
+						<c:if test="${mode != null}">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.paymentreleased" />.</div> 
-							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <span>${paymentsReleasedSoFar}</span></div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377<span>${paymentsReleasedSoFar}</span></div>
+							</c:if>
 						</div>
 					</div>
 				</div>
