@@ -57,6 +57,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -148,7 +149,7 @@ public class EstimateService {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private TechnicalSanctionNumberGenerator technicalSanctionNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
     private AssetService assetService;
@@ -203,9 +204,9 @@ public class EstimateService {
         } else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
-            createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
+        createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
-        
+
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -499,7 +500,7 @@ public class EstimateService {
                 assetsForEstimate.setAbstractEstimate(abstractEstimate);
                 assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
             }
-            
+
             mergeSorAndNonSorActivities(abstractEstimate);
             List<Activity> activities = new ArrayList<Activity>(abstractEstimate.getActivities());
             activities = removeDeletedActivities(activities, removedActivityIds);
@@ -531,8 +532,8 @@ public class EstimateService {
 
         abstractEstimateStatusChange(abstractEstimate, workFlowAction);
 
-            createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
-                    additionalRule, workFlowAction);
+        createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
+                additionalRule, workFlowAction);
 
         return updatedAbstractEstimate;
     }
@@ -565,9 +566,8 @@ public class EstimateService {
         estimateTechnicalSanction.setAbstractEstimate(abstractEstimate);
         estimateTechnicalSanction.setTechnicalSanctionBy(securityUtils.getCurrentUser());
         estimateTechnicalSanction.setTechnicalSanctionDate(new Date());
-        estimateTechnicalSanction
-                .setTechnicalSanctionNumber(technicalSanctionNumberGenerator.getNextNumber(abstractEstimate));
-
+        TechnicalSanctionNumberGenerator tsng = beanResolver.getAutoNumberServiceFor(TechnicalSanctionNumberGenerator.class);
+        estimateTechnicalSanction.setTechnicalSanctionNumber(tsng.getNextNumber(abstractEstimate));
         abstractEstimate.getEstimateTechnicalSanctions().add(estimateTechnicalSanction);
     }
 
@@ -774,7 +774,7 @@ public class EstimateService {
     }
 
     public void validateActivities(AbstractEstimate abstractEstimate, BindingResult errors) {
-        if(abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
+        if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
             errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
     }
 }

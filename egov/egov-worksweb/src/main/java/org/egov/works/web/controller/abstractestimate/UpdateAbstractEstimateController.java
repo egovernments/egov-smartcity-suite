@@ -165,11 +165,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         final AbstractEstimate abstractEstimate = getAbstractEstimate(abstractEstimateId);
         splitSorAndNonSorActivities(abstractEstimate);
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
-        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
-        model.addAttribute("estimateTemplateConfirmMsg",
-                messageSource.getMessage("masg.estimate.template.confirm.reset", null, null));
-        setDropDownValues(model);
-        return loadViewData(model, request, abstractEstimate);
+
+        return loadViewData(model, request, abstractEstimate, lineEstimateDetails);
     }
 
     private void splitSorAndNonSorActivities(final AbstractEstimate abstractEstimate) {
@@ -220,19 +217,14 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             validateMultiYearEstimates(abstractEstimate, errors);
             validateMandatory(abstractEstimate, errors);
             estimateService.validateAssetDetails(abstractEstimate, errors);
-            if(!workFlowAction.equals(WorksConstants.SAVE_ACTION))
+            if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 estimateService.validateActivities(abstractEstimate, errors);
         }
 
         if (errors.hasErrors()) {
             for (final Activity activity : abstractEstimate.getSorActivities())
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
-            setDropDownValues(model);
-            estimateService.populateDataForAbstractEstimate(abstractEstimate.getLineEstimateDetails(), model,
-                    abstractEstimate);
-            model.addAttribute("estimateTemplateConfirmMsg",
-                    messageSource.getMessage("masg.estimate.template.confirm.reset", null, null));
-            return loadViewData(model, request, abstractEstimate);
+            return loadViewData(model, request, abstractEstimate, abstractEstimate.getLineEstimateDetails());
         } else {
             if (null != workFlowAction)
                 newAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
@@ -277,8 +269,11 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
-            final AbstractEstimate abstractEstimate) {
+            final AbstractEstimate abstractEstimate, final LineEstimateDetails lineEstimateDetails) {
 
+        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
+
+        setDropDownValues(model);
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
 
         if (abstractEstimate.getCurrentState() != null

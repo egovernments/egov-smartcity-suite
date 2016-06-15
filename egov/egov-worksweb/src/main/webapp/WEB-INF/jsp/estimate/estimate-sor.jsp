@@ -361,7 +361,7 @@ function showProcessImage(event) {
 	<div class="panel-heading">
 		<div class="panel-title">
 		   SOR
-		   <div class="pull-right mb-5 small-note-title"><s:text name="estimate.rate.disclaimer"/></div>
+		   <div class="pull-right mb-5 small-note-title"><s:text name="estimate.template.rate.disclaimer"/></div>
 		</div>
 	</div>
 	<div class="panel-body">

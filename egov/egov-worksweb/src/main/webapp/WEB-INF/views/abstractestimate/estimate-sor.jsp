@@ -88,7 +88,7 @@
 			<div class="col-sm-3 add-margin">
 			<input name="code" id="templateCode" class="form-control" placeholder="Type first 3 letters of Template Code" />
 			<input type="hidden" value="" id="templateId" />	
-			<input type="hidden" id="estimateTemplateConfirmMsg"  value="<spring:message code='masg.estimate.template.confirm.reset' />"/>
+			<input type="hidden" id="estimateTemplateConfirmMsg"  value="<spring:message code='msg.estimate.template.confirm.reset' />"/>
 			</div>
 		</div>
 	</div>
@@ -98,12 +98,14 @@
 			<spring:message code='lbl.searchestimatetemplate' />
 		</button>
 	</div>
+	<br/>
+	<div class="add-margin error-msg text-right"><spring:message code="estimate.template.rate.disclaimer" />&nbsp;&nbsp;&nbsp;</div>
 </div>
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="isServiceVATRequired" value="${isServiceVATRequired }">
 	<div class="panel-heading">
-		<div class="panel-title"><spring:message code="title.sor" />
-			<div class="pull-right mb-5 small-note-title"><spring:message code="estimate.rate.disclaimer" /></div>
+		<div class="panel-title">
+			<spring:message code="title.sor" />
 		</div>
 	</div>
 	<div class="panel-body" id="sorHeaderTable">

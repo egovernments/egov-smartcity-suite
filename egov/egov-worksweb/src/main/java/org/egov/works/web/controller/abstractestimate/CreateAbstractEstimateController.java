@@ -26,9 +26,9 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
-import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
@@ -114,43 +114,26 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private WorksUtils worksUtils;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private ScheduleOfRateService scheduleOfRateService;
-    
+
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@RequestParam final Long lineEstimateDetailId, final Model model) {
         final AbstractEstimate abstractEstimate = new AbstractEstimate();
         LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
-        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
+        
         final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
         final List<MultiYearEstimate> multiYearEstimateList = new ArrayList<MultiYearEstimate>();
         multiYearEstimate.setFinancialYear(financialYearHibernateDAO.getFinancialYearByDate(new Date()));
         multiYearEstimate.setPercentage(100);
         multiYearEstimateList.add(multiYearEstimate);
         abstractEstimate.setMultiYearEstimates(multiYearEstimateList);
-        model.addAttribute("estimateTemplateConfirmMsg",
-                messageSource.getMessage("masg.estimate.template.confirm.reset", null, null));
-        setDropDownValues(model);
 
-        model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
-
-        WorkflowContainer workflowContainer = new WorkflowContainer();
-        prepareWorkflow(model, abstractEstimate, workflowContainer);
-
-        List<String> validActions = Collections.emptyList();
-
-        validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
-                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
-                abstractEstimate.getCreatedDate());
-
-        model.addAttribute("validActionList", validActions);
-
-        model.addAttribute("mode", null);
+        loadViewData(model, abstractEstimate,lineEstimateDetails);
 
         return "newAbstractEstimate-form";
     }
@@ -168,7 +151,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("finYear", financialYearDAO.findAll());
         model.addAttribute("uoms", uomService.getAllUOMs());
         model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-        
+
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);
@@ -178,12 +161,33 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("isServiceVATRequired", false);
     }
 
+    private void loadViewData(Model model, AbstractEstimate abstractEstimate,LineEstimateDetails lineEstimateDetails) {
+        
+        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
+        setDropDownValues(model);
+
+        model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
+
+        WorkflowContainer workflowContainer = new WorkflowContainer();
+        prepareWorkflow(model, abstractEstimate, workflowContainer);
+
+        List<String> validActions = Collections.emptyList();
+
+        validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
+                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
+                abstractEstimate.getCreatedDate());
+
+        model.addAttribute("validActionList", validActions);
+        model.addAttribute("mode", null);
+    }
+
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String saveAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
             @RequestParam String workFlowAction) throws IOException {
-        
+
         Long approvalPosition = 0l;
         String approvalComment = "";
         if (request.getParameter("approvalComment") != null)
@@ -192,33 +196,19 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-        
+
         validateMultiYearEstimates(abstractEstimate, bindErrors);
         validateMandatory(abstractEstimate, bindErrors);
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
-        if(!workFlowAction.equals(WorksConstants.SAVE_ACTION))
+        if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
             estimateService.validateActivities(abstractEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
-            for(final Activity activity : abstractEstimate.getSorActivities()) {
+            for (final Activity activity : abstractEstimate.getSorActivities()) {
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
             }
-            setDropDownValues(model);
-            estimateService.populateDataForAbstractEstimate(abstractEstimate.getLineEstimateDetails(), model,
-                    abstractEstimate);
-            model.addAttribute("estimateTemplateConfirmMsg",
-                    messageSource.getMessage("masg.estimate.template.confirm.reset", null, null));
-            model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
-            WorkflowContainer workflowContainer = new WorkflowContainer();
-            prepareWorkflow(model, abstractEstimate, workflowContainer);
 
-            List<String> validActions = Collections.emptyList();
+            loadViewData(model, abstractEstimate,abstractEstimate.getLineEstimateDetails());
 
-            validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
-                    workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                    workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
-                    abstractEstimate.getCreatedDate());
-            model.addAttribute("validActionList", validActions);
-            model.addAttribute("mode", null);
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
 
@@ -232,7 +222,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                     abstractEstimate.setEgwStatus(egwStatusHibernateDAO
                             .getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE, EstimateStatus.NEW.toString()));
             }
-            final AbstractEstimate savedAbstractEstimate = estimateService.createAbstractEstimate(abstractEstimate, files, approvalPosition, approvalComment, null,
+            final AbstractEstimate savedAbstractEstimate = estimateService.createAbstractEstimate(abstractEstimate, files,
+                    approvalPosition, approvalComment, null,
                     workFlowAction);
 
             final String pathVars = worksUtils.getPathVars(savedAbstractEstimate.getEgwStatus(), savedAbstractEstimate.getState(),
@@ -242,7 +233,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         }
 
     }
-    
+
     private void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
         CFinancialYear cFinancialYear = null;
         Double totalPercentage = 0d;
@@ -295,12 +286,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             if (keyNameArray.length == 1 && !keyNameArray[0].equals("null"))
                 id = Long.parseLong(keyNameArray[0]);
             else if (keyNameArray.length == 3) {
-                if(!keyNameArray[0].equals("null"))
+                if (!keyNameArray[0].equals("null"))
                     id = Long.parseLong(keyNameArray[0]);
                 approverName = keyNameArray[1];
                 currentUserDesgn = keyNameArray[2];
             } else {
-                if(!keyNameArray[0].equals("null"))
+                if (!keyNameArray[0].equals("null"))
                     id = Long.parseLong(keyNameArray[0]);
                 approverName = keyNameArray[1];
                 currentUserDesgn = keyNameArray[2];
@@ -342,7 +333,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                                     .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1)
                                     .getTechnicalSanctionNumber() },
                     null);
-        } else if (abstractEstimate.getState() != null && abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+        } else if (abstractEstimate.getState() != null
+                && abstractEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.estimate.rejected",
                     new String[] { abstractEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CANCELLED.toString()))

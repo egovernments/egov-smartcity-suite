@@ -460,6 +460,7 @@ public class LineEstimateService {
         for (final LineEstimateDetails led : lineEstimateDetails) {
             final LineEstimatesForAbstractEstimate result = new LineEstimatesForAbstractEstimate();
             result.setId(led.getId());
+            result.setLeId(led.getLineEstimate().getId());
             result.setAdminSanctionNumber(led.getLineEstimate().getAdminSanctionNumber());
             result.setCreatedBy(led.getLineEstimate().getCreatedBy().getName());
             result.setEstimateAmount(led.getEstimateAmount());

@@ -59,6 +59,7 @@ public class LineEstimatesForAbstractEstimate {
     private String adminSanctionBy;
     private BigDecimal estimateAmount;
     private BigDecimal actualEstimateAmount;
+    private Long leId;
 
     public LineEstimatesForAbstractEstimate() {
     }
@@ -181,6 +182,14 @@ public class LineEstimatesForAbstractEstimate {
 
     public void setActualEstimateAmount(BigDecimal actualEstimateAmount) {
         this.actualEstimateAmount = actualEstimateAmount;
+    }
+
+    public Long getLeId() {
+        return leId;
+    }
+
+    public void setLeId(Long leId) {
+        this.leId = leId;
     }
 
 }

@@ -276,43 +276,7 @@ $(document).ready(function(){
 
 $overheadRowCount = 0;
 $('#addOverheadRow').click(function() { 
-
-	if (document.getElementById('overheadRow') != null) {
-			// get Next Row Index to Generate
-			var nextIdx = 0;
-			if($overheadRowCount == 0 || $overheadRowCount == '')
-				nextIdx = jQuery("#overheadTable tbody tr").length;
-			else
-				nextIdx = $overheadRowCount++;
-			// Generate all textboxes Id and name with new index
-			jQuery("#overheadRow").clone().find("input,select, errors").each(
-			function() {	
-				if (jQuery(this).data('server')) {
-					jQuery(this).removeAttr('data-server');
-				}
-				jQuery(this).attr(
-						{
-							'name' : function(_, name) {
-								if(!(jQuery(this).attr('name')===undefined))
-									return name.replace(/\d+/, nextIdx); 
-							},
-							'id' : function(_, id) {
-								if(!(jQuery(this).attr('id')===undefined))
-									return id.replace(/\d+/, nextIdx); 
-							},
-							'data-idx' : function(_,dataIdx)
-							{
-								return nextIdx;
-							}
-						});
-					// if element is static attribute hold values for next row, otherwise it will be reset
-					if (!jQuery(this).data('static')) {
-						jQuery(this).val('');
-					}
-	
-			}).end().appendTo("#overheadTable tbody");		
-			
-		}
+	addRow('overheadTable','overheadRow',$overheadRowCount);
 });
 
 function getRow(obj) {
@@ -329,12 +293,7 @@ function getRow(obj) {
 var addedOverheads = new Array();
 
 function deleteOverheadRow(obj) {
-    var rIndex = getRow(obj).rowIndex;
-    var overhead = document.getElementById('overheadValues['+ (rIndex-1) + '].name').value;
-    var id = jQuery(getRow(obj)).children('td:first').children('input:first').val();
-    //To get all the deleted rows id
-    var aIndex = rIndex - 1;
-	var tbl=document.getElementById('overheadTable');	
+	var rIndex = getRow(obj).rowIndex;
 	var rowcount=jQuery("#overheadTable tbody tr").length;
     if(rowcount<=1) {
     	bootbox.alert("This row can not be deleted");
@@ -350,35 +309,8 @@ function deleteOverheadRow(obj) {
 	    total = eval(total) - eval(amount);
 	    document.getElementById('overheadTotalAmount').value = total;
 	    
-		tbl.deleteRow(rIndex);
-		//starting index for table fields
-		var idx=parseInt($overheadRowCount);
-		//regenerate index existing inputs in table row
-		jQuery("#overheadTable tbody tr").each(function() {
-		
-			hiddenElem=jQuery(this).find("input:hidden");
-			
-			if(!jQuery(hiddenElem).val())
-			{
-				jQuery(this).find("input,select,errors").each(function() {
-					jQuery(this).attr({
-					      'name': function(_, name) {
-					    	  if(!(jQuery(this).attr('name')===undefined))
-					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-					      'id': function(_, id) {
-					    	  if(!(jQuery(this).attr('id')===undefined))
-					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-						  'data-idx' : function(_,dataIdx)
-						  {
-							  return idx;
-						  }
-					   });
-			    });
-				idx++;
-			}
-		});
+	    deleteRow("overheadTable",obj,$overheadRowCount);
+	    
 		resetAddedOverheads();
 	    calculateOverheadTotalAmount();
 		return true;
@@ -1844,4 +1776,87 @@ function openMap()
 			return;
 	}	
 	//popup.moveTo(0,0);
+}
+
+function addRow(tableName,rowName,rowCount){
+	if (document.getElementById(rowName) != null) {
+		// get Next Row Index to Generate
+		var nextIdx = 0;
+		if(rowCount == 0 || rowCount == '')
+			nextIdx = jQuery("#"+tableName+" tbody tr").length;
+		else
+			nextIdx = rowCount++;
+		// Generate all textboxes Id and name with new index
+		jQuery("#"+rowName).clone().find("input,select, errors").each(
+		function() {	
+			if (jQuery(this).data('server')) {
+				jQuery(this).removeAttr('data-server');
+			}
+			jQuery(this).attr(
+					{
+						'name' : function(_, name) {
+							if(!(jQuery(this).attr('name')===undefined))
+								return name.replace(/\d+/, nextIdx); 
+						},
+						'id' : function(_, id) {
+							if(!(jQuery(this).attr('id')===undefined))
+								return id.replace(/\d+/, nextIdx); 
+						},
+						'data-idx' : function(_,dataIdx)
+						{
+							return nextIdx;
+						}
+					});
+				// if element is static attribute hold values for next row, otherwise it will be reset
+				if (!jQuery(this).data('static')) {
+					jQuery(this).val('');
+				}
+
+		}).end().appendTo("#"+tableName+" tbody");		
+		
+	}
+}
+
+function deleteRow(tableName,obj,rowCount){
+	 var rIndex = getRow(obj).rowIndex;
+	    var id = jQuery(getRow(obj)).children('td:first').children('input:first').val();
+	    //To get all the deleted rows id
+	    var aIndex = rIndex - 1;
+		var tbl=document.getElementById(tableName);	
+		var rowcount=jQuery("#"+tableName+" tbody tr").length;
+	    if(rowcount<=1) {
+	    	bootbox.alert("This row can not be deleted");
+			return false;
+		} else {
+			tbl.deleteRow(rIndex);
+			//starting index for table fields
+			var idx=parseInt(rowCount);
+			//regenerate index existing inputs in table row
+			jQuery("#"+tableName+" tbody tr").each(function() {
+			
+				hiddenElem=jQuery(this).find("input:hidden");
+				
+				if(!jQuery(hiddenElem).val())
+				{
+					jQuery(this).find("input,select,errors").each(function() {
+						jQuery(this).attr({
+						      'name': function(_, name) {
+						    	  if(!(jQuery(this).attr('name')===undefined))
+						    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+						      },
+						      'id': function(_, id) {
+						    	  if(!(jQuery(this).attr('id')===undefined))
+						    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+						      },
+							  'data-idx' : function(_,dataIdx)
+							  {
+								  return idx;
+							  }
+						   });
+				    });
+					idx++;
+				}
+			});
+			return true;
+		}
 }

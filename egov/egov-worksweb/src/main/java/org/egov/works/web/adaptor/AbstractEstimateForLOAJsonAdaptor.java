@@ -93,6 +93,7 @@ public class AbstractEstimateForLOAJsonAdaptor implements JsonSerializer<Abstrac
             else
                 jsonObject.addProperty("workIdentificationNumber", "");
             jsonObject.addProperty("id", abstractEstimateForLoaSearchResult.getId());
+            jsonObject.addProperty("leId", abstractEstimateForLoaSearchResult.getLeId());
         }
         return jsonObject;
     }
