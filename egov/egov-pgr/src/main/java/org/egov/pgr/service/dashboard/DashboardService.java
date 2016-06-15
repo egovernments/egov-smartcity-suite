@@ -174,12 +174,12 @@ public class DashboardService {
             final double noOfCompAsOnDate = compData1.doubleValue();
             final double noOfCompReceivedBtw = compData3.doubleValue();
             final double noOfCompPenAsonDate = compData4.doubleValue();
-            final double totalcomplaintCount = noOfCompAsOnDate + noOfCompReceivedBtw;
-            if (totalcomplaintCount < 1)
+            final Double yValue = 100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
+                    / (noOfCompAsOnDate + noOfCompReceivedBtw);
+            if (yValue.isNaN() || yValue.isInfinite())
                 complaintData.put("y", BigDecimal.ZERO);
             else
-                complaintData.put("y", new BigDecimal(df.format(100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
-                        / (noOfCompAsOnDate + noOfCompReceivedBtw))));
+                complaintData.put("y", new BigDecimal(df.format(yValue)));
             compAggrData.add(complaintData);
         }
 
@@ -263,12 +263,12 @@ public class DashboardService {
             complaintData.put("noOfCompReceivedBtw", noOfCompReceivedBtw);
             complaintData.put("dateAsOn", formattedTo);
             complaintData.put("noOfCompPenAsonDate", noOfCompPenAsonDate);
-            final double totalcomplaintCount = noOfCompAsOnDate + noOfCompReceivedBtw;
-            if (totalcomplaintCount < 1)
-                complaintData.put("disposalPerc", 0);
+            final Double disposalPerc = 100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
+                    / (noOfCompAsOnDate + noOfCompReceivedBtw);
+            if (disposalPerc.isNaN() || disposalPerc.isInfinite())
+                complaintData.put("disposalPerc", "0");
             else
-                complaintData.put("disposalPerc", df.format(100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
-                        / totalcomplaintCount));
+                complaintData.put("disposalPerc", df.format(disposalPerc));
             complaintData.put("lat", compData[6]);
             complaintData.put("lng", compData[7]);
             complaintData.put("zoneId", compData[8]);
