@@ -300,12 +300,13 @@ jQuery(document).ready(function() {
     	var tradeOwnerName=jQuery('#tradeOwnerName').val();
     	var propertyAssessmentNo=jQuery('#propertyAssessmentNo').val();
     	var mobileNo=jQuery('#mobileNo').val();
-    	
+    	var isCancelled	=jQuery('#isCancelled').is(":checked");
 		if ((applicationNumber == null || applicationNumber == "")  &&
 				(licenseNumber == null || licenseNumber == "") && (oldLicenseNumber == null || oldLicenseNumber == "") &&
 				(category == '-1') && (subCategory == '-1') &&
 				(tradeTitle == null || tradeTitle == "") && (tradeOwnerName == null || tradeOwnerName == "") &&
-				(propertyAssessmentNo == null || propertyAssessmentNo == "") && (mobileNo == null || mobileNo == "")) {
+				(propertyAssessmentNo == null || propertyAssessmentNo == "") && (mobileNo == null || mobileNo == "") && 
+				(isCancelled == null || isCancelled == '' || isCancelled == false)) {
 			document.getElementById("tradeSearchError").style.display='';
 	        document.getElementById("tradeSearchError").innerHTML='Cannot Search. Atleast One Search Criteria is Mandatory.';
 			return false;
@@ -350,7 +351,7 @@ function callAjaxForSearchTrade() {
 	var tradeOwnerName=jQuery('#tradeOwnerName').val();
 	var propertyAssessmentNo=jQuery('#propertyAssessmentNo').val();
 	var mobileNo=jQuery('#mobileNo').val();
-		
+	var isCancelled	= jQuery('#isCancelled').is(":checked");
 	jQuery('.report-section').removeClass('display-hide');
 	reportdatatable = drillDowntableContainer
 			.dataTable({
@@ -365,7 +366,8 @@ function callAjaxForSearchTrade() {
 						tradeTitle : tradeTitle,
 						tradeOwnerName : tradeOwnerName ,
 						propertyAssessmentNo : propertyAssessmentNo ,
-						mobileNo : mobileNo 
+						mobileNo : mobileNo ,
+						isCancelled : isCancelled
 					}
 				},
 				"sPaginationType" : "bootstrap",

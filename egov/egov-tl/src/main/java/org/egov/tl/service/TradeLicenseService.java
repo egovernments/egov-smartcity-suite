@@ -40,6 +40,16 @@
 
 package org.egov.tl.service;
 
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
@@ -62,16 +72,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
@@ -195,9 +195,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return new ReportRequest("licenseCertificate", license, reportParams);
     }
 
-    public ReportOutput prepareReportInputDataForDig(final License license, final String districtName, final String cityMunicipalityName) {
-        return reportService.createReport(new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
-                cityMunicipalityName)));
+    public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
+            final String cityMunicipalityName) {
+        return reportService.createReport(
+                new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
+                        cityMunicipalityName)));
     }
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
@@ -262,10 +264,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     public List<TradeLicense> searchTradeLicense(final String applicationNumber, final String licenseNumber,
             final String oldLicenseNumber, final Long categoryId, final Long subCategoryId, final String tradeTitle,
-            final String tradeOwnerName, final String propertyAssessmentNo, final String mobileNo) {
+            final String tradeOwnerName, final String propertyAssessmentNo, final String mobileNo, final Boolean isCancelled) {
         final Criteria searchCriteria = persistenceService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
-                .createAlias("tradeName", "subcat");
+                .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
 
         if (StringUtils.isNotBlank(applicationNumber))
             searchCriteria.add(Restrictions.eq("applicationNumber", applicationNumber).ignoreCase());
@@ -285,6 +287,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.eq("assessmentNo", propertyAssessmentNo).ignoreCase());
         if (StringUtils.isNotBlank(mobileNo))
             searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", mobileNo));
+        if (isCancelled != null && isCancelled.equals(Boolean.TRUE))
+            searchCriteria.add(Restrictions.eq("licstatus.statusCode", StringUtils.upperCase("CAN")));
+        else
+            searchCriteria.add(Restrictions.ne("licstatus.statusCode", StringUtils.upperCase("CAN")));
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
         return searchCriteria.list();
