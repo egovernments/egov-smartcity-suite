@@ -126,9 +126,9 @@
 		             <li id='top5'>
 		            	<a href="javascript:void(0)"  class="menu-item" data-fn="topFiveCompType" data-win="topFiveCompTypeWin" id="topFiveCompTypeview"><i class="fa fa-area-chart fa-lg fa-fw"></i> Top Five Complaint Types</a>
 		            </li>
-		            <li>
+		            <!-- <li>
 		            	<a href="javascript:void(0)"  class="menu-item" data-fn="wardwiseAnalysis" data-win="wardwiseAnalysisWin" id="wardwiseAnalysis"><i class="fa fa-map-marker fa-lg fa-fw"></i> GIS Analysis</a>
-		            </li>
+		            </li> -->
 		      </ul>
 		    </div>
 		  </div>
