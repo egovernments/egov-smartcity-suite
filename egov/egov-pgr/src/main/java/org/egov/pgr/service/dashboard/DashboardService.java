@@ -174,8 +174,12 @@ public class DashboardService {
             final double noOfCompAsOnDate = compData1.doubleValue();
             final double noOfCompReceivedBtw = compData3.doubleValue();
             final double noOfCompPenAsonDate = compData4.doubleValue();
-            complaintData.put("y", new BigDecimal(df.format(100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
-                    / (noOfCompAsOnDate + noOfCompReceivedBtw))));
+            final double totalcomplaintCount = noOfCompAsOnDate + noOfCompReceivedBtw;
+            if (totalcomplaintCount < 1)
+                complaintData.put("y", "0.00");
+            else
+                complaintData.put("y", new BigDecimal(df.format(100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
+                        / (noOfCompAsOnDate + noOfCompReceivedBtw))));
             compAggrData.add(complaintData);
         }
 
@@ -261,7 +265,7 @@ public class DashboardService {
             complaintData.put("noOfCompPenAsonDate", noOfCompPenAsonDate);
             final double totalcomplaintCount = noOfCompAsOnDate + noOfCompReceivedBtw;
             if (totalcomplaintCount < 1)
-                complaintData.put("disposalPerc", 0d);
+                complaintData.put("disposalPerc", "0.00");
             else
                 complaintData.put("disposalPerc", df.format(100 * (noOfCompAsOnDate + noOfCompReceivedBtw - noOfCompPenAsonDate)
                         / totalcomplaintCount));
