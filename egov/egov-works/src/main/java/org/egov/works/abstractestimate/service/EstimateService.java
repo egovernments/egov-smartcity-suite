@@ -268,11 +268,10 @@ public class EstimateService {
         abstractEstimateFromDB.setLineEstimateDetails(newAbstractEstimate.getLineEstimateDetails());
         abstractEstimateFromDB.setEgwStatus(newAbstractEstimate.getEgwStatus());
 
-        for (final MultiYearEstimate multiYearEstimate : abstractEstimateFromDB.getMultiYearEstimates()) {
-            multiYearEstimate.setCreatedDate(new Date());
-            multiYearEstimate.setLastModifiedDate(new Date());
-            multiYearEstimate.setCreatedBy(securityUtils.getCurrentUser());
-            multiYearEstimate.setLastModifiedBy(securityUtils.getCurrentUser());
+        abstractEstimateFromDB.getMultiYearEstimates().clear();
+        for (final MultiYearEstimate multiYearEstimate : newAbstractEstimate.getMultiYearEstimates()) {
+            multiYearEstimate.setAbstractEstimate(abstractEstimateFromDB);
+            abstractEstimateFromDB.addMultiYearEstimate(multiYearEstimate);
         }
 
         abstractEstimateFromDB.getActivities().clear();
@@ -281,11 +280,10 @@ public class EstimateService {
             abstractEstimateFromDB.addActivity(act);
         }
 
-        for (final FinancialDetail finacilaDetail : abstractEstimateFromDB.getFinancialDetails()) {
-            finacilaDetail.setCreatedDate(new Date());
-            finacilaDetail.setLastModifiedDate(new Date());
-            finacilaDetail.setCreatedBy(securityUtils.getCurrentUser());
-            finacilaDetail.setLastModifiedBy(securityUtils.getCurrentUser());
+        abstractEstimateFromDB.getFinancialDetails().clear();
+        for (final FinancialDetail finacilaDetail : newAbstractEstimate.getFinancialDetails()) {
+            finacilaDetail.setAbstractEstimate(abstractEstimateFromDB);
+            abstractEstimateFromDB.addFinancialDetails(finacilaDetail);
         }
 
         for (final AssetsForEstimate assetsForEstimate : newAbstractEstimate.getAssetValues()) {
@@ -761,8 +759,6 @@ public class EstimateService {
         abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
         abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
-        if (lineEstimate.getLocation() != null)
-            abstractEstimate.setLocation(lineEstimate.getLocation().getName());
         abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
         abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
         abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());

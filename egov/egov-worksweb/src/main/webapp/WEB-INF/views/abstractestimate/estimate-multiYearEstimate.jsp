@@ -112,7 +112,7 @@
 								</td> 
 								<c:if test="${lineEstimateDetails.estimateNumber == '' }">
 								<td>
-									<button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteMultiYearEstimate(this);">Delete</button>
+									<button type="button" class="btn btn-xs btn-secondary delete-row" onclick="deleteRow('tblyearestimate',this);"><span class="glyphicon glyphicon-trash"></span>Delete</button>
 								</td>
 								</c:if>
 							</tr>
@@ -132,15 +132,15 @@
 				<tr>
 					<td colspan="2" class="text-right"><spring:message
 							code="lbl.total" /></td>
-					<td class="text-right"><span id="estimateTotal"><c:out
-								value="${total}" /></span></td>
+					<td class="text-right"><span id="estimateTotal">
+					<fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${total}"/></fmt:formatNumber></span></td>
 				</tr>
 			</tfoot>
 		</table>
 		<c:if test="${lineEstimateDetails.estimateNumber == '' }">
 		<div class="col-sm-12 text-center">
 			<button id="addRowBtn" type="button" class="btn btn-primary"
-				onclick="addMultiyearEstimate()">
+				onclick="addRow('tblyearestimate','yearEstimateRow')">
 				<spring:message code="lbl.addrow" />
 			</button>
 		</div>

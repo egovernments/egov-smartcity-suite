@@ -64,7 +64,11 @@ $(document).ready(function(){
 	$('#sorSearch').blur(function() {
 		$('#sorSearch').val('');
 	});
-	
+	$( "input[name$='percentage']" ).each(function() {
+		var value = $(this).val();
+		if(value != 0)
+			$(this).val(parseFloat(value).toFixed(2));
+	});
 	$mode = $("#mode").val();
 	if($mode == '') {
 		$("#latlonDiv").hide(); 
@@ -1778,16 +1782,38 @@ function openMap()
 	//popup.moveTo(0,0);
 }
 
-function addRow(tableName,rowName){
+function addRow(tableName,rowName) {
 	if (document.getElementById(rowName) != null) {
 		// get Next Row Index to Generate
 		var nextIdx = 0;
-			nextIdx = jQuery("#"+tableName+" tbody tr").length;
+		var sno = 1;
+		nextIdx = jQuery("#"+tableName+" tbody tr").length;
+		sno = nextIdx + 1;
+		
+        var isValid=1;//for default have success value 0  
+		//validate existing rows in table
+		jQuery("#"+tableName+" tbody tr").find('input, select, span, input:hidden').each(function() {
+			if((jQuery(this).data('optional') === 0) && (jQuery(this).val() == ''))
+			{
+				jQuery(this).focus();
+				bootbox.alert(jQuery(this).data('errormsg'));
+				isValid=0;//set validation failure
+				return false;
+			}
+		});
+		
+		if (isValid === 0) {
+			return false;
+		}
 		// Generate all textboxes Id and name with new index
-		jQuery("#"+rowName).clone().find("input,select, errors").each(
-		function() {	
+		jQuery("#"+rowName).clone().find("input,select, errors, span, input:hidden").each(function() {	
+			var classval = jQuery(this).attr('class');
 			if (jQuery(this).data('server')) {
 				jQuery(this).removeAttr('data-server');
+			}
+			if(classval == 'spansno') {
+				jQuery(this).text(sno);
+				sno++;
 			}
 			jQuery(this).attr(
 					{
@@ -1827,15 +1853,17 @@ function deleteRow(tableName,obj){
 		} else {
 			tbl.deleteRow(rIndex);
 			//starting index for table fields
-			var idx=parseInt(rIndex);
+			var idx= 0;
+			var sno = 1;
 			//regenerate index existing inputs in table row
 			jQuery("#"+tableName+" tbody tr").each(function() {
 			
-				hiddenElem=jQuery(this).find("input:hidden");
-				
-				if(!jQuery(hiddenElem).val())
-				{
-					jQuery(this).find("input,select,errors").each(function() {
+					jQuery(this).find("input, select, errors, span, input:hidden").each(function() {
+						var classval = jQuery(this).attr('class');
+						if(classval == 'spansno') {
+							jQuery(this).text(sno);
+							sno++;
+						} else {
 						jQuery(this).attr({
 						      'name': function(_, name) {
 						    	  if(!(jQuery(this).attr('name')===undefined))
@@ -1850,9 +1878,10 @@ function deleteRow(tableName,obj){
 								  return idx;
 							  }
 						   });
+						}
 				    });
+					
 					idx++;
-				}
 			});
 			return true;
 		}
