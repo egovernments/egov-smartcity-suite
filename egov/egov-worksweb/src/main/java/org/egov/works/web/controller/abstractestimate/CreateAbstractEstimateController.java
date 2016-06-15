@@ -155,6 +155,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     private void loadViewData(Model model, AbstractEstimate abstractEstimate, LineEstimateDetails lineEstimateDetails) {
         setDropDownValues(model);
+        model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
         WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, abstractEstimate, workflowContainer);

@@ -78,7 +78,7 @@
 			<div class="tab-pane fade in active" id="estimateheader">
 				<%@ include file="estimate-header.jsp"%>
 				<%@ include file="estimate-multiYearEstimate.jsp"%>
-				<%@ include file="uploadDocuments.jsp"%>
+				<%@ include file="../common/uploadDocuments.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="workdetails">
 				<%@ include file="estimate-sor.jsp"%>

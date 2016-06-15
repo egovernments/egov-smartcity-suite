@@ -390,7 +390,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("mode", "edit");
         else
             model.addAttribute("mode", "view");
-
+        
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
@@ -398,6 +398,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
 
         final LineEstimate newLineEstimate = getEstimateDocuments(lineEstimate);
+        model.addAttribute("documentDetails", newLineEstimate.getDocumentDetails());
         model.addAttribute("lineEstimate", newLineEstimate);
         if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);

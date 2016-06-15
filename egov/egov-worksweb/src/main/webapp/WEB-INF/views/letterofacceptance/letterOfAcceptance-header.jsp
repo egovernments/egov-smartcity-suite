@@ -54,7 +54,7 @@
 				<jsp:include page="letterOfAcceptance-details.jsp"/>
 			</div>
 		</div>
-		<jsp:include page="uploadDocuments.jsp"/>
+		<jsp:include page="../common/uploadDocuments.jsp"/>
 	</div>
 </div>	
 			

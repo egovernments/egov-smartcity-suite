@@ -116,6 +116,7 @@ public class CreateLetterOfAcceptanceController {
         final AppConfigValues value = values.get(0);
         model.addAttribute("percentage_on_estimaterate_or_workvalue", value.getValue());
         model.addAttribute("lineEstimateDetails", abstractEstimate);
+        model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("abstractEstimate", estimateService.getAbstractEstimateByEstimateNumber(estimateNumber));
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
@@ -151,6 +152,7 @@ public class CreateLetterOfAcceptanceController {
         if (resultBinder.hasErrors()) {
             setDropDownValues(model, abstractEstimate);
             model.addAttribute("abstractEstimate", abstractEstimate);
+            model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
             model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
             model.addAttribute("contractorSearch", request.getParameter("contractorSearch"));
             model.addAttribute("contractorCode", request.getParameter("contractorCode"));

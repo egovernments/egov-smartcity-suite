@@ -64,7 +64,7 @@
 							<jsp:include page="contractorBill-mbdetails.jsp"/>
 							<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
 							<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
-							<jsp:include page="uploadDocuments.jsp"/>
+							<jsp:include page="../common/uploadDocuments.jsp"/>
 						</div>
 					</div>
 				</div>

@@ -147,8 +147,8 @@ public class CreateSpillOverLineEstimateController {
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             lineEstimate.setExecutingDepartment(departments.get(0));
-
         model.addAttribute("lineEstimate", lineEstimate);
+        model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
 
         model.addAttribute("mode", null);
 
@@ -176,6 +176,7 @@ public class CreateSpillOverLineEstimateController {
         
         if (errors.hasErrors()) {
             setDropDownValues(model);
+            model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
             model.addAttribute("mode", null);
             model.addAttribute("designation", request.getParameter("designation"));
             return "spillOverLineEstimate-form";

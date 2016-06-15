@@ -81,7 +81,7 @@
 							</c:if>
 						<%-- 	<jsp:include page="contractorBill-details.jsp"/> --%>
 						<c:if test="${!contractorBillRegister.documentDetails.isEmpty()}">
-							<jsp:include page="uploadDocuments.jsp"/>
+							<jsp:include page="../common/uploadDocuments.jsp"/>
 						</c:if>
 						</div>
 					</div>

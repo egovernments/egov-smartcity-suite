@@ -151,6 +151,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             lineEstimate.setExecutingDepartment(departments.get(0));
 
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
+        model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
 
         prepareWorkflow(model, lineEstimate, new WorkflowContainer());
 
@@ -171,7 +172,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
             prepareWorkflow(model, lineEstimate, new WorkflowContainer());
-
+            model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
             model.addAttribute("mode", null);
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));

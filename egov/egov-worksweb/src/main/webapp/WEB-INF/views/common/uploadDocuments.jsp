@@ -50,33 +50,56 @@
 	.file-ellipsis {
 		width : auto !Important;
 	}
+	
+	.padding-10
+	{
+	  padding:10px;
+	}
 </style>
 <div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="lbl.upload.document" />
+			<c:if test="${mode != 'view' }">
+				<spring:message code="lbl.upload.document" />
+			</c:if>
+			<c:if test="${mode == 'view' }">
+				<spring:message code="lbl.documents" />
+			</c:if>
 		</div>
 	</div>
-	<div>
-		<table width="100%">
-			<tbody>
-				<tr>
-					<td valign="top">
-					 	<table id="uploadertbl" width="100%"><tbody>
-					 		<tr id="row1">			 				
-								<td>
-									<input type="file" name="file" id="file1" onchange="isValidFile(this.id)">
-								</td>
-							</tr>									 										
-					 	</tbody></table>
-					</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<c:if test="${documentDetails != null &&  !documentDetails.isEmpty()}">
+		<c:forEach items="${documentDetails}" var="documentDtls">
+			<a href="/egi/downloadfile?fileStoreId=${documentDtls.fileStore.fileStoreId}&moduleName=WMS">${documentDtls.fileStore.fileName }</a><br />
+		</c:forEach>
+	</c:if>
+	<c:if test="${mode == 'view' && documentDetails.isEmpty()}">
+		<spring:message code="msg.no.documents" />
+	</c:if>
+	<input type="hidden" value="${fn:length(documentDetails)}" id="documentsSize">
+	<c:if test="${mode != 'view' }">
+		<div>
+			<table width="100%">
+				<c:if test="${documentDetails != null &&  fn:length(documentDetails) lt 4}">
+				<tbody>
+					<tr>
+						<td valign="top">
+						 	<table id="uploadertbl" width="100%"><tbody>
+						 		<tr id="row1">			 				
+									<td>
+										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
+									</td>
+								</tr>									 										
+						 	</tbody></table>
+						</td>
+					</tr>
+					<tr>
+						<td align="center">
+							<button id="attachNewFileBtn" type="button" class="btn btn-primary" onclick="addFileInputField()"><spring:message code="lbl.addfile" /></button>
+						</td>
+					</tr>
+				</tbody>
+				</c:if>
+			</table>
+		</div>
+	</c:if>
 </div>

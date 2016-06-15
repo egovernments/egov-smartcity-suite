@@ -287,7 +287,7 @@
 	</div>
 	<input type="hidden" value="${mode}" id="mode" />
 	<c:if test="${!workOrder.documentDetails.isEmpty() }">
-		<jsp:include page="uploadDocuments.jsp" />
+		<jsp:include page="../common/uploadDocuments.jsp" />
 	</c:if>
 	<div class="row">
 	<div class="col-sm-12 text-center">

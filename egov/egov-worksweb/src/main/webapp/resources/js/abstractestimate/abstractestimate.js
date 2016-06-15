@@ -276,7 +276,7 @@ $(document).ready(function(){
 
 $overheadRowCount = 0;
 $('#addOverheadRow').click(function() { 
-	addRow('overheadTable','overheadRow',$overheadRowCount);
+	addRow('overheadTable','overheadRow');
 });
 
 function getRow(obj) {
@@ -309,7 +309,7 @@ function deleteOverheadRow(obj) {
 	    total = eval(total) - eval(amount);
 	    document.getElementById('overheadTotalAmount').value = total;
 	    
-	    deleteRow("overheadTable",obj,$overheadRowCount);
+	    deleteRow("overheadTable",obj);
 	    
 		resetAddedOverheads();
 	    calculateOverheadTotalAmount();
@@ -1778,14 +1778,11 @@ function openMap()
 	//popup.moveTo(0,0);
 }
 
-function addRow(tableName,rowName,rowCount){
+function addRow(tableName,rowName){
 	if (document.getElementById(rowName) != null) {
 		// get Next Row Index to Generate
 		var nextIdx = 0;
-		if(rowCount == 0 || rowCount == '')
 			nextIdx = jQuery("#"+tableName+" tbody tr").length;
-		else
-			nextIdx = rowCount++;
 		// Generate all textboxes Id and name with new index
 		jQuery("#"+rowName).clone().find("input,select, errors").each(
 		function() {	
@@ -1817,7 +1814,7 @@ function addRow(tableName,rowName,rowCount){
 	}
 }
 
-function deleteRow(tableName,obj,rowCount){
+function deleteRow(tableName,obj){
 	 var rIndex = getRow(obj).rowIndex;
 	    var id = jQuery(getRow(obj)).children('td:first').children('input:first').val();
 	    //To get all the deleted rows id
@@ -1830,7 +1827,7 @@ function deleteRow(tableName,obj,rowCount){
 		} else {
 			tbl.deleteRow(rIndex);
 			//starting index for table fields
-			var idx=parseInt(rowCount);
+			var idx=parseInt(rIndex);
 			//regenerate index existing inputs in table row
 			jQuery("#"+tableName+" tbody tr").each(function() {
 			

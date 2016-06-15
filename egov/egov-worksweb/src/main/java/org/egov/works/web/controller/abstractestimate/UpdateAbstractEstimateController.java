@@ -274,6 +274,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
 
         setDropDownValues(model);
+        
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
 
         if (abstractEstimate.getCurrentState() != null
@@ -307,6 +308,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
         getEstimateDocuments(abstractEstimate);
         model.addAttribute("abstractEstimate", abstractEstimate);
+        model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
 
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
                 abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {

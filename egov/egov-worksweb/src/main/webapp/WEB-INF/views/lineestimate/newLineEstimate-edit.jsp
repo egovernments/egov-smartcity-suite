@@ -54,7 +54,7 @@
 					<c:if test="${mode != 'view' && mode != 'readOnly' }">
 						<jsp:include page="lineEstimateHeader.jsp"/>
 						<jsp:include page="lineEstimateDetails.jsp"/>
-						<jsp:include page="uploadDocuments.jsp"/>
+						<jsp:include page="../common/uploadDocuments.jsp"/>
 					</c:if>
 					<c:if test="${mode == 'view' || mode == 'readOnly' }">
 						<jsp:include page="lineEstimateHeader-view.jsp"/>
@@ -70,7 +70,7 @@
 		</c:if>
 			<c:if test="${mode == 'view' || mode == 'readOnly' }">
 				<c:if test="${!lineEstimate.documentDetails.isEmpty() }">
-					<jsp:include page="uploadDocuments.jsp" />
+					<jsp:include page="../common/uploadDocuments.jsp" />
 				</c:if>
 			</c:if>
 			<c:if test="${!workflowHistory.isEmpty()}">

@@ -326,7 +326,6 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("mode", "view");
 
         model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister, model));
-
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(contractorBillRegister.getState(), contractorBillRegister.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
@@ -341,6 +340,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         final ContractorBillRegister newcontractorBillRegister = getContractorBillDocuments(contractorBillRegister);
         model.addAttribute("contractorBillRegister", newcontractorBillRegister);
+        model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
         final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(newcontractorBillRegister);
         if (mbHeaders != null && !mbHeaders.isEmpty())
             newcontractorBillRegister.setMbHeader(mbHeaders.get(0));

@@ -110,6 +110,7 @@ public class UpdateLetterOfAcceptanceController {
         final AbstractEstimate abstractEstimate = estimateService
                 .getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
         final WorkOrder newWorkOrder = getWorkOrderDocuments(workOrder);
+        model.addAttribute("documentDetails", newWorkOrder.getDocumentDetails());
         model.addAttribute("workOrder", newWorkOrder);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());

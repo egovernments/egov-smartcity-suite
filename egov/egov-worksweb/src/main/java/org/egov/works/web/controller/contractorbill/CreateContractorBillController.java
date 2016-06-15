@@ -126,7 +126,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
         setDropDownValues(model);
-
+        model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
@@ -175,6 +175,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
+            model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
             model.addAttribute("lineEstimateDetails", lineEstimateDetails);
             model.addAttribute("workOrder", workOrder);
             model.addAttribute("netPayableAmount", request.getParameter("netPayableAmount"));
