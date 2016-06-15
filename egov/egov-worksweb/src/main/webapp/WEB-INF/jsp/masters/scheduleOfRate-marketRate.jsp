@@ -39,14 +39,6 @@
   --%>
 
 <script>
-function createDeleteImageFormatterMR(baseURL){
-	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/resources/erp2/images/cancel.png";
-	    markup='<img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/>';
-	    el.innerHTML = markup;
-	}
-	return deleteImageFormatter;
-}
 
 function createTextBoxFormatterMR(size,maxlength) {
 	var textboxFormatter1 = function(el, oRecord, oColumn, oData) {
@@ -94,7 +86,7 @@ var makeScheduleOfRateDataTableForMR = function() {
 		{key:"marketRate", label:'<span class="mandatory"></span>Market Rate', formatter:rateTextboxFormatterMR, sortable:false, resizeable:false, width:180},		
 		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatterMR,sortable:false, resizeable:false, width:130},
 		{key:"endDate",label:'End Date', formatter:dateFormatterMR,sortable:false, resizeable:false, width:130},
-		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatterMR("${pageContext.request.contextPath}")}  
+		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	
 	var scheduleOfRateDataSourceMR = new YAHOO.util.DataSource(); 

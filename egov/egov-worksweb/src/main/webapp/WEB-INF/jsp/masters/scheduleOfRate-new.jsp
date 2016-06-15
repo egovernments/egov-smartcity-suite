@@ -68,10 +68,11 @@ body
         </div>
     </s:if>
 	<s:if test="%{hasActionMessages()}">
-        <div class="messagestyle">
-        	<s:actionmessage theme="simple"/>
-        </div>
-    </s:if>
+		<div class="alert alert-success">
+			 <a href="#" style="font-size:21px;" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<s:actionmessage theme="simple" escape="false"/>
+		</div>
+	</s:if>
 <div class="errorstyle" id="sor_error" class="alert alert-danger" style="display: none;"></div>
 <s:form action="scheduleOfRate-save" theme="simple" name="scheduleOfRate" onsubmit="return validateSORFormAndSubmit();" cssClass="form-horizontal form-groups-bordered"><s:token/> 
 <s:hidden name="mode" id="mode" />

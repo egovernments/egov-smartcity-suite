@@ -176,4 +176,8 @@ public class ScheduleOfRateService {
         marketRate.setModifiedDate(new Date());
         return marketRate;
     }
+    
+    public ScheduleOfRate getByCode(final String code) {
+        return scheduleOfRateRepository.findByCode(code);
+    }
 }

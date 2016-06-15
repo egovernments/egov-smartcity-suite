@@ -38,6 +38,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 jQuery('#btnsearch').click(function(e) {
+	$('#Modify').hide();
+	$('#close').hide();
 		callAjaxSearch();
 });
 $(document).ready(function(){
@@ -90,6 +92,8 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)', row).html(index + 1);
+					$('#Modify').show();
+					$('#close').show();
 					$('td:eq(5)', row).html(
 							'<a href="javascript:void(0);" onclick="openOverhead(\''
 									+ data.id + '\')">Modify</a>');

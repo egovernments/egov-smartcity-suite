@@ -64,12 +64,12 @@
 	<div class="row">
 		<div class="col-sm-12 text-center">
 		<c:if test="${mode != 'view'}">
-			<button type="submit" name="submit" id="Modify"
+			<button type="submit" style="display: none;" name="submit" id="Modify"
 				class="btn btn-primary" value="Modify">
 				<spring:message code="lbl.modify" />
 			</button>
 		</c:if>
-			<a href='javascript:void(0)' class='btn btn-default'
+			<a href='javascript:void(0)' class='btn btn-default' style="display: none;" id="close"
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>

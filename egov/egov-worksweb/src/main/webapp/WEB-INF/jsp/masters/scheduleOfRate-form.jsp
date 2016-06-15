@@ -47,41 +47,9 @@ list-style-type: none;
 }
 </style>
 <script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
+<script src="<egov:url path='resources/js/master/scheduleofrate.js?${app_release_no}'/>"></script>
 <script>
-function createDeleteImageFormatter(baseURL){
-	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/resources/erp2/images/cancel.png";
-	    markup='<img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/>';
-	    el.innerHTML = markup;
-	}
-	return deleteImageFormatter;
-}
-
-function validateSORFormAndSubmit() {
-    clearMessage('sor_error')
-	links=document.scheduleOfRate.getElementsByTagName("span");
-	errors=false;
-	for(i=0; i<links.length; i++) {
-        if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none') {
-            errors=true;
-            break;
-        }
-    }
-    
-    if(errors) {
-        dom.get("sor_error").style.display = '';
-    	document.getElementById("sor_error").innerHTML='<s:text name="sor.validate_x.message" />';
-    	return false;
-    } else {
-		var lenFrm = document.scheduleOfRate.elements.length;
-		for(i=0; i<lenFrm; i++) {
-			document.scheduleOfRate.elements[i].readonly=false;	
-			document.scheduleOfRate.elements[i].disabled=false;	
-		}   	
-   	}
-    doLoadingMask();
-}
-
+ 
 function enableLastEndDate(){
 	var persistedRatesCnt = '<s:property value="%{editableRateList.size()}"/>';
 	var i;
@@ -177,7 +145,7 @@ function createTextBoxFormatter(size,maxlength) {
 	var textboxFormatter = function(el, oRecord, oColumn, oData) {
 	   var fieldName = "actionRates[" + oRecord.getCount() + "]." +  oColumn.getKey();   
 	   var id = oColumn.getKey()+oRecord.getId();
-	   markup="<input type='text' id='"+id+"' class='selectmultilinewk' size='20' maxlength='"+maxlength+"' style=\"width:100px; text-align:right\" name='"+fieldName+ "'" 
+	   markup="<input type='text' id='"+id+"' class='selectmultilinewk rateforsor' size='20' maxlength='"+maxlength+"' style=\"width:100px; text-align:right\" name='"+fieldName+ "'" 
 	   + " onblur='validateNumberInTableCell(scheduleOfRateDataTable,this,\"" + oRecord.getId()+ "\");'/>"
 	   + " <span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
 	   el.innerHTML = markup; 
@@ -187,6 +155,16 @@ function createTextBoxFormatter(size,maxlength) {
 
 var rateTextboxFormatter = createTextBoxFormatter(11,10);
 var dateFormatter = function(e2, oRecord, oColumn, oData) {
+	var fieldName = "actionRates[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
+	var id = oColumn.getKey() + oRecord.getId();
+	
+	var markup= "<input type='text' id='"+id+"' class='selectmultilinewk datepicker startdate' size='20' maxlength='10' style=\"width:100px\" name='"+fieldName 
+	            + "'  onkeyup=\"DateFormat(this,this.value,event,false,'3')\" onblur=\"validateDateFormat(this)\" />"
+				+ " <span id='error"+ id +"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
+	 e2.innerHTML = markup;
+}
+
+var dateFormatterForEndDate = function(e2, oRecord, oColumn, oData) {
 	var fieldName = "actionRates[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
 	var id = oColumn.getKey() + oRecord.getId();
 	
@@ -204,7 +182,7 @@ var makeScheduleOfRateDataTable = function() {
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false, width:50},
 		{key:"rate", label:'<span class="mandatory"></span>Rate', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
 		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
-		{key:"endDate",label:'End Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
+		{key:"endDate",label:'End Date', formatter:dateFormatterForEndDate,sortable:false, resizeable:false, width:130},
 		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	
@@ -240,7 +218,14 @@ var makeScheduleOfRateDataTable = function() {
 <div class="new-page-header">
 	<s:text name="master.sor.rate.master" />
 </div>
-
+	<input type="hidden" value="<s:text name="sor.uom.not.null" />" id="selectUOM" />
+	<input type="hidden" value="<s:text name="sor.code.not.empty" />" id="selectCodeForSor" />
+	<input type="hidden" value="<s:text name="sor.category.not.null" />" id="selectCategory" />
+	<input type="hidden" value="<s:text name="sor.description.not.empty" />" id="selectDescription" />
+	<input type="hidden" value="<s:text name="sor.rate.altleastone_sorRate_needed" />" id="selectAtleastOneSOR" />
+	<input type="hidden" value="<s:text name="sor.rate.not.empty" />" id="selectSORRate" />
+	<input type="hidden" value="<s:text name="sor.rate.startDate__empty" />" id="selectSORStartDate" />
+	
 <div class="panel panel-primary" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -276,7 +261,7 @@ var makeScheduleOfRateDataTable = function() {
 			    <s:text name="master.sor.uom" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-			<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="uom" id="uom" cssClass="form-control" list="dropdownData.uomlist" listKey="id" listValue="uom" value="%{uom.id}" />
+			<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="uom" id="uom" cssClass="form-control" list="dropdownData.uomlist" listKey="id" listValue="uom" value="%{uom.id }" />
 			</div>
 		</div>
      </div>

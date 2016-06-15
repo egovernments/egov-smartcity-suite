@@ -58,10 +58,11 @@
     	</s:if>
     	
 		<s:if test="%{hasActionMessages()}">
-        	<div class="messagestyle">
-        		<s:actionmessage theme="simple"/>
-        	</div>
-    	</s:if>
+			<div class="alert alert-success">
+				 <a href="#" style="font-size:21px;" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				<s:actionmessage theme="simple" escape="false"/>
+			</div>
+		</s:if>
    
 		<s:form action="contractorGrade-save" theme="simple" name="contractorGrade" id="contractorGrade" cssClass="form-horizontal form-groups-bordered">
 			<s:token/>

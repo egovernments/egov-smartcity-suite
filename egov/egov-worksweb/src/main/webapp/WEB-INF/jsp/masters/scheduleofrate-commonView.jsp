@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -86,7 +86,7 @@
 					<thead>
 						<tr>
 							<th><s:text name="column.title.SLNo" /></th>
-							<th><s:text name="master.sor.rate" /></th>
+							<th align="right"><s:text name="master.sor.rate" /></th>
 							<th><s:text name="master.sor.startDate" /></th>
 							<th><s:text name="master.sor.endDate" /></th>
 						</tr>
@@ -95,7 +95,9 @@
 					<s:iterator id="rateIterator" value="model.sorRates" status="rate_row_status">
 						<tr>
 							<td><s:property value="#rate_row_status.count" /></td>
-							<td><s:property value="%{rate}" /></td>
+							<td align="right">
+								<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{rate}" /></fmt:formatNumber>
+							</td>
 							<td><s:date name="validity.startDate" format="dd/MM/yyyy" /></td>
 							<td><s:date name="validity.endDate" format="dd/MM/yyyy" /></td>
 						</tr>
@@ -116,7 +118,7 @@
 					<thead>
 						<tr>
 							<th><s:text name="column.title.SLNo" /></th>
-							<th><s:text name="master.sor.marketRate" /></th>
+							<th align="right"><s:text name="master.sor.marketRate" /></th>
 							<th><s:text name="master.sor.startDate" /></th>
 							<th><s:text name="master.sor.endDate" /></th>
 						</tr>
@@ -125,7 +127,9 @@
 					<s:iterator id="marketRateIterator" value="model.marketRates" status="marketrate_row_status">
 						<tr>
 							<td><s:property value="#marketrate_row_status.count" /></td>
-							<td><s:property value="%{marketRate}" /></td>
+							<td align="right">
+								<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{marketRate}" /></fmt:formatNumber>
+							</td>
 							<td><s:date name="validity.startDate" format="dd/MM/yyyy" /></td>
 							<td><s:date name="validity.endDate" format="dd/MM/yyyy" /></td>
 						</tr>

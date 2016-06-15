@@ -58,23 +58,27 @@ function validateFormBeforeSubmit() {
 		if (document.getElementById("code").value == '') {
 	    	var message = document.getElementById('templateCode').value;
 	        showMessage('milestonetemplateerror', message);
+	        window.scrollTo(0, 0);
 	        return false;
 	
 	    }
         if (document.getElementById("name").value == '') {
         	var message = document.getElementById('templateName').value;
             showMessage('milestonetemplateerror', message);
+            window.scrollTo(0, 0);
             return false;
 
         }
         if (document.getElementById("templateDescription").value == '') {
         	var message = document.getElementById('templateDesc').value;
             showMessage('milestonetemplateerror', message);
+            window.scrollTo(0, 0);
             return false;
         }
         if (document.getElementById("typeOfWork").value == '' || document.getElementById("typeOfWork").value == '-1') {
         	var message = document.getElementById('selectTypeOfWork').value;
             showMessage('milestonetemplateerror', message);
+            window.scrollTo(0, 0);
         	return false;
         }
         
@@ -84,7 +88,8 @@ function validateFormBeforeSubmit() {
            if(stageOrderNo.item(i).value == '') {
            	var message = document.getElementById('stageOrderNo').value;
             showMessage('milestonetemplateerror', message);
-        	   return false;
+            window.scrollTo(0, 0);
+        	return false;
            }
         }
         
@@ -94,7 +99,8 @@ function validateFormBeforeSubmit() {
            if(description.item(i).value == '') {
            	var message = document.getElementById('description').value;
             showMessage('milestonetemplateerror', message);
-        	   return false;
+            window.scrollTo(0, 0);
+        	return false;
            }
         }
         
@@ -103,7 +109,8 @@ function validateFormBeforeSubmit() {
            if(percentage.item(i).value == '') {
            	var message = document.getElementById('tempPercentage').value;
             showMessage('milestonetemplateerror', message);
-        	   return false;
+            window.scrollTo(0, 0);
+        	return false;
            }
         }
         
@@ -111,6 +118,7 @@ function validateFormBeforeSubmit() {
         if(totalValue != 100){
         	var message = document.getElementById('validateTotalPercentage').value;
         	showMessage('milestonetemplateerror', message);
+        	window.scrollTo(0, 0);
         	return false;
         }
         	

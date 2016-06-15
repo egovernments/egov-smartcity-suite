@@ -141,7 +141,7 @@
 			</div>
 	</s:elseif>   
  </div>
-<s:if test="%{!sourcePage.equals('searchForEstimate') }">
+<s:if test="%{!sourcePage.equals('searchForEstimate') && searchResult.fullListSize != 0}">
 	<div align="center">
 		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
 	</div>

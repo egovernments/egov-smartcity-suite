@@ -173,6 +173,13 @@ public class ScheduleOfRateAction extends SearchFormAction {
             getRateDetailsForSORId(true);
             getRateDetailsForSORIdForREValidation(true);
         }
+        if (scheduleOfRate != null) {
+            final ScheduleOfRate newScheduleOfRate = scheduleOfRateService.getByCode(code);
+            if (newScheduleOfRate != null && scheduleOfRate.getId() != newScheduleOfRate.getId()) {
+                addActionMessage(getText("sor.code.isunique"));
+                return NEW;
+            }
+        }
         scheduleOfRateService.save(scheduleOfRate);
         scheduleOfRate = scheduleOfRateService.findById(scheduleOfRate.getId(), false);
         scheduleOfRateList = new ArrayList<ScheduleOfRate>();

@@ -38,7 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 jQuery('#btnsearch').click(function(e) {
-		callAjaxSearch();
+	$('#Modify').hide();
+	$('#close').hide();
+	callAjaxSearch();
 });
 $(document).ready(function(){
 		var overheadName = new Bloodhound({
@@ -89,8 +91,9 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					
 					$('td:eq(0)', row).html(index + 1);
+					$('#Modify').show();
+					$('#close').show();
 					$(row).on(
 							'click',
 							function() {

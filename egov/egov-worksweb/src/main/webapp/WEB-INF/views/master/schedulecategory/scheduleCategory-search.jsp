@@ -99,8 +99,8 @@
 				<tr>
 					<th><spring:message code="lbl.categorycode" /></th>
 					<th><spring:message code="lbl.categoryname" /></th>
-					<c:if test="${mode == 'view'} ">
-					<th><spring:message code="lbl.modify" /></th>
+					<c:if test="${mode != 'view'}"> 
+						<th><spring:message code="lbl.modify" /></th>
 					</c:if>
 				</tr>
 			</thead>

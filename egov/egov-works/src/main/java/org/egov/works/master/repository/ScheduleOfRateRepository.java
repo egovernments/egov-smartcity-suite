@@ -55,4 +55,6 @@ public interface ScheduleOfRateRepository extends JpaRepository<ScheduleOfRate, 
     List<ScheduleOfRate> findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(@Param("code") final String code,
             @Param("ids") final List<Long> ids, @Param("currentDate") final Date currentDate);
 
+    ScheduleOfRate findByCode(final String sorCode);
+    
 }

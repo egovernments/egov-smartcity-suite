@@ -59,5 +59,6 @@
 		</div>
 	</div>
 	<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
+	<script src="<egov:url path='resources/js/master/schedulecategory.js?${app_release_no}'/>"></script>
 </body>
 </html>
