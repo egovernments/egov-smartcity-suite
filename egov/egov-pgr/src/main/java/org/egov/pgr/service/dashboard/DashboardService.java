@@ -185,6 +185,7 @@ public class DashboardService {
 
         // SORT ZONEWISE PERFORMANCE BY REDRESSAL %
         sortData(compAggrData, "y");
+        Collections.reverse(compAggrData);
         return compAggrData;
     }
 
@@ -277,7 +278,7 @@ public class DashboardService {
 
         // SORT ZONEWISE PERFORMANCE BY REDRESSAL %
         sortData(compAggrData, "disposalPerc");
-
+        Collections.reverse(compAggrData);
         // ASSIGN A RANK BASED ON ORDER
         assignRank(compAggrData, "rank");
         return compAggrData;
@@ -520,7 +521,7 @@ public class DashboardService {
 
     private static void sortData(final List<Map<String, Object>> dataList, final String key) {
         Collections.sort(dataList, (map1, map2) -> {
-            return Double.valueOf(map1.get(key).toString()) <= Double.valueOf(map2.get(key).toString()) ? 1 : -1;
+            return Double.valueOf(map1.get(key).toString()).compareTo(Double.valueOf(map2.get(key).toString()));
         });
     }
 
