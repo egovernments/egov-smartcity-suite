@@ -88,12 +88,12 @@ public class Judgment extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_JUDGMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     @Required(message = "select.judgmentType")
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "JUDGEMENTTYPE", nullable = false)
     private JudgmentType judgmentType;
@@ -122,14 +122,17 @@ public class Judgment extends AbstractAuditable {
     private Date setasidePetitionDate;
     @Length(max = 1024, message = "setasidePetitionDetails.length")
     private String setasidePetitionDetails;
-    @OneToMany(mappedBy = "eglcJudgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Judgmentimpl> eglcJudgmentimpls = new HashSet<Judgmentimpl>(0);
-   /* @OneToMany(mappedBy = "PARENT", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Judgment> children = new LinkedHashSet<Judgment>(0);*/
+    /*
+     * @OneToMany(mappedBy = "PARENT", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL, orphanRemoval = true) private Set<Judgment> children =
+     * new LinkedHashSet<Judgment>(0);
+     */
     @DateFormat(message = "invalid.fieldvalue.model.sapHearingDate")
     private Date sapHearingDate;
     private boolean sapAccepted;
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "PARENT")
     private Judgment parent;
@@ -145,12 +148,12 @@ public class Judgment extends AbstractAuditable {
         this.documentNum = documentNum;
     }
 
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(final Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase eglcLegalcase) {
+        legalcase = eglcLegalcase;
     }
 
     public JudgmentType getJudgmentType() {
@@ -292,7 +295,7 @@ public class Judgment extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (eglcLegalcase != null && !DateUtils.compareDates(getOrderDate(), eglcLegalcase.getCasedate()))
+        if (legalcase != null && !DateUtils.compareDates(getOrderDate(), legalcase.getCasedate()))
             errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
         if (!DateUtils.compareDates(getImplementByDate(), getOrderDate()))
             errors.add(new ValidationError("implementByDate", "implementByDate.less.orderDate"));
@@ -315,8 +318,6 @@ public class Judgment extends AbstractAuditable {
         this.eglcJudgmentimpls = eglcJudgmentimpls;
     }
 
-    
-
     public Judgment getParent() {
         return parent;
     }
@@ -324,7 +325,6 @@ public class Judgment extends AbstractAuditable {
     public void setParent(final Judgment parent) {
         this.parent = parent;
     }
-    
 
     public void setIsMemoRequired(final boolean isMemoRequired) {
         this.isMemoRequired = isMemoRequired;

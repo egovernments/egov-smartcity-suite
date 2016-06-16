@@ -88,7 +88,7 @@ public class Lcinterimorder extends AbstractAuditable {
     @Valid
     @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     @Required(message = "io.select.iotype")
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
@@ -136,12 +136,12 @@ public class Lcinterimorder extends AbstractAuditable {
         this.documentNum = documentNum;
     }
 
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(final Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase legalcase) {
+        this.legalcase = legalcase;
     }
 
     public InterimOrder getInterimOrder() {
@@ -239,7 +239,7 @@ public class Lcinterimorder extends AbstractAuditable {
                 && getReportFilingDue() == null)
             errors.add(new ValidationError("reportFilingDue", "reportFilingDue.required"));
 
-        if (!DateUtils.compareDates(getIodate(), eglcLegalcase.getCasedate()))
+        if (!DateUtils.compareDates(getIodate(), legalcase.getCasedate()))
             errors.add(new ValidationError("ioDate", "ioDate.greaterThan.caseDate"));
 
         if (!DateUtils.compareDates(getPetitionFiledOn(), getSendtoStandingCounsel()))

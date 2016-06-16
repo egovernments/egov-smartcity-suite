@@ -87,7 +87,7 @@ public class LegalcaseAdvocate extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     @Required(message = "advocate.legalcase.null")
     @ManyToOne
     @NotNull
@@ -151,12 +151,12 @@ public class LegalcaseAdvocate extends AbstractAuditable {
         this.changeSeniorAdvocate = changeSeniorAdvocate;
     }
 
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(final Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase legalcase) {
+        this.legalcase = legalcase;
     }
 
     public AdvocateMaster getEglcAdvocateMaster() {
@@ -219,28 +219,28 @@ public class LegalcaseAdvocate extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (eglcLegalcase.getIsSenioradvrequired()) {
+        if (legalcase.getIsSenioradvrequired()) {
             if (getEglcSeniorAdvocateMaster() == null)
                 errors.add(new ValidationError("eglcSeniorAdvocateMaster", "legalcase.eglcSeniorAdvocateMaster.null"));
             if (StringUtils.isBlank(getOrdernumber()))
                 errors.add(new ValidationError("ordernumber", "legalcase.ordernumber.null"));
             if (getOrderdate() == null)
                 errors.add(new ValidationError("orderDate", "legalcase.orderdate.null"));
-            if (!DateUtils.compareDates(getOrderdate(), eglcLegalcase.getCaseReceivingDate()))
+            if (!DateUtils.compareDates(getOrderdate(), legalcase.getCaseReceivingDate()))
                 errors.add(new ValidationError("orderDate", "orderdate.less.casereceivingdate"));
-            if (!DateUtils.compareDates(getOrderdate(), eglcLegalcase.getCasedate()))
+            if (!DateUtils.compareDates(getOrderdate(), legalcase.getCasedate()))
                 errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
             if (!DateUtils.compareDates(getAssignedtodateForsenior(), getOrderdate()))
                 errors.add(new ValidationError("assignedtodatesenior", "assignedon.less.orderdate"));
         }
 
-        if (!DateUtils.compareDates(getAssignedtodate(), eglcLegalcase.getCaseReceivingDate()))
+        if (!DateUtils.compareDates(getAssignedtodate(), legalcase.getCaseReceivingDate()))
             errors.add(new ValidationError("assignedon", "assignedon.less.casereceivingdate"));
-        if (!DateUtils.compareDates(getAssignedtodate(), eglcLegalcase.getCasedate()))
+        if (!DateUtils.compareDates(getAssignedtodate(), legalcase.getCasedate()))
             errors.add(new ValidationError("assignedon", "assignedon.less.casedate"));
-        if (!DateUtils.compareDates(getVakalatdate(), eglcLegalcase.getCasedate()))
+        if (!DateUtils.compareDates(getVakalatdate(), legalcase.getCasedate()))
             errors.add(new ValidationError("vakalatdate", "vakalatdate.less.casedate"));
-        if (!DateUtils.compareDates(getVakalatdate(), eglcLegalcase.getCaseReceivingDate()))
+        if (!DateUtils.compareDates(getVakalatdate(), legalcase.getCaseReceivingDate()))
             errors.add(new ValidationError("vakalatdate", "vakalatdate.less.caserecdate"));
         if (!DateUtils.compareDates(getVakalatdate(), getAssignedtodate()))
             errors.add(new ValidationError("vakalatdate", "vakalatdate.less.assingedon"));

@@ -73,7 +73,7 @@ public class LegalcaseMiscDetails extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     @Required(message = "miscDetails.date.null")
     @DateFormat(message = "invalid.fieldvalue.model.miscDate")
     private Date miscDate;
@@ -87,14 +87,12 @@ public class LegalcaseMiscDetails extends AbstractAuditable {
     @JoinColumn(name = "STATUS", nullable = false)
     private EgwStatus egwStatus;
 
-    
-
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase Legalcase) {
+        legalcase = Legalcase;
     }
 
     public Date getMiscDate() {

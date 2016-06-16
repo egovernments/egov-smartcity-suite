@@ -83,62 +83,61 @@ public class Appeal extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "JUDGMENTIMPL")
-    private Judgmentimpl judgmentimpl1;
+    private Judgmentimpl judgmentimpl;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "STATUS")
-    private EgwStatus egwStatus;
+    private EgwStatus status;
     @Required(message = "srnumber.null")
     @Length(max = 50, message = "srnumber.length")
     @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "srnumber.alpha")
-    private String srnumber;
+    private String srNumber;
     @Required(message = "appealfiledon.null")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.appeal.date")
-    private Date appealfiledon;
+    private Date appealFiledOn;
     @Required(message = "appealfiledby.null")
     @Length(max = 100, message = "appealfiledby.length")
     @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "appealfiledby.alpha")
-    private String appealfiledby;
+    private String appealFiledBy;
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
+    public EgwStatus getStatus() {
+        return status;
     }
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
+    public void setStatus(final EgwStatus status) {
+        this.status = status;
     }
 
-    public String getSrnumber() {
-        return srnumber;
+    public String getSrNumber() {
+        return srNumber;
     }
 
-    public void setSrnumber(final String srnumber) {
-        this.srnumber = srnumber;
+    public void setSrNumber(final String srNumber) {
+        this.srNumber = srNumber;
     }
 
-    public Date getAppealfiledon() {
-        return appealfiledon;
+    public Date getAppealFiledOn() {
+        return appealFiledOn;
     }
 
-    public void setAppealfiledon(final Date appealfiledon) {
-        this.appealfiledon = appealfiledon;
+    public void setAppealFiledOn(final Date appealFiledOn) {
+        this.appealFiledOn = appealFiledOn;
     }
 
-    public String getAppealfiledby() {
-        return appealfiledby;
+    public String getAppealFiledBy() {
+        return appealFiledBy;
     }
 
-    public void setAppealfiledby(final String appealfiledby) {
-        this.appealfiledby = appealfiledby;
+    public void setAppealFiledBy(final String appealFiledBy) {
+        this.appealFiledBy = appealFiledBy;
     }
 
-   
-    public Judgmentimpl getJudgmentimpl1() {
-        return judgmentimpl1;
+    public Judgmentimpl getJudgmentimpl() {
+        return judgmentimpl;
     }
 
-    public void setJudgmentimpl1(Judgmentimpl judgmentimpl1) {
-        this.judgmentimpl1 = judgmentimpl1;
+    public void setJudgmentimpl(final Judgmentimpl judgmentimpl) {
+        this.judgmentimpl = judgmentimpl;
     }
 
     @Override
@@ -153,8 +152,8 @@ public class Appeal extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getAppealfiledon() != null
-                && !DateUtils.compareDates(getAppealfiledon(), getJudgmentimpl1().getEglcJudgment().getOrderDate()))
+        if (getAppealFiledOn() != null
+                && !DateUtils.compareDates(getAppealFiledOn(), getJudgmentimpl().getJudgment().getOrderDate()))
             errors.add(new ValidationError("appealfiledon", "appealfiledon.less.orderDate"));
         return errors;
     }

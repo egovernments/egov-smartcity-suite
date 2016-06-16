@@ -41,9 +41,7 @@ package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -56,7 +54,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -88,10 +85,10 @@ public class Judgmentimpl extends AbstractAuditable {
     private Long id;
 
     // Fields
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "JUDGEMENT", nullable = false)
-    private Judgment eglcJudgment;
+    private Judgment judgment;
     private Long isCompiled;
     @DateFormat(message = "invalid.fieldvalue.model.dateofcompliance")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.compliance.date")
@@ -101,17 +98,16 @@ public class Judgmentimpl extends AbstractAuditable {
     private String reason;
     @Length(max = 128, message = "details.maxlength")
     private String details;
-    @OneToMany(mappedBy = "judgmentimpl1",  fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "judgmentimpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contempt> contempt = new ArrayList<Contempt>();
-    @OneToMany(mappedBy = "judgmentimpl1", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "judgmentimpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appeal> appeal = new ArrayList<Appeal>();
 
-   
     public List<Contempt> getContempt() {
         return contempt;
     }
 
-    public void setContempt(List<Contempt> contempt) {
+    public void setContempt(final List<Contempt> contempt) {
         this.contempt = contempt;
     }
 
@@ -119,16 +115,16 @@ public class Judgmentimpl extends AbstractAuditable {
         return appeal;
     }
 
-    public void setAppeal(List<Appeal> appeal) {
+    public void setAppeal(final List<Appeal> appeal) {
         this.appeal = appeal;
     }
 
-    public Judgment getEglcJudgment() {
-        return eglcJudgment;
+    public Judgment getJudgment() {
+        return judgment;
     }
 
-    public void setEglcJudgment(final Judgment eglcJudgment) {
-        this.eglcJudgment = eglcJudgment;
+    public void setJudgment(final Judgment eglcJudgment) {
+        judgment = eglcJudgment;
     }
 
     public Long getIsCompiled() {
@@ -172,8 +168,7 @@ public class Judgmentimpl extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getDateofcompliance() != null
-                && !DateUtils.compareDates(getDateofcompliance(), eglcJudgment.getOrderDate()))
+        if (getDateofcompliance() != null && !DateUtils.compareDates(getDateofcompliance(), judgment.getOrderDate()))
             errors.add(new ValidationError("dateofcompliance", "dateofcompliance.less.orderDate"));
         for (final Contempt contempt : getContempt())
             errors.addAll(contempt.validate());

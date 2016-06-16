@@ -79,7 +79,7 @@ public class LegalcaseDisposal extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     @Required(message = "disposalDate.null")
     @DateFormat(message = "invalid.fieldvalue.model.disposalDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "disposalDate.lessthan.currentDate")
@@ -113,23 +113,21 @@ public class LegalcaseDisposal extends AbstractAuditable {
         this.consignmentDate = consignmentDate;
     }
 
-    
-
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase legalcase) {
+        this.legalcase = legalcase;
     }
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-        if (!DateUtils.compareDates(getDisposalDate(), getEglcLegalcase().getCasedate()))
+        if (!DateUtils.compareDates(getDisposalDate(), getLegalcase().getCasedate()))
             errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.caseDate"));
 
-        for (final Hearings hearingsObj : eglcLegalcase.getHearings()) {
+        for (final Hearings hearingsObj : legalcase.getHearings()) {
             int i = 0;
             if (!DateUtils.compareDates(getDisposalDate(), hearingsObj.getHearingDate())) {
                 errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.hearingDate"));
@@ -139,7 +137,7 @@ public class LegalcaseDisposal extends AbstractAuditable {
                 break;
         }
 
-        for (final Judgment judgmentObj : getEglcLegalcase().getEglcJudgments()) {
+        for (final Judgment judgmentObj : getLegalcase().getEglcJudgments()) {
             if (!DateUtils.compareDates(getDisposalDate(), judgmentObj.getOrderDate()))
                 errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.judgementDate"));
             for (final Judgmentimpl judgementImpl : judgmentObj.getEglcJudgmentimpls())

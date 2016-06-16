@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -53,7 +52,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -84,33 +82,31 @@ public class Contempt extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "JUDGMENTIMPL")
-    private Judgmentimpl judgmentimpl1;
+    private Judgmentimpl judgmentimpl;
     @Required(message = "canumber.null")
     @Length(max = 50, message = "canumber.length")
     @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "canumber.alpha")
-    private String canumber;
+    private String caNumber;
     @Required(message = "receivingdate.null")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.contempt.date")
     private Date receivingdate;
     private boolean iscommapprRequired = false;
     private Date commappDate;
 
-  
-
-    public Judgmentimpl getJudgmentimpl1() {
-        return judgmentimpl1;
+    public Judgmentimpl getJudgmentimpl() {
+        return judgmentimpl;
     }
 
-    public void setJudgmentimpl1(Judgmentimpl judgmentimpl1) {
-        this.judgmentimpl1 = judgmentimpl1;
+    public void setJudgmentimpl(final Judgmentimpl judgmentimpl) {
+        this.judgmentimpl = judgmentimpl;
     }
 
     public String getCanumber() {
-        return canumber;
+        return caNumber;
     }
 
     public void setCanumber(final String canumber) {
-        this.canumber = canumber;
+        caNumber = canumber;
     }
 
     public Date getReceivingdate() {
@@ -150,7 +146,7 @@ public class Contempt extends AbstractAuditable {
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
         if (getReceivingdate() != null) {
-            if (!DateUtils.compareDates(getReceivingdate(), getJudgmentimpl1().getEglcJudgment().getOrderDate()))
+            if (!DateUtils.compareDates(getReceivingdate(), getJudgmentimpl().getJudgment().getOrderDate()))
                 errors.add(new ValidationError("receivingDate", "receivingDate.less.orderDate"));
             if (!DateUtils.compareDates(getCommappDate(), getReceivingdate()))
                 errors.add(new ValidationError("receivingDate", "commappDate.greaterThan.receivingDate"));

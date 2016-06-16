@@ -7,7 +7,7 @@
 <hibernate-mapping>
 
     <query name="getProcessRegisterByLegalCaseId">
-    <![CDATA[select pr from ProcessRegister pr where pr.eglcLegalcase.id=? order by pr.id asc]]></query>
+    <![CDATA[select pr from ProcessRegister pr where legalcase.id=? order by pr.id asc]]></query>
     
     <query name="getProcessRegisterById">
     <![CDATA[from ProcessRegister pr where pr.id=?]]></query>

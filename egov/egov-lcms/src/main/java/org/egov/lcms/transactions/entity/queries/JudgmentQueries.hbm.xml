@@ -7,25 +7,25 @@
 <hibernate-mapping>
 
  <query name="getJudgmentByLcnumber">
-    <![CDATA[select jd from Judgment jd,Legalcase lc where lc.id=jd.eglcLegalcase and lc.lcnumber=? order by jd.id desc]]></query>
+    <![CDATA[select jd from Judgment jd,Legalcase lc where lc.id=jd.legalcase and lc.lcNumber=? order by jd.id desc]]></query>
  <query name="getJudgmentByLcnumberNotByJudgmentId">
-    <![CDATA[select jd from Judgment jd,Legalcase lc where lc.id=jd.eglcLegalcase and lc.lcnumber=? and jd.id!=? order by jd.id desc]]></query>
+    <![CDATA[select jd from Judgment jd,Legalcase lc where lc.id=jd.legalcase and lc.lcNumber=? and jd.id!=? order by jd.id desc]]></query>
  <query name="getJudgmentByType">
-    <![CDATA[from Judgment j where j.eglcLegalcase.id=? and j.judgmentType.judgmentType=? and j.sapAccepted=? ORDER BY orderDate desc]]></query>
+    <![CDATA[from Judgment j where j.legalcase.id=? and j.judgmentType.judgmentType=? and j.sapAccepted=? ORDER BY orderDate desc]]></query>
 <query name="getJudgmentByTypeandId">
-    <![CDATA[from Judgment j where j.eglcLegalcase.id=? and j.judgmentType.judgmentType=? and j.id!=? and j.sapAccepted=? ORDER BY orderDate desc]]></query>
+    <![CDATA[from Judgment j where j.legalcase.id=? and j.judgmentType.judgmentType=? and j.id!=? and j.sapAccepted=? ORDER BY orderDate desc]]></query>
  <query name="getJudgmentForGreaterOrderDates">
-    <![CDATA[from Judgment j where j.eglcLegalcase.id=? and j.orderDate>=?]]></query>
+    <![CDATA[from Judgment j where j.legalcase.id=? and j.orderDate>=?]]></query>
  <query name="getAllJudgmentsById">
-    <![CDATA[from Judgment j where j.eglcLegalcase.id=? and j.id!=? ORDER BY orderDate desc]]></query>
+    <![CDATA[from Judgment j where j.legalcase.id=? and j.id!=? ORDER BY orderDate desc]]></query>
   <query name="getJudgmentsByOrderDate">
-    <![CDATA[from Judgment j where j.eglcLegalcase.id=? and j.id!=? and j.orderDate=?]]></query>
+    <![CDATA[from Judgment j where j.legalcase.id=? and j.id!=? and j.orderDate=?]]></query>
    <query name="getJudgmentOrderByTypeandOrderNumber">
     <![CDATA[from JudgmentType order by orderNumber,judgmentType]]></query>
  <query name="getLegalcaseForJudgmentId">
-    <![CDATA[select j.eglcLegalcase from Judgment j where j.id=?]]></query>
+    <![CDATA[select j.legalcase from Judgment j where j.id=?]]></query>
  <query name="getJudgmentForLegalcaseId">
-    <![CDATA[from Judgment jd where jd.eglcLegalcase.id=?]]></query>
+    <![CDATA[from Judgment jd where jd.legalcase.id=?]]></query>
  <query name="getJudgmentForParentId">
     <![CDATA[from Judgment j where j.parent.id=? order by j.id]]></query>
  

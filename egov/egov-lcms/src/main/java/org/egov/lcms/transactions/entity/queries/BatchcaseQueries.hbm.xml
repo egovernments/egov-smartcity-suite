@@ -10,10 +10,10 @@
 </query>
 
  <query name="getBatchCaseByLegalcaseId">
-    <![CDATA[ from Batchcase bc where bc.eglcLegalcase.id=? order by bc.id asc]]>
+    <![CDATA[ from Batchcase bc where bc.legalcase.id=? order by bc.id asc]]>
  </query>
  
   <query name="getBatchCaseByLCNumber">
-    <![CDATA[ from Batchcase bc where bc.eglcLegalcase.lcnumber=? order by bc.id asc]]>
+    <![CDATA[ from Batchcase bc where bc.legalcase.lcNumber=? order by bc.id asc]]>
  </query>
 </hibernate-mapping>

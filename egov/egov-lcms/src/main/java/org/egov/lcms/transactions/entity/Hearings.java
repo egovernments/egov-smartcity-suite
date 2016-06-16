@@ -90,14 +90,17 @@ public class Hearings extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     private boolean isStandingcounselpresent;
     @Length(max = 128, message = "hearing.additionalLawyer.length")
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
     private String additionalLawyers;
-    /*@OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PersonalInformation> eglcEmployeehearings = new HashSet<PersonalInformation>(0);*
-    need to check */
+    /*
+     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL, orphanRemoval = true) private Set<PersonalInformation>
+     * eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to
+     * check
+     */
     @Length(max = 1024, message = "hearing.outcome.length")
     private String hearingOutcome;
     private boolean isSeniorStandingcounselpresent;
@@ -107,14 +110,15 @@ public class Hearings extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "STATUS", nullable = false)
-    private EgwStatus egwStatus;
+    private EgwStatus status;
     @Length(max = 50, message = "ti.referencenumber.length")
     @OptionalPattern(regex = LcmsConstants.referenceNumberTIRegx, message = "ti.referencenumber.alphanumeric")
     private String referenceNumber;
 
-    /*public void addEmployee(final PersonalInformation empObj) {
-        eglcEmployeehearings.add(empObj);
-    }*/
+    /*
+     * public void addEmployee(final PersonalInformation empObj) {
+     * eglcEmployeehearings.add(empObj); }
+     */
 
     public Date getHearingDate() {
         return hearingDate;
@@ -124,13 +128,12 @@ public class Hearings extends AbstractAuditable {
         this.hearingDate = hearingDate;
     }
 
-
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase eglcLegalcase) {
+        legalcase = eglcLegalcase;
     }
 
     public String getAdditionalLawyers() {
@@ -149,13 +152,12 @@ public class Hearings extends AbstractAuditable {
         this.isStandingcounselpresent = isStandingcounselpresent;
     }
 
-    /*public Set<PersonalInformation> getEglcEmployeehearings() {
-        return eglcEmployeehearings;
-    }
-
-    public void setEglcEmployeehearings(final Set<PersonalInformation> eglcEmployeehearings) {
-        this.eglcEmployeehearings = eglcEmployeehearings;
-    }*/
+    /*
+     * public Set<PersonalInformation> getEglcEmployeehearings() { return
+     * eglcEmployeehearings; } public void setEglcEmployeehearings(final
+     * Set<PersonalInformation> eglcEmployeehearings) {
+     * this.eglcEmployeehearings = eglcEmployeehearings; }
+     */
 
     public String getHearingOutcome() {
         return hearingOutcome;
@@ -183,7 +185,7 @@ public class Hearings extends AbstractAuditable {
 
     public Date getCaDueDate() {
         Date caDueDate = null;
-        for (final Pwr pwr : getEglcLegalcase().getEglcPwrs())
+        for (final Pwr pwr : getLegalcase().getEglcPwrs())
             caDueDate = pwr.getCaDueDate();
         return caDueDate;
     }
@@ -194,22 +196,22 @@ public class Hearings extends AbstractAuditable {
 
             if (getCaDueDate() != null && !DateUtils.compareDates(getHearingDate(), getCaDueDate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caDueDate"));
-            if (eglcLegalcase.getCaseReceivingDate() != null
-                    && !DateUtils.compareDates(getHearingDate(), eglcLegalcase.getCaseReceivingDate()))
+            if (legalcase.getCaseReceivingDate() != null
+                    && !DateUtils.compareDates(getHearingDate(), legalcase.getCaseReceivingDate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseReceivingDate"));
-            if (!DateUtils.compareDates(getHearingDate(), eglcLegalcase.getCasedate()))
+            if (!DateUtils.compareDates(getHearingDate(), legalcase.getCasedate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseDate"));
 
         }
         return errors;
     }
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
+    public EgwStatus getStatus() {
+        return status;
     }
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
+    public void setStatus(final EgwStatus egwStatus) {
+        status = egwStatus;
     }
 
     public String getReferenceNumber() {
@@ -221,7 +223,7 @@ public class Hearings extends AbstractAuditable {
     }
 
     public Boolean getReplytoTI() {
-        if (getEgwStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_HEARING_REPLYTOTI))
+        if (getStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_HEARING_REPLYTOTI))
             return Boolean.TRUE;
         else
             return Boolean.FALSE;

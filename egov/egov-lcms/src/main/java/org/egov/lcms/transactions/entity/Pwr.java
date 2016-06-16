@@ -82,7 +82,7 @@ public class Pwr extends AbstractAuditable {
     @Valid
     @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     private String uploadPwr;
     @DateFormat(message = "invalid.fieldvalue.caFilingdate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
@@ -93,12 +93,12 @@ public class Pwr extends AbstractAuditable {
     @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
     private Date pwrDueDate;
 
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(final Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase legalcase) {
+        this.legalcase = legalcase;
     }
 
     public String getUploadPwr() {
@@ -145,11 +145,11 @@ public class Pwr extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!DateUtils.compareDates(getCaDueDate(), eglcLegalcase.getCasedate()))
+        if (!DateUtils.compareDates(getCaDueDate(), legalcase.getCasedate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.less.casedate"));
-        if (!DateUtils.compareDates(getCaFilingdate(), eglcLegalcase.getCasedate()))
+        if (!DateUtils.compareDates(getCaFilingdate(), legalcase.getCasedate()))
             errors.add(new ValidationError("caFilingDate", "caFilingDate.less.casedate"));
-        if (!DateUtils.compareDates(getPwrDueDate(), eglcLegalcase.getCasedate()))
+        if (!DateUtils.compareDates(getPwrDueDate(), legalcase.getCasedate()))
             errors.add(new ValidationError("pwrDueDate", "pwrDueDate.less.casedate"));
         if (!DateUtils.compareDates(getCaDueDate(), getPwrDueDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.greaterThan.pwrDueDate"));

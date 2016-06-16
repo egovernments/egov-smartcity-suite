@@ -7,6 +7,6 @@
 <hibernate-mapping>
 
  <query name="getCasedisposalByLcnumber">
-    <![CDATA[select lcd from LegalcaseDisposal lcd,Legalcase lc where lc.id=lcd.eglcLegalcase and lc.lcnumber=?]]></query>
+    <![CDATA[select lcd from LegalcaseDisposal lcd,Legalcase lc where lc.id=lcd.legalcase and lc.lcNumber=?]]></query>
 
 </hibernate-mapping>

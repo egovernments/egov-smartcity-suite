@@ -77,7 +77,7 @@ public class Batchcase extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     @DateFormat(message = "invalid.fieldvalue.model.batchCaseDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.batchcase.date")
     private Date batchCaseDate;
@@ -97,14 +97,12 @@ public class Batchcase extends AbstractAuditable {
         this.id = id;
     }
 
-    
-
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase legalcase) {
+        this.legalcase = legalcase;
     }
 
     public Date getBatchCaseDate() {

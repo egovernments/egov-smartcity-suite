@@ -7,9 +7,9 @@
 <hibernate-mapping>
 
 <query name="getJudgmentImplByLcnumber">
-    <![CDATA[select jimpl from Judgmentimpl jimpl,Judgment jd,Legalcase lc where jimpl.eglcJudgment=jd.id and lc.id=jd.eglcLegalcase and lc.lcnumber=?]]></query>
+    <![CDATA[select jimpl from Judgmentimpl jimpl,Judgment jd,Legalcase lc where jimpl.judgment=jd.id and lc.id=jd.legalcase and lc.lcNumber=?]]></query>
 <query name="getJudgmentImplByJudgmentId">
-    <![CDATA[from Judgmentimpl jimpl where jimpl.eglcJudgment.id=? ]]></query>
+    <![CDATA[from Judgmentimpl jimpl where jimpl.judgment.id=? ]]></query>
 <query name="getContemptById">
     <![CDATA[select c from Contempt c where c.id=?]]></query>
 <query name="getAppealById">

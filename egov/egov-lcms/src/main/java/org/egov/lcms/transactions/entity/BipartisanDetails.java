@@ -81,7 +81,7 @@ public class BipartisanDetails extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "legalcase")
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     @Length(max = 128, message = "petitionerName.length")
     @OptionalPattern(regex = LcmsConstants.mixedCharType1, message = "petitionerName.name.mixedChar")
     private String name;
@@ -122,12 +122,12 @@ public class BipartisanDetails extends AbstractAuditable {
         this.isrepondent = isrepondent;
     }
 
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(final Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase legalcase) {
+        this.legalcase = legalcase;
     }
 
     public String getName() {

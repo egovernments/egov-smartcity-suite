@@ -50,9 +50,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
@@ -90,13 +93,28 @@ public class Legalcase extends AbstractAuditable {
     @DateFormat(message = "invalid.fieldvalue.model.nextDate")
     private Date nextDate;
     @Required(message = "case.sectionNumber.null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "FUNCTIONARY", nullable = false)
     private Functionary functionary;
     @Required(message = "case.casetype.null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "CASETYPE", nullable = false)
     private CasetypeMaster casetypeMaster;
     @Required(message = "case.court.null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "COURT", nullable = false)
     private CourtMaster courtMaster;
-    private EgwStatus egwStatus;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "STATUS", nullable = false)
+    private EgwStatus status;
     @Required(message = "case.petitiontype.null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "PETITIONTYPE", nullable = false)
     private PetitiontypeMaster petitiontypeMaster;
     @Required(message = "case.number.null")
     @Length(max = 50, message = "casenumber.length")
@@ -105,12 +123,12 @@ public class Legalcase extends AbstractAuditable {
     @Required(message = "case.casedate.null")
     @DateFormat(message = "invalid.fieldvalue.model.casedate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.case.date")
-    private Date casedate;
+    private Date caseDate;
     @Required(message = "case.title.null")
     @Length(max = 1024, message = "casetitle.length")
-    private String casetitle;
+    private String caseTitle;
     @Length(max = 50, message = "appealnum.length")
-    private String appealnum;
+    private String appealNum;
     @Length(max = 1024, message = "remarks.length")
     private String remarks;
     @DateFormat(message = "invalid.fieldvalue.model.caseReceivingDate")
@@ -119,33 +137,38 @@ public class Legalcase extends AbstractAuditable {
     private boolean isfiledbycorporation;
     @OptionalPattern(regex = LcmsConstants.alphaNumericwithSlashes, message = "case.lcnumber.invalid")
     @Length(max = 50, message = "lcnumber.length")
-    private String lcnumber;
+    private String lcNumber;
     @Required(message = "case.prayer.null")
     @Length(max = 1024, message = "prayer.length")
     private String prayer;
     private boolean isSenioradvrequired;
     private Long assigntoIdboundary;
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Judgment> eglcJudgments = new ArrayList<Judgment>(0);
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pwr> eglcPwrs = new ArrayList<Pwr>(0);
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lcinterimorder> eglcLcinterimorders = new ArrayList<Lcinterimorder>(0);
-    /*@OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Contempt> eglcContempts = new ArrayList<Contempt>(0);
-*/
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    /*
+     * @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL, orphanRemoval = true) private List<Contempt>
+     * eglcContempts = new ArrayList<Contempt>(0);
+     */
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalcaseAdvocate>(0);
 
-    /*@OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appeal> eglcAppeals = new ArrayList<Appeal>(0);*/
+    /*
+     * @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL, orphanRemoval = true) private List<Appeal> eglcAppeals =
+     * new ArrayList<Appeal>(0);
+     */
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Hearings> hearings = new ArrayList<Hearings>(0);
 
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "oppPartyAdvocate.alphanumeric")
@@ -155,26 +178,26 @@ public class Legalcase extends AbstractAuditable {
     @Length(max = 256, message = "representedby.length")
     private String representedby;
     private String lcNumberType;
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseDisposal> legalcaseDisposal = new ArrayList<LegalcaseDisposal>(0);
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseDepartment> legalcaseDepartment = new ArrayList<LegalcaseDepartment>(0);
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Batchcase> batchCaseSet = new ArrayList<Batchcase>(0);
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaperBook> paperBookSet = new ArrayList<PaperBook>(0);
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProcessRegister> processRegisterSet = new ArrayList<ProcessRegister>(0);
 
     private Long documentNum;
     @DateFormat(message = "invalid.fieldvalue.model.firstAppearenceDate")
     private Date firstAppearanceDate;
 
-    @OneToMany(mappedBy = "eglcLegalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseMiscDetails> legalcaseMiscDetails = new ArrayList<LegalcaseMiscDetails>(0);
 
     @DateFormat(message = "invalid.fieldvalue.model.previousDate")
@@ -421,12 +444,12 @@ public class Legalcase extends AbstractAuditable {
         this.courtMaster = courtMaster;
     }
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
+    public EgwStatus getStatus() {
+        return status;
     }
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
+    public void setStatus(final EgwStatus status) {
+        this.status = status;
     }
 
     public PetitiontypeMaster getPetitiontypeMaster() {
@@ -446,27 +469,27 @@ public class Legalcase extends AbstractAuditable {
     }
 
     public Date getCasedate() {
-        return casedate;
+        return caseDate;
     }
 
     public void setCasedate(final Date casedate) {
-        this.casedate = casedate;
+        caseDate = casedate;
     }
 
     public String getCasetitle() {
-        return casetitle;
+        return caseTitle;
     }
 
     public void setCasetitle(final String casetitle) {
-        this.casetitle = casetitle;
+        caseTitle = casetitle;
     }
 
     public String getAppealnum() {
-        return appealnum;
+        return appealNum;
     }
 
     public void setAppealnum(final String appealnum) {
-        this.appealnum = appealnum;
+        appealNum = appealnum;
     }
 
     public String getRemarks() {
@@ -494,11 +517,11 @@ public class Legalcase extends AbstractAuditable {
     }
 
     public String getLcnumber() {
-        return lcnumber;
+        return lcNumber;
     }
 
     public void setLcnumber(final String lcnumber) {
-        this.lcnumber = lcnumber;
+        lcNumber = lcnumber;
     }
 
     public String getPrayer() {
@@ -533,13 +556,11 @@ public class Legalcase extends AbstractAuditable {
         this.eglcLcinterimorders = eglcLcinterimorders;
     }
 
-    /*public List<Contempt> getEglcContempts() {
-        return eglcContempts;
-    }
-
-    public void setEglcContempts(final List<Contempt> eglcContempts) {
-        this.eglcContempts = eglcContempts;
-    }*/
+    /*
+     * public List<Contempt> getEglcContempts() { return eglcContempts; } public
+     * void setEglcContempts(final List<Contempt> eglcContempts) {
+     * this.eglcContempts = eglcContempts; }
+     */
 
     public List<BipartisanDetails> getBipartisanDetails() {
         return bipartisanDetails;
@@ -557,13 +578,11 @@ public class Legalcase extends AbstractAuditable {
         this.eglcLegalcaseAdvocates = eglcLegalcaseAdvocates;
     }
 
-/*    public List<Appeal> getEglcAppeals() {
-        return eglcAppeals;
-    }
-
-    public void setEglcAppeals(final List<Appeal> eglcAppeals) {
-        this.eglcAppeals = eglcAppeals;
-    }*/
+    /*
+     * public List<Appeal> getEglcAppeals() { return eglcAppeals; } public void
+     * setEglcAppeals(final List<Appeal> eglcAppeals) { this.eglcAppeals =
+     * eglcAppeals; }
+     */
 
     public List<Hearings> getHearings() {
         return hearings;

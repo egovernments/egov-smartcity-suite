@@ -113,10 +113,10 @@ public class Reminder extends AbstractAuditable {
                 && !getDate().before(legalCaseDepartment.getReceiptOfPwr()))
             errors.add(new ValidationError("date", "date.less.receiptOfPwr", getFormattedDate(),
                     sdf.format(legalCaseDepartment.getReceiptOfPwr())));
-        else if (legalCaseDepartment != null && legalCaseDepartment.getEglcLegalcase().getCasedate() != null
-                && !getDate().after(legalCaseDepartment.getEglcLegalcase().getCasedate()))
+        else if (legalCaseDepartment != null && legalCaseDepartment.getLegalcase().getCasedate() != null
+                && !getDate().after(legalCaseDepartment.getLegalcase().getCasedate()))
             errors.add(new ValidationError("date", "date.greater.casedate", getFormattedDate(),
-                    sdf.format(legalCaseDepartment.getEglcLegalcase().getCasedate())));
+                    sdf.format(legalCaseDepartment.getLegalcase().getCasedate())));
 
         return errors;
     }

@@ -69,7 +69,7 @@ public class ProcessRegister extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     private String detailedAddress;
     private Date processDate;
     private Date nextDateOfProcess;
@@ -80,14 +80,12 @@ public class ProcessRegister extends AbstractAuditable {
     private String remarks;
     private boolean isProcessRegReqd;
 
-   
-
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase legalcase) {
+        this.legalcase = legalcase;
     }
 
     public String getDetailedAddress() {

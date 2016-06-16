@@ -80,7 +80,7 @@ public class LegalcaseDepartment extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase eglcLegalcase;
+    private Legalcase legalcase;
     @DateFormat(message = "invalid.fieldvalue.dateOfReceipt")
     private Date receiptOfPwr;
     @ManyToOne
@@ -118,17 +118,15 @@ public class LegalcaseDepartment extends AbstractAuditable {
         this.receiptOfPwr = receiptOfPwr;
     }
 
-   
-
-    public Legalcase getEglcLegalcase() {
-        return eglcLegalcase;
+    public Legalcase getLegalcase() {
+        return legalcase;
     }
 
-    public void setEglcLegalcase(Legalcase eglcLegalcase) {
-        this.eglcLegalcase = eglcLegalcase;
+    public void setLegalcase(final Legalcase eglcLegalcase) {
+        legalcase = eglcLegalcase;
     }
 
-    public void setPrimaryDepartment(boolean isPrimaryDepartment) {
+    public void setPrimaryDepartment(final boolean isPrimaryDepartment) {
         this.isPrimaryDepartment = isPrimaryDepartment;
     }
 
@@ -152,9 +150,9 @@ public class LegalcaseDepartment extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (eglcLegalcase != null && !DateUtils.compareDates(getReceiptOfPwr(), eglcLegalcase.getCasedate()))
+        if (getLegalcase() != null && !DateUtils.compareDates(getReceiptOfPwr(), legalcase.getCasedate()))
             errors.add(new ValidationError("dateOfReceipt", "dateOfReceipt.less.casedate"));
-        if (eglcLegalcase != null && !DateUtils.compareDates(getAssignOn(), eglcLegalcase.getCasedate()))
+        if (legalcase != null && !DateUtils.compareDates(getAssignOn(), legalcase.getCasedate()))
             errors.add(new ValidationError("assignOnDate", "assignOn.less.casedate"));
 
         return errors;

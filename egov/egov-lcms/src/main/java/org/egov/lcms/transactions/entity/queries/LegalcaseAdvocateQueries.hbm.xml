@@ -7,13 +7,13 @@
 <hibernate-mapping>
 
  <query name="getLegalcaseAdvocateByLegalCaseId">
-    <![CDATA[from LegalcaseAdvocate la where la.eglcLegalcase.id=?]]></query>
+    <![CDATA[from LegalcaseAdvocate la where la.legalcase.id=?]]></query>
  
  <query name="getUniqueOrderNumber">
-    <![CDATA[from LegalcaseAdvocate la where la.eglcLegalcase.id!=? and la.ordernumber=?]]></query>
+    <![CDATA[from LegalcaseAdvocate la where la.legalcase.id!=? and la.ordernumber=?]]></query>
  
   <query name="getUniqueJuniorOrderNumber">
-    <![CDATA[from LegalcaseAdvocate la where la.eglcLegalcase.id!=? and la.ordernumberJunior=?]]></query>
+    <![CDATA[from LegalcaseAdvocate la where la.legalcase.id!=? and la.ordernumberJunior=?]]></query>
  
  <query name="getLegalcaseAdvocateByOrderNumber">
     <![CDATA[from LegalcaseAdvocate la where la.ordernumber=?]]></query>
@@ -25,10 +25,10 @@
     <![CDATA[from LegalcaseAdvocate la where la.id=?]]></query>
   
    <query name="getActiveLegalcaseAdvocateByLegalCaseId">
-    <![CDATA[from LegalcaseAdvocate la where la.isActive=1 and la.eglcLegalcase.id=?]]></query>  
+    <![CDATA[from LegalcaseAdvocate la where la.isActive=1 and la.legalcase.id=?]]></query>  
     
    <query name="getInActiveLegalcaseAdvocateByLcNumber">
-    <![CDATA[from LegalcaseAdvocate la where la.isActive=0 and la.eglcLegalcase.lcnumber=? order by id desc]]></query>   
+    <![CDATA[from LegalcaseAdvocate la where la.isActive=0 and la.legalcase.lcNumber=? order by id desc]]></query>   
    
 
 </hibernate-mapping>
