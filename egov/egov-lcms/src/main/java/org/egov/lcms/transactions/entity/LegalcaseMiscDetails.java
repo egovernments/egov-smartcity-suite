@@ -85,7 +85,7 @@ public class LegalcaseMiscDetails extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "STATUS", nullable = false)
-    private EgwStatus egwStatus;
+    private EgwStatus status;
 
     public Legalcase getLegalcase() {
         return legalcase;
@@ -111,12 +111,12 @@ public class LegalcaseMiscDetails extends AbstractAuditable {
         this.remarks = remarks;
     }
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
+    public EgwStatus getStatus() {
+        return status;
     }
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
+    public void setStatus(final EgwStatus status) {
+        this.status = status;
     }
 
     public String getReferenceNumber() {

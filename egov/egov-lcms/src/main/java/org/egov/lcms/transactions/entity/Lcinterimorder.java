@@ -123,7 +123,7 @@ public class Lcinterimorder extends AbstractAuditable {
     @Valid
     @NotNull
     @JoinColumn(name = "STATUS", nullable = false)
-    private EgwStatus egwStatus;
+    private EgwStatus status;
     @Length(max = 50, message = "ti.referencenumber.length")
     @OptionalPattern(regex = LcmsConstants.referenceNumberTIRegx, message = "ti.referencenumber.alphanumeric")
     private String referenceNumber;
@@ -261,8 +261,8 @@ public class Lcinterimorder extends AbstractAuditable {
         return errors;
     }
 
-    public EgwStatus getEgwStatus() {
-        return egwStatus;
+    public EgwStatus getStatus() {
+        return status;
     }
 
     @Override
@@ -275,8 +275,8 @@ public class Lcinterimorder extends AbstractAuditable {
         this.id = id;
     }
 
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
+    public void setStatus(final EgwStatus status) {
+        this.status = status;
     }
 
     public String getReferenceNumber() {
@@ -288,7 +288,7 @@ public class Lcinterimorder extends AbstractAuditable {
     }
 
     public Boolean getReplytoTI() {
-        if (getEgwStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_ORDER_REPLYTOTI))
+        if (getStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_ORDER_REPLYTOTI))
             return Boolean.TRUE;
         else
             return Boolean.FALSE;
