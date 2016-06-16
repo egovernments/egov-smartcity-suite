@@ -75,8 +75,8 @@
 						<form:hidden path="assetValues[${item.index}].asset.id" name="assetValues[${item.index}].asset.id" value="${assetValues.asset.id}" class="form-control table-input hidden-input" />
 						<td><span id="sno" class="spansno" data-sno><c:out value="${item.index + 1}"/></span> 
 					    <td><button type="button" class="btn btn-xs btn-secondary searchAssetbtn" data-idx="0" data-optional="0"><span class="glyphicon glyphicon-search"></span> Search</button></td>
-					     <td><span id="assetcode[${item.index}]"><c:out value="${assetValues.asset.code}"/></span><input type="hidden" id="assetValues[${item.index}].asset.code" name="assetValues[${item.index}].asset.code" value="${assetValues.asset.code}" data-idx="0" data-optional="0" data-errormsg="Select asset details!"/></td>
-						<td><span id="assetname[${item.index}]"><c:out value="${assetValues.asset.name}"/></span><input type="hidden" id="assetValues[${item.index}].asset.name" name="assetValues[${item.index}].asset.name" value="${assetValues.asset.name}" data-idx="0" /></td>
+					     <td><span class="assetdetail" id="assetcode[${item.index}]"><c:out value="${assetValues.asset.code}"/></span><input type="hidden" id="assetValues[${item.index}].asset.code" name="assetValues[${item.index}].asset.code" value="${assetValues.asset.code}" data-idx="0" data-optional="0" data-errormsg="Select asset details!"/></td>
+						<td><span class="assetdetail" id="assetname[${item.index}]"><c:out value="${assetValues.asset.name}"/></span><input type="hidden" id="assetValues[${item.index}].asset.name" name="assetValues[${item.index}].asset.name" value="${assetValues.asset.name}" data-idx="0" /></td>
 						<td><div class="text-left"><button type="button" onclick="deleteRow('tblassetdetails',this);" class="btn btn-xs btn-danger delete-row" data-idx="0" data-optional="0"><span class="glyphicon glyphicon-trash"></span> Delete</button></div>
 					</tr>
 					</c:forEach>

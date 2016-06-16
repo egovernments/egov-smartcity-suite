@@ -791,23 +791,6 @@ public class EstimateService {
             errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
     }
 
-    public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,
-            final AbstractEstimate abstractEstimate) {
-        final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
-        abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
-        abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
-        abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
-        if (lineEstimate.getLocation() != null)
-            abstractEstimate.setLocation(lineEstimate.getLocation().getName());
-        abstractEstimate.setNatureOfWork(lineEstimate.getNatureOfWork());
-        abstractEstimate.setParentCategory(lineEstimate.getTypeOfWork());
-        abstractEstimate.setCategory(lineEstimate.getSubTypeOfWork());
-        abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
-        abstractEstimate.addMultiYearEstimate(populateMultiYearEstimate(abstractEstimate));
-        abstractEstimate.addFinancialDetails(populateEstimateFinancialDetails(abstractEstimate));
-        loadModelValues(lineEstimateDetails, model, abstractEstimate);
-    }
-    
     public void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
         CFinancialYear cFinancialYear = null;
         Double totalPercentage = 0d;

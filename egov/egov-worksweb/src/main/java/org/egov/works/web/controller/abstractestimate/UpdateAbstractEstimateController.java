@@ -196,7 +196,6 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final AbstractEstimate abstractEstimate, final LineEstimateDetails lineEstimateDetails) {
-        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
         estimateService.setDropDownValues(model);
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
         if (abstractEstimate.getCurrentState() != null

@@ -1659,6 +1659,10 @@ function addRow(tableName,rowName) {
 				jQuery(this).text(sno);
 				sno++;
 			}
+			if(classval == 'assetdetail') {
+				 $(this).html('');
+			     $(this).val(''); 
+			}
 			jQuery(this).attr(
 					{
 						'name' : function(_, name) {

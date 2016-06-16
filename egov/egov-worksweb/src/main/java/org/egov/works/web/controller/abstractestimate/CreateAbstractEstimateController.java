@@ -69,7 +69,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     }
 
     private void loadViewData(Model model, AbstractEstimate abstractEstimate,LineEstimateDetails lineEstimateDetails) {
-        estimateService.populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
         estimateService.setDropDownValues(model);
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
@@ -112,6 +111,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             loadViewData(model, abstractEstimate, abstractEstimate.getLineEstimateDetails());
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+            model.addAttribute("mode", "edit");
             return "newAbstractEstimate-form";
         } else {
             if (abstractEstimate.getState() == null) {
@@ -208,6 +208,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         return message;
     }
 
+    /**
+     * Method called to populate data from lineestimatedetails to create abstract estimate
+     * @param lineEstimateDetails
+     * @param model
+     * @param abstractEstimate
+     */
     public void populateDataForAbstractEstimate(final LineEstimateDetails lineEstimateDetails, final Model model,
             final AbstractEstimate abstractEstimate) {
         final LineEstimate lineEstimate = lineEstimateDetails.getLineEstimate();
