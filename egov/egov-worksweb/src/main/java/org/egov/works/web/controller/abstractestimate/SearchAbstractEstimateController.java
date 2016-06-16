@@ -42,8 +42,10 @@ package org.egov.works.web.controller.abstractestimate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -82,6 +84,9 @@ public class SearchAbstractEstimateController {
 
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     private WorksUtils worksUtils;
@@ -100,6 +105,13 @@ public class SearchAbstractEstimateController {
         final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(Long.valueOf(id));
 
         getEstimateDocuments(abstractEstimate);
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isServiceVATRequired", true);
+        else
+            model.addAttribute("isServiceVATRequired", false);
         model.addAttribute("mode", "view");
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());

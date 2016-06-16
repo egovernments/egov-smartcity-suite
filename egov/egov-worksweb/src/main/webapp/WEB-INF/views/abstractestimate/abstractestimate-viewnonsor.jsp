@@ -59,6 +59,10 @@
 					<th><spring:message code="lbl.rate" /></th>
 					<th><spring:message code="lbl.estimatedquantity" /></th>
 					<th><spring:message code="lbl.estimatedamount" /></th>
+					<c:if test="${isServiceVATRequired == true }">
+						<th><spring:message code="lbl.service.vat" /></th>
+						<th><spring:message code="lbl.service.vat.amount" /></th>
+					</c:if>
 				</tr>
 			</thead>
 			<tbody>
@@ -72,6 +76,10 @@
 								 	<td class="text-right"><c:out value="${nonSorDtls.rate}"></c:out></td>
 								 	<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out></td>
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
+								 	<c:if test="${isServiceVATRequired == true }">
+										<td class="text-right"><c:out value="${nonSorDtls.serviceTaxPerc}"></c:out></td>
+										<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(nonSorDtls.getAmount().value) * (nonSorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
+									</c:if>
 								</tr>
 						</c:forEach>
 					</c:when>
@@ -87,8 +95,12 @@
 					</c:forEach>
 				</c:if>
 				<tr>
-					<td colspan="5" class="text-right"><spring:message
-							code="lbl.total" /></td>
+				<c:if test="${isServiceVATRequired == true }">
+					<td colspan="7" class="text-right"><spring:message code="lbl.total" /></td>
+				</c:if>
+				<c:if test="${isServiceVATRequired == false }">
+					<td colspan="5" class="text-right"><spring:message code="lbl.total" /></td>
+				</c:if>
 					<td class="text-right">
 						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonsortotal}" /></fmt:formatNumber></span>
 					</td>
