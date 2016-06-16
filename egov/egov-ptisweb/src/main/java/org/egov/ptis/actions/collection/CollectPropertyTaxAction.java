@@ -77,6 +77,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_COLLECTION_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 
 @Namespace("/collection")
 @ResultPath("/WEB-INF/jsp/")
@@ -173,6 +174,9 @@ public class CollectPropertyTaxAction extends BaseFormAction {
             isAssessmentNoValid = Boolean.TRUE;
             setErrorMsg(getText("msg.collection.fully.paid", args));
             return RESULT_ERROR;
+        }
+        if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode())) {
+            propertyTaxBillable.setVacantLandTaxPayment(Boolean.TRUE);
         }
         propertyTaxBillable.setLevyPenalty(true);
         propertyTaxBillable.setBasicProperty(basicProperty);

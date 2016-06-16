@@ -114,6 +114,11 @@
 		<property name="ptBillServiceImpl" ref="ptBillServiceImpl"/>
     </bean>
     
+    <bean id="VLTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
+		<property name="persistenceService" ref="persistenceService"/>
+		<property name="ptBillServiceImpl" ref="ptBillServiceImpl"/>
+    </bean>
+    
 	<bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype"/>
 
     <bean id="receiptHeaderPersistenceService" parent="persistenceService">
