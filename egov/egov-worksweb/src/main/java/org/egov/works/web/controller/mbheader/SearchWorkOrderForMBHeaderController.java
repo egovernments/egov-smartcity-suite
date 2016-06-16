@@ -37,26 +37,34 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.workorder.repository;
+package org.egov.works.web.controller.mbheader;
 
-import java.util.List;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.service.ContractorService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.egov.works.workorder.entity.WorkOrderEstimate;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+@Controller
+@RequestMapping(value = "/workorder/searchform")
+public class SearchWorkOrderForMBHeaderController {
 
-@Repository
-public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEstimate, Long> {
+    @Autowired
+    private LineEstimateService lineEstimateService;
 
-    WorkOrderEstimate findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(final Long workOrderId, final Long estimateId,
-            final String status);
-    
-    WorkOrderEstimate findByEstimate_IdAndWorkOrder_EgwStatus_Code(final Long estimateId,final String status);
-    
-    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and not exists (select workOrder from MBHeader mbh where mbh.workOrder.id = woe.workOrder.id) or exists (select workOrder from MBHeader mbh where mbh.egwStatus.code in (:MBStatus1,:MBStatus2) and mbh.workOrder.id = woe.workOrder.id) and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where woe.workOrder.id = cbr.workOrder.id and cbr.billtype = :billtype)")
-    List<String> findWorkOrderNumbersToCreateMB(@Param("workOrderNumber") String workOrderNumber,@Param("MBStatus1") String MBStatus1,@Param("MBStatus2") String MBStatus2,  @Param("billtype") String billtype);
-    
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String showSearchWorkOrder(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model) {
+        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
+        model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        return "workorder-search";
+    }
 
 }

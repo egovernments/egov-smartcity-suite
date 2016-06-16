@@ -101,7 +101,7 @@ public class MBHeader extends StateAware {
     private static final long serialVersionUID = 121631467636260459L;
 
     public enum MeasurementBookStatus {
-        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
+        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED, WORK_COMMENCED
     }
 
     public enum Actions {

@@ -39,8 +39,8 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
@@ -53,6 +53,7 @@ import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
@@ -64,8 +65,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -90,6 +91,9 @@ public class AjaxLetterOfAcceptanceController {
     
     @Autowired
     private ResourceBundleMessageSource messageSource;
+    
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;  
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
@@ -266,4 +270,9 @@ public class AjaxLetterOfAcceptanceController {
         
         return message;
     }
+    
+    @RequestMapping(value = "/ajaxworkorder-mbheader", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWorkOrderForMBHeader(@RequestParam final String workOrderNo) {
+        return workOrderEstimateService.findWorkOrderForMBHeader(workOrderNo);
+    } 
 }

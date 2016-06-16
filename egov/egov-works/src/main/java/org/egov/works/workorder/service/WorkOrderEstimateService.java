@@ -39,9 +39,23 @@
  */
 package org.egov.works.workorder.service;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
+import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.repository.WorkOrderEstimateRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +64,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WorkOrderEstimateService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final WorkOrderEstimateRepository workOrderEstimateRepository;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Autowired
     public WorkOrderEstimateService(final WorkOrderEstimateRepository workOrderEstimateRepository) {
@@ -58,8 +79,8 @@ public class WorkOrderEstimateService {
     }
 
     public WorkOrderEstimate getEstimateByWorkOrderAndEstimateAndStatus(final Long workOrderId, final Long estimateId) {
-        return workOrderEstimateRepository.findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(workOrderId, estimateId,
-                WorksConstants.APPROVED);
+        return workOrderEstimateRepository.findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(workOrderId,
+                estimateId, WorksConstants.APPROVED);
     }
 
     public WorkOrderEstimate getWorkOrderEstimateById(final Long id) {
@@ -67,6 +88,42 @@ public class WorkOrderEstimateService {
     }
 
     public WorkOrderEstimate getWorkOrderEstimateByAbstractEstimateId(final Long estimateId) {
-        return workOrderEstimateRepository.findByEstimate_IdAndWorkOrder_EgwStatus_Code(estimateId,WorksConstants.APPROVED);
+        return workOrderEstimateRepository.findByEstimate_IdAndWorkOrder_EgwStatus_Code(estimateId,
+                WorksConstants.APPROVED);
+    }
+
+    public List<String> findWorkOrderForMBHeader(final String workOrderNo) {
+        final List<String> workOrderNumbers = workOrderEstimateRepository.findWorkOrderNumbersToCreateMB(
+                "%" + workOrderNo + "%", MBHeader.MeasurementBookStatus.APPROVED.toString(),
+                MBHeader.MeasurementBookStatus.WORK_COMMENCED.toString(), BillTypes.Final_Bill.toString());
+        return workOrderNumbers;
+    }
+
+    public List<WorkOrderEstimate> searchWorkOrderToCreateMBHeader(
+            SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderEstimate.class, "woe")
+                .createAlias("estimate", "e").createAlias("workOrder", "wo").createAlias("workOrder.contractor", "woc")
+                .createAlias("workOrder.egwStatus", "status");
+
+        if (searchRequestLetterOfAcceptance != null) {
+            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
+                criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber())
+                        .ignoreCase());
+            if (searchRequestLetterOfAcceptance.getFromDate() != null)
+                criteria.add(Restrictions.ge("wo.workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
+            if (searchRequestLetterOfAcceptance.getToDate() != null)
+                criteria.add(Restrictions.le("wo.workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
+            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
+                criteria.add(Restrictions.eq("e.estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber())
+                        .ignoreCase());
+            if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null)
+                criteria.add(Restrictions.ge("e.projectCode.code",
+                        searchRequestLetterOfAcceptance.getWorkIdentificationNumber()));
+            if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getContractor()))
+                criteria.add(Restrictions.ge("woc.name", searchRequestLetterOfAcceptance.getContractor()));
+
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
     }
 }
