@@ -189,7 +189,7 @@
 							</td>
 							<td>
 								<span class="uom_0"></span>
-								<form:hidden path="sorActivities[0].uom.id" id="uomid_0" class="uomhiddenid"/>
+								<form:hidden path="sorActivities[0].uom.id" id="sorUomid_0" class="uomhiddenid"/>
 							</td>
 							<td align="right">
 								<span class="sorRate rate_0"></span>
