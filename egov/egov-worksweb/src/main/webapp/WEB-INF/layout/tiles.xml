@@ -283,11 +283,11 @@
      
     <definition name="abstractestimate-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.searchae" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchAbstractEstimate-form.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchAbstractEstimate-search.jsp"/>
     </definition>
     
     <definition name="abstractestimate-view" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.searchae" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.viewae" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/abstractestimate-view.jsp"/>
     </definition>
       

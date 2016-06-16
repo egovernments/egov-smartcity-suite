@@ -38,35 +38,94 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div id="searchCriteria" class="text-center"></div>
-	<div id="dataRun" class="text-center"></div>
-	<div class="form-group report-table-container" >
-		<table class="table table-bordered table-responsive table-hover"
-			id="resultTable">
-			<thead>
-				<tr>
-					<%-- <th><spring:message code="lbl.slno" /></th> --%>
-					<th><spring:message code="lbl.lineestimatenumber" /></th>
-					<th><spring:message code="lbl.estimatenumberanddate" /></th>
-					<th><spring:message code="lbl.workidentificationnumber" /></th>
-					<th><spring:message code="lbl.estimateamount" /></th>
-					<th><spring:message code="lbl.department" /></th>
-					<th><spring:message code="lbl.estimate.ward" /></th>
-					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.currentowner" /></th>
-				</tr>
-			</thead>
-			<tbody class="no-pointer">
-			</tbody>
-		</table>
-	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<a href='javascript:void(0)' class='btn btn-default'
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+		<form:form name="searchAbstractEstimate" role="form" action="" modelAttribute="searchAbstractEstimate" id="searchAbstractEstimate" class="form-horizontal form-groups-bordered" >
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title" style="text-align:center;"><spring:message code="lbl.searchae" /></div>
+						</div>
+						<div class="panel-body">
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fromdate" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="fromDate" class="form-control datepicker" id="fromDate" data-inputmask="'mask': 'd/m/y'"  />
+									<form:errors path="fromDate" cssClass="add-margin error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.todate" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="toDate" class="form-control datepicker"	id="toDate"  data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
+									<form:errors path="toDate" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
+								<div class="col-sm-3 add-margin">
+									<input type="hidden" id="id" name="id"/>
+									<form:input path="abstractEstimateNumber" id="abstractEstimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract Estimate Number"/>
+									<form:errors path="abstractEstimateNumber" cssClass="add-margin error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.createdby" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="createdBy" data-first-option="false" id="createdBy" class="form-control">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${createdUsers}" itemValue="id" itemLabel="username" />
+									</form:select>
+									<form:errors path="createdBy" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-3 col-xs-12 add-margin">
+									<a href="javascript:void(0);" id="toggle-searchae"
+									class="btn btn-secondary"><spring:message code='lbl.more' />..</a>
+								</div>
+							</div>
+							<div class="form-group show-searchae-more display-hide">
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /></label>
+								<div class="col-sm-3 add-margin">
+								<input type="hidden" id="departmentSelected" />
+									<form:select path="department" multiple="false" id="department" cssClass="form-control" cssErrorClass="form-control error">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+					               	   <form:options items="${departments}" itemValue="id" itemLabel="name"/>
+					             	</form:select>
+									<form:errors path="department" cssClass="add-margin error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber" />
+									<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
+								</div>	
+							</div>
+							<div class="form-group show-searchae-more display-hide"  >
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.status" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="status" data-first-option="false" id="status" class="form-control">
+										<form:option value=""> <spring:message code="lbl.select" /> </form:option>
+										<form:options items="${abstractEstimateStatus}" itemValue="id" itemLabel="description"/>
+									</form:select>
+									<form:errors path="status" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+						</div>
+					  </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lbl.search' />
+					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div>
-</div>
+				</div>
+			</div>
+		</form:form>  
+
+<jsp:include page="searchAbstractEstimate-result.jsp"/>
+<script src="<c:url value='/resources/js/abstractestimate/searchAbstractEstimateHelper.js?rnd=${app_release_no}'/>"></script>

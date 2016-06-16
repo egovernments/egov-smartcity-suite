@@ -42,6 +42,7 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.utils.WorksConstants;
@@ -57,6 +58,8 @@ import com.google.gson.JsonSerializer;
 @Component
 public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstimate> {
 
+    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    
     @Autowired
     private WorksUtils worksUtils;
 
@@ -89,7 +92,7 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
             if (abstractEstimate.getLineEstimateDetails().getEstimateNumber() != null
                     && abstractEstimate.getEstimateDate() != null)
                 jsonObject.addProperty("estimateNumberAndDate",
-                        abstractEstimate.getLineEstimateDetails().getEstimateNumber() + "/" + abstractEstimate.getEstimateDate());
+                        abstractEstimate.getLineEstimateDetails().getEstimateNumber() + " - " + sdf.format(abstractEstimate.getEstimateDate()));
             else
                 jsonObject.addProperty("estimateNumberAndDate", "");
 
@@ -116,7 +119,7 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
                 jsonObject.addProperty("ward", "");
 
             if (abstractEstimate.getEgwStatus() != null) {
-                jsonObject.addProperty("status", abstractEstimate.getEgwStatus().getCode());
+                jsonObject.addProperty("status", abstractEstimate.getEgwStatus().getDescription());
             } else
                 jsonObject.addProperty("status", "");
 

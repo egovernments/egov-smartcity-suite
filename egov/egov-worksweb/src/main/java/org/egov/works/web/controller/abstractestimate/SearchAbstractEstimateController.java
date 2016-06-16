@@ -51,7 +51,10 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -80,6 +83,9 @@ public class SearchAbstractEstimateController {
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
             throws ApplicationException {
@@ -93,7 +99,10 @@ public class SearchAbstractEstimateController {
             throws ApplicationException {
         final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(Long.valueOf(id));
 
+        getEstimateDocuments(abstractEstimate);
+        model.addAttribute("mode", "view");
         model.addAttribute("abstractEstimate", abstractEstimate);
+        model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("workOrderEstimate",
                 workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(Long.valueOf(id)));
         model.addAttribute("paymentreleased",
@@ -122,7 +131,14 @@ public class SearchAbstractEstimateController {
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("createdUsers", estimateService.getAbstractEstimateCreatedByUsers());
-        model.addAttribute("abstractEstimateStatus", AbstractEstimate.EstimateStatus.values());
+        model.addAttribute("abstractEstimateStatus", worksUtils.getStatusByModule(WorksConstants.ABSTRACTESTIMATE));
 
+    }
+    
+    private void getEstimateDocuments(final AbstractEstimate abstractEstimate) {
+        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(abstractEstimate.getId(),
+                WorksConstants.ABSTRACTESTIMATE);
+        abstractEstimate.setDocumentDetails(documentDetailsList);
     }
 }

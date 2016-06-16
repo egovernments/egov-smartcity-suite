@@ -38,28 +38,35 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-		<form:form name="searchAbstractEstimate" role="form" action="" modelAttribute="searchAbstractEstimate" id="searchAbstractEstimate" class="form-horizontal form-groups-bordered" >
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="searchAbstractEstimate-header.jsp"/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type='button' class='btn btn-primary' id="btnsearch">
-						<spring:message code='lbl.search' />
-					</button>
-					<a href='javascript:void(0)' class='btn btn-default'
+<div class="row display-hide report-section">
+	<div id="searchCriteria" class="text-center"></div>
+	<div id="dataRun" class="text-center"></div>
+	<div class="form-group report-table-container" >
+		<table class="table table-bordered table-responsive table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<%-- <th><spring:message code="lbl.slno" /></th> --%>
+					<th><spring:message code="lbl.lineestimatenumber" /></th>
+					<th><spring:message code="lbl.estimatenumberanddate" /></th>
+					<th><spring:message code="lbl.workidentificationnumber" /></th>
+					<th><spring:message code="lbl.estimateamount" /></th>
+					<th><spring:message code="lbl.department" /></th>
+					<th><spring:message code="lbl.estimate.ward" /></th>
+					<th><spring:message code="lbl.status" /></th>
+					<th><spring:message code="lbl.currentowner" /></th>
+				</tr>
+			</thead>
+			<tbody class="no-pointer">
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
-				</div>
-			</div>
-		</form:form>  
-
-<jsp:include page="searchAbstractEstimate-search.jsp"/>
-<script src="<c:url value='/resources/js/abstractestimate/searchAbstractEstimateHelper.js?rnd=${app_release_no}'/>"></script>
+		</div>
+	</div>
+</div>

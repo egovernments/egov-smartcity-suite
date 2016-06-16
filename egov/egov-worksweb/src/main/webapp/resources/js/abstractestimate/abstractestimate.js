@@ -371,7 +371,8 @@ function recalculateOverheads(){
 				+ index + '].percentage').value;
 		var amount = document.getElementById('overheadValues['
 				+ index + '].amount');
-		amount.value = ((workValue*percentage)/100).toFixed(2);
+		if(percentage!="")
+			amount.value = ((workValue*percentage)/100).toFixed(2);
 		calculateOverheadTotalAmount();
 	}
 }

@@ -54,6 +54,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slNo" /></th>
+					<th><spring:message code="lbl.categorycode" /></th>
 					<th><spring:message code="lbl.code" /></th>
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.uom" /></th>
@@ -68,14 +69,15 @@
 						<c:forEach items="${abstractEstimate.getSORActivities()}" var="sorDtls" varStatus="item">
 								<tr >
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+									<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
 									<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
 								 	<td>
 								 		<c:out value="${sorDtls.schedule.getSummary()}"></c:out>
 								 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
 								 	</td> 
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
-								 	<td><c:out value="${sorDtls.rate}"></c:out></td>
-								 	<td><c:out value="${sorDtls.quantity}"></c:out></td>
+								 	<td class="text-right"><c:out value="${sorDtls.rate}"></c:out></td>
+								 	<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out></td>
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								</tr>
 						</c:forEach>
@@ -92,7 +94,7 @@
 					</c:forEach>
 				</c:if>
 				<tr>
-					<td colspan="6" class="text-right"><spring:message
+					<td colspan="7" class="text-right"><spring:message
 							code="lbl.total" /></td>
 					<td class="text-right">
 						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sortotal}" /></fmt:formatNumber></span>

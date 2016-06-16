@@ -87,6 +87,7 @@
 						 		<tr id="row1">			 				
 									<td>
 										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
+										<div class="add-margin error-msg text-left"><font size="2">document should not exceed 2 MB</font></div>
 									</td>
 								</tr>									 										
 						 	</tbody></table>

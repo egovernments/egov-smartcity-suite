@@ -66,7 +66,7 @@
 							<tr id="yearEstimateRow">
 								<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 								<td><c:out value="${yearEstimateDtls.financialYear.finYearRange}"></c:out></td>
-							 <td class="text-right"><c:out value="${yearEstimateDtls.percentage}"></c:out></td> 
+							 <td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${yearEstimateDtls.percentage}" /></fmt:formatNumber></td> 
 							</tr>
 						</c:forEach>
 					</c:when>
@@ -85,8 +85,7 @@
 				<tr>
 					<td colspan="2" class="text-right"><spring:message
 							code="lbl.total" /></td>
-					<td class="text-right"><span id="estimateTotal"><c:out
-								value="${total}" /></span></td>
+					<td class="text-right"><span id="estimateTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${total}" /></fmt:formatNumber></span></td>
 				</tr>
 			</tfoot>
 		</table>

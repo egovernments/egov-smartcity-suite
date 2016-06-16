@@ -86,7 +86,7 @@ public class WorksUtils {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
@@ -217,9 +217,14 @@ public class WorksUtils {
             return assignmentList.get(0).getDesignation().getName();
         return null;
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<EgwStatus> getStatusByModule(final String moduleType) {
+        return egwStatusHibernateDAO.getStatusByModule(moduleType);
     }
 }

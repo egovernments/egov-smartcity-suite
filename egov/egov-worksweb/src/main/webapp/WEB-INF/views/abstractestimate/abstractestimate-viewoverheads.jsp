@@ -68,7 +68,7 @@
 													<c:when  test="${fromDate <= estDate && (estDate <= toDate || toDate == null || toDate == '')}">
 														<c:choose>
 															<c:when test="${overheadrate.percentage > 0}">
-															<td><c:out value="${overheadrate.percentage}"></c:out></td>
+															<td class="text-right"><c:out value="${overheadrate.percentage}"></c:out></td>
 															</c:when>
 															<c:otherwise>
 																<td></td>
