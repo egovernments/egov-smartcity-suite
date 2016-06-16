@@ -262,9 +262,11 @@ $(document).ready(function(){
 	typeaheadWithEventsHandling(ward_typeahead,
 	'#ward');
 	
+	var $rowId = 0;
 	var index = 0;
-	$(document).on('click', '.searchAssetbtn', function() {
-		index = $(this).attr("data-idx");
+	$(document).on('click', '#tblassetdetails tbody tr', function() {
+		$rowId = $(this).find('span[id$="sno"]');
+		index = $rowId.text() - 1;
 		var status = getStatusForNatureOfWork($("#natureOfWork option:selected" ).text());
 		window.open("/egassets/assetmaster/asset-showSearchPage.action?rowId="+index+"&assetStatus="+status,"",
 			"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
@@ -1679,12 +1681,12 @@ function addRow(tableName,rowName) {
 			}
 			if(classval == 'spansno') {
 				jQuery(this).text(sno);
-				sno++;
 			}
+			
 			if(classval == 'assetdetail') {
 				 $(this).html('');
 			     $(this).val(''); 
-			}
+			} 
 			jQuery(this).attr(
 					{
 						'name' : function(_, name) {
@@ -1698,18 +1700,19 @@ function addRow(tableName,rowName) {
 						'class' : function(_, name) {
 							if(!(jQuery(this).attr('class')===undefined))
 								return name.replace(/\d+/, nextIdx); 
-						},
+						}/*,
 						'data-idx' : function(_,dataIdx)
 						{
-							return nextIdx;
-						}
+							return nextIdx++;
+						}*/
 					});
 				// if element is static attribute hold values for next row, otherwise it will be reset
 				if (!jQuery(this).data('static')) {
 					jQuery(this).val('');
 				}
 
-		}).end().appendTo("#"+tableName+" tbody");		
+		}).end().appendTo("#"+tableName+" tbody");	
+		sno++;
 		
 	}
 }
