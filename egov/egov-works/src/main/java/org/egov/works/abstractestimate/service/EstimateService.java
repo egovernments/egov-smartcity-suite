@@ -801,6 +801,11 @@ public class EstimateService {
             if (activity.getQuantity() <= 0)
                 errors.reject("error.quantity.zero", "error.quantity.zero");
         }
+        
+        for (final Activity activity : abstractEstimate.getNonSorActivities()) {
+            if (activity.getQuantity() <= 0)
+                errors.reject("error.quantity.zero", "error.quantity.zero");
+        }
     }
 
     public void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {

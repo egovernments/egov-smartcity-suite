@@ -114,7 +114,7 @@
 			<div class="col-sm-3 add-margin">
 				<form:select path="" multiple="true" name="scheduleCategory" data-first-option="false" id="scheduleCategory" class="form-control">
 					<c:forEach items="${scheduleCategories }" var="scheduleCategory">
-						<form:option value="${scheduleCategory.id }">${scheduleCategory.code }</form:option>
+						<form:option value="${scheduleCategory.id }">${scheduleCategory.code } -- ${scheduleCategory.description }</form:option>
 					</c:forEach>
 				</form:select>
 			</div>
@@ -130,7 +130,7 @@
 			<div class="col-sm-8 add-margin">
 				<div id="sorSearch_autocomplete">
 				   <div class="right-inner-addon">
-					    <input id="sorSearch" type="text" name="item" class="form-control">
+					    <input id="sorSearch" placeholder="Start typing SOR code or description and select an item" type="text" name="item" class="form-control">
 	    			</div>    
 			    </div> 
 			</div>

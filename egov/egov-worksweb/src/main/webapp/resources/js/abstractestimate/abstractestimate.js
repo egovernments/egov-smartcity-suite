@@ -1508,6 +1508,10 @@ function validateWorkFlowApprover(name) {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});
+			$('.nonSorQuantity').each(function() {
+				if (parseFloat($(this).val()) <= 0)
+					flag = false;
+			});
 			if (!flag) {
 				bootbox.alert($('#errorquantityzero').val());
 				return false;

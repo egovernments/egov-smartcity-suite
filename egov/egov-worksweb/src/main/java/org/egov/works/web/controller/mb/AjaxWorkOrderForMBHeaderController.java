@@ -1,4 +1,4 @@
-package org.egov.works.web.controller.mbheader;
+package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.io.Writer;

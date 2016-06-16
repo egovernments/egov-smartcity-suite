@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.controller.mbheader;
+package org.egov.works.web.controller.mb;
 
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
