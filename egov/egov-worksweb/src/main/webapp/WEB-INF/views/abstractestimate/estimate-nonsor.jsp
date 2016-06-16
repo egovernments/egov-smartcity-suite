@@ -101,7 +101,7 @@
 										<spring:message code="lbl.select" />
 									</form:option>
 									<c:forEach items="${uoms }" var="uom">
-										<option value="${uom.id }" label="${uom.uomCategory.category } -- ${uom.uom }" />
+										<form:option value="${uom.id }">${uom.uomCategory.category } -- ${uom.uom }</form:option>
 									</c:forEach>
 								</form:select>
 								<form:hidden path="nonSorActivities[0].uom.id" id="nonSorUomid_0" class="uomhiddenid"/>
@@ -148,10 +148,10 @@
 											</form:option>
 											<c:forEach items="${uoms }" var="uom">
 												<c:if test="${uom.id == activity.uom.id }">
-													<option value="${uom.id }" selected="selected" >${uom.uomCategory.category } -- ${uom.uom }</option>
+													<form:option value="${uom.id }" selected="selected" >${uom.uomCategory.category } -- ${uom.uom }</form:option>
 												</c:if>
 												<c:if test="${uom.id != activity.uom.id }">
-													<option value="${uom.id }" >${uom.uomCategory.category } -- ${uom.uom }</option>
+													<form:option value="${uom.id }">${uom.uomCategory.category } -- ${uom.uom }</form:option>
 												</c:if>
 											</c:forEach>
 										</form:select>

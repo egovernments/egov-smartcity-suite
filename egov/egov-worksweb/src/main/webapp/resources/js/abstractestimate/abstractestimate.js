@@ -852,7 +852,7 @@ function validateInput(object) {
 }
 
 function validateQuantityInput(object) {
-    var valid = /^[1-9](\d{0,9})(\.\d{0,4})?$/.test($(object).val()),
+    var valid = /^[0-9](\d{0,9})(\.\d{0,4})?$/.test($(object).val()),
         val = $(object).val();
     
     if(!valid){
@@ -1482,6 +1482,17 @@ function validateWorkFlowApprover(name) {
 			}
 		}
 		
+		if($('#abstractEstimate').valid()) {
+			$('.quantity').each(function() {
+				if (parseFloat($(this).val()) <= 0)
+					flag = false;
+			});
+			if (!flag) {
+				bootbox.alert($('#errorquantityzero').val());
+				return false;
+			}
+		}
+		
 	}
 	if (button != null && button == 'Approve') {
 		$('#approvalComent').removeAttr('required');
@@ -1552,6 +1563,17 @@ function validateWorkFlowApprover(name) {
 			});
 			if (!flag) {
 				bootbox.alert($('#errorrateszero').val());
+				return false;
+			}
+		}
+		
+		if($('#abstractEstimate').valid()) {
+			$('.quantity').each(function() {
+				if (parseFloat($(this).val()) <= 0)
+					flag = false;
+			});
+			if (!flag) {
+				bootbox.alert($('#errorquantityzero').val());
 				return false;
 			}
 		}

@@ -787,8 +787,20 @@ public class EstimateService {
     }
 
     public void validateActivities(final AbstractEstimate abstractEstimate, final BindingResult errors) {
-        if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
-            errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
+        for (int i = 0; i < abstractEstimate.getSorActivities().size() - 1; i++) {
+            for (int j = i + 1; j < abstractEstimate.getSorActivities().size(); j++) {
+                if (abstractEstimate.getSorActivities().get(i).getSchedule() != null && abstractEstimate.getSorActivities().get(i)
+                        .getSchedule().getId().equals(abstractEstimate.getSorActivities().get(j).getSchedule().getId())) {
+                    errors.reject("error.sor.duplicate", "error.sor.duplicate");
+                    break;
+                }
+            }
+        }
+        
+        for (final Activity activity : abstractEstimate.getSorActivities()) {
+            if (activity.getQuantity() <= 0)
+                errors.reject("error.quantity.zero", "error.quantity.zero");
+        }
     }
 
     public void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {

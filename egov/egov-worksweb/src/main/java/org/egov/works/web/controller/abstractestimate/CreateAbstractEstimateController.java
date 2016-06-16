@@ -101,8 +101,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.validateMultiYearEstimates(abstractEstimate, bindErrors);
         estimateService.validateMandatory(abstractEstimate, bindErrors);
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
-        if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
-            estimateService.validateActivities(abstractEstimate, bindErrors);
+        estimateService.validateActivities(abstractEstimate, bindErrors);
+        if (!workFlowAction.equals(WorksConstants.SAVE_ACTION)) {
+            if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
+                bindErrors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
+        }
         if (bindErrors.hasErrors()) {
             for (final Activity activity : abstractEstimate.getSorActivities()) {
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
