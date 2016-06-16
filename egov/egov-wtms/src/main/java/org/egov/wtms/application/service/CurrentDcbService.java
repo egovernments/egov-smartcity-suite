@@ -89,5 +89,17 @@ public class CurrentDcbService {
         return finalQuery;
 
     }
+    
+    public SQLQuery getMigratedReceiptDetails(final Long connectiondetails) throws ParseException {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append(
+                "select distinct(booknumber) as \"bookNumber\", receiptnumber as \"receiptNumber\",receiptdate as \"receiptDate\",fromdate as \"fromDate\",todate as \"toDate\","
+                        + "amount as \"receiptAmount\" from egwtr_legacy_receipts where connectiondetails ="
+                        + connectiondetails);
+        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class));
+        return finalQuery;
+
+    }
 
 }

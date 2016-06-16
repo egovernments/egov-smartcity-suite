@@ -230,6 +230,20 @@ public class CommonWaterTaxSearchController {
                     }
                 
         }
+        if (applicationType != null && applicationType.equals(WaterTaxConstants.EDITCOLLECTION))
+            if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+                    || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)
+                    && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+                    && waterConnectionDetails.getLegacy() == true)
+                return "redirect:/application/editCollection/"
+                        + waterConnectionDetails.getConnection().getConsumerCode();
+            else {
+                model.addAttribute("mode", "errorMode");
+                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+                // model.addAttribute("validMessage", "InValid Number");
+                return COMMON_FORM_SEARCH;
+            }
+        
         return "";
 
     }

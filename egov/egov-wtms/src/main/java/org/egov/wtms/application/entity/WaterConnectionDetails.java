@@ -186,9 +186,12 @@ public class WaterConnectionDetails extends StateAware {
     @JoinColumn(name = "chairPerson")
     private ChairPerson chairPerson;
     private Boolean isHistory = false;
+    
     @Valid
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FieldInspectionDetails fieldInspectionDetails;
+    
+    
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -197,10 +200,16 @@ public class WaterConnectionDetails extends StateAware {
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WaterDemandConnection> waterDemandConnection = new ArrayList<WaterDemandConnection>(0);
+    
+
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>(0);
+    
+    @OrderBy("id")
+    @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<LegacyReceipts> legacyReceipts = new ArrayList<LegacyReceipts>(0);
 
     @OrderBy("id desc")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -419,6 +428,14 @@ public class WaterConnectionDetails extends StateAware {
     public void setFieldInspectionDetails(final FieldInspectionDetails fieldInspectionDetails) {
         this.fieldInspectionDetails = fieldInspectionDetails;
     }
+    
+    public List<LegacyReceipts> getLegacyReceipts() {
+        return legacyReceipts;
+    }
+
+    public void setLegacyReceipts(final List<LegacyReceipts> legacyReceipts) {
+        this.legacyReceipts = legacyReceipts;
+    }
 
     public List<ApplicationDocuments> getApplicationDocs() {
         return applicationDocs;
@@ -632,5 +649,7 @@ public class WaterConnectionDetails extends StateAware {
             final List<DemandDetail> demandDetailBeanList) {
         this.demandDetailBeanList = demandDetailBeanList;
     }
+    
+
 
 }

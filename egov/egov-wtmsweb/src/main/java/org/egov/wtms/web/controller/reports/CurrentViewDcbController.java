@@ -136,9 +136,13 @@ public class CurrentViewDcbController {
     @RequestMapping(value = "/showMigData/{consumerNumber}/{applicationCode}", method = RequestMethod.GET)
     public String showMigData(final Model model, @PathVariable final String consumerNumber, @PathVariable final String applicationCode,final HttpServletRequest request) throws ParseException {
         List<WaterChargesReceiptInfo> waterChargesReceiptInfo = new ArrayList<WaterChargesReceiptInfo>();
-    	final SQLQuery query = currentDcbService.getMigratedReceipttDetails(consumerNumber);
+        List<WaterChargesReceiptInfo> waterChargesReceiptInfoList = new ArrayList<WaterChargesReceiptInfo>();
+       final SQLQuery query = currentDcbService.getMigratedReceipttDetails(consumerNumber);
     	waterChargesReceiptInfo = query.list();
-        model.addAttribute("waterChargesReceiptInfo", waterChargesReceiptInfo);
+    	final SQLQuery query1 = currentDcbService.getMigratedReceiptDetails(waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerNumber).getId());
+    	waterChargesReceiptInfoList = query1.list();
+    	waterChargesReceiptInfoList.addAll(waterChargesReceiptInfo);
+        model.addAttribute("waterChargesReceiptInfo", waterChargesReceiptInfoList);
         model.addAttribute("consumerCode", consumerNumber);
        return "dcbview-migdata";
     }
@@ -183,7 +187,6 @@ public class CurrentViewDcbController {
             final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
             model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
             model.addAttribute("mode", "viewdcb");
-
         }
         else{
         	 	model.addAttribute("dcbReport", dCBReport);

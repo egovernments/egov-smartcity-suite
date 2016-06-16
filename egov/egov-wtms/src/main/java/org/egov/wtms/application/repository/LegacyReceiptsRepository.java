@@ -37,77 +37,23 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.application.entity;
+package org.egov.wtms.application.repository;
 
 
-import java.util.Date;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
 
-public class WaterChargesReceiptInfo {
+import org.egov.wtms.application.entity.LegacyReceipts;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-    private String consumerNumber;
-    private Integer bookNumber;
-    private String receiptNumber;
-    private Date receiptDate;
-    private Date fromDate;
-    private Date toDate;
-    private double receiptAmount;
+import java.util.List;
 
-    public String getConsumerNumber() {
-        return consumerNumber;
-    }
+@Repository
+public interface LegacyReceiptsRepository extends JpaRepository<LegacyReceipts, Long> {
 
-    public void setConsumerNumber(final String consumerNumber) {
-        this.consumerNumber = consumerNumber;
-    }
-
-    public Date getReceiptDate() {
-        return receiptDate;
-    }
-
-    public Integer getBookNumber() {
-        return bookNumber;
-    }
-
-    public void setBookNumber(final Integer bookNumber) {
-        this.bookNumber = bookNumber;
-    }
-
-    public String getReceiptNumber() {
-        return receiptNumber;
-    }
-
-    public void setReceiptNumber(final String receiptNumber) {
-        this.receiptNumber = receiptNumber;
-    }
-
-    public void setReceiptDate(final Date receiptDate) {
-        this.receiptDate = receiptDate;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
-	public double getReceiptAmount() {
-		return receiptAmount;
-	}
-
-	public void setReceiptAmount(double receiptAmount) {
-		this.receiptAmount = receiptAmount;
-	}
-
+    List<LegacyReceipts> findByWaterConnectionDetails(WaterConnectionDetails waterConnectionDetails);
     
+    LegacyReceipts findByReceiptNumber(String receiptNumber);
+
 
 }

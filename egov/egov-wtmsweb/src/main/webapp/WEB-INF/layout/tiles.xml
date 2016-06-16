@@ -110,6 +110,7 @@
         <put-attribute name="page-title" value="title.editDemndNonMetered" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/editDemandDateEntry-newForm.jsp"/> 
     </definition>
+    
     <definition name="editDemand-dataEntryAck" extends="base_layout">
         <put-attribute name="page-title" value="title.editDemndNonMetered" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/editDemand-dataEntryAck.jsp"/> 
@@ -344,5 +345,13 @@
       <definition name="property-pipesize-master-success" extends="base_layout">
         <put-attribute name="page-title" value="title.propertyPipeSize.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/property-pipesize-master-success.jsp"/>
+    </definition>
+        <definition name="editCollection-newForm" extends="base_layout">
+        <put-attribute name="page-title" value="title.editCollection" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/editCollection-newForm.jsp"/> 
+    </definition>
+    <definition name="editCollection-Ack" extends="base_layout">
+        <put-attribute name="page-title" value="title.editCollection" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/editCollection-Ack.jsp"/> 
     </definition>
 </tiles-definitions>
