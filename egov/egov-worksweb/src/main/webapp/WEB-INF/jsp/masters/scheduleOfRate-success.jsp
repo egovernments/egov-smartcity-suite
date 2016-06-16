@@ -60,7 +60,7 @@ list-style-type: none;
 
 <div class="row text-center">
 	<div class="add-margin">
-		<s:if test="%{mode!='edit' && mode != 'view'}">
+		<s:if test="%{mode != 'edit' && mode != 'view'}">
 			<input type="submit" name="create" Class="btn btn-primary" value="Create New Rate" id="CREATE" name="button" onclick="createNew();" />
 		</s:if>
 			<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />

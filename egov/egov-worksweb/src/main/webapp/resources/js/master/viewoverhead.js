@@ -116,37 +116,12 @@ function callAjaxSearch() {
 					"sClass" : "text-left"
 				}, {
 					"data" : "startDate",
-					"sClass" : "text-left","sWidth": "10%",
-					render: function (data, type, full) {
-						if(data){
-							return getFormattedDate(data);
-						}
-						return "";
-			    	}
+					"sClass" : "text-left","sWidth": "10%"
 				}, {
 					"data" : "endDate",
-					"sClass" : "text-left","sWidth": "10%",
-					render: function (data, type, full) {
-						if(data){
-							return getFormattedDate(data);
-						}
-						return "";
-			    	}
+					"sClass" : "text-left","sWidth": "10%"
 				} ]
 			});
-}
-
-
-function getFormattedDate(dateStr)
-{
-	var dateObj=new Date(dateStr);
-	return addPrefixZero(dateObj.getDate())+"/"+ addPrefixZero(dateObj.getMonth())  +"/"+ dateObj.getFullYear();
-}
-
-function addPrefixZero(str)
-{
-	str=str.toString();	
-	return (str.length===1?"0"+str:str);
 }
 
 function getFormData($form){

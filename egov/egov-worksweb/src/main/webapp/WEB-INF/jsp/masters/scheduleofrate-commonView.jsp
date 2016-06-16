@@ -49,7 +49,7 @@
 						<s:text name="master.sor.category" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{scheduleCategory.code}" />
+						<s:property value="%{scheduleCategory.description}" />
 					</div>
 
 					<div class="col-xs-3 add-margin">

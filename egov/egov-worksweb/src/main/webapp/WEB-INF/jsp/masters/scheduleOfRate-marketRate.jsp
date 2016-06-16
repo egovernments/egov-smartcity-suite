@@ -126,7 +126,6 @@ var makeScheduleOfRateDataTableForMR = function() {
 	   	   </div>
 	   	   <div class="yui-skin-sam">
 				<div id="scheduleOfRateTableMR"></div>
-				<s:hidden name="mode" />
 <script>
 	var imgURL="/resources/erp2/images/cancel.png";	
 	makeScheduleOfRateDataTableForMR();

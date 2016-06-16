@@ -55,16 +55,6 @@ function enableFieldsForModify(){
     document.estimateTemplateForm.submit();
 } 
 
-function validateCancel() {
-	var msg='<s:text name="estimate.template.modify.confirm"/>';
-	if(!confirmCancel(msg,'')) {
-		return false;
-	}
-	else {
-	    return true;
-	}
-}
-
 function validateEstimateTemplateFormAndSubmit() {
     clearMessage('estimatetemplateerror')
 	links=document.estimateTemplateForm.getElementsByTagName("span");
@@ -86,10 +76,8 @@ function validateEstimateTemplateFormAndSubmit() {
     else {
     	mode=dom.get('mode').value;
     	if(mode=='edit'){
-    	 if(validateCancel()){
     	  document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-save.action';
     	  document.estimateTemplateForm.submit();
-    	 }
     	}
     	else{
     	document.estimateTemplateForm.action='${pageContext.request.contextPath}/estimate/estimateTemplate-save.action';

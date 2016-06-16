@@ -110,7 +110,7 @@
 <div class="row text-center">
 	<div class="add-margin">
 	<s:if test="%{mode == 'new'}"> 
-		<input type="submit" name="createNewGrade" Class="btn btn-primary" value="Create new Grade" id="createNewGrade" onclick="createNewContractorGrade();" /> &nbsp;
+		<input type="submit" name="createNewGrade" Class="btn btn-primary" value="Create new Contractor Grade" id="createNewGrade" onclick="createNewContractorGrade();" /> &nbsp;
 	</s:if>
 		<input type="submit" name="closeButton" id="closeButton" value="Close" class="btn btn-default" onclick="window.close();" />
 	</div>

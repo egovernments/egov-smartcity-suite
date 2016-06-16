@@ -95,4 +95,3 @@ body
 </s:form>    
 </body>  
 </html>
-<%-- <script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script> --%>

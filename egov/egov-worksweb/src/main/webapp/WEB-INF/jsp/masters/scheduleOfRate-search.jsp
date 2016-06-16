@@ -84,7 +84,7 @@ body
 				    <s:text name="master.sor.category" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategoryId" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="code"/>
+					<s:select headerKey="-1" headerValue="%{getText('estimate.default.select')}" name="scheduleCategoryId" id="scheduleCategory" cssClass="form-control" list="dropdownData.scheduleCategoryList" listKey="id" listValue="description"/>
 				</div>
 			</div>
 		</s:if>

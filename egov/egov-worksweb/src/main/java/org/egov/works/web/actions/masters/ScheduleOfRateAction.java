@@ -185,9 +185,9 @@ public class ScheduleOfRateAction extends SearchFormAction {
         scheduleOfRateList = new ArrayList<ScheduleOfRate>();
         scheduleOfRateList.add(scheduleOfRate);
         if (StringUtils.isBlank(mode))
-            addActionMessage(getText("sor.save.success"));
+            addActionMessage(getText("sor.save.success", new String[] { code }));
         else
-            addActionMessage(getText("sor.modified.success", new String[] { code }));
+            addActionMessage(getText("sor.modified.success"));
         return SUCCESS;
     }
 

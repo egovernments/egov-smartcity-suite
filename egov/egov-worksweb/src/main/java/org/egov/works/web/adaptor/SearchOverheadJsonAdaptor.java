@@ -41,6 +41,7 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 import org.egov.works.models.masters.Overhead;
 import org.springframework.stereotype.Component;
@@ -56,6 +57,7 @@ public class SearchOverheadJsonAdaptor implements JsonSerializer<Overhead> {
     public JsonElement serialize(final Overhead overhead, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         if (overhead != null) {
             if (overhead.getName() != null)
                 jsonObject.addProperty("name", overhead.getName());
@@ -66,11 +68,11 @@ public class SearchOverheadJsonAdaptor implements JsonSerializer<Overhead> {
             else
                 jsonObject.addProperty("description", "");
             if (overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getStartDate() != null)
-                jsonObject.addProperty("startDate", overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getStartDate().toString());
+                jsonObject.addProperty("startDate", formatter.format(overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getStartDate()));
             else
                 jsonObject.addProperty("startDate", "");
             if (overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getEndDate() != null)
-                jsonObject.addProperty("endDate", overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getEndDate().toString());
+                jsonObject.addProperty("endDate", formatter.format(overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getEndDate()));
             else
                 jsonObject.addProperty("endDate", "");
 
