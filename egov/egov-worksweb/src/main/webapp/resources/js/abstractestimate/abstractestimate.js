@@ -1649,21 +1649,6 @@ function addRow(tableName,rowName) {
 		nextIdx = jQuery("#"+tableName+" tbody tr").length;
 		sno = nextIdx + 1;
 		
-        var isValid=1;//for default have success value 0  
-		//validate existing rows in table
-		jQuery("#"+tableName+" tbody tr").find('input, select, span, input:hidden').each(function() {
-			if((jQuery(this).data('optional') === 0) && (jQuery(this).val() == ''))
-			{
-				jQuery(this).focus();
-				bootbox.alert(jQuery(this).data('errormsg'));
-				isValid=0;//set validation failure
-				return false;
-			}
-		});
-		
-		if (isValid === 0) {
-			return false;
-		}
 		// Generate all textboxes Id and name with new index
 		jQuery("#"+rowName).clone().find("input,select, errors, span, input:hidden").each(function() {	
 			var classval = jQuery(this).attr('class');
