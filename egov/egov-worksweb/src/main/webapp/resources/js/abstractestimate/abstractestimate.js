@@ -67,6 +67,12 @@ $(document).ready(function(){
 		if(value != 0)
 			$(this).val(parseFloat(value).toFixed(2));
 	});
+	
+	if($('#natureOfWork').val() != '') {
+		$('.alert-danger').hide();
+	} else {
+		$('.alert-danger').show();
+	}
 	$mode = $("#mode").val();
 	if($mode == '') {
 		$("#latlonDiv").hide(); 
@@ -101,6 +107,14 @@ $(document).ready(function(){
 		$('.emptytd').removeAttr('hidden');
 		$('.nonSorServiceVatAmt').removeAttr('hidden');
 	}
+	
+	$('#natureOfWork').click(function() {
+		if($('#natureOfWork').val() != '') {
+			$('.alert-danger').hide();
+		} else {
+			$('.alert-danger').show();
+		}
+	});
 	
 	$('#addnonSorRow').click(function() {
 		var hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
@@ -268,8 +282,12 @@ $(document).ready(function(){
 		$rowId = $(this).find('span[id$="sno"]');
 		index = $rowId.text() - 1;
 		var status = getStatusForNatureOfWork($("#natureOfWork option:selected" ).text());
+		if(status != '') {
 		window.open("/egassets/assetmaster/asset-showSearchPage.action?rowId="+index+"&assetStatus="+status,"",
 			"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
+		} else {
+			bootbox.alert("No Asset can be link for selected nature of work");
+		}
 	});
 
 	var currentState = $('#currentState').val();
