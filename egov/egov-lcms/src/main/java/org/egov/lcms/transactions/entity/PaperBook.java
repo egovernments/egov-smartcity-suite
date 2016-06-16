@@ -41,65 +41,102 @@ package org.egov.lcms.transactions.entity;
 
 import java.util.Date;
 
-import org.egov.infstr.models.BaseModel;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-public class PaperBook extends BaseModel {
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-	private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "EGLC_PAPERBOOK")
+@SequenceGenerator(name = PaperBook.SEQ_EGLC_PAPERBOOK, sequenceName = PaperBook.SEQ_EGLC_PAPERBOOK, allocationSize = 1)
+public class PaperBook extends AbstractAuditable {
 
-	private Legalcase legalcase;
-	private Date lastDateToDepositAmt;
-	private Double depositedAmount;
-	private String concernedOfficerName;
-	private String remarks;
-	private boolean isPaperBookRequired;
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_PAPERBOOK = "SEQ_EGLC_PAPERBOOK";
 
-	public Legalcase getLegalcase() {
-		return legalcase;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_PAPERBOOK, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne
+    @NotNull
+    @Valid
+    @JoinColumn(name = "legalcase", nullable = false)
+    private Legalcase eglcLegalcase;
+    private Date lastDateToDepositAmt;
+    private Double depositedAmount;
+    private String concernedOfficerName;
+    private String remarks;
+    private boolean isPaperBookRequired;
 
-	public void setLegalcase(final Legalcase legalcase) {
-		this.legalcase = legalcase;
-	}
+   
+    public Legalcase getEglcLegalcase() {
+        return eglcLegalcase;
+    }
 
-	public Date getLastDateToDepositAmt() {
-		return lastDateToDepositAmt;
-	}
+    public void setEglcLegalcase(Legalcase eglcLegalcase) {
+        this.eglcLegalcase = eglcLegalcase;
+    }
 
-	public void setLastDateToDepositAmt(final Date lastDateToDepositAmt) {
-		this.lastDateToDepositAmt = lastDateToDepositAmt;
-	}
+    public Date getLastDateToDepositAmt() {
+        return lastDateToDepositAmt;
+    }
 
-	public Double getDepositedAmount() {
-		return depositedAmount;
-	}
+    public void setLastDateToDepositAmt(final Date lastDateToDepositAmt) {
+        this.lastDateToDepositAmt = lastDateToDepositAmt;
+    }
 
-	public void setDepositedAmount(final Double depositedAmount) {
-		this.depositedAmount = depositedAmount;
-	}
+    public Double getDepositedAmount() {
+        return depositedAmount;
+    }
 
-	public String getConcernedOfficerName() {
-		return concernedOfficerName;
-	}
+    public void setDepositedAmount(final Double depositedAmount) {
+        this.depositedAmount = depositedAmount;
+    }
 
-	public void setConcernedOfficerName(final String concernedOfficerName) {
-		this.concernedOfficerName = concernedOfficerName;
-	}
+    public String getConcernedOfficerName() {
+        return concernedOfficerName;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public void setConcernedOfficerName(final String concernedOfficerName) {
+        this.concernedOfficerName = concernedOfficerName;
+    }
 
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public boolean getIsPaperBookRequired() {
-		return isPaperBookRequired;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
-	public void setIsPaperBookRequired(final boolean isPaperBookRequired) {
-		this.isPaperBookRequired = isPaperBookRequired;
-	}
+    public boolean getIsPaperBookRequired() {
+        return isPaperBookRequired;
+    }
+
+    public void setIsPaperBookRequired(final boolean isPaperBookRequired) {
+        this.isPaperBookRequired = isPaperBookRequired;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public void setPaperBookRequired(final boolean isPaperBookRequired) {
+        this.isPaperBookRequired = isPaperBookRequired;
+    }
 
 }

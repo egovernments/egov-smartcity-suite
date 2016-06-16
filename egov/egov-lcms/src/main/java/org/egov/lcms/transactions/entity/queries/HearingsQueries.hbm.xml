@@ -7,17 +7,17 @@
 <hibernate-mapping>
 
  <query name="getHearingsByLegalcase">
-    <![CDATA[ from Hearings hs where hs.legalcase.id=? ORDER BY hearingDate desc ]]></query>
+    <![CDATA[ from Hearings hs where hs.eglcLegalcase.id=? ORDER BY hearingDate desc ]]></query>
  <query name="getHearingsByLegalcaseandHearingDate">
-    <![CDATA[ from Hearings hs where hs.legalcase=? and hs.hearingDate=? ]]></query>
+    <![CDATA[ from Hearings hs where hs.eglcLegalcase=? and hs.hearingDate=? ]]></query>
 <query name="getHearingsByLegalcaseandHearingDateandId">
-    <![CDATA[ from Hearings hs where hs.legalcase=? and hs.hearingDate=? and hs.id!=? ]]></query>
+    <![CDATA[ from Hearings hs where hs.eglcLegalcase=? and hs.hearingDate=? and hs.id!=? ]]></query>
 <query name="getFutureHearingsByLegalcaseandHearingDate">
-    <![CDATA[ from Hearings hs where hs.legalcase=? and hs.hearingDate>?  ]]></query>
+    <![CDATA[ from Hearings hs where hs.eglcLegalcase=? and hs.hearingDate>?  ]]></query>
  <query name="getFutureHearingsByLegalcaseandHearingDateandId">
-    <![CDATA[ from Hearings hs where hs.legalcase=? and hs.hearingDate>? and hs.id!=?]]></query>
+    <![CDATA[ from Hearings hs where hs.eglcLegalcase=? and hs.hearingDate>? and hs.id!=?]]></query>
 <query name="getHearingsByLCNumber">
-    <![CDATA[ from Hearings hs where hs.legalcase.lcnumber=? ORDER BY hearingDate desc ]]></query>
+    <![CDATA[ from Hearings hs where hs.eglcLegalcase.lcnumber=? ORDER BY hearingDate desc ]]></query>
 <query name="getHearingsByHearingDate">
-    <![CDATA[ from Hearings hs where hs.hearingDate=? and (hs.legalcase.nextDate is null or hs.legalcase.nextDate!=?)]]></query>
+    <![CDATA[ from Hearings hs where hs.hearingDate=? and (hs.eglcLegalcase.nextDate is null or hs.eglcLegalcase.nextDate!=?)]]></query>
 </hibernate-mapping>

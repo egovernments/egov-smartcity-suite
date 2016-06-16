@@ -43,94 +43,125 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
 import org.egov.lcms.utils.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
-public class VacateStay extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "EGLC_VACATESTAY_PETITION")
+@SequenceGenerator(name = VacateStay.SEQ_EGLC_VACATESTAY_PETITION, sequenceName = VacateStay.SEQ_EGLC_VACATESTAY_PETITION, allocationSize = 1)
+public class VacateStay extends AbstractAuditable {
+    /**
+     * Serial version uid
+     */
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_VACATESTAY_PETITION = "SEQ_EGLC_VACATESTAY_PETITION";
 
-	private Lcinterimorder lcinterimOrder;
-	@DateFormat(message = "invalid.fieldvalue.model.vsReceivedFromStandingCounsel")
-	private Date vsReceivedFromStandingCounsel;
-	@DateFormat(message = "invalid.fieldvalue.model.vsSendToStandingCounsel")
-	private Date vsSendToStandingCounsel;
-	@Required(message = "vcpetition.exists")
-	@DateFormat(message = "invalid.fieldvalue.model.vsPetitionFiledOn")
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "petitionfiledon.notAllow.futureDate")
-	private Date vsPetitionFiledOn;
-	@Length(max = 1024, message = "io.vcremarks.length")
-	private String remarks;
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_VACATESTAY_PETITION, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne
+    @NotNull
+    @Valid
+    @JoinColumn(name = "LCINTERIMORDER", nullable = false)
+    private Lcinterimorder lcinterimOrder;
+    @DateFormat(message = "invalid.fieldvalue.model.vsReceivedFromStandingCounsel")
+    private Date vsReceivedFromStandingCounsel;
+    @DateFormat(message = "invalid.fieldvalue.model.vsSendToStandingCounsel")
+    private Date vsSendToStandingCounsel;
+    @Required(message = "vcpetition.exists")
+    @DateFormat(message = "invalid.fieldvalue.model.vsPetitionFiledOn")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "petitionfiledon.notAllow.futureDate")
+    private Date vsPetitionFiledOn;
+    @Length(max = 1024, message = "io.vcremarks.length")
+    private String remarks;
 
-	public Date getVsReceivedFromStandingCounsel() {
-		return vsReceivedFromStandingCounsel;
-	}
+    public Date getVsReceivedFromStandingCounsel() {
+        return vsReceivedFromStandingCounsel;
+    }
 
-	public void setVsReceivedFromStandingCounsel(final Date vsReceivedFromStandingCounsel) {
-		this.vsReceivedFromStandingCounsel = vsReceivedFromStandingCounsel;
-	}
+    public void setVsReceivedFromStandingCounsel(final Date vsReceivedFromStandingCounsel) {
+        this.vsReceivedFromStandingCounsel = vsReceivedFromStandingCounsel;
+    }
 
-	public Date getVsSendToStandingCounsel() {
-		return vsSendToStandingCounsel;
-	}
+    public Date getVsSendToStandingCounsel() {
+        return vsSendToStandingCounsel;
+    }
 
-	public void setVsSendToStandingCounsel(final Date vsSendToStandingCounsel) {
-		this.vsSendToStandingCounsel = vsSendToStandingCounsel;
-	}
+    public void setVsSendToStandingCounsel(final Date vsSendToStandingCounsel) {
+        this.vsSendToStandingCounsel = vsSendToStandingCounsel;
+    }
 
-	public Date getVsPetitionFiledOn() {
-		return vsPetitionFiledOn;
-	}
+    public Date getVsPetitionFiledOn() {
+        return vsPetitionFiledOn;
+    }
 
-	public void setVsPetitionFiledOn(final Date vsPetitionFiledOn) {
-		this.vsPetitionFiledOn = vsPetitionFiledOn;
-	}
+    public void setVsPetitionFiledOn(final Date vsPetitionFiledOn) {
+        this.vsPetitionFiledOn = vsPetitionFiledOn;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
-	public Lcinterimorder getLcinterimOrder() {
-		return lcinterimOrder;
-	}
+    public Lcinterimorder getLcinterimOrder() {
+        return lcinterimOrder;
+    }
 
-	public void setLcinterimOrder(final Lcinterimorder lcinterimOrder) {
-		this.lcinterimOrder = lcinterimOrder;
-	}
+    public void setLcinterimOrder(final Lcinterimorder lcinterimOrder) {
+        this.lcinterimOrder = lcinterimOrder;
+    }
 
-	@Override
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-		if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLcinterimOrder().getIodate()))
-			errors.add(new ValidationError("iodate", "iodate.greaterThan.vsReceivedFromStandingCounsel"));
+        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLcinterimOrder().getIodate()))
+            errors.add(new ValidationError("iodate", "iodate.greaterThan.vsReceivedFromStandingCounsel"));
 
-		if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcinterimOrder().getIodate()))
-			errors.add(new ValidationError("iodate", "iodate.greaterThan.petitionFiledOn"));
+        if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcinterimOrder().getIodate()))
+            errors.add(new ValidationError("iodate", "iodate.greaterThan.petitionFiledOn"));
 
-		if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLcinterimOrder().getIodate()))
-			errors.add(new ValidationError("iodate", "iodate.greaterThan.vsSendToStandingCounsel"));
+        if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLcinterimOrder().getIodate()))
+            errors.add(new ValidationError("iodate", "iodate.greaterThan.vsSendToStandingCounsel"));
 
-		if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getVsSendToStandingCounsel()))
-			errors.add(new ValidationError("vsReceivedFromStandingCounsel",
-					"vsReceivedFromStandingCounsel.greaterThan.vsSendToStandingCounsel"));
+        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getVsSendToStandingCounsel()))
+            errors.add(new ValidationError("vsReceivedFromStandingCounsel",
+                    "vsReceivedFromStandingCounsel.greaterThan.vsSendToStandingCounsel"));
 
-		if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getVsPetitionFiledOn()))
-			errors.add(new ValidationError("petitionFiledOn", "vsSendToStandingCounsel.greaterThan.petitionFiledOn"));
+        if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getVsPetitionFiledOn()))
+            errors.add(new ValidationError("petitionFiledOn", "vsSendToStandingCounsel.greaterThan.petitionFiledOn"));
 
-		return errors;
-	}
+        return errors;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
 }

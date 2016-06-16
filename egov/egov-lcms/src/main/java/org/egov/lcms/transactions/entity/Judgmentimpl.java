@@ -45,13 +45,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
 import org.egov.lcms.utils.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
@@ -60,125 +72,138 @@ import org.hibernate.validator.constraints.Length;
  *
  * @author MyEclipse Persistence Tools
  */
+@Entity
+@Table(name = "EGLC_JUDGMENTIMPL")
+@SequenceGenerator(name = Judgmentimpl.SEQ_EGLC_JUDGMENTIMPL, sequenceName = Judgmentimpl.SEQ_EGLC_JUDGMENTIMPL, allocationSize = 1)
+public class Judgmentimpl extends AbstractAuditable {
+    /**
+     * Serial version uid
+     */
 
-public class Judgmentimpl extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_JUDGMENTIMPL = "SEQ_EGLC_JUDGMENTIMPL";
 
-	// Fields
-	private Judgment eglcJudgment;
-	private Long isCompiled;
-	@DateFormat(message = "invalid.fieldvalue.model.dateofcompliance")
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.compliance.date")
-	private Date dateofcompliance;
-	@Length(max = 1024, message = "compliancereport.maxlength")
-	private String compliancereport;
-	private String reason;
-	@Length(max = 128, message = "details.maxlength")
-	private String details;
-	private Set<Contempt> contempt = new HashSet<Contempt>();
-	private Set<Appeal> appeal = new HashSet<Appeal>();
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_JUDGMENTIMPL, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	public void addContempt(final Contempt contempt) {
-		getContempt().add(contempt);
-	}
+    // Fields
+    @ManyToOne(fetch=FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "JUDGEMENT", nullable = false)
+    private Judgment eglcJudgment;
+    private Long isCompiled;
+    @DateFormat(message = "invalid.fieldvalue.model.dateofcompliance")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.compliance.date")
+    private Date dateofcompliance;
+    @Length(max = 1024, message = "compliancereport.maxlength")
+    private String compliancereport;
+    private String reason;
+    @Length(max = 128, message = "details.maxlength")
+    private String details;
+    @OneToMany(mappedBy = "judgmentimpl1",  fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contempt> contempt = new ArrayList<Contempt>();
+    @OneToMany(mappedBy = "judgmentimpl1", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appeal> appeal = new ArrayList<Appeal>();
 
-	public void addAppeal(final Appeal appeal) {
-		getAppeal().add(appeal);
-	}
+   
+    public List<Contempt> getContempt() {
+        return contempt;
+    }
 
-	@Valid
-	public Set<Contempt> getContempt() {
-		return contempt;
-	}
+    public void setContempt(List<Contempt> contempt) {
+        this.contempt = contempt;
+    }
 
-	public void setContempt(final Set<Contempt> contempt) {
-		this.contempt = contempt;
-	}
+    public List<Appeal> getAppeal() {
+        return appeal;
+    }
 
-	@Valid
-	public Set<Appeal> getAppeal() {
-		return appeal;
-	}
+    public void setAppeal(List<Appeal> appeal) {
+        this.appeal = appeal;
+    }
 
-	public void setAppeal(final Set<Appeal> appeal) {
-		this.appeal = appeal;
-	}
+    public Judgment getEglcJudgment() {
+        return eglcJudgment;
+    }
 
-	public Judgment getEglcJudgment() {
-		return eglcJudgment;
-	}
+    public void setEglcJudgment(final Judgment eglcJudgment) {
+        this.eglcJudgment = eglcJudgment;
+    }
 
-	public void setEglcJudgment(final Judgment eglcJudgment) {
-		this.eglcJudgment = eglcJudgment;
-	}
+    public Long getIsCompiled() {
+        return isCompiled;
+    }
 
-	public Long getIsCompiled() {
-		return isCompiled;
-	}
+    public void setIsCompiled(final Long isCompiled) {
+        this.isCompiled = isCompiled;
+    }
 
-	public void setIsCompiled(final Long isCompiled) {
-		this.isCompiled = isCompiled;
-	}
+    public Date getDateofcompliance() {
+        return dateofcompliance;
+    }
 
-	public Date getDateofcompliance() {
-		return dateofcompliance;
-	}
+    public void setDateofcompliance(final Date dateofcompliance) {
+        this.dateofcompliance = dateofcompliance;
+    }
 
-	public void setDateofcompliance(final Date dateofcompliance) {
-		this.dateofcompliance = dateofcompliance;
-	}
+    public String getCompliancereport() {
+        return compliancereport;
+    }
 
-	public String getCompliancereport() {
-		return compliancereport;
-	}
+    public void setCompliancereport(final String compliancereport) {
+        this.compliancereport = compliancereport;
+    }
 
-	public void setCompliancereport(final String compliancereport) {
-		this.compliancereport = compliancereport;
-	}
+    /**
+     * @return the reason
+     */
+    public String getReason() {
+        return reason;
+    }
 
-	/**
-	 * @return the reason
-	 */
-	public String getReason() {
-		return reason;
-	}
+    /**
+     * @param reason
+     *            the reason to set
+     */
+    public void setReason(final String reason) {
+        this.reason = reason;
+    }
 
-	/**
-	 * @param reason
-	 *            the reason to set
-	 */
-	public void setReason(final String reason) {
-		this.reason = reason;
-	}
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (getDateofcompliance() != null
+                && !DateUtils.compareDates(getDateofcompliance(), eglcJudgment.getOrderDate()))
+            errors.add(new ValidationError("dateofcompliance", "dateofcompliance.less.orderDate"));
+        for (final Contempt contempt : getContempt())
+            errors.addAll(contempt.validate());
+        for (final Appeal appeal : getAppeal())
+            errors.addAll(appeal.validate());
+        return errors;
+    }
 
-	@Override
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
-		if (getDateofcompliance() != null
-				&& !DateUtils.compareDates(getDateofcompliance(), eglcJudgment.getOrderDate()))
-			errors.add(new ValidationError("dateofcompliance", "dateofcompliance.less.orderDate"));
-		for (final Contempt contempt : getContempt())
-			errors.addAll(contempt.validate());
-		for (final Appeal appeal : getAppeal())
-			errors.addAll(appeal.validate());
-		return errors;
-	}
+    /*
+     * public String getImplementationdetails() { return implementationdetails;
+     * } public void setImplementationdetails(String implementationdetails) {
+     * this.implementationdetails = implementationdetails; }
+     */
 
-	/*
-	 * public String getImplementationdetails() { return implementationdetails;
-	 * } public void setImplementationdetails(String implementationdetails) {
-	 * this.implementationdetails = implementationdetails; }
-	 */
+    public String getDetails() {
+        return details;
+    }
 
-	public String getDetails() {
-		return details;
-	}
+    public void setDetails(final String details) {
+        this.details = details;
+    }
 
-	public void setDetails(final String details) {
-		this.details = details;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
 }

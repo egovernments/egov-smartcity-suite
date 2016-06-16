@@ -47,41 +47,41 @@ import org.egov.infra.script.entity.Script;
 import org.egov.infstr.services.PersistenceService;
 
 public class LegalcaseNumberGenerator {
-	public String getLcNumber(final Legalcase legalcase, final String manualNumber, final Integer caseYear) {
-		/*
-		 * Script validTransitionScript = scriptService.findAllByNamedQuery(
-		 * Script.BY_NAME, LcmsConstants.SCRIPT_LEGALCASE_LCNUMBER).get(0); if
-		 * (legalcase.getLcNumberType().equals(
-		 * LcmsConstants.LC_NUMBER_AUTOMATED_TYPE)) return (String)
-		 * validTransitionScript.eval(Script.createContext( "legalcase",
-		 * legalcase, "seqGenerator", seqGenerator, "currentYear",
-		 * getCurrentYear())); else if (legalcase.getLcNumberType().equals(
-		 * LcmsConstants.LC_NUMBER_OPTIONAL_TYPE)) return (String)
-		 * validTransitionScript.eval(Script.createContext( "legalcase",
-		 * legalcase, "manualNumber", manualNumber, "caseYear",
-		 * caseYear.toString()));
-		 */
-		return null;
-	}
+    public String getLcNumber(final Legalcase legalcase, final String manualNumber, final Integer caseYear) {
+        /*
+         * Script validTransitionScript = scriptService.findAllByNamedQuery(
+         * Script.BY_NAME, LcmsConstants.SCRIPT_LEGALCASE_LCNUMBER).get(0); if
+         * (legalcase.getLcNumberType().equals(
+         * LcmsConstants.LC_NUMBER_AUTOMATED_TYPE)) return (String)
+         * validTransitionScript.eval(Script.createContext( "legalcase",
+         * legalcase, "seqGenerator", seqGenerator, "currentYear",
+         * getCurrentYear())); else if (legalcase.getLcNumberType().equals(
+         * LcmsConstants.LC_NUMBER_OPTIONAL_TYPE)) return (String)
+         * validTransitionScript.eval(Script.createContext( "legalcase",
+         * legalcase, "manualNumber", manualNumber, "caseYear",
+         * caseYear.toString()));
+         */
+        return null;
+    }
 
-	public String getCaseNumber(final Legalcase legalcase, final String caseNumber) {
-		/*
-		 * Script validTransitionScript = scriptService.findAllByNamedQuery(
-		 * Script.BY_NAME, LcmsConstants.SCRIPT_LEGALCASE_CASENUMBER).get( 0);
-		 * return (String) validTransitionScript.eval(Script.createContext(
-		 * "legalcase", legalcase, "caseNumber", caseNumber));
-		 */
-		return null;
-	}
+    public String getCaseNumber(final Legalcase legalcase, final String caseNumber) {
+        /*
+         * Script validTransitionScript = scriptService.findAllByNamedQuery(
+         * Script.BY_NAME, LcmsConstants.SCRIPT_LEGALCASE_CASENUMBER).get( 0);
+         * return (String) validTransitionScript.eval(Script.createContext(
+         * "legalcase", legalcase, "caseNumber", caseNumber));
+         */
+        return null;
+    }
 
-	public void setSeqGenerator(final SequenceGenerator seqGenerator) {
-	}
+    public void setSeqGenerator(final SequenceGenerator seqGenerator) {
+    }
 
-	public void setScriptService(final PersistenceService<Script, Long> persistenceService) {
-	}
+    public void setScriptService(final PersistenceService<Script, Long> persistenceService) {
+    }
 
-	protected String getCurrentYear() {
-		final Calendar cal = Calendar.getInstance();
-		return Integer.valueOf(cal.get(Calendar.YEAR)).toString();
-	}
+    protected String getCurrentYear() {
+        final Calendar cal = Calendar.getInstance();
+        return Integer.valueOf(cal.get(Calendar.YEAR)).toString();
+    }
 }

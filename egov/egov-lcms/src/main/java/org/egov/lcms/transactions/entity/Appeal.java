@@ -43,7 +43,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
@@ -57,77 +69,93 @@ import org.hibernate.validator.constraints.Length;
  *
  * @author MyEclipse Persistence Tools
  */
+@Entity
+@Table(name = "EGLC_APPEAL")
+@SequenceGenerator(name = Appeal.SEQ_EGLC_APPEAL, sequenceName = Appeal.SEQ_EGLC_APPEAL, allocationSize = 1)
+public class Appeal extends AbstractAuditable {
 
-public class Appeal {
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_APPEAL = "SEQ_EGLC_APPEAL";
 
-	private Long id;
-	private Judgmentimpl judgmentimpl;
-	private EgwStatus egwStatus;
-	@Required(message = "srnumber.null")
-	@Length(max = 50, message = "srnumber.length")
-	@OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "srnumber.alpha")
-	private String srnumber;
-	@Required(message = "appealfiledon.null")
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.appeal.date")
-	private Date appealfiledon;
-	@Required(message = "appealfiledby.null")
-	@Length(max = 100, message = "appealfiledby.length")
-	@OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "appealfiledby.alpha")
-	private String appealfiledby;
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_APPEAL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "JUDGMENTIMPL")
+    private Judgmentimpl judgmentimpl1;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "STATUS")
+    private EgwStatus egwStatus;
+    @Required(message = "srnumber.null")
+    @Length(max = 50, message = "srnumber.length")
+    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "srnumber.alpha")
+    private String srnumber;
+    @Required(message = "appealfiledon.null")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.appeal.date")
+    private Date appealfiledon;
+    @Required(message = "appealfiledby.null")
+    @Length(max = 100, message = "appealfiledby.length")
+    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "appealfiledby.alpha")
+    private String appealfiledby;
 
-	public EgwStatus getEgwStatus() {
-		return egwStatus;
-	}
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
 
-	public void setEgwStatus(final EgwStatus egwStatus) {
-		this.egwStatus = egwStatus;
-	}
+    public void setEgwStatus(final EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
 
-	public String getSrnumber() {
-		return srnumber;
-	}
+    public String getSrnumber() {
+        return srnumber;
+    }
 
-	public void setSrnumber(final String srnumber) {
-		this.srnumber = srnumber;
-	}
+    public void setSrnumber(final String srnumber) {
+        this.srnumber = srnumber;
+    }
 
-	public Date getAppealfiledon() {
-		return appealfiledon;
-	}
+    public Date getAppealfiledon() {
+        return appealfiledon;
+    }
 
-	public void setAppealfiledon(final Date appealfiledon) {
-		this.appealfiledon = appealfiledon;
-	}
+    public void setAppealfiledon(final Date appealfiledon) {
+        this.appealfiledon = appealfiledon;
+    }
 
-	public String getAppealfiledby() {
-		return appealfiledby;
-	}
+    public String getAppealfiledby() {
+        return appealfiledby;
+    }
 
-	public void setAppealfiledby(final String appealfiledby) {
-		this.appealfiledby = appealfiledby;
-	}
+    public void setAppealfiledby(final String appealfiledby) {
+        this.appealfiledby = appealfiledby;
+    }
 
-	public Judgmentimpl getJudgmentimpl() {
-		return judgmentimpl;
-	}
+   
+    public Judgmentimpl getJudgmentimpl1() {
+        return judgmentimpl1;
+    }
 
-	public void setJudgmentimpl(final Judgmentimpl judgmentimpl) {
-		this.judgmentimpl = judgmentimpl;
-	}
+    public void setJudgmentimpl1(Judgmentimpl judgmentimpl1) {
+        this.judgmentimpl1 = judgmentimpl1;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
-		if (getAppealfiledon() != null
-				&& !DateUtils.compareDates(getAppealfiledon(), getJudgmentimpl().getEglcJudgment().getOrderDate()))
-			errors.add(new ValidationError("appealfiledon", "appealfiledon.less.orderDate"));
-		return errors;
-	}
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (getAppealfiledon() != null
+                && !DateUtils.compareDates(getAppealfiledon(), getJudgmentimpl1().getEglcJudgment().getOrderDate()))
+            errors.add(new ValidationError("appealfiledon", "appealfiledon.less.orderDate"));
+        return errors;
+    }
 }

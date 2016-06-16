@@ -41,67 +41,102 @@ package org.egov.lcms.transactions.entity;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-public class LegalcaseMiscDetails extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "EGLC_LEGALCASE_MISCDETAILS")
+@SequenceGenerator(name = LegalcaseMiscDetails.SEQ_EGLC_LEGALCASE_MISCDETAILS, sequenceName = LegalcaseMiscDetails.SEQ_EGLC_LEGALCASE_MISCDETAILS, allocationSize = 1)
+public class LegalcaseMiscDetails extends AbstractAuditable {
 
-	@Required(message = "miscDetails.date.null")
-	@DateFormat(message = "invalid.fieldvalue.model.miscDate")
-	private Date miscDate;
-	@Length(max = 50, message = "miscDetails.referencenumber.maxlength")
-	private String referenceNumber;
-	@Length(max = 1024, message = "miscDetails.remarks.maxlength")
-	private String remarks;
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_LEGALCASE_MISCDETAILS = "SEQ_EGLC_LEGALCASE_MISCDETAILS";
 
-	private Legalcase legalcase;
-	private EgwStatus egwStatus;
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_MISCDETAILS, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne
+    @NotNull
+    @Valid
+    @JoinColumn(name = "legalcase", nullable = false)
+    private Legalcase eglcLegalcase;
+    @Required(message = "miscDetails.date.null")
+    @DateFormat(message = "invalid.fieldvalue.model.miscDate")
+    private Date miscDate;
+    @Length(max = 50, message = "miscDetails.referencenumber.maxlength")
+    private String referenceNumber;
+    @Length(max = 1024, message = "miscDetails.remarks.maxlength")
+    private String remarks;
+    @ManyToOne
+    @NotNull
+    @Valid
+    @JoinColumn(name = "STATUS", nullable = false)
+    private EgwStatus egwStatus;
 
-	public Legalcase getLegalcase() {
-		return legalcase;
-	}
+    
 
-	public void setLegalcase(final Legalcase legalcase) {
-		this.legalcase = legalcase;
-	}
+    public Legalcase getEglcLegalcase() {
+        return eglcLegalcase;
+    }
 
-	public Date getMiscDate() {
-		return miscDate;
-	}
+    public void setEglcLegalcase(Legalcase eglcLegalcase) {
+        this.eglcLegalcase = eglcLegalcase;
+    }
 
-	public void setMiscDate(final Date miscDate) {
-		this.miscDate = miscDate;
-	}
+    public Date getMiscDate() {
+        return miscDate;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public void setMiscDate(final Date miscDate) {
+        this.miscDate = miscDate;
+    }
 
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public EgwStatus getEgwStatus() {
-		return egwStatus;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
-	public void setEgwStatus(final EgwStatus egwStatus) {
-		this.egwStatus = egwStatus;
-	}
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
 
-	public String getReferenceNumber() {
-		return referenceNumber;
-	}
+    public void setEgwStatus(final EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
 
-	public void setReferenceNumber(final String referenceNumber) {
-		this.referenceNumber = referenceNumber;
-	}
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(final String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
 }

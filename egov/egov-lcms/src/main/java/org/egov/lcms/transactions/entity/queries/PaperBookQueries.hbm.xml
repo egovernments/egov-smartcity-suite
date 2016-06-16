@@ -5,7 +5,7 @@
 <hibernate-mapping>
 
  <query name="getPaperBookByLegalCaseId">
-    <![CDATA[from PaperBook pb where pb.legalcase.id=?]]></query>
+    <![CDATA[from PaperBook pb where pb.eglcLegalcase.id=?]]></query>
 
  <query name="getPaperBookById">
     <![CDATA[from PaperBook pb where pb.id=?]]></query>

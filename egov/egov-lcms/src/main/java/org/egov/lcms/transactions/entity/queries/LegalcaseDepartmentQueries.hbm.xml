@@ -7,7 +7,7 @@
 <hibernate-mapping>
 
  <query name="getLegalcaseDeptByLegalcaseId">
-    <![CDATA[select ld from LegalcaseDepartment ld where ld.legalcase.id=? order by ld.id asc]]></query>
+    <![CDATA[select ld from LegalcaseDepartment ld where ld.eglcLegalcase.id=? order by ld.id asc]]></query>
  
 
 

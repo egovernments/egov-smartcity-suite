@@ -43,6 +43,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
@@ -54,90 +67,101 @@ import org.egov.lcms.utils.LcmsConstants;
  *
  * @author MyEclipse Persistence Tools
  */
+@Entity
+@Table(name = "EGLC_PWR")
+@SequenceGenerator(name = Pwr.SEQ_EGLC_1PWR, sequenceName = Pwr.SEQ_EGLC_1PWR, allocationSize = 1)
+public class Pwr extends AbstractAuditable {
 
-public class Pwr {
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_1PWR = "seq_eglc_pwr";
 
-	// Fields
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_1PWR, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
+    @NotNull
+    @JoinColumn(name = "LEGALCASE", nullable = false)
+    private Legalcase eglcLegalcase;
+    private String uploadPwr;
+    @DateFormat(message = "invalid.fieldvalue.caFilingdate")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
+    private Date caFilingdate;
+    private String uploadCa;
+    @DateFormat(message = "invalid.fieldvalue.caDueDate")
+    private Date caDueDate;
+    @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
+    private Date pwrDueDate;
 
-	private Long id;
-	private Legalcase eglcLegalcase;
-	private String uploadPwr;
-	@DateFormat(message = "invalid.fieldvalue.caFilingdate")
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
-	private Date caFilingdate;
-	private String uploadCa;
-	@DateFormat(message = "invalid.fieldvalue.caDueDate")
-	private Date caDueDate;
-	@DateFormat(message = "invalid.fieldvalue.pwrDueDate")
-	private Date pwrDueDate;
+    public Legalcase getEglcLegalcase() {
+        return eglcLegalcase;
+    }
 
-	public Legalcase getEglcLegalcase() {
-		return eglcLegalcase;
-	}
+    public void setEglcLegalcase(final Legalcase eglcLegalcase) {
+        this.eglcLegalcase = eglcLegalcase;
+    }
 
-	public void setEglcLegalcase(final Legalcase eglcLegalcase) {
-		this.eglcLegalcase = eglcLegalcase;
-	}
+    public String getUploadPwr() {
+        return uploadPwr;
+    }
 
-	public String getUploadPwr() {
-		return uploadPwr;
-	}
+    public void setUploadPwr(final String uploadPwr) {
+        this.uploadPwr = uploadPwr;
+    }
 
-	public void setUploadPwr(final String uploadPwr) {
-		this.uploadPwr = uploadPwr;
-	}
+    public Date getCaFilingdate() {
+        return caFilingdate;
+    }
 
-	public Date getCaFilingdate() {
-		return caFilingdate;
-	}
+    public void setCaFilingdate(final Date caFilingdate) {
+        this.caFilingdate = caFilingdate;
+    }
 
-	public void setCaFilingdate(final Date caFilingdate) {
-		this.caFilingdate = caFilingdate;
-	}
+    public String getUploadCa() {
+        return uploadCa;
+    }
 
-	public String getUploadCa() {
-		return uploadCa;
-	}
+    public void setUploadCa(final String uploadCa) {
+        this.uploadCa = uploadCa;
+    }
 
-	public void setUploadCa(final String uploadCa) {
-		this.uploadCa = uploadCa;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    public Date getCaDueDate() {
+        return caDueDate;
+    }
 
-	public Date getCaDueDate() {
-		return caDueDate;
-	}
+    public void setCaDueDate(final Date caDueDate) {
+        this.caDueDate = caDueDate;
+    }
 
-	public void setCaDueDate(final Date caDueDate) {
-		this.caDueDate = caDueDate;
-	}
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (!DateUtils.compareDates(getCaDueDate(), eglcLegalcase.getCasedate()))
+            errors.add(new ValidationError("caDueDate", "caDueDate.less.casedate"));
+        if (!DateUtils.compareDates(getCaFilingdate(), eglcLegalcase.getCasedate()))
+            errors.add(new ValidationError("caFilingDate", "caFilingDate.less.casedate"));
+        if (!DateUtils.compareDates(getPwrDueDate(), eglcLegalcase.getCasedate()))
+            errors.add(new ValidationError("pwrDueDate", "pwrDueDate.less.casedate"));
+        if (!DateUtils.compareDates(getCaDueDate(), getPwrDueDate()))
+            errors.add(new ValidationError("caDueDate", "caDueDate.greaterThan.pwrDueDate"));
+        return errors;
+    }
 
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
-		if (!DateUtils.compareDates(getCaDueDate(), eglcLegalcase.getCasedate()))
-			errors.add(new ValidationError("caDueDate", "caDueDate.less.casedate"));
-		if (!DateUtils.compareDates(getCaFilingdate(), eglcLegalcase.getCasedate()))
-			errors.add(new ValidationError("caFilingDate", "caFilingDate.less.casedate"));
-		if (!DateUtils.compareDates(getPwrDueDate(), eglcLegalcase.getCasedate()))
-			errors.add(new ValidationError("pwrDueDate", "pwrDueDate.less.casedate"));
-		if (!DateUtils.compareDates(getCaDueDate(), getPwrDueDate()))
-			errors.add(new ValidationError("caDueDate", "caDueDate.greaterThan.pwrDueDate"));
-		return errors;
-	}
+    public Date getPwrDueDate() {
+        return pwrDueDate;
+    }
 
-	public Date getPwrDueDate() {
-		return pwrDueDate;
-	}
-
-	public void setPwrDueDate(final Date pwrDueDate) {
-		this.pwrDueDate = pwrDueDate;
-	}
+    public void setPwrDueDate(final Date pwrDueDate) {
+        this.pwrDueDate = pwrDueDate;
+    }
 
 }

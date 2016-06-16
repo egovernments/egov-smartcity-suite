@@ -39,82 +39,92 @@
  */
 package org.egov.lcms.masters.entity;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.Max;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.models.BaseModel;
-import org.egov.lcms.transactions.entity.Legalcase;
 import org.hibernate.validator.constraints.Length;
 
+@Entity
+@Table(name = "EGLC_GOVERNMENTDEPARTMENT")
+@SequenceGenerator(name = GovernmentDept.SEQ_EGLC_GOVERNMENTDEPARTMENT, sequenceName = GovernmentDept.SEQ_EGLC_GOVERNMENTDEPARTMENT, allocationSize = 1)
 @Unique(fields = "name", id = "id", tableName = "EGLC_GOVERNMENTDEPARTMENT", columnName = "NAME", message = "masters.name.isunique")
-public class GovernmentDept extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
-	@Required(message = "masters.name.null")
-	@Length(max = 32, message = "masters.name.length")
-	@OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message = "masters.name.mixedChar2")
-	private String name;
-	private Boolean active;
+public class GovernmentDept extends AbstractAuditable {
+    /**
+     * Serial version uid
+     */
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_GOVERNMENTDEPARTMENT = "SEQ_EGLC_GOVERNMENTDEPARTMENT";
 
-	public Boolean getActive() {
-		return active;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_GOVERNMENTDEPARTMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @Required(message = "masters.name.null")
+    @Length(max = 32, message = "masters.name.length")
+    @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message = "masters.name.mixedChar2")
+    private String name;
+    private Boolean active;
 
-	public void setActive(final Boolean active) {
-		this.active = active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
-	@Length(max = 128, message = "masters.description.length")
-	private String Description;
-	@Max(value = 1000, message = "masters.orderNumber.length")
-	private Long orderNumber;
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
 
-	private Set<Legalcase> eglcLegalcases = new HashSet<Legalcase>(0);
+    @Length(max = 128, message = "masters.description.length")
+    private String Description;
+    @Max(value = 1000, message = "masters.orderNumber.length")
+    private Long orderNumber;
 
-	public GovernmentDept() {
-	}
+    public GovernmentDept() {
+    }
 
-	public GovernmentDept(final String name) {
-		this.name = name;
-	}
+    public GovernmentDept(final String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return Description;
-	}
+    public String getDescription() {
+        return Description;
+    }
 
-	public void setDescription(final String description) {
-		Description = description;
-	}
+    public void setDescription(final String description) {
+        Description = description;
+    }
 
-	public Long getOrderNumber() {
-		return orderNumber;
-	}
+    public Long getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setOrderNumber(final Long orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setOrderNumber(final Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-	public Set<Legalcase> getEglcLegalcases() {
-		return eglcLegalcases;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setEglcLegalcases(final Set<Legalcase> eglcLegalcases) {
-		this.eglcLegalcases = eglcLegalcases;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
 }

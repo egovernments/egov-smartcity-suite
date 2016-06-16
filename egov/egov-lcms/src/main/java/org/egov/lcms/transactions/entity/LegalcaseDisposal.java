@@ -43,91 +43,122 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
 import org.egov.lcms.utils.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
+@Entity
+@Table(name = "EGLC_LEGALCASEDISPOSAL")
+@SequenceGenerator(name = LegalcaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, sequenceName = LegalcaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, allocationSize = 1)
 @CompareDates(fromDate = "consignmentDate", toDate = LcmsConstants.DISPOSAL_DATE, dateFormat = "dd/MM/yyyy", message = "consignmentDate.greaterThan.disposalDate")
-public class LegalcaseDisposal extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
+public class LegalcaseDisposal extends AbstractAuditable {
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_LEGALCASEDISPOSAL = "SEQ_EGLC_LEGALCASEDISPOSAL";
 
-	@Required(message = "disposalDate.null")
-	@DateFormat(message = "invalid.fieldvalue.model.disposalDate")
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "disposalDate.lessthan.currentDate")
-	private Date disposalDate;
-	@Length(max = 1024, message = "io.disposalDetails.length")
-	private String disposalDetails;
-	@DateFormat(message = "invalid.fieldvalue.model.consignmentDate")
-	private Date consignmentDate;
-	private Legalcase legalcase;
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_LEGALCASEDISPOSAL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne
+    @NotNull
+    @Valid
+    @JoinColumn(name = "legalcase", nullable = false)
+    private Legalcase eglcLegalcase;
+    @Required(message = "disposalDate.null")
+    @DateFormat(message = "invalid.fieldvalue.model.disposalDate")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "disposalDate.lessthan.currentDate")
+    private Date disposalDate;
+    @Length(max = 1024, message = "io.disposalDetails.length")
+    private String disposalDetails;
+    @DateFormat(message = "invalid.fieldvalue.model.consignmentDate")
+    private Date consignmentDate;
 
-	public Date getDisposalDate() {
-		return disposalDate;
-	}
+    public Date getDisposalDate() {
+        return disposalDate;
+    }
 
-	public void setDisposalDate(final Date disposalDate) {
-		this.disposalDate = disposalDate;
-	}
+    public void setDisposalDate(final Date disposalDate) {
+        this.disposalDate = disposalDate;
+    }
 
-	public String getDisposalDetails() {
-		return disposalDetails;
-	}
+    public String getDisposalDetails() {
+        return disposalDetails;
+    }
 
-	public void setDisposalDetails(final String disposalDetails) {
-		this.disposalDetails = disposalDetails;
-	}
+    public void setDisposalDetails(final String disposalDetails) {
+        this.disposalDetails = disposalDetails;
+    }
 
-	public Date getConsignmentDate() {
-		return consignmentDate;
-	}
+    public Date getConsignmentDate() {
+        return consignmentDate;
+    }
 
-	public void setConsignmentDate(final Date consignmentDate) {
-		this.consignmentDate = consignmentDate;
-	}
+    public void setConsignmentDate(final Date consignmentDate) {
+        this.consignmentDate = consignmentDate;
+    }
 
-	public Legalcase getLegalcase() {
-		return legalcase;
-	}
+    
 
-	public void setLegalcase(final Legalcase legalcase) {
-		this.legalcase = legalcase;
-	}
+    public Legalcase getEglcLegalcase() {
+        return eglcLegalcase;
+    }
 
-	@Override
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
+    public void setEglcLegalcase(Legalcase eglcLegalcase) {
+        this.eglcLegalcase = eglcLegalcase;
+    }
 
-		if (!DateUtils.compareDates(getDisposalDate(), getLegalcase().getCasedate()))
-			errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.caseDate"));
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-		for (final Hearings hearingsObj : legalcase.getHearings()) {
-			int i = 0;
-			if (!DateUtils.compareDates(getDisposalDate(), hearingsObj.getHearingDate())) {
-				errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.hearingDate"));
-				i++;
-			}
-			if (i > 0)
-				break;
-		}
+        if (!DateUtils.compareDates(getDisposalDate(), getEglcLegalcase().getCasedate()))
+            errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.caseDate"));
 
-		for (final Judgment judgmentObj : getLegalcase().getEglcJudgments()) {
-			if (!DateUtils.compareDates(getDisposalDate(), judgmentObj.getOrderDate()))
-				errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.judgementDate"));
-			for (final Judgmentimpl judgementImpl : judgmentObj.getEglcJudgmentimpls())
-				if (!DateUtils.compareDates(getDisposalDate(), judgementImpl.getDateofcompliance()))
-					errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE,
-							"disposalDate.greaterthan.judgementImplDate"));
-		}
+        for (final Hearings hearingsObj : eglcLegalcase.getHearings()) {
+            int i = 0;
+            if (!DateUtils.compareDates(getDisposalDate(), hearingsObj.getHearingDate())) {
+                errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.hearingDate"));
+                i++;
+            }
+            if (i > 0)
+                break;
+        }
 
-		return errors;
-	}
+        for (final Judgment judgmentObj : getEglcLegalcase().getEglcJudgments()) {
+            if (!DateUtils.compareDates(getDisposalDate(), judgmentObj.getOrderDate()))
+                errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.judgementDate"));
+            for (final Judgmentimpl judgementImpl : judgmentObj.getEglcJudgmentimpls())
+                if (!DateUtils.compareDates(getDisposalDate(), judgementImpl.getDateofcompliance()))
+                    errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE,
+                            "disposalDate.greaterthan.judgementImplDate"));
+        }
+
+        return errors;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
 }

@@ -43,6 +43,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
@@ -56,78 +70,92 @@ import org.hibernate.validator.constraints.Length;
  *
  * @author MyEclipse Persistence Tools
  */
+@Entity
+@Table(name = "EGLC_CONTEMPT")
+@SequenceGenerator(name = Contempt.SEQ_EGLC_CONTEMPT, sequenceName = Contempt.SEQ_EGLC_CONTEMPT, allocationSize = 1)
+public class Contempt extends AbstractAuditable {
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_CONTEMPT = "SEQ_EGLC_CONTEMPT";
 
-public class Contempt {
+    // Fields
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_CONTEMPT, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "JUDGMENTIMPL")
+    private Judgmentimpl judgmentimpl1;
+    @Required(message = "canumber.null")
+    @Length(max = 50, message = "canumber.length")
+    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "canumber.alpha")
+    private String canumber;
+    @Required(message = "receivingdate.null")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.contempt.date")
+    private Date receivingdate;
+    private boolean iscommapprRequired = false;
+    private Date commappDate;
 
-	private Long id;
-	private Judgmentimpl judgmentimpl;
-	@Required(message = "canumber.null")
-	@Length(max = 50, message = "canumber.length")
-	@OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "canumber.alpha")
-	private String canumber;
-	@Required(message = "receivingdate.null")
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.contempt.date")
-	private Date receivingdate;
-	private boolean iscommapprRequired = false;
-	private Date commappDate;
+  
 
-	public Judgmentimpl getJudgmentimpl() {
-		return judgmentimpl;
-	}
+    public Judgmentimpl getJudgmentimpl1() {
+        return judgmentimpl1;
+    }
 
-	public void setJudgmentimpl(final Judgmentimpl judgmentimpl) {
-		this.judgmentimpl = judgmentimpl;
-	}
+    public void setJudgmentimpl1(Judgmentimpl judgmentimpl1) {
+        this.judgmentimpl1 = judgmentimpl1;
+    }
 
-	public String getCanumber() {
-		return canumber;
-	}
+    public String getCanumber() {
+        return canumber;
+    }
 
-	public void setCanumber(final String canumber) {
-		this.canumber = canumber;
-	}
+    public void setCanumber(final String canumber) {
+        this.canumber = canumber;
+    }
 
-	public Date getReceivingdate() {
-		return receivingdate;
-	}
+    public Date getReceivingdate() {
+        return receivingdate;
+    }
 
-	public void setReceivingdate(final Date receivingdate) {
-		this.receivingdate = receivingdate;
-	}
+    public void setReceivingdate(final Date receivingdate) {
+        this.receivingdate = receivingdate;
+    }
 
-	public boolean getIscommapprRequired() {
-		return iscommapprRequired;
-	}
+    public boolean getIscommapprRequired() {
+        return iscommapprRequired;
+    }
 
-	public void setIscommapprRequired(final boolean iscommapprRequired) {
-		this.iscommapprRequired = iscommapprRequired;
-	}
+    public void setIscommapprRequired(final boolean iscommapprRequired) {
+        this.iscommapprRequired = iscommapprRequired;
+    }
 
-	public Date getCommappDate() {
-		return commappDate;
-	}
+    public Date getCommappDate() {
+        return commappDate;
+    }
 
-	public void setCommappDate(final Date commappDate) {
-		this.commappDate = commappDate;
-	}
+    public void setCommappDate(final Date commappDate) {
+        this.commappDate = commappDate;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
-		if (getReceivingdate() != null) {
-			if (!DateUtils.compareDates(getReceivingdate(), getJudgmentimpl().getEglcJudgment().getOrderDate()))
-				errors.add(new ValidationError("receivingDate", "receivingDate.less.orderDate"));
-			if (!DateUtils.compareDates(getCommappDate(), getReceivingdate()))
-				errors.add(new ValidationError("receivingDate", "commappDate.greaterThan.receivingDate"));
-		}
-		return errors;
-	}
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (getReceivingdate() != null) {
+            if (!DateUtils.compareDates(getReceivingdate(), getJudgmentimpl1().getEglcJudgment().getOrderDate()))
+                errors.add(new ValidationError("receivingDate", "receivingDate.less.orderDate"));
+            if (!DateUtils.compareDates(getCommappDate(), getReceivingdate()))
+                errors.add(new ValidationError("receivingDate", "commappDate.greaterThan.receivingDate"));
+        }
+        return errors;
+    }
 
 }

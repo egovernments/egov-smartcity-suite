@@ -41,100 +41,139 @@ package org.egov.lcms.transactions.entity;
 
 import java.util.Date;
 
-import org.egov.infstr.models.BaseModel;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-public class ProcessRegister extends BaseModel {
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-	private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "EGLC_PROCESSREGISTER")
+@SequenceGenerator(name = ProcessRegister.SEQ_EGLC_PROCESSREGISTER, sequenceName = ProcessRegister.SEQ_EGLC_PROCESSREGISTER, allocationSize = 1)
+public class ProcessRegister extends AbstractAuditable {
 
-	private Legalcase legalcase;
-	private String detailedAddress;
-	private Date processDate;
-	private Date nextDateOfProcess;
-	private Date receivedOn;
-	private String processHandedOverTo;
-	private Date dateOfHandingOver;
-	private String processFilingAttorney;
-	private String remarks;
-	private boolean isProcessRegReqd;
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_PROCESSREGISTER = "SEQ_EGLC_PROCESSREGISTER";
 
-	public Legalcase getLegalcase() {
-		return legalcase;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_PROCESSREGISTER, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne
+    @NotNull
+    @Valid
+    @JoinColumn(name = "legalcase", nullable = false)
+    private Legalcase eglcLegalcase;
+    private String detailedAddress;
+    private Date processDate;
+    private Date nextDateOfProcess;
+    private Date receivedOn;
+    private String processHandedOverTo;
+    private Date dateOfHandingOver;
+    private String processFilingAttorney;
+    private String remarks;
+    private boolean isProcessRegReqd;
 
-	public void setLegalcase(final Legalcase legalcase) {
-		this.legalcase = legalcase;
-	}
+   
 
-	public String getDetailedAddress() {
-		return detailedAddress;
-	}
+    public Legalcase getEglcLegalcase() {
+        return eglcLegalcase;
+    }
 
-	public void setDetailedAddress(final String detailedAddress) {
-		this.detailedAddress = detailedAddress;
-	}
+    public void setEglcLegalcase(Legalcase eglcLegalcase) {
+        this.eglcLegalcase = eglcLegalcase;
+    }
 
-	public Date getProcessDate() {
-		return processDate;
-	}
+    public String getDetailedAddress() {
+        return detailedAddress;
+    }
 
-	public void setProcessDate(final Date processDate) {
-		this.processDate = processDate;
-	}
+    public void setDetailedAddress(final String detailedAddress) {
+        this.detailedAddress = detailedAddress;
+    }
 
-	public Date getNextDateOfProcess() {
-		return nextDateOfProcess;
-	}
+    public Date getProcessDate() {
+        return processDate;
+    }
 
-	public void setNextDateOfProcess(final Date nextDateOfProcess) {
-		this.nextDateOfProcess = nextDateOfProcess;
-	}
+    public void setProcessDate(final Date processDate) {
+        this.processDate = processDate;
+    }
 
-	public Date getReceivedOn() {
-		return receivedOn;
-	}
+    public Date getNextDateOfProcess() {
+        return nextDateOfProcess;
+    }
 
-	public void setReceivedOn(final Date receivedOn) {
-		this.receivedOn = receivedOn;
-	}
+    public void setNextDateOfProcess(final Date nextDateOfProcess) {
+        this.nextDateOfProcess = nextDateOfProcess;
+    }
 
-	public String getProcessHandedOverTo() {
-		return processHandedOverTo;
-	}
+    public Date getReceivedOn() {
+        return receivedOn;
+    }
 
-	public void setProcessHandedOverTo(final String processHandedOverTo) {
-		this.processHandedOverTo = processHandedOverTo;
-	}
+    public void setReceivedOn(final Date receivedOn) {
+        this.receivedOn = receivedOn;
+    }
 
-	public Date getDateOfHandingOver() {
-		return dateOfHandingOver;
-	}
+    public String getProcessHandedOverTo() {
+        return processHandedOverTo;
+    }
 
-	public void setDateOfHandingOver(final Date dateOfHandingOver) {
-		this.dateOfHandingOver = dateOfHandingOver;
-	}
+    public void setProcessHandedOverTo(final String processHandedOverTo) {
+        this.processHandedOverTo = processHandedOverTo;
+    }
 
-	public String getProcessFilingAttorney() {
-		return processFilingAttorney;
-	}
+    public Date getDateOfHandingOver() {
+        return dateOfHandingOver;
+    }
 
-	public void setProcessFilingAttorney(final String processFilingAttorney) {
-		this.processFilingAttorney = processFilingAttorney;
-	}
+    public void setDateOfHandingOver(final Date dateOfHandingOver) {
+        this.dateOfHandingOver = dateOfHandingOver;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getProcessFilingAttorney() {
+        return processFilingAttorney;
+    }
 
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
+    public void setProcessFilingAttorney(final String processFilingAttorney) {
+        this.processFilingAttorney = processFilingAttorney;
+    }
 
-	public void setIsProcessRegReqd(final boolean isProcessRegReqd) {
-		this.isProcessRegReqd = isProcessRegReqd;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public boolean getIsProcessRegReqd() {
-		return isProcessRegReqd;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
+
+    public void setIsProcessRegReqd(final boolean isProcessRegReqd) {
+        this.isProcessRegReqd = isProcessRegReqd;
+    }
+
+    public boolean getIsProcessRegReqd() {
+        return isProcessRegReqd;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public void setProcessRegReqd(final boolean isProcessRegReqd) {
+        this.isProcessRegReqd = isProcessRegReqd;
+    }
+
 }

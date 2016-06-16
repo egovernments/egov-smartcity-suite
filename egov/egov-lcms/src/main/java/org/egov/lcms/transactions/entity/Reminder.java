@@ -44,59 +44,91 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
 
-public class Reminder extends BaseModel {
+@Entity
+@Table(name = "EGLC_REMINDER")
+@SequenceGenerator(name = Reminder.SEQ_EGLC_REMINDER, sequenceName = Reminder.SEQ_EGLC_REMINDER, allocationSize = 1)
+public class Reminder extends AbstractAuditable {
 
-	private static final long serialVersionUID = 6066719749607410784L;
-	private LegalcaseDepartment legalCaseDepartment;
-	private String remarks;
-	private Date date;
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_REMINDER = "SEQ_EGLC_REMINDER";
 
-	private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_REMINDER, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne
+    @NotNull
+    @Valid
+    @JoinColumn(name = "LEGALCASEDEPT", nullable = false)
+    private LegalcaseDepartment legalCaseDepartment;
+    private String remarks;
+    private Date date;
 
-	public LegalcaseDepartment getLegalCaseDepartment() {
-		return legalCaseDepartment;
-	}
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-	public void setLegalCaseDepartment(final LegalcaseDepartment legalCaseDepartment) {
-		this.legalCaseDepartment = legalCaseDepartment;
-	}
+    public LegalcaseDepartment getLegalCaseDepartment() {
+        return legalCaseDepartment;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public void setLegalCaseDepartment(final LegalcaseDepartment legalCaseDepartment) {
+        this.legalCaseDepartment = legalCaseDepartment;
+    }
 
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public Date getDate() {
-		return date;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
-	public void setDate(final Date date) {
-		this.date = date;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public String getFormattedDate() {
-		return sdf.format(date);
-	}
+    public void setDate(final Date date) {
+        this.date = date;
+    }
 
-	@Override
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
-		if (legalCaseDepartment != null && legalCaseDepartment.getReceiptOfPwr() != null
-				&& !getDate().before(legalCaseDepartment.getReceiptOfPwr()))
-			errors.add(new ValidationError("date", "date.less.receiptOfPwr", getFormattedDate(),
-					sdf.format(legalCaseDepartment.getReceiptOfPwr())));
-		else if (legalCaseDepartment != null && legalCaseDepartment.getLegalcase().getCasedate() != null
-				&& !getDate().after(legalCaseDepartment.getLegalcase().getCasedate()))
-			errors.add(new ValidationError("date", "date.greater.casedate", getFormattedDate(),
-					sdf.format(legalCaseDepartment.getLegalcase().getCasedate())));
+    public String getFormattedDate() {
+        return sdf.format(date);
+    }
 
-		return errors;
-	}
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (legalCaseDepartment != null && legalCaseDepartment.getReceiptOfPwr() != null
+                && !getDate().before(legalCaseDepartment.getReceiptOfPwr()))
+            errors.add(new ValidationError("date", "date.less.receiptOfPwr", getFormattedDate(),
+                    sdf.format(legalCaseDepartment.getReceiptOfPwr())));
+        else if (legalCaseDepartment != null && legalCaseDepartment.getEglcLegalcase().getCasedate() != null
+                && !getDate().after(legalCaseDepartment.getEglcLegalcase().getCasedate()))
+            errors.add(new ValidationError("date", "date.greater.casedate", getFormattedDate(),
+                    sdf.format(legalCaseDepartment.getEglcLegalcase().getCasedate())));
+
+        return errors;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
 }
