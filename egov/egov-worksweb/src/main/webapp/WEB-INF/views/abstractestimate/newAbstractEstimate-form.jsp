@@ -112,7 +112,7 @@
 		</div>
 	</div>
 </form:form>
-
+<%@ include file="estimate-map.jsp"%>
 <script type="text/javascript"
 	src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
 	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
