@@ -344,14 +344,14 @@ function deleteOverheadRow(obj) {
 function recalculateOverheads(){
 	var resultLength = jQuery('#overheadTable tr').length-1;
 	var index;
-	var estimateValue = $("#estimateValue").val();
+	var workValue = $('#workValue').val();
 	for (var i = 0; i < resultLength; i++) {
 		index = i;
 		var percentage = document.getElementById('overheadValues['
 				+ index + '].percentage').value;
 		var amount = document.getElementById('overheadValues['
 				+ index + '].amount');
-		amount.value = ((estimateValue*percentage)/100).toFixed(2);
+		amount.value = ((workValue*percentage)/100).toFixed(2);
 		calculateOverheadTotalAmount();
 	}
 }
@@ -383,7 +383,7 @@ function getPercentageOrLumpsumByOverhead(overhead) {
 			resetAddedOverheads();
 		var objName = overhead.name;
 		var index =objName.substring(objName.indexOf("[")+1,objName.indexOf("]")); 
-		var estimateValue = $("#estimateValue").val();
+		var workValue = $('#workValue').val();
 		if (overhead.value != '') {
 			$.ajax({
 				url : '/egworks/abstractestimate/getpercentageorlumpsumbyoverheadid',
@@ -395,8 +395,7 @@ function getPercentageOrLumpsumByOverhead(overhead) {
 					document.getElementById('overheadValues['+ index + '].overhead.id').value = data.overhead.id;
 					if(data.percentage>0){
 						document.getElementById('overheadValues['+ index + '].percentage').value = data.percentage;
-						document.getElementById('overheadValues['+ index + '].amount').value = ((estimateValue*data.percentage)/100).toFixed(2);
-						
+						document.getElementById('overheadValues['+ index + '].amount').value = ((workValue*data.percentage)/100).toFixed(2);
 					}else{
 						document.getElementById('overheadValues['+ index + '].percentage').value = "";
 						document.getElementById('overheadValues['+ index + '].amount').value = data.lumpsumAmount;
@@ -834,12 +833,13 @@ function calculateEstimateValue() {
 	if(nonSorTotal == '')
 		nonSorTotal = 0.0;
 	
-	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) + parseFloat(overheadTotal)).toFixed(2);
-	
-	$('#estimateValue').val(workValue);
+	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) ).toFixed(2);
+	var estimateValue =  parseFloat(parseFloat(workValue) + parseFloat(overheadTotal)).toFixed(2)
+	$('#estimateValue').val(estimateValue);
 	$('#workValue').val(workValue);
-	$('#estimateValueTotal').html(workValue);
+	$('#estimateValueTotal').html(estimateValue);
 }
+
 
 function validateInput(object) {
     var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test($(object).val()),
