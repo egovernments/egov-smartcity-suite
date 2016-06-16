@@ -39,77 +39,110 @@
  */
 package org.egov.lcms.masters.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.models.BaseModel;
-import org.egov.lcms.utils.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
-@Unique(fields = { "interimOrderType", "code" }, id = "id", tableName = "EGLC_INTERIMTYPE_MASTER", columnName = {
-		"INTERIMORDERTYPE", "CODE" }, message = "masters.interimOrderType.isunique")
-public class InterimOrder extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "eglc_interimtype_master")
+@Unique(id = "id", tableName = "eglc_interimtype_master", columnName = { "code", "interimOrderType" }, fields = {
+        "code", "interimOrderType" }, enableDfltMsg = true)
+@SequenceGenerator(name = InterimOrder.SEQ_INTERIMORDER, sequenceName = InterimOrder.SEQ_INTERIMORDER, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class InterimOrder extends AbstractAuditable {
 
-	@Required(message = "masters.interimOrderType.null")
-	@Length(max = 32, message = "masters.interimOrderType.length")
-	@OptionalPattern(regex = LcmsConstants.mixedChar, message = "masters.interimOrderType.mixedChar")
-	private String interimOrderType;
-	private Boolean active;
+    private static final long serialVersionUID = 796823780349590496L;
+    public static final String SEQ_INTERIMORDER = "SEQ_EGLC_INTERIMTYPE_MASTER";
 
-	public Boolean getActive() {
-		return active;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_INTERIMORDER, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	public void setActive(final Boolean active) {
-		this.active = active;
-	}
+    @NotNull
+    @SafeHtml
+    @Length(min = 1, max = 32)
+    @Audited
+    private String interimOrderType;
 
-	@Required(message = "masters.code.null")
-	@Length(max = 8, message = "masters.code.length")
-	@OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.code.alpha2")
-	private String code;
+    @NotNull
+    @SafeHtml
+    @Length(min = 1, max = 8)
+    @Audited
+    private String code;
 
-	@Length(max = 128, message = "masters.description.length")
-	private String description;
-	@Max(value = 1000, message = "masters.orderNumber.length")
-	private Long orderNumber;
+    @SafeHtml
+    private String description;
 
-	public String getInterimOrderType() {
-		return interimOrderType;
-	}
+    @Min(1)
+    @Max(1000)
+    private Long orderNumber;
 
-	public void setInterimOrderType(final String interimOrderType) {
-		this.interimOrderType = interimOrderType;
-	}
+    @NotNull
+    private Boolean active;
 
-	public String getCode() {
-		return code;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getInterimOrderType() {
+        return interimOrderType;
+    }
 
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    public void setInterimOrderType(final String interimOrderType) {
+        this.interimOrderType = interimOrderType;
+    }
 
-	public Long getOrderNumber() {
-		return orderNumber;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setOrderNumber(final Long orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public Long getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(final Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
 
 }

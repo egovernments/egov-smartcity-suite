@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+<struts-config>
+  <!--============================================== Form Bean Definitions  -->
+  <form-beans>
+    <!-- Registration form bean -->
+    <form-bean name="registrationForm" type="org.apache.struts.webapp.validator.RegistrationForm" />
+    <!-- Multi-Part Registration form bean -->
+    <form-bean name="multiRegistrationForm" type="org.apache.struts.webapp.validator.RegistrationForm" />
+    <!-- Type form bean -->
+    <form-bean name="typeForm" type="org.apache.struts.webapp.validator.TypeForm" />
+    <!-- JavaScript Type form bean -->
+    <form-bean name="jsTypeForm" type="org.apache.struts.webapp.validator.TypeForm" />
+    <!-- Locale form bean -->
+    <form-bean name="localeForm" type="org.apache.struts.action.DynaActionForm">
+      <form-property name="language" type="java.lang.String" />
+      <form-property name="country" type="java.lang.String" />
+    </form-bean>
+  </form-beans>
+  <!-- ======================================== Global Forward Definitions  -->
+  <global-forwards>
+    <forward name="home" path="/index.jsp" />
+  </global-forwards>
+  <!-- ========================================= Action Mapping Definitions -->
+  <action-mappings>
+    <action path="/welcome" forward="/index.jsp" />
+    <!-- Registration Action -->
+    <action path="/registration" forward="/registration.jsp" />
+    <action path="/registration-submit" type="org.apache.struts.webapp.validator.RegistrationAction" name="registrationForm" scope="request" validate="true" input="input">
+      <forward name="input" path="/registration.do" />
+      <forward name="success" path="/index.jsp" />
+    </action>
+    <action path="/jsRegistration" forward="/jsRegistration.jsp" />
+    <!-- Multi-Part Registration Action -->
+    <action path="/multiRegistration" forward="/multiRegistration1.jsp" />
+    <action path="/multiRegistration-submit" type="org.apache.struts.webapp.validator.MultiRegistrationAction" name="multiRegistrationForm" scope="request" validate="false">
+      <forward name="success" path="/welcome.do" />
+      <forward name="input1" path="/multiRegistration1.jsp" />
+      <forward name="input2" path="/multiRegistration2.jsp" />
+    </action>
+    <!-- Type Action -->
+    <action path="/type" forward="/type.jsp" />
+    <action path="/type-submit" type="org.apache.struts.webapp.validator.TypeAction" name="typeForm" scope="request" validate="true" input="input">
+      <forward name="input" path="/type.do" />
+      <forward name="success" path="/welcome.do" />
+    </action>
+    <!-- JavaScript Type Action -->
+    <action path="/editJsType" type="org.apache.struts.webapp.validator.EditTypeAction" scope="request" validate="false">
+      <forward name="success" path="/jsType.do" />
+    </action>
+    <action path="/jsType" forward="/jsType.jsp" />
+    <action path="/jsType-submit" type="org.apache.struts.webapp.validator.TypeAction" name="jsTypeForm" scope="request" validate="true" input="input">
+      <forward name="input" path="/editJsType-submit.do?typeForm.reset=false" />
+      <forward name="success" path="/welcome.do" />
+    </action>
+    <!-- Locale Action -->
+    <action path="/locale" type="org.apache.struts.webapp.validator.LocaleAction" name="localeForm" scope="request">
+      <forward name="success" path="/welcome.do" />
+    </action>
+  </action-mappings>
+  <!-- ============================================= Controller Definition  -->
+  <controller inputForward="true" />
+  <!-- ===================================== Message Resources Definitions  -->
+<message-resources parameter="org.apache.struts.webapp.validator.MessageResources" />
+  <!-- ============================================ Plug Ins Configuration  -->
+  <!-- 
+       Add multiple validator resource files by setting the pathnames property 
+       with a comma delimitted list of resource files to load. 
+    -->
+  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+    <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validator/validation.xml" />
+    <set-property property="stopOnFirstError" value="true" />
+  </plug-in>
+</struts-config>

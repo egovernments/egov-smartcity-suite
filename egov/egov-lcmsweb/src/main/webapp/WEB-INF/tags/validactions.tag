@@ -1,5 +1,9 @@
-<?xml version="1.0"?>
-<!--
+<%@ tag dynamic-attributes="true" isELIgnored="false"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld" %>  
+
+<%@ attribute name="formName" required="true" %>
+
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,58 +41,16 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE hibernate-mapping
-PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-<class name="org.egov.lcms.masters.entity.InterimOrder" table="EGLC_INTERIMTYPE_MASTER">
-		<id
-			name="id"
-			column="ID"
-			type="long"
-			unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGLC_INTORDERTYPE_MASTER</param>
-			</generator>
-		</id>
-		<property name="modifiedDate" type="java.util.Date">
-            <column name="LASTMODIFIEDDATE" not-null="true" />
-        </property>
-     	 <property name="active" type="boolean">
-            <column name="ACTIVE" precision="22" scale="0" not-null="true" />
-        </property>
-   <property
-	    name="code"
-	    column="CODE"
-	    type="string"
-    />
-    
-   
-    
-   <property
-        name="createdDate"
-        column="CREATEDDATE"
-		type="java.util.Date"
-    />
-   <property
-	    name="description"
-	    column="DESCRIPTION"
-	    type="string"
-    />
-   <property
-	    name="interimOrderType"
-	    column="INTERIMORDERTYPE"
-	    type="string"
-    />
-   <property
-	    name="orderNumber"
-	    column="ORDERNUMBER"
-	    type="long"
-    />
-   <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"  not-null="true" fetch="select" />
-		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" not-null="true" fetch="select"/>
-		
-    
-</class>
-</hibernate-mapping>
+  --%>
+
+<div class="buttonholderwk">
+<input type="hidden" name="actionName" id="actionName"/>	
+<s:iterator value="%{validActions}">
+  <s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="moveEstimate" onclick="document.${formName}.actionName.value='%{name}'"/>
+</s:iterator>
+
+<s:if test="%{model.id==null}">
+	  <input type="reset" class="buttonfinal" value="CLEAR" id="button" name="button"/>
+  </s:if>
+  <input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();"/>
+</div>

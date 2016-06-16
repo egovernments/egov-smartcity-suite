@@ -76,4 +76,28 @@
         <put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/caseType-sucess.jsp"/> 
     </definition>
+    <definition name="interimorder-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.interimorder.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-new.jsp"/>
+</definition>
+
+<definition name="interimorder-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.interimorder.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-view.jsp"/>
+</definition>
+
+<definition name="interimorder-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.interimorder.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-edit.jsp"/>
+</definition>
+
+<definition name="interimorder-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.interimorder.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters//interimorder/interimorder-result.jsp"/>
+</definition>
+
+<definition name="interimorder-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.interimorder.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-search.jsp"/>
+</definition>
 </tiles-definitions>
