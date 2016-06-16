@@ -99,12 +99,12 @@ public class WorkProgressRegisterService {
                 criteria.add(Restrictions.eq("winCode", workProgressRegisterSearchRequest.getWorkIdentificationNumber())
                         .ignoreCase());
             if (workProgressRegisterSearchRequest.getContractor() != null) {
-                criteria.createAlias("contractor", "contractor ");
-                criteria.add(Restrictions.or(
-                        Restrictions.ilike("contractor.code", workProgressRegisterSearchRequest.getContractor(),
-                                MatchMode.ANYWHERE),
-                        Restrictions.ilike("contractor.name", workProgressRegisterSearchRequest.getContractor(),
-                                MatchMode.ANYWHERE)));
+                criteria.createAlias("contractor", "contractor");
+                criteria.add(Restrictions.or(Restrictions.ilike("contractor.code",
+                        workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE),
+                        Restrictions.ilike("contractor.name",
+                                workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE)));
+
             }
             if (workProgressRegisterSearchRequest.getAdminSanctionFromDate() != null)
                 criteria.add(Restrictions.ge("adminSanctionDate",

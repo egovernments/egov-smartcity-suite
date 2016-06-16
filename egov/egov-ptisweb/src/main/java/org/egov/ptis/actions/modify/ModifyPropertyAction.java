@@ -988,7 +988,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propDetail.setWallType(propertyDetail.getWallType());
         propDetail.setWoodType(propertyDetail.getWoodType());
         propDetail.setExtentSite(propertyDetail.getExtentSite());
-        propDetail.setStructure(propertyDetail.isStructure());
+        //propDetail.setStructure(propertyDetail.isStructure());
         propDetail.setExtentAppartenauntLand(propertyDetail.getExtentAppartenauntLand());
         if (numOfFloors == 0)
             propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());

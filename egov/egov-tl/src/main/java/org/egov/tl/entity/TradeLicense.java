@@ -66,8 +66,9 @@ public class TradeLicense extends License {
         final StringBuffer details = new StringBuffer();
         if (getLicenseNumber() != null && !getLicenseNumber().isEmpty())
             details.append("TradeLicense Number " +getLicenseNumber() +" and ");
-       details.append(String.format(" Application Number %s with application date %s.", applicationNumber ,
+       details.append(String.format("App No. %s dated %s", applicationNumber ,
                 (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date())))));
+       details.append("<br/> Remarks : "+this.getState().getComments());
         return details.toString();
     }
     

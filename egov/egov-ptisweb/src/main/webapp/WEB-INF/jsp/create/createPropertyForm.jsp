@@ -172,7 +172,7 @@
 				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
 	</tr>
 	
-	<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox">
@@ -184,7 +184,7 @@
 		</td>
 		<td class="greybox siteowner"><s:textfield maxlength="32" value="%{propertyDetail.siteOwner}"
 				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
-	</tr>
+	</tr> --%>
 	
 	<tr>
 		<td class="greybox">&nbsp;</td>

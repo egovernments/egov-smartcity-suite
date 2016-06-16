@@ -165,22 +165,27 @@ function validateDetailsBeforeSubmit(){
     	fromRange=getControlInBranch(tbl.rows[i],'fromRange').value;
     	toRange=getControlInBranch(tbl.rows[i],'toRange').value;
     	rate=getControlInBranch(tbl.rows[i],'rate').value;
-    	if(fromRange!='' && toRange!='' && (eval(fromRange)>=eval(toRange))){
-    		bootbox.alert("\"To Range\" should be greater than \"From Range\" for row "+(i)+".");
-    		getControlInBranch(tbl.rows[i],'toRange').value="";
-    		getControlInBranch(tbl.rows[i],'toRange').focus();
-    		return false;
-    	}
-    	if(!toRange){
-    		bootbox.alert("Please enter \"To(days)\" for row "+(i)+".");
-    		getControlInBranch(tbl.rows[i],'toRange').value="";
-    		getControlInBranch(tbl.rows[i],'toRange').focus();
-    		return false;
-    	}
-    	if(!rate){
-    		bootbox.alert("Please enter \"Penalty Rate(In Perc)\" for row "+(i)+".");
-    		getControlInBranch(tbl.rows[i],'rate').value="";
-    		getControlInBranch(tbl.rows[i],'rate').focus();
+    	if(jQuery.isNumeric( fromRange ) && jQuery.isNumeric( toRange )){
+    		if(fromRange!='' && toRange!='' && (eval(fromRange)>=eval(toRange))){
+        		bootbox.alert("\"To Range\" should be greater than \"From Range\" for row "+(i)+".");
+        		getControlInBranch(tbl.rows[i],'toRange').value="";
+        		getControlInBranch(tbl.rows[i],'toRange').focus();
+        		return false;
+        	}
+        	if(!toRange){
+        		bootbox.alert("Please enter \"To(days)\" for row "+(i)+".");
+        		getControlInBranch(tbl.rows[i],'toRange').value="";
+        		getControlInBranch(tbl.rows[i],'toRange').focus();
+        		return false;
+        	}
+        	if(!rate){
+        		bootbox.alert("Please enter \"Penalty Rate(In Perc)\" for row "+(i)+".");
+        		getControlInBranch(tbl.rows[i],'rate').value="";
+        		getControlInBranch(tbl.rows[i],'rate').focus();
+        		return false;
+        	}
+    	}else{
+    		bootbox.alert("Not a valid number for row "+(i)+".");
     		return false;
     	}
     }
@@ -203,6 +208,9 @@ $( "#search" ).click(function( event ) {
 			//dataType: "json",
 			success: function (response) {
 				 $('#resultdiv').html(response);
+				 if(jQuery('#resultdiv #result tbody tr').length == 1){
+					 jQuery('input[name="penaltyRatesList[0].fromRange"]').attr("readonly", false);
+				 }
 			}, 
 			error: function (response) {
 				console.log("failed");

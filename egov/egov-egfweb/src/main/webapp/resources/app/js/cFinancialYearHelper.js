@@ -312,7 +312,6 @@ function callAjaxSearch() {
 			"data" : "finYearRange", "sClass" : "text-left"} ,{ 
 				"data" : "startingDate", "sClass" : "text-left"} ,{ 
 					"data" : "endingDate", "sClass" : "text-left"} ,{ 
-						"data" : "isActive", "sClass" : "text-left"} ,{ 
 							"data" : "isActiveForPosting", "sClass" : "text-left"} ,{ 
 								"data" : "isClosed", "sClass" : "text-left"} ,{ 
 									"data" : "transferClosingBalance", "sClass" : "text-left"}]				

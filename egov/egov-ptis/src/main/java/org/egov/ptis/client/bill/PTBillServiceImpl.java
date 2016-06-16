@@ -372,35 +372,38 @@ public class PTBillServiceImpl extends BillServiceInterface {
     }
 
     /**
-     * Method used to insert penalty in EgDemandDetail table. Penalty Amount
-     * will be calculated depending upon the cheque Amount.
-     *
-     * @see createDemandDetails() -- EgDemand Details are created
-     * @see getPenaltyAmount() --Penalty Amount is calculated
-     * @param chqBouncePenalty
-     * @return New EgDemandDetails Object
+     * Method used to insert demand details in EgDemandDetail table.
+     * 
+     * @param demandReason
+     * @param amount
+     * @param inst
+     * @return
      */
-    public EgDemandDetails insertDemandDetails(final String demandReason, final BigDecimal penaltyAmount,
+    public EgDemandDetails insertDemandDetails(final String demandReason, final BigDecimal amount,
             final Installment inst) {
         EgDemandDetails demandDetail = null;
         Module ptModule = null;
 
-        if (penaltyAmount != null && penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
+        if (amount != null && amount.compareTo(BigDecimal.ZERO) > 0) {
 
             ptModule = module();
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(
                     demandReason, ptModule);
 
             if (egDemandReasonMaster == null)
-                throw new ApplicationRuntimeException(" Penalty Demand reason Master is null in method  insertPenalty");
+                throw new ApplicationRuntimeException(demandReason + " Demand reason Master is null in method  insertDemandDetails");
 
             final EgDemandReason egDemandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(
                     egDemandReasonMaster, inst, ptModule);
 
             if (egDemandReason == null)
-                throw new ApplicationRuntimeException(" Penalty Demand reason is null in method  insertPenalty ");
+                throw new ApplicationRuntimeException(demandReason + " Demand reason is null in method  insertDemandDetails ");
 
-            demandDetail = createDemandDetails(egDemandReason, BigDecimal.ZERO, penaltyAmount);
+            if (DEMANDRSN_CODE_ADVANCE.equals(egDemandReason.getEgDemandReasonMaster().getCode())) {
+                demandDetail = createDemandDetails(egDemandReason, amount, BigDecimal.ZERO);
+            } else {
+                demandDetail = createDemandDetails(egDemandReason, BigDecimal.ZERO, amount);
+            }
         }
         return demandDetail;
     }

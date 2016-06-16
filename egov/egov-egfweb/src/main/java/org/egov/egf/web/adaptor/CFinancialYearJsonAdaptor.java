@@ -40,13 +40,14 @@
 
 package org.egov.egf.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.commons.CFinancialYear;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.commons.CFinancialYear;
-
-import java.lang.reflect.Type;
 
 public class CFinancialYearJsonAdaptor implements JsonSerializer<CFinancialYear> {
     @Override
@@ -66,10 +67,6 @@ public class CFinancialYearJsonAdaptor implements JsonSerializer<CFinancialYear>
                 jsonObject.addProperty("endingDate", cFinancialYear.getEndingDate().toString());
             else
                 jsonObject.addProperty("endingDate", "");
-            if (cFinancialYear.getIsActive() != null)
-                jsonObject.addProperty("isActive", cFinancialYear.getIsActive());
-            else
-                jsonObject.addProperty("isActive", "");
             if (cFinancialYear.getIsActiveForPosting() != null)
                 jsonObject.addProperty("isActiveForPosting", cFinancialYear.getIsActiveForPosting());
             else

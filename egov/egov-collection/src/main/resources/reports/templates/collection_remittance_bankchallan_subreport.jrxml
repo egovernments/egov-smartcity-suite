@@ -75,6 +75,10 @@
 		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
+	<variable name="serialnumber" class="java.lang.Integer" resetType="Group" resetGroup="remittancegroup" calculation="Count">
+		<variableExpression><![CDATA[$F{chequeNo}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Integer(1)]]></initialValueExpression>
+	</variable>
 	<group name="remittancegroup">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
@@ -337,7 +341,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{serialnumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="41" y="0" width="100" height="26" isPrintWhenDetailOverflows="true" uuid="a2c3d40c-98d3-4481-adb7-8c6cf36b6a3f">

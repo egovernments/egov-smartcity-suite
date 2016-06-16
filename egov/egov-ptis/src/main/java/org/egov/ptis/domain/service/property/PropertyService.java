@@ -670,15 +670,17 @@ public class PropertyService {
             carryForwardCollection(newProperty, inst, newDemandDtlsMap.get(inst), ptDemandOld, oldPropTypeMaster,
                     newPropTypeMaster);
 
-            /* If current year second half is the only installment in the list, 
-        	then create the arrear demand details from the Ptdemand of current year first installment */
-            if(instList.size()==1 && instList.get(0).equals(installmentSecondHalf)){
-				carryForwardPenalty(ptDemandOld, ptDemandNew, installmentFirstHalf);
-			}else{
-				if (inst.equals(currentInstall)) {
-	                carryForwardPenalty(ptDemandOld, ptDemandNew, inst);
-	            }
-			}
+            /*
+             * If current year second half is the only installment in the list, then create the arrear demand details from the
+             * Ptdemand of current year first installment
+             */
+            if (instList.size() == 1 && instList.get(0).equals(installmentSecondHalf)) {
+                carryForwardPenalty(ptDemandOld, ptDemandNew, installmentFirstHalf);
+            } else {
+                if (inst.equals(currentInstall)) {
+                    carryForwardPenalty(ptDemandOld, ptDemandNew, inst);
+                }
+            }
         }
 
         // sort the installment list in ascending order to start the excessCollection adjustment from 1st inst
@@ -1826,261 +1828,103 @@ public class PropertyService {
      * @param newDemandDetailsByInstallment
      */
     public void adjustExcessCollectionAmount(final List<Installment> installments,
-            final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, final Ptdemand ptDemand) {
+            final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, Ptdemand ptDemand) {
         LOGGER.info("Entered into adjustExcessCollectionAmount");
         LOGGER.info("adjustExcessCollectionAmount: installments - " + installments
                 + ", newDemandDetailsByInstallment.size - " + newDemandDetailsByInstallment.size());
 
-        /**
-         * Demand reason groups to adjust the excess collection amount if a demand reason is collected fully. Ex: if GEN_TAX is
-         * collected for the installment fully then remaining excess collection will be adjusted to the group to which GEN_TAX
-         * belongs i.e., demandReasons1[GROUP1]
-         */
-        final Set<String> demandReasons1 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+        final Set<String> demandReasons = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+                DEMANDRSN_CODE_GENERAL_TAX,
                 DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS,
                 DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-        final Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
-                DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS,
-                DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
-
-        final Installment currerntInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-
-        for (final Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment : excessCollAmtMap
-                .entrySet()) {
-            LOGGER.debug("adjustExcessCollectionAmount : excessAmountByDemandReasonForInstallment - "
-                    + excessAmountByDemandReasonForInstallment);
-
-            for (final String demandReason : excessAmountByDemandReasonForInstallment.getValue().keySet()) {
-
-                adjustExcessCollection(installments, newDemandDetailsByInstallment, demandReasons1, demandReasons2,
-                        excessAmountByDemandReasonForInstallment, demandReason, false, null);
-
-                // when the demand details is absent in all the installments /
-                // fully collected(in case of current installment demand
-                // details) , adjusting to its group
-                // and remaining to one of group for current installment
-                // if (!isDemandDetailExists) {
-                final Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-                        demandReasons1) : new LinkedHashSet<String>(demandReasons2);
-                reasons.remove(demandReason);
-                for (final String reason : reasons) {
-                    adjustExcessCollection(installments, newDemandDetailsByInstallment, demandReasons1, demandReasons2,
-                            excessAmountByDemandReasonForInstallment, reason, true, demandReason);
-                    if (excessAmountByDemandReasonForInstallment.getValue().get(demandReason)
-                            .compareTo(BigDecimal.ZERO) == 0)
-                        break;
-                }
-                // }
-
-                if (excessAmountByDemandReasonForInstallment.getValue().get(demandReason).compareTo(BigDecimal.ZERO) > 0) {
-
-                    EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
-                            newDemandDetailsByInstallment.get(currerntInstallment),
-                            PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
-
-                    if (currentDemandDetail == null) {
-                        LOGGER.info("adjustExcessCollectionAmount - Advance demand details is not present, creating.. ");
-
-                        currentDemandDetail = propertyTaxCollection.insertAdvanceCollection(
-                                PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE, excessAmountByDemandReasonForInstallment
-                                        .getValue().get(demandReason), currerntInstallment);
-                        ptDemand.addEgDemandDetails(currentDemandDetail);
-                        newDemandDetailsByInstallment.get(currerntInstallment).add(currentDemandDetail);
-                    } else {
-                        currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected().add(
-                                excessAmountByDemandReasonForInstallment.getValue().get(demandReason)));
-                        currentDemandDetail.setModifiedDate(new Date());
-
-                    }
-                }
-
-                excessAmountByDemandReasonForInstallment.getValue().put(demandReason, BigDecimal.ZERO);
-            }
+        if (!excessCollAmtMap.isEmpty()) {
+            adjustCollection(installments, newDemandDetailsByInstallment, demandReasons, ptDemand);
         }
+
         LOGGER.info("Excess collection adjustment is successfully completed..");
         LOGGER.debug("Exiting from adjustExcessCollectionAmount");
     }
 
     /**
-     * Adjusts Excess Collection amount to installment wise demand details
-     *
+     * Adjusts Collection amount to installment wise demand details
+     * 
      * @param installments
      * @param newDemandDetailsByInstallment
-     * @param demandReasons1
-     * @param demandReasons2
-     * @param excessAmountByDemandReasonForInstallment
-     * @param demandReason
-     * @param isGroupAdjustment
-     * @param reasonNotExists
+     * @param demandReasons
+     * @param ptDemand
      * @return
      */
-    private Boolean adjustExcessCollection(final List<Installment> installments,
+    private Ptdemand adjustCollection(final List<Installment> installments,
             final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment,
-            final Set<String> demandReasons1, final Set<String> demandReasons2,
-            final Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment,
-            final String demandReason, final Boolean isGroupAdjustment, final String reasonNotExists) {
+            final Set<String> demandReasons, Ptdemand ptDemand) {
 
-        LOGGER.info("Entered into adjustExcessCollection");
-
-        Boolean isDemandDetailExists = Boolean.FALSE;
+        LOGGER.info("Entered into adjustCollection");
+        EgDemandDetails advanceDemandDetails = null;
         BigDecimal balanceDemand = BigDecimal.ZERO;
-
-        for (final Installment installment : installments) {
-            final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
-                    newDemandDetailsByInstallment.get(installment), demandReason);
-
-            if (newDemandDetail == null)
-                isDemandDetailExists = Boolean.FALSE;
-            else {
-                isDemandDetailExists = Boolean.TRUE;
-                balanceDemand = newDemandDetail.getAmount().subtract(newDemandDetail.getAmtCollected());
-
-                if (balanceDemand.compareTo(BigDecimal.ZERO) > 0) {
-
-                    BigDecimal excessCollection = isGroupAdjustment ? excessAmountByDemandReasonForInstallment
-                            .getValue().get(reasonNotExists) : excessAmountByDemandReasonForInstallment.getValue().get(
-                            demandReason);
-
-                    if (excessCollection.compareTo(BigDecimal.ZERO) > 0) {
-
-                        if (excessCollection.compareTo(balanceDemand) <= 0) {
-                            newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(excessCollection));
-                            newDemandDetail.setModifiedDate(new Date());
-                            excessCollection = BigDecimal.ZERO;
-                        } else {
-                            newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(balanceDemand));
-                            newDemandDetail.setModifiedDate(new Date());
-                            BigDecimal remainingExcessCollection = excessCollection.subtract(balanceDemand);
-
-                            while (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
-
-                                /**
-                                 * adjust to next installments in asc order for the reason demandReason
-                                 */
-
-                                final Set<String> oneReason = new LinkedHashSet<String>();
-                                oneReason.add(demandReason);
-                                remainingExcessCollection = adjustToInstallmentDemandDetails(installments,
-                                        newDemandDetailsByInstallment, excessAmountByDemandReasonForInstallment,
-                                        remainingExcessCollection, oneReason);
-
-                                if (remainingExcessCollection.compareTo(BigDecimal.ZERO) == 0)
-                                    excessCollection = BigDecimal.ZERO;
-
-                                if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
-                                    final Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-                                            demandReasons1)
-                                                    : new LinkedHashSet<String>(demandReasons2);
-                                    reasons.remove(demandReason);
-
-                                    remainingExcessCollection = adjustToInstallmentDemandDetails(installments,
-                                            newDemandDetailsByInstallment, excessAmountByDemandReasonForInstallment,
-                                            remainingExcessCollection, reasons);
-                                }
-
-                                /**
-                                 * There is still remainingExcessCollection after adjusting to demandReason[Installment1]
-                                         * demandReason[Installment2] . . . . . . . . . . . . . . demandReason[CurrentInstallment] So,
-                                         * adjusting the remaining excess collection to demandReason[currentInstallment]
-                                 */
-                                if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
-                                    EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
-                                            newDemandDetailsByInstallment.get(propertyTaxCommonUtils.getCurrentInstallment()),
-                                            demandReason);
-                                    /**
-                                     * if the demand reason does not exist in the current installment then adjusting the remaining
-                                             * excess collection to its group
-                                     */
-                                    if (currentDemandDetail == null) {
-                                        final Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-                                                demandReasons1)
-                                                        : new LinkedHashSet<String>(demandReasons2);
-                                        reasons.remove(demandReason);
-                                        for (final String rsn : reasons) {
-                                            currentDemandDetail = getEgDemandDetailsForReason(
-                                                    newDemandDetailsByInstallment.get(propertyTaxCommonUtils
-                                                            .getCurrentInstallment()), rsn);
-                                            if (currentDemandDetail != null)
-                                                break;
-                                        }
-                                    }
-
-                                    currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected().add(
-                                            remainingExcessCollection));
-                                    currentDemandDetail.setModifiedDate(new Date());
-                                    remainingExcessCollection = BigDecimal.ZERO;
-                                    excessCollection = BigDecimal.ZERO;
-
-                                }
-
-                                if (remainingExcessCollection.compareTo(BigDecimal.ZERO) == 0)
-                                    excessCollection = BigDecimal.ZERO;
-                            }
-                        }
-
-                        if (excessCollection.compareTo(BigDecimal.ZERO) == 0) {
-                            final String rsn = isGroupAdjustment ? reasonNotExists : demandReason;
-                            excessAmountByDemandReasonForInstallment.getValue().put(rsn, ZERO);
-                        }
-                    }
-                }
-                final String rsn = isGroupAdjustment ? reasonNotExists : demandReason;
-                if (excessAmountByDemandReasonForInstallment.getValue().get(rsn).compareTo(BigDecimal.ZERO) == 0)
-                    break;
+        BigDecimal excessCollection = BigDecimal.ZERO;
+        for (Map<String, BigDecimal> map : excessCollAmtMap.values()) {
+            for (BigDecimal amount : map.values()) {
+                excessCollection = excessCollection.add(amount);
             }
         }
+        Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date()).get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+        if (excessCollection.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal collection = BigDecimal.ZERO;
+            for (EgDemandDetails demandDetials : ptDemand.getEgDemandDetails()) {
+                if (advanceDemandDetails == null && DEMANDRSN_CODE_ADVANCE.equals(demandDetials.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                        && currSecondHalf.equals(demandDetials.getEgDemandReason().getEgInstallmentMaster())) {
+                    advanceDemandDetails = demandDetials;
+                }
+                collection = collection.add(demandDetials.getAmtCollected());
+                demandDetials.setAmtCollected(BigDecimal.ZERO);
+            }
+            collection = collection.add(excessCollection);
+            for (final Installment installment : installments) {
+                for (String demandReason : demandReasons) {
+                    final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
+                            newDemandDetailsByInstallment.get(installment), demandReason);
 
-        LOGGER.info("Exiting from adjustExcessCollection");
+                    if (newDemandDetail != null) {
+                        balanceDemand = newDemandDetail.getAmount().subtract(newDemandDetail.getAmtCollected());
 
-        return isDemandDetailExists;
-    }
-
-    /**
-     * Adjusts excess amount installment wise demand details
-     *
-     * @param installments
-     * @param newDemandDetailsByInstallment
-     * @param excessAmountByDemandReasonForInstallment
-     * @param remainingExcessCollection
-     * @param reasons
-     * @return
-     */
-    private BigDecimal adjustToInstallmentDemandDetails(final List<Installment> installments,
-            final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment,
-            final Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment,
-            BigDecimal remainingExcessCollection, final Set<String> reasons) {
-        LOGGER.debug("Entered into adjustToInstallmentDemandDetails");
-        LOGGER.debug("adjustToInstallmentDemandDetails : reasons=" + reasons + ", remainingExcessCollection="
-                + remainingExcessCollection);
-        for (final String reason : reasons)
-            for (final Installment nextInstallment : installments) {
-                final EgDemandDetails nextNewDemandDetail = getEgDemandDetailsForReason(
-                        newDemandDetailsByInstallment.get(nextInstallment), reason);
-
-                if (nextNewDemandDetail != null) {
-                    final BigDecimal balance = nextNewDemandDetail.getAmount().subtract(
-                            nextNewDemandDetail.getAmtCollected());
-
-                    if (balance.compareTo(BigDecimal.ZERO) > 0)
-                        if (remainingExcessCollection.compareTo(balance) <= 0) {
-                            nextNewDemandDetail.setAmtCollected(nextNewDemandDetail.getAmtCollected().add(
-                                    remainingExcessCollection));
-                            nextNewDemandDetail.setModifiedDate(new Date());
-                            remainingExcessCollection = BigDecimal.ZERO;
-                        } else {
-                            nextNewDemandDetail.setAmtCollected(nextNewDemandDetail.getAmtCollected().add(balance));
-                            nextNewDemandDetail.setModifiedDate(new Date());
-                            remainingExcessCollection = remainingExcessCollection.subtract(balance);
+                        if (balanceDemand.compareTo(BigDecimal.ZERO) > 0) {
+                            if (collection.compareTo(BigDecimal.ZERO) > 0) {
+                                if (collection.compareTo(balanceDemand) <= 0) {
+                                    newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(collection));
+                                    newDemandDetail.setModifiedDate(new Date());
+                                    collection = BigDecimal.ZERO;
+                                } else {
+                                    newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(balanceDemand));
+                                    newDemandDetail.setModifiedDate(new Date());
+                                    collection = collection.subtract(balanceDemand);
+                                }
+                            }
                         }
-
-                    if (remainingExcessCollection.compareTo(BigDecimal.ZERO) == 0)
+                    }
+                    if (collection.compareTo(BigDecimal.ZERO) == 0) {
                         break;
+                    }
+                }
+                if (collection.compareTo(BigDecimal.ZERO) == 0) {
+                    break;
                 }
             }
-        LOGGER.debug("adjustToInstallmentDemandDetails : remainingExcessCollection=" + remainingExcessCollection);
-        LOGGER.debug("Exiting from adjustToInstallmentDemandDetails");
-        return remainingExcessCollection;
+
+            if (collection.compareTo(BigDecimal.ZERO) > 0) {
+                if (advanceDemandDetails == null) {
+                    EgDemandDetails demandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
+                            collection,
+                            currSecondHalf);
+                    ptDemand.getEgDemandDetails().add(demandDetails);
+                } else {
+                    advanceDemandDetails.getAmtCollected().add(collection);
+                }
+            }
+            LOGGER.info("Exiting from adjustCollection");
+
+        }
+        return ptDemand;
     }
 
     /**

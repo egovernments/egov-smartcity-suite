@@ -306,7 +306,7 @@
 			</display:column>
 
 			<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-				title="Index Number" style="text-align:center;width:10%;">
+				title="Assessment Number" style="text-align:center;width:10%;">
 				<s:property value="#attr.currentRowObject.basicProperty.upicNo" />
 			</display:column>
 
