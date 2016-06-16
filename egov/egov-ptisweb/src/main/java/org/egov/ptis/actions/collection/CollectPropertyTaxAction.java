@@ -158,8 +158,8 @@ public class CollectPropertyTaxAction extends BaseFormAction {
 		final SQLQuery qry = entityQueryService
 				.getSession()
 				.createSQLQuery(
-						"select i_asmtno, ts_dttm, (coalesce(d_crnpt,0) + coalesce(d_crned,0) + coalesce(d_crnlcs,0) + coalesce(d_crnuauthcnstplty,0)) from pt_extnasmtbal_tbl where (coalesce(d_crnpt,0)>0 or coalesce(d_crned,0)>0 or coalesce(d_crnlcs,0)>0 or coalesce(d_crnuauthcnstplty,0)>0) and i_asmtno =:propertyid");
-        qry.setInteger("propertyid", Integer.valueOf(propertyId));
+						"select i_asmtno, ts_dttm, (coalesce(d_crnpt,0) + coalesce(d_crned,0) + coalesce(d_crnlcs,0) + coalesce(d_crnuauthcnstplty,0)) from pt_extnasmtbal_tbl where (coalesce(d_crnpt,0)>0 or coalesce(d_crned,0)>0 or coalesce(d_crnlcs,0)>0 or coalesce(d_crnuauthcnstplty,0)>0) and cast(i_asmtno as text) =:propertyid");
+        qry.setParameter("propertyid", propertyId);
         final List<Object[]> list = (List<Object[]>) qry.list();
         
 		if (list!=null && list.size() > 0) {
