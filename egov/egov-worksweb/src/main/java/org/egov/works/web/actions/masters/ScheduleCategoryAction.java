@@ -139,7 +139,7 @@ public class ScheduleCategoryAction extends BaseFormAction {
         if (StringUtils.isBlank(mode))
             addActionMessage(getText("schedule.category.save.success", new String[] { scheduleCategory.getCode() }));
         else
-            addActionMessage(getText("contractor.modified.success"));
+            addActionMessage(getText("schedule.category.modify.success"));
         return SUCCESS;
     }
 
