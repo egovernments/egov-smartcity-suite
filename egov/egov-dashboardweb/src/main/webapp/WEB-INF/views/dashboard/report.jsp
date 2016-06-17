@@ -72,167 +72,151 @@
 				</nav>
 				
 			</header>
+			
 			<div class="main-content">
 
-				<div class="container" style="margin-top:30px;">
+				<div class="container-fluid">
+				    
 				    <div class="row">
-
-				        <div class="col-md-4">
-				        	<div class="panel panel-default">
-		        			<div class="panel-heading">
-		        				PGR
-		        			</div>
-							  <div class="panel-body">
-							  	<ul class="treed">
-					                <li><a href="#">PGR</a>
-					                    <ul>
-					                        <li><a href="/pgr/report/complaintTypeReport" target="_blank">Grievance Type Wise Report</a></li>
-					                        <li><a href="/pgr/report/ageingReportByDept" target="_blank">Ageing Report - Department wise</a></li>
-					                        <li><a href="/pgr/report/ageingReportByBoundary" target="_blank">Ageing Report - Boundary wise</a></li>
-					                        <li><a href="/pgr/report/drillDownReportByBoundary" target="_blank">Status Drill Down Report - Department wise</a></li>
-					                        <li><a href="/pgr/report/drillDownReportByDept" target="_blank">Status Drill Down Report - Boundary wise</a></li>
-					                        <!-- <li><a href="report.html" target="_blank">Functionary wise Ageing</a></li>
-					                        <li><a href="report.html" target="_blank">Functionary wise Status</a></li> -->
-					                    </ul>
-					                </li>
-					            </ul>
-							  </div>
+				    	<div class="col-sm-8 text-right">
+				    		<button type="button" class="btn btn-secondary expand">Expand All</button>
+				    		<button type="button" class="btn btn-secondary collapsable">Collapse All</button>
+				    	</div>
+				    	<div class="col-sm-4 text-center">
+				    		<div class="input-group">
+							    <input type="text" class="form-control search"/>
+							    <span class="input-group-addon">
+							        <i class="fa fa-search"></i>
+							    </span>
 							</div>
-				        </div>
-
-				        <div class="col-md-4">
-				        	<div class="panel panel-default">
-		        			<div class="panel-heading">
-		        				Collections
-		        			</div>
-							  <div class="panel-body">
-							  	<ul class="treed">
-					                <li><a href="#">Collections</a>
-					                    <ul>
-					                        <li><a href="/collection/reports/collectionSummary-criteria.action#no-back-button" target="_blank">Collection summary report</a></li>
-					                        <li><a href="/collection/reports/remittanceVoucherReport-criteria.action#no-back-button" target="_blank">Remittance voucher report</a></li>
-					                        <li><a href="/collection/reports/receiptRegisterReport-criteria.action#no-back-button" target="_blank">Receipt register report</a></li>
-					                    </ul>
-					                </li>
-					            </ul>
-							  </div>
-							</div>
-				        </div>
-
-				        <div class="col-md-4">
-				        	<div class="panel panel-default">
-		        			<div class="panel-heading">
-		        				Works
-		        			</div>
-							  <div class="panel-body">
-							  	<ul class="treed">
-					                <li><a href="#">Works</a>
-					                    <ul>
-					                        <li><a href="/egworks/reports/workprogressregister/searchform" target="_blank">Work Progress Register</a></li>
-					                        <li><a href="/egworks/reports/estimateabstractreport/departmentwise-searchform" target="_blank">Estimate abstract by department</a></li>
-					                        <li><a href="/egworks/reports/estimateabstractreport/typeofworkwise-searchform" target="_blank">Estimate abstract by type of work</a></li>
-					                    </ul>
-					                </li>
-					            </ul>
-							  </div>
-							</div>
-				        </div>
-
-				        <div class="col-md-4">
-				        	<div class="panel panel-default">
-		        			<div class="panel-heading">
-		        				PTIS
-		        			</div>
-							  <div class="panel-body">
-							  	<ul class="treed">
-					                <li><a href="#">PTIS</a>
-					                    <ul>
-					                        <li><a href="/ptis/reports/collectionSummaryReport-wardWise.action" target="_blank">Revenue zone wise collection report</a></li>
-					                        <li><a href="/ptis/reports/defaultersReport-search.action#no-back-button" target="_blank">Defaulters Report</a></li>
-					                        <li><a href="/ptis/reports/dCBReport-search.action#no-back-button" target="_blank">DCB Report</a></li>
-					                        <li><a href="/ptis/report/baseRegister" target="_blank">Base Register</a></li>
-					                        <li><a href="/ptis/report/dailyCollection" target="_blank">Daily collection report</a></li>
-					                        <li><a href="/ptis/reports/arrearRegisterReport-index.action#no-back-button" target="_blank">Arrear Register report</a></li>
-					                    </ul>
-					                </li>
-					            </ul>
-							  </div>
-							</div>
-				        </div>
-
-				        <div class="col-md-4">
-				        	<div class="panel panel-default">
-		        			<div class="panel-heading">
-		        				Advertisement
-		        			</div>
-							  <div class="panel-body">
-							  	<ul class="treed">
-					                <li><a href="#">Advertisement</a>
-					                    <ul>
-					                        <li><a href="/adtax/reports/search-for-dcbreport" target="_blank">Advertisement Collection Report</a></li>
-					                        <li><a href="/adtax/reports/search-dcbreport" target="_blank">Agency wise Collection Report</a></li>
-					                    </ul>
-					                </li>
-					            </ul>
-							  </div>
-							</div>
-				        </div>
-
-				        <div class="col-md-4">
-				        	<div class="panel panel-default">
-		        			<div class="panel-heading">
-		        				TL
-		        			</div>
-							  <div class="panel-body">
-							  	<ul class="treed">
-					                <li><a href="#">TL</a>
-					                    <ul>
-					                        <li><a href="/tl/tlreports/dCBReport/licenseNumberWise#no-back" target="_blank">DCB Report by Trade</a></li>
-					                        <li><a href="/tl/search/searchTrade-newForm.action#no-back" target="_blank">View/Search Trade licenses</a></li>
-					                    </ul>
-					                </li>
-					            </ul>
-							  </div>
-							</div>
-				        </div>
-
-				        <div class="col-md-4">
-				        	<div class="panel panel-default">
-		        			<div class="panel-heading">
-		        				Water Charges
-		        			</div>
-							  <div class="panel-body">
-							  	<ul class="treed">
-					                <li><a href="#">Water Charges</a>
-					                    <ul>
-					                        <li><a href="/wtms/reports/dCBReport/wardWise" target="_blank">DCB Report revenue ward wise</a></li>
-					                        <li><a href="/wtms/report/defaultersWTReport/search" target="_blank">Defaulters Report</a></li>
-					                        <li><a href="/wtms/report/dailyWTCollectionReport/search/" target="_blank">Daily collection report</a></li>
-					                        <li><a href="/wtms/reports/dCBReport/localityWise" target="_blank">DCB Report locality wise</a></li>
-					                        <li><a href="/wtms/reports/coonectionReport/wardWise" target="_blank">Number of connections</a></li>
-					                        <li><a href="/wtms/report/baseRegister" target="_blank">Base Register report</a></li>
-					                    </ul>
-					                </li>
-					            </ul>
-							  </div>
-							</div>
-				        </div>
-
-
-
+							<ul class="search-ul">
+							</ul>
+				    	</div>
 				    </div>
+				    
+				    <br>
+				    
+				    <div class="row">
+				    	<div class="col-md-4">
+				        	<div class="panel panel-default">
+			        			<div class="panel-heading">
+			        				Grievance Redressal
+			        			</div>
+							  	<div class="panel-body">
+							  		<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+			                        <li class="report-li"><a href="/pgr/report/complaintTypeReport" class="open-popup" data-strwindname="Grievance Type Wise Report">Grievance Type Wise Report</a></li>
+			                        <li class="report-li"><a href="/pgr/report/ageingReportByDept" class="open-popup" data-strwindname="Ageing Report - Department wise">Ageing Report - Department wise</a></li>
+			                        <li class="report-li hide"><a href="/pgr/report/ageingReportByBoundary" class="open-popup" data-strwindname="Ageing Report - Boundary wise">Ageing Report - Boundary wise</a></li>
+			                        <li class="report-li hide"><a href="/pgr/report/drillDownReportByBoundary" class="open-popup" data-strwindname="Status Drill Down Report - Department wise">Status Drill Down Report - Department wise</a></li>
+			                        <li class="report-li hide"><a href="/pgr/report/drillDownReportByDept" class="open-popup" data-strwindname="Status Drill Down Report - Boundary wise">Status Drill Down Report - Boundary wise</a></li>
+							 	</div>
+							</div>
+						</div>
+						
+						<div class="col-md-4">
+				        	<div class="panel panel-default">
+       		        			<div class="panel-heading">
+       		        				Property Tax
+       		        			</div>
+								<div class="panel-body">
+									<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+									<li class="report-li"><a href="/ptis/reports/collectionSummaryReport-wardWise.action" class="open-popup" data-strwindname="Revenue zone wise collection report">Revenue zone wise collection report</a></li>
+				                    <li class="report-li"><a href="/ptis/reports/defaultersReport-search.action#no-back-button" class="open-popup" data-strwindname="Defaulters Report">Defaulters Report</a></li>
+				                    <li class="report-li hide"><a href="/ptis/reports/dCBReport-search.action#no-back-button" class="open-popup" data-strwindname="DCB Report">DCB Report</a></li>
+				                    <li class="report-li hide"><a href="/ptis/report/baseRegister" class="open-popup" data-strwindname="Base Register">Base Register</a></li>
+				                    <li class="report-li hide"><a href="/ptis/report/dailyCollection" class="open-popup" data-strwindname="Daily collection report">Daily collection report</a></li>
+				                    <li class="report-li hide"><a href="/ptis/reports/arrearRegisterReport-index.action#no-back-button" class="open-popup" data-strwindname="Arrear Register report">Arrear Register report</a></li>
+								</div>
+      						</div>
+				        </div>
+				        
+				        <div class="col-md-4">
+				        	<div class="panel panel-default">
+       		        			<div class="panel-heading">
+       		        				Water Charge Management
+       		        			</div>
+								<div class="panel-body">
+									<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+									<li class="report-li"><a href="/wtms/reports/dCBReport/wardWise" class="open-popup" data-strwindname="DCB Report revenue ward wise">DCB Report revenue ward wise</a></li>
+				                    <li class="report-li"><a href="/wtms/report/defaultersWTReport/search" class="open-popup" data-strwindname="Defaulters Report">Defaulters Report</a></li>
+				                    <li class="report-li hide"><a href="/wtms/report/dailyWTCollectionReport/search/" class="open-popup" data-strwindname="Daily collection report">Daily collection report</a></li>
+				                    <li class="report-li hide"><a href="/wtms/reports/dCBReport/localityWise" class="open-popup" data-strwindname="DCB Report locality wise">DCB Report locality wise</a></li>
+				                    <li class="report-li hide"><a href="/wtms/reports/coonectionReport/wardWise" class="open-popup" data-strwindname="Number of connections">Number of connections</a></li>
+				                    <li class="report-li hide"><a href="/wtms/report/baseRegister" class="open-popup" data-strwindname="Base Register report">Base Register report</a></li>
+								</div>
+       						</div>
+				        </div>
+				    </div>
+				    
+				    <div class="row">
+				    	<div class="col-md-4">
+				        	<div class="panel panel-default">
+					   			<div class="panel-heading">
+					   				Collection
+					   			</div>
+								<div class="panel-body">
+									<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+									<li class="report-li"><a href="/collection/reports/collectionSummary-criteria.action#no-back-button" class="open-popup" data-strwindname="Collection summary report">Collection summary report</a></li>
+				                    <li class="report-li"><a href="/collection/reports/remittanceVoucherReport-criteria.action#no-back-button" class="open-popup" data-strwindname="Remittance voucher report">Remittance voucher report</a></li>
+				                    <li class="report-li hide"><a href="/collection/reports/receiptRegisterReport-criteria.action#no-back-button" class="open-popup" data-strwindname="Receipt register report">Receipt register report</a></li>
+								</div>
+							</div>
+				        </div>
+				        
+				        <div class="col-md-4">
+				        	<div class="panel panel-default">
+     		        			<div class="panel-heading">
+     		        				Works Management
+     		        			</div>
+								<div class="panel-body">
+									<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+									<li class="report-li"><a href="/egworks/reports/workprogressregister/searchform" class="open-popup" data-strwindname="Work Progress Register">Work Progress Register</a></li>
+				                    <li class="report-li"><a href="/egworks/reports/estimateabstractreport/departmentwise-searchform" class="open-popup" data-strwindname="Estimate abstract by department">Estimate abstract by department</a></li>
+				                    <li class="report-li hide"><a href="/egworks/reports/estimateabstractreport/typeofworkwise-searchform" class="open-popup" data-strwindname="Estimate abstract by type of work">Estimate abstract by type of work</a></li>
+								</div>
+     						</div>
+				        </div>
+				        
+				        <div class="col-md-4">
+				        	<div class="panel panel-default">
+       		        			<div class="panel-heading">
+       		        				Advertisement Tax
+       		        			</div>
+								<div class="panel-body">
+									<li class="report-li"><a href="/adtax/reports/search-for-dcbreport" class="open-popup" data-strwindname="Advertisement Collection Report">Advertisement Collection Report</a></li>
+				                    <li class="report-li"><a href="/adtax/reports/search-dcbreport" class="open-popup" data-strwindname="Agency wise Collection Report">Agency wise Collection Report</a></li>
+								</div>
+       						</div>
+				        </div>
+				    </div>
+				    
+				    <div class="row">
+				    	<div class="col-md-4">
+				        	<div class="panel panel-default">
+       		        			<div class="panel-heading">
+       		        				Trade License
+       		        			</div>
+								<div class="panel-body">
+									<li class="report-li"><a href="/tl/tlreports/dCBReport/licenseNumberWise#no-back" class="open-popup" data-strwindname="DCB Report by Trade">DCB Report by Trade</a></li>
+				                    <li class="report-li"><a href="/tl/search/searchTrade-newForm.action#no-back" class="open-popup" data-strwindname="View/Search Trade licenses">View/Search Trade licenses</a></li>
+								</div>
+       						</div>
+				        </div>
+				    </div> 
+
 				</div>
 
 			</div>
 		</div>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/treed.css' context='/egi'/>">
+		<link rel="stylesheet" href="<c:url value='/resources/css/report.css' />">
 		
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/global/js/bootstrap/treed.js' context='/egi'/>"></script>
+		<script src="<c:url value='/resources/js/report.js' />"></script>
+		
 		</body>
 </html>
 
