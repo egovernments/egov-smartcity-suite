@@ -39,6 +39,34 @@
  */
 package org.egov.wtms.application.entity;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.entity.Source;
@@ -54,16 +82,6 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
-
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "egwtr_connectiondetails")
@@ -186,12 +204,10 @@ public class WaterConnectionDetails extends StateAware {
     @JoinColumn(name = "chairPerson")
     private ChairPerson chairPerson;
     private Boolean isHistory = false;
-    
+
     @Valid
     @OneToOne(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private FieldInspectionDetails fieldInspectionDetails;
-    
-    
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -200,13 +216,11 @@ public class WaterConnectionDetails extends StateAware {
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WaterDemandConnection> waterDemandConnection = new ArrayList<WaterDemandConnection>(0);
-    
-
 
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConnectionEstimationDetails> estimationDetails = new ArrayList<ConnectionEstimationDetails>(0);
-    
+
     @OrderBy("id")
     @OneToMany(mappedBy = "waterConnectionDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LegacyReceipts> legacyReceipts = new ArrayList<LegacyReceipts>(0);
@@ -242,8 +256,7 @@ public class WaterConnectionDetails extends StateAware {
     private String approvalComent;
 
     @Transient
-    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(
-            0);
+    private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>(0);
 
     public List<MeterReadingConnectionDetails> getMeterConnection() {
         return meterConnection;
@@ -428,7 +441,7 @@ public class WaterConnectionDetails extends StateAware {
     public void setFieldInspectionDetails(final FieldInspectionDetails fieldInspectionDetails) {
         this.fieldInspectionDetails = fieldInspectionDetails;
     }
-    
+
     public List<LegacyReceipts> getLegacyReceipts() {
         return legacyReceipts;
     }
@@ -645,11 +658,8 @@ public class WaterConnectionDetails extends StateAware {
         return demandDetailBeanList;
     }
 
-    public void setDemandDetailBeanList(
-            final List<DemandDetail> demandDetailBeanList) {
+    public void setDemandDetailBeanList(final List<DemandDetail> demandDetailBeanList) {
         this.demandDetailBeanList = demandDetailBeanList;
     }
-    
-
 
 }

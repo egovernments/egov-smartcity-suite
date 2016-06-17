@@ -44,11 +44,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-
 import org.egov.wtms.application.entity.LegacyReceipts;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.LegacyReceiptsRepository;
-import org.egov.wtms.masters.entity.DonationHeader;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -91,21 +89,12 @@ public class LegacyReceiptsSevice {
     }
 
     @Transactional
-    public void updateLegacyReceipts(LegacyReceipts  legacyReceipts) {
-    	legacyReceiptsRepository.save(legacyReceipts);
+    public void updateLegacyReceipts(final LegacyReceipts legacyReceipts) {
+        legacyReceiptsRepository.save(legacyReceipts);
     }
-    
+
     public LegacyReceipts findByReceiptNumber(final String receiptNumber) {
         return legacyReceiptsRepository.findByReceiptNumber(receiptNumber);
     }
 
 }
-
-
-
-
-
-
-
-
-
