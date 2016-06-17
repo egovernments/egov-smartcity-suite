@@ -54,6 +54,7 @@ import org.egov.collection.entity.ReceiptDetailInfo;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.entity.ReceiptVoucher;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.service.ChallanService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
@@ -182,7 +183,6 @@ public class FileUploadAction extends BaseFormAction {
     public void setChallanService(final ChallanService challanService) {
         this.challanService = challanService;
     }
-
 
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -769,7 +769,7 @@ public class FileUploadAction extends BaseFormAction {
             ReceiptDetail receiptDetail = new ReceiptDetail(
                     account, function, rDetails.getCreditAmountDetail(),
                     rDetails.getDebitAmountDetail(), null,
-                    Long.valueOf(m), null, null, receiptHeader);
+                    Long.valueOf(m), null, null, receiptHeader, PURPOSE.OTHERS.toString());
             receiptDetail.setCramount(rDetails.getCreditAmountDetail());
 
             totalAmt = totalAmt.add(
@@ -815,7 +815,7 @@ public class FileUploadAction extends BaseFormAction {
          * ReceiptPayeeDetails receiptPayee = receiptHeader.getReceiptPayeeDetails();
          * receiptPayee.addReceiptHeader(receiptHeader); receiptPayee=receiptPayeeDetailsService.persistChallan(receiptPayee);
          */
-        //receiptHeaderService.persistChallan(receiptHeader);
+        // receiptHeaderService.persistChallan(receiptHeader);
         receiptHeaderService.getSession().flush();
         LOGGER.info("Persisted Challan and Created Receipt In Pending State For the Challan");
 
