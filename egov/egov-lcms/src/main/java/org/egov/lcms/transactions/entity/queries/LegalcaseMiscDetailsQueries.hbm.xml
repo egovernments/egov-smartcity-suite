@@ -7,6 +7,6 @@
 <hibernate-mapping>
 
  <query name="getMiscDetailsByLegalcaseAndStatus">
-    <![CDATA[select lcmd from LegalcaseMiscDetails lcmd where lcmd.legalcase.id=? and lcmd.egwStatus.id=?]]></query>
+    <![CDATA[select lcmd from LegalcaseMiscDetails lcmd where lcmd.legalcase.id=? and lcmd.status.id=?]]></query>
 
 </hibernate-mapping>
