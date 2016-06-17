@@ -1137,8 +1137,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/createProperty-updateDataEntry")
     public String updateDataEntry() {
-    	if(StringUtils.isNotBlank(propertyCategory))
-    		property.getPropertyDetail().setCategoryType(propertyCategory);
     	if (LOGGER.isDebugEnabled())
             LOGGER.debug("update data entry: Property updation started, Property: " + property + ", UpicNo: " + basicProp.getUpicNo()
             		+ ", zoneId: " + zoneId + ", wardId: " + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot
@@ -1146,7 +1144,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: " + propOccId);
     	validate();
         if (hasErrors()){
-        	populateFormData();
+        	upicNo = indexNumber;
             return EDIT_DATA_ENTRY;
         }
     	basicProp.setRegdDocDate(property.getBasicProperty().getRegdDocDate());

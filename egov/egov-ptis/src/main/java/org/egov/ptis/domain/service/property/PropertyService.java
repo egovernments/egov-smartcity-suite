@@ -3068,6 +3068,7 @@ public class PropertyService {
 	                    savedFloor.getBuiltUpArea().setArea(floorProxy.getBuiltUpArea().getArea());
 	                    savedFloor.getBuiltUpArea().setLength(floorProxy.getBuiltUpArea().getLength());
 	                    savedFloor.getBuiltUpArea().setBreadth(floorProxy.getBuiltUpArea().getLength());
+	                    savedFloor.setFirmName(floorProxy.getFirmName());
 	                    // setting total builtup area.
 	                    totBltUpArea.setArea(totBltUpAreaVal);
 	                    totBltUpArea.setLength(floorProxy.getBuiltUpArea().getLength());
