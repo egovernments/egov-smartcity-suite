@@ -84,31 +84,9 @@ public class CodeValidator {
         DataExtractor.getExtractor();
     }
 
-    public boolean isValidGLCode(final String pServiceID, final String pGlCode) {
-        final boolean valid = false;
-        // Iterator it=glFilterList.keySet().iterator();
+ 
 
-        /*
-         * try { hm = (HashMap)cache.get(ROOTNODE+"/"+ApplicationThreadLocals.getDomainName(),GLFILTERCODE); } catch (Exception e) { //
-         * TODO Auto-generated catch block if(LOGGER.isDebugEnabled()) LOGGER.debug("Exp="+e.getMessage()); throw new
-         * ApplicationRuntimeException(e.getMessage()); } //if(LOGGER.isInfoEnabled()) LOGGER.info("glcode:"+pGlCode);
-         * //if(LOGGER.isInfoEnabled()) LOGGER.info("looked up str:"+rootNode+"/"+FilterName.get()+gLFilterCode); //
-         * if(LOGGER.isInfoEnabled()) LOGGER.info("hashmap is:"+hm); // if(LOGGER.isInfoEnabled())
-         * LOGGER.info("hashmap keyset is:"+hm.keySet()); Iterator it=hm.keySet().iterator(); while(it.hasNext()){ FilterCodeList
-         * fList=(FilterCodeList)hm.get(it.next()); if(fList.getServiceID().equalsIgnoreCase(pServiceID) &&
-         * fList.getGLCode().equalsIgnoreCase(pGlCode)){ valid=true; break; } }
-         */
-        return valid;
-    }
-
-    public boolean isValidCode(final String pGlCode) {
-        boolean valid = false;
-        // GLAccount fList=(GLAccount)glAccountCodes.get(pGlCode);
-        final GLAccount fList = (GLAccount) ChartOfAccounts.getGlAccountCodes().get(pGlCode);
-        if (fList != null)
-            valid = true;
-        return valid;
-    }
+    
 
     public void reloadMappedCodes() throws TaskFailedException {
         // glFilterList.clear();

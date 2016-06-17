@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.commons;
+package org.egov.egf.model;
 
 import java.util.Date;
 
@@ -51,6 +51,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.egov.commons.CFinancialYear;
 
 @Entity
 @Table(name = "closedperiods")

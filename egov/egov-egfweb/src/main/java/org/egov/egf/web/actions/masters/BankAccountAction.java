@@ -39,9 +39,15 @@
  */
 package org.egov.egf.web.actions.masters;
 
-import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bankaccount;
@@ -49,286 +55,307 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.Fund;
+import org.egov.commons.service.BankAccountService;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.gson.GsonBuilder;
 
 @ParentPackage("egov")
 public class BankAccountAction extends JQueryGridActionSupport {
-    private static final long serialVersionUID = 1L;
-    private String mode;
-    private String newGLCode = "", coaID = "", glCode = "";
-    private Integer bankBranchId;
-    private PersistenceService<Bankaccount, Integer> bankAccountService;
-    private PersistenceService<CChartOfAccounts, Long> chartOfAccountsService;
-    private AppConfigValueService appConfigValuesService;
+	private static final long serialVersionUID = 1L;
+	private String mode;
+	private String newGLCode = "", coaID = "", glCode = "";
+	private Integer bankBranchId;
+	@Autowired
+	@Qualifier("bankAccountService")
+	private BankAccountService bankAccountService;
+	@Autowired
+	@Qualifier("chartOfAccountsService")
+	private ChartOfAccountsService chartOfAccountsService;
+	@Autowired
+	private AppConfigValueService appConfigValuesService;
 
-    String code = EGovConfig.getProperty("egf_config.xml",
-            "glcodeMaxLength", "", "AccountCode");
+	String code = EGovConfig.getProperty("egf_config.xml", "glcodeMaxLength",
+			"", "AccountCode");
 
-    @Override
-    public String execute() {
-        if ("CRUD".equals(mode))
-            try {
-                if (oper.equals(ADD))
-                    addBankAccount();
-                else if (oper.equals(EDIT))
-                    editBankAccount();
-                else if (oper.equals(DELETE))
-                    deleteBankAccount();
-                sendAJAXResponse(SUCCESS);
-            } catch (final RuntimeException e) {
-                sendAJAXResponse("failed");
-                throw new ApplicationRuntimeException("Error occurred in Bank Account.", e);
-            }
-        else if ("LIST_BRANCH_ACC".equals(mode))
-            listAllBankBranchAccounts();
-        return null;
-    }
+	@Override
+	public String execute() {
+		if ("CRUD".equals(mode))
+			try {
+				if (oper.equals(ADD))
+					addBankAccount();
+				else if (oper.equals(EDIT))
+					editBankAccount();
+				else if (oper.equals(DELETE))
+					deleteBankAccount();
+				sendAJAXResponse(SUCCESS);
+			} catch (final RuntimeException e) {
+				sendAJAXResponse("failed");
+				throw new ApplicationRuntimeException(
+						"Error occurred in Bank Account.", e);
+			}
+		else if ("LIST_BRANCH_ACC".equals(mode))
+			listAllBankBranchAccounts();
+		return null;
+	}
 
-    private void addBankAccount() {
-        final Bankbranch bankBranch = (Bankbranch) persistenceService.getSession().load(Bankbranch.class, bankBranchId);
-        new Date();
-        final Bankaccount bankAccount = new Bankaccount();
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        bankAccount.setBankbranch(bankBranch);
-        try {
-            if(autoBankAccountGLCodeEnabled()){
-            if (!request.getParameter("accounttype").equalsIgnoreCase("")) {
-                newGLCode = prepareBankAccCode(request.getParameter("accounttype").split("#")[0], code);
-                coaID = postInChartOfAccounts(newGLCode, request.getParameter("accounttype").split("#")[0],
-                        request.getParameter("accountnumber"));
-                if (coaID != null && coaID.length() > 0) {
-                    final CChartOfAccounts chartofaccounts = (CChartOfAccounts) persistenceService.getSession().load(
-                            CChartOfAccounts.class, Long.parseLong(coaID));
-                    bankAccount.setChartofaccounts(chartofaccounts);
-                }
-            }
-            }
-            else
-            {
-            if (!request.getParameter("glcode").equalsIgnoreCase("")) {
-                glCode = request.getParameter("glcode");
-                validateGlCode(glCode);
-                CChartOfAccounts COA = chartOfAccountsService.find("select coa from CChartOfAccounts coa where coa.glcode = ?",
-                        glCode);
-                bankAccount.setChartofaccounts(COA);
-            }
-            }
-        } catch (final Exception e) {
-            sendAJAXResponse(e.getMessage());
-            throw new ApplicationRuntimeException(e.getMessage());
-        }
-        populateBankAccountDetail(bankAccount);
-        bankAccountService.applyAuditing(bankAccount);
-        bankAccountService.persist(bankAccount);
-    }
+	private void addBankAccount() {
+		final Bankbranch bankBranch = (Bankbranch) persistenceService
+				.getSession().load(Bankbranch.class, bankBranchId);
+		new Date();
+		final Bankaccount bankAccount = new Bankaccount();
+		final HttpServletRequest request = ServletActionContext.getRequest();
+		bankAccount.setBankbranch(bankBranch);
+		try {
+			if (autoBankAccountGLCodeEnabled()) {
+				if (!request.getParameter("accounttype").equalsIgnoreCase("")) {
+					newGLCode = prepareBankAccCode(
+							request.getParameter("accounttype").split("#")[0],
+							code);
+					coaID = postInChartOfAccounts(newGLCode, request
+							.getParameter("accounttype").split("#")[0],
+							request.getParameter("accountnumber"));
+					if (coaID != null && coaID.length() > 0) {
+						final CChartOfAccounts chartofaccounts = (CChartOfAccounts) persistenceService
+								.getSession().load(CChartOfAccounts.class,
+										Long.parseLong(coaID));
+						bankAccount.setChartofaccounts(chartofaccounts);
+					}
+				}
+			} else {
+				if (!request.getParameter("glcode").equalsIgnoreCase("")) {
+					glCode = request.getParameter("glcode");
+					validateGlCode(glCode);
+					CChartOfAccounts COA = chartOfAccountsService
+							.find("select coa from CChartOfAccounts coa where coa.glcode = ?",
+									glCode);
+					bankAccount.setChartofaccounts(COA);
+				}
+			}
+		} catch (final Exception e) {
+			sendAJAXResponse(e.getMessage());
+			throw new ApplicationRuntimeException(e.getMessage());
+		}
+		populateBankAccountDetail(bankAccount);
+		bankAccountService.applyAuditing(bankAccount);
+		bankAccountService.persist(bankAccount);
+	}
 
-    public String prepareBankAccCode(final String accID, final String code)
-            throws Exception {
-        String glCode = "";
-        Long glcode;
-        Long tempCode = 0L;
-        glCode = (String) persistenceService
-                .find("select glcode from CChartOfAccounts where id=?) order by glcode desc",
-                        Long.parseLong(accID));
-        final String subminorvalue = EGovConfig.getProperty("egf_config.xml",
-                "subminorvalue", "", "AccountCode");
-        glCode = glCode.substring(0, Integer.parseInt(subminorvalue));
-        glCode = (String) persistenceService.find(
-                "select glcode from CChartOfAccounts where glcode like ? || '%' order by glcode desc", glCode);
-        final String zero = EGovConfig.getProperty("egf_config.xml", "zerofill", "",
-                "AccountCode");
-        if (glCode.length() == Integer.parseInt(code)) {
-            glcode = Long.parseLong(glCode);
-            tempCode = glcode + 1;
-        } else {
-            glCode = glCode + zero;
-            glcode = Long.parseLong(glCode);
-            tempCode = glcode + 1;
-        }
-        glCode = Long.toString(tempCode);
-        return glCode;
-    }
-    
-    public String postInChartOfAccounts(final String glCode, final String parentId,
-            final String accNumber) throws Exception {
-        final Bankbranch bankBranch = (Bankbranch) persistenceService.getSession().load(Bankbranch.class, bankBranchId);
-        int majorCodeLength = 0;
-        majorCodeLength = Integer.valueOf(getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
-        final CChartOfAccounts chart = new CChartOfAccounts();
-        chart.setGlcode(glCode);
-        chart.setName(bankBranch.getBank().getName() + " "
-                + bankBranch.getBranchname() + " "
-                + accNumber);
-        chart.setParentId(Long.parseLong(parentId));
-        chart.setType('A');
-        chart.setClassification(Long.parseLong("4"));
-        chart.setIsActiveForPosting(true);
-        chart.setMajorCode(chart.getGlcode().substring(0, majorCodeLength));
-        chartOfAccountsService.persist(chart);
-        return String.valueOf(chart.getId());
-    }
+	public String prepareBankAccCode(final String accID, final String code)
+			throws Exception {
+		String glCode = "";
+		Long glcode;
+		Long tempCode = 0L;
+		glCode = (String) persistenceService
+				.find("select glcode from CChartOfAccounts where id=?) order by glcode desc",
+						Long.parseLong(accID));
+		final String subminorvalue = EGovConfig.getProperty("egf_config.xml",
+				"subminorvalue", "", "AccountCode");
+		glCode = glCode.substring(0, Integer.parseInt(subminorvalue));
+		glCode = (String) persistenceService
+				.find("select glcode from CChartOfAccounts where glcode like ? || '%' order by glcode desc",
+						glCode);
+		final String zero = EGovConfig.getProperty("egf_config.xml",
+				"zerofill", "", "AccountCode");
+		if (glCode.length() == Integer.parseInt(code)) {
+			glcode = Long.parseLong(glCode);
+			tempCode = glcode + 1;
+		} else {
+			glCode = glCode + zero;
+			glcode = Long.parseLong(glCode);
+			tempCode = glcode + 1;
+		}
+		glCode = Long.toString(tempCode);
+		return glCode;
+	}
 
-    
-    private void validateGlCode(String glCode) {
-        CChartOfAccounts COA = chartOfAccountsService.find("select coa from CChartOfAccounts coa where coa.glcode = ?", glCode);
-        Bankaccount account = null;
-        AccountCodePurpose purpose = null;
-        if (COA == null)
-            throw new ApplicationRuntimeException("Given glcode does not exist");
-        if (glCode != null) {
-            CGeneralLedger glList = (CGeneralLedger) persistenceService
-                    .find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=? and gl.voucherHeaderId.status not in (4) ",
-                            glCode);
-            if (glList != null )
-                throw new ApplicationRuntimeException("Transaction already exist for given glcode");
+	public String postInChartOfAccounts(final String glCode,
+			final String parentId, final String accNumber) throws Exception {
+		final Bankbranch bankBranch = (Bankbranch) persistenceService
+				.getSession().load(Bankbranch.class, bankBranchId);
+		int majorCodeLength = 0;
+		majorCodeLength = Integer.valueOf(getAppConfigValueFor(Constants.EGF,
+				"coa_majorcode_length"));
+		final CChartOfAccounts chart = new CChartOfAccounts();
+		chart.setGlcode(glCode);
+		chart.setName(bankBranch.getBank().getName() + " "
+				+ bankBranch.getBranchname() + " " + accNumber);
+		chart.setParentId(Long.parseLong(parentId));
+		chart.setType('A');
+		chart.setClassification(Long.parseLong("4"));
+		chart.setIsActiveForPosting(true);
+		chart.setMajorCode(chart.getGlcode().substring(0, majorCodeLength));
+		chartOfAccountsService.persist(chart);
+		return String.valueOf(chart.getId());
+	}
 
-        }
-        if (COA != null) {
-            account = bankAccountService.find("select ba from Bankaccount ba where ba.chartofaccounts.glcode = ?", glCode);
-            if (account != null)
-                throw new ApplicationRuntimeException("Given glcode is already mapped to another bank account - "
-                        + account.getAccountnumber());
-        }
-        if (!COA.getIsActiveForPosting())
-            throw new ApplicationRuntimeException("Given glcode is not active for posting");
-        if (COA.getChartOfAccountDetails() != null && !COA.getChartOfAccountDetails().isEmpty())
-            throw new ApplicationRuntimeException("Given glcode should not be a control code");
-        if (COA.getType() != null && !COA.getType().equals('A')) {
-            throw new ApplicationRuntimeException("Given glcode should be of type Assets");
-        }
-        if (COA.getPurposeId() == null) {
-            throw new ApplicationRuntimeException("Given glcode is not mapped with any purpose ");
-        }
-        if (COA.getPurposeId() != null) {
-            purpose = (AccountCodePurpose) persistenceService.find(
-                    "select purpose from AccountCodePurpose purpose where purpose.id = ?", COA.getPurposeId());
-            if (purpose != null && !purpose.getName().contains("Bank Account Codes"))
-                throw new ApplicationRuntimeException("Given glcode should be of purpose Bank Account Codes");
-        }
+	private void validateGlCode(String glCode) {
+		CChartOfAccounts COA = chartOfAccountsService.find(
+				"select coa from CChartOfAccounts coa where coa.glcode = ?",
+				glCode);
+		Bankaccount account = null;
+		AccountCodePurpose purpose = null;
+		if (COA == null)
+			throw new ApplicationRuntimeException("Given glcode does not exist");
+		if (glCode != null) {
+			CGeneralLedger glList = (CGeneralLedger) persistenceService
+					.find("select gl from CGeneralLedger gl where gl.glcodeId.glcode=? and gl.voucherHeaderId.status not in (4) ",
+							glCode);
+			if (glList != null)
+				throw new ApplicationRuntimeException(
+						"Transaction already exist for given glcode");
 
-    }
+		}
+		if (COA != null) {
+			account = bankAccountService
+					.find("select ba from Bankaccount ba where ba.chartofaccounts.glcode = ?",
+							glCode);
+			if (account != null)
+				throw new ApplicationRuntimeException(
+						"Given glcode is already mapped to another bank account - "
+								+ account.getAccountnumber());
+		}
+		if (!COA.getIsActiveForPosting())
+			throw new ApplicationRuntimeException(
+					"Given glcode is not active for posting");
+		if (COA.getChartOfAccountDetails() != null
+				&& !COA.getChartOfAccountDetails().isEmpty())
+			throw new ApplicationRuntimeException(
+					"Given glcode should not be a control code");
+		if (COA.getType() != null && !COA.getType().equals('A')) {
+			throw new ApplicationRuntimeException(
+					"Given glcode should be of type Assets");
+		}
+		if (COA.getPurposeId() == null) {
+			throw new ApplicationRuntimeException(
+					"Given glcode is not mapped with any purpose ");
+		}
+		if (COA.getPurposeId() != null) {
+			purpose = (AccountCodePurpose) persistenceService
+					.find("select purpose from AccountCodePurpose purpose where purpose.id = ?",
+							COA.getPurposeId());
+			if (purpose != null
+					&& !purpose.getName().contains("Bank Account Codes"))
+				throw new ApplicationRuntimeException(
+						"Given glcode should be of purpose Bank Account Codes");
+		}
 
-    private void editBankAccount() {
-        final Bankaccount bankAccount = (Bankaccount) bankAccountService.getSession().get(Bankaccount.class,
-                id.longValue());
-        populateBankAccountDetail(bankAccount);
-        bankAccountService.applyAuditing(bankAccount);
-        bankAccountService.update(bankAccount);
-    }
+	}
 
-    private void deleteBankAccount() {
-        final Bankaccount bankBranch = (Bankaccount) bankAccountService.getSession().load(Bankaccount.class,
-                id.longValue());
-        persistenceService.delete(bankBranch);
-    }
+	private void editBankAccount() {
+		final Bankaccount bankAccount = (Bankaccount) bankAccountService
+				.getSession().get(Bankaccount.class, id.longValue());
+		populateBankAccountDetail(bankAccount);
+		bankAccountService.applyAuditing(bankAccount);
+		bankAccountService.update(bankAccount);
+	}
 
-    private void populateBankAccountDetail(final Bankaccount bankAccount) {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        bankAccount.setAccountnumber(request.getParameter("accountnumber"));
-        bankAccount.setAccounttype(getAccountType(request.getParameter("glcode")));
+	private void deleteBankAccount() {
+		final Bankaccount bankBranch = (Bankaccount) bankAccountService
+				.getSession().load(Bankaccount.class, id.longValue());
+		persistenceService.delete(bankBranch);
+	}
 
-        if (org.apache.commons.lang.StringUtils.isNotBlank(request.getParameter("fundname"))) {
-            final Fund fund = (Fund) persistenceService.getSession().load(Fund.class,
-                    Integer.valueOf(request.getParameter("fundname")));
-            bankAccount.setFund(fund);
-        }
-        bankAccount.setIsactive(request.getParameter("active").equals("Y") ? true : false);
-        bankAccount.setNarration(request.getParameter("narration"));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(request.getParameter("typename"))) {
-            final BankAccountType type = BankAccountType.valueOf(request.getParameter("typename"));
-            bankAccount.setType(type);
-        }
-        bankAccount.setPayTo(request.getParameter("payto"));
-    }
+	private void populateBankAccountDetail(final Bankaccount bankAccount) {
+		final HttpServletRequest request = ServletActionContext.getRequest();
+		bankAccount.setAccountnumber(request.getParameter("accountnumber"));
+		bankAccount.setAccounttype(getAccountType(request
+				.getParameter("glcode")));
 
-    public String getAccountType(String glCode) {
-        String name = (String) persistenceService
-                .find("select name from CChartOfAccounts where id=(select parentId from CChartOfAccounts where glcode = ?)",
-                        glCode);
-        return name;
-    }
-    
-    public Boolean autoBankAccountGLCodeEnabled(){
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-               Constants.EGF, "auto_bankaccount_glcode").get(0);   
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
-    }
-    
-    private void listAllBankBranchAccounts() {
-        final List<Bankaccount> bankAccounts = getPagedResult(Bankaccount.class, "bankbranch.id", bankBranchId).getList();
-        final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
-        String glCode = "";
+		if (org.apache.commons.lang.StringUtils.isNotBlank(request
+				.getParameter("fundname"))) {
+			final Fund fund = (Fund) persistenceService.getSession().load(
+					Fund.class,
+					Integer.valueOf(request.getParameter("fundname")));
+			bankAccount.setFund(fund);
+		}
+		bankAccount
+				.setIsactive(request.getParameter("active").equals("Y") ? true
+						: false);
+		bankAccount.setNarration(request.getParameter("narration"));
+		if (org.apache.commons.lang.StringUtils.isNotBlank(request
+				.getParameter("typename"))) {
+			final BankAccountType type = BankAccountType.valueOf(request
+					.getParameter("typename"));
+			bankAccount.setType(type);
+		}
+		bankAccount.setPayTo(request.getParameter("payto"));
+	}
 
-        for (final Bankaccount bankaccount : bankAccounts)
-            try {
-                final JSONObject jsonObject = new JSONObject();
-                jsonObject.put("id", bankaccount.getId());
-                jsonObject.put("accountnumber", bankaccount.getAccountnumber());
-                jsonObject.put("fundname", bankaccount.getFund().getName());
-                jsonObject.put("narration", bankaccount.getNarration());
-                jsonObject.put("payto", bankaccount.getPayTo());
-                jsonObject.put("typename", bankaccount.getType() == null ? "" : bankaccount.getType().name());
-                jsonObject.put("active", bankaccount.getIsactive() ? "Y" : "N");
-                glCode = (String) persistenceService
-                        .find("select glcode from CChartOfAccounts where id=(select chartofaccounts.id from Bankaccount where accountnumber = ?)",
-                                bankaccount.getAccountnumber());
-                jsonObject.put("glcode", glCode);
-                jsonObject.put("accounttype", getAccountType(glCode));
-                jsonObjects.add(jsonObject);
-            } catch (final JSONException e) {
-                sendAJAXResponse("error");
-            }
-        final String jsonString = new GsonBuilder().create().toJson(jsonObjects);
-        sendAJAXResponse(constructJqGridResponse(jsonString));
-    }
+	public String getAccountType(String glCode) {
+		String name = (String) persistenceService
+				.find("select name from CChartOfAccounts where id=(select parentId from CChartOfAccounts where glcode = ?)",
+						glCode);
+		return name;
+	}
 
-    String getAppConfigValueFor(final String module, final String key) {
-        return appConfigValuesService.getConfigValuesByModuleAndKey(module, key).get(0).getValue();
-    }
+	public Boolean autoBankAccountGLCodeEnabled() {
+		final AppConfigValues appConfigValue = appConfigValuesService
+				.getConfigValuesByModuleAndKey(Constants.EGF,
+						"auto_bankaccount_glcode").get(0);
+		return "YES".equalsIgnoreCase(appConfigValue.getValue());
+	}
 
-    public void setMode(final String mode) {
-        this.mode = mode;
-    }
+	private void listAllBankBranchAccounts() {
+		final List<Bankaccount> bankAccounts = getPagedResult(
+				Bankaccount.class, "bankbranch.id", bankBranchId).getList();
+		final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+		String glCode = "";
 
-    public void setBankBranchId(final Integer bankBranchId) {
-        this.bankBranchId = bankBranchId;
-    }
+		for (final Bankaccount bankaccount : bankAccounts)
+			try {
+				final JSONObject jsonObject = new JSONObject();
+				jsonObject.put("id", bankaccount.getId());
+				jsonObject.put("accountnumber", bankaccount.getAccountnumber());
+				jsonObject.put("fundname", bankaccount.getFund().getName());
+				jsonObject.put("narration", bankaccount.getNarration());
+				jsonObject.put("payto", bankaccount.getPayTo());
+				jsonObject.put("typename", bankaccount.getType() == null ? ""
+						: bankaccount.getType().name());
+				jsonObject.put("active", bankaccount.getIsactive() ? "Y" : "N");
+				glCode = (String) persistenceService
+						.find("select glcode from CChartOfAccounts where id=(select chartofaccounts.id from Bankaccount where accountnumber = ?)",
+								bankaccount.getAccountnumber());
+				jsonObject.put("glcode", glCode);
+				jsonObject.put("accounttype", getAccountType(glCode));
+				jsonObjects.add(jsonObject);
+			} catch (final JSONException e) {
+				sendAJAXResponse("error");
+			}
+		final String jsonString = new GsonBuilder().create()
+				.toJson(jsonObjects);
+		sendAJAXResponse(constructJqGridResponse(jsonString));
+	}
 
-    public AppConfigValueService getAppConfigValuesService() {
-        return appConfigValuesService;
-    }
+	String getAppConfigValueFor(final String module, final String key) {
+		return appConfigValuesService
+				.getConfigValuesByModuleAndKey(module, key).get(0).getValue();
+	}
 
-    public void setAppConfigValuesService(
-            final AppConfigValueService appConfigValuesService) {
-        this.appConfigValuesService = appConfigValuesService;
-    }
+	public void setMode(final String mode) {
+		this.mode = mode;
+	}
 
-    public PersistenceService<Bankaccount, Integer> getBankAccountService() {
-        return bankAccountService;
-    }
+	public void setBankBranchId(final Integer bankBranchId) {
+		this.bankBranchId = bankBranchId;
+	}
 
-    public void setBankAccountService(PersistenceService<Bankaccount, Integer> bankAccountService) {
-        this.bankAccountService = bankAccountService;
-    }
+	public AppConfigValueService getAppConfigValuesService() {
+		return appConfigValuesService;
+	}
 
-    public PersistenceService<CChartOfAccounts, Long> getChartOfAccountsService() {
-        return chartOfAccountsService;
-    }
-
-    public void setChartOfAccountsService(PersistenceService<CChartOfAccounts, Long> chartOfAccountsService) {
-        this.chartOfAccountsService = chartOfAccountsService;
-    }
+	public void setAppConfigValuesService(
+			final AppConfigValueService appConfigValuesService) {
+		this.appConfigValuesService = appConfigValuesService;
+	}
 
 }

@@ -340,6 +340,7 @@ function printVoucher(){
 </head>
 <body>
 	<s:form action="directBankPayment" theme="simple" name="dbpform">
+	<div class="formmainbox">
 		<s:push value="model">
 			<div align="center">
 				<font style='color: red;'>
@@ -480,18 +481,29 @@ function printVoucher(){
 						value="Print Preview" onclick="printVoucher()" />
 
 				</div>
+				</br>
+				</br>
+				</br>
+				</br>
 				<s:if test="%{showApprove}">
-
-					<tr>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox"><strong>Comments</strong></td>
-						<td class="bluebox" colspan="4"><s:textarea name="comments"
-								id="comments" cols="100" rows="3" onblur="checkLength(this)"
-								value="%{getComments()}" /></td>
-					</tr>
+				<div class="commentsTab" align="center">
+					<table border="0" width="100%">
+						<tr>
+							<td class="bluebox">Comments</td>
+							<td class="bluebox"><s:textarea name="comments"
+									id="comments" cols="150" rows="3" onblur="checkLength(this)"
+									value="%{getComments()}" /></td>
+						</tr>
+						<br />
+					</table>
+				</div>
+					</br>
+					</br>
+					</br>
+					</br>
 					<script>
-				document.getElementById('viewButton').style.display="none";
-	</script>
+						document.getElementById('viewButton').style.display="none";
+					</script>
 
 				</s:if>
 
@@ -609,6 +621,7 @@ if(document.getElementById('actionName').value!='')
 			</div>
 
 		</s:push>
+		</div>
 	</s:form>
 </body>
 

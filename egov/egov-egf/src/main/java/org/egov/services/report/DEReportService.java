@@ -66,6 +66,7 @@ public class DEReportService {
 
     final static Logger LOGGER = Logger.getLogger(DEReportService.class);
     private @Autowired AppConfigValueService appConfigValuesService;
+    @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
     private PersistenceService persistenceService;
 

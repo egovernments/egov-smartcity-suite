@@ -623,7 +623,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     void clearCache() {
         try {
-        	chartOfAccounts.reLoadAccountData();
+        	chartOfAccounts.loadAccountData();
         } catch (final TaskFailedException e) {
 
             LOGGER.error("Error" + e.getMessage(), e);

@@ -54,9 +54,9 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Metamodel;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.ClosedPeriod;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.commons.service.FinancialYearService;
+import org.egov.egf.model.ClosedPeriod;
 import org.egov.repository.closeperiod.ClosedPeriodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -83,7 +83,7 @@ public class ClosedPeriodService {
 
 	@Transactional
 	public ClosedPeriod create(final ClosedPeriod closedPeriod) {
-		return closedPeriodRepository.save(closedPeriod);
+		return closedPeriodRepository.save(closedPeriod); 
 	}
 
 	@Transactional

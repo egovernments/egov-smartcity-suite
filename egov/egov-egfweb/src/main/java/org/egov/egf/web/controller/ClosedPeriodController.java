@@ -42,8 +42,8 @@ package org.egov.egf.web.controller;
 
 import java.util.List;
 
-import org.egov.commons.ClosedPeriod;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.egf.model.ClosedPeriod;
 import org.egov.egf.web.adaptor.ClosedPeriodJsonAdaptor;
 import org.egov.services.closeperiod.ClosedPeriodService;
 import org.springframework.beans.factory.annotation.Autowired;
