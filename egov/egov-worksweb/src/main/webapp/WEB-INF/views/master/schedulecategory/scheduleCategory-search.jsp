@@ -83,9 +83,7 @@
 			<spring:message code='lbl.search' />
 		</button>
 		<a href='javascript:void(0)' class='btn btn-default'
-			onclick='self.close()'><spring:message code='lbl.close' /></a> <input
-			type="button" class="btn btn-default" value="Reset" id="button"
-			name="Reset" onclick="this.form.reset();">
+			onclick='self.close()'><spring:message code='lbl.close' /></a> 
 	</div>
 </form:form>
 <div class="row display-hide report-section">

@@ -51,13 +51,13 @@
 		</div>
 	</div>
 	<div class="panel-body">
-		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.code" /></label>
+		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.code" /><span class="mandatory"></span></label>
 			<s:hidden name="id"	id="id" />
 			<s:hidden name="mode" id="mode" />
 		<div class="col-sm-3 add-margin">
 			<s:textfield cssClass="form-control" name="code" maxlength="15"	id="code" size="40" />
 		</div>
-		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.description" /></label>
+		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.description" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<s:textfield cssClass="form-control" name="description"	maxlength="150" id="description" size="40" />
 		</div>
@@ -67,7 +67,7 @@
 <div class="row">
 	<div class="col-sm-12 text-center buttonholdersearch">
 		<s:if test="%{id==null}">
-			<s:submit cssClass="btn btn-primary" value="Save" id="saveButton"
+			<s:submit cssClass="btn btn-primary" value="Create" id="saveButton"
 				name="button" method="save" onclick="return methodTest();" /> &nbsp;
 		</s:if>
 		<s:elseif test="%{id!=null && mode=='edit'}">
