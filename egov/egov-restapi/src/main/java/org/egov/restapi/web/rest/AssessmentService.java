@@ -856,7 +856,7 @@ public class AssessmentService {
         AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
         RestAssessmentDetails assessmentDetails = propertyExternalService
-                .loadAssessmentDetails(assessmentReq.getAssessmentNo());
+                .loadAssessmentDetails(assessmentReq.getAssessmentNo(),assessmentReq.getApplicationNo());
         return getJSONResponse(assessmentDetails);
     }
     

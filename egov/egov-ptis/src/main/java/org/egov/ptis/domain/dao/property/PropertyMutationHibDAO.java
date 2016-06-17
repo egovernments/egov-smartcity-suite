@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.dao.property;
 
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import org.hibernate.Query;
 
 @Repository(value = "propertyMutationDAO")
 @Transactional(readOnly = true)
@@ -87,5 +89,19 @@ public class PropertyMutationHibDAO implements PropertyMutationDAO {
 	public PropertyMutation update(PropertyMutation propertyMutation) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/**
+	 * Fetch the PropertyMutation for the given assessmentNo and applicationNo
+	 * @param assessmentNo
+	 * @param applicationNo
+	 * @return PropertyMutation
+	 */
+	public PropertyMutation getPropertyMutationForAssessmentNoAndApplicationNumber(String assessmentNo, String applicationNo){
+        Query qry = getCurrentSession().createQuery("from PropertyMutation where basicProperty.upicNo = :assessmentNo and applicationNo = :applicationNo ");
+        qry.setParameter("assessmentNo", assessmentNo);
+        qry.setParameter("applicationNo", applicationNo);
+        PropertyMutation propertyMutation =  (PropertyMutation) qry.uniqueResult();
+		return propertyMutation;
 	}
 }

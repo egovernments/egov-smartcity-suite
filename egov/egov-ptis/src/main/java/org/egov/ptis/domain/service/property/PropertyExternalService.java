@@ -82,6 +82,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -197,6 +198,9 @@ public class PropertyExternalService {
 
     @Autowired
     BankHibernateDAO bankHibernateDAO;
+    
+    @Autowired
+    private PropertyMutationDAO propertyMutationDAO;
 
     public AssessmentDetails loadAssessmentDetails(final String propertyId, final Integer flag,
             final BasicPropertyStatus status) {
@@ -1764,10 +1768,12 @@ public class PropertyExternalService {
      * @param assessmentNo
      * @return
      */
-    public RestAssessmentDetails loadAssessmentDetails(final String assessmentNo) {
+    public RestAssessmentDetails loadAssessmentDetails(final String assessmentNo, final String applicationNo) {
         assessmentDetails = new RestAssessmentDetails();
         if (StringUtils.isBlank(assessmentNo))
             throw new ApplicationRuntimeException("AssessmentNo is null or empty!");
+        if (StringUtils.isBlank(applicationNo))
+            throw new ApplicationRuntimeException("ApplicationNo is null or empty!");
         assessmentDetails.setAssessmentNo(assessmentNo);
         basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetails.getAssessmentNo());
         if (basicProperty != null) {
@@ -1788,9 +1794,29 @@ public class PropertyExternalService {
             		}
             	}
             	assessmentDetails.setTotalTaxDue(totalTaxDue);
-            	assessmentDetails.setIsMutationFeePaid("N");
+            	PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
+            	if(propertyMutation != null){
+            		if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
+            			assessmentDetails.setIsMutationFeePaid("Y");
+            			assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
+            			Date receiptDate = null;
+            			final Query qry = entityManager.createQuery("select receiptdate from ReceiptHeader where receiptnumber = :receiptNum");
+            	        qry.setParameter("receiptNum", propertyMutation.getReceiptNum());
+            	        receiptDate = (Date) qry.getSingleResult();
+            	        assessmentDetails.setFeeReceiptDate(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate));
+            	        assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
+            		}
+            		else
+            			assessmentDetails.setIsMutationFeePaid("N");
+            		
+            		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
+            	}else{
+            		assessmentDetails.setIsMutationFeePaid("N");
+            	}
+            	
             }
         }
         return assessmentDetails;
     }
+    
 }
