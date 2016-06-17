@@ -59,14 +59,14 @@ function callAjaxSearch() {
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/lcms/interimorder/ajaxsearch/"+$('#mode').val(),      
+					url : "/lcms/courttypemaster/ajaxsearch/"+$('#mode').val(),      
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
 				"fnRowCallback": function (row, data, index) {
 						$(row).on('click', function() {
 				console.log(data.id);
-				window.open('/lcms/interimorder/'+ $('#mode').val() +'/'+data.id,'','width=800, height=600');
+				window.open('/lcms/courttypemaster/'+ $('#mode').val() +'/'+data.id,'','width=800, height=600');
 			});
 				 },
 				"sPaginationType" : "bootstrap",
@@ -79,8 +79,8 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "interimOrderType", "sClass" : "text-left"} ,{ 
 "data" : "code", "sClass" : "text-left"} ,{ 
+"data" : "courtType", "sClass" : "text-left"} ,{ 
 "data" : "active", "sClass" : "text-left"}]				
 			});
 			}

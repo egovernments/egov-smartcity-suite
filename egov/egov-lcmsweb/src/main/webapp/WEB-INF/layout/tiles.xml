@@ -93,11 +93,37 @@
 
 <definition name="interimorder-result" extends="base_layout">
 	<put-attribute name="page-title" value="title.interimorder.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters//interimorder/interimorder-result.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-result.jsp"/>
 </definition>
 
 <definition name="interimorder-search" extends="base_layout">
 	<put-attribute name="page-title" value="title.interimorder.search" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-search.jsp"/>
+	
+</definition><definition name="courttypemaster-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.courttypemaster.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-new.jsp"/>
 </definition>
+
+<definition name="courttypemaster-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.courttypemaster.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-view.jsp"/>
+</definition>
+
+<definition name="courttypemaster-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.courttypemaster.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-edit.jsp"/>
+</definition>
+
+<definition name="courttypemaster-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.courttypemaster.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-result.jsp"/>
+</definition>
+
+<definition name="courttypemaster-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.courttypemaster.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-search.jsp"/>
+</definition>
+
+
 </tiles-definitions>

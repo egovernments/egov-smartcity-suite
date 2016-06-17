@@ -37,50 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-jQuery('#btnsearch').click(function(e) {
-		
-		callAjaxSearch();
-	});
-	
-	function getFormData($form){
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
+package org.egov.lcms.web.adaptor;
 
-    $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
-    });
+import java.lang.reflect.Type;
 
-    return indexed_array;
+import org.egov.lcms.masters.entity.CourtTypeMaster;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+public class CourttypeMasterJsonAdaptor implements JsonSerializer<CourtTypeMaster> {
+    @Override
+    public JsonElement serialize(final CourtTypeMaster courttypeMaster, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (courttypeMaster != null) {
+            if (courttypeMaster.getCourtType() != null)
+                jsonObject.addProperty("courtType", courttypeMaster.getCourtType());
+            else
+                jsonObject.addProperty("courtType", "");
+            if (courttypeMaster.getCode() != null)
+                jsonObject.addProperty("code", courttypeMaster.getCode());
+            else
+                jsonObject.addProperty("code", "");
+            if (courttypeMaster.getActive() != null)
+                jsonObject.addProperty("active", courttypeMaster.getActive() == true ? "YES" : "NO");
+            else
+                jsonObject.addProperty("active", "");
+            jsonObject.addProperty("id", courttypeMaster.getId());
+        }
+        return jsonObject;
+    }
 }
- 
-function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");		
-	jQuery('.report-section').removeClass('display-hide');
-		reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/lcms/interimorder/ajaxsearch/"+$('#mode').val(),      
-					type: "POST",
-					"data":  getFormData(jQuery('form'))
-				},
-				"fnRowCallback": function (row, data, index) {
-						$(row).on('click', function() {
-				console.log(data.id);
-				window.open('/lcms/interimorder/'+ $('#mode').val() +'/'+data.id,'','width=800, height=600');
-			});
-				 },
-				"sPaginationType" : "bootstrap",
-				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
-				},
-				aaSorting: [],				
-				columns : [ { 
-"data" : "interimOrderType", "sClass" : "text-left"} ,{ 
-"data" : "code", "sClass" : "text-left"} ,{ 
-"data" : "active", "sClass" : "text-left"}]				
-			});
-			}
