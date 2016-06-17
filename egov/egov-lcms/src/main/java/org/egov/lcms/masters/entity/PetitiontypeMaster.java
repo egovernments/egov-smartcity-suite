@@ -39,97 +39,105 @@
  */
 package org.egov.lcms.masters.entity;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.models.BaseModel;
-import org.egov.lcms.transactions.entity.Legalcase;
 import org.egov.lcms.utils.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * PetitiontypeMaster entity.
- *
- * @author MyEclipse Persistence Tools
- */
-@Unique(fields = "petitionCode", id = "id", columnName = "PETITION_CODE", tableName = "EGLC_PETITIONTYPE_MASTER", message = "masters.petitionmaster.isunique")
-public class PetitiontypeMaster extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
-	private Boolean active;
+@Entity
+@Table(name = "eglc_petitiontype_master")
+@Unique(id = "id", tableName = "eglc_petitiontype_master", columnName = { "code" }, fields = {
+        "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = PetitiontypeMaster.SEQ_PETITIONTYPE, sequenceName = PetitiontypeMaster.SEQ_PETITIONTYPE, allocationSize = 1)
+public class PetitiontypeMaster extends AbstractAuditable {
+    private static final long serialVersionUID = 796823780349590496L;
+    public static final String SEQ_PETITIONTYPE = "SEQ_EGLC_COURT_MASTER";
 
-	public Boolean getActive() {
-		return active;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_PETITIONTYPE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	public void setActive(final Boolean active) {
-		this.active = active;
-	}
+    private Boolean active;
 
-	@Required(message = "petition.courttype.null")
-	private CourttypeMaster eglcCourttypeMaster;
+    public Boolean getActive() {
+        return active;
+    }
 
-	@Required(message = "masters.petitionmaster.petitioncodereq")
-	@Length(max = 15, message = "masters.petitionmaster.petitioncodemaxleng")
-	@OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.petitionmaster.petitioncodePattern")
-	private String petitionCode;
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
 
-	@Required(message = "masters.petitionmaster.petitiontypereq")
-	@Length(max = 128, message = "masters.petitionmaster.petitiontypemaxleng")
-	@OptionalPattern(regex = LcmsConstants.mixedChar, message = "masters.petitionmaster.petitiontypePattern")
-	private String petitionType;
+    @Required(message = "masters.petitionmaster.petitioncodereq")
+    @Length(max = 15, message = "masters.petitionmaster.petitioncodemaxleng")
+    @OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.petitionmaster.petitioncodePattern")
+    private String code;
 
-	@Max(value = 1000, message = "masters.orderNumber.length")
-	@Min(value = 1, message = "masters.orderNumber.minlength")
-	private Long ordernumber;
-	private Set<Legalcase> eglcLegalcases = new HashSet<Legalcase>(0);
+    @Required(message = "masters.petitionmaster.petitiontypereq")
+    @Length(max = 128, message = "masters.petitionmaster.petitiontypemaxleng")
+    @OptionalPattern(regex = LcmsConstants.mixedChar, message = "masters.petitionmaster.petitiontypePattern")
+    private String petitionType;
 
-	public CourttypeMaster getEglcCourttypeMaster() {
-		return eglcCourttypeMaster;
-	}
+    @Max(value = 1000, message = "masters.orderNumber.length")
+    private Long ordernumber;
 
-	public void setEglcCourttypeMaster(final CourttypeMaster eglcCourttypeMaster) {
-		this.eglcCourttypeMaster = eglcCourttypeMaster;
-	}
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "courttype")
+    private CourttypeMaster courtType;
 
-	public String getPetitionCode() {
-		return petitionCode;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setPetitionCode(final String petitionCode) {
-		this.petitionCode = petitionCode;
-	}
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getPetitionType() {
-		return petitionType;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setPetitionType(final String petitionType) {
-		this.petitionType = petitionType;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public Long getOrdernumber() {
-		return ordernumber;
-	}
+    public CourttypeMaster getCourtType() {
+        return courtType;
+    }
 
-	public void setOrdernumber(final Long ordernumber) {
-		this.ordernumber = ordernumber;
-	}
+    public void setCourtType(final CourttypeMaster courtType) {
+        this.courtType = courtType;
+    }
 
-	public Set<Legalcase> getEglcLegalcases() {
-		return eglcLegalcases;
-	}
+    public String getPetitionType() {
+        return petitionType;
+    }
 
-	public void setEglcLegalcases(final Set<Legalcase> eglcLegalcases) {
-		this.eglcLegalcases = eglcLegalcases;
-	}
+    public void setPetitionType(final String petitionType) {
+        this.petitionType = petitionType;
+    }
+
+    public Long getOrdernumber() {
+        return ordernumber;
+    }
+
+    public void setOrdernumber(final Long ordernumber) {
+        this.ordernumber = ordernumber;
+    }
 
 }

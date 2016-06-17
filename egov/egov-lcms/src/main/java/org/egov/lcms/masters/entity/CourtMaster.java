@@ -39,94 +39,104 @@
  */
 package org.egov.lcms.masters.entity;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.models.BaseModel;
-import org.egov.lcms.transactions.entity.Legalcase;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * CourtMaster entity.
- *
- * @author srikanth
- */
-@Unique(fields = { "courtName" }, id = "id", tableName = "EGLC_COURT_MASTER", columnName = {
-		"COURT_NAME" }, message = "masters.courtMaster.isunique")
-public class CourtMaster extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
-	private Boolean active;
+@Entity
+@Table(name = "eglc_court_master")
+@Unique(id = "id", tableName = "eglc_court_master", columnName = { "name" }, fields = {
+        "name" }, enableDfltMsg = true)
+@SequenceGenerator(name = CourtMaster.SEQ_COURT, sequenceName = CourtMaster.SEQ_COURT, allocationSize = 1)
+public class CourtMaster extends AbstractAuditable {
 
-	public Boolean getActive() {
-		return active;
-	}
+    private static final long serialVersionUID = 796823780349590496L;
+    public static final String SEQ_COURT = "SEQ_EGLC_COURT_MASTER";
 
-	public void setActive(final Boolean active) {
-		this.active = active;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_COURT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Required(message = "masters.courtMaster.courtTypeSelect")
-	private CourttypeMaster eglcCourttypeMaster;
 
-	@Required(message = "masters.courtMaster.courtNameNull")
-	@Length(max = 100, message = "masters.courtMaster.nameLength")
-	// @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message =
-	// "masters.courtMaster.courtNamePattern2")
-	private String courtName;
+    @Required(message = "masters.courtMaster.courtNameNull")
+    @Length(max = 100, message = "masters.courtMaster.nameLength")
+    // @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message =
+    // "masters.courtMaster.courtNamePattern2")
+    private String name;
 
-	@Required(message = "masters.courtMaster.courtAddressNull")
-	@Length(max = 256, message = "masters.courtMaster.addressLength")
-	private String courtAddress;
-	@Max(value = 1000, message = "masters.orderNumber.length")
-	private Long ordernumber;
+    @Required(message = "masters.courtMaster.courtAddressNull")
+    @Length(max = 256, message = "masters.courtMaster.addressLength")
+    private String address;
+    @Max(value = 1000, message = "masters.orderNumber.length")
+    private Long ordernumber;
 
-	private Set<Legalcase> eglcLegalcases = new HashSet<Legalcase>(0);
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "courttype")
+    private CourttypeMaster courtType;
 
-	public CourttypeMaster getEglcCourttypeMaster() {
-		return eglcCourttypeMaster;
-	}
+    private Boolean active;
 
-	public void setEglcCourttypeMaster(final CourttypeMaster eglcCourttypeMaster) {
-		this.eglcCourttypeMaster = eglcCourttypeMaster;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getCourtName() {
-		return courtName;
-	}
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setCourtName(final String courtName) {
-		this.courtName = courtName;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getCourtAddress() {
-		return courtAddress;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setCourtAddress(final String courtAddress) {
-		this.courtAddress = courtAddress;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public Long getOrdernumber() {
-		return ordernumber;
-	}
+    public void setAddress(final String address) {
+        this.address = address;
+    }
 
-	public void setOrdernumber(final Long ordernumber) {
-		this.ordernumber = ordernumber;
-	}
+    public CourttypeMaster getCourtType() {
+        return courtType;
+    }
 
-	public Set<Legalcase> getEglcLegalcases() {
-		return eglcLegalcases;
-	}
+    public void setCourtType(final CourttypeMaster courtType) {
+        this.courtType = courtType;
+    }
 
-	public void setEglcLegalcases(final Set<Legalcase> eglcLegalcases) {
-		this.eglcLegalcases = eglcLegalcases;
-	}
+    public Long getOrdernumber() {
+        return ordernumber;
+    }
+
+    public void setOrdernumber(final Long ordernumber) {
+        this.ordernumber = ordernumber;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
 
 }
