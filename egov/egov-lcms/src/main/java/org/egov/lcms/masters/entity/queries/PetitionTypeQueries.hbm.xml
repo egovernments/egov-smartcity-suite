@@ -46,6 +46,6 @@
 <hibernate-mapping>
 
  <query name="getPetitionMasterByCourtType">
-    <![CDATA[ select ept from PetitiontypeMaster ept where ept.eglcCourttypeMaster.id=?]]></query>
+    <![CDATA[ select ept from PetitiontypeMaster ept where ept.courtType.id=?]]></query>
 
 </hibernate-mapping>
