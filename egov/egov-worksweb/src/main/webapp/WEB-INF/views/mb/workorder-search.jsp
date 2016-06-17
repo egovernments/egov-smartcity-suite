@@ -46,6 +46,7 @@
 
 <form:form name="abstractEstimateForm" role="form" modelAttribute="searchRequestLetterOfAcceptance"
 	id="searchRequestLetterOfAcceptance"	class="form-horizontal form-groups-bordered">
+	<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true"></div>
 	<div class="row">
 		<div class="col-md-12">
 			<jsp:include page="workorder-searchform.jsp" />
@@ -63,4 +64,4 @@
 	</div>
 </form:form>
 <jsp:include page="workorder-searchResult.jsp" />
-<script src="<c:url value='/resources/js/mbheader/searchloaformbheader.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/mb/searchloaformbheader.js?rnd=${app_release_no}'/>"></script>

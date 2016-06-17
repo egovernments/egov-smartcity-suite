@@ -50,13 +50,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEstimate, Long> {
 
-    WorkOrderEstimate findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(final Long workOrderId, final Long estimateId,
-            final String status);
+    WorkOrderEstimate findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(final Long workOrderId,
+            final Long estimateId, final String status);
+
+    WorkOrderEstimate findByEstimate_IdAndWorkOrder_EgwStatus_Code(final Long estimateId, final String status);
     
-    WorkOrderEstimate findByEstimate_IdAndWorkOrder_EgwStatus_Code(final Long estimateId,final String status);
+    WorkOrderEstimate findByWorkOrder_Id(final Long workOrderId);
+
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and  woe.workOrder.egwStatus.code =:workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where woe.workOrder.id = cbr.workOrder.id and upper(cbr.billstatus) != :billStatus and cbr.billtype = :billtype)")
+    List<String> findWorkOrderNumbersToCreateMB(@Param("workOrderNumber") String workOrderNumber,@Param("workOrderStatus") String workOrderStatus ,@Param("billStatus") String billStatus, @Param("billtype") String billtype);
     
-    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and not exists (select workOrder from MBHeader mbh where mbh.workOrder.id = woe.workOrder.id) or exists (select workOrder from MBHeader mbh where mbh.egwStatus.code in (:MBStatus1,:MBStatus2) and mbh.workOrder.id = woe.workOrder.id) and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where woe.workOrder.id = cbr.workOrder.id and cbr.billtype = :billtype)")
-    List<String> findWorkOrderNumbersToCreateMB(@Param("workOrderNumber") String workOrderNumber,@Param("MBStatus1") String MBStatus1,@Param("MBStatus2") String MBStatus2,  @Param("billtype") String billtype);
-    
+    @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
+    List<String> getCancelledWorkOrderNumbersByBillType(@Param("status") String billstatus,@Param("billtype") String finalBill);
 
 }

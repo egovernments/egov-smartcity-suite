@@ -47,14 +47,14 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title" style="text-align: center;">
-						<spring:message code="title.search.letterofacceptance" />
+						<spring:message code="title.search.letterofacceptance.tocreatemb" />
 					</div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="workOrderNumber"	id="workOrderNumber" class="form-control"	placeholder="Type first 3 letters of Work Identification Number" />
+							<form:input path="workOrderNumber"	id="workOrderNumber" class="form-control"	placeholder="Type first 3 letters of Work Order Number" />
 							<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>

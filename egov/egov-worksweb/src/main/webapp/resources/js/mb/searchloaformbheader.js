@@ -103,7 +103,7 @@ function callAjaxSearch() {
 						"data" : "", "sClass" : "text-center"} , {
 						"data" : "workOrderNumber", "sClass" : "text-center"} ,{
 						"data" : "workOrderDate", "sClass" : "text-center"} ,{
-						"data" : "agreementAmount", "sClass" : "text-center"} ,{
+						"data" : "agreementAmount", "sClass" : "text-right"} ,{
 						"data" : "contractorName", "sClass" : "text-center"} ,{
 						"data" : "workIdentificationNumber", "sClass" : "text-center"}]
 			});
@@ -241,22 +241,21 @@ var workIdentificationNumber_typeahead = $('#workIdentificationNumber').typeahea
 
 $('#btncreatemb').click(function(e) {
 	var workOrderId = $('input[name=selectCheckbox]:checked').val();
-	alert("workOrderId"+workOrderId);
 	if(workOrderId == null) {
 		bootbox.alert("Please select atleast one work order to create Measurement book");
 	}
 	else {
 		$.ajax({
 			type: "GET",
-			url: "/egworks/workorder/validate/"+workOrderId,
+			url: "/egworks/workorder/validatemb/"+workOrderId,
 			cache: true,
 		}).done(function(value) {
-			var errors = jQuery.parseJSON(value)
-			bootbox.alert(errors.error1+"\n"+errors.error2);
+			var json = $.parseJSON(value);
 			if(value == '') {
 				window.location = "/egworks/mbheader/create?workOrderId="+workOrderId;
 			} else {
-				
+				$('#errorMessage').append(json.mberror+ '</br>');
+				$('#errorMessage').show();
 			}
 		});
 	}

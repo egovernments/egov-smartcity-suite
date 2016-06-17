@@ -39,6 +39,7 @@ public class AjaxWorkOrderForMBHeaderController {
     
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
+    
 
     @RequestMapping(value = "/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchWorkOrders(
@@ -58,10 +59,16 @@ public class AjaxWorkOrderForMBHeaderController {
         return json;
     }
 
-    @RequestMapping(value = "/validate/{workOrderId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/validatemb/{workOrderId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String validateWorkOrder(@PathVariable Long workOrderId, final HttpServletRequest request,
             final HttpServletResponse response) {
-        final JsonObject jsonObject = new JsonObject();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject = workOrderEstimateService.validateMBInDrafts(workOrderId);
+        jsonObject = workOrderEstimateService.validateMBInWorkFlow(workOrderId);
+        if (jsonObject.toString().length() > 2) {
+            sendAJAXResponse(jsonObject.toString(), response);
+            return "";
+        }
         return null;
     }
 

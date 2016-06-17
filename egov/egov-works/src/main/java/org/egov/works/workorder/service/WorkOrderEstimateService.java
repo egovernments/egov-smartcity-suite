@@ -45,11 +45,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.repository.WorkOrderEstimateRepository;
 import org.hibernate.Criteria;
@@ -57,8 +61,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.gson.JsonObject;
 
 @Service
 @Transactional(readOnly = true)
@@ -68,6 +75,18 @@ public class WorkOrderEstimateService {
     private EntityManager entityManager;
 
     private final WorkOrderEstimateRepository workOrderEstimateRepository;
+
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private MBHeaderService mbHeaderService;
+
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -92,15 +111,26 @@ public class WorkOrderEstimateService {
                 WorksConstants.APPROVED);
     }
 
+    public WorkOrderEstimate getWorkOrderEstimateByWorkOrderId(final Long workOrderId) {
+        return workOrderEstimateRepository.findByWorkOrder_Id(workOrderId);
+    }
+
     public List<String> findWorkOrderForMBHeader(final String workOrderNo) {
         final List<String> workOrderNumbers = workOrderEstimateRepository.findWorkOrderNumbersToCreateMB(
-                "%" + workOrderNo + "%", MBHeader.MeasurementBookStatus.APPROVED.toString(),
-                MBHeader.MeasurementBookStatus.WORK_COMMENCED.toString(), BillTypes.Final_Bill.toString());
+                "%" + workOrderNo + "%", WorksConstants.APPROVED,
+                ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
         return workOrderNumbers;
     }
 
     public List<WorkOrderEstimate> searchWorkOrderToCreateMBHeader(
             SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+
+        final List<String> estimateNumbers = lineEstimateService
+                .getEstimateNumberForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
+        if (estimateNumbers.isEmpty())
+            estimateNumbers.add("");
+        final List<String> workOrderNumbers = workOrderEstimateRepository.getCancelledWorkOrderNumbersByBillType(
+                ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderEstimate.class, "woe")
                 .createAlias("estimate", "e").createAlias("workOrder", "wo").createAlias("workOrder.contractor", "woc")
                 .createAlias("workOrder.egwStatus", "status");
@@ -121,9 +151,61 @@ public class WorkOrderEstimateService {
                         searchRequestLetterOfAcceptance.getWorkIdentificationNumber()));
             if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getContractor()))
                 criteria.add(Restrictions.ge("woc.name", searchRequestLetterOfAcceptance.getContractor()));
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
+                criteria.add(Restrictions.in("estimateNumber", estimateNumbers));
+            if (!workOrderNumbers.isEmpty())
+                criteria.add(Restrictions.not(Restrictions.in("wo.workOrderNumber", workOrderNumbers)));
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
+                criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
 
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
+
+    public JsonObject validateMBInDrafts(final Long workOrderId) {
+        final JsonObject jsonObject = new JsonObject();
+        List<MBHeader> mbHeaders = mbHeaderService
+                .getMBHeadersByWorkOrder(workOrderEstimateRepository.findByWorkOrder_Id(workOrderId).getWorkOrder());
+        String userName = "";
+        for (MBHeader MBHeader : mbHeaders) {
+            if (MBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)) {
+                Assignment assignment = assignmentService
+                        .getPrimaryAssignmentForPositon(MBHeader.getState().getOwnerPosition().getId());
+                if (assignment != null)
+                    userName = assignment.getEmployee().getName();
+                jsonObject
+                        .addProperty("mberror",
+                                messageSource.getMessage("error.mbheader.newstatus", new String[] {
+                                        MBHeader.getMbRefNo(), MBHeader.getEgwStatus().getDescription(), userName },
+                                        null));
+            }
+
+        }
+        return jsonObject;
+
+    }
+
+    public JsonObject validateMBInWorkFlow(final Long workOrderId) {
+        final JsonObject jsonObject = new JsonObject();
+        List<MBHeader> mbHeaders = mbHeaderService
+                .getMBHeadersByWorkOrder(workOrderEstimateRepository.findByWorkOrder_Id(workOrderId).getWorkOrder());
+        String userName = "";
+        for (MBHeader MBHeader : mbHeaders) {
+            if (!(MBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
+                    && MBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED))) {
+                Assignment assignment = assignmentService
+                        .getPrimaryAssignmentForPositon(MBHeader.getState().getOwnerPosition().getId());
+                if (assignment != null)
+                    userName = assignment.getEmployee().getName();
+                jsonObject
+                        .addProperty("mberror",
+                                messageSource.getMessage("error.mbheader.workflow", new String[] {
+                                        MBHeader.getMbRefNo(), MBHeader.getEgwStatus().getDescription(), userName },
+                                        null));
+            }
+        }
+        return jsonObject;
+    }
+
 }
