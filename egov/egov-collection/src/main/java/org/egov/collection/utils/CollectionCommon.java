@@ -56,6 +56,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.models.BillAccountDetails;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillPayeeDetails;
@@ -214,6 +215,7 @@ public class CollectionCommon {
             final BigDecimal chequeInstrumenttotal, final BigDecimal otherInstrumenttotal, final String instrumentType) {
 
         final ReceiptDetail newReceiptDetail = new ReceiptDetail();
+        newReceiptDetail.setPurpose(PURPOSE.OTHERS.toString());
         if (chequeInstrumenttotal.toString() != null
                 && !chequeInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_INT)
                 && !chequeInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
