@@ -168,7 +168,7 @@ var dateFormatterForEndDate = function(e2, oRecord, oColumn, oData) {
 	var fieldName = "actionRates[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
 	var id = oColumn.getKey() + oRecord.getId();
 	
-	var markup= "<input type='text' id='"+id+"' class='selectmultilinewk datepicker' size='20' maxlength='10' style=\"width:100px\" name='"+fieldName 
+	var markup= "<input type='text' id='"+id+"' class='selectmultilinewk datepicker enddate' size='20' maxlength='10' style=\"width:100px\" name='"+fieldName 
 	            + "'  onkeyup=\"DateFormat(this,this.value,event,false,'3')\" onblur=\"validateDateFormat(this)\" />"
 				+ " <span id='error"+ id +"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
 	 e2.innerHTML = markup;
@@ -180,9 +180,9 @@ var makeScheduleOfRateDataTable = function() {
 	var scheduleOfRateColumnDefs = [ 
 		{key:"id", hidden:true,formatter:hiddenFormatter,sortable:false, resizeable:false} ,
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false, width:50},
-		{key:"rate", label:'<span class="mandatory"></span>Rate', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
-		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatter,sortable:false, resizeable:false, width:130},
-		{key:"endDate",label:'End Date', formatter:dateFormatterForEndDate,sortable:false, resizeable:false, width:130},
+		{key:"rate", label:'<span class="mandatory"></span>Rate(Rs.)', formatter:rateTextboxFormatter, sortable:false, resizeable:false, width:180},		
+		{key:"startDate", label:'<span class="mandatory"></span>Applicable From(Date)', formatter:dateFormatter,sortable:false, resizeable:false, width:180},
+		{key:"endDate",label:'Applicable To(Date)', formatter:dateFormatterForEndDate,sortable:false, resizeable:false, width:180},
 		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	
@@ -225,7 +225,14 @@ var makeScheduleOfRateDataTable = function() {
 	<input type="hidden" value="<s:text name="sor.rate.altleastone_sorRate_needed" />" id="selectAtleastOneSOR" />
 	<input type="hidden" value="<s:text name="sor.rate.not.empty" />" id="selectSORRate" />
 	<input type="hidden" value="<s:text name="sor.rate.startDate__empty" />" id="selectSORStartDate" />
-	
+	<input type="hidden" value="<s:text name="sor.rate.invalid_date_range" />" id="errorDateValidate" />
+	<input type="hidden" value="<s:text name="sor.marketrate.invalid_date_range" />" id="errorMarketDateValidate" />
+	<input type="hidden" value="<s:text name="sor.marketrate.rate.empty" />" id="selectMarketRate" />
+	<input type="hidden" value="<s:text name="sor.marketrate.startDate__empty" />" id="selectMarketRateDate" />
+	<input type="hidden" value="<s:text name="sor.rate.startDate.enddate" />" id="selectSORDateValidate" />
+	<input type="hidden" value="<s:text name="sor.marketrate.startDate.enddate" />" id="selectMarketRateDateValidate" />
+	<input type="hidden" value="<s:text name="sor.rate.dates.overlap" />" id="selectSOREndDateValidate" />
+	<input type="hidden" value="<s:text name="sor.rate.dates.overlap" />" id="selectMarketRateEndDateValidate" />
 <div class="panel panel-primary" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">
 		<div class="panel-title">

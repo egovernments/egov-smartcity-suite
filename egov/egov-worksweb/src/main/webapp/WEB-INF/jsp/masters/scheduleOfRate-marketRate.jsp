@@ -44,7 +44,7 @@ function createTextBoxFormatterMR(size,maxlength) {
 	var textboxFormatter1 = function(el, oRecord, oColumn, oData) {
 	   var fieldName = "actionMarketRates[" + oRecord.getCount() + "]." +  oColumn.getKey();   
 	   var id = oColumn.getKey()+oRecord.getId();	   
-	   markup="<input type='text' id='"+id+"' class='selectmultilinewk' size='20' maxlength='"+maxlength+"' style=\"width:100px; text-align:right\" name='"+fieldName+ "'" 
+	   markup="<input type='text' id='"+id+"' class='selectmultilinewk marketrate' size='20' maxlength='"+maxlength+"' style=\"width:100px; text-align:right\" name='"+fieldName+ "'" 
 	   + " onblur='validateNumberInTableCell(scheduleOfRateDataTableMR,this,\"" + oRecord.getId()+ "\");'/>"
 	   + " <span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
 	   el.innerHTML = markup; 
@@ -57,7 +57,16 @@ var rateTextboxFormatterMR = createTextBoxFormatterMR(11,10);
 var dateFormatterMR = function(e2, oRecord, oColumn, oData) {
 	var fieldName = "actionMarketRates[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
 	var id =oColumn.getKey() + oRecord.getId();	
-	var markup= "<input type='text' id='"+id+"' class='selectmultilinewk datepicker' size='20' maxlength='10' style=\"width:100px\" name='"+fieldName 
+	var markup= "<input type='text' id='"+id+"' class='selectmultilinewk datepicker marketRateStartDate' size='20' maxlength='10' style=\"width:100px\" name='"+fieldName 
+	            + "'  onkeyup=\"DateFormat(this,this.value,event,false,'3')\" onblur=\"validateDateFormat(this)\" />"
+				+ " <span id='error"+ id +"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
+	 e2.innerHTML = markup;
+}
+
+var endDateateFormatterMR = function(e2, oRecord, oColumn, oData) {
+	var fieldName = "actionMarketRates[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
+	var id =oColumn.getKey() + oRecord.getId();	
+	var markup= "<input type='text' id='"+id+"' class='selectmultilinewk datepicker marketRateEndDate' size='20' maxlength='10' style=\"width:100px\" name='"+fieldName 
 	            + "'  onkeyup=\"DateFormat(this,this.value,event,false,'3')\" onblur=\"validateDateFormat(this)\" />"
 				+ " <span id='error"+ id +"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
 	 e2.innerHTML = markup;
@@ -83,9 +92,9 @@ var makeScheduleOfRateDataTableForMR = function() {
 	var scheduleOfRateColumnDefsMR = [ 
 		{key:"id", hidden:true,formatter:hiddenIdFormatter,sortable:false, resizeable:false} ,		
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false, width:50},
-		{key:"marketRate", label:'<span class="mandatory"></span>Market Rate', formatter:rateTextboxFormatterMR, sortable:false, resizeable:false, width:180},		
-		{key:"startDate", label:'<span class="mandatory"></span>Start Date', formatter:dateFormatterMR,sortable:false, resizeable:false, width:130},
-		{key:"endDate",label:'End Date', formatter:dateFormatterMR,sortable:false, resizeable:false, width:130},
+		{key:"marketRate", label:'<span class="mandatory"></span>Rate(Rs.)', formatter:rateTextboxFormatterMR, sortable:false, resizeable:false, width:180},		
+		{key:"startDate", label:'<span class="mandatory"></span>Applicable From(Date)', formatter:dateFormatterMR,sortable:false, resizeable:false, width:180},
+		{key:"endDate",label:'Applicable To(Date)', formatter:endDateateFormatterMR,sortable:false, resizeable:false, width:180},
 		{key:'deleteRate',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	

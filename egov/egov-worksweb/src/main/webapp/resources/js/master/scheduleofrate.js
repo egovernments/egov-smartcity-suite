@@ -86,6 +86,7 @@ function validateSORFormAndSubmit(){
     }
     
     var startDate = document.getElementsByClassName("startdate");
+    var endDate = document.getElementsByClassName("enddate");
     for(var i = 0; i < startDate.length; i++) {
        if(startDate.item(i).value == '') {
        	var message = document.getElementById('selectSORStartDate').value;
@@ -95,6 +96,88 @@ function validateSORFormAndSubmit(){
        }
     }
     
+    for(var i = 0; i < startDate.length; i++) {
+		if(endDate.item(i).value)
+		{
+		  if(new Date((startDate.item(i).value).split('/').reverse().join('-')).getTime() >  new Date((endDate.item(i).value).split('/').reverse().join('-')).getTime()) {
+	    	var message = document.getElementById('errorDateValidate').value;
+	    	showMessage('sor_error', message);
+	    	window.scrollTo(0, 0);
+			return false;
+		   }
+	    }
+   }
+    
+    for(var i = 0; i < startDate.length-1; i++) {
+		if(endDate.length != 1 && endDate.item(i).value == ''){
+			var message = document.getElementById('selectSOREndDateValidate').value;
+	    	showMessage('sor_error', message);
+	    	window.scrollTo(0, 0);
+			return false;
+		}else {
+		  if(new Date((startDate.item(i+1).value).split('/').reverse().join('-')).getTime() <  new Date((endDate.item(i).value).split('/').reverse().join('-')).getTime()) {
+	    	var message = document.getElementById('selectSORDateValidate').value;
+	    	showMessage('sor_error', message);
+	    	window.scrollTo(0, 0);
+			return false;
+		   }
+	    }
+   }
+    
+    var marketRateActivity = document.getElementsByClassName("marketrate");
+    //marketrate length validtion
+    if(marketRateActivity.length != 0){
+    	//marketRate rate validation
+        var rate = document.getElementsByClassName("marketrate");
+        for(var i = 0; i < rate.length; i++)
+        {
+           if(rate.item(i).value == '') {
+           	var message = document.getElementById('selectMarketRate').value;
+            showMessage('sor_error', message);
+            window.scrollTo(0, 0);
+        	   return false;
+           }
+        }
+        //market rate date validation
+        var startDate = document.getElementsByClassName("marketRateStartDate");
+        var endDate = document.getElementsByClassName("marketRateEndDate");
+        for(var i = 0; i < startDate.length; i++) {
+           if(startDate.item(i).value == '') {
+           	var message = document.getElementById('selectMarketRateDate').value;
+            showMessage('sor_error', message);
+            window.scrollTo(0, 0);
+        	   return false;
+           }
+        }
+        
+        for(var i = 0; i < startDate.length; i++) {
+    		if(endDate.item(i).value)
+    		{
+    		  if(new Date((startDate.item(i).value).split('/').reverse().join('-')).getTime() >  new Date((endDate.item(i).value).split('/').reverse().join('-')).getTime()) {
+    	    	var message = document.getElementById('errorMarketDateValidate').value;
+    	    	showMessage('sor_error', message);
+    	    	window.scrollTo(0, 0);
+    			return false;
+    		   }
+    	    }
+       }
+        
+       for(var i = 0; i < startDate.length-1; i++) {
+    	   if(endDate.length != 1 && endDate.item(i).value == ''){
+   			var message = document.getElementById('selectMarketRateEndDateValidate').value;
+   	    	showMessage('sor_error', message);
+   	    	window.scrollTo(0, 0);
+   			return false;
+   		}else {
+    		  if(new Date((startDate.item(i+1).value).split('/').reverse().join('-')).getTime() <  new Date((endDate.item(i).value).split('/').reverse().join('-')).getTime()) {
+    	    	var message = document.getElementById('selectMarketRateDateValidate').value;
+    	    	showMessage('sor_error', message);
+    	    	window.scrollTo(0, 0);
+    			return false;
+    		   }
+    	    }
+       }
+    }
     return true;
     
 }

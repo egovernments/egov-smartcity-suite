@@ -106,13 +106,14 @@
 				</table>
 			</div>
 		</div>
-
+		<s:if test="%{model.marketRates.size() != 0}">	
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
 					<s:text name="sor.marketrateDetails" />
 				</div>
 			</div>
+		
 			<div class="panel-body">
 				<table class="table table-bordered">
 					<thead>
@@ -137,5 +138,6 @@
 					</tbody>
 				</table>
 			</div>
+		</s:if>
 		</div>
 </div>
