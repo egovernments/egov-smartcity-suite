@@ -59,72 +59,72 @@ import org.egov.commons.CFinancialYear;
 @SequenceGenerator(name = ClosedPeriod.SEQ, sequenceName = ClosedPeriod.SEQ, allocationSize = 1)
 public class ClosedPeriod implements Comparable<ClosedPeriod> {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ = "seq_closedperiods";
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ = "seq_closedperiods";
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id = null;
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id = null;
 
-	private Date startingDate;
+    private Date startingDate;
 
-	private Date endingDate;
+    private Date endingDate;
 
-	private Boolean isClosed = false;
+    private Boolean isClosed = false;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "financialYearId", nullable = false)
-	private CFinancialYear cFinancialYearId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "financialYearId", nullable = false)
+    private CFinancialYear cFinancialYearId;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Boolean getIsClosed() {
-		return isClosed;
-	}
+    public Boolean getIsClosed() {
+        return isClosed;
+    }
 
-	public CFinancialYear getcFinancialYearId() {
-		return cFinancialYearId;
-	}
+    public CFinancialYear getcFinancialYearId() {
+        return cFinancialYearId;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setIsClosed(Boolean isClosed) {
-		this.isClosed = isClosed;
-	}
+    public void setIsClosed(Boolean isClosed) {
+        this.isClosed = isClosed;
+    }
 
-	public void setcFinancialYearId(CFinancialYear cFinancialYearId) {
-		this.cFinancialYearId = cFinancialYearId;
-	}
+    public void setcFinancialYearId(CFinancialYear cFinancialYearId) {
+        this.cFinancialYearId = cFinancialYearId;
+    }
 
-	public Date getStartingDate() {
-		return startingDate;
-	}
+    public Date getStartingDate() {
+        return startingDate;
+    }
 
-	public void setStartingDate(Date startingDate) {
-		this.startingDate = startingDate;
-	}
+    public void setStartingDate(Date startingDate) {
+        this.startingDate = startingDate;
+    }
 
-	public Date getEndingDate() {
-		return endingDate;
-	}
+    public Date getEndingDate() {
+        return endingDate;
+    }
 
-	public void setEndingDate(Date endingDate) {
-		this.endingDate = endingDate;
-	}
+    public void setEndingDate(Date endingDate) {
+        this.endingDate = endingDate;
+    }
 
-	public int compareTo(ClosedPeriod p) {
-		if (p.getcFinancialYearId().getFinYearRange()
-				.compareTo(this.getcFinancialYearId().getFinYearRange()) > 0) {
-			return -1;
-		} else if (p.getcFinancialYearId().getFinYearRange()
-				.compareTo(this.getcFinancialYearId().getFinYearRange()) < 0)
-			return 1;
-		else {
-			return 0;
-		}
-	}
+    public int compareTo(ClosedPeriod p) {
+        if (p.getcFinancialYearId().getFinYearRange()
+                .compareTo(this.getcFinancialYearId().getFinYearRange()) > 0) {
+            return -1;
+        } else if (p.getcFinancialYearId().getFinYearRange()
+                .compareTo(this.getcFinancialYearId().getFinYearRange()) < 0)
+            return 1;
+        else {
+            return 0;
+        }
+    }
 }
