@@ -37,17 +37,60 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.masters.repository;
+jQuery('#btnsearch').click(function(e) {
 
+	callAjaxSearch();
+});
 
-import org.egov.lcms.masters.entity.CasetypeMaster;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
 
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
+	});
 
-@Repository 
-public interface CasetypeMasterRepository extends JpaRepository<CasetypeMaster,Long> {
+	return indexed_array;
+}
 
-	CasetypeMaster findByCode(String code);
-
+function callAjaxSearch() {
+	drillDowntableContainer = jQuery("#resultTable");
+	jQuery('.report-section').removeClass('display-hide');
+	reportdatatable = drillDowntableContainer
+			.dataTable({
+				ajax : {
+					url : "/lcms/casetypemaster/ajaxsearch/" + $('#mode').val(),
+					type : "POST",
+					"data" : getFormData(jQuery('form'))
+				},
+				"fnRowCallback" : function(row, data, index) {
+					$(row).on(
+							'click',
+							function() {
+								console.log(data.id);
+								window.open('/lcms/casetypemaster/'
+										+ $('#mode').val() + '/' + data.id, '',
+										'width=800, height=600');
+							});
+				},
+				"sPaginationType" : "bootstrap",
+				"bDestroy" : true,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"oTableTools" : {
+					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : [ "xls", "pdf", "print" ]
+				},
+				aaSorting : [],
+				columns : [ {
+					"data" : "code",
+					"sClass" : "text-left"
+				}, {
+					"data" : "caseType",
+					"sClass" : "text-left"
+				}, {
+					"data" : "active",
+					"sClass" : "text-left"
+				} ]
+			});
 }

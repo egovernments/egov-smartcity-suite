@@ -48,20 +48,21 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.ja.annotation.SearchField;
+import org.ja.annotation.SearchResult;
 
 @Entity
 @Table(name = "EGLC_CASETYPE_MASTER")
-@Unique(fields = { "code","caseType" }, id = "id", tableName = "EGLC_CASETYPE_MASTER", columnName = {"code", "caseType"  }, enableDfltMsg = true)
+@Unique(fields = { "code", "caseType" }, id = "id", tableName = "EGLC_CASETYPE_MASTER", columnName = { "code",
+		"casetype" }, enableDfltMsg = true)
 @SequenceGenerator(name = CasetypeMaster.SEQ_CASE_TYPE, sequenceName = CasetypeMaster.SEQ_CASE_TYPE, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class CasetypeMaster extends AbstractAuditable {
 
 	private static final long serialVersionUID = 1517694643078084884L;
@@ -71,20 +72,33 @@ public class CasetypeMaster extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ_CASE_TYPE, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@Required(message = "masters.code.null")
-	@Length(max = 8, message = "masters.code.length")
-	@OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.code.alpha2")
+	@Length(min = 1, max = 8)
 	@Audited
+	@SearchField
+	@SearchResult
+	@NotNull
 	private String code;
 
-	@Required(message = "casetype.null.validation")
-	@Length(max = 50, message = "casetype.casetype.length.validation")
+	@NotNull
+	@Length(min = 3, max = 50)
 	@Audited
+	@SearchField
+	@SearchResult
 	private String caseType;
 
-	@NotNull
 	@Audited
-	private boolean active;
+	@SearchField
+	@SearchResult
+	@NotNull
+	private Boolean active;
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
 
 	@Length(max = 256, message = "masters.description.length")
 	private String notes;
@@ -114,14 +128,6 @@ public class CasetypeMaster extends AbstractAuditable {
 
 	public void setCaseType(final String caseType) {
 		this.caseType = caseType;
-	}
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(final boolean active) {
-		this.active = active;
 	}
 
 	public String getNotes() {

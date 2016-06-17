@@ -37,17 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.masters.repository;
+package org.egov.lcms.web.adaptor;
 
-
+import java.lang.reflect.Type;
 import org.egov.lcms.masters.entity.CasetypeMaster;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
+public class CasetypeMasterJsonAdaptor implements JsonSerializer<CasetypeMaster> {
+	@Override
+	public JsonElement serialize(final CasetypeMaster casetypeMaster, final Type type,
+			final JsonSerializationContext jsc) {
+		final JsonObject jsonObject = new JsonObject();
+		if (casetypeMaster != null) {
+			if (casetypeMaster.getCaseType() != null)
+				jsonObject.addProperty("caseType", casetypeMaster.getCaseType());
+			else
+				jsonObject.addProperty("caseType", "");
+			if (casetypeMaster.getCode() != null)
+				jsonObject.addProperty("code", casetypeMaster.getCode());
+			else
+				jsonObject.addProperty("code", "");
+			if (casetypeMaster.getActive() != null)
+				jsonObject.addProperty("active", casetypeMaster.getActive() == true ? "YES" : "NO");
+			else
+				jsonObject.addProperty("active", "");
 
-@Repository 
-public interface CasetypeMasterRepository extends JpaRepository<CasetypeMaster,Long> {
-
-	CasetypeMaster findByCode(String code);
-
+			jsonObject.addProperty("id", casetypeMaster.getId());
+		}
+		return jsonObject;
+	}
 }

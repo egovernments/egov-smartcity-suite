@@ -39,9 +39,23 @@
  */
 package org.egov.lcms.masters.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Metamodel;
+
 import org.egov.lcms.masters.entity.CasetypeMaster;
 import org.egov.lcms.masters.repository.CasetypeMasterRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,22 +63,83 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CaseTypeMasterService {
 
-	private final CasetypeMasterRepository caseTypeRepository;
+	private final CasetypeMasterRepository casetypeMasterRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Autowired
-	public CaseTypeMasterService(final CasetypeMasterRepository caseTypeRepository) {
-		this.caseTypeRepository = caseTypeRepository;
-
-	}
-
-	public CasetypeMaster findBy(final Long usageTypeId) {
-		return caseTypeRepository.findOne(usageTypeId);
+	public CaseTypeMasterService(final CasetypeMasterRepository casetypeMasterRepository) {
+		this.casetypeMasterRepository = casetypeMasterRepository;
 	}
 
 	@Transactional
-	public CasetypeMaster createUsageType(final CasetypeMaster caseType) {
-		caseType.setActive(true);
-		return caseTypeRepository.save(caseType);
+	public CasetypeMaster create(final CasetypeMaster casetypeMaster) {
+		return casetypeMasterRepository.save(casetypeMaster);
 	}
 
+	@Transactional
+	public CasetypeMaster update(final CasetypeMaster casetypeMaster) {
+		return casetypeMasterRepository.save(casetypeMaster);
+	}
+
+	public List<CasetypeMaster> findAll() {
+		return casetypeMasterRepository.findAll(new Sort(Sort.Direction.ASC, "caseType"));
+	}
+
+	public CasetypeMaster findByCode(String code) {
+		return casetypeMasterRepository.findByCode(code);
+	}
+
+	public CasetypeMaster findOne(Long id) {
+		return casetypeMasterRepository.findOne(id);
+	}
+
+	public List<CasetypeMaster> search(final CasetypeMaster casetypeMaster) {
+
+		final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		final CriteriaQuery<CasetypeMaster> createQuery = cb.createQuery(CasetypeMaster.class);
+		final Root<CasetypeMaster> casetypemasters = createQuery.from(CasetypeMaster.class);
+		createQuery.select(casetypemasters);
+		final Metamodel m = entityManager.getMetamodel();
+		final javax.persistence.metamodel.EntityType<CasetypeMaster> CasetypeMaster = m.entity(CasetypeMaster.class);
+
+		final List<CasetypeMaster> resultList;
+		final List<Predicate> predicates = new ArrayList<Predicate>();
+		if (casetypeMaster.getCaseType() == null && casetypeMaster.getCode() == null
+				&& casetypeMaster.getActive() == null)
+			resultList = findAll();
+		else {
+			if (casetypeMaster.getCode() != null) {
+				final String code = "%" + casetypeMaster.getCode().toLowerCase() + "%";
+				predicates.add(cb.isNotNull(casetypemasters.get("code")));
+				predicates.add(cb.like(
+						cb.lower(
+								casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("code", String.class))),
+						code));
+			}
+			if (casetypeMaster.getCaseType() != null) {
+				final String caseType = "%" + casetypeMaster.getCaseType().toLowerCase() + "%";
+				predicates.add(cb.isNotNull(casetypemasters.get("caseType")));
+				predicates.add(cb.like(
+						cb.lower(casetypemasters
+								.get(CasetypeMaster.getDeclaredSingularAttribute("caseType", String.class))),
+						caseType));
+			}
+			if (casetypeMaster.getActive() != null)
+				if (casetypeMaster.getActive() == true)
+					predicates.add(cb.equal(
+							casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+							true));
+				else
+					predicates.add(cb.equal(
+							casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+							false));
+
+			createQuery.where(predicates.toArray(new Predicate[] {}));
+			final TypedQuery<CasetypeMaster> query = entityManager.createQuery(createQuery);
+
+			resultList = query.getResultList();
+		}
+		return resultList;
+	}
 }

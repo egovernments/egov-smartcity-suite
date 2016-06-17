@@ -124,6 +124,29 @@
 	<put-attribute name="page-title" value="title.courttypemaster.search" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-search.jsp"/>
 </definition>
+<definition name="casetypemaster-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.casetypemaster.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-new.jsp"/>
+</definition>
 
+<definition name="casetypemaster-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.casetypemaster.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-view.jsp"/>
+</definition>
+
+<definition name="casetypemaster-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.casetypemaster.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-edit.jsp"/>
+</definition>
+
+<definition name="casetypemaster-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.casetypemaster.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-result.jsp"/>
+</definition>
+
+<definition name="casetypemaster-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.casetypemaster.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-search.jsp"/>
+</definition>
 
 </tiles-definitions>
