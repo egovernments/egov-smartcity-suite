@@ -366,8 +366,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         objection.setObjectionNumber(applicationNumberGenerator.generate());
         objection.getBasicProperty().setStatus(
                 propertyStatusDAO.getPropertyStatusByCode(PropertyTaxConstants.STATUS_OBJECTED_STR));
-        objection.getBasicProperty().addPropertyStatusValues(propService.createPropStatVal(objection.getBasicProperty(), REVISIONPETITION_STATUS_CODE,
-                null, null, null, null, null));
         objection.getBasicProperty().setUnderWorkflow(Boolean.TRUE);
         updateStateAndStatus(objection);
         addActionMessage(getText("objection.success") + objection.getObjectionNumber());
@@ -619,6 +617,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     PropertyTaxConstants.OBJECTION_ACCEPTED));
 	        objection.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
 	        objection.getProperty().setStatus(STATUS_ISACTIVE);
+	        objection.getBasicProperty().addPropertyStatusValues(propService.createPropStatVal(objection.getBasicProperty(), REVISIONPETITION_STATUS_CODE,
+	                null, null, null, null, null));
 	        propService.setWFPropStatValActive(objection.getBasicProperty());
         }
             
