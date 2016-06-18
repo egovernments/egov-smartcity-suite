@@ -134,7 +134,7 @@
 														
 														
 														<c:choose>
-															<c:when test="${var1.installment == current1HalfInstallment || var1.installment == current2HalfInstallment || demandDetailBeanList[counter.index].actualAmount ==demandDetailBeanList[counter.index].actualCollection}">
+															<c:when test="${var1.installment == current1HalfInstallment || var1.installment == current2HalfInstallment || (demandDetailBeanList[counter.index].actualAmount >0 && demandDetailBeanList[counter.index].actualAmount == demandDetailBeanList[counter.index].actualCollection)}">
 														    
 														       <form:input type="text" path=""
 																class="form-control is_valid_number" value="${var1.actualCollection}"
