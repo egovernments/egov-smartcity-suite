@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="page-container" id="page-container">
+<input type="hidden" name="mode" value="${mode}" />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="main-content">
 			<div class="alert text-center" style="color: green;" id="successMessage">
@@ -50,6 +51,9 @@
 				<jsp:include page="overhead-commonView.jsp" />
 			<div class="col-sm-12 text-center">
 				<div class="row">
+				<c:if test="${ mode != 'edit' && mode != 'view' }">
+					<input type="submit" name="create" Class="btn btn-primary" value="Create New Overhead" id="CREATE" name="button" onclick="createNewOverhead();" />
+				</c:if>
 					<input type="submit" name="closeButton" id="closeButton"
 						value="Close" Class="btn btn-default" onclick="window.close();" />
 				</div>
@@ -57,3 +61,5 @@
 		</div>
 	</div>
 </div>
+<script
+	src="<c:url value='/resources/js/master/overhead.js?rnd=${app_release_no}'/>"></script>

@@ -266,5 +266,8 @@ function validateLumpsumAmount() {
 	        this.value = val.substring(0, val.length - 1);
 	    }
 	});
+}
 
+function createNewOverhead() {
+	window.location = "overhead-newform";
 }
