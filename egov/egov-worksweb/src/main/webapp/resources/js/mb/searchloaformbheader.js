@@ -250,10 +250,11 @@ $('#btncreatemb').click(function(e) {
 			url: "/egworks/workorder/validatemb/"+workOrderId,
 			cache: true,
 		}).done(function(value) {
-			var json = $.parseJSON(value);
 			if(value == '') {
+				$('#errorMessage').hide();
 				window.location = "/egworks/mbheader/create?workOrderId="+workOrderId;
 			} else {
+				var json = $.parseJSON(value);
 				$('#errorMessage').append(json.mberror+ '</br>');
 				$('#errorMessage').show();
 			}

@@ -157,7 +157,8 @@ public class ContractorBillRegisterService {
     }
 
     public Integer getMaxSequenceNumberByWorkOrder(final WorkOrderEstimate workOrderEstimate) {
-        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getCode());
+        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(
+                workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getCode());
     }
 
     public ContractorBillRegister getContractorBillByBillNumber(final String billNumber) {
@@ -552,5 +553,10 @@ public class ContractorBillRegisterService {
         for (final MBHeader mbHeader : mbHeaders)
             mbHeaderService.cancel(mbHeader);
         return contractorBillRegisterRepository.save(contractorBillRegister);
+    }
+
+    public ContractorBillRegister getContratorBillForWorkOrder(final WorkOrder workOrder, final String status,
+            final String billtype) {
+        return contractorBillRegisterRepository.findByWorkOrderAndBillTypeAndStatus(workOrder, status, billtype);
     }
 }

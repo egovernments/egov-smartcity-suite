@@ -63,8 +63,8 @@ public class AjaxWorkOrderForMBHeaderController {
     public @ResponseBody String validateWorkOrder(@PathVariable Long workOrderId, final HttpServletRequest request,
             final HttpServletResponse response) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject = workOrderEstimateService.validateMBInDrafts(workOrderId);
-        jsonObject = workOrderEstimateService.validateMBInWorkFlow(workOrderId);
+        workOrderEstimateService.validateMBInDrafts(workOrderId,jsonObject);
+        workOrderEstimateService.validateMBInWorkFlow(workOrderId,jsonObject);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
             return "";
