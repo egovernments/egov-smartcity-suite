@@ -187,7 +187,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
         if (StringUtils.isBlank(mode))
             addActionMessage(getText("sor.save.success", new String[] { code }));
         else
-            addActionMessage(getText("sor.modified.success"));
+            addActionMessage(getText("sor.modified.success", new String[] { code }));
         return SUCCESS;
     }
 

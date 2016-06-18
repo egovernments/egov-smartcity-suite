@@ -233,6 +233,9 @@ var makeScheduleOfRateDataTable = function() {
 	<input type="hidden" value="<s:text name="sor.marketrate.startDate.enddate" />" id="selectMarketRateDateValidate" />
 	<input type="hidden" value="<s:text name="sor.rate.dates.overlap" />" id="selectSOREndDateValidate" />
 	<input type="hidden" value="<s:text name="sor.rate.dates.overlap" />" id="selectMarketRateEndDateValidate" />
+	<input type="hidden" value="<s:text name="sor.rate.endDate__empty" />" id="selectSOREndDate" />
+	<input type="hidden" value="<s:text name="sor.marketrate.endDate__empty" />" id="selectMarketRateEndDate" />
+	
 <div class="panel panel-primary" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -289,6 +292,7 @@ var makeScheduleOfRateDataTable = function() {
 			<div id="scheduleOfRateTable"></div>
 
 <script>
+
 var imgURL="/resources/erp2/images/cancel.png";	
 function validateInput(){ 
 		var elems = document.getElementsByTagName("input");
