@@ -64,11 +64,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
         populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
         loadViewData(model, abstractEstimate, lineEstimateDetails);
-        
+
         return "newAbstractEstimate-form";
     }
 
-    private void loadViewData(Model model, AbstractEstimate abstractEstimate,LineEstimateDetails lineEstimateDetails) {
+    private void loadViewData(Model model, AbstractEstimate abstractEstimate, LineEstimateDetails lineEstimateDetails) {
         estimateService.setDropDownValues(model);
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
@@ -127,11 +127,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             }
             final AbstractEstimate savedAbstractEstimate = estimateService.createAbstractEstimate(abstractEstimate,
                     files, approvalPosition, approvalComment, null, workFlowAction);
-            
-            if(savedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
-                return "redirect:/abstractestimate/update/" + savedAbstractEstimate.getId()+"?mode=save";
 
-            return "redirect:/abstractestimate/abstractestimate-success?estimate=" + savedAbstractEstimate.getId() + "&approvalPosition=" + approvalPosition;
+            if (savedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
+                return "redirect:/abstractestimate/update/" + savedAbstractEstimate.getId() + "?mode=save";
+
+            return "redirect:/abstractestimate/abstractestimate-success?estimate=" + savedAbstractEstimate.getId()
+                    + "&approvalPosition=" + approvalPosition;
         }
 
     }

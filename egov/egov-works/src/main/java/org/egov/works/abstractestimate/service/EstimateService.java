@@ -87,7 +87,6 @@ import org.egov.works.autonumber.TechnicalSanctionNumberGenerator;
 import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
@@ -172,10 +171,10 @@ public class EstimateService {
 
     @Autowired
     private WorksApplicationProperties worksApplicationProperties;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ScheduleCategoryService scheduleCategoryService;
 
@@ -796,12 +795,12 @@ public class EstimateService {
                 }
             }
         }
-        
+
         for (final Activity activity : abstractEstimate.getSorActivities()) {
             if (activity.getQuantity() <= 0)
                 errors.reject("error.quantity.zero", "error.quantity.zero");
         }
-        
+
         for (final Activity activity : abstractEstimate.getNonSorActivities()) {
             if (activity.getQuantity() <= 0)
                 errors.reject("error.quantity.zero", "error.quantity.zero");
@@ -846,7 +845,7 @@ public class EstimateService {
                     "error.estimatevalue.greater");
         }
     }
-    
+
     public void setDropDownValues(final Model model) {
         model.addAttribute("overheads", overheadService.getOverheadsByDate(new Date()));
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
@@ -861,7 +860,7 @@ public class EstimateService {
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("finYear", financialYearDAO.findAll());
         model.addAttribute("uoms", uomService.getAllUOMs());
-        
+
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);

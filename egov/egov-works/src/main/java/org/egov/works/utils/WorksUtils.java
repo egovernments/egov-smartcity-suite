@@ -197,7 +197,7 @@ public class WorksUtils {
             nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
 
         String pathVars = "";
-        if (!status.getCode().equals(LineEstimateStatus.REJECTED.toString()))
+        if (!status.getCode().equalsIgnoreCase(LineEstimateStatus.REJECTED.toString()))
             pathVars = id + ","
                     + getApproverName(approvalPosition) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","

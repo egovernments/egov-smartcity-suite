@@ -53,11 +53,17 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
@@ -91,7 +97,11 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,6 +109,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class LetterOfAcceptanceService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LetterOfAcceptanceService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -150,6 +162,13 @@ public class LetterOfAcceptanceService {
     @Autowired
     private MilestoneService milestoneService;
 
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<WorkOrder> workOrderWorkflowService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -173,19 +192,26 @@ public class LetterOfAcceptanceService {
     }
 
     @Transactional
-    public WorkOrder create(WorkOrder workOrder, final MultipartFile[] files) throws IOException {
-
-        workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
-                WorksConstants.APPROVED));
+    public WorkOrder create(WorkOrder workOrder, final MultipartFile[] files, final Long approvalPosition,
+            final String approvalComent, final String additionalRule, final String workFlowAction,
+            final AbstractEstimate abstractEstimate) throws IOException {
 
         if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
 
         workOrder = createWorkOrderActivities(workOrder);
-        
-        workOrder = createAssetsForWorkOrder(workOrder);
 
-        final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+        workOrder = createAssetsForWorkOrder(workOrder);
+        WorkOrder savedworkOrder = null;
+        if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated()) {
+            workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                    WorksConstants.APPROVED));
+            savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+        } else {
+            createWorkOrderWorkflowTransition(workOrder, approvalPosition, approvalComent, additionalRule, workFlowAction);
+            savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+        }
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedworkOrder,
                 WorksConstants.WORKORDER);
@@ -194,6 +220,111 @@ public class LetterOfAcceptanceService {
             worksUtils.persistDocuments(documentDetails);
         }
         return savedworkOrder;
+    }
+
+    public void createWorkOrderWorkflowTransition(final WorkOrder workOrder,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
+        if (LOG.isDebugEnabled())
+            LOG.debug(" Create WorkFlow Transition Started  ...");
+        final User user = securityUtils.getCurrentUser();
+        final DateTime currentDate = new DateTime();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position pos = null;
+        Assignment wfInitiator = null;
+        final String currState = "";
+        final String natureOfwork = WorksConstants.WORKFLOWTYPE_DISPLAYNAME_WORKORDER;
+        WorkFlowMatrix wfmatrix = null;
+
+        if (null != workOrder.getId())
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(workOrder.getCreatedBy().getId());
+        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                    WorksConstants.REJECTED));
+            if (wfInitiator.equals(userAssignment))
+                workOrder.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+            else
+                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
+                        .withNatureOfTask(natureOfwork);
+        } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null,
+                    additionalRule, WorksConstants.NEW, null);
+            if (workOrder.getState() == null)
+                workOrder.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(WorksConstants.NEW)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+            else
+                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(WorksConstants.NEW)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+        } else {
+            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+                pos = positionMasterService.getPositionById(approvalPosition);
+            if (null == workOrder.getState()) {
+                workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                        WorksConstants.CREATED_STATUS));
+                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null,
+                        additionalRule, currState, null);
+                workOrder.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+            } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+                workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                        WorksConstants.CANCELLED_STATUS));
+                final String stateValue = WorksConstants.WF_STATE_CANCELLED;
+                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null,
+                        additionalRule, workOrder.getCurrentState().getValue(), null);
+                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
+            } else if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+                workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                        WorksConstants.APPROVED));
+                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null,
+                        additionalRule, workOrder.getCurrentState().getValue(), null);
+                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getCurrentDesignation() + " Approved")
+                        .withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
+                workOrder.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate());
+            } else {
+                workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                        WorksConstants.CREATED_STATUS));
+                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null,
+                        additionalRule, workOrder.getCurrentState().getValue(), null);
+                workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
+            }
+        }
+        if (LOG.isDebugEnabled())
+            LOG.debug(" WorkFlow Transition Completed  ...");
+    }
+
+    public Long getApprovalPositionByMatrixDesignation(final WorkOrder workOrder, Long approvalPosition,
+            final String additionalRule, final String mode, final String workFlowAction) {
+        final WorkFlowMatrix wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(),
+                null, null, additionalRule, workOrder.getCurrentState().getValue(), null);
+        if (workOrder.getEgwStatus() != null && workOrder.getEgwStatus().getCode() != null)
+            if (workOrder.getEgwStatus().getCode().equals(WorksConstants.CREATED_STATUS)
+                    && workOrder.getState() != null)
+                if (mode.equals("edit"))
+                    approvalPosition = workOrder.getState().getOwnerPosition().getId();
+                else
+                    approvalPosition = worksUtils.getApproverPosition(wfmatrix.getNextDesignation(),
+                            workOrder.getState(), workOrder.getCreatedBy().getId());
+        if (workFlowAction.equals(WorksConstants.CANCEL_ACTION)
+                && wfmatrix.getNextState().equals(WorksConstants.WF_STATE_CREATED))
+            approvalPosition = null;
+
+        return approvalPosition;
     }
 
     private WorkOrder createAssetsForWorkOrder(WorkOrder workOrder) {
@@ -213,11 +344,8 @@ public class LetterOfAcceptanceService {
     }
 
     /*
-     * This method will create work order activities
-     * 
-     * Populate work order activities for Percentage Tender. 
-     * The Item Rate tender logic will be implemented later when we take up Item Rate use case.
-     * 
+     * This method will create work order activities Populate work order activities for Percentage Tender. The Item Rate tender
+     * logic will be implemented later when we take up Item Rate use case.
      */
     private WorkOrder createWorkOrderActivities(WorkOrder workOrder) {
         WorkOrderActivity workOrderActivity = null;
@@ -540,6 +668,18 @@ public class LetterOfAcceptanceService {
     }
 
     @Transactional
+    public WorkOrder forward(WorkOrder workOrder, final Long approvalPosition, final String approvalComent,
+            final String additionalRule, final String workFlowAction) throws ValidationException {
+
+        createWorkOrderWorkflowTransition(workOrder, approvalPosition, approvalComent, additionalRule, workFlowAction);
+
+        final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
+
+        return savedworkOrder;
+
+    }
+
+    @Transactional
     public WorkOrder update(WorkOrder workOrder, LineEstimateDetails lineEstimateDetails, Double appropriationAmount,
             Double revisedWorkOrderAmount)
             throws ValidationException {
@@ -720,4 +860,10 @@ public class LetterOfAcceptanceService {
         return estimateNumbers;
     }
 
+    public WorkOrder getWorkOrderDocuments(final WorkOrder workOrder) {
+        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        documentDetailsList = worksUtils.findByObjectIdAndObjectType(workOrder.getId(), WorksConstants.WORKORDER);
+        workOrder.setDocumentDetails(documentDetailsList);
+        return workOrder;
+    }
 }

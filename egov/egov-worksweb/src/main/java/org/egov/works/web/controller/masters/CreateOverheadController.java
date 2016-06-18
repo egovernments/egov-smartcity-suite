@@ -85,7 +85,7 @@ public class CreateOverheadController {
     @RequestMapping(value = "/overhead-save", method = RequestMethod.POST)
     public String create(@ModelAttribute final Overhead overhead,
             final Model model, final HttpServletRequest request, final BindingResult resultBinder)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
         validateOverhead(overhead, resultBinder, request);
         if (overhead.getId() != null)
             model.addAttribute("mode", "edit");
@@ -113,7 +113,7 @@ public class CreateOverheadController {
         if (worksService.getWorksConfigValue("OVERHEAD_PURPOSE") != null)
             model.addAttribute("accounts",
                     chartOfAccountsHibernateDAO
-                    .getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue("OVERHEAD_PURPOSE"))));
+                            .getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue("OVERHEAD_PURPOSE"))));
     }
 
     private void validateOverhead(final Overhead overhead, final BindingResult resultBinder, final HttpServletRequest request) {
@@ -126,7 +126,7 @@ public class CreateOverheadController {
                     "error.overheadname.exists");
         if (!overheadName.matches(WorksConstants.alphaNumericwithspecialchar))
             resultBinder.reject("error.overheadname.invalid", "error.overheadname.invalid");
-        
+
         if (overhead.getOverheadRates() == null)
             resultBinder.reject("error.overhead.altleastone.overheadrate.needed",
                     new String[] { "" },
@@ -166,16 +166,16 @@ public class CreateOverheadController {
                         "overhead.lumpsumandpercentage.invalid");
                 break;
             }
-            
-            if((overheadRates.getPercentage() != null && overheadRates.getPercentage() > 0.0)
+
+            if ((overheadRates.getPercentage() != null && overheadRates.getPercentage() > 0.0)
                     && (overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() <= 0.0)) {
                 resultBinder.reject("overhead.lumpsumandpercentage.invalid",
                         new String[] { "" },
                         "overhead.lumpsumandpercentage.invalid");
                 break;
             }
-            
-            if((overheadRates.getPercentage() != null && overheadRates.getPercentage() <= 0.0)
+
+            if ((overheadRates.getPercentage() != null && overheadRates.getPercentage() <= 0.0)
                     && (overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() > 0.0)) {
                 resultBinder.reject("overhead.lumpsumandpercentage.invalid",
                         new String[] { "" },

@@ -119,3 +119,58 @@ $(document).ready(function() {
 	if($('#revisedValue').val() != '')
 		$('#revisedValue').trigger('blur');
 });
+
+
+function validateWorkFlowApprover(name) {
+	document.getElementById("workFlowAction").value = name;
+	var approverPosId = document.getElementById("approvalPosition");
+	var button = document.getElementById("workFlowAction").value;
+	
+	var flag = true;
+	
+	if (button != null && button == 'Approve') {
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Reject') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Cancel') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+		
+		if($("form").valid())
+		{
+			bootbox.confirm($('#confirm').val(), function(result) {
+				if(!result) {
+					bootbox.hideAll();
+					return false;
+				} else {
+					document.forms[0].submit();
+				}
+			});
+		}
+		return false;
+	}
+	if (button != null && button == 'Forward') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+		
+		if(!$("form").valid())
+		{
+			return false;
+		}
+	}
+	
+	if(flag) {
+		document.forms[0].submit;
+		return true;
+	} else
+		return false;
+}

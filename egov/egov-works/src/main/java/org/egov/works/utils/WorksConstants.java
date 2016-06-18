@@ -88,7 +88,7 @@ public class WorksConstants {
     public static final String NATUREOFWORKFORASSETCAPITALISATION_DEFAULTVALUE = "Capital Works - New Asset,Deposit Works - Own Asset";
     public static final String NATUREOFWORKFORASSETIMPROVMENT_DEFAULTVALUE = "Capital Works - Improvement Works";
     public static final String NATUREOFWORKFORASSETREPAIRANDMAINTAINANCE_DEFAULTVALUE = "Repairs and maintenance Works";
-    
+
     // RebatePremium
     public static final String BILL = "BILL";
 
@@ -236,7 +236,7 @@ public class WorksConstants {
     public static final String SUBMIT_ACTION = "Submit";
     public static final Object REJECT_ACTION = "Reject";
     public static final Object FORWARD_ACTION = "Forward";
-
+    public static final String APPROVE_ACTION = "Approve";
     // Module types
     public static final String MODULE_NAME_LINEESTIMATE = "LineEstimate";
 
@@ -264,17 +264,19 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION = "ENGINEERINCHARGE_DESIGNATION";
 
     public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
-    
-    public static final String WORKFLOWTYPE_DISPLAYNAME_ESTIMATE = "Abstract Estimate";
+
+    public static final String WORKFLOWTYPE_DISPLAYNAME_WORKORDER = "Letter Of Acceptance";
 
     public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill";
+
+    public static final String WORKFLOWTYPE_DISPLAYNAME_ESTIMATE = "Abstract Estimate";
 
     public static final String BILL_EXPENDITURE_TYPE = "Works";
 
     public static final String APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY = "DESIGNATION_TECHSANCTION_AUTHORITY";
 
     public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
-    
+
     public static final String APPCONFIG_KEY_SHOW_SERVICE_FIELDS = "SHOW_SERVICE_FIELDS";
 
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
@@ -298,17 +300,17 @@ public class WorksConstants {
     public static final String LOCATION_BOUNDARYTYPE = "Locality";
 
     public static final String LOCATION_HIERARCHYTYPE = "LOCATION";
-    
+
     public static final String STATUS_TECHNICAL_SANCTIONED = "TECHNICAL_SANCTIONED";
 
     public static final String NATUREOFWORK_EXPENDITURETYPE_CAPITAL = "CAPITAL";
 
     public static final String NATUREOFWORK_EXPENDITURETYPE_REVENUE = "REVENUE";
-    
+
     public static final String ASSETDETAILS_REQUIRED_FOR_ESTIMATE = "ASSETDETAILS_REQUIRED";
 
     public static final String ESTIMATE_ONSAVE_NEXTACTION_VALUE = "Pending Submission";
-    
+
     public static final String APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE = "PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE";
-    
+
 }

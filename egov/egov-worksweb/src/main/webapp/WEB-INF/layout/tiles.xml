@@ -295,5 +295,10 @@
 	   <put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
 	   <put-attribute name="body" value="/WEB-INF/views/mb/workorder-search.jsp"/>
      </definition>
+     
+     <definition name="letterOfAcceptance-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createae" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/abstractEstimate-success.jsp"/>
+     </definition>
 
 </tiles-definitions>

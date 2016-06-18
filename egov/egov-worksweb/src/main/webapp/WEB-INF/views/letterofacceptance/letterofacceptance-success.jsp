@@ -38,36 +38,28 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%> 
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
-	<div class="col-sm-3 add-margin">  
-		<form:input path="estimateNumber" name="estimateNumber" value="${abstractEstimate.estimateNumber}" type="text" class="form-control" readonly="true" /> 
-	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
-	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="projectCode" value="${abstractEstimate.projectCode.code}" disabled>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<div id="main">
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title text-center">
+					<c:out value="${message}" /><br />
+				</div>
+			</div>
+		</div>
+	</div>					
+</div>					
+</div>
+<div class="row text-center">
+	<div class="add-margin">
+		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 	</div>
 </div>
 
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofwork" /></label>
-	<div class="col-sm-3 add-margin">
-		<textarea class="form-control" id="nameOfWork" disabled>${abstractEstimate.name}</textarea>
-	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
-	<div class="col-sm-3 add-margin">	
-		<input type="text" class="form-control" id="department" value="${abstractEstimate.lineEstimateDetails.lineEstimate.executingDepartment.name}" disabled>
-	</div>
-</div>
-<c:if test="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			 <form:input path="workOrderNumber" name="workOrderNumber" id="workOrderNumber" type="text" onkeyup="alphanumerichyphenbackslash(this);" class="form-control" maxlength="32" required="required"/>
-			 <form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
-		</div>
-	</div>
-</c:if>

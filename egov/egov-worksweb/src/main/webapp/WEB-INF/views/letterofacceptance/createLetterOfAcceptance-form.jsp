@@ -46,7 +46,8 @@
 
 <form:form id="createLetterOfAcceptanceForm" class="form-horizontal form-groups-bordered" modelAttribute="workOrder" role="form" action="loa-save" method="post" enctype="multipart/form-data">	
 	<div class="new-page-header"><spring:message code="title.loa.create" /></div>
-
+	<input type="hidden" name="mode" id ="mode" value ="${mode}">
+	<input type="hidden" name="workOrder" value="${workOrder.id}"/>
 	<div class="main-content">
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -70,13 +71,25 @@
 				</div>
 			</c:if>
 		</div>
-		<div class="row">
+		<c:choose>
+			<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 				<div class="col-sm-12 text-center">
 					<form:button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.save"/></form:button>
 					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
 				</div>
-		</div>
+		    </c:when>
+			<c:otherwise>
+				<div class="row">
+					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+					<div class="buttonbottom" align="center">
+						<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+					</div>
+				</div>
+		    </c:otherwise>
+	  </c:choose>
 	</div>
 </form:form>
 
 <script src="<c:url value='/resources/js/letterofacceptance/letterofacceptance.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

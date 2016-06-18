@@ -38,6 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	calculateAgreementAmount();
+	if($('#engineerInchargeId').val()!="")
+		$('#engineerIncharge').val($('#engineerInchargeId').val());
 	var contractorSearch = new Bloodhound({
         datumTokenizer: function (datum) {
             return Bloodhound.tokenizers.whitespace(datum.value);
@@ -209,4 +212,51 @@ $(document).ready(function(){
 
 function searchContractor() {
 	window.open("/egworks/letterofacceptance/contractorsearchform", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function validateWorkFlowApprover(name) {
+	document.getElementById("workFlowAction").value = name;
+	var approverPosId = document.getElementById("approvalPosition");
+	var button = document.getElementById("workFlowAction").value;
+	
+	var flag = true;
+	
+	if (button != null && button == 'Approve') {
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Reject') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Cancel') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+		
+		if(!$("form").valid())
+		{
+			return false;
+		}
+		
+	}
+	if (button != null && button == 'Forward') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+		
+		if(!$("form").valid())
+		{
+			return false;
+		}
+	}
+	
+	if(flag) {
+		document.forms[0].submit;
+		return true;
+	} else
+		return false;
 }

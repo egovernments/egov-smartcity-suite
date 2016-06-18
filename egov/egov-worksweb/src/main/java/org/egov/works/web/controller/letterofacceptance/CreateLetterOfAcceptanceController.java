@@ -40,11 +40,14 @@
 package org.egov.works.web.controller.letterofacceptance;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -52,6 +55,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
@@ -60,22 +64,26 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
-public class CreateLetterOfAcceptanceController {
+public class CreateLetterOfAcceptanceController extends GenericWorkFlowController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -102,24 +110,39 @@ public class CreateLetterOfAcceptanceController {
     @Autowired
     private EstimateService estimateService;
 
+    @Autowired
+    protected CustomizedWorkFlowService customizedWorkFlowService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
-    public String showNewForm(@ModelAttribute("workOrder") final WorkOrder workOrder, final Model model,
+    public String showNewForm(@ModelAttribute("workOrder") WorkOrder workOrder, final Model model,
             final HttpServletRequest request) {
+        if (request.getParameter("mode") != null)
+            model.addAttribute("mode", request.getParameter("mode"));
         final String estimateNumber = request.getParameter("estimateNumber");
         final AbstractEstimate abstractEstimate = estimateService
                 .getAbstractEstimateByEstimateNumberAndStatus(estimateNumber);
-        setDropDownValues(model, abstractEstimate);
-        workOrder.setWorkOrderDate(new Date());
+        workOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(estimateNumber);
+        if (workOrder == null)
+            workOrder = new WorkOrder();
+        if (workOrder.getWorkOrderDate() == null)
+            workOrder.setWorkOrderDate(new Date());
+
+        loadViewData(model, abstractEstimate, workOrder, request);
 
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
         final AppConfigValues value = values.get(0);
         model.addAttribute("percentage_on_estimaterate_or_workvalue", value.getValue());
         model.addAttribute("lineEstimateDetails", abstractEstimate);
-        model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
-        model.addAttribute("abstractEstimate", estimateService.getAbstractEstimateByEstimateNumber(estimateNumber));
+        model.addAttribute("documentDetails", workOrder.getDocumentDetails());
+        model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("workOrder", workOrder);
-        model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         return "createLetterOfAcceptance-form";
     }
 
@@ -130,19 +153,21 @@ public class CreateLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
-    public String create(@ModelAttribute("workOrder") WorkOrder workOrder, final Model model,
-            final BindingResult resultBinder, final HttpServletRequest request,
-            @RequestParam("file") final MultipartFile[] files) throws IOException {
+    public String create(@ModelAttribute("workOrder") WorkOrder workOrder, final Model model, final BindingResult resultBinder,
+            final HttpServletRequest request, @RequestParam("file") final MultipartFile[] files,
+            @RequestParam String workFlowAction, @RequestParam String mode) throws IOException {
         final AbstractEstimate abstractEstimate = estimateService
                 .getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
-        final WorkOrder existingWorkOrder = letterOfAcceptanceService
-                .getWorkOrderByEstimateNumber(workOrder.getEstimateNumber());
 
-        if (existingWorkOrder != null)
-            resultBinder.reject("error.loa.exists.for.estimate",
-                    new String[] { existingWorkOrder.getWorkOrderNumber(), workOrder.getEstimateNumber() },
-                    "error.loa.exists.for.estimate");
+        if (mode == null || (mode != null && !mode.equalsIgnoreCase("edit"))) {
+            final WorkOrder existingWorkOrder = letterOfAcceptanceService
+                    .getWorkOrderByEstimateNumber(workOrder.getEstimateNumber());
 
+            if (existingWorkOrder != null)
+                resultBinder.reject("error.loa.exists.for.estimate",
+                        new String[] { existingWorkOrder.getWorkOrderNumber(), workOrder.getEstimateNumber() },
+                        "error.loa.exists.for.estimate");
+        }
         validateInput(workOrder, resultBinder);
 
         if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
@@ -150,15 +175,22 @@ public class CreateLetterOfAcceptanceController {
             validateSpillOverInput(workOrder, resultBinder, abstractEstimate);
 
         if (resultBinder.hasErrors()) {
-            setDropDownValues(model, abstractEstimate);
+            loadViewData(model, abstractEstimate, workOrder, request);
             model.addAttribute("abstractEstimate", abstractEstimate);
-            model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
-            model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
             model.addAttribute("contractorSearch", request.getParameter("contractorSearch"));
             model.addAttribute("contractorCode", request.getParameter("contractorCode"));
             model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
             return "createLetterOfAcceptance-form";
         } else {
+            Long approvalPosition = 0l;
+            String approvalComment = "";
+            if (request.getParameter("approvalComment") != null)
+                approvalComment = request.getParameter("approvalComent");
+            if (request.getParameter("workFlowAction") != null)
+                workFlowAction = request.getParameter("workFlowAction");
+            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
             workOrder.setContractor(contractorService.findById(workOrder.getContractor().getId(), false));
             final WorkOrderEstimate workOrderEstimate = letterOfAcceptanceService.createWorkOrderEstimate(workOrder);
 
@@ -171,9 +203,99 @@ public class CreateLetterOfAcceptanceController {
                 final String workOrderNumber = l.getNextNumber(workOrderEstimate);
                 workOrder.setWorkOrderNumber(workOrderNumber);
             }
-            final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files);
-            return "redirect:/letterofacceptance/loa-success?loaNumber=" + savedWorkOrder.getWorkOrderNumber();
+            final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files, approvalPosition, approvalComment,
+                    null, workFlowAction, abstractEstimate);
+
+            String pathVars = "";
+
+            if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
+                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated())
+                pathVars = savedWorkOrder.getId().toString();
+            else
+                pathVars = worksUtils.getPathVars(savedWorkOrder.getEgwStatus(), savedWorkOrder.getState(),
+                        savedWorkOrder.getId(), approvalPosition);
+
+            return "redirect:/letterofacceptance/letterofacceptance-success?pathVars=" + pathVars;
         }
+    }
+
+    private void loadViewData(Model model, AbstractEstimate abstractEstimate, WorkOrder workOrder, HttpServletRequest request) {
+        setDropDownValues(model, abstractEstimate);
+        model.addAttribute("stateType", workOrder.getClass().getSimpleName());
+        WorkflowContainer workflowContainer = new WorkflowContainer();
+        prepareWorkflow(model, workOrder, workflowContainer);
+        List<String> validActions = Collections.emptyList();
+        if (workOrder.getId() != null)
+            validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
+                    workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                    workflowContainer.getAdditionalRule(), workOrder.getState().getValue(), workflowContainer.getPendingActions(),
+                    workOrder.getCreatedDate());
+        else
+            validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
+                    workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                    workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
+                    workOrder.getCreatedDate());
+        workOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
+
+        model.addAttribute("documentDetails", workOrder.getDocumentDetails());
+        model.addAttribute("validActionList", validActions);
+        model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
+    }
+
+    @RequestMapping(value = "/letterofacceptance-success", method = RequestMethod.GET)
+    public ModelAndView successView(@ModelAttribute WorkOrder workOrder, final HttpServletRequest request,
+            final Model model, final ModelMap modelMap) {
+
+        final String[] keyNameArray = request.getParameter("pathVars").split(",");
+        Long id = 0L;
+        String approverName = "";
+        String currentUserDesgn = "";
+        String nextDesign = "";
+        if (keyNameArray.length != 0 && keyNameArray.length > 0)
+            if (keyNameArray.length == 1)
+                id = Long.parseLong(keyNameArray[0]);
+            else if (keyNameArray.length == 3) {
+                id = Long.parseLong(keyNameArray[0]);
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+            } else {
+                id = Long.parseLong(keyNameArray[0]);
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+                nextDesign = keyNameArray[3];
+            }
+
+        if (id != null)
+            workOrder = letterOfAcceptanceService.getWorkOrderById(id);
+        model.addAttribute("approverName", approverName);
+        model.addAttribute("currentUserDesgn", currentUserDesgn);
+        model.addAttribute("nextDesign", nextDesign);
+
+        final String message = getMessageByStatus(workOrder, approverName, nextDesign);
+
+        model.addAttribute("message", message);
+
+        return new ModelAndView("letterOfAcceptance-success", "workOrder", workOrder);
+    }
+
+    private String getMessageByStatus(final WorkOrder workOrder, final String approverName,
+            final String nextDesign) {
+        String message = "";
+
+        if (workOrder.getEgwStatus().getCode().equals(WorksConstants.CREATED_STATUS))
+            message = messageSource.getMessage("msg.letterofacceptance.saved",
+                    new String[] { approverName, nextDesign, workOrder.getWorkOrderNumber() }, null);
+        else if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED))
+            message = messageSource.getMessage("msg.letterofacceptance.rejected",
+                    new String[] { workOrder.getWorkOrderNumber(), approverName, nextDesign }, null);
+        else if (workOrder.getEgwStatus().getCode().equals(WorksConstants.APPROVED))
+            message = messageSource.getMessage("msg.letterofacceptance.approved",
+                    new String[] { workOrder.getWorkOrderNumber() }, null);
+        else if (workOrder.getEgwStatus().getCode().equals(WorksConstants.CANCELLED_STATUS))
+            message = messageSource.getMessage("msg.letterofacceptance.cancelled",
+                    new String[] { workOrder.getWorkOrderNumber() }, null);
+
+        return message;
     }
 
     @RequestMapping(value = "/loa-success", method = RequestMethod.GET)

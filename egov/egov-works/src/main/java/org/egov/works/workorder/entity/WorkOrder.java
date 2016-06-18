@@ -249,6 +249,12 @@ public class WorkOrder extends StateAware implements Auditable {
     @Length(max = 256)
     private String cancellationRemarks;
 
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
+
     @Override
     public Long getId() {
         return id;
@@ -604,6 +610,22 @@ public class WorkOrder extends StateAware implements Auditable {
 
     public void setCancellationRemarks(final String cancellationRemarks) {
         this.cancellationRemarks = cancellationRemarks;
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
     }
 
 }

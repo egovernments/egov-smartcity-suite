@@ -42,12 +42,16 @@ package org.egov.works.web.controller.letterofacceptance;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
@@ -56,7 +60,6 @@ import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
@@ -71,10 +74,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
-public class UpdateLetterOfAcceptanceController {
+public class UpdateLetterOfAcceptanceController extends GenericWorkFlowController {
 
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
@@ -97,10 +101,88 @@ public class UpdateLetterOfAcceptanceController {
     @Autowired
     private EstimateService estimateService;
 
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+
     @ModelAttribute
     public WorkOrder getWorkOrder(@PathVariable final String id) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.parseLong(id));
         return workOrder;
+    }
+
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+    public String beforeUpdate(final Model model, @PathVariable final String id, final HttpServletRequest request)
+            throws ApplicationException {
+        final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.valueOf(id));
+        final AbstractEstimate abstractEstimate = workOrder.getWorkOrderEstimates().get(0).getEstimate();
+        if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED)) {
+            return "redirect:/letterofacceptance/newform?estimateNumber=" + abstractEstimate.getEstimateNumber() + "&mode=edit";
+        } else {
+            model.addAttribute("stateType", workOrder.getClass().getSimpleName());
+            if (workOrder.getCurrentState() != null
+                    && !workOrder.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.NEW))
+                model.addAttribute("currentState", workOrder.getCurrentState().getValue());
+            WorkflowContainer workflowContainer = new WorkflowContainer();
+            prepareWorkflow(model, workOrder, workflowContainer);
+            List<String> validActions = Collections.emptyList();
+            validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
+                    workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                    workflowContainer.getAdditionalRule(), workOrder.getState().getValue(), workflowContainer.getPendingActions(),
+                    workOrder.getCreatedDate());
+            model.addAttribute("validActionList", validActions);
+            model.addAttribute("mode", "workflowView");
+            final WorkOrder newWorkOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
+            model.addAttribute("documentDetails", newWorkOrder.getDocumentDetails());
+            model.addAttribute("workOrder", newWorkOrder);
+            model.addAttribute("abstractEstimate", abstractEstimate);
+            model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
+            return "letterOfAcceptance-view";
+        }
+    }
+
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+    public String forward(@PathVariable final String id, final Model model, @RequestParam String workFlowAction,
+            final HttpServletRequest request) {
+
+        final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.valueOf(id));
+        Long approvalPosition = 0l;
+        String approvalComment = "";
+        if (request.getParameter("approvalComment") != null)
+            approvalComment = request.getParameter("approvalComent");
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        final WorkOrder savedWorkOrder = letterOfAcceptanceService.forward(workOrder, approvalPosition, approvalComment, null,
+                workFlowAction);
+
+        final String pathVars = worksUtils.getPathVars(savedWorkOrder.getEgwStatus(), savedWorkOrder.getState(),
+                savedWorkOrder.getId(), approvalPosition);
+
+        return "redirect:/letterofacceptance/letterofacceptance-success?pathVars=" + pathVars;
+    }
+
+    private void setDropDownValues(final Model model, final AbstractEstimate abstractEstimate) {
+        model.addAttribute("engineerInchargeList",
+                letterOfAcceptanceService.getEngineerInchargeList(abstractEstimate.getExecutingDepartment().getId(),
+                        letterOfAcceptanceService.getEngineerInchargeDesignationId()));
+    }
+
+    private void loadViewData(Model model, AbstractEstimate abstractEstimate, WorkOrder workOrder, HttpServletRequest request) {
+        setDropDownValues(model, abstractEstimate);
+        model.addAttribute("stateType", workOrder.getClass().getSimpleName());
+        WorkflowContainer workflowContainer = new WorkflowContainer();
+        prepareWorkflow(model, workOrder, workflowContainer);
+        List<String> validActions = Collections.emptyList();
+        validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
+                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
+                workOrder.getCreatedDate());
+        model.addAttribute("documentDetails", workOrder.getDocumentDetails());
+        model.addAttribute("validActionList", validActions);
+        model.addAttribute("mode", null);
+        model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
     }
 
     @RequestMapping(value = "/modify/{id}", method = RequestMethod.GET)
@@ -109,7 +191,7 @@ public class UpdateLetterOfAcceptanceController {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.parseLong(id));
         final AbstractEstimate abstractEstimate = estimateService
                 .getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
-        final WorkOrder newWorkOrder = getWorkOrderDocuments(workOrder);
+        final WorkOrder newWorkOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
         model.addAttribute("documentDetails", newWorkOrder.getDocumentDetails());
         model.addAttribute("workOrder", newWorkOrder);
         model.addAttribute("abstractEstimate", abstractEstimate);
@@ -199,10 +281,4 @@ public class UpdateLetterOfAcceptanceController {
         }
     }
 
-    private WorkOrder getWorkOrderDocuments(final WorkOrder workOrder) {
-        List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
-        documentDetailsList = worksUtils.findByObjectIdAndObjectType(workOrder.getId(), WorksConstants.WORKORDER);
-        workOrder.setDocumentDetails(documentDetailsList);
-        return workOrder;
-    }
 }

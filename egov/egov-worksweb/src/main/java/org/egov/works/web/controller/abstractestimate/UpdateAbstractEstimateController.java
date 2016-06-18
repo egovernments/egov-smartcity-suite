@@ -99,7 +99,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private ScheduleOfRateService scheduleOfRateService;
-    
+
     @Autowired
     private MessageSource messageSource;
 
@@ -111,13 +111,13 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
     @RequestMapping(value = "/update/{abstractEstimateId}", method = RequestMethod.GET)
     public String updateAbstractEstimate(final Model model, @PathVariable final String abstractEstimateId,
-            final HttpServletRequest request, @RequestParam(value="mode", required=false) final String mode)
+            final HttpServletRequest request, @RequestParam(value = "mode", required = false) final String mode)
             throws ApplicationException {
         final AbstractEstimate abstractEstimate = getAbstractEstimate(abstractEstimateId);
         splitSorAndNonSorActivities(abstractEstimate);
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
-        
-        if(mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
+
+        if (mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
             model.addAttribute("message",
                     messageSource.getMessage("msg.estimate.saved", new String[] { abstractEstimate.getEstimateNumber() }, null));
 
@@ -189,11 +189,12 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
                 updatedAbstractEstimate = estimateService.updateAbstractEstimateDetails(abstractEstimate, approvalPosition,
                         approvalComment, null, workFlowAction, files, removedActivityIds);
             redirectAttributes.addFlashAttribute("abstractEstimate", updatedAbstractEstimate);
-            
-            if(updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
-                return "redirect:/abstractestimate/update/" + updatedAbstractEstimate.getId()+"?mode=save";
 
-            return "redirect:/abstractestimate/abstractestimate-success?estimate=" + updatedAbstractEstimate.getId() + "&approvalPosition=" + approvalPosition;
+            if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
+                return "redirect:/abstractestimate/update/" + updatedAbstractEstimate.getId() + "?mode=save";
+
+            return "redirect:/abstractestimate/abstractestimate-success?estimate=" + updatedAbstractEstimate.getId()
+                    + "&approvalPosition=" + approvalPosition;
         }
     }
 
