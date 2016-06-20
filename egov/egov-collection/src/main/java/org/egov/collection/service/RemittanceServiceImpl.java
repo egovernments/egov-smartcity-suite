@@ -277,67 +277,6 @@ public class RemittanceServiceImpl extends RemittanceService {
                                 depositedBankAccount);
                     bankRemittanceList.addAll(getRemittanceList(serviceDetails, instrumentHeaderListCheque));
                 }
-                /*
-                 * // TODO: Uncomment if online and card remittance is allowed
-                 * // If card amount is present if (totalCardAmount[i].trim() !=
-                 * null && totalCardAmount[i].trim().length() > 0 &&
-                 * cardPaymentGlCode != null) { final StringBuilder
-                 * onlineQueryBuilder = new
-                 * StringBuilder(receiptInstrumentQueryString);
-                 * onlineQueryBuilder.append(serviceNameCondition);
-                 * onlineQueryBuilder.append(receiptDateCondition);
-                 * onlineQueryBuilder.append(instrumentStatusCondition);
-                 * onlineQueryBuilder.append(instrumentTypeCondition);
-                 * onlineQueryBuilder.append(receiptFundCondition);
-                 * onlineQueryBuilder.append(receiptDepartmentCondition); final
-                 * Object arguments[] = new Object[7]; arguments[0] =
-                 * serviceName; try { arguments[1] =
-                 * dateFomatter.parse(receiptDateArray[i]); } catch (final
-                 * ParseException exp) {
-                 * LOGGER.debug("Exception in parsing date  " +
-                 * receiptDateArray[i] + " - " + exp.getMessage()); throw new
-                 * ApplicationRuntimeException("Exception while parsing date",
-                 * exp); } arguments[2] = instrmentStatusNew.getId();
-                 * arguments[3] = CollectionConstants.INSTRUMENTTYPE_CARD;
-                 * arguments[4] = fundCodeArray[i]; arguments[5] =
-                 * departmentCodeArray[i]; final List<InstrumentHeader>
-                 * instrumentHeaderListOnline = persistenceService.findAllBy(
-                 * onlineQueryBuilder.toString(), arguments); if
-                 * (!CollectionConstants.YES.equalsIgnoreCase(createVoucher))
-                 * financialsUtil
-                 * .updateInstrumentHeader(instrumentHeaderListOnline,
-                 * instrumentStatusDeposited, depositedBankAccount); } // If
-                 * online amount is present if (totalOnlineAmount[i].trim() !=
-                 * null && totalOnlineAmount[i].trim().length() > 0 &&
-                 * onlinePaymentGlCode != null) { final StringBuilder
-                 * onlineQueryBuilder = new
-                 * StringBuilder(receiptInstrumentQueryString);
-                 * onlineQueryBuilder.append(serviceNameCondition);
-                 * onlineQueryBuilder.append(receiptDateCondition);
-                 * onlineQueryBuilder.append(instrumentStatusCondition);
-                 * onlineQueryBuilder.append(instrumentTypeCondition);
-                 * onlineQueryBuilder.append(receiptFundCondition);
-                 * onlineQueryBuilder.append(receiptDepartmentCondition);
-                 * onlineQueryBuilder.append(receiptSourceCondition); final
-                 * Object arguments[] = new Object[6]; arguments[0] =
-                 * serviceName; try { arguments[1] =
-                 * dateFomatter.parse(receiptDateArray[i]); } catch (final
-                 * ParseException exp) {
-                 * LOGGER.debug("Exception in parsing date  " +
-                 * receiptDateArray[i] + " - " + exp.getMessage()); throw new
-                 * ApplicationRuntimeException("Exception while parsing date",
-                 * exp); } arguments[2] = instrmentStatusNew.getId();
-                 * arguments[3] = CollectionConstants.INSTRUMENTTYPE_ONLINE;
-                 * arguments[4] = fundCodeArray[i]; arguments[5] =
-                 * departmentCodeArray[i]; arguments[6] =
-                 * Source.SYSTEM.toString(); final List<InstrumentHeader>
-                 * instrumentHeaderListOnline = persistenceService.findAllBy(
-                 * onlineQueryBuilder.toString(), arguments); if
-                 * (!CollectionConstants.YES.equalsIgnoreCase(createVoucher))
-                 * financialsUtil
-                 * .updateInstrumentHeader(instrumentHeaderListOnline,
-                 * instrumentStatusDeposited, depositedBankAccount); }
-                 */
             }
             for (final ReceiptHeader receiptHeader : bankRemittanceList)
                 if (!bankRemitList.contains(receiptHeader))
@@ -513,16 +452,6 @@ public class RemittanceServiceImpl extends RemittanceService {
 
         collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 
-        /*
-         * if (boundaryIdList != null && citizenUser != null) { final String
-         * queryStringForOnline = " union " + queryBuilder +
-         * whereClauseBeforInstumentType + whereClauseForServiceAndFund +
-         * "it.TYPE='" + CollectionConstants.INSTRUMENTTYPE_ONLINE + "'" +
-         * whereClause + "AND ch.CREATEDBY=" + citizenUser.getId() +
-         * groupByClause;
-         * queryStringForCashChequeDDCard.append(queryStringForOnline); }
-         */
-
         final Query query = receiptHeaderService.getSession().createSQLQuery(
                 queryStringForCashChequeDDCard.toString() + orderBy);
 
@@ -544,49 +473,13 @@ public class RemittanceServiceImpl extends RemittanceService {
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT,
                             arrayObjectInitialIndex[0]);
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                    /*
-                     * objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                     * objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "")
-                     */;
                 }
                 if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
                         || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
                     objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT,
                             arrayObjectInitialIndex[0]);
-                    /*
-                     * objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                     * objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
-                     */
                 }
-                // TODO: Uncomment if online and card remittance is allowed
-                /*
-                 * if (arrayObjectInitialIndex[3].equals(CollectionConstants.
-                 * INSTRUMENTTYPE_CARD)) { objHashMap.put(CollectionConstants.
-                 * BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                 * objHashMap.put(CollectionConstants
-                 * .BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                 * objHashMap.put(
-                 * CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT
-                 * , arrayObjectInitialIndex[0]);
-                 * objHashMap.put(CollectionConstants
-                 * .BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, ""); } if
-                 * (arrayObjectInitialIndex
-                 * [3].equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
-                 * objHashMap
-                 * .put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCASHAMOUNT
-                 * , ""); objHashMap.put(CollectionConstants.
-                 * BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
-                 * objHashMap.put(CollectionConstants
-                 * .BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                 * objHashMap.put(CollectionConstants.
-                 * BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
-                 * arrayObjectInitialIndex[0]); }
-                 */
             } else {
                 final int checknew = receiptHeaderService.checkIfMapObjectExist(paramList, arrayObjectInitialIndex);
                 if (checknew == -1) {
@@ -612,33 +505,6 @@ public class RemittanceServiceImpl extends RemittanceService {
                         objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
                         objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
                     }
-                    // TODO: Uncomment if online and card remittance is allowed
-                    /*
-                     * if
-                     * (arrayObjectInitialIndex[3].equals(CollectionConstants.
-                     * INSTRUMENTTYPE_CARD)) {
-                     * objHashMap.put(CollectionConstants
-                     * .BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                     * objHashMap.put
-                     * (CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT
-                     * , ""); objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT,
-                     * arrayObjectInitialIndex[0]);
-                     * objHashMap.put(CollectionConstants
-                     * .BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, ""); }
-                     * if
-                     * (arrayObjectInitialIndex[3].equals(CollectionConstants.
-                     * INSTRUMENTTYPE_ONLINE)) {
-                     * objHashMap.put(CollectionConstants
-                     * .BANKREMITTANCE_SERVICETOTALCASHAMOUNT, "");
-                     * objHashMap.put
-                     * (CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT
-                     * , ""); objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                     * objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
-                     * arrayObjectInitialIndex[0]); }
-                     */
                 } else {
                     objHashMap = paramList.get(checknew);
 
@@ -656,19 +522,6 @@ public class RemittanceServiceImpl extends RemittanceService {
                         existingAmount = existingAmount.add(new BigDecimal(arrayObjectInitialIndex[0].toString()));
                         objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, existingAmount);
                     }
-                    // TODO: Uncomment if online and card remittance is allowed
-                    /*
-                     * if
-                     * (arrayObjectInitialIndex[3].equals(CollectionConstants.
-                     * INSTRUMENTTYPE_CARD)) objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT,
-                     * arrayObjectInitialIndex[0]); if
-                     * (arrayObjectInitialIndex[3
-                     * ].equals(CollectionConstants.INSTRUMENTTYPE_ONLINE))
-                     * objHashMap.put(CollectionConstants.
-                     * BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT,
-                     * arrayObjectInitialIndex[0]);
-                     */
                 }
             }
             if (objHashMap.get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE) != null
