@@ -555,9 +555,9 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.save(contractorBillRegister);
     }
 
-    public ContractorBillRegister getContratorBillForWorkOrder(final WorkOrder workOrder, final String status,
+    public ContractorBillRegister getContratorBillForWorkOrder(final WorkOrderEstimate workOrderEstimate, final String status,
             final String billtype) {
-        return contractorBillRegisterRepository.findByWorkOrderAndBillTypeAndStatus(workOrder, status, billtype);
+        return contractorBillRegisterRepository.findByWorkOrderAndBillTypeAndStatus(workOrderEstimate, status, billtype);
     }
 
     public List<String> getContractorsByWorkOrderStatus(final String contractorNameCode) {

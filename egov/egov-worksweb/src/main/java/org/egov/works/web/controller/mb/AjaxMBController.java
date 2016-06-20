@@ -49,19 +49,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.web.adaptor.SearchMBHeaderJsonAdaptor;
 import org.egov.works.web.adaptor.SearchWorkOrderForMBHeaderJsonAdaptor;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,40 +71,47 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 @RestController
-@RequestMapping(value = "/workorder")
-public class AjaxWorkOrderForMBHeaderController {
+public class AjaxMBController {
 
     @Autowired
     private SearchWorkOrderForMBHeaderJsonAdaptor searchWorkOrderForMBHeaderJsonAdaptor;
-    
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
 
-    @RequestMapping(value = "/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @Autowired
+    private MBHeaderService mBHeaderService;
+
+    @Autowired
+    private ContractorBillRegisterService contractorBillRegisterService;
+
+    @Autowired
+    private SearchMBHeaderJsonAdaptor searchMBHeaderJsonAdaptor;
+
+    @RequestMapping(value = "/workorder/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchWorkOrders(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrderEstimate> searchMilestoneList = workOrderEstimateService
+        final List<WorkOrderEstimate> workOrderEstimateList = workOrderEstimateService
                 .searchWorkOrderToCreateMBHeader(searchRequestLetterOfAcceptance);
-        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(searchMilestoneList)).append("}")
+        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(workOrderEstimateList)).append("}")
                 .toString();
         return result;
     }
 
     public Object searchWorkOrder(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, searchWorkOrderForMBHeaderJsonAdaptor)
-                .create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(WorkOrderEstimate.class, searchWorkOrderForMBHeaderJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
 
-    @RequestMapping(value = "/validatemb/{workOrderId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String validateWorkOrder(@PathVariable Long workOrderId, final HttpServletRequest request,
-            final HttpServletResponse response) {
-        JsonObject jsonObject = new JsonObject();
-        workOrderEstimateService.validateMBInDrafts(workOrderId,jsonObject);
-        workOrderEstimateService.validateMBInWorkFlow(workOrderId,jsonObject);
+    @RequestMapping(value = "/workorder/validatemb/{workOrderId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderId,
+            final HttpServletRequest request, final HttpServletResponse response) {
+        final JsonObject jsonObject = new JsonObject();
+        workOrderEstimateService.validateMBInDrafts(workOrderId, jsonObject);
+        workOrderEstimateService.validateMBInWorkFlow(workOrderId, jsonObject);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
             return "";
@@ -120,4 +128,35 @@ public class AjaxWorkOrderForMBHeaderController {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping(value = "/mbheader/ajaxworkordernumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWorkOrderNumber(@RequestParam final String code) {
+        return workOrderEstimateService.getApprovedAndWorkCommencedWorkOrderNumbers(code);
+    }
+
+    @RequestMapping(value = "/mbheader/ajaxestimateNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findEstimateNumbersForWorkOrder(@RequestParam final String code) {
+        return workOrderEstimateService.getEstimateNumbersByApprovedAndWorkCommencedWorkOrders(code);
+    }
+
+    @RequestMapping(value = "/mbheader/ajaxcontractors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsForWorkOrder(@RequestParam final String code) {
+        return contractorBillRegisterService.getContractorsByWorkOrderStatus(code);
+    }
+
+    @RequestMapping(value = "/mbheader/ajax-searchmbheader", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchMBHeaders(@ModelAttribute final SearchRequestMBHeader searchRequestMBHeader) {
+        final List<MBHeader> mBHeaderList = mBHeaderService.searchMBHeader(searchRequestMBHeader);
+        final String result = new StringBuilder("{ \"data\":").append(searchMBHeader(mBHeaderList)).append("}")
+                .toString();
+        return result;
+    }
+
+    public Object searchMBHeader(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(MBHeader.class, searchMBHeaderJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
 }

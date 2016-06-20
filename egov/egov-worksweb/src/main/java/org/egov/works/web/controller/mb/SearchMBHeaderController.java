@@ -41,6 +41,7 @@ package org.egov.works.web.controller.mb;
 
 import java.util.List;
 
+import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -59,35 +60,33 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/mbheader")
 public class SearchMBHeaderController {
-    
+
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
-    private MBHeaderService mBHeaderService; 
-    
+    private MBHeaderService mBHeaderService;
+
     @Autowired
     private LineEstimateService lineEstimateService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
-    
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusDAO;
-    
-    @RequestMapping(value="/searchform",method = RequestMethod.GET)
-    public String showSearchWorkOrder(@ModelAttribute final SearchRequestMBHeader searchRequestMBHeader, final Model model) {
+
+    @RequestMapping(value = "/searchform", method = RequestMethod.GET)
+    public String showSearchWorkOrder(@ModelAttribute final SearchRequestMBHeader searchRequestMBHeader,
+            final Model model) {
         setDropDownValues(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestMBHeader.setDepartment(departments.get(0).getId());
+        model.addAttribute("egwStatus", mBHeaderService.getMBHeaderStatus());
         model.addAttribute("searchRequestMBHeader", searchRequestMBHeader);
         return "mbheader-searchform";
     }
-    
+
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.MBHEADER));
         model.addAttribute("createdUsers", mBHeaderService.getMBHeaderCreatedByUsers());
     }
 

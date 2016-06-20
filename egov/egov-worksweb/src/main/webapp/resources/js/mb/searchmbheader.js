@@ -181,10 +181,9 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
 					if(data.workOrderNumber != null)
-						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
+						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="viewWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
 					if(data.estimateNumber != null)
-						$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.estimateId +'\')">' + data.estimateNumber + '</a>');
-				
+						$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="viewAbstractEstimate(\''+ data.estimateId +'\')">' + data.estimateNumber + '</a>');
 				},
 				aaSorting : [],
 				columns : [ { 
@@ -203,21 +202,15 @@ function callAjaxSearch() {
 			});
 }
 
-function openWorkOrder(workOrderid) {
+function viewWorkOrder(workOrderid) {
 	window.open("/egworks/letterofacceptance/view/" + workOrderid, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-function openAbstractEstimate(estimateId) {
+function viewAbstractEstimate(estimateId) {
 	window.open("/egworks/abstractestimate/view/" + estimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 
 $(document).on('click', '#resultTable tr', function() {
-	$inputHiddenAssetId = $(this).find('input[name$="asset.id"]');
-	if($inputHiddenAssetId.val())
-	{
-		assetId = $inputHiddenAssetId.val();
-		var url = "/egassets/assetmaster/asset-showform.action?id="+assetId+"&userMode=view";
-		window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes'); 
-	}
+	//Add view mbheader
 });

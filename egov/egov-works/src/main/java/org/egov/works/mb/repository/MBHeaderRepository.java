@@ -39,15 +39,16 @@
  */
 package org.egov.works.mb.repository;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
@@ -55,6 +56,8 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     MBHeader findById(final Long id);
 
     List<MBHeader> findByWorkOrder(final WorkOrder workOrder);
+    
+    List<MBHeader> findByWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate);
 
     List<MBHeader> findByWorkOrderAndEgwStatus_codeEquals(final WorkOrder workOrder, final String statusCode);
 

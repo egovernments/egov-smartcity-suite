@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -89,8 +90,8 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     
     List<ContractorBillRegister> findByWorkOrderAndBillstatusNot(final WorkOrder workOrder, final String billstatus);
     
-    @Query("select distinct(cbr) from ContractorBillRegister as cbr where cbr.workOrderEstimate.workOrder = :workOrder and upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
-    ContractorBillRegister findByWorkOrderAndBillTypeAndStatus(@Param("workOrder") final WorkOrder workOrder, @Param("status") final String status, @Param("billtype") final String billtype);
+    @Query("select distinct(cbr) from ContractorBillRegister as cbr where cbr.workOrderEstimate = :workOrderEstimate and upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
+    ContractorBillRegister findByWorkOrderAndBillTypeAndStatus(@Param("workOrderEstimate") final WorkOrderEstimate workOrderEstimate, @Param("status") final String status, @Param("billtype") final String billtype);
     
     @Query("select distinct(cbr.workOrderEstimate.workOrder.contractor.name) from ContractorBillRegister as cbr where upper(cbr.workOrderEstimate.workOrder.contractor.name) like upper(:contractorname) or upper(cbr.workOrderEstimate.workOrder.contractor.code) like upper(:contractorname)  and cbr.workOrderEstimate.workOrder.egwStatus.code in (:status1,:status2) ")
     List<String> findContractorByWorkOrderStatus(@Param("contractorname") String contractorname,

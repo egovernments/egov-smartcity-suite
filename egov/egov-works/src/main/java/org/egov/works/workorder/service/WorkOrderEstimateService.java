@@ -79,9 +79,6 @@ public class WorkOrderEstimateService {
     private final WorkOrderEstimateRepository workOrderEstimateRepository;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
     private MBHeaderService mbHeaderService;
 
     @Autowired
@@ -130,15 +127,12 @@ public class WorkOrderEstimateService {
     public List<WorkOrderEstimate> searchWorkOrderToCreateMBHeader(
             final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
 
-        final List<String> estimateNumbers = lineEstimateService
-                .getEstimateNumberForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
-        if (estimateNumbers.isEmpty())
-            estimateNumbers.add("");
         final List<String> workOrderNumbers = workOrderEstimateRepository.getCancelledWorkOrderNumbersByBillType(
                 ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderEstimate.class, "woe")
                 .createAlias("estimate", "e").createAlias("workOrder", "wo").createAlias("workOrder.contractor", "woc")
-                .createAlias("workOrder.egwStatus", "status").createAlias("estimate.projectCode", "projectCode");
+                .createAlias("estimate.executingDepartment", "department").createAlias("workOrder.egwStatus", "status")
+                .createAlias("estimate.projectCode", "projectCode");
 
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
@@ -157,7 +151,7 @@ public class WorkOrderEstimateService {
             if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getContractor()))
                 criteria.add(Restrictions.ge("woc.name", searchRequestLetterOfAcceptance.getContractor()));
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
-                criteria.add(Restrictions.in("e.estimateNumber", estimateNumbers));
+                criteria.add(Restrictions.eq("department.id", searchRequestLetterOfAcceptance.getDepartmentName()));
             if (!workOrderNumbers.isEmpty())
                 criteria.add(Restrictions.not(Restrictions.in("wo.workOrderNumber", workOrderNumbers)));
             if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
@@ -187,9 +181,9 @@ public class WorkOrderEstimateService {
         return jsonObject;
     }
 
-    public JsonObject validateMBInWorkFlow(final Long workOrderId, final JsonObject jsonObject) {
+    public JsonObject validateMBInWorkFlow(final Long workOrderEstimateId, final JsonObject jsonObject) {
         final List<MBHeader> mbHeaders = mbHeaderService
-                .getMBHeadersByWorkOrder(getWorkOrderEstimateById(workOrderId).getWorkOrder());
+                .getMBHeadersByWorkOrderEstimate(getWorkOrderEstimateById(workOrderEstimateId));
         String userName = "";
         for (final MBHeader mBHeader : mbHeaders)
             if (!(mBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
@@ -213,11 +207,11 @@ public class WorkOrderEstimateService {
      * @param workOrderId
      * @return
      */
-    public JsonObject checkFinalContractorBillForWorkOrder(final Long workOrderId) {
+    public JsonObject getContratorBillForWorkOrderEstimateAndBillType(final Long workOrderEstimateId) {
         final JsonObject jsonObject = new JsonObject();
-        final WorkOrder workOrder = getWorkOrderEstimateById(workOrderId).getWorkOrder();
+        final WorkOrderEstimate workOrderEstimate = getWorkOrderEstimateById(workOrderEstimateId);
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
-                .getContratorBillForWorkOrder(workOrder, ContractorBillRegister.BillStatus.CANCELLED.toString(),
+                .getContratorBillForWorkOrder(workOrderEstimate, ContractorBillRegister.BillStatus.CANCELLED.toString(),
                         BillTypes.Final_Bill.toString());
         if (contractorBillRegister != null)
             jsonObject.addProperty("mberror", messageSource.getMessage("error.mbheader.create", new String[] {}, null));

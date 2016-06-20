@@ -57,7 +57,7 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
     
     WorkOrderEstimate findByWorkOrder_Id(final Long workOrderId);
 
-    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and  woe.workOrder.egwStatus.code =:workOrderStatus and not exists (select distinct(cbr.workOrderEstimate.workOrder) from ContractorBillRegister as cbr where woe.workOrder.id = cbr.workOrderEstimate.workOrder.id and upper(cbr.billstatus) != :billStatus and cbr.billtype = :billtype)")
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and  woe.workOrder.egwStatus.code =:workOrderStatus and not exists (select distinct(cbr.workOrderEstimate.workOrder) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :billStatus and cbr.billtype = :billtype)")
     List<String> findWorkOrderNumbersToCreateMB(@Param("workOrderNumber") String workOrderNumber,@Param("workOrderStatus") String workOrderStatus ,@Param("billStatus") String billStatus, @Param("billtype") String billtype);
     
     @Query("select distinct(cbr.workOrderEstimate.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")

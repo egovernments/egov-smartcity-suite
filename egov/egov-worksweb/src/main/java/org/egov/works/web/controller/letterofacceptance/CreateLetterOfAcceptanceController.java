@@ -139,7 +139,6 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
         final AppConfigValues value = values.get(0);
         model.addAttribute("percentage_on_estimaterate_or_workvalue", value.getValue());
-        model.addAttribute("lineEstimateDetails", abstractEstimate);
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("workOrder", workOrder);

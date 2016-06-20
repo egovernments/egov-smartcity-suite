@@ -39,12 +39,14 @@
  */
 package org.egov.works.mb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -54,6 +56,7 @@ import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.repository.MBHeaderRepository;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -77,6 +80,9 @@ public class MBHeaderService {
     @Autowired
     private LineEstimateService lineEstimateService;
 
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusDAO;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -92,6 +98,10 @@ public class MBHeaderService {
 
     public List<MBHeader> getMBHeadersByWorkOrder(final WorkOrder workOrder) {
         return mbHeaderRepository.findByWorkOrder(workOrder);
+    }
+
+    public List<MBHeader> getMBHeadersByWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
+        return mbHeaderRepository.findByWorkOrderEstimate(workOrderEstimate);
     }
 
     public List<MBHeader> getApprovedMBHeadersByWorkOrder(final WorkOrder workOrder) {
@@ -134,18 +144,16 @@ public class MBHeaderService {
 
     public List<MBHeader> searchMBHeader(final SearchRequestMBHeader searchRequestMBHeader) {
 
-        final List<String> estimateNumbers = lineEstimateService
-                .getEstimateNumberForDepartment(searchRequestMBHeader.getDepartment());
-        if (estimateNumbers.isEmpty())
-            estimateNumbers.add("");
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(MBHeader.class, "mbh")
                 .createAlias("workOrderEstimate", "woe").createAlias("workOrderEstimate.workOrder", "wo")
-                .createAlias("workOrderEstimate.estimate", "e").createAlias("workOrder.contractor", "woc")
-                .createAlias("mbh.egwStatus", "status");
+                .createAlias("workOrderEstimate.estimate", "e")
+                .createAlias("workOrderEstimate.estimate.executingDepartment", "department")
+                .createAlias("workOrderEstimate.workOrder.contractor", "woc").createAlias("mbh.egwStatus", "status");
 
         if (searchRequestMBHeader != null) {
             if (searchRequestMBHeader.getMbReferenceNumber() != null)
-                criteria.add(Restrictions.ilike("mbh.mbRefNo", searchRequestMBHeader.getMbReferenceNumber()));
+                criteria.add(
+                        Restrictions.ilike("mbh.mbRefNo", "%" + searchRequestMBHeader.getMbReferenceNumber() + "%"));
             if (searchRequestMBHeader.getWorkOrderNumber() != null)
                 criteria.add(
                         Restrictions.eq("wo.workOrderNumber", searchRequestMBHeader.getWorkOrderNumber()).ignoreCase());
@@ -159,16 +167,26 @@ public class MBHeaderService {
             if (StringUtils.isNotBlank(searchRequestMBHeader.getContractorName()))
                 criteria.add(Restrictions.ge("woc.name", searchRequestMBHeader.getContractorName()));
             if (searchRequestMBHeader.getDepartment() != null)
-                criteria.add(Restrictions.in("e.estimateNumber", estimateNumbers));
+                criteria.add(Restrictions.eq("department.id", searchRequestMBHeader.getDepartment()));
             if (searchRequestMBHeader.getMbStatus() != null)
-                criteria.add(Restrictions.eq("status.code", searchRequestMBHeader.getMbStatus()));
+                criteria.add(
+                        Restrictions.eq("status.id", Integer.valueOf(searchRequestMBHeader.getMbStatus().toString())));
             if (searchRequestMBHeader.getCreatedBy() != null)
-                criteria.add(Restrictions.eq("mbh.createdBy", searchRequestMBHeader.getCreatedBy()));
+                criteria.add(Restrictions.eq("mbh.createdBy.id", searchRequestMBHeader.getCreatedBy()));
 
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
+    }
 
+    public List<EgwStatus> getMBHeaderStatus() {
+        List<EgwStatus> statusList = egwStatusDAO.getStatusByModule(WorksConstants.MBHEADER);
+        final List<EgwStatus> latestStatusList = new ArrayList<EgwStatus>();
+        if (!statusList.isEmpty())
+            for (final EgwStatus egwStatus : statusList)
+                if (!egwStatus.getCode().equals(WorksConstants.NEW))
+                    latestStatusList.add(egwStatus);
+        return latestStatusList;
     }
 
 }

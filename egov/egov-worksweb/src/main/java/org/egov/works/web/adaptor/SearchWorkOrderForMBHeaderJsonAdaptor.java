@@ -65,7 +65,7 @@ public class SearchWorkOrderForMBHeaderJsonAdaptor implements JsonSerializer<Wor
         jsonObject.addProperty("contractorName", workOrderEstimate.getWorkOrder().getContractor().getName());
         jsonObject.addProperty("workIdentificationNumber", workOrderEstimate.getEstimate().getProjectCode().getCode());
         jsonObject.addProperty("estimateId", workOrderEstimate.getEstimate().getId());
-        jsonObject.addProperty("id", workOrderEstimate.getId());
+        jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
         jsonObject.addProperty("workOrderId", workOrderEstimate.getWorkOrder().getId());
         return jsonObject;
     }

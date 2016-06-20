@@ -65,6 +65,7 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
     public JsonElement serialize(MBHeader mBHeader, Type typeOfSrc, JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         WorkOrderEstimate workOrderEstimate = mBHeader.getWorkOrderEstimate();
+        jsonObject.addProperty("mbheaderId",mBHeader.getId());
         jsonObject.addProperty("workOrderId", workOrderEstimate.getWorkOrder().getId());
         jsonObject.addProperty("estimateId", workOrderEstimate.getEstimate().getId());
         jsonObject.addProperty("estimateNumber", workOrderEstimate.getEstimate().getEstimateNumber());

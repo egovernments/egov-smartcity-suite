@@ -89,12 +89,12 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');
+					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.workOrderEstimateId +'"/>');
 					$('td:eq(1)',row).html(index+1);
 					if(data.workOrderNumber != null)
-						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
+						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="viewWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
 					if(data.workIdentificationNumber != null)
-						$('td:eq(6)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.estimateId +'\')">' + data.workIdentificationNumber + '</a>');
+						$('td:eq(6)',row).html('<a href="javascript:void(0);" onclick="viewAbstractEstimate(\''+ data.estimateId +'\')">' + data.workIdentificationNumber + '</a>');
 				
 				},
 				aaSorting : [],
@@ -104,15 +104,16 @@ function callAjaxSearch() {
 						"data" : "workOrderNumber", "sClass" : "text-center"} ,{
 						"data" : "workOrderDate", "sClass" : "text-center"} ,{
 						"data" : "agreementAmount", "sClass" : "text-right"} ,{
-						"data" : "contractorName", "sClass" : "text-center"} ]
+						"data" : "contractorName", "sClass" : "text-center"},{
+						"data" : "workIdentificationNumber", "sClass" : "text-center"} ]
 			});
 }
 
-function openWorkOrder(workOrderid) {
+function viewWorkOrder(workOrderid) {
 	window.open("/egworks/letterofacceptance/view/" + workOrderid, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-function openAbstractEstimate(estimateId) {
+function viewAbstractEstimate(estimateId) {
 	window.open("/egworks/abstractestimate/view/" + estimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
