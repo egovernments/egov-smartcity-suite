@@ -53,9 +53,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -71,7 +69,7 @@ import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseChecklistHelper;
+import org.egov.tl.utils.LicenseNumberUtils;
 import org.hibernate.CacheMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -81,9 +79,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -111,10 +107,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected InstallmentHibDao installmentDao;
 
     @Autowired
-    protected SequenceNumberGenerator sequenceNumberGenerator;
-
-    @Autowired
-    protected ApplicationNumberGenerator applicationNumberGenerator;
+    protected LicenseNumberUtils licenseNumberUtils;
 
     @Autowired
     protected AssignmentService assignmentService;
@@ -130,7 +123,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
 
     @Autowired
-    private TradeLicenseUpdateIndexService updateIndexService;
+    protected TradeLicenseUpdateIndexService updateIndexService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -182,7 +175,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
                 Constants.APPLICATION_STATUS_CREATED_CODE);
         license.setEgwStatus(statusChange);
-        license.setApplicationNumber(this.applicationNumberGenerator.generate());
+        license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         licensePersitenceService.applyAuditing(license);
         processAndStoreDocument(license.getDocuments());
         transitionWorkFlow(license, workflowBean);
@@ -278,11 +271,11 @@ public abstract class AbstractLicenseService<T extends License> {
         license.getLicensee().setLicense(license);
         license.setStatus((LicenseStatus) this.persistenceService.find("from org.egov.tl.entity.LicenseStatus where name=? ",
                 Constants.LICENSE_STATUS_ACTIVE));
-        license.setApplicationNumber(this.applicationNumberGenerator.generate());
+        license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         license.setLegacy(true);
         license.setActive(true);
         licensePersitenceService.applyAuditing(license);
-        license.generateLicenseNumber(this.getNextRunningLicenseNumber("egtl_license_number"));
+        license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
         this.validityService.applyLicenseValidity(license);
         licensePersitenceService.persist(license);
     }
@@ -382,13 +375,9 @@ public abstract class AbstractLicenseService<T extends License> {
         }
     }
 
-    public Serializable getNextRunningLicenseNumber(String sequenceName) {
-        return this.sequenceNumberGenerator.getNextSequence(sequenceName);
-    }
-
     @Transactional
     public void renew(T license, WorkflowBean workflowBean) {
-        license.setApplicationNumber(this.applicationNumberGenerator.generate());
+        license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         recalculateDemand(this.feeMatrixService.findFeeList(license), license);
         LicenseStatus status = (LicenseStatus) this.persistenceService.find(
                 "from org.egov.tl.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);

@@ -49,7 +49,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -91,7 +90,6 @@ public abstract class License extends StateAware {
     private String agreementDocNo;
     private String digiSignedCertFileStoreId;
     private String assessmentNo;
-    public abstract String generateLicenseNumber(Serializable runningNumber);
 
     public abstract List<LicenseDocument> getDocuments();
 

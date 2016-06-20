@@ -71,6 +71,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return FORMAT_DATE_TO_YEAR.print(date);
     }
 
+    public static String toYearFormat(final Date date) {
+        return FORMAT_DATE_TO_YEAR.print(new LocalDate(date));
+    }
+
     public static String currentDateToDefaultDateFormat() {
         return toDefaultDateFormat(new LocalDate());
     }

@@ -38,44 +38,25 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.entity;
+package org.egov.tl.service;
 
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-public class TradeLicense extends License {
-    private List<LicenseDocument> documents = new ArrayList<>();
+@Service
+public class TradeLicenseNumberGenerator implements LicenseNumberGenerator {
+
+    @Autowired
+    private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Override
-    public String getStateDetails() {
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        final StringBuffer details = new StringBuffer();
-        if (getLicenseNumber() != null && !getLicenseNumber().isEmpty())
-            details.append("TradeLicense Number " +getLicenseNumber() +" and ");
-       details.append(String.format("App No. %s dated %s", applicationNumber ,
-                (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date())))));
-       details.append("<br/> Remarks : "+this.getState().getComments());
-        return details.toString();
-    }
-    
-    @Override
-    @NotAudited
-    public List<LicenseDocument> getDocuments() {
-        return documents;
-    }
-
-    @Override
-    public void setDocuments(final List<LicenseDocument> documents) {
-        this.documents = documents;
+    public String generateLicenseNumber() {
+        Serializable nextSequence = this.sequenceNumberGenerator.getNextSequence("egtl_license_number");
+        return String.format("TL/%05d/%s", nextSequence, DateUtils.currentDateToYearFormat());
     }
 
 }
