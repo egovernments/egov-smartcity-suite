@@ -41,6 +41,7 @@ package org.egov.ptis.client.service;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.demand.model.EgBillDetails;
@@ -146,6 +147,7 @@ public class CollectionApportioner {
         for (final EgBillDetails billDetail : billDetails) {
             final String glCode = billDetail.getGlcode();
             final ReceiptDetail receiptDetail = new ReceiptDetail();
+            receiptDetail.setPurpose(PURPOSE.OTHERS.toString());
             receiptDetail.setOrdernumber(Long.valueOf(billDetail.getOrderNo()));
             receiptDetail.setDescription(billDetail.getDescription());
             receiptDetail.setIsActualDemand(true);
