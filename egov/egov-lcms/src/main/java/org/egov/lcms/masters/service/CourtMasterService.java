@@ -73,12 +73,7 @@ public class CourtMasterService {
     }
 
     @Transactional
-    public CourtMaster create(final CourtMaster courtMaster) {
-        return courtMasterRepository.save(courtMaster);
-    }
-
-    @Transactional
-    public CourtMaster update(final CourtMaster courtMaster) {
+    public CourtMaster persist(final CourtMaster courtMaster) {
         return courtMasterRepository.save(courtMaster);
     }
 

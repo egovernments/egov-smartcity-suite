@@ -96,7 +96,7 @@ public class CourtMasterController {
             prepareNewForm(model);
             return COURTMASTER_NEW;
         }
-        courtMasterService.create(courtMaster);
+        courtMasterService.persist(courtMaster);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.courtMaster.success", null, null));
         return "redirect:/courtmaster/result/" + courtMaster.getId();
     }
@@ -116,7 +116,7 @@ public class CourtMasterController {
             prepareNewForm(model);
             return COURTMASTER_EDIT;
         }
-        courtMasterService.update(courtMaster);
+        courtMasterService.persist(courtMaster);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.courtMaster.update", null, null));
         return "redirect:/courtmaster/result/" + courtMaster.getId();
     }
