@@ -39,7 +39,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="../update"
+<form:form role="form" action="/lcms/courttypemaster/update"
 	modelAttribute="courtTypeMaster" id="courttypeMasterform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">

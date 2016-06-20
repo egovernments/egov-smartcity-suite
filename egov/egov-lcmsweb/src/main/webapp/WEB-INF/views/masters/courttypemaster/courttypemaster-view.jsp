@@ -95,3 +95,6 @@
 					onclick="self.close()">Close</a>
 			</div>
 		</div>
+		</div>
+		</div>
+		

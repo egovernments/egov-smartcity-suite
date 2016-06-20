@@ -92,6 +92,11 @@ public class CourtTypeMasterService {
     public CourtTypeMaster findOne(final Long id) {
         return courtTypeMasterRepository.findOne(id);
     }
+
+    public List<CourtTypeMaster> getActiveCourtTypes() {
+        return courtTypeMasterRepository.findByActiveTrueOrderByCourtTypeAsc();
+    }
+
     /*
      * public List<CourttypeMaster> search(CourttypeMaster courttypeMaster){
      * return courttypeMasterRepository.findAll(); }

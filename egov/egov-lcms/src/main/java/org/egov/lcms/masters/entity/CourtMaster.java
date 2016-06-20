@@ -48,18 +48,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "eglc_court_master")
-@Unique(id = "id", tableName = "eglc_court_master", columnName = { "name" }, fields = {
-        "name" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "eglc_court_master", columnName = { "name" }, fields = { "name" }, enableDfltMsg = true)
 @SequenceGenerator(name = CourtMaster.SEQ_COURT, sequenceName = CourtMaster.SEQ_COURT, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class CourtMaster extends AbstractAuditable {
 
     private static final long serialVersionUID = 796823780349590496L;
@@ -69,24 +73,26 @@ public class CourtMaster extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_COURT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-
-    @Required(message = "masters.courtMaster.courtNameNull")
-    @Length(max = 100, message = "masters.courtMaster.nameLength")
-    // @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message =
-    // "masters.courtMaster.courtNamePattern2")
+    @NotNull
+    @Length(min = 3, max = 100)
+    @Audited
     private String name;
 
-    @Required(message = "masters.courtMaster.courtAddressNull")
-    @Length(max = 256, message = "masters.courtMaster.addressLength")
+    @NotNull
+    @Length(min = 3, max = 256)
     private String address;
-    @Max(value = 1000, message = "masters.orderNumber.length")
-    private Long ordernumber;
+    
+    @Min(1)
+    @Max(1000)
+    private Long orderNumber;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "courttype")
-    private CourttypeMaster courtType;
+    @Audited
+    private CourtTypeMaster courtType;
 
+    @Audited
     private Boolean active;
 
     @Override
@@ -115,20 +121,20 @@ public class CourtMaster extends AbstractAuditable {
         this.address = address;
     }
 
-    public CourttypeMaster getCourtType() {
+    public CourtTypeMaster getCourtType() {
         return courtType;
     }
 
-    public void setCourtType(final CourttypeMaster courtType) {
+    public void setCourtType(final CourtTypeMaster courtType) {
         this.courtType = courtType;
     }
 
-    public Long getOrdernumber() {
-        return ordernumber;
+    public Long getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setOrdernumber(final Long ordernumber) {
-        this.ordernumber = ordernumber;
+    public void setOrderNumber(final Long orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public Boolean getActive() {

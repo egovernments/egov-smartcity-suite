@@ -37,20 +37,36 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.masters.repository;
+package org.egov.lcms.web.adaptor;
 
-import java.util.List;
+import java.lang.reflect.Type;
 
 import org.egov.lcms.masters.entity.CourtMaster;
-import org.egov.lcms.masters.entity.CourtTypeMaster;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface CourtMasterRepository extends JpaRepository<CourtMaster, java.lang.Long> {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    CourtMaster findByName(String name);
-
-    List<CourtMaster> findByCourtType(CourtTypeMaster courtType);
-
+public class CourtMasterJsonAdaptor implements JsonSerializer<CourtMaster> {
+    @Override
+    public JsonElement serialize(final CourtMaster courtMaster, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (courtMaster != null) {
+            if (courtMaster.getName() != null)
+                jsonObject.addProperty("name", courtMaster.getName());
+            else
+                jsonObject.addProperty("name", "");
+            if (courtMaster.getCourtType() != null)
+                jsonObject.addProperty("courtType", courtMaster.getCourtType().getCourtType());
+            else
+                jsonObject.addProperty("courtType", "");
+            if (courtMaster.getActive() != null)
+                jsonObject.addProperty("active", courtMaster.getActive() == true ? "YES" : "NO");
+            else
+                jsonObject.addProperty("active", "");
+            jsonObject.addProperty("id", courtMaster.getId());
+        }
+        return jsonObject;
+    }
 }
