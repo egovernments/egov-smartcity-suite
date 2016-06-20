@@ -42,6 +42,7 @@ package org.egov.lcms.transactions.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -55,7 +56,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.GovernmentDept;
@@ -70,7 +71,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGLC_BIPARTISANDETAILS")
 @SequenceGenerator(name = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, sequenceName = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, allocationSize = 1)
-public class BipartisanDetails extends AbstractAuditable {
+public class BipartisanDetails extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_BIPARTISANDETAILS = "SEQ_EGLC_BIPARTISANDETAILS";
@@ -89,13 +90,15 @@ public class BipartisanDetails extends AbstractAuditable {
     private String address;
     @OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "contactNumber.numeric")
     private Long contactNumber;
-    private boolean isrepondent;
+    @Column(name = "isrespondent")
+    private Boolean isrepondent = false;
     @ManyToOne
-    @NotNull
     @Valid
-    @JoinColumn(name = "respondentgovtdept", nullable = false)
+    @JoinColumn(name = "respondentgovtdept")
     private GovernmentDept governmentDept;
-    private boolean isrespondentgovernment;
+    @Column(name = "isrespondentgovernment", nullable = false)
+    private Boolean isrespondentgovernment = false;
+    @Column(name = "serialnumber")
     private Long serialNumber;
 
     public GovernmentDept getGovernmentDept() {

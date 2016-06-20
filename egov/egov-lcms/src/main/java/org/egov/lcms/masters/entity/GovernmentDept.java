@@ -49,7 +49,6 @@ import javax.validation.constraints.Max;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 
@@ -67,10 +66,13 @@ public class GovernmentDept extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_GOVERNMENTDEPARTMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @Required(message = "masters.name.null")
-    @Length(max = 32, message = "masters.name.length")
+     @Length(max = 32, message = "masters.name.length")
     @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message = "masters.name.mixedChar2")
     private String name;
+    
+    @Length(max = 32, message = "masters.name.length")
+    @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message = "masters.code.mixedChar2")
+    private String code;
     private Boolean active;
 
     public Boolean getActive() {
@@ -127,4 +129,13 @@ public class GovernmentDept extends AbstractAuditable {
         this.id = id;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    
 }

@@ -159,4 +159,10 @@ public class PetitionTypeMasterService {
         }
         return resultList;
     }
+    
+    public List<PetitionTypeMaster> getPetitiontypeList()
+    {
+        return petitionTypeMasterRepository.findAll();
+    }
+
 }

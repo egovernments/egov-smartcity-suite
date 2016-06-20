@@ -39,9 +39,19 @@
  */
 package org.egov.lcms.transations.service;
 
+import java.math.BigDecimal;
+
+import org.egov.commons.EgwStatus;
+import org.egov.commons.Functionary;
+import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.lcms.masters.entity.GovernmentDept;
+import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
+import org.egov.lcms.transactions.repository.GovernmentDeptRepository;
 import org.egov.lcms.transactions.repository.LegalcaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +60,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class LegalCaseService {
 
     private final LegalcaseRepository legalCaseRepository;
+    
+
+    @Autowired
+    private GovernmentDeptRepository governmentDeptRepository;
+    
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+
+
+    @Autowired
+    private FunctionaryHibernateDAO functionaryDAO;
+    
 
     @Autowired
     public LegalCaseService(final LegalcaseRepository legalCaseRepository) {
@@ -70,12 +93,37 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public Legalcase createLegalCase(final Legalcase legalCase) {
-        return legalCaseRepository.save(legalCase);
+    public Legalcase createLegalCase(final Legalcase legalcase) {
+        legalcase.setCasenumber(legalcase.getCasenumber()+legalcase.getWpYear());
+        final String[] funcString = legalcase.getFunctionaryCode().split("LC");
+        final Functionary funcObj = getFunctionaryByCode(funcString);
+        legalcase.setFunctionary(funcObj);
+        legalcase.setStatus(getStatusByCodeAndModuleType("CREATED", "LCMS"));
+        prepareBipartsanDetails(legalcase);
+        return legalCaseRepository.save(legalcase);
     }
-
+    private void prepareBipartsanDetails(final Legalcase legalcase) {
+        final BipartisanDetails bipartObj = new BipartisanDetails();
+        final GovernmentDept govtDept = governmentDeptRepository.findByCode("L011");
+        bipartObj.setGovernmentDept(govtDept);
+        bipartObj.setIsrepondent(Boolean.TRUE);
+        bipartObj.setIsrespondentgovernment(Boolean.TRUE);
+        bipartObj.setName("bipart1");
+        bipartObj.setSerialNumber(231232l);
+        bipartObj.setLegalcase(legalcase);
+        legalcase.getBipartisanDetails().add(bipartObj);
+    }
     @Transactional
     public Legalcase updateLegalCase(final Legalcase legalCase) {
         return legalCaseRepository.save(legalCase);
+    }
+    
+    public Functionary getFunctionaryByCode(final String[] funcString) {
+        final Functionary funcObj = functionaryDAO.getFunctionaryByCode(new BigDecimal(funcString[1]));
+        return funcObj;
+    }
+
+    public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
+        return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
     }
 }

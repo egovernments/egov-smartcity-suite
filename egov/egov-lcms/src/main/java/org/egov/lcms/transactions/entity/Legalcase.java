@@ -45,6 +45,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -55,19 +56,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.CasetypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
@@ -78,8 +78,9 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE")
-@CompareDates(fromDate = "caseReceivingDate", toDate = "casedate", dateFormat = "dd/MM/yyyy", message = "caseReceivingDate.greaterThan.casedate")
-@Unique(fields = { "casenumber", "lcnumber" }, id = "id", tableName = "EGLC_LEGALCASE", columnName = { "CASENUMBER",
+// @CompareDates(fromDate = "caseReceivingDate", toDate = "caseDate", dateFormat
+// = "dd/MM/yyyy", message = "fgfgf ggffg date")
+@Unique(fields = { "casenumber", "lcNumber" }, id = "id", tableName = "EGLC_LEGALCASE", columnName = { "CASENUMBER",
         "LCNUMBER" }, message = "casenumber.name.isunique")
 @SequenceGenerator(name = Legalcase.SEQ_LEGALCASE_TYPE, sequenceName = Legalcase.SEQ_LEGALCASE_TYPE, allocationSize = 1)
 public class Legalcase extends AbstractAuditable {
@@ -92,9 +93,8 @@ public class Legalcase extends AbstractAuditable {
 
     @DateFormat(message = "invalid.fieldvalue.model.nextDate")
     private Date nextDate;
-    @Required(message = "case.sectionNumber.null")
+    // @Required(message = "case.sectionNumber.null")
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
     @JoinColumn(name = "FUNCTIONARY", nullable = false)
     private Functionary functionary;
     @Required(message = "case.casetype.null")
@@ -108,7 +108,6 @@ public class Legalcase extends AbstractAuditable {
     @JoinColumn(name = "COURT", nullable = false)
     private CourtMaster courtMaster;
     @ManyToOne
-    @NotNull
     @JoinColumn(name = "STATUS", nullable = false)
     private EgwStatus status;
     @Required(message = "case.petitiontype.null")
@@ -122,26 +121,33 @@ public class Legalcase extends AbstractAuditable {
     private String casenumber;
     @Required(message = "case.casedate.null")
     @DateFormat(message = "invalid.fieldvalue.model.casedate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.case.date")
+    // @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT,
+    // message = "invalid.case.date")
     private Date caseDate;
     @Required(message = "case.title.null")
     @Length(max = 1024, message = "casetitle.length")
+    @Column(name = "casetitle")
     private String caseTitle;
     @Length(max = 50, message = "appealnum.length")
+    @Column(name = "appealNum")
     private String appealNum;
     @Length(max = 1024, message = "remarks.length")
     private String remarks;
     @DateFormat(message = "invalid.fieldvalue.model.caseReceivingDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.caseReceivingDate.date")
+    @Column(name = "caseReceivingDate")
     private Date caseReceivingDate;
-    private boolean isfiledbycorporation;
+    private Boolean isfiledbycorporation;
     @OptionalPattern(regex = LcmsConstants.alphaNumericwithSlashes, message = "case.lcnumber.invalid")
     @Length(max = 50, message = "lcnumber.length")
+    @Column(name = "lcnumber")
     private String lcNumber;
     @Required(message = "case.prayer.null")
     @Length(max = 1024, message = "prayer.length")
     private String prayer;
-    private boolean isSenioradvrequired;
+    @Column(name = "isSenioradvrequired")
+    private Boolean isSenioradvrequired = true;
+    @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
 
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -152,31 +158,26 @@ public class Legalcase extends AbstractAuditable {
 
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lcinterimorder> eglcLcinterimorders = new ArrayList<Lcinterimorder>(0);
-    /*
-     * @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private List<Contempt>
-     * eglcContempts = new ArrayList<Contempt>(0);
-     */
+
+    @Transient
+    private String wpYear;
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalcaseAdvocate>(0);
-
-    /*
-     * @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private List<Appeal> eglcAppeals =
-     * new ArrayList<Appeal>(0);
-     */
 
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Hearings> hearings = new ArrayList<Hearings>(0);
 
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "oppPartyAdvocate.alphanumeric")
     @Length(max = 128, message = "oppPartyAdvocate.length")
+    @Column(name = "oppPartyAdvocate")
     private String oppPartyAdvocate;
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "representedby.alphanumeric")
     @Length(max = 256, message = "representedby.length")
+    @Column(name = "representedby")
     private String representedby;
+    @Column(name = "lcNumberType")
     private String lcNumberType;
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseDisposal> legalcaseDisposal = new ArrayList<LegalcaseDisposal>(0);
@@ -193,27 +194,25 @@ public class Legalcase extends AbstractAuditable {
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProcessRegister> processRegisterSet = new ArrayList<ProcessRegister>(0);
 
-    private Long documentNum;
     @DateFormat(message = "invalid.fieldvalue.model.firstAppearenceDate")
-    private Date firstAppearanceDate;
+    private Date casefirstappearancedate;
 
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseMiscDetails> legalcaseMiscDetails = new ArrayList<LegalcaseMiscDetails>(0);
 
     @DateFormat(message = "invalid.fieldvalue.model.previousDate")
+    @Column(name = "previousDate")
     private Date previousDate;
 
-    @DateFormat(message = "invalid.fieldvalue.model.petFirstAppDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.petFirstAppDate.date")
-    private Date petFirstAppDate;
     @Length(max = 50, message = "stampNumber.length")
+    @Column(name = "stampNumber")
     private String stampNumber;
+
+    @Transient
+    private String functionaryCode;
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getPetFirstAppDate() != null)
-            if (!DateUtils.compareDates(getPetFirstAppDate(), getCasedate()))
-                errors.add(new ValidationError("petFirstAppDate", "petFirstAppDate.greaterThan.casedate"));
         if (getIsfiledbycorporation() == true && getStampNumber().length() == 0)
             errors.add(new ValidationError("stampNumber", "case.stampNumber.invalid"));
         for (final BipartisanDetails bipartisanDetails2 : getBipartisanDetails()) {
@@ -254,8 +253,8 @@ public class Legalcase extends AbstractAuditable {
      * @param errors
      */
     protected void legalcaseDeptValidation(final List<ValidationError> errors) {
-        boolean isPrimaryDepartment = false;
-        boolean deptPositionUniqueCheck = false;
+        Boolean isPrimaryDepartment = false;
+        Boolean deptPositionUniqueCheck = false;
         int i = 0;
         for (final LegalcaseDepartment legalcaseDept : getLegalcaseDepartment()) {
             int j = 0;
@@ -287,7 +286,7 @@ public class Legalcase extends AbstractAuditable {
      *            Validation Check for Batch case:
      */
     protected void batchCaseValidation(final List<ValidationError> errors) {
-        boolean duplicateCaseNumberCheck = false;
+        Boolean duplicateCaseNumberCheck = false;
         int i = 0;
         for (final Batchcase batchcase : getBatchCaseSet()) {
             /*
@@ -460,6 +459,10 @@ public class Legalcase extends AbstractAuditable {
         this.petitiontypeMaster = petitiontypeMaster;
     }
 
+    public void setIsSenioradvrequired(final Boolean isSenioradvrequired) {
+        this.isSenioradvrequired = isSenioradvrequired;
+    }
+
     public String getCasenumber() {
         return casenumber;
     }
@@ -508,11 +511,11 @@ public class Legalcase extends AbstractAuditable {
         this.caseReceivingDate = caseReceivingDate;
     }
 
-    public boolean getIsfiledbycorporation() {
+    public Boolean getIsfiledbycorporation() {
         return isfiledbycorporation;
     }
 
-    public void setIsfiledbycorporation(final boolean isfiledbycorporation) {
+    public void setIsfiledbycorporation(final Boolean isfiledbycorporation) {
         this.isfiledbycorporation = isfiledbycorporation;
     }
 
@@ -532,11 +535,11 @@ public class Legalcase extends AbstractAuditable {
         this.prayer = prayer;
     }
 
-    public boolean getIsSenioradvrequired() {
+    public Boolean getIsSenioradvrequired() {
         return isSenioradvrequired;
     }
 
-    public void setSenioradvrequired(final boolean isSenioradvrequired) {
+    public void setSenioradvrequired(final Boolean isSenioradvrequired) {
         this.isSenioradvrequired = isSenioradvrequired;
     }
 
@@ -656,24 +659,22 @@ public class Legalcase extends AbstractAuditable {
         this.processRegisterSet = processRegisterSet;
     }
 
-    public Long getDocumentNum() {
-        return documentNum;
-    }
-
-    public void setDocumentNum(final Long documentNum) {
-        this.documentNum = documentNum;
-    }
-
-    public Date getFirstAppearanceDate() {
-        return firstAppearanceDate;
-    }
-
-    public void setFirstAppearanceDate(final Date firstAppearanceDate) {
-        this.firstAppearanceDate = firstAppearanceDate;
-    }
+    /*
+     * public Long getDocumentNum() { return documentNum; } public void
+     * setDocumentNum(final Long documentNum) { this.documentNum = documentNum;
+     * }
+     */
 
     public List<LegalcaseMiscDetails> getLegalcaseMiscDetails() {
         return legalcaseMiscDetails;
+    }
+
+    public Date getCasefirstappearancedate() {
+        return casefirstappearancedate;
+    }
+
+    public void setCasefirstappearancedate(final Date casefirstappearancedate) {
+        this.casefirstappearancedate = casefirstappearancedate;
     }
 
     public void setLegalcaseMiscDetails(final List<LegalcaseMiscDetails> legalcaseMiscDetails) {
@@ -688,13 +689,11 @@ public class Legalcase extends AbstractAuditable {
         this.previousDate = previousDate;
     }
 
-    public Date getPetFirstAppDate() {
-        return petFirstAppDate;
-    }
-
-    public void setPetFirstAppDate(final Date petFirstAppDate) {
-        this.petFirstAppDate = petFirstAppDate;
-    }
+    /*
+     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void
+     * setPetFirstAppDate(final Date petFirstAppDate) { this.petFirstAppDate =
+     * petFirstAppDate; }
+     */
 
     public String getStampNumber() {
         return stampNumber;
@@ -724,6 +723,54 @@ public class Legalcase extends AbstractAuditable {
 
     public void setEglcPwrs(final List<Pwr> eglcPwrs) {
         this.eglcPwrs = eglcPwrs;
+    }
+
+    public Date getCaseDate() {
+        return caseDate;
+    }
+
+    public void setCaseDate(final Date caseDate) {
+        this.caseDate = caseDate;
+    }
+
+    public String getCaseTitle() {
+        return caseTitle;
+    }
+
+    public void setCaseTitle(final String caseTitle) {
+        this.caseTitle = caseTitle;
+    }
+
+    public String getAppealNum() {
+        return appealNum;
+    }
+
+    public void setAppealNum(final String appealNum) {
+        this.appealNum = appealNum;
+    }
+
+    public String getFunctionaryCode() {
+        return functionaryCode;
+    }
+
+    public void setFunctionaryCode(final String functionaryCode) {
+        this.functionaryCode = functionaryCode;
+    }
+
+    public String getLcNumber() {
+        return lcNumber;
+    }
+
+    public void setLcNumber(final String lcNumber) {
+        this.lcNumber = lcNumber;
+    }
+
+    public String getWpYear() {
+        return wpYear;
+    }
+
+    public void setWpYear(final String wpYear) {
+        this.wpYear = wpYear;
     }
 
 }

@@ -75,6 +75,10 @@ public class CourtTypeMasterService {
     public CourtTypeMaster create(final CourtTypeMaster courtTypeMaster) {
         return courtTypeMasterRepository.save(courtTypeMaster);
     }
+    public List<CourtTypeMaster> getCourtTypeList()
+    {
+        return courtTypeMasterRepository.findAll();
+    }
 
     @Transactional
     public CourtTypeMaster update(final CourtTypeMaster courtTypeMaster) {

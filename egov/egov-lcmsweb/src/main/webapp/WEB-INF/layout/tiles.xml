@@ -198,6 +198,15 @@
 	<put-attribute name="page-title" value="title.petitiontypemaster.search" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-search.jsp"/>
 </definition>
+<definition name="legalCase-newForm" extends="base_layout">
+	<put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/application/legalcase-newForm.jsp"/>
+</definition>
+
+<definition name="legalcasedetails-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/application/legalcasedetails-view.jsp"/>
+</definition>
 
 
 </tiles-definitions>

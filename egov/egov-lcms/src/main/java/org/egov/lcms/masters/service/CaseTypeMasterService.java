@@ -77,6 +77,11 @@ public class CaseTypeMasterService {
 		return casetypeMasterRepository.save(casetypeMaster);
 	}
 
+
+	public List<CasetypeMaster> getCaseTypeList()
+        {
+            return casetypeMasterRepository.findAll();
+        }
 	@Transactional
 	public CasetypeMaster update(final CasetypeMaster casetypeMaster) {
 		return casetypeMasterRepository.save(casetypeMaster);
