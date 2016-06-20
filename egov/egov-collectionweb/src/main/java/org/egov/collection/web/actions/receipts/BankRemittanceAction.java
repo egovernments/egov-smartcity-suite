@@ -61,8 +61,8 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.service.CollectionRemittanceService;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
@@ -73,7 +73,6 @@ import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -81,24 +80,21 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 @Results({
-    @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-    @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
-            "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
-                "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
-    "${bankAccount}", "remittanceDate","${remittanceDate}"}), @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
+        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
+                "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
+            "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
+                "${bankAccount}", "remittanceDate", "${remittanceDate}" }),
+        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
     private List<HashMap<String, Object>> paramList = null;
-    @Autowired
-    private ApplicationProperties applicationProperties;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
     private List<ReceiptHeader> voucherHeaderValues = new ArrayList(0);
     private String[] serviceNameArray;
@@ -132,11 +128,10 @@ public class BankRemittanceAction extends BaseFormAction {
     private List<CollectionBankRemittanceReport> bankRemittanceList;
     private String bank;
     private String bankAccount;
-    @Autowired
-    private ApplicationContext beanProvider;
     private Boolean showCardAndOnlineColumn = false;
     private Boolean showRemittanceDate = false;
     private Long finYearId;
+    private RemittanceServiceImpl remittanceService;
 
     /**
      * @param collectionsUtil
@@ -204,28 +199,10 @@ public class BankRemittanceAction extends BaseFormAction {
             fundCodeList.add(arrayObjectInitialIndex[1].toString());
         }
         final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
-        final CollectionRemittanceService collectionRemittanceService = getServiceForRemittance();
-        paramList = collectionRemittanceService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(),
-                "'" + StringUtils.join(serviceCodeList, "','") + "'",
-                "'" + StringUtils.join(fundCodeList, "','") + "'", financialYear.getStartingDate(),
-                financialYear.getEndingDate());
+        paramList = remittanceService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(), "'"
+                + StringUtils.join(serviceCodeList, "','") + "'", "'" + StringUtils.join(fundCodeList, "','") + "'",
+                financialYear.getStartingDate(), financialYear.getEndingDate());
         return NEW;
-    }
-
-    public CollectionRemittanceService getServiceForRemittance() throws ApplicationRuntimeException, BeansException {
-        Class<?> service = null;
-        try {
-            service = Class.forName(applicationProperties.getProperty("collection.remittance.client.impl.class"));
-        } catch (final ClassNotFoundException e) {
-            throw new ApplicationRuntimeException("Error in Create Bank Remittance" + e.getMessage());
-        }
-        // getting the entity type service.
-        final String serviceClassName = service.getSimpleName();
-        final String remittanceService = Character.toLowerCase(serviceClassName.charAt(0))
-                + serviceClassName.substring(1).substring(0, serviceClassName.length() - 5);
-        final CollectionRemittanceService collectionRemittanceService = (CollectionRemittanceService) beanProvider
-                .getBean(remittanceService);
-        return collectionRemittanceService;
     }
 
     @Action(value = "/receipts/bankRemittance-printBankChallan")
@@ -290,11 +267,10 @@ public class BankRemittanceAction extends BaseFormAction {
                 && accountNumber.intValue() != accountNumberId)
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
-        final CollectionRemittanceService collectionRemittanceService = getServiceForRemittance();
-        voucherHeaderValues = collectionRemittanceService.createBankRemittance(getServiceNameArray(),
-                getTotalCashAmountArray(), getTotalChequeAmountArray(), getTotalCardAmountArray(),
-                getTotalOnlineAmountArray(), getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(),
-                accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate);
+        voucherHeaderValues = remittanceService.createBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
+                getTotalChequeAmountArray(), getTotalCardAmountArray(), getTotalOnlineAmountArray(),
+                getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(), accountNumberId, positionUser,
+                getReceiptNumberArray(), remittanceDate);
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         bankRemittanceList = prepareBankRemittanceReport(voucherHeaderValues);
@@ -329,9 +305,7 @@ public class BankRemittanceAction extends BaseFormAction {
                     collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
                     collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
                     reportList.add(collBankRemitReport);
-                }
-                else
-                {
+                } else {
                     collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
                     reportList.add(collBankRemitReport);
                 }
@@ -675,5 +649,9 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setFinYearId(final Long finYearId) {
         this.finYearId = finYearId;
+    }
+
+    public void setRemittanceService(final RemittanceServiceImpl remittanceService) {
+        this.remittanceService = remittanceService;
     }
 }

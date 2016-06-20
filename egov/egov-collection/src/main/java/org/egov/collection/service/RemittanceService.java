@@ -47,8 +47,8 @@ import java.util.List;
 
 import org.egov.collection.entity.ReceiptHeader;
 
-public abstract class CollectionRemittanceService implements Serializable {
-    private static final long serialVersionUID = 494234993113078236L;
+public abstract class RemittanceService implements Serializable {
+    private static final long serialVersionUID = 1849734164810403255L;
 
     public abstract List<ReceiptHeader> createBankRemittance(final String[] serviceNameArr,
             final String[] totalCashAmount, final String[] totalChequeAmount, final String[] totalCardAmount,

@@ -37,51 +37,44 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.utils;
+package org.egov.collection.autonumber.impl;
 
-import org.egov.collection.autonumber.ChallanNumberGenerator;
-import org.egov.collection.autonumber.ReceiptNumberGenerator;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.egov.collection.autonumber.RemittanceNumberGenerator;
-import org.egov.collection.entity.Challan;
-import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
-@Transactional(readOnly = true)
-public class CollectionsNumberGenerator {
+@Service
+public class RemittanceNumberGeneratorImpl implements RemittanceNumberGenerator {
 
     @Autowired
-    private AutonumberServiceBeanResolver beanResolver;
+    private CollectionsUtil collectionsUtil;
 
-    /**
-     * This method generates the receipt number for the given receipt header
-     *
-     * @param receiptHeader an instance of <code>ReceiptHeader</code>
-     * @return a <code>String</code> representing the receipt number
-     */
-    public String generateReceiptNumber(final ReceiptHeader receiptHeader) {
-        final ReceiptNumberGenerator receiptNumberGen = beanResolver
-                .getAutoNumberServiceFor(ReceiptNumberGenerator.class);
-        return receiptNumberGen.generateReceiptNumber(receiptHeader);
-    }
+    @Autowired
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-    /**
-     * This method generates the challan number for the given receipt header
-     *
-     * @param challan an instance of <code>Challan</code>
-     * @return a <code>String</code> representing the challan number
-     */
-    public String generateChallanNumber(final Challan challan, final CFinancialYear financialYear) {
-        final ChallanNumberGenerator challanNumberGen = beanResolver
-                .getAutoNumberServiceFor(ChallanNumberGenerator.class);
-        return challanNumberGen.generateChallanNumber(challan, financialYear);
-    }
-    
+    @Override
     public String generateRemittanceNumber(final CFinancialYear financialYear) {
-        final RemittanceNumberGenerator remittanceNumberGen = beanResolver
-                .getAutoNumberServiceFor(RemittanceNumberGenerator.class);
-        return remittanceNumberGen.generateRemittanceNumber(financialYear);
+
+        final String APP_NUMBER_SEQ_PREFIX = "SQ_REMITTANCE%s";
+        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
+        final String formattedDate = sdf.format(new Date());
+
+        final String currentYear = DateUtils.currentDateToYearFormat();
+        final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, currentYear);
+        Serializable sequenceNumber  = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+
+        final String result = String.format("%s/%07d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX, sequenceNumber,formattedDate,
+                financialYear.getFinYearRange());
+        return result;
     }
+
 }
