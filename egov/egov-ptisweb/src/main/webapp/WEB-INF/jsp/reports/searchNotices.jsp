@@ -156,7 +156,7 @@
 				</tr>
 				<tr>
 					<td class="greybox">&nbsp;</td>
-					<td class="greybox"><s:text name="PropertyType" /> :</td>
+					<td class="greybox"><s:text name="Ownership Type" /> :</td>
 					<td class="greybox"><s:select name="propertyType"
 							id="propTypeMaster" list="dropdownData.PropTypeMaster"
 							listKey="id" listValue="type" headerKey="-1"
@@ -299,7 +299,7 @@
 			</display:column>
 
 			<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-				title="Date of Issue of Notice" style="text-align:center;width:10%;">
+				title="Notice Date" style="text-align:center;width:10%;">
 				<s:date name="#attr.currentRowObject.noticeDate" var="noticeDt"
 					format="dd/MM/yyyy" />
 				<s:property value="noticeDt" />
