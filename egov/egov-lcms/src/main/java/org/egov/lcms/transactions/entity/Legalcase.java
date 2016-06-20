@@ -71,7 +71,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.CasetypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
-import org.egov.lcms.masters.entity.PetitiontypeMaster;
+import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.utils.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
@@ -115,7 +115,7 @@ public class Legalcase extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "PETITIONTYPE", nullable = false)
-    private PetitiontypeMaster petitiontypeMaster;
+    private PetitionTypeMaster petitiontypeMaster;
     @Required(message = "case.number.null")
     @Length(max = 50, message = "casenumber.length")
     @OptionalPattern(regex = LcmsConstants.caseNumberRegx, message = "case.number.alphanumeric")
@@ -452,11 +452,11 @@ public class Legalcase extends AbstractAuditable {
         this.status = status;
     }
 
-    public PetitiontypeMaster getPetitiontypeMaster() {
+    public PetitionTypeMaster getPetitiontypeMaster() {
         return petitiontypeMaster;
     }
 
-    public void setPetitiontypeMaster(final PetitiontypeMaster petitiontypeMaster) {
+    public void setPetitiontypeMaster(final PetitionTypeMaster petitiontypeMaster) {
         this.petitiontypeMaster = petitiontypeMaster;
     }
 

@@ -48,55 +48,54 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.lcms.utils.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "eglc_petitiontype_master")
 @Unique(id = "id", tableName = "eglc_petitiontype_master", columnName = { "code" }, fields = {
         "code" }, enableDfltMsg = true)
-@SequenceGenerator(name = PetitiontypeMaster.SEQ_PETITIONTYPE, sequenceName = PetitiontypeMaster.SEQ_PETITIONTYPE, allocationSize = 1)
-public class PetitiontypeMaster extends AbstractAuditable {
+@SequenceGenerator(name = PetitionTypeMaster.SEQ_PETITIONTYPE, sequenceName = PetitionTypeMaster.SEQ_PETITIONTYPE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class PetitionTypeMaster extends AbstractAuditable {
     private static final long serialVersionUID = 796823780349590496L;
-    public static final String SEQ_PETITIONTYPE = "SEQ_EGLC_COURT_MASTER";
+    public static final String SEQ_PETITIONTYPE = "SEQ_EGLC_PETITIONTYPE_MASTER";
 
     @Id
     @GeneratedValue(generator = SEQ_PETITIONTYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private Boolean active;
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(final Boolean active) {
-        this.active = active;
-    }
-
-    @Required(message = "masters.petitionmaster.petitioncodereq")
-    @Length(max = 15, message = "masters.petitionmaster.petitioncodemaxleng")
-    @OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.petitionmaster.petitioncodePattern")
-    private String code;
-
-    @Required(message = "masters.petitionmaster.petitiontypereq")
-    @Length(max = 128, message = "masters.petitionmaster.petitiontypemaxleng")
-    @OptionalPattern(regex = LcmsConstants.mixedChar, message = "masters.petitionmaster.petitiontypePattern")
-    private String petitionType;
-
-    @Max(value = 1000, message = "masters.orderNumber.length")
-    private Long ordernumber;
-
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "courttype")
-    private CourttypeMaster courtType;
+    @NotNull
+    @Audited
+    private CourtTypeMaster courtType;
+
+    @NotNull
+    @Length(min = 1, max = 15)
+    @Audited
+    private String code;
+
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Audited
+    private String petitionType;
+
+    @Min(1)
+    @Max(1000)
+    private Long orderNumber;
+
+    @NotNull
+    @Audited
+    private Boolean active;
 
     @Override
     public Long getId() {
@@ -116,11 +115,11 @@ public class PetitiontypeMaster extends AbstractAuditable {
         this.code = code;
     }
 
-    public CourttypeMaster getCourtType() {
+    public CourtTypeMaster getCourtType() {
         return courtType;
     }
 
-    public void setCourtType(final CourttypeMaster courtType) {
+    public void setCourtType(final CourtTypeMaster courtType) {
         this.courtType = courtType;
     }
 
@@ -132,12 +131,20 @@ public class PetitiontypeMaster extends AbstractAuditable {
         this.petitionType = petitionType;
     }
 
-    public Long getOrdernumber() {
-        return ordernumber;
+    public Long getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setOrdernumber(final Long ordernumber) {
-        this.ordernumber = ordernumber;
+    public void setOrderNumber(final Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
     }
 
 }

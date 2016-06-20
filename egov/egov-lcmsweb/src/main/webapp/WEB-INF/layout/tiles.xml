@@ -149,4 +149,55 @@
 	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-search.jsp"/>
 </definition>
 
+<definition name="courtmaster-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.courtmaster.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-new.jsp"/>
+</definition>
+
+<definition name="courtmaster-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.courtmaster.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-view.jsp"/>
+</definition>
+
+<definition name="courtmaster-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.courtmaster.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-edit.jsp"/>
+</definition>
+
+<definition name="courtmaster-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.courtmaster.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-result.jsp"/>
+</definition>
+
+<definition name="courtmaster-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.courtmaster.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-search.jsp"/>
+</definition>
+
+<definition name="petitiontypemaster-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.petitiontypemaster.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-new.jsp"/>
+</definition>
+
+<definition name="petitiontypemaster-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.petitiontypemaster.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-view.jsp"/>
+</definition>
+
+<definition name="petitiontypemaster-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.petitiontypemaster.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-edit.jsp"/>
+</definition>
+
+<definition name="petitiontypemaster-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.petitiontypemaster.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-result.jsp"/>
+</definition>
+
+<definition name="petitiontypemaster-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.petitiontypemaster.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-search.jsp"/>
+</definition>
+
+
 </tiles-definitions>
