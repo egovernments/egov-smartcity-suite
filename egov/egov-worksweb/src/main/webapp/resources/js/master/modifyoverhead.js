@@ -116,7 +116,7 @@ function callAjaxSearch() {
 				}, {
 					"data" : "endDate",
 					"sClass" : "text-left","sWidth": "10%"
-				} ,{
+				}, {
 					"data" : "",
 					"sClass" : "text-center",
 					"sWidth" : "10%"

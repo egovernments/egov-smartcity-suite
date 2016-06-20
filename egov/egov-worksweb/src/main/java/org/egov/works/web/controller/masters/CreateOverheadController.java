@@ -87,7 +87,8 @@ public class CreateOverheadController {
             final Model model, final HttpServletRequest request, final BindingResult resultBinder)
             throws ApplicationException, IOException {
         validateOverhead(overhead, resultBinder, request);
-        if (overhead.getId() != null)
+        final String mode = request.getParameter("mode");
+        if (mode.equalsIgnoreCase("edit") && overhead.getId() != null)
             model.addAttribute("mode", "edit");
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
@@ -104,7 +105,12 @@ public class CreateOverheadController {
         final Long overheadId = Long.valueOf(request.getParameter("overheadId"));
         final Overhead newOverhead = overheadService.getOverheadById(overheadId);
         model.addAttribute("overhead", newOverhead);
-        model.addAttribute("message", messageSource.getMessage("msg.overhead.create.success",
+        final String mode = request.getParameter("mode");
+        if (mode != null && mode.equalsIgnoreCase("edit"))
+            model.addAttribute("mode", "edit");
+        model.addAttribute("success", messageSource.getMessage("msg.overhead.create.success",
+                new String[] { newOverhead.getName() }, null));
+        model.addAttribute("modify", messageSource.getMessage("msg.overhead.modify.success",
                 new String[] { newOverhead.getName() }, null));
         return "overhead-success";
     }

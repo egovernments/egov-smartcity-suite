@@ -44,7 +44,13 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
-		<div class="panel-title" style="text-align:center;"><spring:message code="lbl.createoverhead" /></div>
+	<c:choose>
+		<c:when test="${mode != 'edit' }">
+			<div class="panel-title" style="text-align:center;"><spring:message code="lbl.createoverhead" /></div>
+		</c:when><c:otherwise>
+			<div class="panel-title" style="text-align:center;"><spring:message code="lbl.modifyoverhead" /></div>
+		</c:otherwise>
+	</c:choose>
 	</div>
 	<input type="hidden" value="${overhead.id }" id="overheadid" name="overhead" />
 	

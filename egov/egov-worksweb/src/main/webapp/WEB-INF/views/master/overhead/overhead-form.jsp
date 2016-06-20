@@ -51,6 +51,7 @@
 	<input type="hidden" value="<spring:message code='overhead.percentage.invalid' />" id='validateTotalPercentage'>
 	<div class="errorstyle" id="overhead_error" class="alert alert-danger"
 		style="display: none;"></div>
+		<input type="hidden" name="mode" value="${mode}" />
 	<spring:hasBindErrors name="overhead">
 		<div class="alert alert-danger col-md-10 col-md-offset-1">
 			<form:errors path="*" cssClass="add-margin" />

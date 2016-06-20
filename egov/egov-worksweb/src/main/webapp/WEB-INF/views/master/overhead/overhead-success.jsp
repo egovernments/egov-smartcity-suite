@@ -46,12 +46,19 @@
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="main-content">
 			<div class="alert text-center" style="color: green;" id="successMessage">
-				${message}
+				<c:choose>
+					<c:when test="${ mode == 'edit'}">
+						${modify}
+					</c:when>
+				<c:otherwise>
+						${success}
+				</c:otherwise>
+			</c:choose>
 			</div>
 				<jsp:include page="overhead-commonView.jsp" />
 			<div class="col-sm-12 text-center">
 				<div class="row">
-				<c:if test="${ mode != 'edit' && mode != 'view' }">
+				<c:if test="${ mode != 'view' && mode != 'edit'}">
 					<input type="submit" name="create" Class="btn btn-primary" value="Create New Overhead" id="CREATE" name="button" onclick="createNewOverhead();" />
 				</c:if>
 					<input type="submit" name="closeButton" id="closeButton"
