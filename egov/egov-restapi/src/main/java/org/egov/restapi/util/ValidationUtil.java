@@ -51,6 +51,7 @@ import org.egov.restapi.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.PropertyTransferDetails;
@@ -497,6 +498,21 @@ public class ValidationUtil {
         return errorDetails;
     }
 
-    
+    /**
+     * Validates Assessment Details request
+     * @param assessmentReq
+     * @return
+     */
+    public static ErrorDetails validateAssessmentDetailsRequest(AssessmentRequest assessmentRequest){
+    	ErrorDetails errorDetails = null;
+    	
+    	if(StringUtils.isBlank(assessmentRequest.getApplicationNo())){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.APPLICATION_NO_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.APPLICATION_NO_REQ_MSG);
+            return errorDetails;
+    	}
+    	return errorDetails;
+    }
 
 }

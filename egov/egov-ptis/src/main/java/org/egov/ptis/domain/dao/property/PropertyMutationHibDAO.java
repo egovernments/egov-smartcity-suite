@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.domain.dao.property;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.Session;
@@ -98,9 +99,14 @@ public class PropertyMutationHibDAO implements PropertyMutationDAO {
 	 * @return PropertyMutation
 	 */
 	public PropertyMutation getPropertyMutationForAssessmentNoAndApplicationNumber(String assessmentNo, String applicationNo){
-        Query qry = getCurrentSession().createQuery("from PropertyMutation where basicProperty.upicNo = :assessmentNo and applicationNo = :applicationNo ");
-        qry.setParameter("assessmentNo", assessmentNo);
+		String query = "from PropertyMutation where applicationNo = :applicationNo ";
+		if(StringUtils.isNotBlank(assessmentNo))
+			query = query.concat(" and basicProperty.upicNo = :assessmentNo ");
+        
+		Query qry = getCurrentSession().createQuery(query);
         qry.setParameter("applicationNo", applicationNo);
+        if(StringUtils.isNotBlank(assessmentNo))
+        	qry.setParameter("assessmentNo", assessmentNo);
         PropertyMutation propertyMutation =  (PropertyMutation) qry.uniqueResult();
 		return propertyMutation;
 	}

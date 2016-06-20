@@ -1764,58 +1764,53 @@ public class PropertyExternalService {
     }
     
     /**
-     * Fetches Assessment Details - owner details, tax dues, plinth area
+     * Fetches Assessment Details - owner details, tax dues, plinth area, mutation fee related information
      * @param assessmentNo
      * @return
      */
-    public RestAssessmentDetails loadAssessmentDetails(final String assessmentNo, final String applicationNo) {
+    public RestAssessmentDetails loadAssessmentDetails(final String applicationNo, final String assessmentNo) {
         assessmentDetails = new RestAssessmentDetails();
-        if (StringUtils.isBlank(assessmentNo))
-            throw new ApplicationRuntimeException("AssessmentNo is null or empty!");
-        if (StringUtils.isBlank(applicationNo))
-            throw new ApplicationRuntimeException("ApplicationNo is null or empty!");
-        assessmentDetails.setAssessmentNo(assessmentNo);
-        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetails.getAssessmentNo());
-        if (basicProperty != null) {
-            assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
-            property = (PropertyImpl) basicProperty.getProperty();
-            assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
-            if (property != null) {
-            	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
-            	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
-            		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
-            	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-            	BigDecimal totalTaxDue = BigDecimal.ZERO;
-            	if(currentPtdemand != null){
-            		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
-            			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
-            				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
-            			}
-            		}
-            	}
-            	assessmentDetails.setTotalTaxDue(totalTaxDue);
-            	PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
-            	if(propertyMutation != null){
-            		if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
-            			assessmentDetails.setIsMutationFeePaid("Y");
-            			assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
-            			Date receiptDate = null;
-            			final Query qry = entityManager.createQuery("select receiptdate from ReceiptHeader where receiptnumber = :receiptNum");
-            	        qry.setParameter("receiptNum", propertyMutation.getReceiptNum());
-            	        receiptDate = (Date) qry.getSingleResult();
-            	        assessmentDetails.setFeeReceiptDate(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate));
-            	        assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
-            		}
-            		else
-            			assessmentDetails.setIsMutationFeePaid("N");
-            		
-            		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
-            	}else{
-            		assessmentDetails.setIsMutationFeePaid("N");
-            	}
-            	
-            }
-        }
+        PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
+        if(propertyMutation != null){
+        	basicProperty = propertyMutation.getBasicProperty();
+        	if (basicProperty != null) {
+        		assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
+        		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+                property = (PropertyImpl) basicProperty.getProperty();
+                assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
+                if (property != null) {
+                	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
+                	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
+                		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
+                	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+                	BigDecimal totalTaxDue = BigDecimal.ZERO;
+                	if(currentPtdemand != null){
+                		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
+                			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
+                				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                			}
+                		}
+                	}
+                	assessmentDetails.setTotalTaxDue(totalTaxDue);
+                }
+        	}
+        	if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
+    			assessmentDetails.setIsMutationFeePaid("Y");
+    			assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
+    			Date receiptDate = null;
+    			final Query qry = entityManager.createQuery("select receiptdate from ReceiptHeader where receiptnumber = :receiptNum");
+    	        qry.setParameter("receiptNum", propertyMutation.getReceiptNum());
+    	        receiptDate = (Date) qry.getSingleResult();
+    	        assessmentDetails.setFeeReceiptDate(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate));
+    	        assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
+    		}
+    		else
+    			assessmentDetails.setIsMutationFeePaid("N");
+    		
+    		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
+        }else{
+    		assessmentDetails.setIsMutationFeePaid("N");
+    	}
         return assessmentDetails;
     }
     

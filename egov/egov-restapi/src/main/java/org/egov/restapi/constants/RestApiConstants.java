@@ -191,6 +191,9 @@ public class RestApiConstants {
 	public static final String OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE = "57";
 	public static final String OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG = "Sale Details are required only if reason is Sale Deed.";
 	
+	public static final String APPLICATION_NO_REQ_CODE = "58";
+	public static final String APPLICATION_NO_REQ_MSG = "Application Number is required.";
+	
 	//Water TAx
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID = "PropertyType and UsageType Combination is not valid";

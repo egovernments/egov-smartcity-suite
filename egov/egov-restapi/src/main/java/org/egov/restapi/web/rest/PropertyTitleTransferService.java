@@ -58,7 +58,10 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.RestAssessmentDetails;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.OwnerInformation;
 import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.util.JsonConvertor;
@@ -74,6 +77,9 @@ public class PropertyTitleTransferService {
 
 	@Autowired
 	private ValidationUtil validationUtil;
+	
+	@Autowired
+    private PropertyExternalService propertyExternalService;
 	
 	@Autowired
 	private PropertyTransferService transferOwnerService;
@@ -138,6 +144,35 @@ public class PropertyTitleTransferService {
 		}
 		return ownerDetailsList;
 	}
+	
+	 /**
+     * This method loads the assessment details.
+     * 
+     * @param applicationNo - Mutation Application Number
+     * @param assessmentNumber - assessment number i.e. property id
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/assessmentdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public String fetchAssessmentDetails(@RequestBody String assessmentRequest)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
+        String responseJson = new String();
+        
+        ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentReq);
+        if (errorDetails != null) {
+            responseJson = getJSONResponse(errorDetails);
+        } else {
+	        RestAssessmentDetails assessmentDetails = propertyExternalService
+	                .loadAssessmentDetails(assessmentReq.getApplicationNo(),assessmentReq.getAssessmentNo());
+	        responseJson = getJSONResponse(assessmentDetails);
+        }
+        return responseJson;
+    }
+    
 	/**
      * This method is used to get POJO object from JSON request.
      * 
@@ -156,4 +191,19 @@ public class PropertyTitleTransferService {
         return mapper.readValue(jsonString, cls);
     }
     
+    /**
+     * This method is used to prepare jSON response.
+     * 
+     * @param obj - a POJO object
+     * @return jsonResponse - JSON response string
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    private String getJSONResponse(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+        String jsonResponse = objectMapper.writeValueAsString(obj);
+        return jsonResponse;
+    }
 }
