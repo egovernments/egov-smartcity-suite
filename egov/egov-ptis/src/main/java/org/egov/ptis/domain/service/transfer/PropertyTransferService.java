@@ -111,6 +111,7 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertySource;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.service.notice.NoticeService;
@@ -625,5 +626,40 @@ public class PropertyTransferService {
         }
         return transfereeInfoList;
     }
-    
+ 
+    /**
+     * API to calculate mutation fee 
+     * @param partyValue
+     * @param departmentValue
+     * @return MutationFee
+     */
+    public BigDecimal calculateMutationFee(BigDecimal partyValue, BigDecimal departmentValue){
+    	BigDecimal documentValue = BigDecimal.ZERO;
+    	BigDecimal mutationFee = BigDecimal.ZERO;
+    	// Maximum among partyValue and departmentValue will be considered as the documentValue
+    	documentValue = (partyValue.compareTo(departmentValue) > 0 ? partyValue : departmentValue);
+    	
+    	if(documentValue.compareTo(BigDecimal.ZERO) > 0){
+    		BigDecimal excessDocValue = BigDecimal.ZERO;
+    		BigDecimal multiplicationFactor = BigDecimal.ZERO;
+    		MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) basicPropertyService.find("from MutationFeeDetails where lowLimit <= ? and (highLimit is null OR highLimit >= ?)", documentValue,documentValue);
+    		if(mutationFeeDetails != null){
+    			if(mutationFeeDetails.getFlatAmount() != null && mutationFeeDetails.getFlatAmount().compareTo(BigDecimal.ZERO) > 0){
+    				if(mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N")){
+    					mutationFee = mutationFeeDetails.getFlatAmount();
+    				}else{
+    					excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
+    					multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(), BigDecimal.ROUND_CEILING);
+    					mutationFee = mutationFeeDetails.getFlatAmount().add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));
+    				}
+    			}
+    			if(mutationFeeDetails.getPercentage() != null && mutationFeeDetails.getPercentage().compareTo(BigDecimal.ZERO) > 0){
+    				if(mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N")){
+    					mutationFee = (documentValue.multiply(mutationFeeDetails.getPercentage())).divide(PropertyTaxConstants.BIGDECIMAL_100);
+    				}
+    			}
+    		}
+    	}
+    	return mutationFee;
+    }
 }
