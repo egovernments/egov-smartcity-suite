@@ -98,4 +98,9 @@ public interface ReceiptAccountInfo {
      */
     public abstract BigDecimal getCreditAmountToBePaid();
 
+    /**
+     * @return the purpose of account head
+     */
+    public abstract String getPurpose();
+
 }

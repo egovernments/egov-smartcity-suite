@@ -54,26 +54,25 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
     /**
      * This is used to check if an account is a revenue account.
      */
-    private  boolean isRevenueAccount;
+    private boolean isRevenueAccount;
     /**
-     * The private instance of receipt detail. This is used by all public
-     * getters.
+     * The private instance of receipt detail. This is used by all public getters.
      */
-    private  ReceiptDetail receiptDetail;
+    private ReceiptDetail receiptDetail;
 
     /**
      * Creates the receipt account info for given receipt detail.
      *
-     * @param receiptDetail
-     *            The receipt detail object
+     * @param receiptDetail The receipt detail object
      */
-    public ReceiptAccountInfoImpl(final ReceiptDetail receiptDetail,ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO, PersistenceService persistenceService) {
+    public ReceiptAccountInfoImpl(final ReceiptDetail receiptDetail, ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO,
+            PersistenceService persistenceService) {
         this.receiptDetail = receiptDetail;
         this.isRevenueAccount = FinancialsUtil.isRevenueAccountHead(this.receiptDetail.getAccounthead(),
                 chartOfAccountsHibernateDAO.getBankChartofAccountCodeList(), persistenceService);
-       
+
     }
-   
+
     @Override
     public String toString() {
         return receiptDetail.toString();
@@ -81,9 +80,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.egov.infstr.collections.integration.models.IReceiptAccountInfo#getGlCode
-     * ()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#getGlCode ()
      */
     @Override
     public String getGlCode() {
@@ -92,8 +89,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getAccountName()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getAccountName()
      */
     @Override
     public String getAccountName() {
@@ -102,8 +98,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getFunction()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getFunction()
      */
     @Override
     public String getFunction() {
@@ -112,8 +107,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getFunctionName()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getFunctionName()
      */
     @Override
     public String getFunctionName() {
@@ -122,8 +116,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getDrAmount()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getDrAmount()
      */
     @Override
     public BigDecimal getDrAmount() {
@@ -132,8 +125,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getCrAmount()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getCrAmount()
      */
     @Override
     public BigDecimal getCrAmount() {
@@ -142,8 +134,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getIsRevenueAccount()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getIsRevenueAccount()
      */
     @Override
     public boolean getIsRevenueAccount() {
@@ -152,8 +143,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getOrderNumber()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getOrderNumber()
      */
     @Override
     public Long getOrderNumber() {
@@ -162,8 +152,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getDescription()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getDescription()
      */
     @Override
     public String getDescription() {
@@ -172,8 +161,7 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getFinancialYear()
+     * @see org.egov.infstr.collections.integration.models.IReceiptAccountInfo# getFinancialYear()
      */
     @Override
     public String getFinancialYear() {
@@ -182,11 +170,19 @@ public class ReceiptAccountInfoImpl implements ReceiptAccountInfo {
 
     /*
      * (non-Javadoc)
-     * @seeorg.egov.infstr.collections.integration.models.IReceiptAccountInfo#
-     * getCreditAmountToBePaid()
+     * @seeorg.egov.infstr.collections.integration.models.IReceiptAccountInfo# getCreditAmountToBePaid()
      */
     @Override
     public BigDecimal getCreditAmountToBePaid() {
         return receiptDetail.getCramountToBePaid();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @seeorg.egov.infstr.collections.integration.models.IReceiptAccountInfo# getPurpose()
+     */
+    @Override
+    public String getPurpose() {
+        return receiptDetail.getPurpose() == null ? "" : receiptDetail.getPurpose();
     }
 }
