@@ -72,7 +72,7 @@ public class RemittanceNumberGeneratorImpl implements RemittanceNumberGenerator 
         final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, currentYear);
         Serializable sequenceNumber  = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
 
-        final String result = String.format("%s/%07d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX, sequenceNumber,formattedDate,
+        final String result = String.format("%s/%06d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX, sequenceNumber,formattedDate,
                 financialYear.getFinYearRange());
         return result;
     }
