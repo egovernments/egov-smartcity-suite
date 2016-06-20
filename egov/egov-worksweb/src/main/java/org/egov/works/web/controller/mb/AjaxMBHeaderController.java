@@ -39,52 +39,60 @@
  */
 package org.egov.works.web.controller.mb;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.service.MBHeaderService;
-import org.egov.works.web.adaptor.SearchWorkOrderForMBHeaderJsonAdaptor;
-import org.egov.works.workorder.entity.WorkOrder;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.web.adaptor.SearchMBHeaderJsonAdaptor;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
-@RestController
-@RequestMapping(value = "/workorder")
-public class AjaxWorkOrderForMBHeaderController {
+@Controller
+@RequestMapping(value = "/mbheader")
+public class AjaxMBHeaderController {
 
-    @Autowired
-    private SearchWorkOrderForMBHeaderJsonAdaptor searchWorkOrderForMBHeaderJsonAdaptor;
-    
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
 
-    @RequestMapping(value = "/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchWorkOrders(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrderEstimate> searchMilestoneList = workOrderEstimateService
-                .searchWorkOrderToCreateMBHeader(searchRequestLetterOfAcceptance);
+    @Autowired
+    private MBHeaderService mBHeaderService;
+
+    @Autowired
+    private ContractorBillRegisterService ontractorBillRegisterService;
+
+    @Autowired
+    private SearchMBHeaderJsonAdaptor searchMBHeaderJsonAdaptor;
+
+    @RequestMapping(value = "/ajaxworkordernumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWorkOrderNumber(@RequestParam final String code) {
+        return workOrderEstimateService.getApprovedAndWorkCommencedWorkOrderNumbers(code);
+    }
+
+    @RequestMapping(value = "/ajaxestimateNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findEstimateNumbersForWorkOrder(@RequestParam final String code) {
+        return workOrderEstimateService.getEstimateNumbersByApprovedAndWorkCommencedWorkOrders(code);
+    }
+
+    @RequestMapping(value = "/ajaxcontractors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsForWorkOrder(@RequestParam final String code) {
+        return ontractorBillRegisterService.getContractorsByWorkOrderStatus(code);
+    }
+
+    @RequestMapping(value = "/ajax-searchmbheader", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchWorkOrders(@ModelAttribute final SearchRequestMBHeader searchRequestMBHeader) {
+        final List<MBHeader> searchMilestoneList = mBHeaderService.searchMBHeader(searchRequestMBHeader);
         final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(searchMilestoneList)).append("}")
                 .toString();
         return result;
@@ -92,32 +100,9 @@ public class AjaxWorkOrderForMBHeaderController {
 
     public Object searchWorkOrder(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, searchWorkOrderForMBHeaderJsonAdaptor)
-                .create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(MBHeader.class, searchMBHeaderJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
 
-    @RequestMapping(value = "/validatemb/{workOrderId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String validateWorkOrder(@PathVariable Long workOrderId, final HttpServletRequest request,
-            final HttpServletResponse response) {
-        JsonObject jsonObject = new JsonObject();
-        workOrderEstimateService.validateMBInDrafts(workOrderId,jsonObject);
-        workOrderEstimateService.validateMBInWorkFlow(workOrderId,jsonObject);
-        if (jsonObject.toString().length() > 2) {
-            sendAJAXResponse(jsonObject.toString(), response);
-            return "";
-        }
-        return null;
-    }
-
-    protected void sendAJAXResponse(final String msg, final HttpServletResponse response) {
-        try {
-            final Writer httpResponseWriter = response.getWriter();
-            IOUtils.write(msg, httpResponseWriter);
-            IOUtils.closeQuietly(httpResponseWriter);
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

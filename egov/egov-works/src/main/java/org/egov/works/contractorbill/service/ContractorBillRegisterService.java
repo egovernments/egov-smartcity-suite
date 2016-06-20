@@ -559,4 +559,10 @@ public class ContractorBillRegisterService {
             final String billtype) {
         return contractorBillRegisterRepository.findByWorkOrderAndBillTypeAndStatus(workOrder, status, billtype);
     }
+
+    public List<String> getContractorsByWorkOrderStatus(final String contractorNameCode) {
+        return contractorBillRegisterRepository.findContractorByWorkOrderStatus("%" + contractorNameCode + "%",
+                WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOCOMMENCED);
+    }
+
 }

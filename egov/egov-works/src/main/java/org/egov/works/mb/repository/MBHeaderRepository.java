@@ -39,10 +39,12 @@
  */
 package org.egov.works.mb.repository;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -60,5 +62,8 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
             final String statusCode);
 
     List<MBHeader> findByEgBillregister(final ContractorBillRegister contractorBillRegister);
+    
+    @Query("select distinct(mbh.createdBy) from MBHeader as mbh")
+    List<User> findMBHeaderCreatedByUsers();
 
 }

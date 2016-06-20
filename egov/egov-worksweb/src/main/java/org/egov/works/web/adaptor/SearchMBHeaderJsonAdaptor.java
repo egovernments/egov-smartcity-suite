@@ -1,3 +1,4 @@
+
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -42,8 +43,11 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
-import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.eis.entity.Assignment;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -52,21 +56,33 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 @Component
-public class SearchWorkOrderForMBHeaderJsonAdaptor implements JsonSerializer<WorkOrderEstimate> {
+public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
+
+    @Autowired
+    private WorksUtils worksUtils;
 
     @Override
-    public JsonElement serialize(WorkOrderEstimate workOrderEstimate, Type typeOfSrc,
-            JsonSerializationContext context) {
+    public JsonElement serialize(MBHeader mBHeader, Type typeOfSrc, JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        jsonObject.addProperty("workOrderDate", sdf.format(workOrderEstimate.getWorkOrder().getWorkOrderDate()));
-        jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
-        jsonObject.addProperty("agreementAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
-        jsonObject.addProperty("contractorName", workOrderEstimate.getWorkOrder().getContractor().getName());
-        jsonObject.addProperty("workIdentificationNumber", workOrderEstimate.getEstimate().getProjectCode().getCode());
-        jsonObject.addProperty("estimateId", workOrderEstimate.getEstimate().getId());
-        jsonObject.addProperty("id", workOrderEstimate.getId());
+        WorkOrderEstimate workOrderEstimate = mBHeader.getWorkOrderEstimate();
         jsonObject.addProperty("workOrderId", workOrderEstimate.getWorkOrder().getId());
+        jsonObject.addProperty("estimateId", workOrderEstimate.getEstimate().getId());
+        jsonObject.addProperty("estimateNumber", workOrderEstimate.getEstimate().getEstimateNumber());
+        jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
+        jsonObject.addProperty("department", workOrderEstimate.getEstimate().getExecutingDepartment().getName());
+        jsonObject.addProperty("contractor", workOrderEstimate.getWorkOrder().getContractor().getName());
+        jsonObject.addProperty("agreemantAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
+        jsonObject.addProperty("mbrefnumber", mBHeader.getMbRefNo());
+        jsonObject.addProperty("mbamount", mBHeader.getMbAmount());
+        jsonObject.addProperty("mbpageno", mBHeader.getFromPageNo() + "-" + mBHeader.getToPageNo());
+        jsonObject.addProperty("status", mBHeader.getEgwStatus().getDescription());
+        jsonObject.addProperty("createdBy", mBHeader.getCreatedBy().getName());
+        if (mBHeader.getState() != null) {
+            jsonObject.addProperty("currentOwner",
+                    worksUtils.getApproverName(mBHeader.getState().getOwnerPosition().getId()));
+        } else {
+            jsonObject.addProperty("currentOwner","N/A");
+        }
         return jsonObject;
     }
 

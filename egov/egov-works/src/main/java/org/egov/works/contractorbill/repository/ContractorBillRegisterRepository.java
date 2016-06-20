@@ -89,6 +89,10 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     
     List<ContractorBillRegister> findByWorkOrderAndBillstatusNot(final WorkOrder workOrder, final String billstatus);
     
-    @Query("select distinct(cbr) from ContractorBillRegister as cbr where cbr.workOrder = :workOrder and upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
+    @Query("select distinct(cbr) from ContractorBillRegister as cbr where cbr.workOrderEstimate.workOrder = :workOrder and upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
     ContractorBillRegister findByWorkOrderAndBillTypeAndStatus(@Param("workOrder") final WorkOrder workOrder, @Param("status") final String status, @Param("billtype") final String billtype);
+    
+    @Query("select distinct(cbr.workOrderEstimate.workOrder.contractor.name) from ContractorBillRegister as cbr where upper(cbr.workOrderEstimate.workOrder.contractor.name) like upper(:contractorname) or upper(cbr.workOrderEstimate.workOrder.contractor.code) like upper(:contractorname)  and cbr.workOrderEstimate.workOrder.egwStatus.code in (:status1,:status2) ")
+    List<String> findContractorByWorkOrderStatus(@Param("contractorname") String contractorname,
+            @Param("status1") String status1,@Param("status2") String status2);
 }

@@ -92,7 +92,7 @@ function callAjaxSearch() {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');
 					$('td:eq(1)',row).html(index+1);
 					if(data.workOrderNumber != null)
-						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openWorkOrder(\''+ data.id +'\')">' + data.workOrderNumber + '</a>');
+						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
 					if(data.workIdentificationNumber != null)
 						$('td:eq(6)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.estimateId +'\')">' + data.workIdentificationNumber + '</a>');
 				
@@ -104,8 +104,7 @@ function callAjaxSearch() {
 						"data" : "workOrderNumber", "sClass" : "text-center"} ,{
 						"data" : "workOrderDate", "sClass" : "text-center"} ,{
 						"data" : "agreementAmount", "sClass" : "text-right"} ,{
-						"data" : "contractorName", "sClass" : "text-center"} ,{
-						"data" : "workIdentificationNumber", "sClass" : "text-center"}]
+						"data" : "contractorName", "sClass" : "text-center"} ]
 			});
 }
 

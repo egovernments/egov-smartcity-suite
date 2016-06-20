@@ -128,7 +128,7 @@ public class WorkOrderEstimateService {
     }
 
     public List<WorkOrderEstimate> searchWorkOrderToCreateMBHeader(
-            SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+            final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
 
         final List<String> estimateNumbers = lineEstimateService
                 .getEstimateNumberForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
@@ -169,12 +169,12 @@ public class WorkOrderEstimateService {
     }
 
     public JsonObject validateMBInDrafts(final Long workOrderId, final JsonObject jsonObject) {
-        List<MBHeader> mbHeaders = mbHeaderService
-                .getMBHeadersByWorkOrder(workOrderEstimateRepository.findByWorkOrder_Id(workOrderId).getWorkOrder());
+        final List<MBHeader> mbHeaders = mbHeaderService
+                .getMBHeadersByWorkOrder(getWorkOrderEstimateById(workOrderId).getWorkOrder());
         String userName = "";
-        for (MBHeader MBHeader : mbHeaders) {
+        for (final MBHeader MBHeader : mbHeaders)
             if (MBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)) {
-                Assignment assignment = assignmentService
+                final Assignment assignment = assignmentService
                         .getPrimaryAssignmentForPositon(MBHeader.getState().getOwnerPosition().getId());
                 if (assignment != null)
                     userName = assignment.getEmployee().getName();
@@ -184,46 +184,54 @@ public class WorkOrderEstimateService {
                                         MBHeader.getMbRefNo(), MBHeader.getEgwStatus().getDescription(), userName },
                                         null));
             }
-
-        }
         return jsonObject;
     }
 
     public JsonObject validateMBInWorkFlow(final Long workOrderId, final JsonObject jsonObject) {
-        List<MBHeader> mbHeaders = mbHeaderService
-                .getMBHeadersByWorkOrder(workOrderEstimateRepository.findByWorkOrder_Id(workOrderId).getWorkOrder());
+        final List<MBHeader> mbHeaders = mbHeaderService
+                .getMBHeadersByWorkOrder(getWorkOrderEstimateById(workOrderId).getWorkOrder());
         String userName = "";
-        for (MBHeader MBHeader : mbHeaders) {
-            if (!(MBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
-                    || MBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED))) {
-                Assignment assignment = assignmentService
-                        .getPrimaryAssignmentForPositon(MBHeader.getState().getOwnerPosition().getId());
+        for (final MBHeader mBHeader : mbHeaders)
+            if (!(mBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
+                    || mBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED))) {
+                final Assignment assignment = assignmentService
+                        .getPrimaryAssignmentForPositon(mBHeader.getState().getOwnerPosition().getId());
                 if (assignment != null)
                     userName = assignment.getEmployee().getName();
                 jsonObject
                         .addProperty("mberror",
                                 messageSource.getMessage("error.mbheader.workflow", new String[] {
-                                        MBHeader.getMbRefNo(), MBHeader.getEgwStatus().getDescription(), userName },
+                                        mBHeader.getMbRefNo(), mBHeader.getEgwStatus().getDescription(), userName },
                                         null));
             }
-        }
         return jsonObject;
     }
 
     /**
      * Method is called to while saving mb and validate final bill for workorder
+     *
      * @param workOrderId
      * @return
      */
     public JsonObject checkFinalContractorBillForWorkOrder(final Long workOrderId) {
         final JsonObject jsonObject = new JsonObject();
-        WorkOrder workOrder = workOrderEstimateRepository.findByWorkOrder_Id(workOrderId).getWorkOrder();
-        ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContratorBillForWorkOrder(
-                workOrder, ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
-        if (contractorBillRegister != null) {
+        final WorkOrder workOrder = getWorkOrderEstimateById(workOrderId).getWorkOrder();
+        final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
+                .getContratorBillForWorkOrder(workOrder, ContractorBillRegister.BillStatus.CANCELLED.toString(),
+                        BillTypes.Final_Bill.toString());
+        if (contractorBillRegister != null)
             jsonObject.addProperty("mberror", messageSource.getMessage("error.mbheader.create", new String[] {}, null));
-        }
         return jsonObject;
+    }
+
+    public List<String> getApprovedAndWorkCommencedWorkOrderNumbers(final String workOrderNo) {
+        return workOrderEstimateRepository.findWordOrderByStatus("%" + workOrderNo + "%", WorksConstants.APPROVED,
+                WorksConstants.WO_STATUS_WOCOMMENCED);
+    }
+
+    public List<String> getEstimateNumbersByApprovedAndWorkCommencedWorkOrders(final String EstimateNumber) {
+        return workOrderEstimateRepository.findEstimatesByWorkOrderStatus("%" + EstimateNumber + "%",
+                WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOCOMMENCED);
     }
 
 }

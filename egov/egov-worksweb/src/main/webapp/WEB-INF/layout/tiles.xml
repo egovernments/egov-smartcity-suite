@@ -300,5 +300,10 @@
         <put-attribute name="page-title" value="lbl.createae" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/abstractEstimate-success.jsp"/>
      </definition>
+     
+     <definition name="mbheader-searchform" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchview.mbheader" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mb/mbheader-searchform.jsp"/>
+     </definition>
 
 </tiles-definitions>
