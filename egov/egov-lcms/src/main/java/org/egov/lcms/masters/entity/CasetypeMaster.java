@@ -53,8 +53,7 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
-import org.ja.annotation.SearchField;
-import org.ja.annotation.SearchResult;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGLC_CASETYPE_MASTER")
@@ -74,23 +73,22 @@ public class CasetypeMaster extends AbstractAuditable {
 
 	@Length(min = 1, max = 8)
 	@Audited
-	@SearchField
-	@SearchResult
 	@NotNull
 	private String code;
 
 	@NotNull
 	@Length(min = 3, max = 50)
 	@Audited
-	@SearchField
-	@SearchResult
 	private String caseType;
 
 	@Audited
-	@SearchField
-	@SearchResult
 	@NotNull
 	private Boolean active;
+	
+	@Length(min = 3,max = 256)
+	@SafeHtml
+	private String notes;
+	private Long ordernumber;
 
 	public Boolean getActive() {
 		return active;
@@ -100,9 +98,6 @@ public class CasetypeMaster extends AbstractAuditable {
 		this.active = active;
 	}
 
-	@Length(max = 256, message = "masters.description.length")
-	private String notes;
-	private Long ordernumber;
 
 	@Override
 	public Long getId() {
