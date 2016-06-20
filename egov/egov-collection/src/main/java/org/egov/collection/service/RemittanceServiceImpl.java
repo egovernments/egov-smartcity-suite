@@ -282,12 +282,12 @@ public class RemittanceServiceImpl extends RemittanceService {
                 if (!bankRemitList.contains(receiptHeader))
                     bankRemitList.add(receiptHeader);
         }
-        CVoucherHeader voucherHeader =populateAndPersistRemittance(totalCashAmt, totalChequeAmount, fundCode, cashInHandGLCode, chequeInHandGlcode,
+        Remittance remittance =populateAndPersistRemittance(totalCashAmt, totalChequeAmount, fundCode, cashInHandGLCode, chequeInHandGlcode,
                 serviceGlCode, functionCode, bankRemitList, createVoucher, voucherDate);
 
         for (final ReceiptHeader receiptHeader : bankRemitList) {
             receiptHeader.setStatus(receiptStatusRemitted);
-            receiptHeader.setRemittanceVoucher(voucherHeader.getVoucherNumber());
+            receiptHeader.setRemittanceVoucher(remittance.getReferenceNumber());
             receiptHeaderService.update(receiptHeader);
         }
         return bankRemitList;
@@ -342,11 +342,10 @@ public class RemittanceServiceImpl extends RemittanceService {
     }
 
     @Transactional
-    public CVoucherHeader populateAndPersistRemittance(final BigDecimal totalCashAmount, final BigDecimal totalChequeAmount,
+    public Remittance populateAndPersistRemittance(final BigDecimal totalCashAmount, final BigDecimal totalChequeAmount,
             final String fundCode, final String cashInHandGLCode, final String chequeInHandGLcode,
             final String serviceGLCode, final String functionCode, final List<ReceiptHeader> receiptHeadList,
             final String createVoucher, final Date voucherDate) {
-        CVoucherHeader voucherHeader = null;
         final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
         BigDecimal totalAmount = BigDecimal.ZERO;
         final Remittance remittance = new Remittance();
@@ -373,8 +372,8 @@ public class RemittanceServiceImpl extends RemittanceService {
         remittancePersistService.persist(remittance);
         startWorkflow(remittance);
         if (CollectionConstants.YES.equalsIgnoreCase(createVoucher))
-            voucherHeader=   createVoucherForRemittance(remittance, voucherDate, fundCode);
-        return voucherHeader;
+            createVoucherForRemittance(remittance, voucherDate, fundCode);
+        return remittance;
     }
 
     private void startWorkflow(final Remittance remittance) {
