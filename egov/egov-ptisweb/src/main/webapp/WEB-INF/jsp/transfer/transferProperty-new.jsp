@@ -57,6 +57,7 @@
 	jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
 		enableBlock();
+		enableRegistrationDetails();
 		try {
 			jQuery(".datepicker").datepicker({
 				format : "dd/mm/yyyy",
@@ -203,6 +204,19 @@
 					<%@ include file="transfereeDetailsForm.jsp"%>
 					<tr>
 						<td class="greybox2">&nbsp;</td>
+						<td class="greybox">
+							<s:checkbox name="partialMutation" id="partialMutation" value="%{partialMutation}"/>
+							<s:text name="label.is.mutation.partial"/>
+						</td>
+						<td class="greybox">
+							<s:checkbox name="registrationDone" id="registrationDone" value="%{registrationDone}" onchange="enableRegistrationDetails();"/>
+							<s:text name="label.is.reg.done"/>
+						</td>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="transferreason"></s:text> <span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:select name="mutationReason"
@@ -218,7 +232,7 @@
 								onblur="trim(this,this.value);"></s:textarea></td>
 					</tr>
 
-					<tr>
+					<tr class="documentDetRow">
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="docNum" /><span
 							class="mandatory1">*</span> :</td>
@@ -233,6 +247,17 @@
 								autocomplete="off"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
+					</tr>
+					<tr>
+						<td class="greybox2">&nbsp;</td>
+						<td class="greybox"><s:text name="label.parties.value" /> :</td>
+						<td class="greybox">
+							<s:textfield name="partyValue" value="%{partyValue}" id="partyValue" maxlength="16" onblur="validNumber(this);checkZero(this);" />
+						</td>
+						<td class="greybox"><s:text name="label.department.value" />:</td>
+						<td class="greybox">
+							<s:textfield name="departmentValue" value="%{departmentValue}" id="departmentValue" maxlength="16" onblur="validNumber(this);checkZero(this);" />
+						</td>
 					</tr>
 					<s:if test="%{!documentTypes.isEmpty()}">
 						<%@ include file="../common/DocumentUploadForm.jsp"%>
@@ -295,6 +320,16 @@
 				} else {
 					jQuery("td.reasonRow").hide();
 				}
+			}
+		}
+		function enableRegistrationDetails() {
+			var obj = document.getElementById("registrationDone");
+			if (obj.checked) {
+				jQuery("tr.documentDetRow").show();
+			} else {
+				jQuery("#docNum").val("");
+				jQuery("#deedDate").val("");
+				jQuery("tr.documentDetRow").hide();
 			}
 		}
 	</script>

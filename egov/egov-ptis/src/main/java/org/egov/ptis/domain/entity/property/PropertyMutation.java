@@ -81,6 +81,10 @@ public class PropertyMutation extends StateAware {
     private List<Document> documents = new ArrayList<>();
     private String meesevaApplicationNumber;//Temporary number for meeseva integration.
     private Character source = 'A';
+    private BigDecimal partyValue;
+    private BigDecimal departmentValue;
+    private boolean partialMutation;
+    private boolean registrationDone;
 
     
     @Override
@@ -392,5 +396,36 @@ public class PropertyMutation extends StateAware {
         this.transfereeInfosProxy = transfereeInfosProxy;
     }
 
+    public BigDecimal getPartyValue() {
+        return partyValue;
+    }
+
+    public void setPartyValue(BigDecimal partyValue) {
+        this.partyValue = partyValue;
+    }
+
+    public BigDecimal getDepartmentValue() {
+        return departmentValue;
+    }
+
+    public void setDepartmentValue(BigDecimal departmentValue) {
+        this.departmentValue = departmentValue;
+    }
+
+    public boolean isPartialMutation() {
+        return partialMutation;
+    }
+
+    public void setPartialMutation(boolean partialMutation) {
+        this.partialMutation = partialMutation;
+    }
+
+    public boolean isRegistrationDone() {
+        return registrationDone;
+    }
+
+    public void setRegistrationDone(boolean registrationDone) {
+        this.registrationDone = registrationDone;
+    }
    
 }
