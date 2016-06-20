@@ -39,7 +39,7 @@
  */
 
 $subTypeOfWorkId = 0;
-$ExceptionalSors = "";
+$ExceptionalUOMs = "";
 $subSchemeId = 0;
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
@@ -47,7 +47,7 @@ $(document).ready(function(){
 	   $('.disablefield').attr('disabled', 'disabled');
 	}
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
-	$ExceptionalSors = $('#exceptionalsors').val();
+	$ExceptionalUOMs = $('#exceptionaluoms').val();
 	var nameOfWork = $('#nameOfWork').val();
 	$('#workName').val(nameOfWork);
 	$('#scheme').trigger('change');
@@ -1807,9 +1807,9 @@ function deleteRow(tableName,obj){
 
 function getUnitRate(uom,estimateRate){
 	var unitRate=0;
-	var exceptionalSorValues = $ExceptionalSors.split(':');
-	var exceptionalSorArray = $.makeArray( exceptionalSorValues );
-	$.map( exceptionalSorArray, function( val, i ) {
+	var exceptionalUOMValues = $ExceptionalUOMs.split(':');
+	var exceptionalUOMArray = $.makeArray( exceptionalUOMValues );
+	$.map( exceptionalUOMArray, function( val, i ) {
 		if(val.split(",")[0] == uom)
 			unitRate = parseFloat( parseFloat(estimateRate) * parseFloat( val.split(",")[1] ) / 100).toFixed(2);
 	});

@@ -277,7 +277,7 @@ public class WorksConstants {
 
     public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
 
-    public static final String APPCONFIG_KEY_EXCEPTIONALSOR = "EXCEPTIONALSOR";
+    public static final String APPCONFIG_KEY_EXCEPTIONALUOMS = "EXCEPTIONALUOMS";
     
     public static final String APPCONFIG_KEY_SHOW_SERVICE_FIELDS = "SHOW_SERVICE_FIELDS";
 

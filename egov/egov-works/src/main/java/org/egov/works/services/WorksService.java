@@ -264,7 +264,7 @@ public class WorksService {
     }
 
     public Map<String, Integer> getExceptionSOR() {
-        final List<AppConfigValues> appConfigList = getAppConfigValue(WorksConstants.WORKS_MODULE_NAME, "EXCEPTIONALSOR");
+        final List<AppConfigValues> appConfigList = getAppConfigValue(WorksConstants.WORKS_MODULE_NAME, "EXCEPTIONALUOMS");
         final Map<String, Integer> resultMap = new HashMap<String, Integer>();
         for (final AppConfigValues configValue : appConfigList) {
             final String value[] = configValue.getValue().split(",");

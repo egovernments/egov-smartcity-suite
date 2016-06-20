@@ -847,12 +847,7 @@ public class EstimateService {
     }
 
     public void setDropDownValues(final Model model) {
-        final List<AppConfigValues> exceptionalSorValues = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_EXCEPTIONALSOR);
-        String exceptionalsors = "";
-        for (AppConfigValues appVal : exceptionalSorValues)
-            exceptionalsors = exceptionalsors + appVal.getValue() + ":";
-        model.addAttribute("exceptionalsors", exceptionalsors);
+        model.addAttribute("exceptionaluoms", worksUtils.getExceptionalUOMS());
         model.addAttribute("overheads", overheadService.getOverheadsByDate(new Date()));
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));

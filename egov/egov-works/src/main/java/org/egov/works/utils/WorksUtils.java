@@ -52,7 +52,9 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -89,6 +91,9 @@ public class WorksUtils {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     public void persistDocuments(final List<DocumentDetails> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
@@ -226,5 +231,14 @@ public class WorksUtils {
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<EgwStatus> getStatusByModule(final String moduleType) {
         return egwStatusHibernateDAO.getStatusByModule(moduleType);
+    }
+
+    public String getExceptionalUOMS() {
+        final List<AppConfigValues> exceptionalUomValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_EXCEPTIONALUOMS);
+        String exceptionaluoms = "";
+        for (AppConfigValues appVal : exceptionalUomValues)
+            exceptionaluoms = exceptionaluoms + appVal.getValue() + ":";
+        return exceptionaluoms;
     }
 }

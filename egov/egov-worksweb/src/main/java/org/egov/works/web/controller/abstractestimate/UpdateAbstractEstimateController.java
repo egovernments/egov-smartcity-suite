@@ -232,7 +232,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-
+        model.addAttribute("exceptionaluoms", worksUtils.getExceptionalUOMS());
         getEstimateDocuments(abstractEstimate);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
