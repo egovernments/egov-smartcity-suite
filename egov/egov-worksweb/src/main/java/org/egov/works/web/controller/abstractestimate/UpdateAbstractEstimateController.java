@@ -205,6 +205,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (abstractEstimate.getCurrentState() != null
                 && !abstractEstimate.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", abstractEstimate.getCurrentState().getValue());
+        if (abstractEstimate.getState() != null  && abstractEstimate.getState().getNextAction()!=null )
+            model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, abstractEstimate, workflowContainer);

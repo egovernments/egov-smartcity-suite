@@ -72,7 +72,7 @@
 		<c:choose>
 			<c:when test="${mode == 'workflowView'}">
 				<div class="row">
-					<jsp:include page="../common/commonWorkflowMatrix-workOrder.jsp"/>
+					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 					</div>

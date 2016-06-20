@@ -51,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
@@ -101,9 +100,6 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
     @Autowired
     private EstimateService estimateService;
 
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
-
     @ModelAttribute
     public WorkOrder getWorkOrder(@PathVariable final String id) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.parseLong(id));
@@ -122,6 +118,8 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             if (workOrder.getCurrentState() != null
                     && !workOrder.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.NEW))
                 model.addAttribute("currentState", workOrder.getCurrentState().getValue());
+            if (workOrder.getState() != null && workOrder.getState().getNextAction() != null)
+                model.addAttribute("nextAction", workOrder.getState().getNextAction());
             WorkflowContainer workflowContainer = new WorkflowContainer();
             prepareWorkflow(model, workOrder, workflowContainer);
             List<String> validActions = Collections.emptyList();
@@ -167,22 +165,6 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("engineerInchargeList",
                 letterOfAcceptanceService.getEngineerInchargeList(abstractEstimate.getExecutingDepartment().getId(),
                         letterOfAcceptanceService.getEngineerInchargeDesignationId()));
-    }
-
-    private void loadViewData(Model model, AbstractEstimate abstractEstimate, WorkOrder workOrder, HttpServletRequest request) {
-        setDropDownValues(model, abstractEstimate);
-        model.addAttribute("stateType", workOrder.getClass().getSimpleName());
-        WorkflowContainer workflowContainer = new WorkflowContainer();
-        prepareWorkflow(model, workOrder, workflowContainer);
-        List<String> validActions = Collections.emptyList();
-        validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
-                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
-                workOrder.getCreatedDate());
-        model.addAttribute("documentDetails", workOrder.getDocumentDetails());
-        model.addAttribute("validActionList", validActions);
-        model.addAttribute("mode", null);
-        model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
     }
 
     @RequestMapping(value = "/modify/{id}", method = RequestMethod.GET)

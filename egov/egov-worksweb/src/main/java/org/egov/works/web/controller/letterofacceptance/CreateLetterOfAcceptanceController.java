@@ -225,18 +225,21 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, workOrder, workflowContainer);
         List<String> validActions = Collections.emptyList();
-        if (workOrder.getId() != null)
+        if (workOrder.getId() != null) {
             validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
                     workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
                     workflowContainer.getAdditionalRule(), workOrder.getState().getValue(), workflowContainer.getPendingActions(),
                     workOrder.getCreatedDate());
-        else
+            model.addAttribute("contractorSearch", workOrder.getContractor().getName());
+            model.addAttribute("contractorCode", workOrder.getContractor().getCode());
+        } else
             validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
                     workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
                     workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
                     workOrder.getCreatedDate());
         workOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
-
+        if (workOrder.getState() != null && workOrder.getState().getNextAction() != null)
+            model.addAttribute("nextAction", workOrder.getState().getNextAction());
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("validActionList", validActions);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());

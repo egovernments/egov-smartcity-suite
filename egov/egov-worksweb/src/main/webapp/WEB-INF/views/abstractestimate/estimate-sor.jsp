@@ -192,9 +192,9 @@
 								<form:hidden path="sorActivities[0].uom.id" id="sorUomid_0" class="uomhiddenid"/>
 							</td>
 							<td align="right">
-								<span class="sorRate rate_0"></span>
+								<span class="estimateRate estimateRate_0"></span>
 								<form:hidden path="sorActivities[0].rate" id="rate_0" />
-								<form:hidden path="sorActivities[0].sorRate" id="sorRate_0" />
+								<form:hidden path="sorActivities[0].estimateRate" id="estimateRate_0" />
 							</td>
 							<td>
 								<form:input path="sorActivities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
@@ -237,9 +237,9 @@
 										<form:hidden path="sorActivities[${item.index }].uom.id" id="sorUomid_${item.index }" class="uomhiddenid" value="${activity.schedule.uom.id }"/>
 									</td>
 									<td align="right">
-										<span class="sorRate rate_${item.index }">${activity.rate }</span>
+										<span class="estimateRate estimateRate_${item.index }">${activity.rate }</span>
 										<form:hidden path="sorActivities[${item.index }].rate" id="rate_${item.index }" value="${activity.rate }" />
-										<form:hidden path="sorActivities[${item.index }].sorRate" id="sorRate_${item.index }" value="${activity.rate }" />
+										<form:hidden path="sorActivities[${item.index }].estimateRate" id="estimateRate_${item.index }" value="${activity.estimateRate }" />
 									</td>
 									<td>
 										<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>

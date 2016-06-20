@@ -79,7 +79,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
                 workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
                 abstractEstimate.getCreatedDate());
-
+        if (abstractEstimate.getState() != null  && abstractEstimate.getState().getNextAction()!=null )
+            model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
         model.addAttribute("validActionList", validActions);
         model.addAttribute("mode", null);
     }

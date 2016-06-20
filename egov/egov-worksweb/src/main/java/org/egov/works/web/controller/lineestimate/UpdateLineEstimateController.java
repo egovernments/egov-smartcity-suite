@@ -384,7 +384,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         if (lineEstimate.getCurrentState() != null)
             model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
-
+        if (lineEstimate.getState() != null  && lineEstimate.getState().getNextAction()!=null )
+            model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
         prepareWorkflow(model, lineEstimate, new WorkflowContainer());
         if (lineEstimate.getState() != null && lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", "edit");

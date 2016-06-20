@@ -926,7 +926,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
                     if (DateUtils.compareDates(tenAct.getActivity().getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
                         if (tenderResponse.getTenderEstimate().getTenderType().equals(percTenderType))
-                            preEstlineItem.setRate(tenAct.getActivity().getSorRate());
+                            preEstlineItem.setRate(tenAct.getActivity().getEstimateRate());
                         else
                             preEstlineItem.setRate(tenAct.getNegotiatedRate());
                         double result = 1;
@@ -976,7 +976,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
                     preEstlineItem.setQuantity(tenAct.getActivity().getQuantity() + preEstlineItem.getQuantity());
                     if (DateUtils.compareDates(tenAct.getActivity().getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
-                        preEstlineItem.setRate(tenAct.getActivity().getSorRate());
+                        preEstlineItem.setRate(tenAct.getActivity().getEstimateRate());
                         double result = 1;
                         if (tenAct.getActivity().getSchedule() != null
                                 && exceptionaSorMap.containsKey(tenAct.getActivity().getUom().getUom())) {
@@ -1049,7 +1049,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
         } else {
             estlineItem.setCode(act.getActivity().getSchedule().getCode());
             estlineItem.setDescription(act.getActivity().getSchedule().getDescription());
-            estlineItem.setRate(act.getActivity().getSorRate());
+            estlineItem.setRate(act.getActivity().getEstimateRate());
             estlineItem.setSummary(act.getActivity().getSchedule().getSummary());
             final Map<String, Integer> exceptionaSorMap = getSpecialUoms();
             double result = 1;
@@ -1085,7 +1085,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
                         preEstlineItem.setQuantity(woAct.getApprovedQuantity() + preEstlineItem.getQuantity());
                         if (DateUtils.compareDates(woAct.getActivity().getAbstractEstimate().getEstimateDate(),
                                 preEstlineItem.getEstimateDate())) {
-                            preEstlineItem.setRate(woAct.getActivity().getSorRate());
+                            preEstlineItem.setRate(woAct.getActivity().getEstimateRate());
                             double result = 1;
                             if (woAct.getActivity().getSchedule() != null
                                     && exceptionaSorMap.containsKey(woAct.getActivity().getUom().getUom())) {

@@ -789,7 +789,7 @@ public class EstimatePDFGenerator extends AbstractPDFGenerator {
                 estimateUom = activity.getUom().getUom();
             addRow(activitiesTable, true, makePara(index++), rightPara(activity.getQuantity()), makePara(activity
                     .getSchedule().getDescription()), centerPara(activity.getSchedule().getCode()),
-                    centerPara(estimateUom), rightPara(toCurrency(activity.getSorRate())),
+                    centerPara(estimateUom), rightPara(toCurrency(activity.getEstimateRate())),
                     rightPara(toCurrency(activity.getAmount())));
         }
         activities = estimate.getNonSORActivities();

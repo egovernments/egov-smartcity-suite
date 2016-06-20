@@ -67,7 +67,7 @@
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<c:choose>
-		<c:when test="${currentState != 'Admin sanctioned'}">
+		<c:when test="${nextAction != 'END'}">
 			<div class="show-row"  id="approverDetailHeading">
 				<div class="show-row form-group" >
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>

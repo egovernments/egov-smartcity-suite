@@ -39,6 +39,7 @@
  */
 
 $subTypeOfWorkId = 0;
+$ExceptionalSors = "";
 $subSchemeId = 0;
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
@@ -46,7 +47,7 @@ $(document).ready(function(){
 	   $('.disablefield').attr('disabled', 'disabled');
 	}
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
-	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
+	$ExceptionalSors = $('#exceptionalsors').val();
 	var nameOfWork = $('#nameOfWork').val();
 	$('#workName').val(nameOfWork);
 	$('#scheme').trigger('change');
@@ -127,6 +128,7 @@ $(document).ready(function(){
 			$('#nonSorDesc_' + key).val('');
 			$('#nonSorUom_' + key).val('');
 			$('#nonSorRate_' + key).val('');
+			$('#nonSorEstimateRate_' + key).val('');
 			$('#nonSorQuantity_' + key).val('');
 			$('.nonSorAmount_' + key).html('');
 			$('#nonSorServiceTaxPerc_' + key).val('');
@@ -137,8 +139,9 @@ $(document).ready(function(){
 			var key = 0;
 			$('#nonSorDesc_' + key).attr('required', 'required');
 			$('#nonSorUom_' + key).attr('required', 'required');
-			$('#nonSorRate_' + key).attr('required', 'required');
+			$('#nonSorEstimateRate_' + key).attr('required', 'required');
 			$('#nonSorQuantity_' + key).attr('required', 'required');
+			$('.nonSorEstimateRate').val('');
 			$('.nonSorRate').val('');
 			$('.nonSorQuantity').val('');
 			$('.nonSorServiceTaxPerc').val('');
@@ -169,7 +172,7 @@ $(document).ready(function(){
 	                    description: ct.description,
 	                    uom: ct.uom.uom,
 	                    uomid: ct.uom.id,
-	                    rate: ct.sorRates[0].rate.value,
+	                    estimateRate: ct.sorRates[0].rate.value,
 	                    summary: ct.summary,
 	                    displayResult: ct.code+' : '+ct.summary
 	                };
@@ -227,19 +230,21 @@ $(document).ready(function(){
 					$('#sorUomid_' + key).val(val);
 				else if(id == 'description') {
 					$('.' + id + "_" + key).html(hint.replace(/@fulldescription@/g, val));
-				} else if(id == 'rate') {
+				} else if(id == 'estimateRate') {
 					if(val != null) {
 						$('.' + id + "_" + key).html(val);
 						$('#' + id + "_" + key).val(val);
-						$('#sorRate_' + key).val(val);
+						//$('#rate_' + key).val(val);
 					} else {
 						$('.' + id + "_" + key).html(0);
 						$('#' + id + "_" + key).val(0);
-						$('#sorRate_' + key).val(0);
+						//$('#rate_' + key).val(0);
 					}
 				}else
 					$('.' + id + "_" + key).html(val);
 			});
+			$('#rate_' + key).val(getUnitRate($('.uom_' + key).html(),$('#estimateRate_' + key).val()));
+			
 		}
 		$('#sorSearch').val('');
     });
@@ -612,7 +617,7 @@ function deleteSor(obj) {
 
 function calculateEstimateAmount(currentObj) {
 	rowcount = $(currentObj).attr('id').split('_').pop();
-	var rate = parseFloat($('.rate_' + rowcount).html().trim());
+	var rate = parseFloat($('#rate_' + rowcount).val().trim());
 	var amount = parseFloat($(currentObj).val() * rate).toFixed(2);
 	var vatAmount = parseFloat(($('#vat_' + rowcount).val() * amount) / 100).toFixed(2);
 	$('.amount_' + rowcount).html(amount);
@@ -690,6 +695,7 @@ function deleteNonSor(obj) {
 		$('#nonSorId_' + rowId).val('');
 		$('#nonSorDesc_' + rowId).val('');
 		$('#nonSorUom_' + rowId).val('');
+		$('#nonSorEstimateRate_' + rowId).val('');
 		$('#nonSorRate_' + rowId).val('');
 		$('#nonSorQuantity_' + rowId).val('');
 		$('.nonSorAmount_' + rowId).html('');
@@ -785,13 +791,18 @@ function calculateNonSorEstimateAmount(currentObj) {
 		flag = true;
 	}
 	if(!flag) {
-		var rate = $('#nonSorRate_' + rowcount).val();
-		if(rate == "")
-			rate = 0.0;
+		var estimateRate = $('#nonSorEstimateRate_' + rowcount).val();
+		var unitRate;
+		if(estimateRate == "")
+			unitRate = 0.0;
+		else{
+			unitRate = getUnitRate($('#nonSorUom_' + rowcount).find(":selected").text().split(" -- ")[1],estimateRate);
+			$('#nonSorRate_' + rowcount).val(unitRate);
+		}
 		var quantity = $('#nonSorQuantity_' + rowcount).val();
 		if(quantity == "")
 			quantity = 0.0;
-		var amount = parseFloat(parseFloat(quantity) * parseFloat(rate)).toFixed(2);
+		var amount = parseFloat(parseFloat(quantity) * parseFloat(unitRate)).toFixed(2);
 		var vatAmount = parseFloat(($('#nonSorServiceTaxPerc_' + rowcount).val() * amount) / 100).toFixed(2);
 		$('.nonSorAmount_' + rowcount).html(amount);
 		$('.nonSorVatAmount_' + rowcount).html(vatAmount);
@@ -1076,6 +1087,7 @@ function clearActivities(){
 				$('.nonSorId').val('');
 				$('.nonSorDesc').val('');
 				$('.nonSorUom').val('');
+				$('.nonSorEstimateRate').val('');
 				$('.nonSorRate').val('');
 				$('.nonSorQuantity').val('');
 				$('.nonsoramount').html('');
@@ -1132,6 +1144,7 @@ function getActivitiesForTemplate(id){
 							$('#nonSorDesc_' + key).val('');
 							$('#nonSorUom_' + key).val('');
 							$('#nonSorRate_' + key).val('');
+							$('#nonSorEstimateRate_' + key).val('');
 							$('#nonSorQuantity_' + key).val('');
 							$('.nonSorAmount_' + key).html('');
 							$('#nonSorServiceTaxPerc_' + key).val('');
@@ -1150,21 +1163,22 @@ function getActivitiesForTemplate(id){
 					$('.uom_'+sorCount).html(estimateTemplateActivity.schedule.uom.uom);
 					$('#sorUomid_'+sorCount).val(estimateTemplateActivity.schedule.uom.id);
 					if(estimateTemplateActivity.schedule.sorRate!=null) {
-						$('.rate_'+sorCount).html(estimateTemplateActivity.schedule.sorRate);
-						$('#rate_'+sorCount).val(estimateTemplateActivity.schedule.sorRate);
-						$('#sorRate_'+sorCount).val(estimateTemplateActivity.schedule.sorRate);
+						$('.estimateRate_'+sorCount).html(estimateTemplateActivity.schedule.sorRate);
+						$('#rate_'+sorCount).val(getUnitRate(estimateTemplateActivity.schedule.uom.uom, estimateTemplateActivity.schedule.sorRate));
+						$('#estimateRate_'+sorCount).val(estimateTemplateActivity.schedule.sorRate);
 					}
 					else {
-						$('.rate_'+sorCount).html(0);
+						$('.estimateRate_'+sorCount).html(0);
 						$('#rate_'+sorCount).val(0);
-						$('#sorRate_'+sorCount).val(0);
+						$('#estimateRate_'+sorCount).val(0);
 					}
 					sorCount++;
 				}else{
 					$('#nonSorDesc_'+nonSorCount).val(estimateTemplateActivity.nonSor.description);
 					$('#nonSorUom_'+nonSorCount).val(estimateTemplateActivity.uom.id);
 					$('#nonSorUomid_'+nonSorCount).val(estimateTemplateActivity.uom.id);
-					$('#nonSorRate_'+nonSorCount).val(estimateTemplateActivity.rate.formattedString);
+					$('#nonSorEstimateRate_'+nonSorCount).val(estimateTemplateActivity.rate.formattedString);
+					$('#nonSorRate_'+nonSorCount).val(getUnitRate(estimateTemplateActivity.uom.uom,estimateTemplateActivity.rate));
 					nonSorCount++;
 				}
 				resetIndexes();
@@ -1493,7 +1507,7 @@ function validateWorkFlowApprover(name) {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});
-			$('.sorRate').each(function() {
+			$('.estimateRate').each(function() {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});
@@ -1582,7 +1596,7 @@ function validateWorkFlowApprover(name) {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});
-			$('.sorRate').each(function() {
+			$('.estimateRate').each(function() {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});
@@ -1789,4 +1803,18 @@ function deleteRow(tableName,obj){
 			});
 			return true;
 		}
+}
+
+function getUnitRate(uom,estimateRate){
+	var unitRate=0;
+	var exceptionalSorValues = $ExceptionalSors.split(':');
+	var exceptionalSorArray = $.makeArray( exceptionalSorValues );
+	$.map( exceptionalSorArray, function( val, i ) {
+		if(val.split(",")[0] == uom)
+			unitRate = parseFloat( parseFloat(estimateRate) * parseFloat( val.split(",")[1] ) / 100).toFixed(2);
+	});
+	if(unitRate!=0)
+		return unitRate;
+	else
+		return estimateRate;
 }

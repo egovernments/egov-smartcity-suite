@@ -95,7 +95,7 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
                     preEstlineItem.setQuantity(act.getQuantity() + preEstlineItem.getQuantity());
                     if (DateUtils.compareDates(act.getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
-                        preEstlineItem.setRate(act.getSorRate());
+                        preEstlineItem.setRate(act.getEstimateRate());
                         preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate());
                     }
                     resultMap.put(act.getSchedule().getId(), preEstlineItem);
@@ -119,7 +119,7 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
         } else {
             estlineItem.setCode(act.getSchedule().getCode());
             estlineItem.setDescription(act.getSchedule().getDescription());
-            estlineItem.setRate(act.getSorRate());
+            estlineItem.setRate(act.getEstimateRate());
         }
         estlineItem.setAmt(act.getQuantity() * act.getRate());
         estlineItem.setEstimateDate(act.getAbstractEstimate().getEstimateDate());

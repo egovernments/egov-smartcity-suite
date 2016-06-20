@@ -129,7 +129,7 @@
         </p></td>
         <td width="45" style="WORD-BREAK:BREAK-ALL"><p align="right">
 	<s:if test="%{workOrderActivity.activity.schedule!=null}">
-        	<s:property value="%{workOrderActivity.activity.sorRate}"/>
+        	<s:property value="%{workOrderActivity.activity.estimateRate}"/>
         </s:if>
         <s:else>
         	<s:property value="%{workOrderActivity.activity.rate}"/>

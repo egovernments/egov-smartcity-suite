@@ -203,7 +203,7 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                 else
                     sorRate = activity.getSORRateForDate(activity.getAbstractEstimate().getParent().getEstimateDate())
                             .getValue();
-            activity.setSorRate(sorRate);
+            activity.setEstimateRate(sorRate);
         }
 
         return NEW;

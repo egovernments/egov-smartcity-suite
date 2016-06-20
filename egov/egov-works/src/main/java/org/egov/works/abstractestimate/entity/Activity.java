@@ -106,7 +106,7 @@ public class Activity extends AbstractAuditable {
     @Column(name = "unitrate")
     private double rate = 0.0;
 
-    private double sorRate = 0.0;
+    private double estimateRate = 0.0;
 
     @NotNull(message = "activity.quantity.not.null")
     @GreaterThan(value = 0, message = "activity.quantity.non.negative")
@@ -250,7 +250,7 @@ public class Activity extends AbstractAuditable {
         if (schedule == null)
             return Double.valueOf(1);
         else {
-            final double masterRate = sorRate;
+            final double masterRate = estimateRate;
             final double unitRate = rate;
             if (unitRate > 0 && masterRate > 0)
                 return unitRate / masterRate;
@@ -316,12 +316,12 @@ public class Activity extends AbstractAuditable {
         this.signValue = signValue;
     }
 
-    public double getSorRate() {
-        return sorRate;
+    public double getEstimateRate() {
+        return estimateRate;
     }
 
-    public void setSorRate(final double sorRate) {
-        this.sorRate = sorRate;
+    public void setEstimateRate(double estimateRate) {
+        this.estimateRate = estimateRate;
     }
 
 }

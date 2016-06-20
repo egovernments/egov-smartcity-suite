@@ -53,9 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
-import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
@@ -105,12 +103,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     private FundHibernateDAO fundHibernateDAO;
 
     @Autowired
-    private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
-
-    @Autowired
     private SchemeService schemeService;
 
     @Autowired
@@ -136,7 +128,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -149,7 +141,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             lineEstimate.setExecutingDepartment(departments.get(0));
-
+        if (lineEstimate.getState() != null  && lineEstimate.getState().getNextAction()!=null )
+            model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
 
@@ -209,11 +202,12 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
             for (CChartOfAccountDetail detail : accountDetails) {
-                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                if (detail.getDetailTypeId() != null
+                        && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
             }
             if (!check) {
-                errors.reject("error.budgethead.validate","error.budgethead.validate");
+                errors.reject("error.budgethead.validate", "error.budgethead.validate");
             }
 
         }

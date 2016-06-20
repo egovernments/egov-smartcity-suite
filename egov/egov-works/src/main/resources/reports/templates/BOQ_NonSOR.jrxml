@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-06-10T15:37:44 -->
+<!-- 2016-06-20T16:04:52 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BOQ_NonSOR" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="f1f45257-e70e-42dd-b2d0-4bfdfccf64d7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -14,7 +14,7 @@
 	<field name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="uom" class="org.egov.common.entity.UOM"/>
-	<field name="rate" class="java.lang.Double"/>
+	<field name="estimateRate" class="java.lang.Double"/>
 	<field name="amount" class="org.egov.infra.persistence.entity.component.Money"/>
 	<variable name="description" class="java.lang.String">
 		<variableExpression><![CDATA[$F{schedule}==null?$F{nonSor}.getDescription():$F{schedule}.getDescription()]]></variableExpression>
@@ -207,7 +207,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{estimateRate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

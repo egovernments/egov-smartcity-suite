@@ -203,15 +203,16 @@ public class LetterOfAcceptanceService {
 
         workOrder = createAssetsForWorkOrder(workOrder);
         WorkOrder savedworkOrder = null;
-        if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
+        if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
                 && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated()) {
             workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                     WorksConstants.APPROVED));
-            savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
         } else {
             createWorkOrderWorkflowTransition(workOrder, approvalPosition, approvalComent, additionalRule, workFlowAction);
-            savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
         }
+
+        savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedworkOrder,
                 WorksConstants.WORKORDER);

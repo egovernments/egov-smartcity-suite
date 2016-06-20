@@ -259,7 +259,7 @@ function showChangeQtyDtlsTab(){
 					<td width="6%" ><s:property value="schedule.code"/></td>
 					<td width="25%" ><s:property value="schedule.summaryJS"/></td>
 					<td width="10%" ><div align="center"><s:property value="schedule.uom.uom"/></div></td>
-					<td width="7%" ><div align="right"><s:property value="sorRate"/></div></td>
+					<td width="7%" ><div align="right"><s:property value="estimateRate"/></div></td>
 					<td width="10%" ><div align="right"><s:property value="quantity"/></div></td>
 					<td width="10%" ><div align="right"><s:text name="contractor.format.number" >
                                                     <s:param name="value" value="%{amount.value}"/></s:text></div></td>

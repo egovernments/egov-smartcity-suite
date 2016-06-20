@@ -63,6 +63,7 @@
 	<div class="main-content">
 	<form:hidden path="estimateValue" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
 	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${abstractEstimate.workValue}" default="0.0" />'/>
+	<input type="hidden" id="exceptionalsors" name="exceptionalsors" value='<c:out value="${exceptionalsors}"/>'/>
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">

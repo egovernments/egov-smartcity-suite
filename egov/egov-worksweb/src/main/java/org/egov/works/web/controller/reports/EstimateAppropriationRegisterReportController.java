@@ -79,7 +79,7 @@ public class EstimateAppropriationRegisterReportController {
 
     private void setDropDownValues(final Model model) {
          model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctionsOrderByCode());
          model.addAttribute("financialYear", financialYearHibernateDAO.getAllActiveFinancialYearList());
          model.addAttribute("departments", departmentService.getAllDepartments());
          
