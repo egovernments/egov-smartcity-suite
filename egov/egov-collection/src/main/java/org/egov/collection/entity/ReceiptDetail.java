@@ -39,13 +39,13 @@
  */
 package org.egov.collection.entity;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFunction;
 
 public class ReceiptDetail implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -81,35 +81,38 @@ public class ReceiptDetail implements java.io.Serializable {
 
     private CFinancialYear financialYear;
 
+    private String purpose;
+
     public ReceiptDetail() {
     }
 
-    public ReceiptDetail(final CChartOfAccounts account, final CFunction function, final BigDecimal cramountToBePaid,
-            final BigDecimal drAmount, final BigDecimal crAmount, final Long order, final String description,
+    public ReceiptDetail(final CChartOfAccounts accounthead, final CFunction function, final BigDecimal cramountToBePaid,
+            final BigDecimal dramount, final BigDecimal cramount, final Long ordernumber, final String description,
             final Boolean isActualDemand,
-            final ReceiptHeader receiptHeader) {
-        accounthead = account;
+            final ReceiptHeader receiptHeader, final String purpose) {
+        this.accounthead = accounthead;
         this.function = function;
         this.cramountToBePaid = cramountToBePaid;
-        dramount = drAmount;
-        cramount = crAmount;
-        ordernumber = order;
+        this.dramount = dramount;
+        this.cramount = cramount;
+        this.ordernumber = ordernumber;
         this.description = description;
         this.isActualDemand = isActualDemand;
         this.receiptHeader = receiptHeader;
+        this.purpose = purpose;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb
-        .append(ordernumber).append(TO_STRING_SEP)
-        .append(accounthead.getGlcode()).append(TO_STRING_SEP)
-        .append(cramountToBePaid).append(TO_STRING_SEP)
-        .append(cramount).append(TO_STRING_SEP)
-        .append(dramount).append(TO_STRING_SEP)
-        .append(description).append(TO_STRING_SEP)
-        .append(isActualDemand);
+                .append(ordernumber).append(TO_STRING_SEP)
+                .append(accounthead.getGlcode()).append(TO_STRING_SEP)
+                .append(cramountToBePaid).append(TO_STRING_SEP)
+                .append(cramount).append(TO_STRING_SEP)
+                .append(dramount).append(TO_STRING_SEP)
+                .append(description).append(TO_STRING_SEP)
+                .append(isActualDemand);
         return sb.toString();
     }
 
@@ -232,5 +235,19 @@ public class ReceiptDetail implements java.io.Serializable {
      */
     public void setIsActualDemand(final Boolean isActualDemand) {
         this.isActualDemand = isActualDemand;
+    }
+
+    /**
+     * @return the purpose
+     */
+    public String getPurpose() {
+        return purpose;
+    }
+
+    /**
+     * @param purpose the purpose to set
+     */
+    public void setPurpose(final String purpose) {
+        this.purpose = purpose;
     }
 }

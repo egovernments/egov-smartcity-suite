@@ -152,7 +152,7 @@
 					value="%{propertyDetail.extentAppartenauntLand}" />
 			</div>
 		</div>
-		<div class="row add-border">
+		<%-- <div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<s:text name="superstructure"></s:text>
 			</div>
@@ -170,7 +170,7 @@
 			<div class="col-xs-3 add-margin view-content">
 				<s:property default="N/A" value="%{propertyDetail.siteOwner}" />
 			</div>
-		</div>
+		</div> --%>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<s:text name="reg.docno"></s:text>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.egov</groupId>
+  <artifactId>egov-samplejava-archetype</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
+  <packaging>maven-archetype</packaging>
+
+  <name>egov-samplejava-archetype</name>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+        <version>2.4</version>
+      </extension>
+    </extensions>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-archetype-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <description>eGov opensource ERP solution for municipal e-governance</description>
+
+  <licenses>
+    <license>
+      <name>GPL 3.0</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.en.html</url>
+      <comments>See also: https://raw.githubusercontent.com/egovernments/eGov/master/LICENSE</comments>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/egovernments/eGov.git/egov-pgr</connection>
+    <developerConnection>scm:git:git@github.com:egovernments/eGov.git/egov-pgr</developerConnection>
+    <url>https://github.com/egovernments/eGov/egov-pgr</url>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>repo.egovernments.org</id>
+      <name>eGov ERP Releases Repository</name>
+      <url>http://repo.egovernments.org/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>repo.egovernments.org</id>
+      <name>eGov ERP Snapshots Repository</name>
+      <url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>

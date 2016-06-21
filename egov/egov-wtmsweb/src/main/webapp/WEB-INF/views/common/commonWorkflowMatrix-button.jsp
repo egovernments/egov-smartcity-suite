@@ -62,6 +62,17 @@
 			$('#approvalComent').attr('required', 'required');	
 			} 
 		 if(rejectbutton!=null && rejectbutton=='Forward'){
+			if($('#currentUser'))
+			{
+				if($('#currentUser').val()=="true")
+				{
+					$('#approvalDepartment').removeAttr('required');
+					$('#approvalDesignation').removeAttr('required');
+					$('#approvalPosition').removeAttr('required');
+					$('#approvalComent').removeAttr('required');
+					return true;
+				}
+			}
 			$('#approvalDepartment').attr('required', 'required');
 			$('#approvalDesignation').attr('required', 'required');
 			$('#approvalPosition').attr('required', 'required');

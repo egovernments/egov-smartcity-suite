@@ -627,8 +627,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         basicProp = propertyModel.getBasicProperty();
         oldProperty = (PropertyImpl) basicProp.getProperty();
         transitionWorkFlow(propertyModel);
-        if (!PROPERTY_MODIFY_REASON_OBJ.equals(modifyRsn))
-            propService.setWFPropStatValActive(basicProp);
+        createPropertyStatusValues();
 
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn)
                 || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)) {
@@ -664,6 +663,30 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Exiting approve");
         return RESULT_ACK;
     }
+
+	private void createPropertyStatusValues() {
+		Date propCompletionDate = null;
+        PropertyTypeMaster proptypeMstr = propertyTypeMasterDAO.findById(Integer.valueOf(propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().toString()), false);
+        if (!proptypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+            propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail()
+                    .getFloorDetails());
+        else
+            propCompletionDate = propertyModel.getPropertyDetail().getDateOfCompletion();
+        
+        if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
+                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
+            basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, getModifyRsn(),
+                    propCompletionDate, null, null, null, null));
+            if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
+                propService.createAmalgPropStatVal(amalgPropIds, basicProp);
+        } else if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
+            basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
+                    PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, null, null, null, null));
+        else if (PROPERTY_MODIFY_REASON_COURT_RULE.equals(getModifyRsn()))
+            basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
+                    PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, getCourtOrdNum(),
+                    propService.getPropOccupatedDate(getOrderDate()), getJudgmtDetails(), null));
+	}
 
     /**
      * Rejects the assessment
@@ -854,20 +877,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) propService.getPropPerServ().find(
                 "from PropertyMutationMaster PM where upper(PM.code) = ?", modifyRsn);
         basicProp.setPropertyMutationMaster(propMutMstr);
-        // AMALG & BIFUR
-        if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
-                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
-            basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, getModifyRsn(),
-                    propCompletionDate, null, null, null, null));
-            if (PROPERTY_MODIFY_REASON_AMALG.equals(modifyRsn))
-                propService.createAmalgPropStatVal(amalgPropIds, basicProp);
-        } else if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn))
-            basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
-                    PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, null, null, null, null));
-        else if (PROPERTY_MODIFY_REASON_COURT_RULE.equals(getModifyRsn()))
-            basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp,
-                    PROPERTY_MODIFY_REASON_ADD_OR_ALTER, propCompletionDate, getCourtOrdNum(),
-                    propService.getPropOccupatedDate(getOrderDate()), getJudgmtDetails(), null));
         basicProp.setPropOccupationDate(propCompletionDate);
 
         setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, propTypeId, propUsageId,
@@ -988,7 +997,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         propDetail.setWallType(propertyDetail.getWallType());
         propDetail.setWoodType(propertyDetail.getWoodType());
         propDetail.setExtentSite(propertyDetail.getExtentSite());
-        propDetail.setStructure(propertyDetail.isStructure());
+        //propDetail.setStructure(propertyDetail.isStructure());
         propDetail.setExtentAppartenauntLand(propertyDetail.getExtentAppartenauntLand());
         if (numOfFloors == 0)
             propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());

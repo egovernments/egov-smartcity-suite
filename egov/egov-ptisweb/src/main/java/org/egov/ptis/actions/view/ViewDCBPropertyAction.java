@@ -39,6 +39,32 @@
  */
 package org.egov.ptis.actions.view;
 
+import static java.math.BigDecimal.ZERO;
+import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -73,28 +99,6 @@ import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-
 @SuppressWarnings("serial")
 @ParentPackage("egov")
 @Results({ @Result(name = ViewDCBPropertyAction.VIEW, location = "viewDCBProperty-view.jsp"),
@@ -126,6 +130,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private Integer noOfDaysForInactiveDemand;
     private String errorMessage;
     private String roleName;
+    private String serviceCode;
     private Map<String, Object> viewMap;
 
     @Autowired
@@ -154,6 +159,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     @Override
     public void prepare() {
         setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
+        if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode())) {
+            serviceCode = SERVICE_CODE_VACANTLANDTAX;
+        } else {
+            serviceCode = SERVICE_CODE_PROPERTYTAX;
+        }
     }
 
     /**
@@ -532,6 +542,14 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
     }
 
 }

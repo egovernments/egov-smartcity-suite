@@ -81,7 +81,7 @@ import java.util.Set;
  * This class contains the common methods used for E-Governments applciation
  */
 @Transactional(readOnly = true)
-@Service
+@Service("eGovernCommon")
 public class EGovernCommon extends AbstractTask {
 	 
 	private final SimpleDateFormat dtFormat = new SimpleDateFormat("dd-MMM-yyyy");
@@ -93,7 +93,6 @@ public class EGovernCommon extends AbstractTask {
 	@Qualifier("persistenceService")
 	private PersistenceService persistenceService;
 	
-	private @Autowired EGovernCommon eGovernCommon;
 	@Autowired
 	private DBSequenceGenerator dbSequenceGenerator;
 	@Autowired
@@ -108,10 +107,10 @@ public class EGovernCommon extends AbstractTask {
 			final boolean errorData,
 			final boolean gridHasCol, final String prefix) throws TaskFailedException
 	{
-		datacol.addValue("voucherHeader_cgn", eGovernCommon.getCGNumber());
+		datacol.addValue("voucherHeader_cgn", getCGNumber());
 		if (datacol.getValue("hasSecondCGN").equalsIgnoreCase("true"))
-			datacol.addValue("jv_cgn", eGovernCommon.getCGNumber());
-		datacol.addValue("databaseDate", eGovernCommon.getCurrentDate());
+			datacol.addValue("jv_cgn", getCGNumber());
+		datacol.addValue("databaseDate", getCurrentDate());
 	}
 
 	public long getCGNumber()

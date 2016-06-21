@@ -319,9 +319,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Eneterd into validateBuiltUpProperty");
 
-        if (propertyDetail.isStructure())
+        /*if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))
-                addActionError(getText("mandatory.siteowner"));
+                addActionError(getText("mandatory.siteowner"));*/
         if (null != propertyDetail.isAppurtenantLandChecked() && null == propertyDetail.getExtentAppartenauntLand())
             addActionError(getText("mandatory.extentAppartnant"));
         else if (null == propertyDetail.isAppurtenantLandChecked() && isBlank(areaOfPlot))

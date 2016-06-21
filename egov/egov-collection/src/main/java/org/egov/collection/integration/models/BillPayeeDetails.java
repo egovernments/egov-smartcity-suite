@@ -51,7 +51,7 @@ public class BillPayeeDetails {
     private final String payeeAddress;
 
     @XStreamAlias("bills")
-    private final List<BillDetails> billDetails = new ArrayList<BillDetails>();
+    private final List<BillDetails> billDetails = new ArrayList<BillDetails>(0);
 
     public BillPayeeDetails(final String payeeName, final String payeeAddress) {
         super();

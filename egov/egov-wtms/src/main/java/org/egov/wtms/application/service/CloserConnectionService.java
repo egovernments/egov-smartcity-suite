@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigDecimal;
+
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -54,8 +56,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 @Service
 @Transactional(readOnly = true)
@@ -114,7 +114,7 @@ public class CloserConnectionService {
             final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getCurrentDue(parentWaterConnectionDetail);
             if (waterTaxDueforParent.doubleValue() > 0)
                 validationMessage = messageSource
-                        .getMessage("err.closure.connection.watertaxdue", null, null);
+                .getMessage("err.closure.connection.watertaxdue", null, null);
             /*
              * if (parentWaterConnectionDetail.getConnection().getId() != null) if
              * (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0) validationMessage =

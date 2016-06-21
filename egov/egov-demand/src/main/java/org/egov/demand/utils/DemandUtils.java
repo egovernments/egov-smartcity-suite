@@ -43,6 +43,7 @@ import org.apache.log4j.Logger;
 import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillDetails;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillPayeeDetails;
@@ -117,7 +118,7 @@ public class DemandUtils {
 				        isActualDemand = egBillDet.getAdditionalFlag() == 1 ? true : false;
 					billAccDetails = new BillAccountDetails(egBillDet.getGlcode(), egBillDet
 							.getOrderNo(), egBillDet.getCrAmount(), egBillDet.getDrAmount(),
-							egBillDet.getFunctionCode(), egBillDet.getDescription(), isActualDemand);
+							egBillDet.getFunctionCode(), egBillDet.getDescription(), isActualDemand, PURPOSE.OTHERS);
 					billDetails.addBillAccountDetails(billAccDetails);
 				}
 				billPayeeDet.addBillDetails(billDetails);

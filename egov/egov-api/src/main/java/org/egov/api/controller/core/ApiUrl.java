@@ -48,6 +48,8 @@ public class ApiUrl {
 	 * Complaint
 	 */
 	public final static String COMPLAINT_GET_TYPES = "/complaint/getAllTypes";
+	
+	public final static String COMPLAINT_TYPES_BY_CATEGORIES = "/complaint/getComplaintCategories";
 
 	public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/complaint/getFrequentlyFiledTypes";
 

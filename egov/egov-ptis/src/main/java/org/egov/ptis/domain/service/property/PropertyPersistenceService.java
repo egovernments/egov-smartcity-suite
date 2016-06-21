@@ -187,4 +187,60 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         LOGGER.debug("Exit from updateOwners");
         return errorMesg.toString();
     }
+    
+    /**
+     * Update the owners for a property
+     * @param property
+     * @param basicProp
+     * @param ownerAddress
+     */
+    public void updateOwners(Property property, BasicProperty basicProp, Address ownerAddress) {
+		int orderNo = 0;
+		basicProp.getPropertyOwnerInfo().clear();
+        for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
+            
+            if (ownerInfo != null) {
+                User user = null;
+                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
+                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                else
+                    user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo
+                            .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
+                            .getGender());
+                if (user == null) {
+                	orderNo++;
+                    final Citizen newOwner = new Citizen();
+                    newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                    newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
+                    newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
+                    newOwner.setGender(ownerInfo.getOwner().getGender());
+                    newOwner.setGuardian(ownerInfo.getOwner().getGuardian());
+                    newOwner.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
+                    newOwner.setName(ownerInfo.getOwner().getName());
+                    newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
+                    newOwner.setPassword("NOT SET");
+                    newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
+                    userService.createUser(newOwner);
+                    ownerInfo.setBasicProperty(basicProp);
+                    ownerInfo.setOwner(newOwner);
+                    ownerInfo.setOrderNo(orderNo);
+                    LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
+                    ownerInfo.getOwner().addAddress(ownerAddress);
+                    basicProp.addPropertyOwners(ownerInfo);
+                } else {
+                    // If existing user, then update the address
+                	user.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                	user.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
+                	user.setName(ownerInfo.getOwner().getName());
+                	user.setGender(ownerInfo.getOwner().getGender());
+                    user.setEmailId(ownerInfo.getOwner().getEmailId());
+                    user.setGuardian(ownerInfo.getOwner().getGuardian());
+                    user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
+                    ownerInfo.setOwner(user);
+                    ownerInfo.setBasicProperty(basicProp);
+                }
+            }
+            
+        }
+	}
 }

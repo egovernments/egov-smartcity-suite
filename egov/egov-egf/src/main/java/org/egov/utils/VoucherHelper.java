@@ -87,6 +87,7 @@ public class VoucherHelper {
     public static final String DEFAULT_SEQUENCE_PREFIX = "SQ_";
     @SuppressWarnings("unchecked")
     private PersistenceService persistenceService;
+    @Autowired 
     private EisCommonService eisCommonService;
     @Autowired
     private FundHibernateDAO fundDAO;

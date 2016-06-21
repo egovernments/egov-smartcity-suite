@@ -96,7 +96,7 @@
 		<td class="greybox" width="25%"></td>
 		<td class="greybox"></td>
 	</tr>
-	<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox"><s:checkbox name="propertyDetail.structure"
@@ -107,7 +107,7 @@
 		<td class="greybox siteowner"><s:textfield maxlength="64"
 				value="%{propertyDetail.siteOwner}" name="propertyDetail.siteOwner"
 				id="siteOwner"></s:textfield></td>
-	</tr>
+	</tr> --%>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>

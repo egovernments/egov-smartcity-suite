@@ -71,8 +71,12 @@ $(document).ready(function(){
 	});
 	typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
 	
-	
+	var isSubmitForm=false;
 	$("#deactivation").click(function(e){
+		if(isSubmitForm)
+		{
+			return true;
+		}
 		if(!validateDate()){
 			document.getElementById("deactiveDate").value="";
 			document.getElementById("deactiveDate").focus(); 
@@ -90,18 +94,20 @@ $(document).ready(function(){
 							var action = '/adtax/deactivate/deactive/' + id;
 							$('#statusdeactivateform').attr('method','post');
 							$('#statusdeactivateform').attr('action',action);
-							document.forms[0].submit();
+							isSubmitForm=true;
+							$("#deactivation").trigger("click");
 						}
 				});
+				return false;
 			}else
 				{
 					var action = '/adtax/deactivate/deactive/' + id;
 					$('#statusdeactivateform').attr('method','post');
 					$('#statusdeactivateform').attr('action',action);
-					document.forms[0].submit();
+					return true;
 				}
 		}else{
-			e.preventDefault();
+			return false;
 			
 		}
 	});

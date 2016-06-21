@@ -906,7 +906,9 @@ public class GeneralLedgerReport {
                             + "").append(" WHERE coa.glCode = gl.glCode AND gl.voucherHeaderId = vh.id  ")
                             .append(" AND	f.id=vh.fundid ").append(" AND gl.glcode ='" + glCode1 + "'")
                             .append(" AND (gl.debitamount>0 OR gl.creditamount>0) ").append(functionCondition)
-                            .append(" and vh.id in (" + engineQry + " )").append(" order by \"code\",\"vDate\" ");
+                            .append(" and vh.id in (" + engineQry + " )")
+                            .append(" group by vh.id,gl.glcode,vh.voucherDate ,vh.voucherNumber,coa.name,gl.description,  vh.type || '-' || vh.name||CASE WHEN status = 1 THEN '(Reversed)' ELSE (CASE WHEN status = 2 THEN '(Reversal)' ELSE '' END) END, gl.debitamount , gl.creditamount  ,f.name, vh.isconfirmed, vh.type  ||'-'  ||vh.name, gl.functionid   ")
+                            .append(" order by \"code\",\"vDate\" ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("____________________________________________________________" + sql.toString());
             return sql.toString();

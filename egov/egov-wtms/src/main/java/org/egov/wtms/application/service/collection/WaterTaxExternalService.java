@@ -39,9 +39,21 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillDetails;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillPayeeDetails;
@@ -96,17 +108,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterTaxExternalService {
 
@@ -127,7 +128,7 @@ public class WaterTaxExternalService {
 
     @Autowired
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
-    
+
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
 
@@ -136,8 +137,10 @@ public class WaterTaxExternalService {
 
     @Autowired
     private EgBillDao egBillDAO;
+
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
+
     @Autowired
     private PtDemandDao ptDemandDAO;
 
@@ -149,7 +152,8 @@ public class WaterTaxExternalService {
         ErrorDetails errorDetails = null;
         String currentInstallmentYear = null;
         final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
-        BillReferenceNumberGenerator billRefeNumber = beanResolver.getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
+        final BillReferenceNumberGenerator billRefeNumber = beanResolver
+                .getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
         WaterConnectionDetails waterConnectionDetails = null;
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails
@@ -250,7 +254,7 @@ public class WaterTaxExternalService {
                 final String taxType = (String) data[0];
 
                 final String installment = (String) data[1];
-                final BigDecimal dmd = new BigDecimal((Double)data[2]);
+                final BigDecimal dmd = new BigDecimal((Double) data[2]);
                 final Double col = (Double) data[3];
                 final BigDecimal demand = BigDecimal.valueOf(dmd.intValue());
                 final BigDecimal collection = BigDecimal.valueOf(col.doubleValue());
@@ -362,9 +366,9 @@ public class WaterTaxExternalService {
         for (final EgBillDetails billDet : billDetails)
             receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
                     billDet.getCrAmount(), billDet.getDrAmount(), billDet.getDescription()));
-        Boolean isActualDemand=false;
+        Boolean isActualDemand = false;
         new WaterTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid, receiptDetails);
-        
+
         for (final EgBillDetails billDet : bill.getEgBillDetails())
             for (final ReceiptDetail rd : receiptDetails)
                 // FIX ME
@@ -373,7 +377,7 @@ public class WaterTaxExternalService {
                     isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
                     final BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
                             billDet.getOrderNo(), rd.getCramount(), rd.getDramount(),
-                            billDet.getFunctionCode(), billDet.getDescription(), isActualDemand);
+                            billDet.getFunctionCode(), billDet.getDescription(), isActualDemand, PURPOSE.OTHERS);
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
                     break;
                 }
@@ -392,7 +396,7 @@ public class WaterTaxExternalService {
         for (final String coll : collModes)
             collModesList.add(coll);
         billInfoImpl = new BillInfoImpl(bill.getServiceCode(), bill.getFundCode(), bill.getFunctionaryCode(),
-                bill.getFundSourceCode(), bill.getDepartmentCode(), "Water Tax collection", bill.getCitizenName(),
+                bill.getFundSourceCode(), bill.getDepartmentCode(), "Water Charge Collection", bill.getCitizenName(),
                 bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList, collType);
         billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress());
 

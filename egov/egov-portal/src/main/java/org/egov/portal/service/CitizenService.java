@@ -87,10 +87,6 @@ public class CitizenService {
         citizenRepository.save(citizen);
     }
 
-    public Citizen getCitizenById(final Long citizenID) {
-        return citizenRepository.findOne(citizenID);
-    }
-
     public Citizen getCitizenByEmailId(final String emailId) {
         return citizenRepository.findByEmailId(emailId);
     }
@@ -114,14 +110,20 @@ public class CitizenService {
         return citizen;
     }
 
-    public void sendActivationMessage(final Citizen citizen) throws ApplicationRuntimeException {
-        messagingService
-        .sendEmail(
-                citizen.getEmailId(),
-                "Portal Activation",
-                String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(),
-                        citizen.getActivationCode()));
-        messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
+    @Transactional
+    public void resendActivationCode(Citizen citizen) {
+        citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
+        sendActivationMessage(citizen);
+        citizenRepository.save(citizen);
     }
 
+    public void sendActivationMessage(final Citizen citizen) throws ApplicationRuntimeException {
+        messagingService
+                .sendEmail(
+                        citizen.getEmailId(),
+                        "Portal Activation",
+                        String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(),
+                                citizen.getActivationCode()));
+        messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
+    }
 }

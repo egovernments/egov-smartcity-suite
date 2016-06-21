@@ -77,6 +77,8 @@ import java.util.List;
  */
 public class BudgetService extends PersistenceService<Budget, Long> {
     private static final Logger LOGGER = Logger.getLogger(BudgetService.class);
+    
+    @Autowired
     protected EisCommonService eisCommonService;
     protected WorkflowService<Budget> budgetWorkflowService;
     @Autowired

@@ -72,6 +72,7 @@ jQuery(document).click(function() {
 		if(name.indexOf("EXCEL")!=-1 || name.indexOf("PDF")!=-1 || name.indexOf("XLS")!=-1 ){
 			setTimeout(function() {
 				undoLoadingMask();
+				jQuery('input[type=submit], input[type=button]').removeAttr("disabled");
 			}, maskingTimeForDownloads)
 		}
 	}

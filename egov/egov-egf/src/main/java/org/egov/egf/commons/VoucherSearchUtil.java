@@ -66,6 +66,7 @@ public class VoucherSearchUtil {
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     private static final Logger LOGGER = Logger.getLogger(VoucherSearchUtil.class);
+    @Autowired
     private FinancialYearDAO financialYearDAO;
 
     public List<CVoucherHeader> search(final CVoucherHeader voucherHeader, final Date fromDate, final Date toDate,

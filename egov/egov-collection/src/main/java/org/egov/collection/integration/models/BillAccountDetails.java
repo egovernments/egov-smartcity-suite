@@ -39,13 +39,17 @@
  */
 package org.egov.collection.integration.models;
 
+import java.math.BigDecimal;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import java.math.BigDecimal;
-
 @XStreamAlias("account")
 public class BillAccountDetails implements Comparable<BillAccountDetails> {
+
+    public enum PURPOSE {
+        ARREAR_AMOUNT, CURRENT_AMOUNT, ADVANCE_AMOUNT, ARREAR_LATEPAYMENT_CHARGES, CURRENT_LATEPAYMENT_CHARGES, CHEQUE_BOUNCE_PENALTY, REBATE, OTHERS
+    };
 
     @XStreamAsAttribute
     private final String glCode;
@@ -65,8 +69,12 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
     @XStreamAsAttribute
     private final Boolean isActualDemand;
 
+    @XStreamAsAttribute
+    private final PURPOSE purpose;
+
     public BillAccountDetails(final String glCode, final Integer order, final BigDecimal crAmount,
-            final BigDecimal drAmount, final String functionCode, final String description, final Boolean isActualDemand) {
+            final BigDecimal drAmount, final String functionCode, final String description, final Boolean isActualDemand,
+            final PURPOSE purpose) {
         this.glCode = glCode;
         this.order = order;
         this.crAmount = crAmount;
@@ -74,6 +82,7 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
         this.functionCode = functionCode;
         this.description = description;
         this.isActualDemand = isActualDemand;
+        this.purpose = purpose;
     }
 
     @Override
@@ -112,6 +121,10 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
         return isActualDemand;
     }
 
+    public PURPOSE getPurpose() {
+        return purpose;
+    }
+
     @Override
     public int compareTo(final BillAccountDetails obj) {
         return order - obj.order;
@@ -138,4 +151,5 @@ public class BillAccountDetails implements Comparable<BillAccountDetails> {
         return glCode.hashCode() + order.hashCode() + crAmount.hashCode() + drAmount.hashCode()
                 + description.hashCode() + functionCode.hashCode() + isActualDemand.hashCode();
     }
+
 }

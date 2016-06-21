@@ -40,10 +40,12 @@
 
 package org.egov.adtax.workflow;
 
+import java.util.Date;
+
+import org.egov.adtax.autonumber.AdvertisementPermitNumberGenerator;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.service.AdvertisementDemandService;
-import org.egov.adtax.utils.AdTaxNumberGenerator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -51,8 +53,9 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -62,8 +65,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
 
 /**
  * The Class ApplicationCommonWorkflow.
@@ -89,7 +90,9 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
-    private AdTaxNumberGenerator adTaxNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
+
+   
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
 
@@ -144,7 +147,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                                 advertisementPermitDetail.getAdvertisement().getDemandId()));
             }
        
-            advertisementPermitDetail.setPermissionNumber(adTaxNumberGenerator.generatePermitNumber());
+            advertisementPermitDetail.setPermissionNumber((beanResolver.getAutoNumberServiceFor(AdvertisementPermitNumberGenerator.class)).getNextAdvertisementPermitNumber(advertisementPermitDetail.getAdvertisement()));
             advertisementPermitDetail.transition(true)
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
                     .withComments(approvalComent)

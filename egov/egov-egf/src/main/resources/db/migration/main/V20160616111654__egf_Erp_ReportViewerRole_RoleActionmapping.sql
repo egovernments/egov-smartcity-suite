@@ -1,0 +1,1 @@
+INSERT INTO  EG_ROLEACTION (roleid, actionid) select (select id from eg_role where name in ('ERP Report Viewer')),actionid from eg_roleaction  where roleid=(select id from eg_role where name='Financial Report Viewer');

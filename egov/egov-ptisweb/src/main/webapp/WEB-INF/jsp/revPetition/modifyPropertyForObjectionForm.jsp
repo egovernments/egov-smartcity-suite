@@ -128,7 +128,7 @@
 		</td>
 	</tr>
 	
-	<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox">
@@ -139,7 +139,7 @@
 	<td class="greybox siteowner"><s:text name="siteowner"></s:text><span class="mandatory1"> *</span> :</td>
 		<td class="greybox siteowner"><s:textfield maxlength="64" value="%{property.propertyDetail.siteOwner}"
 				name="property.propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
-	</tr>
+	</tr> --%>
 	
 	<tr>
 		<td class="bluebox">&nbsp;</td>
